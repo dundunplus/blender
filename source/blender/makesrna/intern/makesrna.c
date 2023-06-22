@@ -1425,8 +1425,9 @@ static char *rna_def_property_set_func(
             /* C++ may require casting to an enum type.  */
             fprintf(f, "#ifdef __cplusplus\n");
             fprintf(f,
-                    /* If #rna_clamp_value() adds an expression like `CLAMPIS(...)` (instead of an
-                       lvalue), #decltype() yields a reference, so that has to be removed.*/
+                    /* If #rna_clamp_value() adds an expression like `CLAMPIS(...)`
+                     * (instead of an `lvalue`), #decltype() yields a reference,
+                     * so that has to be removed. */
                     "    data->%s = %s(std::remove_reference_t<decltype(data->%s)>)",
                     dp->dnaname,
                     (dp->booleannegative) ? "!" : "",
@@ -4551,7 +4552,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_action.c", "rna_action_api.c", RNA_def_action},
     {"rna_animation.c", "rna_animation_api.c", RNA_def_animation},
     {"rna_animviz.c", NULL, RNA_def_animviz},
-    {"rna_armature.c", "rna_armature_api.c", RNA_def_armature},
+    {"rna_armature.cc", "rna_armature_api.cc", RNA_def_armature},
     {"rna_attribute.c", NULL, RNA_def_attribute},
     {"rna_asset.c", NULL, RNA_def_asset},
     {"rna_boid.c", NULL, RNA_def_boid},
@@ -4567,7 +4568,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_dynamicpaint.c", NULL, RNA_def_dynamic_paint},
     {"rna_fcurve.c", "rna_fcurve_api.c", RNA_def_fcurve},
     {"rna_gpencil_legacy.c", NULL, RNA_def_gpencil},
-    {"rna_grease_pencil.c", NULL, RNA_def_grease_pencil},
+    {"rna_grease_pencil.cc", NULL, RNA_def_grease_pencil},
     {"rna_curves.cc", NULL, RNA_def_curves},
     {"rna_image.c", "rna_image_api.c", RNA_def_image},
     {"rna_key.c", NULL, RNA_def_key},
