@@ -399,15 +399,6 @@ void RE_AcquireResultImageViews(Render *re, RenderResult *rr)
             }
           }
         }
-
-        if (rv->z_buffer.data == nullptr) {
-          LISTBASE_FOREACH (RenderView *, rview, &rr->views) {
-            RenderBuffer *buffer = RE_RenderLayerGetPassBuffer(rl, RE_PASSNAME_Z, rview->name);
-            if (buffer) {
-              rview->z_buffer = *buffer;
-            }
-          }
-        }
       }
 
       rr->layers = re->result->layers;
@@ -451,7 +442,6 @@ void RE_AcquireResultImage(Render *re, RenderResult *rr, const int view_id)
        *
        * The thread safety is ensured via the  re->resultmutex. */
       rr->combined_buffer = rv->combined_buffer;
-      rr->z_buffer = rv->z_buffer;
       rr->byte_buffer = rv->byte_buffer;
 
       /* active layer */
@@ -462,13 +452,6 @@ void RE_AcquireResultImage(Render *re, RenderResult *rr, const int view_id)
           RenderBuffer *buffer = RE_RenderLayerGetPassBuffer(rl, RE_PASSNAME_COMBINED, rv->name);
           if (buffer) {
             rr->combined_buffer = *buffer;
-          }
-        }
-
-        if (rv->z_buffer.data == nullptr) {
-          RenderBuffer *buffer = RE_RenderLayerGetPassBuffer(rl, RE_PASSNAME_Z, rv->name);
-          if (buffer) {
-            rr->z_buffer = *buffer;
           }
         }
       }
@@ -614,7 +597,7 @@ void RE_FreeRender(Render *re)
   MEM_freeN(re);
 }
 
-void RE_FreeAllRender(void)
+void RE_FreeAllRender()
 {
   while (RenderGlobal.renderlist.first) {
     RE_FreeRender(static_cast<Render *>(RenderGlobal.renderlist.first));
@@ -626,7 +609,7 @@ void RE_FreeAllRender(void)
 #endif
 }
 
-void RE_FreeAllRenderResults(void)
+void RE_FreeAllRenderResults()
 {
   LISTBASE_FOREACH (Render *, re, &RenderGlobal.renderlist) {
     render_result_free(re->result);
@@ -638,7 +621,7 @@ void RE_FreeAllRenderResults(void)
   }
 }
 
-void RE_FreeAllPersistentData(void)
+void RE_FreeAllPersistentData()
 {
   LISTBASE_FOREACH (Render *, re, &RenderGlobal.renderlist) {
     if (re->engine != nullptr) {
@@ -1803,7 +1786,7 @@ static bool render_init_from_main(Render *re,
     return false;
   }
 
-  /* initstate makes new result, have to send changed tags around */
+  /* Init-state makes new result, have to send changed tags around. */
   ntreeCompositTagRender(re->scene);
 
   re->display_init(re->dih, re->result);

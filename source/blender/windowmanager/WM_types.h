@@ -119,6 +119,15 @@ struct wmWindowManager;
 #include "gizmo/WM_gizmo_api.h"
 
 #ifdef __cplusplus
+namespace blender::asset_system {
+class AssetRepresentation;
+}
+using AssetRepresentationHandle = blender::asset_system::AssetRepresentation;
+#else
+typedef struct AssetRepresentationHandle AssetRepresentationHandle;
+#endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -517,6 +526,7 @@ typedef struct wmNotifier {
 #define NS_MODE_PARTICLE (10 << 8)
 #define NS_EDITMODE_CURVES (11 << 8)
 #define NS_EDITMODE_GREASE_PENCIL (12 << 8)
+#define NS_EDITMODE_POINT_CLOUD (13 << 8)
 
 /* subtype 3d view editing */
 #define NS_VIEW3D_GPU (16 << 8)
@@ -1098,7 +1108,7 @@ typedef struct wmDragID {
 
 typedef struct wmDragAsset {
   int import_method; /* eAssetImportType */
-  const struct AssetRepresentation *asset;
+  const AssetRepresentationHandle *asset;
 
   /* FIXME: This is temporary evil solution to get scene/view-layer/etc in the copy callback of the
    * #wmDropBox.
