@@ -94,7 +94,6 @@ if(WITH_EXPERIMENTAL_FEATURES)
   add_definitions(-DWITH_GREASE_PENCIL_V3)
   list(APPEND DEFSRC
     rna_grease_pencil.cc
-    rna_simulation.cc
   )
 endif()
 
@@ -229,7 +228,6 @@ set(INC
   ../../gpu
   ../../ikplugin
   ../../imbuf
-  ../../makesdna
   ../../modifiers
   ../../nodes
   ../../sequencer
@@ -239,14 +237,10 @@ set(INC
   ../../render
   ../../../../intern/clog
   ../../../../intern/cycles/blender
-  ../../../../intern/guardedalloc
   ../../../../intern/memutil
   ../../../../intern/mantaflow/extern
 
-  ${CMAKE_BINARY_DIR}/source/blender/makesdna/intern
 
-  # dna_type_offsets.h
-  ${CMAKE_CURRENT_BINARY_DIR}/../../makesdna/intern
   # RNA_prototypes.h
   ${CMAKE_CURRENT_BINARY_DIR}/../../makesrna/
 )
@@ -411,8 +405,12 @@ if(WITH_XR_OPENXR)
   add_definitions(-DWITH_XR_OPENXR)
 endif()
 
-if(WITH_VULKAN_METAL)
-  add_definitions(-DWITH_VULKAN_METAL)
+if(WITH_OPENGL_BACKEND)
+  add_definitions(-DWITH_OPENGL_BACKEND)
+endif()
+
+if(WITH_METAL_BACKEND)
+  add_definitions(-DWITH_METAL_BACKEND)
 endif()
 
 if(WITH_VULKAN_BACKEND)
@@ -433,7 +431,8 @@ blender_target_include_dirs(makesrna ${INC})
 blender_target_include_dirs_sys(makesrna ${INC_SYS})
 
 target_link_libraries(makesrna PRIVATE bf_dna)
-target_link_libraries(makesrna PRIVATE bf_intern_atomic)
+target_link_libraries(makesrna PRIVATE bf::intern::atomic)
+target_link_libraries(makesrna PRIVATE bf::intern::guardedalloc)
 target_link_libraries(makesrna PRIVATE bf_dna_blenlib)
 
 if(WIN32 AND NOT UNIX)
@@ -466,7 +465,7 @@ set(SRC
 )
 
 set(LIB
-  bf_dna
+  PRIVATE bf::dna
   bf_editor_space_api
 
   bf_editor_animation
@@ -486,9 +485,8 @@ set(LIB
   bf_editor_sound
   bf_editor_transform
   bf_editor_undo
+  PRIVATE bf::intern::guardedalloc
 )
 
 blender_add_lib(bf_rna "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
-# Needed so we can use dna_type_offsets.h for defaults initialization.
-add_dependencies(bf_blenkernel bf_dna)

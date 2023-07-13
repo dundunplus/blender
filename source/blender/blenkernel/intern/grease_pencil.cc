@@ -29,6 +29,7 @@
 #include "BLI_string_ref.hh"
 #include "BLI_string_utils.h"
 #include "BLI_vector_set.hh"
+#include "BLI_virtual_array.hh"
 
 #include "BLO_read_write.h"
 
@@ -55,6 +56,7 @@ static void grease_pencil_init_data(ID *id)
 
   new (&grease_pencil->root_group) greasepencil::LayerGroup();
   grease_pencil->active_layer = nullptr;
+  grease_pencil->flag |= GREASE_PENCIL_ANIM_CHANNEL_EXPANDED;
 }
 
 static void grease_pencil_copy_data(Main * /*bmain*/,
@@ -250,6 +252,40 @@ IDTypeInfo IDType_ID_GP = {
 
 namespace blender::bke::greasepencil {
 
+static const std::string ATTR_OPACITY = "opacity";
+static const std::string ATTR_RADIUS = "radius";
+
+/* Curves attributes getters */
+static int domain_num(const CurvesGeometry &curves, const eAttrDomain domain)
+{
+  return domain == ATTR_DOMAIN_POINT ? curves.points_num() : curves.curves_num();
+}
+static CustomData &domain_custom_data(CurvesGeometry &curves, const eAttrDomain domain)
+{
+  return domain == ATTR_DOMAIN_POINT ? curves.point_data : curves.curve_data;
+}
+template<typename T>
+static MutableSpan<T> get_mutable_attribute(CurvesGeometry &curves,
+                                            const eAttrDomain domain,
+                                            const StringRefNull name,
+                                            const T default_value = T())
+{
+  const int num = domain_num(curves, domain);
+  const eCustomDataType type = cpp_type_to_custom_data_type(CPPType::get<T>());
+  CustomData &custom_data = domain_custom_data(curves, domain);
+
+  T *data = (T *)CustomData_get_layer_named_for_write(&custom_data, type, name.c_str(), num);
+  if (data != nullptr) {
+    return {data, num};
+  }
+  data = (T *)CustomData_add_layer_named(&custom_data, type, CD_SET_DEFAULT, num, name.c_str());
+  MutableSpan<T> span = {data, num};
+  if (num > 0 && span.first() != default_value) {
+    span.fill(default_value);
+  }
+  return span;
+}
+
 Drawing::Drawing()
 {
   this->base.type = GP_DRAWING;
@@ -344,6 +380,30 @@ bke::CurvesGeometry &Drawing::strokes_for_write()
   return this->geometry.wrap();
 }
 
+VArray<float> Drawing::radii() const
+{
+  return *this->strokes().attributes().lookup_or_default<float>(
+      ATTR_RADIUS, ATTR_DOMAIN_POINT, 0.01f);
+}
+
+MutableSpan<float> Drawing::radii_for_write()
+{
+  return get_mutable_attribute<float>(
+      this->geometry.wrap(), ATTR_DOMAIN_POINT, ATTR_RADIUS, 0.01f);
+}
+
+VArray<float> Drawing::opacities() const
+{
+  return *this->strokes().attributes().lookup_or_default<float>(
+      ATTR_OPACITY, ATTR_DOMAIN_POINT, 1.0f);
+}
+
+MutableSpan<float> Drawing::opacities_for_write()
+{
+  return get_mutable_attribute<float>(
+      this->geometry.wrap(), ATTR_DOMAIN_POINT, ATTR_OPACITY, 1.0f);
+}
+
 void Drawing::tag_positions_changed()
 {
   this->geometry.wrap().tag_positions_changed();
@@ -399,6 +459,11 @@ LayerGroup &TreeNode::as_group_for_write()
 Layer &TreeNode::as_layer_for_write()
 {
   return *reinterpret_cast<Layer *>(this);
+}
+
+LayerGroup *TreeNode::parent_group() const
+{
+  return &this->parent->wrap();
 }
 
 LayerMask::LayerMask()
@@ -738,7 +803,7 @@ Layer &LayerGroup::add_layer(Layer *layer)
   return *layer;
 }
 
-Layer &LayerGroup::add_layer_before(Layer *layer, Layer *link)
+Layer &LayerGroup::add_layer_before(Layer *layer, TreeNode *link)
 {
   BLI_assert(layer != nullptr && link != nullptr);
   BLI_insertlinkbefore(&this->children,
@@ -749,7 +814,7 @@ Layer &LayerGroup::add_layer_before(Layer *layer, Layer *link)
   return *layer;
 }
 
-Layer &LayerGroup::add_layer_after(Layer *layer, Layer *link)
+Layer &LayerGroup::add_layer_after(Layer *layer, TreeNode *link)
 {
   BLI_assert(layer != nullptr && link != nullptr);
   BLI_insertlinkafter(&this->children,
@@ -766,13 +831,13 @@ Layer &LayerGroup::add_layer(StringRefNull name)
   return this->add_layer(new_layer);
 }
 
-Layer &LayerGroup::add_layer_before(StringRefNull name, Layer *link)
+Layer &LayerGroup::add_layer_before(StringRefNull name, TreeNode *link)
 {
   Layer *new_layer = MEM_new<Layer>(__func__, name);
   return this->add_layer_before(new_layer, link);
 }
 
-Layer &LayerGroup::add_layer_after(StringRefNull name, Layer *link)
+Layer &LayerGroup::add_layer_after(StringRefNull name, TreeNode *link)
 {
   Layer *new_layer = MEM_new<Layer>(__func__, name);
   return this->add_layer_after(new_layer, link);
@@ -789,11 +854,11 @@ int64_t LayerGroup::num_nodes_total() const
   return this->runtime->nodes_cache_.size();
 }
 
-bool LayerGroup::unlink_layer(Layer *link)
+bool LayerGroup::unlink_node(TreeNode *link)
 {
   if (BLI_remlink_safe(&this->children, link)) {
     this->tag_nodes_cache_dirty();
-    link->base.parent = nullptr;
+    link->parent = nullptr;
     return true;
   }
   return false;
@@ -1434,14 +1499,14 @@ blender::bke::greasepencil::Layer &GreasePencil::add_layer(
 
 blender::bke::greasepencil::Layer &GreasePencil::add_layer_after(
     blender::bke::greasepencil::LayerGroup &group,
-    blender::bke::greasepencil::Layer *layer,
+    blender::bke::greasepencil::TreeNode *link,
     const blender::StringRefNull name)
 {
   using namespace blender;
   VectorSet<StringRefNull> names = get_node_names(*this);
   std::string unique_name(name.c_str());
   unique_layer_name(names, unique_name.data());
-  return group.add_layer_after(unique_name, layer);
+  return group.add_layer_after(unique_name, link);
 }
 
 blender::bke::greasepencil::Layer &GreasePencil::add_layer(const blender::StringRefNull name)
@@ -1551,7 +1616,7 @@ void GreasePencil::remove_layer(blender::bke::greasepencil::Layer &layer)
   }
 
   /* Unlink the layer from the parent group. */
-  layer.parent_group().unlink_layer(&layer);
+  layer.parent_group().unlink_node(&layer.as_node());
 
   /* Remove drawings. */
   /* TODO: In the future this should only remove drawings when the user count hits zero. */

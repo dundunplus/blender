@@ -4,18 +4,14 @@
 
 set(INC
   ../include
-  ../../blenkernel
-  ../../blenlib
   ../../blentranslation
   ../../depsgraph
   ../../functions
   ../../geometry
   ../../gpu
-  ../../makesdna
   ../../makesrna
   ../../windowmanager
   ../../../../intern/clog
-  ../../../../intern/guardedalloc
   ../../bmesh
 
   # RNA_prototypes.h
@@ -33,8 +29,10 @@ set(SRC
 )
 
 set(LIB
-  bf_blenkernel
-  bf_blenlib
+  PRIVATE bf::blenkernel
+  PRIVATE bf::blenlib
+  PRIVATE bf::dna
+  PRIVATE bf::intern::guardedalloc
 )
 
 if(WITH_TBB)

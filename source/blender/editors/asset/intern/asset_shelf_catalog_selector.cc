@@ -17,6 +17,7 @@
 
 #include "BLT_translation.h"
 
+#include "ED_asset_filter.hh"
 #include "ED_asset_list.hh"
 
 #include "UI_interface.h"
@@ -30,28 +31,35 @@
 namespace blender::ed::asset::shelf {
 
 class AssetCatalogSelectorTree : public ui::AbstractTreeView {
-  asset_system::AssetLibrary &library_;
-  asset_system::AssetCatalogTree *catalog_tree_;
+  AssetShelf &shelf_;
   AssetShelfSettings &shelf_settings_;
+  asset_system::AssetCatalogTree catalog_tree_;
 
  public:
   class Item;
 
-  AssetCatalogSelectorTree(asset_system::AssetLibrary &library, AssetShelfSettings &shelf_settings)
-      : library_(library), shelf_settings_(shelf_settings)
+  AssetCatalogSelectorTree(asset_system::AssetLibrary &library, AssetShelf &shelf)
+      : shelf_(shelf), shelf_settings_(shelf_.settings)
   {
-    asset_system::AssetCatalogService *catalog_service = library_.catalog_service.get();
-    catalog_tree_ = catalog_service->get_catalog_tree();
+    catalog_tree_ = build_filtered_catalog_tree(
+        library, asset_system::all_library_reference(), [this](const AssetHandle asset_handle) {
+          return (!shelf_.type->asset_poll || shelf_.type->asset_poll(shelf_.type, &asset_handle));
+        });
   }
 
   void build_tree() override
   {
-    if (!catalog_tree_) {
+    if (catalog_tree_.is_empty()) {
+      auto &item = add_tree_item<ui::BasicTreeViewItem>(TIP_("No applicable assets found"),
+                                                        ICON_INFO);
+      item.disable_interaction();
       return;
     }
 
-    catalog_tree_->foreach_root_item([this](asset_system::AssetCatalogTreeItem &catalog_item) {
-      build_catalog_items_recursive(*this, catalog_item);
+    catalog_tree_.foreach_root_item([this](asset_system::AssetCatalogTreeItem &catalog_item) {
+      Item &item = build_catalog_items_recursive(*this, catalog_item);
+      /* Uncollapse root items by default (user edits will override this just fine). */
+      item.set_collapsed(false);
     });
   }
 
@@ -106,25 +114,30 @@ class AssetCatalogSelectorTree : public ui::AbstractTreeView {
         uiItemL(&row, nullptr, ICON_BLANK1);
       }
 
-      uiBut *but = uiDefButC(block,
-                             UI_BTYPE_CHECKBOX,
-                             0,
-                             catalog_item_.get_name().c_str(),
-                             0,
-                             0,
-                             UI_UNIT_X * 10,
-                             UI_UNIT_Y,
-                             (char *)&catalog_path_enabled_,
-                             0,
-                             0,
-                             0,
-                             0,
-                             TIP_("Toggle catalog visibility in the asset shelf"));
-      UI_but_func_set(but, [&tree](bContext &C) {
+      uiLayout *subrow = uiLayoutRow(&row, false);
+      uiLayoutSetActive(subrow, catalog_path_enabled_);
+      uiItemL(subrow, catalog_item_.get_name().c_str(), ICON_NONE);
+      UI_block_layout_set_current(block, &row);
+
+      uiBut *toggle_but = uiDefButC(block,
+                                    UI_BTYPE_CHECKBOX,
+                                    0,
+                                    "",
+                                    0,
+                                    0,
+                                    UI_UNIT_X,
+                                    UI_UNIT_Y,
+                                    (char *)&catalog_path_enabled_,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    TIP_("Toggle catalog visibility in the asset shelf"));
+      UI_but_func_set(toggle_but, [&tree](bContext &C) {
         tree.update_shelf_settings_from_enabled_catalogs();
         send_redraw_notifier(C);
       });
-      UI_but_flag_disable(but, UI_BUT_UNDO);
+      UI_but_flag_disable(toggle_but, UI_BUT_UNDO);
     }
   };
 };
@@ -158,7 +171,7 @@ static void catalog_selector_panel_draw(const bContext *C, Panel *panel)
   ui::AbstractTreeView *tree_view = UI_block_add_view(
       *block,
       "asset catalog tree view",
-      std::make_unique<AssetCatalogSelectorTree>(*library, shelf->settings));
+      std::make_unique<AssetCatalogSelectorTree>(*library, *shelf));
 
   ui::TreeViewBuilder::build_tree_view(*tree_view, *layout);
 }

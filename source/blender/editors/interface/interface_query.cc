@@ -38,7 +38,7 @@ bool ui_but_is_editable(const uiBut *but)
                UI_BTYPE_SEPR_LINE,
                UI_BTYPE_ROUNDBOX,
                UI_BTYPE_LISTBOX,
-               UI_BTYPE_PROGRESS_BAR);
+               UI_BTYPE_PROGRESS);
 }
 
 bool ui_but_is_editable_as_text(const uiBut *but)
@@ -144,9 +144,17 @@ bool UI_but_is_tool(const uiBut *but)
 
 bool UI_but_has_tooltip_label(const uiBut *but)
 {
+  if (but->drawflag & UI_BUT_FORCE_TOOLTIP_LABEL) {
+    return true;
+  }
+
   /* No tooltip label if the button itself shows a label already. */
   if (but->drawstr[0] != '\0') {
     return false;
+  }
+
+  if (but->tip_label_func) {
+    return true;
   }
 
   if (UI_but_is_tool(but)) {

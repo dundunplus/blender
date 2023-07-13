@@ -934,10 +934,10 @@ static void fullscreen_azone_init(ScrArea *area, ARegion *region)
 
 /**
  * Return true if the background color alpha is close to fully transparent. That is, a value of
- * less than 50 on a [0-255] scale (arbitrary/eyeballed threshold). Assumes the region uses
- * #TH_BACK for its background.
+ * less than 50 on a [0-255] scale (rather arbitrary threshold). Assumes the region uses #TH_BACK
+ * for its background.
  */
-static bool region_back_is_barely_visible(const ScrArea *area, const ARegion *region)
+static bool region_background_is_transparent(const ScrArea *area, const ARegion *region)
 {
   /* Ensure the right theme is active, may not be the case on startup, for example. */
   bThemeState theme_state;
@@ -957,14 +957,16 @@ static bool region_back_is_barely_visible(const ScrArea *area, const ARegion *re
 static void region_azone_edge(const ScrArea *area, AZone *az, const ARegion *region)
 {
   /* If there is no visible region background, users typically expect the #AZone to be closer to
-   * the content, so move it a bit. Headers-like regions are usually thin and there's not much
-   * padding around them, so don't touch the #AZone there (also avoids mouse hover conflicts with
-   * actual contents).
-   * Note that this is an arbitrary amount that matches nicely with numbers elsewhere. */
-  const int overlap_padding = (region->overlap && region_back_is_barely_visible(area, region) &&
-                               !RGN_TYPE_IS_HEADER_ANY(region->regiontype)) ?
-                                  int(0.4f * U.widget_unit) :
-                                  0;
+   * the content, so move it a bit. */
+  const int overlap_padding =
+      /* Header-like regions are usually thin and there's not much padding around them,
+       * applying an offset would make the edge overlap buttons.*/
+      (!RGN_TYPE_IS_HEADER_ANY(region->regiontype) &&
+       /* Is the region background transparent? */
+       region->overlap && region_background_is_transparent(area, region)) ?
+          /* Note that this is an arbitrary amount that matches nicely with numbers elsewhere. */
+          int(0.4f * U.widget_unit) :
+          0;
 
   switch (az->edge) {
     case AE_TOP_TO_BOTTOMRIGHT:
@@ -1272,7 +1274,7 @@ bool ED_region_is_overlap(int spacetype, int regiontype)
                RGN_TYPE_FOOTER,
                RGN_TYPE_TOOL_HEADER,
                RGN_TYPE_ASSET_SHELF,
-               RGN_TYPE_ASSET_SHELF_FOOTER))
+               RGN_TYPE_ASSET_SHELF_SETTINGS))
       {
         return true;
       }
@@ -1352,8 +1354,8 @@ static void region_rect_recursive(
     prefsizey = region->sizey > 1 ? (UI_SCALE_FAC * (region->sizey + 0.5f)) :
                                     ED_asset_shelf_region_prefsizey();
   }
-  else if (region->regiontype == RGN_TYPE_ASSET_SHELF_FOOTER) {
-    prefsizey = ED_asset_shelf_footer_size();
+  else if (region->regiontype == RGN_TYPE_ASSET_SHELF_SETTINGS) {
+    prefsizey = ED_asset_shelf_settings_region_size();
   }
   else if (ED_area_is_global(area)) {
     prefsizey = ED_region_global_size_y();
@@ -2036,7 +2038,7 @@ static void area_offscreen_init(ScrArea *area)
 
 ScrArea *ED_area_offscreen_create(wmWindow *win, eSpace_Type space_type)
 {
-  ScrArea *area = MEM_cnew<ScrArea>(__func__);
+  ScrArea *area = static_cast<ScrArea *>(MEM_callocN(sizeof(ScrArea), __func__));
   area->spacetype = space_type;
 
   screen_area_spacelink_add(WM_window_get_active_scene(win), area, space_type);
@@ -2062,7 +2064,7 @@ static void area_offscreen_exit(wmWindowManager *wm, wmWindow *win, ScrArea *are
     MEM_SAFE_FREE(region->headerstr);
 
     if (region->regiontimer) {
-      WM_event_remove_timer(wm, win, region->regiontimer);
+      WM_event_timer_remove(wm, win, region->regiontimer);
       region->regiontimer = nullptr;
     }
 
@@ -2448,7 +2450,7 @@ static void region_align_info_to_area(
 
 void ED_area_swapspace(bContext *C, ScrArea *sa1, ScrArea *sa2)
 {
-  ScrArea *tmp = MEM_cnew<ScrArea>(__func__);
+  ScrArea *tmp = static_cast<ScrArea *>(MEM_callocN(sizeof(ScrArea), __func__));
   wmWindow *win = CTX_wm_window(C);
 
   ED_area_exit(C, sa1);

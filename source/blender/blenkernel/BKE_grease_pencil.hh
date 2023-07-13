@@ -14,6 +14,7 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_shared_cache.hh"
 #include "BLI_utility_mixins.hh"
+#include "BLI_virtual_array.hh"
 
 #include "DNA_gpencil_legacy_types.h"
 #include "DNA_grease_pencil_types.h"
@@ -76,6 +77,20 @@ class Drawing : public ::GreasePencilDrawing {
    */
   Span<uint3> triangles() const;
   void tag_positions_changed();
+
+  /**
+   * Radii of the points. Values are expected to be in blender units.
+   */
+  VArray<float> radii() const;
+  MutableSpan<float> radii_for_write();
+
+  /**
+   * Opacity array for the points.
+   * Used by the render engine as an alpha value so they are expected to
+   * be between 0 and 1 inclusive.
+   */
+  VArray<float> opacities() const;
+  MutableSpan<float> opacities_for_write();
 };
 
 class LayerGroup;
@@ -133,6 +148,11 @@ class TreeNode : public ::GreasePencilLayerTreeNode {
    * \note This results in undefined behavior if the node is not a Layer.
    */
   Layer &as_layer_for_write();
+
+  /**
+   * \returns the parent layer group or nullptr for the root group.
+   */
+  LayerGroup *parent_group() const;
 };
 
 /**
@@ -297,6 +317,12 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
   bool is_locked() const;
 
   /**
+   * \returns the group as a `TreeNode`.
+   */
+  const TreeNode &as_node() const;
+  TreeNode &as_node();
+
+  /**
    * Adds a group at the end of this group.
    */
   LayerGroup &add_group(LayerGroup *group);
@@ -317,14 +343,14 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
   /**
    * Adds a layer before \a link and returns it.
    */
-  Layer &add_layer_before(Layer *layer, Layer *link);
-  Layer &add_layer_before(StringRefNull name, Layer *link);
+  Layer &add_layer_before(Layer *layer, TreeNode *link);
+  Layer &add_layer_before(StringRefNull name, TreeNode *link);
 
   /**
    * Adds a layer after \a link and returns it.
    */
-  Layer &add_layer_after(Layer *layer, Layer *link);
-  Layer &add_layer_after(StringRefNull name, Layer *link);
+  Layer &add_layer_after(Layer *layer, TreeNode *link);
+  Layer &add_layer_after(StringRefNull name, TreeNode *link);
 
   /**
    * Returns the number of direct nodes in this group.
@@ -340,7 +366,7 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
    * Tries to unlink the layer from the list of nodes in this group.
    * \returns true, if the layer was successfully unlinked.
    */
-  bool unlink_layer(Layer *link);
+  bool unlink_node(TreeNode *link);
 
   /**
    * Returns a `Span` of pointers to all the `TreeNode`s in this group.
@@ -381,6 +407,15 @@ class LayerGroup : public ::GreasePencilLayerTreeGroup {
   void ensure_nodes_cache() const;
   void tag_nodes_cache_dirty() const;
 };
+
+inline const TreeNode &LayerGroup::as_node() const
+{
+  return *reinterpret_cast<const TreeNode *>(this);
+}
+inline TreeNode &LayerGroup::as_node()
+{
+  return *reinterpret_cast<TreeNode *>(this);
+}
 
 inline const TreeNode &Layer::as_node() const
 {

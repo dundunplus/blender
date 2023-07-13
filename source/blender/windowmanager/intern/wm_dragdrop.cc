@@ -201,6 +201,7 @@ wmDrag *WM_drag_data_create(
         WM_drag_add_local_ID(drag, static_cast<ID *>(poin), nullptr);
       }
       break;
+    case WM_DRAG_GREASE_PENCIL_LAYER:
     case WM_DRAG_ASSET:
     case WM_DRAG_ASSET_CATALOG:
       /* Move ownership of poin to wmDrag. */
@@ -287,7 +288,7 @@ static void wm_drop_ui_context_free(bContextStore **context_store)
   *context_store = nullptr;
 }
 
-void WM_event_drag_image(wmDrag *drag, ImBuf *imb, float scale)
+void WM_event_drag_image(wmDrag *drag, const ImBuf *imb, float scale)
 {
   drag->imb = imb;
   drag->imbuf_scale = scale;

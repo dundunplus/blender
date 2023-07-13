@@ -166,7 +166,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           else if (g_theme_state.regionid == RGN_TYPE_ASSET_SHELF) {
             cp = ts->asset_shelf.back;
           }
-          else if (g_theme_state.regionid == RGN_TYPE_ASSET_SHELF_FOOTER) {
+          else if (g_theme_state.regionid == RGN_TYPE_ASSET_SHELF_SETTINGS) {
             cp = ts->asset_shelf.header_back;
           }
           else {
@@ -197,7 +197,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           else if (ELEM(g_theme_state.regionid,
                         RGN_TYPE_HEADER,
                         RGN_TYPE_FOOTER,
-                        RGN_TYPE_ASSET_SHELF_FOOTER))
+                        RGN_TYPE_ASSET_SHELF_SETTINGS))
           {
             cp = ts->header_text;
           }
@@ -215,7 +215,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           else if (ELEM(g_theme_state.regionid,
                         RGN_TYPE_HEADER,
                         RGN_TYPE_FOOTER,
-                        RGN_TYPE_ASSET_SHELF_FOOTER))
+                        RGN_TYPE_ASSET_SHELF_SETTINGS))
           {
             cp = ts->header_text_hi;
           }
@@ -233,7 +233,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           else if (ELEM(g_theme_state.regionid,
                         RGN_TYPE_HEADER,
                         RGN_TYPE_FOOTER,
-                        RGN_TYPE_ASSET_SHELF_FOOTER))
+                        RGN_TYPE_ASSET_SHELF_SETTINGS))
           {
             cp = ts->header_title;
           }
@@ -662,6 +662,9 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_NODE_ZONE_SIMULATION:
           cp = ts->node_zone_simulation;
+          break;
+        case TH_NODE_ZONE_REPEAT:
+          cp = ts->node_zone_repeat;
           break;
         case TH_SIMULATED_FRAMES:
           cp = ts->simulated_frames;

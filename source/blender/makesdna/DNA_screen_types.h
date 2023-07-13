@@ -365,6 +365,8 @@ typedef struct ScrArea_Runtime {
 } ScrArea_Runtime;
 
 typedef struct ScrArea {
+  DNA_DEFINE_CXX_METHODS(ScrArea)
+
   struct ScrArea *next, *prev;
 
   /** Ordered (bottom-left, top-left, top-right, bottom-right). */
@@ -665,9 +667,9 @@ typedef enum eRegion_Type {
    * context (surface, mirror view). Does not represent any real region. */
   RGN_TYPE_XR = 13,
   RGN_TYPE_ASSET_SHELF = 14,
-  RGN_TYPE_ASSET_SHELF_FOOTER = 15,
+  RGN_TYPE_ASSET_SHELF_SETTINGS = 15,
 
-#define RGN_TYPE_NUM (RGN_TYPE_ASSET_SHELF_FOOTER + 1)
+#define RGN_TYPE_NUM (RGN_TYPE_ASSET_SHELF_SETTINGS + 1)
 } eRegion_Type;
 
 /* use for function args */
@@ -679,7 +681,7 @@ typedef enum eRegion_Type {
 /* Check for any kind of header region. */
 #define RGN_TYPE_IS_HEADER_ANY(regiontype) \
   (((1 << (regiontype)) & ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | \
-                           (1 << RGN_TYPE_FOOTER) | (1 << RGN_TYPE_ASSET_SHELF_FOOTER))) != 0)
+                           (1 << RGN_TYPE_FOOTER) | (1 << RGN_TYPE_ASSET_SHELF_SETTINGS))) != 0)
 
 /** #ARegion.alignment */
 enum {
@@ -766,14 +768,16 @@ typedef struct AssetShelfSettings {
   /** For filtering assets displayed in the asset view. */
   char search_string[64];
 
+  short preview_size;
   short display_flag; /* #AssetShelfSettings_DisplayFlag */
-  char _pad1[6];
+  char _pad1[4];
 
 #ifdef __cplusplus
   /* Zero initializes. */
   AssetShelfSettings();
   /* Proper deep copy. */
   AssetShelfSettings(const AssetShelfSettings &other);
+  AssetShelfSettings &operator=(const AssetShelfSettings &other);
   ~AssetShelfSettings();
 #endif
 } AssetShelfSettings;
