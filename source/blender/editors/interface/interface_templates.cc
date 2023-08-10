@@ -29,7 +29,8 @@
 #include "BLI_alloca.h"
 #include "BLI_fnmatch.h"
 #include "BLI_listbase.h"
-#include "BLI_math.h"
+#include "BLI_math_color.h"
+#include "BLI_math_vector.h"
 #include "BLI_path_util.h"
 #include "BLI_rect.h"
 #include "BLI_string.h"
@@ -1311,7 +1312,7 @@ static void template_ID(const bContext *C,
     type = idptr.type;
   }
 
-  if (text) {
+  if (text && text[0]) {
     /* Add label respecting the separated layout property split state. */
     uiItemL_respect_property_split(layout, text, ICON_NONE);
   }

@@ -15,7 +15,6 @@
 #include "DNA_workspace_types.h"
 
 #include "BLI_kdopbvh.h"
-#include "BLI_math.h"
 #include "BLI_utildefines.h"
 
 #include "PIL_time.h"
@@ -32,6 +31,8 @@
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
+
+#include "BLI_math_vector.h"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -310,6 +311,11 @@ static bool ed_object_mode_generic_exit_ex(
       return true;
     }
     ED_object_gpencil_exit(bmain, ob);
+  }
+  else if (ob->mode & OB_MODE_PAINT_GREASE_PENCIL) {
+    ob->mode &= ~OB_MODE_PAINT_GREASE_PENCIL;
+    DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY | ID_RECALC_COPY_ON_WRITE);
+    WM_main_add_notifier(NC_SCENE | ND_MODE | NS_MODE_OBJECT, nullptr);
   }
   else {
     if (only_test) {

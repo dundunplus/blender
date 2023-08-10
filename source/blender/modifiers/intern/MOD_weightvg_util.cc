@@ -8,7 +8,7 @@
 
 #include "BLI_utildefines.h"
 
-#include "BLI_math.h"
+#include "BLI_math_color.h"
 #include "BLI_rand.h"
 #include "BLI_string.h"
 
@@ -334,7 +334,7 @@ void weightvg_ui_common(const bContext *C, PointerRNA *ob_ptr, PointerRNA *ptr, 
                  nullptr,
                  nullptr,
                  0,
-                 ICON_NONE,
+                 false,
                  IFACE_("Mask Texture"));
 
     if (has_mask_texture) {
