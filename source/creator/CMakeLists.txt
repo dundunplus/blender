@@ -364,8 +364,8 @@ if(UNIX AND NOT APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
       set(TARGETDIR_BPY bpy)
-      set(TARGETDIR_VER bpy/${BLENDER_VERSION})
-      set(TARGETDIR_LIB bpy/lib)
+      set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/bpy/${BLENDER_VERSION})
+      set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/bpy/lib)
     else()
       set(TARGETDIR_BPY ${PYTHON_SITE_PACKAGES}/bpy)
       set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BLENDER_VERSION})
@@ -373,9 +373,9 @@ if(UNIX AND NOT APPLE)
     endif()
   else()
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_VER ${BLENDER_VERSION})
-      set(TARGETDIR_TEXT .)
-      set(TARGETDIR_LIB lib)
+      set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION})
+      set(TARGETDIR_TEXT ${CMAKE_INSTALL_PREFIX})
+      set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/lib)
     else()
       set(TARGETDIR_VER share/blender/${BLENDER_VERSION})
       set(TARGETDIR_TEXT share/doc/blender)
@@ -391,16 +391,16 @@ elseif(WIN32)
     set(TARGETDIR_EXE ${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bpy)
   else()
     set(TARGETDIR_VER ${BLENDER_VERSION})
-    set(TARGETDIR_TEXT .)
-    set(TARGETDIR_LIB ./blender.shared)
-    set(TARGETDIR_EXE .)
+    set(TARGETDIR_TEXT ${CMAKE_INSTALL_PREFIX})
+    set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/blender.shared)
+    set(TARGETDIR_EXE ${CMAKE_INSTALL_PREFIX})
   endif()
 elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     if(WITH_INSTALL_PORTABLE)
-      set(TARGETDIR_BPY bpy)
-      set(TARGETDIR_VER bpy/${BLENDER_VERSION})
-      set(TARGETDIR_LIB bpy/lib)
+      set(TARGETDIR_BPY ${CMAKE_INSTALL_PREFIX}/bpy)
+      set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/bpy/${BLENDER_VERSION})
+      set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/bpy/lib)
     else()
       # Paths defined in terms of site-packages since the site-packages
       # directory can be a symlink (brew for example).
@@ -409,9 +409,9 @@ elseif(APPLE)
       set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
     endif()
   else()
-    set(TARGETDIR_VER Blender.app/Contents/Resources/${BLENDER_VERSION})
-    set(TARGETDIR_LIB Blender.app/Contents/Resources/lib)
-    set(TARGETDIR_TEXT Blender.app/Contents/Resources/text)
+    set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/Blender.app/Contents/Resources/${BLENDER_VERSION})
+    set(TARGETDIR_LIB ${CMAKE_INSTALL_PREFIX}/Blender.app/Contents/Resources/lib)
+    set(TARGETDIR_TEXT ${CMAKE_INSTALL_PREFIX}/Blender.app/Contents/Resources/text)
   endif()
   # Skip re-linking on CPACK / install.
   set_target_properties(blender PROPERTIES BUILD_WITH_INSTALL_RPATH true)
@@ -634,9 +634,10 @@ if(UNIX AND NOT APPLE)
 
     # none of the other files are needed currently
   elseif(WITH_INSTALL_PORTABLE)
+    set(BLENDER_BIN "blender")
     install(
       TARGETS blender
-      DESTINATION "."
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
 
     install(
@@ -644,13 +645,13 @@ if(UNIX AND NOT APPLE)
         ${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
         ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
         ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/blender-symbolic.svg
-      DESTINATION "."
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
 
     if(WITH_BLENDER_THUMBNAILER)
       install(
         TARGETS blender-thumbnailer
-        DESTINATION "."
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
       )
     endif()
 
@@ -658,13 +659,16 @@ if(UNIX AND NOT APPLE)
     if(NOT DEFINED LIBDIR)
       # Pass.
     elseif(EXISTS ${LIBDIR}/mesa)
-      install(DIRECTORY ${LIBDIR}/mesa/lib/ DESTINATION "lib/mesa/")
+      install(
+        DIRECTORY ${LIBDIR}/mesa/lib/
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/mesa/
+      )
 
       install(
         PROGRAMS
         ${CMAKE_SOURCE_DIR}/release/bin/blender-launcher
         ${CMAKE_SOURCE_DIR}/release/bin/blender-softwaregl
-        DESTINATION "."
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
       )
 
       # Remove from old location, so existing builds don't start with software
@@ -685,28 +689,29 @@ if(UNIX AND NOT APPLE)
     endif()
   else()
     # main blender binary
+    set(BLENDER_BIN "bin/blender")
     install(
       TARGETS blender
-      DESTINATION bin
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
     )
 
     # Misc files.
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
-      DESTINATION share/applications
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications
     )
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
-      DESTINATION share/icons/hicolor/scalable/apps
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps
     )
     install(
       FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/blender-symbolic.svg
-      DESTINATION share/icons/hicolor/symbolic/apps
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/symbolic/apps
     )
     if(WITH_BLENDER_THUMBNAILER)
       install(
         TARGETS blender-thumbnailer
-        DESTINATION bin
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
       )
     endif()
   endif()
@@ -1020,11 +1025,15 @@ elseif(WIN32)
       # on the build-bot does not support this endeavor.
       install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/blender_public.pdb
-        DESTINATION .
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
         RENAME blender.pdb
       )
     else()
-      install(FILES $<TARGET_PDB_FILE:blender> DESTINATION . RENAME blender.pdb)
+      install(
+        FILES $<TARGET_PDB_FILE:blender>
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        RENAME blender.pdb
+      )
     endif()
   endif()
 
@@ -1245,14 +1254,14 @@ elseif(WIN32)
         install(
           FILES
             ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/libs/python${_PYTHON_VERSION_NO_DOTS}.pdb
-          DESTINATION "."
+          DESTINATION ${CMAKE_INSTALL_PREFIX}
           CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
         )
 
         install(
           FILES
             ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/libs/python${_PYTHON_VERSION_NO_DOTS}_d.pdb
-          DESTINATION "."
+          DESTINATION ${CMAKE_INSTALL_PREFIX}
           CONFIGURATIONS Debug
         )
       endif()
@@ -1350,7 +1359,7 @@ elseif(WIN32)
         ${LIBDIR}/audaspace/lib/audaspace.dll
         ${LIBDIR}/audaspace/lib/audaspace-c.dll
         ${LIBDIR}/audaspace/lib/audaspace-py.dll
-      DESTINATION "."
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
   endif()
 
@@ -1371,7 +1380,7 @@ elseif(WIN32)
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS BlendThumb
-      DESTINATION "."
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
   endif()
 
@@ -1430,25 +1439,26 @@ elseif(APPLE)
     COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE} ${EXECUTABLE_OUTPUT_PATH}/Blender.app
   )
 
+  set(BLENDER_BIN "bin/blender")
   install(
     TARGETS blender
-    DESTINATION "."
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION Blender.app/Contents
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/Blender.app/Contents
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    Blender.app/Contents/
+    ${CMAKE_INSTALL_PREFIX}/Blender.app/Contents/
   )
 
   if(WITH_BLENDER_THUMBNAILER)
     install(
       TARGETS blender-thumbnailer
-      DESTINATION Blender.app/Contents/MacOS/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/Blender.app/Contents/MacOS
     )
   endif()
 
@@ -1632,7 +1642,7 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${LIBDIR}/usd/plugin/usd/hdStorm
         ${LIBDIR}/usd/plugin/usd/usdShaders
         ${LIBDIR}/usd/plugin/usd/hioOiio
-        DESTINATION "./blender.shared/usd"
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/blender.shared/usd
       )
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
@@ -1744,10 +1754,11 @@ endif()
 # Setup launcher
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
+  set(BLENDER_BIN "blender.exe")
   install(
     TARGETS blender blender-launcher
     COMPONENT Blender
-    DESTINATION "."
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
   set_target_properties(
     blender
@@ -1773,9 +1784,12 @@ if(UNIX AND NOT APPLE)
     if(WITH_DOC_MANPAGE)
       # Only run the command to generate the man-page when it may be outdated.
       # The `IS_NEWER_THAN` checks always run when files are missing.
+
+      # NOTE: While `${EXECUTABLE_OUTPUT_PATH}/blender` may work in some cases
+      # Blender's requirement of libraries mean the installation path must be used.
       install(
         CODE "\
-set(BLENDER_BIN \"${EXECUTABLE_OUTPUT_PATH}/blender\")\n\
+set(BLENDER_BIN \"${CMAKE_INSTALL_PREFIX}/${BLENDER_BIN}\")\n\
 set(MANPAGE_GEN \"${CMAKE_SOURCE_DIR}/doc/manpage/blender.1.py\")\n\
 set(MANPAGE_OUT \"${CMAKE_CURRENT_BINARY_DIR}/blender.1\")\n\
 if(\n\
@@ -1805,7 +1819,7 @@ endif()\n\
       if(WITH_INSTALL_PORTABLE)
         install(
           FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
-          DESTINATION "."
+          DESTINATION ${CMAKE_INSTALL_PREFIX}
         )
       else()
         # Manual page (only with `blender` binary).
