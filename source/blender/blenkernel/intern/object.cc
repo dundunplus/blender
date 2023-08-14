@@ -568,10 +568,6 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   BLO_write_id_struct(writer, Object, id_address, &ob->id);
   BKE_id_blend_write(writer, &ob->id);
 
-  if (ob->adt) {
-    BKE_animdata_blend_write(writer, ob->adt);
-  }
-
   /* direct data */
   BLO_write_pointer_array(writer, ob->totcol, ob->mat);
   BLO_write_raw(writer, sizeof(char) * ob->totcol, ob->matbits);
@@ -665,11 +661,8 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
     ob->mode &= ~(OB_MODE_EDIT | OB_MODE_PARTICLE_EDIT);
   }
 
-  BLO_read_data_address(reader, &ob->adt);
-  BKE_animdata_blend_read_data(reader, ob->adt);
-
   BLO_read_data_address(reader, &ob->pose);
-  BKE_pose_blend_read_data(reader, ob->pose);
+  BKE_pose_blend_read_data(reader, &ob->id, ob->pose);
 
   BLO_read_data_address(reader, &ob->mpath);
   if (ob->mpath) {
@@ -689,8 +682,8 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
 
   /* do it here, below old data gets converted */
   BKE_modifier_blend_read_data(reader, &ob->modifiers, ob);
-  BKE_gpencil_modifier_blend_read_data(reader, &ob->greasepencil_modifiers);
-  BKE_shaderfx_blend_read_data(reader, &ob->shader_fx);
+  BKE_gpencil_modifier_blend_read_data(reader, &ob->greasepencil_modifiers, ob);
+  BKE_shaderfx_blend_read_data(reader, &ob->shader_fx, ob);
 
   BLO_read_list(reader, &ob->effect);
   paf = (PartEff *)ob->effect.first;
@@ -795,7 +788,7 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
   BLO_read_list(reader, &ob->particlesystem);
   BKE_particle_system_blend_read_data(reader, &ob->particlesystem);
 
-  BKE_constraint_blend_read_data(reader, &ob->constraints);
+  BKE_constraint_blend_read_data(reader, &ob->id, &ob->constraints);
 
   BLO_read_list(reader, &ob->hooks);
   while (ob->hooks.first) {
