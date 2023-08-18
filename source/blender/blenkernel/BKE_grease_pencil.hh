@@ -573,7 +573,7 @@ inline void TreeNode::set_visible(const bool visible)
 inline bool TreeNode::is_locked() const
 {
   return ((this->flag & GP_LAYER_TREE_NODE_LOCKED) != 0) ||
-         (!this->parent_group() || this->parent_group()->as_node().is_locked());
+         (this->parent_group() && this->parent_group()->as_node().is_locked());
 }
 inline void TreeNode::set_locked(const bool locked)
 {
@@ -597,7 +597,9 @@ inline bool TreeNode::use_onion_skinning() const
 }
 inline StringRefNull TreeNode::name() const
 {
-  return (this->name_ptr != nullptr) ? this->name_ptr : StringRefNull();
+  return (this->GreasePencilLayerTreeNode::name != nullptr) ?
+             this->GreasePencilLayerTreeNode::name :
+             StringRefNull();
 }
 inline const TreeNode &LayerGroup::as_node() const
 {
