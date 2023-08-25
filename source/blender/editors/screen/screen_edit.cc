@@ -1679,32 +1679,45 @@ ScrArea *ED_screen_temp_space_open(bContext *C,
   return area;
 }
 
+void ED_scene_fps_average_clear(Scene *scene)
+{
+  MEM_SAFE_FREE(scene->fps_info);
+}
+
 void ED_scene_fps_average_accumulate(Scene *scene, const double ltime)
 {
   if ((U.uiflag & USER_SHOW_FPS) == 0) {
     /* Playback stopped or shouldn't be running. */
-    MEM_SAFE_FREE(scene->fps_info);
+    ED_scene_fps_average_clear(scene);
     return;
   }
 
   /* Playback running. */
   const float fps_target = float(FPS);
-  ScreenFrameRateInfo *fpsi = static_cast<ScreenFrameRateInfo *>(scene->fps_info);
 
-  /* Reset when the target FPS changes.
-   * Needed redraw times from when a different FPS was set do not contribute
-   * to an average that is over/under the new target. */
-  if (fpsi && (fpsi->fps_target != fps_target)) {
-    MEM_freeN(fpsi);
-    fpsi = nullptr;
-    scene->fps_info = nullptr;
+  ScreenFrameRateInfo *fpsi = static_cast<ScreenFrameRateInfo *>(scene->fps_info);
+  const int redrawtimes_num = U.playback_fps_samples ? U.playback_fps_samples :
+                                                       max_ii(1, int(ceilf(fps_target)));
+
+  if (fpsi) {
+    /* Reset when the target FPS changes.
+     * Needed redraw times from when a different FPS was set do not contribute
+     * to an average that is over/under the new target. */
+    if ((fpsi->fps_target != fps_target) || (fpsi->redrawtimes_num != redrawtimes_num)) {
+      MEM_freeN(fpsi);
+      fpsi = nullptr;
+      scene->fps_info = nullptr;
+    }
   }
 
   /* If there isn't any info, initialize it first. */
   if (fpsi == nullptr) {
-    fpsi = static_cast<ScreenFrameRateInfo *>(
-        scene->fps_info = MEM_callocN(sizeof(ScreenFrameRateInfo), __func__));
+    scene->fps_info = MEM_callocN(sizeof(ScreenFrameRateInfo) + (sizeof(float) * redrawtimes_num),
+                                  __func__);
+    fpsi = static_cast<ScreenFrameRateInfo *>(scene->fps_info);
     fpsi->fps_target = fps_target;
+    fpsi->redrawtimes_num = redrawtimes_num;
+    fpsi->redrawtimes_num_set = 0;
   }
 
   /* Update the values. */
@@ -1723,7 +1736,7 @@ bool ED_scene_fps_average_calc(const Scene *scene)
   }
 
   /* Doing an average for a more robust calculation. */
-  if (fpsi->lredrawtime == 0.0 && fpsi->redrawtime == 0.0) {
+  if (fpsi->lredrawtime == 0.0 || fpsi->redrawtime == 0.0) {
     /* The user should never see this. */
     fpsi->fps_average = -1.0f;
     return false;
@@ -1733,22 +1746,23 @@ bool ED_scene_fps_average_calc(const Scene *scene)
     return true;
   }
 
-  fpsi->redrawtimes_fps[fpsi->redrawtime_index] = float(1.0 /
-                                                        (fpsi->lredrawtime - fpsi->redrawtime));
+  if (fpsi->redrawtimes_index >= fpsi->redrawtimes_num) {
+    fpsi->redrawtimes_index = 0;
+  }
 
+  /* Doing an average for a more robust calculation. */
+  fpsi->redrawtimes_fps[fpsi->redrawtimes_index] = float(1.0 /
+                                                         (fpsi->lredrawtime - fpsi->redrawtime));
+  fpsi->redrawtimes_index++;
+  if (fpsi->redrawtimes_index > fpsi->redrawtimes_num_set) {
+    fpsi->redrawtimes_num_set = fpsi->redrawtimes_index;
+  }
+  BLI_assert(fpsi->redrawtimes_num_set > 0);
   float fps = 0.0f;
-  int tot = 0;
-  for (int i = 0; i < REDRAW_FRAME_AVERAGE; i++) {
-    if (fpsi->redrawtimes_fps[i]) {
-      fps += fpsi->redrawtimes_fps[i];
-      tot++;
-    }
+  for (int i = 0; i < fpsi->redrawtimes_num_set; i++) {
+    fps += fpsi->redrawtimes_fps[i];
   }
-  if (tot) {
-    fpsi->redrawtime_index = (fpsi->redrawtime_index + 1) % REDRAW_FRAME_AVERAGE;
-    fps = fps / tot;
-  }
-  fpsi->fps_average = fps;
+  fpsi->fps_average = fps / float(fpsi->redrawtimes_num_set);
   return true;
 }
 
