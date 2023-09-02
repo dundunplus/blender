@@ -5,21 +5,62 @@
 import bpy
 from bpy.types import Menu
 from bl_ui import node_add_menu
-from nodeitems_builtins import (
-    eevee_cycles_shader_nodes_poll,
-    line_style_shader_nodes_poll,
-    object_cycles_shader_nodes_poll,
-    object_eevee_cycles_shader_nodes_poll,
-    object_eevee_shader_nodes_poll,
-    world_shader_nodes_poll,
-)
 from bpy.app.translations import (
     pgettext_iface as iface_,
 )
 
 
-class NODE_MT_category_SHADE_INPUT(Menu):
-    bl_idname = "NODE_MT_category_SHADE_INPUT"
+# only show input/output nodes when editing line style node trees
+def line_style_shader_nodes_poll(context):
+    snode = context.space_data
+    return (snode.tree_type == 'ShaderNodeTree' and
+            snode.shader_type == 'LINESTYLE')
+
+
+# only show nodes working in world node trees
+def world_shader_nodes_poll(context):
+    snode = context.space_data
+    return (snode.tree_type == 'ShaderNodeTree' and
+            snode.shader_type == 'WORLD')
+
+
+# only show nodes working in object node trees
+def object_shader_nodes_poll(context):
+    snode = context.space_data
+    return (snode.tree_type == 'ShaderNodeTree' and
+            snode.shader_type == 'OBJECT')
+
+
+def cycles_shader_nodes_poll(context):
+    return context.engine == 'CYCLES'
+
+
+def eevee_shader_nodes_poll(context):
+    return context.engine == 'BLENDER_EEVEE'
+
+
+def eevee_cycles_shader_nodes_poll(context):
+    return (cycles_shader_nodes_poll(context) or
+            eevee_shader_nodes_poll(context))
+
+
+def object_cycles_shader_nodes_poll(context):
+    return (object_shader_nodes_poll(context) and
+            cycles_shader_nodes_poll(context))
+
+
+def object_eevee_shader_nodes_poll(context):
+    return (object_shader_nodes_poll(context) and
+            eevee_shader_nodes_poll(context))
+
+
+def object_eevee_cycles_shader_nodes_poll(context):
+    return (object_shader_nodes_poll(context) and
+            eevee_cycles_shader_nodes_poll(context))
+
+
+class NODE_MT_category_shader_input(Menu):
+    bl_idname = "NODE_MT_category_shader_input"
     bl_label = "Input"
 
     def draw(self, context):
@@ -50,8 +91,8 @@ class NODE_MT_category_SHADE_INPUT(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_OUTPUT(Menu):
-    bl_idname = "NODE_MT_category_SHADE_OUTPUT"
+class NODE_MT_category_shader_output(Menu):
+    bl_idname = "NODE_MT_category_shader_output"
     bl_label = "Output"
 
     def draw(self, context):
@@ -66,8 +107,8 @@ class NODE_MT_category_SHADE_OUTPUT(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_SHADER(Menu):
-    bl_idname = "NODE_MT_category_SHADE_SHADER"
+class NODE_MT_category_shader_shader(Menu):
+    bl_idname = "NODE_MT_category_shader_shader"
     bl_label = "Shader"
 
     def draw(self, context):
@@ -98,8 +139,8 @@ class NODE_MT_category_SHADE_SHADER(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_COLOR(Menu):
-    bl_idname = "NODE_MT_category_SHADE_COLOR"
+class NODE_MT_category_shader_color(Menu):
+    bl_idname = "NODE_MT_category_shader_color"
     bl_label = "Color"
 
     def draw(self, _context):
@@ -110,7 +151,6 @@ class NODE_MT_category_SHADE_COLOR(Menu):
         node_add_menu.add_node_type(layout, "ShaderNodeHueSaturation")
         node_add_menu.add_node_type(layout, "ShaderNodeInvert")
         node_add_menu.add_node_type(layout, "ShaderNodeLightFalloff")
-        node_add_menu.add_node_type(layout, "ShaderNodeMix")
         props = node_add_menu.add_node_type(layout, "ShaderNodeMix", label=iface_("Mix Color"))
         ops = props.settings.add()
         ops.name = "data_type"
@@ -120,8 +160,8 @@ class NODE_MT_category_SHADE_COLOR(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_CONVERTER(Menu):
-    bl_idname = "NODE_MT_category_SHADE_CONVERTER"
+class NODE_MT_category_shader_converter(Menu):
+    bl_idname = "NODE_MT_category_shader_converter"
     bl_label = "Converter"
 
     def draw(self, context):
@@ -146,8 +186,8 @@ class NODE_MT_category_SHADE_CONVERTER(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_TEXTURE(Menu):
-    bl_idname = "NODE_MT_category_SHADE_TEXTURE"
+class NODE_MT_category_shader_texture(Menu):
+    bl_idname = "NODE_MT_category_shader_texture"
     bl_label = "Texture"
 
     def draw(self, _context):
@@ -171,8 +211,8 @@ class NODE_MT_category_SHADE_TEXTURE(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_VECTOR(Menu):
-    bl_idname = "NODE_MT_category_SHADE_VECTOR"
+class NODE_MT_category_shader_vector(Menu):
+    bl_idname = "NODE_MT_category_shader_vector"
     bl_label = "Vector"
 
     def draw(self, _context):
@@ -191,8 +231,8 @@ class NODE_MT_category_SHADE_VECTOR(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_SCRIPT(Menu):
-    bl_idname = "NODE_MT_category_SHADE_SCRIPT"
+class NODE_MT_category_shader_script(Menu):
+    bl_idname = "NODE_MT_category_shader_script"
     bl_label = "Script"
 
     def draw(self, _context):
@@ -203,8 +243,8 @@ class NODE_MT_category_SHADE_SCRIPT(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_category_SHADE_GROUP(Menu):
-    bl_idname = "NODE_MT_category_SHADE_GROUP"
+class NODE_MT_category_shader_group(Menu):
+    bl_idname = "NODE_MT_category_shader_group"
     bl_label = "Group"
 
     def draw(self, context):
@@ -213,40 +253,40 @@ class NODE_MT_category_SHADE_GROUP(Menu):
         node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
 
 
-class NODE_MT_shading_node_add_all(Menu):
-    bl_idname = "NODE_MT_shading_node_add_all"
+class NODE_MT_shader_node_add_all(Menu):
+    bl_idname = "NODE_MT_shader_node_add_all"
     bl_label = "Add"
 
     def draw(self, _context):
         layout = self.layout
-        layout.menu("NODE_MT_category_SHADE_INPUT")
-        layout.menu("NODE_MT_category_SHADE_OUTPUT")
+        layout.menu("NODE_MT_category_shader_input")
+        layout.menu("NODE_MT_category_shader_output")
         layout.separator()
-        layout.menu("NODE_MT_category_SHADE_COLOR")
-        layout.menu("NODE_MT_category_SHADE_CONVERTER")
-        layout.menu("NODE_MT_category_SHADE_SHADER")
-        layout.menu("NODE_MT_category_SHADE_TEXTURE")
-        layout.menu("NODE_MT_category_SHADE_VECTOR")
+        layout.menu("NODE_MT_category_shader_color")
+        layout.menu("NODE_MT_category_shader_converter")
+        layout.menu("NODE_MT_category_shader_shader")
+        layout.menu("NODE_MT_category_shader_texture")
+        layout.menu("NODE_MT_category_shader_vector")
         layout.separator()
-        layout.menu("NODE_MT_category_SHADE_SCRIPT")
+        layout.menu("NODE_MT_category_shader_script")
         layout.separator()
-        layout.menu("NODE_MT_category_SHADE_GROUP")
+        layout.menu("NODE_MT_category_shader_group")
         layout.menu("NODE_MT_category_layout")
 
         node_add_menu.draw_root_assets(layout)
 
 
 classes = (
-    NODE_MT_shading_node_add_all,
-    NODE_MT_category_SHADE_INPUT,
-    NODE_MT_category_SHADE_OUTPUT,
-    NODE_MT_category_SHADE_COLOR,
-    NODE_MT_category_SHADE_CONVERTER,
-    NODE_MT_category_SHADE_SHADER,
-    NODE_MT_category_SHADE_TEXTURE,
-    NODE_MT_category_SHADE_VECTOR,
-    NODE_MT_category_SHADE_SCRIPT,
-    NODE_MT_category_SHADE_GROUP,
+    NODE_MT_shader_node_add_all,
+    NODE_MT_category_shader_input,
+    NODE_MT_category_shader_output,
+    NODE_MT_category_shader_color,
+    NODE_MT_category_shader_converter,
+    NODE_MT_category_shader_shader,
+    NODE_MT_category_shader_texture,
+    NODE_MT_category_shader_vector,
+    NODE_MT_category_shader_script,
+    NODE_MT_category_shader_group,
 )
 
 
