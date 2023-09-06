@@ -34,6 +34,7 @@
 #include "BLI_string_ref.hh"
 
 #include "BKE_armature.h"
+#include "BKE_attribute.h"
 #include "BKE_effect.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idprop.hh"
@@ -999,13 +1000,21 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     /* Legacy node tree sockets are created for forward compatibility,
      * but have to be freed after loading and versioning. */
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
-      /* Clear legacy sockets after conversion.
-       * Internal data pointers have been moved or freed already. */
       LISTBASE_FOREACH_MUTABLE (bNodeSocket *, legacy_socket, &ntree->inputs_legacy) {
+        MEM_SAFE_FREE(legacy_socket->default_attribute_name);
+        MEM_SAFE_FREE(legacy_socket->default_value);
+        if (legacy_socket->prop) {
+          IDP_FreeProperty(legacy_socket->prop);
+        }
         MEM_delete(legacy_socket->runtime);
         MEM_freeN(legacy_socket);
       }
       LISTBASE_FOREACH_MUTABLE (bNodeSocket *, legacy_socket, &ntree->outputs_legacy) {
+        MEM_SAFE_FREE(legacy_socket->default_attribute_name);
+        MEM_SAFE_FREE(legacy_socket->default_value);
+        if (legacy_socket->prop) {
+          IDP_FreeProperty(legacy_socket->prop);
+        }
         MEM_delete(legacy_socket->runtime);
         MEM_freeN(legacy_socket);
       }
@@ -1021,6 +1030,18 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       ntree->tree_interface.root_panel.flag |= NODE_INTERFACE_PANEL_ALLOW_CHILD_PANELS;
     }
     FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 400, 23)) {
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type == NTREE_GEOMETRY) {
+        LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+          if (node->type == GEO_NODE_SET_SHADE_SMOOTH) {
+            node->custom1 = ATTR_DOMAIN_FACE;
+          }
+        }
+      }
+    }
   }
 
   /**

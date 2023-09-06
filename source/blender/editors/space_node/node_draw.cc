@@ -480,42 +480,42 @@ static void node_update_basis_from_declaration(
 
   BLI_assert(is_node_panels_supported(node));
   BLI_assert(node.runtime->panels.size() == node.num_panel_states);
-
   const nodes::NodeDeclaration &decl = *node.declaration();
-  const bool has_buttons = node_update_basis_buttons(C, ntree, node, block, locy);
+  /* Checked at various places to avoid adding duplicate spacers without anything in between. */
+  bool need_spacer_after_item = false;
+
+  /* Space at the top. */
+  locy -= NODE_DYS / 2;
+
+  need_spacer_after_item = node_update_basis_buttons(C, ntree, node, block, locy);
 
   bNodeSocket *current_input = static_cast<bNodeSocket *>(node.inputs.first);
   bNodeSocket *current_output = static_cast<bNodeSocket *>(node.outputs.first);
   bNodePanelState *current_panel_state = node.panel_states_array;
   bke::bNodePanelRuntime *current_panel_runtime = node.runtime->panels.begin();
-  bool has_sockets = false;
 
   /* The panel stack keeps track of the hierarchy of panels. When a panel declaration is found a
    * new #PanelUpdate is added to the stack. Items in the declaration are added to the top panel of
    * the stack. Each panel expects a number of items to be added, after which the panel is removed
    * from the stack again. */
   struct PanelUpdate {
-    /* How many items still to add. */
-    int remaining_items;
+    /* How many declarations still to add. */
+    int remaining_decls;
     /* True if the panel or its parent is collapsed. */
     bool is_collapsed;
     /* Location data, needed to finalize the panel when all items have been added. */
     bke::bNodePanelRuntime *runtime;
   };
 
+  bool is_first = true;
   Stack<PanelUpdate> panel_updates;
   for (const nodes::ItemDeclarationPtr &item_decl : decl.items) {
     bool is_parent_collapsed = false;
     if (PanelUpdate *parent_update = panel_updates.is_empty() ? nullptr : &panel_updates.peek()) {
       /* Adding an item to the parent panel, will be popped when reaching 0. */
-      BLI_assert(parent_update->remaining_items > 0);
-      --parent_update->remaining_items;
+      BLI_assert(parent_update->remaining_decls > 0);
+      --parent_update->remaining_decls;
       is_parent_collapsed = parent_update->is_collapsed;
-    }
-
-    /* Space after header and between items. */
-    if (!is_parent_collapsed) {
-      locy -= NODE_SOCKDY;
     }
 
     if (nodes::PanelDeclaration *panel_decl = dynamic_cast<nodes::PanelDeclaration *>(
@@ -525,13 +525,15 @@ static void node_update_basis_from_declaration(
 
       if (!is_parent_collapsed) {
         locy -= NODE_DY;
+        is_first = false;
+        need_spacer_after_item = true;
       }
 
       SET_FLAG_FROM_TEST(
           current_panel_state->flag, is_parent_collapsed, NODE_PANEL_PARENT_COLLAPSED);
       /* New top panel is collapsed if self or parent is collapsed. */
       const bool is_collapsed = is_parent_collapsed || current_panel_state->is_collapsed();
-      panel_updates.push({panel_decl->num_items, is_collapsed, current_panel_runtime});
+      panel_updates.push({panel_decl->num_child_decls, is_collapsed, current_panel_runtime});
 
       /* Round the socket location to stop it from jiggling. */
       current_panel_runtime->location_y = round(locy + NODE_DYS);
@@ -552,8 +554,14 @@ static void node_update_basis_from_declaration(
             current_input->runtime->location = float2(locx, round(locy + NODE_DYS));
           }
           else {
-            has_sockets |= node_update_basis_socket(
-                C, ntree, node, *current_input, block, locx, locy);
+            /* Space between items. */
+            if (!is_first && current_input->is_visible()) {
+              locy -= NODE_SOCKDY;
+            }
+            if (node_update_basis_socket(C, ntree, node, *current_input, block, locx, locy)) {
+              is_first = false;
+              need_spacer_after_item = true;
+            }
           }
           current_input = current_input->next;
           break;
@@ -567,8 +575,14 @@ static void node_update_basis_from_declaration(
                                                        round(locy + NODE_DYS));
           }
           else {
-            has_sockets |= node_update_basis_socket(
-                C, ntree, node, *current_output, block, locx, locy);
+            /* Space between items. */
+            if (!is_first && current_output->is_visible()) {
+              locy -= NODE_SOCKDY;
+            }
+            if (node_update_basis_socket(C, ntree, node, *current_output, block, locx, locy)) {
+              is_first = false;
+              need_spacer_after_item = true;
+            }
           }
           current_output = current_output->next;
           break;
@@ -578,7 +592,7 @@ static void node_update_basis_from_declaration(
     /* Close parent panels that have all items added. */
     while (!panel_updates.is_empty()) {
       PanelUpdate &top_panel = panel_updates.peek();
-      if (top_panel.remaining_items > 0) {
+      if (top_panel.remaining_decls > 0) {
         /* Incomplete panel, continue adding items. */
         break;
       }
@@ -591,9 +605,9 @@ static void node_update_basis_from_declaration(
   /* Enough items should have been added to close all panels. */
   BLI_assert(panel_updates.is_empty());
 
-  /* Little bit of space in end. */
-  if (has_sockets || !has_buttons) {
+  if (need_spacer_after_item) {
     locy -= NODE_DYS / 2;
+    need_spacer_after_item = false;
   }
 }
 
@@ -1856,13 +1870,14 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
     }
 
     /* Invisible button covering the entire header for collapsing/expanding. */
+    const int header_but_margin = NODE_MARGIN_X / 3;
     but = uiDefIconBut(&block,
                        UI_BTYPE_BUT_TOGGLE,
                        0,
                        ICON_NONE,
-                       rect.xmin,
+                       rect.xmin + header_but_margin,
                        rect.ymin,
-                       rect.xmax - rect.xmin,
+                       std::max(int(rect.xmax - rect.xmin - 2 * header_but_margin), 0),
                        rect.ymax - rect.ymin,
                        nullptr,
                        0.0f,
