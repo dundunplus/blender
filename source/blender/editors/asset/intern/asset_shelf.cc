@@ -271,7 +271,8 @@ void ED_asset_shelf_region_init(wmWindowManager *wm, ARegion *region)
 
   UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_PANELS_UI, region->winx, region->winy);
 
-  wmKeyMap *keymap = WM_keymap_ensure(wm->defaultconf, "View2D Buttons List", 0, 0);
+  wmKeyMap *keymap = WM_keymap_ensure(
+      wm->defaultconf, "View2D Buttons List", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&region->handlers, keymap);
 
   region->v2d.scroll = V2D_SCROLL_RIGHT | V2D_SCROLL_VERTICAL_HIDE;
@@ -473,7 +474,8 @@ void ED_asset_shelf_header_region(const bContext *C, ARegion *region)
 
 int ED_asset_shelf_header_region_size()
 {
-  /* A little smaller than a regular header. */
+  /* The asset shelf tends to look like a separate area. Making the shelf header smaller than a
+   * normal header helps a bit. */
   return ED_area_headersize() * 0.85f;
 }
 
@@ -689,7 +691,6 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
   uiItemSpacer(layout);
 
   uiItemR(layout, &shelf_ptr, "search_filter", UI_ITEM_NONE, "", ICON_VIEWZOOM);
-  uiItemS(layout);
   uiItemPopoverPanel(layout, C, "ASSETSHELF_PT_display", "", ICON_IMGDISPLAY);
 }
 
