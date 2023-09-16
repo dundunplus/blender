@@ -128,6 +128,10 @@ class GeoNodesSimulationParams {
   virtual SimulationZoneBehavior *get(const int zone_id) const = 0;
 };
 
+struct GeoNodesSideEffectNodes {
+  MultiValueMap<ComputeContextHash, const lf::FunctionNode *> nodes_by_context;
+};
+
 /**
  * Data that is passed into geometry nodes evaluation from the modifier.
  */
@@ -145,7 +149,7 @@ struct GeoNodesModifierData {
    * Some nodes should be executed even when their output is not used (e.g. active viewer nodes and
    * the node groups they are contained in).
    */
-  const MultiValueMap<ComputeContextHash, const lf::FunctionNode *> *side_effect_nodes = nullptr;
+  const GeoNodesSideEffectNodes *side_effect_nodes = nullptr;
   /**
    * Controls in which compute contexts we want to log socket values. Logging them in all contexts
    * can result in slowdowns. In the majority of cases, the logged socket values are freed without
@@ -194,13 +198,31 @@ struct GeoNodesLFUserData : public lf::UserData {
 };
 
 struct GeoNodesLFLocalUserData : public lf::LocalUserData {
- public:
+ private:
+  GeoNodesLFUserData &user_data_;
   /**
-   * Thread-local logger for the current node tree in the current compute context.
+   * Thread-local logger for the current node tree in the current compute context. It is only
+   * instantiated when it is actually used and then cached for the current thread.
    */
-  geo_eval_log::GeoTreeLogger *tree_logger = nullptr;
+  mutable std::optional<geo_eval_log::GeoTreeLogger *> tree_logger_;
 
-  GeoNodesLFLocalUserData(GeoNodesLFUserData &user_data);
+ public:
+  GeoNodesLFLocalUserData(GeoNodesLFUserData &user_data) : user_data_(user_data) {}
+
+  /**
+   * Get the current tree logger. This method is not thread-safe, each thread is supposed to have
+   * a separate logger.
+   */
+  geo_eval_log::GeoTreeLogger *try_get_tree_logger() const
+  {
+    if (!tree_logger_.has_value()) {
+      this->ensure_tree_logger();
+    }
+    return *tree_logger_;
+  }
+
+ private:
+  void ensure_tree_logger() const;
 };
 
 /**
