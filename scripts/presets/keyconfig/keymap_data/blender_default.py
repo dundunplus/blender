@@ -24,7 +24,6 @@ __all__ = (
 
 class Params:
     __slots__ = (
-        "apple",
         "legacy",
         "select_mouse",
         "select_mouse_value",
@@ -137,8 +136,6 @@ class Params:
             v3d_alt_mmb_drag_action='RELATIVE',
             use_experimental_grease_pencil_version3=False,
     ):
-        from sys import platform
-        self.apple = platform == 'darwin'
         self.legacy = legacy
 
         if use_mouse_emulate_3_button:
@@ -827,8 +824,6 @@ def km_screen(params):
             ("screen.screen_full_area", {"type": 'SPACE', "value": 'PRESS', "ctrl": True, "alt": True},
              {"properties": [("use_hide_panels", True)]}),
             ("screen.redo_last", {"type": 'F9', "value": 'PRESS'}, None),
-            # Preferences
-            ("screen.userpref_show", {"type": 'COMMA', "value": 'PRESS', "ctrl": True}, None),
         ])
     else:
         # Old keymap
@@ -848,13 +843,16 @@ def km_screen(params):
             ("screen.region_flip", {"type": 'F5', "value": 'PRESS'}, None),
             ("screen.redo_last", {"type": 'F6', "value": 'PRESS'}, None),
             ("script.reload", {"type": 'F8', "value": 'PRESS'}, None),
-            ("screen.userpref_show", {"type": 'U', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         ])
 
-    if params.apple:
-        # Apple undo and user-preferences.
+    # Preferences.
+    if not params.legacy:
         items.extend([
-            ("screen.userpref_show", {"type": 'COMMA', "value": 'PRESS', "oskey": True}, None),
+            ("screen.userpref_show", {"type": 'COMMA', "value": 'PRESS', "ctrl": True}, None),
+        ])
+    else:
+        items.extend([
+            ("screen.userpref_show", {"type": 'U', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         ])
 
     return keymap
@@ -3153,12 +3151,20 @@ def km_console(_params):
     items.extend([
         ("console.move", {"type": 'LEFT_ARROW', "value": 'PRESS', "ctrl": True, "repeat": True},
          {"properties": [("type", 'PREVIOUS_WORD')]}),
+        ("console.move", {"type": 'LEFT_ARROW', "value": 'PRESS', "ctrl": True, "shift": True, "repeat": True},
+         {"properties": [("type", 'PREVIOUS_WORD'), ("select", True)]}),
         ("console.move", {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True, "repeat": True},
          {"properties": [("type", 'NEXT_WORD')]}),
+        ("console.move", {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True, "shift": True, "repeat": True},
+         {"properties": [("type", 'NEXT_WORD'), ("select", True)]}),
         ("console.move", {"type": 'HOME', "value": 'PRESS'},
          {"properties": [("type", 'LINE_BEGIN')]}),
+        ("console.move", {"type": 'HOME', "value": 'PRESS', "shift": True},
+         {"properties": [("type", 'LINE_BEGIN'), ("select", True)]}),
         ("console.move", {"type": 'END', "value": 'PRESS'},
          {"properties": [("type", 'LINE_END')]}),
+        ("console.move", {"type": 'END', "value": 'PRESS', "shift": True},
+         {"properties": [("type", 'LINE_END'), ("select", True)]}),
         ("wm.context_cycle_int", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("data_path", 'space_data.font_size'), ("reverse", False)]}),
         ("wm.context_cycle_int", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "ctrl": True},
@@ -3169,8 +3175,12 @@ def km_console(_params):
          {"properties": [("data_path", 'space_data.font_size'), ("reverse", True)]}),
         ("console.move", {"type": 'LEFT_ARROW', "value": 'PRESS', "repeat": True},
          {"properties": [("type", 'PREVIOUS_CHARACTER')]}),
+        ("console.move", {"type": 'LEFT_ARROW', "value": 'PRESS', "repeat": True, "shift": True},
+         {"properties": [("type", 'PREVIOUS_CHARACTER'), ("select", True)]}),
         ("console.move", {"type": 'RIGHT_ARROW', "value": 'PRESS', "repeat": True},
          {"properties": [("type", 'NEXT_CHARACTER')]}),
+        ("console.move", {"type": 'RIGHT_ARROW', "value": 'PRESS', "repeat": True, "shift": True},
+         {"properties": [("type", 'NEXT_CHARACTER'), ("select", True)]}),
         ("console.history_cycle", {"type": 'UP_ARROW', "value": 'PRESS', "repeat": True},
          {"properties": [("reverse", True)]}),
         ("console.history_cycle", {"type": 'DOWN_ARROW', "value": 'PRESS', "repeat": True},
@@ -3193,8 +3203,10 @@ def km_console(_params):
          {"properties": [("interactive", True)]}),
         ("console.copy_as_script", {"type": 'C', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("console.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
+        ("console.copy", {"type": 'X', "value": 'PRESS', "ctrl": True}, {"properties": [("delete", True)]}),
         ("console.paste", {"type": 'V', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("console.select_set", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+        ("console.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, None),
         ("console.select_word", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("console.insert", {"type": 'TAB', "value": 'PRESS', "ctrl": True, "repeat": True},
          {"properties": [("text", '\t')]}),

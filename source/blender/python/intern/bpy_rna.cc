@@ -60,7 +60,7 @@
 /* Only for types. */
 #include "BKE_node.h"
 
-#include "DEG_depsgraph_query.h"
+#include "DEG_depsgraph_query.hh"
 
 #include "../generic/idprop_py_api.h" /* For IDprop lookups. */
 #include "../generic/idprop_py_ui_api.h"
@@ -8754,7 +8754,7 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
       /* Create a temporary report list so none of the reports are printed (only stored).
        * Only do this when reports is non-null because the error is printed to the `stderr`
        * #PyErr_Print below. */
-      ReportList reports_temp = {0};
+      ReportList reports_temp = {{0}};
       BKE_reports_init(&reports_temp, reports->flag | RPT_PRINT_HANDLED_BY_OWNER);
       reports_temp.storelevel = reports->storelevel;
       BPy_errors_to_report(&reports_temp);
