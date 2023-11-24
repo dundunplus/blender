@@ -9,6 +9,6 @@ rules:
   - base: blender-v3.3-release
     upstream: blender:blender-v3.3-release
     mergeMethod: merge
-  - base: blender-v2.93-release
-    upstream: blender:blender-v2.93-release
+  - base: blender-v4.0-release
+    upstream: blender:blender-v4.0-release
     mergeMethod: merge
