@@ -15,7 +15,6 @@
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
 
-#include "BLI_array.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
@@ -23,12 +22,12 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_interface.hh"
-#include "BKE_node_tree_update.h"
+#include "BKE_node_tree_update.hh"
 
 #include "RNA_access.hh"
 #include "RNA_prototypes.h"
@@ -44,6 +43,8 @@
 #include "node_intern.hh"
 
 #include "ED_undo.hh"
+
+#include "WM_api.hh"
 
 using blender::nodes::NodeDeclaration;
 
@@ -363,7 +364,7 @@ static Vector<NodeLinkItem> ui_node_link_items(NodeLinkArg *arg,
     using namespace blender::nodes;
 
     r_node_decl.emplace(NodeDeclaration());
-    blender::nodes::build_node_declaration(*arg->node_type, *r_node_decl);
+    blender::nodes::build_node_declaration(*arg->node_type, *r_node_decl, nullptr, nullptr);
     Span<SocketDeclaration *> socket_decls = (in_out == SOCK_IN) ? r_node_decl->inputs :
                                                                    r_node_decl->outputs;
     int index = 0;
@@ -711,7 +712,7 @@ static void ui_template_node_link_menu(bContext *C, uiLayout *layout, void *but_
 }  // namespace blender::ed::space_node
 
 void uiTemplateNodeLink(
-    uiLayout *layout, bContext * /*C*/, bNodeTree *ntree, bNode *node, bNodeSocket *input)
+    uiLayout *layout, bContext *C, bNodeTree *ntree, bNode *node, bNodeSocket *input)
 {
   using namespace blender::ed::space_node;
 
@@ -725,7 +726,8 @@ void uiTemplateNodeLink(
   arg->node = node;
   arg->sock = input;
 
-  node_socket_color_get(*input->typeinfo, socket_col);
+  PointerRNA node_ptr = RNA_pointer_create(&ntree->id, &RNA_Node, node);
+  node_socket_color_get(*C, *ntree, node_ptr, *input, socket_col);
 
   UI_block_layout_set_current(block, layout);
 
@@ -775,6 +777,9 @@ static void node_panel_toggle_button_cb(bContext *C, void *panel_state_argv, voi
   panel_state->flag ^= NODE_PANEL_COLLAPSED;
 
   ED_node_tree_propagate_change(C, bmain, ntree);
+
+  /* Make sure panel state updates from the Properties Editor, too. */
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 }
 
 static void ui_node_draw_panel(uiLayout &layout,
@@ -795,7 +800,7 @@ static void ui_node_draw_panel(uiLayout &layout,
                                 0,
                                 panel_state.is_collapsed() ? ICON_DISCLOSURE_TRI_RIGHT :
                                                              ICON_DISCLOSURE_TRI_DOWN,
-                                panel_decl.name.c_str(),
+                                IFACE_(panel_decl.name.c_str()),
                                 0,
                                 0,
                                 UI_UNIT_X * 4,
@@ -1016,6 +1021,7 @@ void uiTemplateNodeView(
   if (!ntree) {
     return;
   }
+  ntree->ensure_topology_cache();
 
   /* clear for cycle check */
   LISTBASE_FOREACH (bNode *, tnode, &ntree->nodes) {

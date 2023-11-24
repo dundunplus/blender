@@ -9,8 +9,8 @@
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
 #include "BKE_mesh_wrapper.hh"
-#include "BKE_object.h"
-#include "BKE_volume.h"
+#include "BKE_object.hh"
+#include "BKE_volume.hh"
 
 #include "GEO_mesh_to_volume.hh"
 
@@ -38,17 +38,17 @@ static void node_declare(NodeDeclarationBuilder &b)
       .subtype(PROP_DISTANCE);
   b.add_input<decl::Float>("Voxel Amount").default_value(64.0f).min(0.0f).max(FLT_MAX);
   b.add_input<decl::Float>("Half-Band Width")
-      .description("Half the width of the narrow band in voxel units")
       .default_value(3.0f)
       .min(1.01f)
-      .max(10.0f);
+      .max(10.0f)
+      .description("Half the width of the narrow band in voxel units");
   b.add_output<decl::Geometry>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
 }
 
 static void search_link_ops(GatherLinkSearchOpParams &params)
 {
   if (U.experimental.use_new_volume_nodes) {
-    blender::nodes::search_link_ops_for_basic_node(params);
+    nodes::search_link_ops_for_basic_node(params);
   }
 }
 
@@ -109,16 +109,12 @@ static Volume *create_volume_from_mesh(const Mesh &mesh, GeoNodeExecParams &para
 
   const float4x4 mesh_to_volume_space_transform = float4x4::identity();
 
-  auto bounds_fn = [&](float3 &r_min, float3 &r_max) {
-    float3 min{std::numeric_limits<float>::max()};
-    float3 max{-std::numeric_limits<float>::max()};
-    BKE_mesh_wrapper_minmax(&mesh, min, max);
-    r_min = min;
-    r_max = max;
-  };
-
   const float voxel_size = geometry::volume_compute_voxel_size(
-      params.depsgraph(), bounds_fn, resolution, half_band_width, mesh_to_volume_space_transform);
+      params.depsgraph(),
+      [&]() { return *mesh.bounds_min_max(); },
+      resolution,
+      half_band_width,
+      mesh_to_volume_space_transform);
 
   if (voxel_size < 1e-5f) {
     /* The voxel size is too small. */

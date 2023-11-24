@@ -19,7 +19,7 @@
 
 #include "rna_internal.h"
 
-const EnumPropertyItem rna_enum_aset_library_type_items[] = {
+const EnumPropertyItem rna_enum_asset_library_type_items[] = {
     {ASSET_LIBRARY_LOCAL, "LOCAL", 0, "Local", ""},
     {ASSET_LIBRARY_ALL, "ALL", 0, "All", ""},
     {ASSET_LIBRARY_ESSENTIALS, "ESSENTIALS", 0, "Essentials", ""},
@@ -32,8 +32,8 @@ const EnumPropertyItem rna_enum_aset_library_type_items[] = {
 #  include "AS_asset_library.h"
 #  include "AS_asset_representation.hh"
 
-#  include "BKE_asset.h"
-#  include "BKE_context.h"
+#  include "BKE_asset.hh"
+#  include "BKE_context.hh"
 #  include "BKE_idprop.h"
 
 #  include "BLI_listbase.h"
@@ -425,16 +425,16 @@ static int rna_AssetRepresentation_full_library_path_length(PointerRNA *ptr)
   return full_library_path.size();
 }
 
-static void rna_AssetRepresentation_full_path_get(PointerRNA* ptr, char* value)
+static void rna_AssetRepresentation_full_path_get(PointerRNA *ptr, char *value)
 {
-  const AssetRepresentation* asset = static_cast<const AssetRepresentation*>(ptr->data);
+  const AssetRepresentation *asset = static_cast<const AssetRepresentation *>(ptr->data);
   const std::string full_path = asset->get_identifier().full_path();
   BLI_strncpy(value, full_path.c_str(), full_path.size() + 1);
 }
 
-static int rna_AssetRepresentation_full_path_length(PointerRNA* ptr)
+static int rna_AssetRepresentation_full_path_length(PointerRNA *ptr)
 {
-  const AssetRepresentation* asset = static_cast<const AssetRepresentation*>(ptr->data);
+  const AssetRepresentation *asset = static_cast<const AssetRepresentation *>(ptr->data);
   const std::string full_path = asset->get_identifier().full_path();
   return full_path.size();
 }
@@ -667,9 +667,7 @@ static void rna_def_asset_representation(BlenderRNA *brna)
                                 nullptr);
 
   RNA_def_property_ui_text(
-    prop,
-    "Full Library Path",
-    "Absolute path to the .blend file containing this asset");
+      prop, "Full Library Path", "Absolute path to the .blend file containing this asset");
 
   prop = RNA_def_property(srna, "full_path", PROP_STRING, PROP_FILENAME);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);

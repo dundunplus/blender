@@ -25,11 +25,11 @@
 
 #include "BKE_attribute.hh"
 #include "BKE_camera.h"
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_lib_query.h"
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 
 #include "UI_interface.hh"
 #include "UI_resources.hh"
@@ -296,7 +296,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   uiLayoutSetPropSep(layout, true);
 
-  uiItemPointerR(layout, ptr, "uv_layer", &obj_data_ptr, "uv_layers", nullptr, ICON_NONE);
+  uiItemPointerR(layout, ptr, "uv_layer", &obj_data_ptr, "uv_layers", nullptr, ICON_GROUP_UVS);
 
   /* Aspect and Scale are only used for camera projectors. */
   bool has_camera = false;
@@ -339,7 +339,7 @@ ModifierTypeInfo modifierType_UVProject = {
     /*struct_name*/ "UVProjectModifierData",
     /*struct_size*/ sizeof(UVProjectModifierData),
     /*srna*/ &RNA_UVProjectModifier,
-    /*type*/ eModifierTypeType_NonGeometrical,
+    /*type*/ ModifierTypeType::NonGeometrical,
     /*flags*/ eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsMapping |
         eModifierTypeFlag_SupportsEditmode | eModifierTypeFlag_EnableInEditmode,
     /*icon*/ ICON_MOD_UVPROJECT,

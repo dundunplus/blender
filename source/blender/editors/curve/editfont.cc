@@ -27,12 +27,12 @@
 #include "DNA_text_types.h"
 #include "DNA_vfont_types.h"
 
-#include "BKE_context.h"
-#include "BKE_curve.h"
+#include "BKE_context.hh"
+#include "BKE_curve.hh"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
-#include "BKE_object.h"
+#include "BKE_object.hh"
 #include "BKE_report.h"
 #include "BKE_vfont.h"
 
@@ -385,7 +385,7 @@ static int insert_into_textbuf(Object *obedit, uintptr_t c)
     ef->textbuf[ef->pos] = c;
     ef->textbufinfo[ef->pos] = cu->curinfo;
     ef->textbufinfo[ef->pos].kern = 0.0f;
-    ef->textbufinfo[ef->pos].mat_nr = obedit->actcol;
+    ef->textbufinfo[ef->pos].mat_nr = obedit->actcol - 1;
 
     ef->pos++;
     ef->len++;
@@ -418,10 +418,7 @@ static void text_update_edited(bContext *C, Object *obedit, const eEditFontMode 
   cu->curinfo = ef->textbufinfo[ef->pos ? ef->pos - 1 : 0];
 
   if (obedit->totcol > 0) {
-    obedit->actcol = cu->curinfo.mat_nr;
-
-    /* since this array is calloc'd, it can be 0 even though we try ensure
-     * (mat_nr > 0) almost everywhere */
+    obedit->actcol = cu->curinfo.mat_nr + 1;
     if (obedit->actcol < 1) {
       obedit->actcol = 1;
     }
@@ -1851,7 +1848,7 @@ static void font_cursor_set_apply(bContext *C, const wmEvent *event)
   cu->curinfo = ef->textbufinfo[ef->pos ? ef->pos - 1 : 0];
 
   if (ob->totcol > 0) {
-    ob->actcol = cu->curinfo.mat_nr;
+    ob->actcol = cu->curinfo.mat_nr + 1;
     if (ob->actcol < 1) {
       ob->actcol = 1;
     }
@@ -2389,7 +2386,6 @@ bool ED_curve_editfont_select_pick(
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Object *obedit = CTX_data_edit_object(C);
   Curve *cu = static_cast<Curve *>(obedit->data);
-  ViewContext vc;
   /* bias against the active, in pixels, allows cycling */
   const float active_bias_px = 4.0f;
   const float mval_fl[2] = {float(mval[0]), float(mval[1])};
@@ -2398,7 +2394,7 @@ bool ED_curve_editfont_select_pick(
   const float dist = ED_view3d_select_dist_px();
   float dist_sq_best = dist * dist;
 
-  ED_view3d_viewcontext_init(C, &vc, depsgraph);
+  ViewContext vc = ED_view3d_viewcontext_init(C, depsgraph);
 
   ED_view3d_init_mats_rv3d(vc.obedit, vc.rv3d);
 

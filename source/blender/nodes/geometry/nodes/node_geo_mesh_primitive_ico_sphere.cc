@@ -8,6 +8,8 @@
 #include "BKE_material.h"
 #include "BKE_mesh.hh"
 
+#include "GEO_randomize.hh"
+
 #include "bmesh.h"
 
 #include "node_geometry_util.hh"
@@ -63,6 +65,8 @@ static Mesh *create_ico_sphere_mesh(const int subdivisions,
                                     const AttributeIDRef &uv_map_id)
 {
   if (subdivisions >= 3) {
+    /* Most nodes don't need this because they internally use multi-threading which triggers
+     * lazy-threading without any extra code. */
     lazy_threading::send_hint();
   }
 
@@ -106,6 +110,8 @@ static Mesh *create_ico_sphere_mesh(const int subdivisions,
     uv_map.finish();
   }
   attributes.remove("UVMap");
+
+  geometry::debug_randomize_mesh_order(mesh);
 
   mesh->bounds_set_eager(calculate_bounds_ico_sphere(radius, subdivisions));
 

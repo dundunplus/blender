@@ -18,7 +18,7 @@
 #include "BLI_string.h"
 #include "BLI_task.h"
 
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_image.h"
 #include "BKE_report.h"
 #include "BKE_unit.h"
@@ -153,7 +153,7 @@ static void transdata_elem_translate(const TransInfo *t,
     add_v3_v3v3(td->loc, td->iloc, tvec);
   }
 
-  constraintTransLim(t, td);
+  constraintTransLim(t, tc, td);
 }
 
 static void transdata_elem_translate_fn(void *__restrict iter_data_v,

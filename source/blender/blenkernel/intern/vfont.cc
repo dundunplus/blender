@@ -37,11 +37,12 @@
 
 #include "BKE_anim_path.h"
 #include "BKE_bpath.h"
-#include "BKE_curve.h"
+#include "BKE_curve.hh"
 #include "BKE_global.h"
 #include "BKE_idtype.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
+#include "BKE_object_types.hh"
 #include "BKE_packedFile.h"
 #include "BKE_vfont.h"
 #include "BKE_vfontdata.h"
@@ -56,6 +57,9 @@ static ThreadRWMutex vfont_rwlock = BLI_RWLOCK_INITIALIZER;
 static PackedFile *get_builtin_packedfile(void);
 
 /****************************** VFont Datablock ************************/
+
+const void *builtin_font_data = nullptr;
+int builtin_font_size = 0;
 
 static void vfont_init_data(ID *id)
 {
@@ -160,7 +164,7 @@ IDTypeInfo IDType_ID_VF = {
     /*main_listbase_index*/ INDEX_ID_VF,
     /*struct_size*/ sizeof(VFont),
     /*name*/ "Font",
-    /*name_plural*/ "fonts",
+    /*name_plural*/ N_("fonts"),
     /*translation_context*/ BLT_I18NCONTEXT_ID_VFONT,
     /*flags*/ IDTYPE_FLAGS_NO_ANIMDATA | IDTYPE_FLAGS_APPEND_IS_REUSABLE,
     /*asset_type_info*/ nullptr,
@@ -216,9 +220,6 @@ void BKE_vfont_free_data(VFont *vfont)
     vfont->temp_pf = nullptr;
   }
 }
-
-static const void *builtin_font_data = nullptr;
-static int builtin_font_size = 0;
 
 bool BKE_vfont_is_builtin(const VFont *vfont)
 {
@@ -448,8 +449,8 @@ static void build_underline(Curve *cu,
   nu2->bezt = nullptr;
   nu2->knotsu = nu2->knotsv = nullptr;
   nu2->charidx = charidx + 1000;
-  if (mat_nr > 0) {
-    nu2->mat_nr = mat_nr - 1;
+  if (mat_nr >= 0) {
+    nu2->mat_nr = mat_nr;
   }
   nu2->pntsu = 4;
   nu2->pntsv = 1;
@@ -538,7 +539,7 @@ void BKE_vfont_build_char(Curve *cu,
       nu2->flag = CU_SMOOTH;
       nu2->charidx = charidx;
       if (info->mat_nr > 0) {
-        nu2->mat_nr = info->mat_nr - 1;
+        nu2->mat_nr = info->mat_nr;
       }
       else {
         nu2->mat_nr = 0;
@@ -1003,10 +1004,8 @@ static bool vfont_to_curve(Object *ob,
       che = find_vfont_char(vfd, ascii);
       BLI_rw_mutex_unlock(&vfont_rwlock);
 
-      /* The character wasn't in the current curve base so load it.
-       * But if the font is built-in then do not try loading since
-       * whole font is in the memory already. */
-      if (che == nullptr && BKE_vfont_is_builtin(vfont) == false) {
+      /* The character wasn't in the current curve base so load it. */
+      if (che == nullptr) {
         BLI_rw_mutex_lock(&vfont_rwlock, THREAD_LOCK_WRITE);
         /* Check it once again, char might have been already load
          * between previous #BLI_rw_mutex_unlock() and this #BLI_rw_mutex_lock().
@@ -1411,9 +1410,9 @@ static bool vfont_to_curve(Object *ob,
   /* TEXT ON CURVE */
   /* NOTE: Only #OB_CURVES_LEGACY objects could have a path. */
   if (cu->textoncurve && cu->textoncurve->type == OB_CURVES_LEGACY) {
-    BLI_assert(cu->textoncurve->runtime.curve_cache != nullptr);
-    if (cu->textoncurve->runtime.curve_cache != nullptr &&
-        cu->textoncurve->runtime.curve_cache->anim_path_accum_length != nullptr)
+    BLI_assert(cu->textoncurve->runtime->curve_cache != nullptr);
+    if (cu->textoncurve->runtime->curve_cache != nullptr &&
+        cu->textoncurve->runtime->curve_cache->anim_path_accum_length != nullptr)
     {
       float distfac, imat[4][4], imat3[3][3], cmat[3][3];
       float minx, maxx;
@@ -1448,7 +1447,7 @@ static bool vfont_to_curve(Object *ob,
       /* length correction */
       const float chartrans_size_x = maxx - minx;
       if (chartrans_size_x != 0.0f) {
-        const CurveCache *cc = cu->textoncurve->runtime.curve_cache;
+        const CurveCache *cc = cu->textoncurve->runtime->curve_cache;
         const float totdist = BKE_anim_path_get_length(cc);
         distfac = (sizefac * totdist) / chartrans_size_x;
         distfac = (distfac > 1.0f) ? (1.0f / distfac) : 1.0f;

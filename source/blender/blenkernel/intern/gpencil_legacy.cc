@@ -19,7 +19,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 
 #include "BLT_translation.h"
 
@@ -268,7 +268,7 @@ IDTypeInfo IDType_ID_GD_LEGACY = {
     /*main_listbase_index*/ INDEX_ID_GD_LEGACY,
     /*struct_size*/ sizeof(bGPdata),
     /*name*/ "GPencil",
-    /*name_plural*/ "grease_pencils",
+    /*name_plural*/ N_("grease_pencils"),
     /*translation_context*/ BLT_I18NCONTEXT_ID_GPENCIL,
     /*flags*/ IDTYPE_FLAGS_APPEND_IS_REUSABLE,
     /*asset_type_info*/ nullptr,
@@ -443,10 +443,21 @@ void BKE_gpencil_free_layers(ListBase *list)
   }
 }
 
+/* Free all of the gp-palettes and colors. */
+void BKE_gpencil_free_legacy_palette_data(ListBase *list)
+{
+  LISTBASE_FOREACH_MUTABLE (bGPDpalette *, palette, list) {
+    BLI_freelistN(&palette->colors);
+    MEM_freeN(palette);
+  }
+  BLI_listbase_clear(list);
+}
+
 void BKE_gpencil_free_data(bGPdata *gpd, bool free_all)
 {
   /* free layers */
   BKE_gpencil_free_layers(&gpd->layers);
+  BKE_gpencil_free_legacy_palette_data(&gpd->palettes);
 
   /* materials */
   MEM_SAFE_FREE(gpd->mat);

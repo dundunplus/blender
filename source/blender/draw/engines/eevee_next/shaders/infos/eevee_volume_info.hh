@@ -44,6 +44,7 @@ GPU_SHADER_CREATE_INFO(eevee_volume_scatter)
     .additional_info("eevee_lightprobe_data")
     .additional_info("eevee_shadow_data")
     .additional_info("eevee_sampling_data")
+    .additional_info("eevee_utility_texture")
     .compute_source("eevee_volume_scatter_comp.glsl")
     .local_group_size(VOLUME_GROUP_SIZE, VOLUME_GROUP_SIZE, VOLUME_GROUP_SIZE)
     .additional_info("eevee_volume_properties_data")
@@ -57,6 +58,23 @@ GPU_SHADER_CREATE_INFO(eevee_volume_scatter_with_lights)
     .define("VOLUME_IRRADIANCE")
     .define("VOLUME_SHADOW")
     .sampler(0, ImageType::FLOAT_3D, "extinction_tx")
+    .do_static_compilation(true);
+
+GPU_SHADER_CREATE_INFO(eevee_volume_occupancy_convert)
+    .additional_info("eevee_shared", "eevee_global_ubo", "draw_fullscreen")
+    .builtins(BuiltinBits::TEXTURE_ATOMIC)
+    .image(VOLUME_HIT_DEPTH_SLOT, GPU_R32F, Qualifier::READ, ImageType::FLOAT_3D, "hit_depth_img")
+    .image(VOLUME_HIT_COUNT_SLOT,
+           GPU_R32UI,
+           Qualifier::READ_WRITE,
+           ImageType::UINT_2D,
+           "hit_count_img")
+    .image(VOLUME_OCCUPANCY_SLOT,
+           GPU_R32UI,
+           Qualifier::READ_WRITE,
+           ImageType::UINT_3D,
+           "occupancy_img")
+    .fragment_source("eevee_occupancy_convert_frag.glsl")
     .do_static_compilation(true);
 
 GPU_SHADER_CREATE_INFO(eevee_volume_integration)

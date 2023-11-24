@@ -27,8 +27,8 @@
 #include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_lib_query.h"
 #include "BKE_main.h"
-#include "BKE_modifier.h"
-#include "BKE_screen.h"
+#include "BKE_modifier.hh"
+#include "BKE_screen.hh"
 
 #include "MEM_guardedalloc.h"
 

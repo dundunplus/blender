@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.0.0 Alpha (b'2d057c023879')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'7ce745a76b47')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-18 08:31:54\n"
+"POT-Creation-Date: 2023-11-20 11:21:26\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -204,6 +204,10 @@ msgstr "ข้อความ"
 
 msgid "Full"
 msgstr "เต็ม"
+
+
+msgid "Auto"
+msgstr "อัตโนมัติ"
 
 
 msgid "Action"
@@ -543,10 +547,6 @@ msgstr "เป้าหมาย"
 
 msgid "Clear"
 msgstr "ล้าง"
-
-
-msgid "Auto"
-msgstr "อัตโนมัติ"
 
 
 msgid "Weight"
@@ -1104,6 +1104,10 @@ msgid "Miscellaneous"
 msgstr "เบ็ดเตล็ด"
 
 
+msgid "Medium"
+msgstr "ปานกลาง"
+
+
 msgid "Show .blend files"
 msgstr "แสดงไฟล์ .blend"
 
@@ -1621,10 +1625,6 @@ msgid "High quality"
 msgstr "คุณภาพสูง"
 
 
-msgid "Medium"
-msgstr "ปานกลาง"
-
-
 msgid "Medium quality"
 msgstr "คุณภาพปานกลาง"
 
@@ -2031,6 +2031,10 @@ msgid "Snap"
 msgstr "ยึดติด"
 
 
+msgid "Files"
+msgstr "ไฟล์"
+
+
 msgctxt "Operator"
 msgid "Add"
 msgstr "เพิ่ม"
@@ -2147,10 +2151,6 @@ msgstr "เพิ่มภาพ"
 
 msgid "Light"
 msgstr "แสง"
-
-
-msgid "Object Context Menu"
-msgstr "เมนูบริบทวัตถุ"
 
 
 msgid "Proportional Editing Falloff"
@@ -2527,10 +2527,6 @@ msgid "Select"
 msgstr "เลือก"
 
 
-msgid "Files"
-msgstr "ไฟล์"
-
-
 msgctxt "Operator"
 msgid "Pan View"
 msgstr "เลื่อนมุมมอง"
@@ -2722,6 +2718,10 @@ msgstr "เชื่อมโยง"
 
 msgid "Replace Existing"
 msgstr "แทนที่ที่มีอยู่"
+
+
+msgid "Flat"
+msgstr "ราบแบน"
 
 
 msgctxt "Operator"
@@ -3856,10 +3856,6 @@ msgid "3D"
 msgstr "สามมิติ"
 
 
-msgid "Flat"
-msgstr "ราบแบน"
-
-
 msgid "Selected Text"
 msgstr "ข้อความที่ถูกเลือก"
 
@@ -4072,6 +4068,21 @@ msgstr "ผนวก..."
 msgctxt "Operator"
 msgid "Manual"
 msgstr "คู่มือ"
+
+
+msgctxt "Operator"
+msgid "Tutorials"
+msgstr "สอนวิธีใช้งาน"
+
+
+msgctxt "Operator"
+msgid "Support"
+msgstr "สนับสนุน"
+
+
+msgctxt "Operator"
+msgid "User Communities"
+msgstr "ชุมชนผู้ใช้"
 
 
 msgid "Frame Numbers"
@@ -4552,21 +4563,6 @@ msgstr "เรนเดอร์ภาพ"
 msgctxt "Operator"
 msgid "Operator Search..."
 msgstr "ค้นหาตัวดำเนินการ..."
-
-
-msgctxt "Operator"
-msgid "Tutorials"
-msgstr "สอนวิธีใช้งาน"
-
-
-msgctxt "Operator"
-msgid "Support"
-msgstr "สนับสนุน"
-
-
-msgctxt "Operator"
-msgid "User Communities"
-msgstr "ชุมชนผู้ใช้"
 
 
 msgctxt "Operator"
@@ -5355,11 +5351,6 @@ msgid "Verts:%s/%s"
 msgstr "จุดยอด:%s/%s"
 
 
-msgctxt "Action"
-msgid "Group"
-msgstr "กลุ่ม"
-
-
 msgid "). Click here to proceed..."
 msgstr "). คลิกที่นี่เพื่อดำเนินการ..."
 
@@ -5487,6 +5478,11 @@ msgstr "สร้าง %s"
 
 msgid "Overwrite %s"
 msgstr "เขียนทับ %s"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "กลุ่ม"
 
 
 msgid "%s '%s'"

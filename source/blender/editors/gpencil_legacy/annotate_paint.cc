@@ -23,14 +23,14 @@
 
 #include "BKE_callbacks.h"
 #include "BKE_colortools.h"
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_global.h"
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_report.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_tracking.h"
 
 #include "DNA_gpencil_legacy_types.h"

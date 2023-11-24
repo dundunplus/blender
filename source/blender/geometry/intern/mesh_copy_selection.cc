@@ -202,6 +202,13 @@ static void copy_loose_edge_hint(const Mesh &src, Mesh &dst)
   }
 }
 
+static void copy_overlapping_hint(const Mesh &src, Mesh &dst)
+{
+  if (src.no_overlapping_topology()) {
+    dst.tag_overlapping_none();
+  }
+}
+
 /** Gather vertex group data and array attributes in separate loops. */
 static void gather_vert_attributes(const Mesh &mesh_src,
                                    const bke::AnonymousAttributePropagationInfo &propagation_info,
@@ -238,7 +245,7 @@ static void gather_vert_attributes(const Mesh &mesh_src,
 
 std::optional<Mesh *> mesh_copy_selection(
     const Mesh &src_mesh,
-    const fn::Field<bool> &selection_field,
+    const VArray<bool> &selection,
     const eAttrDomain selection_domain,
     const bke::AnonymousAttributePropagationInfo &propagation_info)
 {
@@ -248,11 +255,6 @@ std::optional<Mesh *> mesh_copy_selection(
   const Span<int> src_corner_edges = src_mesh.corner_edges();
   const bke::AttributeAccessor src_attributes = src_mesh.attributes();
 
-  const bke::MeshFieldContext context(src_mesh, selection_domain);
-  fn::FieldEvaluator evaluator(context, src_attributes.domain_size(selection_domain));
-  evaluator.add(selection_field);
-  evaluator.evaluate();
-  const VArray<bool> selection = evaluator.get_evaluated<bool>(0);
   if (selection.is_empty()) {
     return std::nullopt;
   }
@@ -386,13 +388,14 @@ std::optional<Mesh *> mesh_copy_selection(
     copy_loose_vert_hint(src_mesh, *dst_mesh);
     copy_loose_edge_hint(src_mesh, *dst_mesh);
   }
+  copy_overlapping_hint(src_mesh, *dst_mesh);
 
   return dst_mesh;
 }
 
 std::optional<Mesh *> mesh_copy_selection_keep_verts(
     const Mesh &src_mesh,
-    const fn::Field<bool> &selection_field,
+    const VArray<bool> &selection,
     const eAttrDomain selection_domain,
     const bke::AnonymousAttributePropagationInfo &propagation_info)
 {
@@ -402,11 +405,6 @@ std::optional<Mesh *> mesh_copy_selection_keep_verts(
   const Span<int> src_corner_edges = src_mesh.corner_edges();
   const bke::AttributeAccessor src_attributes = src_mesh.attributes();
 
-  const bke::MeshFieldContext context(src_mesh, selection_domain);
-  fn::FieldEvaluator evaluator(context, src_attributes.domain_size(selection_domain));
-  evaluator.add(selection_field);
-  evaluator.evaluate();
-  const VArray<bool> selection = evaluator.get_evaluated<bool>(0);
   if (selection.is_empty()) {
     return std::nullopt;
   }
@@ -497,23 +495,20 @@ std::optional<Mesh *> mesh_copy_selection_keep_verts(
   if (selection_domain == ATTR_DOMAIN_FACE) {
     copy_loose_edge_hint(src_mesh, *dst_mesh);
   }
+  copy_overlapping_hint(src_mesh, *dst_mesh);
+
   return dst_mesh;
 }
 
 std::optional<Mesh *> mesh_copy_selection_keep_edges(
     const Mesh &src_mesh,
-    const fn::Field<bool> &selection_field,
+    const VArray<bool> &selection,
     const eAttrDomain selection_domain,
     const bke::AnonymousAttributePropagationInfo &propagation_info)
 {
   const OffsetIndices src_faces = src_mesh.faces();
   const bke::AttributeAccessor src_attributes = src_mesh.attributes();
 
-  const bke::MeshFieldContext context(src_mesh, selection_domain);
-  fn::FieldEvaluator evaluator(context, src_attributes.domain_size(selection_domain));
-  evaluator.add(selection_field);
-  evaluator.evaluate();
-  const VArray<bool> selection = evaluator.get_evaluated<bool>(0);
   if (selection.is_empty()) {
     return std::nullopt;
   }
@@ -568,6 +563,7 @@ std::optional<Mesh *> mesh_copy_selection_keep_edges(
   /* Positions are not changed by the operation, so the bounds are the same. */
   dst_mesh->runtime->bounds_cache = src_mesh.runtime->bounds_cache;
   copy_loose_vert_hint(src_mesh, *dst_mesh);
+  copy_overlapping_hint(src_mesh, *dst_mesh);
   return dst_mesh;
 }
 

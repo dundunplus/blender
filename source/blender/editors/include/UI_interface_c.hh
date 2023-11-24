@@ -118,17 +118,21 @@ struct uiViewItemHandle;
 
 /** #uiBlock.emboss and #uiBut.emboss */
 enum eUIEmbossType {
-  UI_EMBOSS = 0,          /* use widget style for drawing */
-  UI_EMBOSS_NONE = 1,     /* Nothing, only icon and/or text */
-  UI_EMBOSS_PULLDOWN = 2, /* Pull-down menu style */
-  UI_EMBOSS_RADIAL = 3,   /* Pie Menu */
+  /** Use widget style for drawing. */
+  UI_EMBOSS = 0,
+  /** Nothing, only icon and/or text */
+  UI_EMBOSS_NONE = 1,
+  /** Pull-down menu style */
+  UI_EMBOSS_PULLDOWN = 2,
+  /** Pie Menu */
+  UI_EMBOSS_RADIAL = 3,
   /**
    * The same as #UI_EMBOSS_NONE, unless the button has
    * a coloring status like an animation state or red alert.
    */
   UI_EMBOSS_NONE_OR_STATUS = 4,
-
-  UI_EMBOSS_UNDEFINED = 255, /* For layout engine, use emboss from block. */
+  /** For layout engine, use emboss from block. */
+  UI_EMBOSS_UNDEFINED = 255,
 };
 
 /** #uiBlock::direction */
@@ -339,10 +343,10 @@ enum {
   /** This but is "inside" a box item (currently used to change theme colors). */
   UI_BUT_BOX_ITEM = 1 << 20,
 
-  /** Active left part of number button */
-  UI_BUT_ACTIVE_LEFT = 1 << 21,
-  /** Active right part of number button */
-  UI_BUT_ACTIVE_RIGHT = 1 << 22,
+  /** Mouse is hovering left part of number button */
+  UI_BUT_HOVER_LEFT = 1 << 21,
+  /** Mouse is hovering right part of number button */
+  UI_BUT_HOVER_RIGHT = 1 << 22,
 
   /** Reverse order of consecutive off/on icons */
   UI_BUT_ICON_REVERSE = 1 << 23,
@@ -453,6 +457,7 @@ enum eButType {
 
 /** Gradient types, for color picker #UI_BTYPE_HSVCUBE etc. */
 enum eButGradientType {
+  UI_GRAD_NONE = -1,
   UI_GRAD_SV = 0,
   UI_GRAD_HV = 1,
   UI_GRAD_HS = 2,
@@ -839,6 +844,25 @@ void UI_block_region_set(uiBlock *block, ARegion *region);
 void UI_block_lock_set(uiBlock *block, bool val, const char *lockstr);
 void UI_block_lock_clear(uiBlock *block);
 
+#define UI_BUTTON_SECTION_MERGE_DISTANCE (UI_UNIT_X * 3)
+/* Separator line between regions if the #uiButtonSectionsAlign is not #None. */
+#define UI_BUTTON_SECTION_SEPERATOR_LINE_WITH (U.pixelsize * 2)
+
+enum class uiButtonSectionsAlign : int8_t { None = 1, Top, Bottom };
+/**
+ * Draw a background with rounded corners behind each visual group of buttons. The visual groups
+ * are separated by spacer buttons (#uiItemSpacer()). Button groups that are closer than
+ * #UI_BUTTON_SECTION_MERGE_DISTANCE will be merged into one visual section. If the group is closer
+ * than that to a region edge, it will also be extended to that, and the rounded corners will be
+ * removed on that edge.
+ *
+ * \note This currently only works well for horizontal, header like regions.
+ */
+void UI_region_button_sections_draw(const ARegion *region,
+                                    int /*THemeColorID*/ colorid,
+                                    uiButtonSectionsAlign align);
+bool UI_region_button_sections_is_inside_x(const ARegion *region, const int mval_x);
+
 /**
  * Automatic aligning, horizontal or vertical.
  */
@@ -912,6 +936,11 @@ void UI_but_dragflag_disable(uiBut *but, int flag);
 void UI_but_disable(uiBut *but, const char *disabled_hint);
 
 void UI_but_type_set_menu_from_pulldown(uiBut *but);
+
+/**
+ * Set at hint that describes the expected value when empty.
+ */
+void UI_but_placeholder_set(uiBut *but, const char *placeholder_text) ATTR_NONNULL(1);
 
 /**
  * Special button case, only draw it when used actively, for outliner etc.
@@ -1761,6 +1790,7 @@ typedef enum uiTooltipStyle {
   UI_TIP_STYLE_HEADER,     /* Header text. */
   UI_TIP_STYLE_MONO,       /* Mono-spaced text. */
   UI_TIP_STYLE_IMAGE,      /* Image field. */
+  UI_TIP_STYLE_SPACER,     /* Padding to separate sections. */
 } uiTooltipStyle;
 
 typedef enum uiTooltipColorID {
@@ -1782,7 +1812,7 @@ void UI_but_func_tooltip_custom_set(uiBut *but,
  * \param text: Allocated text (transfer ownership to `data`) or null.
  * \param suffix: Allocated text (transfer ownership to `data`) or null.
  */
-void UI_tooltip_text_field_add(struct uiTooltipData *data,
+void UI_tooltip_text_field_add(uiTooltipData *data,
                                char *text,
                                char *suffix,
                                const uiTooltipStyle style,
@@ -1793,9 +1823,8 @@ void UI_tooltip_text_field_add(struct uiTooltipData *data,
  * \param image: Image buffer (duplicated, ownership is *not* transferred to `data`).
  * \param image_size: Display size for the image (pixels without UI scale applied).
  */
-void UI_tooltip_image_field_add(struct uiTooltipData *data,
-                                const struct ImBuf *image,
-                                const short image_size[2]) ATTR_NONNULL(1, 2, 3);
+void UI_tooltip_image_field_add(uiTooltipData *data, const ImBuf *image, const short image_size[2])
+    ATTR_NONNULL(1, 2, 3);
 
 /**
  * Recreate tool-tip (use to update dynamic tips)
@@ -1872,7 +1901,7 @@ void UI_but_drag_attach_image(uiBut *but, const ImBuf *imb, float scale);
  */
 void UI_but_drag_set_asset(uiBut *but,
                            const blender::asset_system::AssetRepresentation *asset,
-                           int import_type, /* eAssetImportType */
+                           int import_method, /* eAssetImportMethod */
                            int icon,
                            const ImBuf *imb,
                            float scale);
@@ -1959,9 +1988,12 @@ bool UI_panel_can_be_pinned(const Panel *panel);
 bool UI_panel_category_is_visible(const ARegion *region);
 void UI_panel_category_add(ARegion *region, const char *name);
 PanelCategoryDyn *UI_panel_category_find(const ARegion *region, const char *idname);
+int UI_panel_category_index_find(ARegion *region, const char *idname);
 PanelCategoryStack *UI_panel_category_active_find(ARegion *region, const char *idname);
 const char *UI_panel_category_active_get(ARegion *region, bool set_fallback);
 void UI_panel_category_active_set(ARegion *region, const char *idname);
+/** \param index: index of item _in #ARegion.panels_category list_. */
+void UI_panel_category_index_active_set(ARegion *region, const int index);
 void UI_panel_category_active_set_default(ARegion *region, const char *idname);
 void UI_panel_category_clear_all(ARegion *region);
 /**
@@ -2584,7 +2616,6 @@ void uiTemplateNodeLink(
     uiLayout *layout, bContext *C, bNodeTree *ntree, bNode *node, bNodeSocket *input);
 void uiTemplateNodeView(
     uiLayout *layout, bContext *C, bNodeTree *ntree, bNode *node, bNodeSocket *input);
-void uiTemplateNodeAssetMenuItems(uiLayout *layout, bContext *C, const char *catalog_path);
 void uiTemplateTextureUser(uiLayout *layout, bContext *C);
 /**
  * Button to quickly show texture in Properties Editor texture tab.
@@ -2643,9 +2674,11 @@ void uiTemplateLightLinkingCollection(uiLayout *layout,
                                       PointerRNA *ptr,
                                       const char *propname);
 
+#ifdef WITH_GREASE_PENCIL_V3
 void uiTemplateGreasePencilLayerTree(uiLayout *layout, bContext *C);
+#endif
 
-void uiTemplateNodeTreeInterface(struct uiLayout *layout, struct PointerRNA *ptr);
+void uiTemplateNodeTreeInterface(uiLayout *layout, PointerRNA *ptr);
 
 /**
  * \return: A RNA pointer for the operator properties.
@@ -2754,7 +2787,8 @@ void uiItemFullR(uiLayout *layout,
                  int value,
                  eUI_Item_Flag flag,
                  const char *name,
-                 int icon);
+                 int icon,
+                 const char *placeholder = nullptr);
 /**
  * Use a wrapper function since re-implementing all the logic in this function would be messy.
  */
@@ -2812,16 +2846,24 @@ void uiItemPointerR(uiLayout *layout,
                     const char *searchpropname,
                     const char *name,
                     int icon);
+
+/**
+* Create a list of enum items.
+
+ * \param active: an optional item to highlight.
+*/
 void uiItemsFullEnumO(uiLayout *layout,
                       const char *opname,
                       const char *propname,
                       IDProperty *properties,
                       wmOperatorCallContext context,
-                      eUI_Item_Flag flag);
+                      eUI_Item_Flag flag,
+                      const int active = -1);
 /**
  * Create UI items for enum items in \a item_array.
  *
  * A version of #uiItemsFullEnumO that takes pre-calculated item array.
+ * \param active: if not -1, will highlight that item.
  */
 void uiItemsFullEnumO_items(uiLayout *layout,
                             wmOperatorType *ot,
@@ -2831,7 +2873,8 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                             wmOperatorCallContext context,
                             eUI_Item_Flag flag,
                             const EnumPropertyItem *item_array,
-                            int totitem);
+                            int totitem,
+                            int active = -1);
 
 struct uiPropertySplitWrapper {
   uiLayout *label_column;

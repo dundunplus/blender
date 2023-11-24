@@ -157,6 +157,7 @@ typedef struct bNodeSocket {
 
   /** Custom dynamic defined label, MAX_NAME. */
   char label[64];
+  char short_label[64];
   char description[64];
 
   /**
@@ -315,6 +316,8 @@ typedef enum eNodePanelFlag {
   NODE_PANEL_COLLAPSED = (1 << 0),
   /* The parent panel is collapsed. */
   NODE_PANEL_PARENT_COLLAPSED = (1 << 1),
+  /* The panel has visible content. */
+  NODE_PANEL_CONTENT_VISIBLE = (1 << 2),
 } eNodePanelFlag;
 
 typedef struct bNodePanelState {
@@ -327,6 +330,7 @@ typedef struct bNodePanelState {
 #ifdef __cplusplus
   bool is_collapsed() const;
   bool is_parent_collapsed() const;
+  bool has_visible_content() const;
 #endif
 } bNodePanelState;
 
@@ -366,7 +370,11 @@ typedef struct bNode {
    */
   int16_t type;
 
-  char _pad1[2];
+  /**
+   * Depth of the node in the node editor, used to keep recently selected nodes at the front, and
+   * to order frame nodes properly.
+   */
+  int16_t ui_order;
 
   /** Used for some builtin nodes that store properties but don't have a storage struct. */
   int16_t custom1, custom2;
@@ -661,6 +669,10 @@ typedef struct bNodeTree {
   int chunksize;
   /** Execution mode to use for compositor engine. */
   int execution_mode;
+  /** Execution mode to use for compositor engine. */
+  int precision;
+
+  char _pad[4];
 
   rctf viewer_border;
 
@@ -716,6 +728,7 @@ typedef struct bNodeTree {
   const bNestedNodeRef *nested_node_ref_from_node_id_path(blender::Span<int> node_ids) const;
   [[nodiscard]] bool node_id_path_from_nested_node_ref(const int32_t nested_node_id,
                                                        blender::Vector<int32_t> &r_node_ids) const;
+  const bNode *find_nested_node(int32_t nested_node_id) const;
 
   /**
    * Update a run-time cache for the node tree based on it's current state. This makes many methods
@@ -779,9 +792,12 @@ typedef struct bNodeTree {
   void ensure_interface_cache() const;
 
   /* Cached interface item lists. */
-  blender::Span<bNodeTreeInterfaceSocket *> interface_inputs() const;
-  blender::Span<bNodeTreeInterfaceSocket *> interface_outputs() const;
-  blender::Span<bNodeTreeInterfaceItem *> interface_items() const;
+  blender::Span<bNodeTreeInterfaceSocket *> interface_inputs();
+  blender::Span<const bNodeTreeInterfaceSocket *> interface_inputs() const;
+  blender::Span<bNodeTreeInterfaceSocket *> interface_outputs();
+  blender::Span<const bNodeTreeInterfaceSocket *> interface_outputs() const;
+  blender::Span<bNodeTreeInterfaceItem *> interface_items();
+  blender::Span<const bNodeTreeInterfaceItem *> interface_items() const;
 #endif
 } bNodeTree;
 
@@ -823,6 +839,12 @@ typedef enum eNodeTreeExecutionMode {
   NTREE_EXECUTION_MODE_FULL_FRAME = 1,
   NTREE_EXECUTION_MODE_REALTIME = 2,
 } eNodeTreeExecutionMode;
+
+/* tree->precision */
+typedef enum eNodeTreePrecision {
+  NODE_TREE_COMPOSITOR_PRECISION_AUTO = 0,
+  NODE_TREE_COMPOSITOR_PRECISION_FULL = 1,
+} eNodeTreePrecision;
 
 typedef enum eNodeTreeRuntimeFlag {
   /** There is a node that references an image with animation. */
@@ -909,8 +931,9 @@ typedef enum GeometryNodeAssetTraitFlag {
   GEO_NODE_ASSET_CURVE = (1 << 4),
   GEO_NODE_ASSET_POINT_CLOUD = (1 << 5),
   GEO_NODE_ASSET_MODIFIER = (1 << 6),
+  GEO_NODE_ASSET_OBJECT = (1 << 7),
 } GeometryNodeAssetTraitFlag;
-ENUM_OPERATORS(GeometryNodeAssetTraitFlag, GEO_NODE_ASSET_POINT_CLOUD);
+ENUM_OPERATORS(GeometryNodeAssetTraitFlag, GEO_NODE_ASSET_OBJECT);
 
 /* Data structs, for `node->storage`. */
 
@@ -1039,7 +1062,7 @@ typedef struct NodeBilateralBlurData {
 } NodeBilateralBlurData;
 
 typedef struct NodeKuwaharaData {
-  short size;
+  short size DNA_DEPRECATED;
   short variation;
   int uniformity;
   float sharpness;
@@ -1259,8 +1282,9 @@ typedef struct NodeTexGradient {
 typedef struct NodeTexNoise {
   NodeTexBase base;
   int dimensions;
+  uint8_t type;
   uint8_t normalize;
-  char _pad[3];
+  char _pad[2];
 } NodeTexNoise;
 
 typedef struct NodeTexVoronoi {
@@ -1274,9 +1298,9 @@ typedef struct NodeTexVoronoi {
 } NodeTexVoronoi;
 
 typedef struct NodeTexMusgrave {
-  NodeTexBase base;
-  int musgrave_type;
-  int dimensions;
+  NodeTexBase base DNA_DEPRECATED;
+  int musgrave_type DNA_DEPRECATED;
+  int dimensions DNA_DEPRECATED;
 } NodeTexMusgrave;
 
 typedef struct NodeTexWave {
@@ -1341,6 +1365,7 @@ typedef struct TexNodeOutput {
 
 typedef struct NodeKeyingScreenData {
   char tracking_object[64];
+  float smoothness;
 } NodeKeyingScreenData;
 
 typedef struct NodeKeyingData {
@@ -1797,7 +1822,6 @@ typedef struct NodeGeometrySimulationOutput {
 #ifdef __cplusplus
   blender::Span<NodeSimulationItem> items_span() const;
   blender::MutableSpan<NodeSimulationItem> items_span();
-  blender::IndexRange items_range() const;
 #endif
 } NodeGeometrySimulationOutput;
 
@@ -1811,11 +1835,6 @@ typedef struct NodeRepeatItem {
    * names change.
    */
   int identifier;
-
-#ifdef __cplusplus
-  static bool supports_type(eNodeSocketDatatype type);
-  std::string identifier_str() const;
-#endif
 } NodeRepeatItem;
 
 typedef struct NodeGeometryRepeatInput {
@@ -1829,15 +1848,34 @@ typedef struct NodeGeometryRepeatOutput {
   int active_index;
   /** Identifier to give to the next repeat item. */
   int next_identifier;
-  char _pad[4];
+  int inspection_index;
 
 #ifdef __cplusplus
   blender::Span<NodeRepeatItem> items_span() const;
   blender::MutableSpan<NodeRepeatItem> items_span();
-  NodeRepeatItem *add_item(const char *name, eNodeSocketDatatype type);
-  void set_item_name(NodeRepeatItem &item, const char *name);
 #endif
 } NodeGeometryRepeatOutput;
+
+typedef struct IndexSwitchItem {
+  /** Generated unique identifier which stays the same even when the item order or names change. */
+  int identifier;
+} IndexSwitchItem;
+
+typedef struct NodeIndexSwitch {
+  IndexSwitchItem *items;
+  int items_num;
+
+  /* #eNodeSocketDataType. */
+  int data_type;
+  /** Identifier to give to the next item. */
+  int next_identifier;
+
+  char _pad[4];
+#ifdef __cplusplus
+  blender::Span<IndexSwitchItem> items_span() const;
+  blender::MutableSpan<IndexSwitchItem> items_span();
+#endif
+} NodeIndexSwitch;
 
 typedef struct NodeGeometryDistributePointsInVolume {
   /** #GeometryNodePointDistributeVolumeMode. */
@@ -2023,13 +2061,22 @@ enum {
   SHD_VORONOI_N_SPHERE_RADIUS = 4,
 };
 
-/* musgrave texture */
+/* Deprecated Musgrave Texture. Keep for Versioning */
 enum {
   SHD_MUSGRAVE_MULTIFRACTAL = 0,
   SHD_MUSGRAVE_FBM = 1,
   SHD_MUSGRAVE_HYBRID_MULTIFRACTAL = 2,
   SHD_MUSGRAVE_RIDGED_MULTIFRACTAL = 3,
   SHD_MUSGRAVE_HETERO_TERRAIN = 4,
+};
+
+/* Noise Texture */
+enum {
+  SHD_NOISE_MULTIFRACTAL = 0,
+  SHD_NOISE_FBM = 1,
+  SHD_NOISE_HYBRID_MULTIFRACTAL = 2,
+  SHD_NOISE_RIDGED_MULTIFRACTAL = 3,
+  SHD_NOISE_HETERO_TERRAIN = 4,
 };
 
 /* wave texture */
@@ -2294,8 +2341,8 @@ enum {
   SHD_SUBSURFACE_GAUSSIAN = 2,
 #endif
   SHD_SUBSURFACE_BURLEY = 3,
-  SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS = 4,
-  SHD_SUBSURFACE_RANDOM_WALK = 5,
+  SHD_SUBSURFACE_RANDOM_WALK = 4,
+  SHD_SUBSURFACE_RANDOM_WALK_SKIN = 5,
 };
 
 /* blur node */

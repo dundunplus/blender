@@ -56,7 +56,6 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_EDITING, "EDITING", 0, "Editing", ""},
     {USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_EXTENSIONS, "EXTENSIONS", 0, "Extensions", ""},
     {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", ""},
 #if 0 /* def WITH_USERDEF_WORKSPACES */
     RNA_ENUM_ITEM_SEPR,
@@ -72,6 +71,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_SYSTEM, "SYSTEM", 0, "System", ""},
     {USER_SECTION_SAVE_LOAD, "SAVE_LOAD", 0, "Save & Load", ""},
     {USER_SECTION_FILE_PATHS, "FILE_PATHS", 0, "File Paths", ""},
+    {USER_SECTION_EXTENSIONS, "EXTENSIONS", 0, "Extensions", ""},
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_EXPERIMENTAL, "EXPERIMENTAL", 0, "Experimental", ""},
     {0, nullptr, 0, nullptr, nullptr},
@@ -149,6 +149,15 @@ static const EnumPropertyItem rna_enum_userdef_viewport_aa_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+static const EnumPropertyItem rna_enum_key_insert_channels[] = {
+    {USER_ANIM_KEY_CHANNEL_LOCATION, "LOCATION", 0, "Location", ""},
+    {USER_ANIM_KEY_CHANNEL_ROTATION, "ROTATION", 0, "Rotation", ""},
+    {USER_ANIM_KEY_CHANNEL_SCALE, "SCALE", 0, "Scale", ""},
+    {USER_ANIM_KEY_CHANNEL_ROTATION_MODE, "ROTATE_MODE", 0, "Rotation Mode", ""},
+    {USER_ANIM_KEY_CHANNEL_CUSTOM_PROPERTIES, "CUSTOM_PROPS", 0, "Custom Properties", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
     {GPU_BACKEND_OPENGL, "OPENGL", 0, "OpenGL", "Use OpenGL backend"},
     {GPU_BACKEND_METAL, "METAL", 0, "Metal", "Use Metal backend"},
@@ -159,7 +168,7 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #ifdef RNA_RUNTIME
 
 #  include "BLI_math_vector.h"
-#  include "BLI_string_utils.h"
+#  include "BLI_string_utils.hh"
 
 #  include "DNA_object_types.h"
 #  include "DNA_screen_types.h"
@@ -170,10 +179,10 @@ static const EnumPropertyItem rna_enum_preference_gpu_backend_items[] = {
 #  include "BKE_image.h"
 #  include "BKE_main.h"
 #  include "BKE_mesh_runtime.hh"
-#  include "BKE_object.h"
+#  include "BKE_object.hh"
 #  include "BKE_paint.hh"
 #  include "BKE_preferences.h"
-#  include "BKE_screen.h"
+#  include "BKE_screen.hh"
 
 #  include "DEG_depsgraph.hh"
 
@@ -1294,6 +1303,14 @@ static void rna_def_userdef_theme_ui_font_style(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Points", "Font size in points");
   RNA_def_property_update(prop, 0, "rna_userdef_gpu_update");
 
+  prop = RNA_def_property(srna, "character_weight", PROP_INT, PROP_NONE);
+  RNA_def_property_int_default(prop, 400);
+  RNA_def_property_range(prop, 100.0f, 900.0f);
+  RNA_def_property_ui_range(prop, 100.0f, 900.0f, 50, 0);
+  RNA_def_property_ui_text(
+      prop, "Character Weight", "Weight of the characters. 100-900, 400 is normal");
+  RNA_def_property_update(prop, 0, "rna_userdef_text_update");
+
   prop = RNA_def_property(srna, "shadow", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 0, 5);
   RNA_def_property_ui_text(prop, "Shadow Size", "Shadow size (0, 3 and 5 supported)");
@@ -1879,7 +1896,7 @@ static void rna_def_userdef_theme_space_common(StructRNA *srna)
   prop = RNA_def_property(srna, "header", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "Header", "");
-  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_gpu_update");
 
   prop = RNA_def_property(srna, "header_text", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
@@ -2124,7 +2141,12 @@ static void rna_def_userdef_theme_spaces_edge(StructRNA *srna)
 
   prop = RNA_def_property(srna, "edge_select", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Edge Select", "");
+  RNA_def_property_ui_text(prop, "Edge Selection", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "edge_mode_select", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Edge Mode Selection", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "edge_seam", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -2170,7 +2192,12 @@ static void rna_def_userdef_theme_spaces_face(StructRNA *srna)
 
   prop = RNA_def_property(srna, "face_select", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 4);
-  RNA_def_property_ui_text(prop, "Face Selected", "");
+  RNA_def_property_ui_text(prop, "Face Selection", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "face_mode_select", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Face Mode Selection", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "face_dot", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -2520,17 +2547,17 @@ static void rna_def_userdef_theme_space_view3d(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "bone_pose", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Bone Pose", "");
+  RNA_def_property_ui_text(prop, "Bone Pose Selected", "Outline color of selected pose bones");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "bone_pose_active", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Bone Pose Active", "");
+  RNA_def_property_ui_text(prop, "Bone Pose Active", "Outline color of active pose bones");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "bone_solid", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Bone Solid", "");
+  RNA_def_property_ui_text(prop, "Bone Solid", "Default color of the solid shapes of bones");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "bone_locked_weight", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -3471,9 +3498,53 @@ static void rna_def_userdef_theme_space_seq(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "keyframe", PROP_FLOAT, PROP_COLOR_GAMMA);
-  RNA_def_property_float_sdna(prop, nullptr, "vertex_select");
+  RNA_def_property_float_sdna(prop, nullptr, "keytype_keyframe");
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Keyframe", "");
+  RNA_def_property_ui_text(prop, "Keyframe", "Color of Keyframe");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_selected", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keytype_keyframe_select");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Keyframe Selected", "Color of selected keyframe");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_breakdown", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keytype_breakdown");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Breakdown Keyframe", "Color of breakdown keyframe");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_breakdown_selected", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keytype_breakdown_select");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(
+      prop, "Breakdown Keyframe Selected", "Color of selected breakdown keyframe");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_movehold", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keytype_movehold");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Moving Hold Keyframe", "Color of moving hold keyframe");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_movehold_selected", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keytype_movehold_select");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(
+      prop, "Moving Hold Keyframe Selected", "Color of selected moving hold keyframe");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_border", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keyborder");
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Keyframe Border", "Color of keyframe border");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "keyframe_border_selected", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "keyborder_select");
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Keyframe Border Selected", "Color of selected keyframe border");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "draw_action", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -3754,6 +3825,12 @@ static void rna_def_userdef_theme_space_nla(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Channel", "Nonlinear Animation Channel");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
+  prop = RNA_def_property(srna, "dopesheet_subchannel", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_float_sdna(prop, nullptr, "ds_subchannel");
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Sub-channel", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
   prop = RNA_def_property(srna, "nla_track", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "nla_track");
   RNA_def_property_array(prop, 3);
@@ -3895,17 +3972,20 @@ static void rna_def_userdef_theme_colorset(BlenderRNA *brna)
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "Regular", "Color used for the surface of bones");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
 
   prop = RNA_def_property(srna, "select", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "select");
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "Select", "Color used for selected bones");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
 
   prop = RNA_def_property(srna, "active", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "Active", "Color used for active bones");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
 
   prop = RNA_def_property(srna, "show_colored_constraints", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", TH_WIRECOLOR_CONSTCOLS);
@@ -5130,6 +5210,12 @@ static void rna_def_userdef_view(BlenderRNA *brna)
       prop, "Text Anti-Aliasing", "Smooth jagged edges of user interface text");
   RNA_def_property_update(prop, 0, "rna_userdef_text_update");
 
+  prop = RNA_def_property(srna, "use_text_render_subpixelaa", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "text_render", USER_TEXT_RENDER_SUBPIXELAA);
+  RNA_def_property_ui_text(
+      prop, "Text Subpixel Anti-Aliasing", "Render text for optimal horizontal placement");
+  RNA_def_property_update(prop, 0, "rna_userdef_text_update");
+
   prop = RNA_def_property(srna, "text_hinting", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "text_render");
   RNA_def_property_enum_items(prop, text_hinting_items);
@@ -5336,7 +5422,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "(default setting used for new Scenes)");
 
   prop = RNA_def_property(srna, "use_keyframe_insert_available", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTAVAIL);
+  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTAVAILABLE);
   RNA_def_property_ui_text(prop,
                            "Auto Keyframe Insert Available",
                            "Automatic keyframe insertion in available F-Curves");
@@ -5349,13 +5435,21 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
       "Show warning indicators when transforming objects and bones if auto keying is enabled");
 
   /* keyframing settings */
+  prop = RNA_def_property(srna, "key_insert_channels", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_bitflag_sdna(prop, nullptr, "key_insert_channels");
+  RNA_def_property_enum_items(prop, rna_enum_key_insert_channels);
+  RNA_def_property_flag(prop, PROP_ENUM_FLAG);
+  RNA_def_property_ui_text(prop,
+                           "Default Key Channels",
+                           "Which channels to insert keys at when no keying set is active");
+
   prop = RNA_def_property(srna, "use_keyframe_insert_needed", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_INSERTNEEDED);
   RNA_def_property_ui_text(
       prop, "Keyframe Insert Needed", "Keyframe insertion only when keyframe needed");
 
   prop = RNA_def_property(srna, "use_visual_keying", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_AUTOMATKEY);
+  RNA_def_property_boolean_sdna(prop, nullptr, "autokey_flag", AUTOKEY_FLAG_VISUALKEY);
   RNA_def_property_ui_text(
       prop, "Visual Keying", "Use Visual keying automatically for constrained objects");
 
@@ -5370,6 +5464,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_anim_channel_group_colors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "animation_flag", USER_ANIM_SHOW_CHANNEL_GROUP_COLORS);
+  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(
       prop,
       "Channel Group Colors",
@@ -6984,10 +7079,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Override Templates", "Enable library override template in the Python API");
 
-  prop = RNA_def_property(srna, "enable_eevee_next", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "enable_eevee_next", 1);
-  RNA_def_property_ui_text(prop, "EEVEE Next", "Enable the new EEVEE codebase, requires restart");
-
   prop = RNA_def_property(srna, "use_grease_pencil_version3", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "use_grease_pencil_version3", 1);
   RNA_def_property_ui_text(prop, "Grease Pencil 3.0", "Enable the new grease pencil 3.0 codebase");
@@ -7018,10 +7109,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_new_volume_nodes", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
       prop, "New Volume Nodes", "Enables visibility of the new Volume nodes in the UI");
-
-  prop = RNA_def_property(srna, "use_node_group_operators", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_ui_text(
-      prop, "Node Group Operators", "Enable using geometry nodes as edit operators");
 
   prop = RNA_def_property(srna, "use_shader_node_previews", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(

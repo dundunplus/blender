@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2023 Blender Foundation
+/* SPDX-FileCopyrightText: 2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -6,9 +6,9 @@
  * \ingroup edinterface
  */
 
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_node_tree_interface.hh"
-#include "BKE_node_tree_update.h"
+#include "BKE_node_tree_update.hh"
 
 #include "BLI_color.hh"
 #include "BLI_string.h"
@@ -18,6 +18,7 @@
 #include "DNA_node_tree_interface_types.h"
 
 #include "ED_node.hh"
+#include "ED_undo.hh"
 
 #include "RNA_access.hh"
 #include "RNA_prototypes.h"
@@ -38,6 +39,8 @@ struct wmDragNodeTreeInterface {
 
 namespace {
 
+class NodePanelViewItem;
+class NodeSocketViewItem;
 class NodeTreeInterfaceView;
 
 class NodeTreeInterfaceDragController : public AbstractViewItemDragController {
@@ -59,7 +62,7 @@ class NodeSocketDropTarget : public TreeViewItemDropTarget {
   bNodeTreeInterfaceSocket &socket_;
 
  public:
-  explicit NodeSocketDropTarget(NodeTreeInterfaceView &view, bNodeTreeInterfaceSocket &socket);
+  explicit NodeSocketDropTarget(NodeSocketViewItem &item, bNodeTreeInterfaceSocket &socket);
 
   bool can_drop(const wmDrag &drag, const char **r_disabled_hint) const override;
   std::string drop_tooltip(const DragInfo &drag_info) const override;
@@ -74,7 +77,7 @@ class NodePanelDropTarget : public TreeViewItemDropTarget {
   bNodeTreeInterfacePanel &panel_;
 
  public:
-  explicit NodePanelDropTarget(NodeTreeInterfaceView &view, bNodeTreeInterfacePanel &panel);
+  explicit NodePanelDropTarget(NodePanelViewItem &item, bNodeTreeInterfacePanel &panel);
 
   bool can_drop(const wmDrag &drag, const char **r_disabled_hint) const override;
   std::string drop_tooltip(const DragInfo &drag_info) const override;
@@ -150,6 +153,8 @@ class NodeSocketViewItem : public BasicTreeViewItem {
   }
   bool rename(const bContext &C, StringRefNull new_name) override
   {
+    MEM_SAFE_FREE(socket_.name);
+
     socket_.name = BLI_strdup(new_name.c_str());
     nodetree_.tree_interface.tag_items_changed();
     ED_node_tree_propagate_change(&C, CTX_data_main(&C), &nodetree_);
@@ -207,6 +212,8 @@ class NodePanelViewItem : public BasicTreeViewItem {
   }
   bool rename(const bContext &C, StringRefNull new_name) override
   {
+    MEM_SAFE_FREE(panel_.name);
+
     panel_.name = BLI_strdup(new_name.c_str());
     nodetree_.tree_interface.tag_items_changed();
     ED_node_tree_propagate_change(&C, CTX_data_main(&C), &nodetree_);
@@ -284,8 +291,7 @@ std::unique_ptr<AbstractViewItemDragController> NodeSocketViewItem::create_drag_
 
 std::unique_ptr<TreeViewItemDropTarget> NodeSocketViewItem::create_drop_target()
 {
-  return std::make_unique<NodeSocketDropTarget>(
-      static_cast<NodeTreeInterfaceView &>(this->get_tree_view()), socket_);
+  return std::make_unique<NodeSocketDropTarget>(*this, socket_);
 }
 
 std::unique_ptr<AbstractViewItemDragController> NodePanelViewItem::create_drag_controller() const
@@ -296,8 +302,7 @@ std::unique_ptr<AbstractViewItemDragController> NodePanelViewItem::create_drag_c
 
 std::unique_ptr<TreeViewItemDropTarget> NodePanelViewItem::create_drop_target()
 {
-  return std::make_unique<NodePanelDropTarget>(
-      static_cast<NodeTreeInterfaceView &>(this->get_tree_view()), panel_);
+  return std::make_unique<NodePanelDropTarget>(*this, panel_);
 }
 
 NodeTreeInterfaceDragController::NodeTreeInterfaceDragController(NodeTreeInterfaceView &view,
@@ -318,9 +323,9 @@ void *NodeTreeInterfaceDragController::create_drag_data() const
   return drag_data;
 }
 
-NodeSocketDropTarget::NodeSocketDropTarget(NodeTreeInterfaceView &view,
+NodeSocketDropTarget::NodeSocketDropTarget(NodeSocketViewItem &item,
                                            bNodeTreeInterfaceSocket &socket)
-    : TreeViewItemDropTarget(view, DropBehavior::Reorder), socket_(socket)
+    : TreeViewItemDropTarget(item, DropBehavior::Reorder), socket_(socket)
 {
 }
 
@@ -390,6 +395,7 @@ bool NodeSocketDropTarget::on_drop(bContext *C, const DragInfo &drag_info) const
 
   /* General update */
   ED_node_tree_propagate_change(C, CTX_data_main(C), &nodetree);
+  ED_undo_push(C, "Insert node group item");
   return true;
 }
 
@@ -400,9 +406,8 @@ wmDragNodeTreeInterface *NodeSocketDropTarget::get_drag_node_tree_declaration(
   return static_cast<wmDragNodeTreeInterface *>(drag.poin);
 }
 
-NodePanelDropTarget::NodePanelDropTarget(NodeTreeInterfaceView &view,
-                                         bNodeTreeInterfacePanel &panel)
-    : TreeViewItemDropTarget(view, DropBehavior::ReorderAndInsert), panel_(panel)
+NodePanelDropTarget::NodePanelDropTarget(NodePanelViewItem &item, bNodeTreeInterfacePanel &panel)
+    : TreeViewItemDropTarget(item, DropBehavior::ReorderAndInsert), panel_(panel)
 {
 }
 
@@ -480,6 +485,7 @@ bool NodePanelDropTarget::on_drop(bContext *C, const DragInfo &drag_info) const
 
   /* General update */
   ED_node_tree_propagate_change(C, CTX_data_main(C), &nodetree);
+  ED_undo_push(C, "Insert node group item");
   return true;
 }
 

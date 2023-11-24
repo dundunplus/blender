@@ -87,7 +87,7 @@ const EnumPropertyItem rna_enum_bake_pass_type_items[] = {
 #  include "RNA_access.hh"
 
 #  include "BKE_appdir.h"
-#  include "BKE_context.h"
+#  include "BKE_context.hh"
 #  include "BKE_report.h"
 
 #  include "GPU_capabilities.h"
@@ -997,6 +997,12 @@ static void rna_def_render_engine(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
   RNA_def_property_ui_text(
       prop, "Use Alembic Procedural", "Support loading Alembic data at render time");
+
+  prop = RNA_def_property(srna, "bl_use_materialx", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "type->flag", RE_USE_MATERIALX);
+  RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
+  RNA_def_property_ui_text(
+      prop, "Use MaterialX", "Use MaterialX for exporting materials to Hydra");
 
   RNA_define_verify_sdna(true);
 }

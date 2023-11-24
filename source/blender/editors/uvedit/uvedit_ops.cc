@@ -28,9 +28,9 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_context.h"
-#include "BKE_customdata.h"
-#include "BKE_editmesh.h"
+#include "BKE_context.hh"
+#include "BKE_customdata.hh"
+#include "BKE_editmesh.hh"
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
@@ -601,30 +601,30 @@ static void UV_OT_align(wmOperatorType *ot)
        "ALIGN_S",
        0,
        "Straighten",
-       "Align UVs along the line defined by the endpoints"},
+       "Align UV vertices along the line defined by the endpoints"},
       {UV_STRAIGHTEN_X,
        "ALIGN_T",
        0,
        "Straighten X",
-       "Align UVs along the line defined by the endpoints along the X axis"},
+       "Align UV vertices, moving them horizontally to the line defined by the endpoints"},
       {UV_STRAIGHTEN_Y,
        "ALIGN_U",
        0,
        "Straighten Y",
-       "Align UVs along the line defined by the endpoints along the Y axis"},
+       "Align UV vertices, moving them vertically to the line defined by the endpoints"},
       {UV_ALIGN_AUTO,
        "ALIGN_AUTO",
        0,
        "Align Auto",
-       "Automatically choose the axis on which there is most alignment already"},
-      {UV_ALIGN_X, "ALIGN_X", 0, "Align X", "Align UVs on X axis"},
-      {UV_ALIGN_Y, "ALIGN_Y", 0, "Align Y", "Align UVs on Y axis"},
+       "Automatically choose the direction on which there is most alignment already"},
+      {UV_ALIGN_X, "ALIGN_X", 0, "Align Vertically", "Align UV vertices on a vertical line"},
+      {UV_ALIGN_Y, "ALIGN_Y", 0, "Align Horizontally", "Align UV vertices on a horizontal line"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
   /* identifiers */
   ot->name = "Align";
-  ot->description = "Align selected UV vertices to an axis";
+  ot->description = "Aligns selected UV vertices on a line";
   ot->idname = "UV_OT_align";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

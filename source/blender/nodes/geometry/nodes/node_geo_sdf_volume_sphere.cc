@@ -11,7 +11,7 @@
 
 #include "BKE_geometry_set.hh"
 #include "BKE_lib_id.h"
-#include "BKE_volume.h"
+#include "BKE_volume.hh"
 #include "BKE_volume_openvdb.hh"
 
 #include "NOD_socket_search_link.hh"
@@ -23,17 +23,17 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Float>("Radius").default_value(1.0f).min(0.0f).subtype(PROP_DISTANCE);
   b.add_input<decl::Float>("Voxel Size").default_value(0.2f).min(0.01f).subtype(PROP_DISTANCE);
   b.add_input<decl::Float>("Half-Band Width")
-      .description("Half the width of the narrow band in voxel units")
       .default_value(3.0f)
       .min(1.01f)
-      .max(10.0f);
+      .max(10.0f)
+      .description("Half the width of the narrow band in voxel units");
   b.add_output<decl::Geometry>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
 }
 
 static void search_link_ops(GatherLinkSearchOpParams &params)
 {
   if (U.experimental.use_new_volume_nodes) {
-    blender::nodes::search_link_ops_for_basic_node(params);
+    nodes::search_link_ops_for_basic_node(params);
   }
 }
 

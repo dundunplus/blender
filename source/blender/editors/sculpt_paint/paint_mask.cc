@@ -28,7 +28,7 @@
 
 #include "BKE_brush.hh"
 #include "BKE_ccg.h"
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_lib_id.h"
 #include "BKE_mesh.hh"
 #include "BKE_multires.hh"
@@ -56,6 +56,8 @@
 /* For undo push. */
 #include "sculpt_intern.hh"
 
+using blender::float3;
+using blender::OffsetIndices;
 using blender::Span;
 using blender::Vector;
 
@@ -73,19 +75,20 @@ static const EnumPropertyItem mode_items[] = {
     {PAINT_MASK_INVERT, "INVERT", 0, "Invert", "Invert the mask"},
     {0}};
 
-static void mask_flood_fill_set_elem(float *elem, PaintMaskFloodMode mode, float value)
+static float mask_flood_fill_get_new_value_for_elem(const float elem,
+                                                    PaintMaskFloodMode mode,
+                                                    float value)
 {
   switch (mode) {
     case PAINT_MASK_FLOOD_VALUE:
-      (*elem) = value;
-      break;
+      return value;
     case PAINT_MASK_FLOOD_VALUE_INVERSE:
-      (*elem) = 1.0f - value;
-      break;
+      return 1.0f - value;
     case PAINT_MASK_INVERT:
-      (*elem) = 1.0f - (*elem);
-      break;
+      return 1.0f - elem;
   }
+  BLI_assert_unreachable();
+  return 0.0f;
 }
 
 static int mask_flood_fill_exec(bContext *C, wmOperator *op)
@@ -106,6 +109,7 @@ static int mask_flood_fill_exec(bContext *C, wmOperator *op)
   const bool multires = (BKE_pbvh_type(pbvh) == PBVH_GRIDS);
 
   Vector<PBVHNode *> nodes = blender::bke::pbvh::search_gather(pbvh, {});
+  const SculptMaskWriteInfo mask_write = SCULPT_mask_get_for_write(ob->sculpt);
 
   SCULPT_undo_push_begin(ob, op);
 
@@ -117,9 +121,10 @@ static int mask_flood_fill_exec(bContext *C, wmOperator *op)
       bool redraw = false;
       PBVHVertexIter vi;
       BKE_pbvh_vertex_iter_begin (pbvh, node, vi, PBVH_ITER_UNIQUE) {
-        float prevmask = *vi.mask;
-        mask_flood_fill_set_elem(vi.mask, mode, value);
-        if (prevmask != *vi.mask) {
+        float prevmask = vi.mask;
+        const float new_mask = mask_flood_fill_get_new_value_for_elem(prevmask, mode, value);
+        if (prevmask != new_mask) {
+          SCULPT_mask_vert_set(BKE_pbvh_type(ob->sculpt->pbvh), mask_write, new_mask, vi);
           redraw = true;
         }
       }
@@ -138,7 +143,7 @@ static int mask_flood_fill_exec(bContext *C, wmOperator *op)
     multires_mark_as_modified(depsgraph, ob, MULTIRES_COORDS_MODIFIED);
   }
 
-  BKE_pbvh_update_vertex_data(pbvh, PBVH_UpdateMask);
+  BKE_pbvh_update_mask(pbvh);
 
   SCULPT_undo_push_end(ob);
 
@@ -288,7 +293,7 @@ static void sculpt_gesture_context_init_common(bContext *C,
                                                SculptGestureContext *sgcontext)
 {
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  ED_view3d_viewcontext_init(C, &sgcontext->vc, depsgraph);
+  sgcontext->vc = ED_view3d_viewcontext_init(C, depsgraph);
   Object *ob = sgcontext->vc.obact;
 
   /* Operator properties. */
@@ -623,11 +628,10 @@ static bool sculpt_gesture_is_effected_lasso(SculptGestureContext *sgcontext, co
   return BLI_BITMAP_TEST_BOOL(lasso->mask_px, scr_co_s[1] * lasso->width + scr_co_s[0]);
 }
 
-static bool sculpt_gesture_is_vertex_effected(SculptGestureContext *sgcontext, PBVHVertRef vertex)
+static bool sculpt_gesture_is_effected(SculptGestureContext *sgcontext,
+                                       const float3 &co,
+                                       const float3 &vertex_normal)
 {
-  float vertex_normal[3];
-  const float *co = SCULPT_vertex_co_get(sgcontext->ss, vertex);
-  SCULPT_vertex_normal_get(sgcontext->ss, vertex, vertex_normal);
   float dot = dot_v3v3(sgcontext->view_normal, vertex_normal);
   const bool is_effected_front_face = !(sgcontext->front_faces_only && dot < 0.0f);
 
@@ -648,17 +652,6 @@ static bool sculpt_gesture_is_vertex_effected(SculptGestureContext *sgcontext, P
       }
       return plane_point_side_v3(sgcontext->line.plane, co) > 0.0f;
   }
-  return false;
-}
-
-static bool sculpt_gesture_is_face_effected(SculptGestureContext *sgcontext, PBVHFaceIter *fd)
-{
-  for (int i = 0; i < fd->verts_num; i++) {
-    if (sculpt_gesture_is_vertex_effected(sgcontext, fd->verts[i])) {
-      return true;
-    }
-  }
-
   return false;
 }
 
@@ -702,23 +695,61 @@ static void sculpt_gesture_face_set_begin(bContext *C, SculptGestureContext *sgc
 
 static void face_set_gesture_apply_task(SculptGestureContext *sgcontext, PBVHNode *node)
 {
+  using namespace blender;
   SculptGestureFaceSetOperation *face_set_operation = (SculptGestureFaceSetOperation *)
                                                           sgcontext->operation;
-  bool any_updated = false;
+  SculptSession &ss = *sgcontext->ss;
+  const PBVH &pbvh = *sgcontext->ss->pbvh;
 
   SCULPT_undo_push_node(sgcontext->vc.obact, node, SCULPT_UNDO_FACE_SETS);
 
-  PBVHFaceIter fd;
-  BKE_pbvh_face_iter_begin (sgcontext->ss->pbvh, node, fd) {
-    if (sculpt_gesture_is_face_effected(sgcontext, &fd)) {
-      if (sgcontext->ss->hide_poly && sgcontext->ss->hide_poly[fd.face.i]) {
-        continue;
+  const int new_face_set = face_set_operation->new_face_set_id;
+
+  bool any_updated = false;
+  switch (BKE_pbvh_type(&pbvh)) {
+    case PBVH_GRIDS:
+    case PBVH_FACES: {
+      const Span<float3> positions = ss.vert_positions;
+      const OffsetIndices<int> faces = ss.faces;
+      const Span<int> corner_verts = ss.corner_verts;
+      const bool *hide_poly = ss.hide_poly;
+
+      const Vector<int> face_indices = BKE_pbvh_node_calc_face_indices(pbvh, *node);
+      for (const int face : face_indices) {
+        if (hide_poly && hide_poly[face]) {
+          continue;
+        }
+        const Span<int> face_verts = corner_verts.slice(faces[face]);
+        const float3 face_center = bke::mesh::face_center_calc(positions, face_verts);
+        const float3 face_normal = bke::mesh::face_normal_calc(positions, face_verts);
+        if (!sculpt_gesture_is_effected(sgcontext, face_center, face_normal)) {
+          continue;
+        }
+        ss.face_sets[face] = new_face_set;
+        any_updated = true;
       }
-      SCULPT_face_set_set(sgcontext->ss, fd.face, face_set_operation->new_face_set_id);
-      any_updated = true;
+      break;
+    }
+
+    case PBVH_BMESH: {
+      BMesh *bm = ss.bm;
+      const int offset = CustomData_get_offset_named(
+          &bm->pdata, CD_PROP_INT32, ".sculpt_face_set");
+      for (BMFace *face : BKE_pbvh_bmesh_node_faces(node)) {
+        if (BM_elem_flag_test(face, BM_ELEM_HIDDEN)) {
+          continue;
+        }
+        float3 center;
+        BM_face_calc_center_median(face, center);
+        if (!sculpt_gesture_is_effected(sgcontext, center, face->no)) {
+          continue;
+        }
+        BM_ELEM_CD_SET_INT(face, offset, new_face_set);
+        any_updated = true;
+      }
+      break;
     }
   }
-  BKE_pbvh_face_iter_end(fd);
 
   if (any_updated) {
     BKE_pbvh_node_mark_update_visibility(node);
@@ -776,7 +807,9 @@ static void sculpt_gesture_mask_begin(bContext *C, SculptGestureContext *sgconte
   BKE_sculpt_update_object_for_edit(depsgraph, sgcontext->vc.obact, false, true, false);
 }
 
-static void mask_gesture_apply_task(SculptGestureContext *sgcontext, PBVHNode *node)
+static void mask_gesture_apply_task(SculptGestureContext *sgcontext,
+                                    const SculptMaskWriteInfo mask_write,
+                                    PBVHNode *node)
 {
   SculptGestureMaskOperation *mask_operation = (SculptGestureMaskOperation *)sgcontext->operation;
   Object *ob = sgcontext->vc.obact;
@@ -788,8 +821,12 @@ static void mask_gesture_apply_task(SculptGestureContext *sgcontext, PBVHNode *n
   bool redraw = false;
 
   BKE_pbvh_vertex_iter_begin (sgcontext->ss->pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    if (sculpt_gesture_is_vertex_effected(sgcontext, vd.vertex)) {
-      float prevmask = vd.mask ? *vd.mask : 0.0f;
+    float vertex_normal[3];
+    const float *co = SCULPT_vertex_co_get(sgcontext->ss, vd.vertex);
+    SCULPT_vertex_normal_get(sgcontext->ss, vd.vertex, vertex_normal);
+
+    if (sculpt_gesture_is_effected(sgcontext, co, vertex_normal)) {
+      float prevmask = vd.mask;
       if (!any_masked) {
         any_masked = true;
 
@@ -799,8 +836,10 @@ static void mask_gesture_apply_task(SculptGestureContext *sgcontext, PBVHNode *n
           BKE_pbvh_node_mark_normals_update(node);
         }
       }
-      mask_flood_fill_set_elem(vd.mask, mask_operation->mode, mask_operation->value);
-      if (prevmask != *vd.mask) {
+      const float new_mask = mask_flood_fill_get_new_value_for_elem(
+          prevmask, mask_operation->mode, mask_operation->value);
+      if (prevmask != new_mask) {
+        SCULPT_mask_vert_set(BKE_pbvh_type(ob->sculpt->pbvh), mask_write, new_mask, vd);
         redraw = true;
       }
     }
@@ -816,9 +855,10 @@ static void sculpt_gesture_mask_apply_for_symmetry_pass(bContext * /*C*/,
                                                         SculptGestureContext *sgcontext)
 {
   using namespace blender;
+  const SculptMaskWriteInfo mask_write = SCULPT_mask_get_for_write(sgcontext->ss);
   threading::parallel_for(sgcontext->nodes.index_range(), 1, [&](const IndexRange range) {
     for (const int i : range) {
-      mask_gesture_apply_task(sgcontext, sgcontext->nodes[i]);
+      mask_gesture_apply_task(sgcontext, mask_write, sgcontext->nodes[i]);
     }
   });
 }
@@ -829,7 +869,7 @@ static void sculpt_gesture_mask_end(bContext *C, SculptGestureContext *sgcontext
   if (BKE_pbvh_type(sgcontext->ss->pbvh) == PBVH_GRIDS) {
     multires_mark_as_modified(depsgraph, sgcontext->vc.obact, MULTIRES_COORDS_MODIFIED);
   }
-  BKE_pbvh_update_vertex_data(sgcontext->ss->pbvh, PBVH_UpdateMask);
+  BKE_pbvh_update_mask(sgcontext->ss->pbvh);
 }
 
 static void sculpt_gesture_init_mask_properties(bContext *C,
@@ -1486,7 +1526,11 @@ static void project_line_gesture_apply_task(SculptGestureContext *sgcontext, PBV
   SCULPT_undo_push_node(sgcontext->vc.obact, node, SCULPT_UNDO_COORDS);
 
   BKE_pbvh_vertex_iter_begin (sgcontext->ss->pbvh, node, vd, PBVH_ITER_UNIQUE) {
-    if (!sculpt_gesture_is_vertex_effected(sgcontext, vd.vertex)) {
+    float vertex_normal[3];
+    const float *co = SCULPT_vertex_co_get(sgcontext->ss, vd.vertex);
+    SCULPT_vertex_normal_get(sgcontext->ss, vd.vertex, vertex_normal);
+
+    if (!sculpt_gesture_is_effected(sgcontext, co, vertex_normal)) {
       continue;
     }
 
@@ -1495,7 +1539,7 @@ static void project_line_gesture_apply_task(SculptGestureContext *sgcontext, PBV
 
     float disp[3];
     sub_v3_v3v3(disp, projected_pos, vd.co);
-    const float mask = vd.mask ? *vd.mask : 0.0f;
+    const float mask = vd.mask;
     mul_v3_fl(disp, 1.0f - mask);
     if (is_zero_v3(disp)) {
       continue;

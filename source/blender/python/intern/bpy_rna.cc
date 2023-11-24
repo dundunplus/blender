@@ -50,7 +50,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_global.h" /* evil G.* */
 #include "BKE_idprop.h"
 #include "BKE_idtype.h"
@@ -5248,13 +5248,15 @@ static bool foreach_attr_type(BPy_PropertyRNA *self,
                               /* Values to assign. */
                               RawPropertyType *r_raw_type,
                               int *r_attr_tot,
-                              bool *r_attr_signed)
+                              bool *r_attr_signed,
+                              bool *r_is_empty)
 {
   PropertyRNA *prop;
   bool attr_ok = true;
   *r_raw_type = PROP_RAW_UNSET;
   *r_attr_tot = 0;
   *r_attr_signed = false;
+  *r_is_empty = true;
 
   /* NOTE: this is fail with zero length lists, so don't let this get called in that case. */
   RNA_PROP_BEGIN (&self->ptr, itemptr, self->prop) {
@@ -5267,6 +5269,7 @@ static bool foreach_attr_type(BPy_PropertyRNA *self,
     else {
       attr_ok = false;
     }
+    *r_is_empty = false;
     break;
   }
   RNA_PROP_END;
@@ -5277,6 +5280,7 @@ static bool foreach_attr_type(BPy_PropertyRNA *self,
 /* pyrna_prop_collection_foreach_get/set both use this. */
 static int foreach_parse_args(BPy_PropertyRNA *self,
                               PyObject *args,
+                              const char *function_name,
 
                               /* Values to assign. */
                               const char **r_attr,
@@ -5287,9 +5291,6 @@ static int foreach_parse_args(BPy_PropertyRNA *self,
                               int *r_attr_tot,
                               bool *r_attr_signed)
 {
-  int array_tot;
-  int target_tot;
-
   *r_size = *r_attr_tot = 0;
   *r_attr_signed = false;
   *r_raw_type = PROP_RAW_UNSET;
@@ -5299,10 +5300,10 @@ static int foreach_parse_args(BPy_PropertyRNA *self,
   }
 
   if (!PySequence_Check(*r_seq) && PyObject_CheckBuffer(*r_seq)) {
-    PyErr_Format(
-        PyExc_TypeError,
-        "foreach_get/set expected second argument to be a sequence or buffer, not a %.200s",
-        Py_TYPE(*r_seq)->tp_name);
+    PyErr_Format(PyExc_TypeError,
+                 "%s(..) expected second argument to be a sequence or buffer, not a %.200s",
+                 function_name,
+                 Py_TYPE(*r_seq)->tp_name);
     return -1;
   }
 
@@ -5310,6 +5311,10 @@ static int foreach_parse_args(BPy_PropertyRNA *self,
   *r_tot = PySequence_Size(*r_seq);
 
   if (*r_tot > 0) {
+#if 0
+    /* Avoid a full collection count when all that's needed is to check it's empty. */
+    int array_tot;
+
     if (RNA_property_type(self->prop) == PROP_COLLECTION) {
       array_tot = RNA_property_collection_length(&self->ptr, self->prop);
     }
@@ -5318,42 +5323,63 @@ static int foreach_parse_args(BPy_PropertyRNA *self,
     }
     if (array_tot == 0) {
       PyErr_Format(PyExc_TypeError,
-                   "foreach_get(attr, sequence) sequence length mismatch given %d, needed 0",
+                   "%s(..) sequence length mismatch given %d, needed 0",
+                   function_name,
                    *r_tot);
       return -1;
     }
+#endif
 
-    if (!foreach_attr_type(self, *r_attr, r_raw_type, r_attr_tot, r_attr_signed)) {
+    bool is_empty = false; /* `array_tot == 0`. */
+    if (!foreach_attr_type(self, *r_attr, r_raw_type, r_attr_tot, r_attr_signed, &is_empty)) {
       PyErr_Format(PyExc_AttributeError,
-                   "foreach_get/set '%.200s.%200s[...]' elements have no attribute '%.200s'",
+                   "%s(..) '%.200s.%200s[...]' elements have no attribute '%.200s'",
+                   function_name,
                    RNA_struct_identifier(self->ptr.type),
                    RNA_property_identifier(self->prop),
                    *r_attr);
       return -1;
     }
+
+    if (is_empty) {
+      PyErr_Format(PyExc_TypeError,
+                   "%s(..) sequence length mismatch given %d, needed 0",
+                   function_name,
+                   *r_tot);
+      return -1;
+    }
+
     *r_size = RNA_raw_type_sizeof(*r_raw_type);
+
+#if 0
+    /* This size check does not work as the size check is based on the size of the
+     * first element and elements in the collection/array can have different sizes
+     * (i.e. for mixed quad/triangle meshes). See for example issue #111117. */
 
     if ((*r_attr_tot) < 1) {
       *r_attr_tot = 1;
     }
 
-    target_tot = array_tot * (*r_attr_tot);
+    const int target_tot = array_tot * (*r_attr_tot);
 
     /* rna_access.cc - rna_raw_access(...) uses this same method. */
     if (target_tot != (*r_tot)) {
       PyErr_Format(PyExc_TypeError,
-                   "foreach_get(attr, sequence) sequence length mismatch given %d, needed %d",
+                   "%s(..) sequence length mismatch given %d, needed %d",
+                   function_name,
                    *r_tot,
                    target_tot);
       return -1;
     }
+#endif
   }
 
   /* Check 'r_attr_tot' otherwise we don't know if any values were set.
    * This isn't ideal because it means running on an empty list may
    * fail silently when it's not compatible. */
   if (*r_size == 0 && *r_attr_tot != 0) {
-    PyErr_SetString(PyExc_AttributeError, "attribute does not support foreach method");
+    PyErr_Format(
+        PyExc_AttributeError, "%s(..): attribute does not support foreach method", function_name);
     return -1;
   }
   return 0;
@@ -5412,8 +5438,16 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
   bool attr_signed;
   RawPropertyType raw_type;
 
-  if (foreach_parse_args(
-          self, args, &attr, &seq, &tot, &size, &raw_type, &attr_tot, &attr_signed) == -1)
+  if (foreach_parse_args(self,
+                         args,
+                         set ? "foreach_set" : "foreach_get",
+                         &attr,
+                         &seq,
+                         &tot,
+                         &size,
+                         &raw_type,
+                         &attr_tot,
+                         &attr_signed) == -1)
   {
     return nullptr;
   }
@@ -5426,7 +5460,7 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
     buffer_is_compat = false;
     if (PyObject_CheckBuffer(seq)) {
       Py_buffer buf;
-      if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+      if (PyObject_GetBuffer(seq, &buf, PyBUF_ND | PyBUF_FORMAT) == -1) {
         /* Request failed. A `PyExc_BufferError` will have been raised,
          * so clear it to silently fall back to accessing as a sequence. */
         PyErr_Clear();
@@ -5487,7 +5521,7 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
     buffer_is_compat = false;
     if (PyObject_CheckBuffer(seq)) {
       Py_buffer buf;
-      if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+      if (PyObject_GetBuffer(seq, &buf, PyBUF_ND | PyBUF_FORMAT) == -1) {
         /* Request failed. A `PyExc_BufferError` will have been raised,
          * so clear it to silently fall back to accessing as a sequence. */
         PyErr_Clear();
@@ -5631,7 +5665,7 @@ static PyObject *pyprop_array_foreach_getset(BPy_PropertyArrayRNA *self,
   }
 
   Py_buffer buf;
-  if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+  if (PyObject_GetBuffer(seq, &buf, PyBUF_ND | PyBUF_FORMAT) == -1) {
     PyErr_Clear();
 
     switch (prop_type) {
@@ -6579,7 +6613,7 @@ static PyObject *pyrna_func_call(BPy_FunctionRNA *self, PyObject *args, PyObject
 #ifdef DEBUG_STRING_FREE
 #  if 0
   if (PyList_GET_SIZE(string_free_ls)) {
-    printf("%.200s.%.200s():  has %d strings\n",
+    printf("%.200s.%.200s(): has %d strings\n",
            RNA_struct_identifier(self_ptr->type),
            RNA_function_identifier(self_func),
            int(PyList_GET_SIZE(string_free_ls)));
@@ -8676,7 +8710,7 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
     else if (ret_len == 1) {
       err = pyrna_py_to_prop(&funcptr, pret_single, retdata_single, ret, "");
 
-      /* When calling operator functions only gives `Function.result` with  no line number
+      /* When calling operator functions only gives `Function.result` with no line number
        * since the function has finished calling on error, re-raise the exception with more
        * information since it would be slow to create prefix on every call
        * (when there are no errors). */
@@ -8758,7 +8792,8 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
       BKE_reports_init(&reports_temp, reports->flag | RPT_PRINT_HANDLED_BY_OWNER);
       reports_temp.storelevel = reports->storelevel;
       BPy_errors_to_report(&reports_temp);
-      BLI_movelisttolist(&reports->list, &reports_temp.list);
+      BKE_reports_move_to_reports(reports, &reports_temp);
+      BKE_reports_free(&reports_temp);
     }
 
     /* Also print in the console for Python. */
@@ -8972,11 +9007,12 @@ static PyObject *pyrna_register_class(PyObject * /*self*/, PyObject *py_class)
     if (!has_error) {
       BPy_reports_write_stdout(&reports, error_prefix);
     }
-    BKE_reports_clear(&reports);
     if (has_error) {
+      BKE_reports_free(&reports);
       return nullptr;
     }
   }
+  BKE_reports_free(&reports);
 
   /* Python errors validating are not converted into reports so the check above will fail.
    * the cause for returning nullptr will be printed as an error */
@@ -9055,8 +9091,15 @@ PyDoc_STRVAR(pyrna_unregister_class_doc,
              "\n"
              "   Unload the Python class from blender.\n"
              "\n"
-             "   If the class has an *unregister* class method it will be called\n"
-             "   before unregistering.\n");
+             "   :arg cls: Blender type class, \n"
+             "      see :mod:`bpy.utils.register_class` for classes which can \n"
+             "      be registered.\n"
+             "   :type cls: class\n"
+             "\n"
+             "   .. note::\n"
+             "\n"
+             "      If the class has an *unregister* class method it will be called\n"
+             "      before unregistering.\n");
 PyMethodDef meth_bpy_unregister_class = {
     "unregister_class",
     pyrna_unregister_class,

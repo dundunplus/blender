@@ -11,6 +11,7 @@
 #include <functional>
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_math_vector_types.hh"
 #include "BLI_rect.h"
 #include "BLI_vector.hh"
 
@@ -69,7 +70,14 @@ enum {
   UI_SELECT = (1 << 0),
   /** Temporarily hidden (scrolled out of the view). */
   UI_SCROLLED = (1 << 1),
-  UI_ACTIVE = (1 << 2),
+  /**
+   * The button is hovered by the mouse and should be drawn with a hover highlight. Also set
+   * sometimes to highlight buttons without actually hovering it (e.g. for arrow navigation in
+   * menus). UI handling code manages this mostly and usually does this together with making the
+   * button active/focused (see #uiBut::active). This means events will be forwarded to it and
+   * further handlers/shortcuts can be used while hovering it.
+   */
+  UI_HOVER = (1 << 2),
   UI_HAS_ICON = (1 << 3),
   UI_HIDDEN = (1 << 4),
   /** Display selected, doesn't impact interaction. */
@@ -173,6 +181,8 @@ struct uiBut {
   char *str = nullptr;
   char strdata[UI_MAX_NAME_STR] = "";
   char drawstr[UI_MAX_DRAW_STR] = "";
+
+  char *placeholder = nullptr;
 
   rctf rect = {}; /* block relative coords */
 
@@ -280,7 +290,10 @@ struct uiBut {
   const ImBuf *imb = nullptr;
   float imb_scale = 0;
 
-  /** Active button data (set when the user is hovering or interacting with a button). */
+  /**
+   * Active button data, set when the user is hovering or interacting with a button (#UI_HOVER and
+   * #UI_SELECT state mostly).
+   */
   uiHandleButtonData *active = nullptr;
 
   /** Custom button data (borrowed, not owned). */
@@ -663,6 +676,10 @@ void ui_region_to_window(const ARegion *region, int *x, int *y);
  */
 void ui_region_winrct_get_no_margin(const ARegion *region, rcti *r_rect);
 
+/** Register a listener callback to this block to tag the area/region for redraw. */
+void ui_block_add_dynamic_listener(uiBlock *block,
+                                   void (*listener_func)(const wmRegionListenerParams *params));
+
 /**
  * Reallocate the button (new address is returned) for a new button type.
  * This should generally be avoided and instead the correct type be created right away.
@@ -736,6 +753,11 @@ void ui_but_active_string_clear_and_exit(bContext *C, uiBut *but) ATTR_NONNULL()
  */
 void ui_but_set_string_interactive(bContext *C, uiBut *but, const char *value);
 uiBut *ui_but_drag_multi_edit_get(uiBut *but);
+
+/**
+ * Get the hint that describes the expected value when empty.
+ */
+const char *ui_but_placeholder_get(uiBut *but);
 
 void ui_def_but_icon(uiBut *but, int icon, int flag);
 /**
@@ -1015,6 +1037,16 @@ void ui_draw_dropshadow(const rctf *rct, float radius, float aspect, float alpha
  */
 void ui_draw_gradient(const rcti *rect, const float hsv[3], eButGradientType type, float alpha);
 
+/**
+ * Draws rounded corner segments but inverted. Imagine each corner like a filled right triangle,
+ * just that the hypotenuse is nicely curved inwards (towards the right angle of the triangle).
+ *
+ * Useful for connecting orthogonal shapes with a rounded corner, which can look quite nice.
+ */
+void ui_draw_rounded_corners_inverted(const rcti &rect,
+                                      const float rad,
+                                      const blender::float4 color);
+
 /* based on UI_draw_roundbox_gl_mode,
  * check on making a version which allows us to skip some sides */
 void ui_draw_but_TAB_outline(const rcti *rect,
@@ -1120,7 +1152,7 @@ uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old);
 
 #ifdef WITH_INPUT_IME
 void ui_but_ime_reposition(uiBut *but, int x, int y, bool complete);
-wmIMEData *ui_but_ime_data_get(uiBut *but);
+const wmIMEData *ui_but_ime_data_get(uiBut *but);
 #endif
 
 /* interface_widgets.cc */
@@ -1193,7 +1225,7 @@ enum uiMenuItemSeparatorType {
  * Helper call to draw a menu item without a button.
  *
  * \param but_flag: Button flags (#uiBut.flag) indicating the state of the item, typically
- *                  #UI_ACTIVE, #UI_BUT_DISABLED, #UI_BUT_INACTIVE.
+ *                  #UI_HOVER, #UI_BUT_DISABLED, #UI_BUT_INACTIVE.
  * \param separator_type: The kind of separator which controls if and how the string is clipped.
  * \param r_xmax: The right hand position of the text, this takes into the icon, padding and text
  *                clipping when there is not enough room to display the full text.

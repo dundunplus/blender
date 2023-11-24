@@ -29,7 +29,7 @@
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 #include "BLI_session_uuid.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -38,8 +38,8 @@
 #include "BKE_anim_data.h"
 #include "BKE_anim_visualization.h"
 #include "BKE_animsys.h"
-#include "BKE_armature.h"
-#include "BKE_asset.h"
+#include "BKE_armature.hh"
+#include "BKE_asset.hh"
 #include "BKE_constraint.h"
 #include "BKE_deform.h"
 #include "BKE_fcurve.h"
@@ -48,7 +48,8 @@
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_main.h"
-#include "BKE_object.h"
+#include "BKE_object.hh"
+#include "BKE_object_types.hh"
 #include "BKE_preview_image.hh"
 
 #include "DEG_depsgraph.hh"
@@ -250,7 +251,7 @@ static IDProperty *action_asset_type_property(const bAction *action)
   return property;
 }
 
-static void action_asset_pre_save(void *asset_ptr, AssetMetaData *asset_data)
+static void action_asset_metadata_ensure(void *asset_ptr, AssetMetaData *asset_data)
 {
   bAction *action = (bAction *)asset_ptr;
   BLI_assert(GS(action->id.name) == ID_AC);
@@ -260,7 +261,8 @@ static void action_asset_pre_save(void *asset_ptr, AssetMetaData *asset_data)
 }
 
 static AssetTypeInfo AssetType_AC = {
-    /*pre_save_fn*/ action_asset_pre_save,
+    /*pre_save_fn*/ action_asset_metadata_ensure,
+    /*on_mark_asset_fn*/ action_asset_metadata_ensure,
 };
 
 IDTypeInfo IDType_ID_AC = {
@@ -1048,6 +1050,7 @@ void BKE_pose_channel_free_bbone_cache(bPoseChannel_Runtime *runtime)
   MEM_SAFE_FREE(runtime->bbone_pose_mats);
   MEM_SAFE_FREE(runtime->bbone_deform_mats);
   MEM_SAFE_FREE(runtime->bbone_dual_quats);
+  MEM_SAFE_FREE(runtime->bbone_segment_boundaries);
 }
 
 void BKE_pose_channel_free(bPoseChannel *pchan)
@@ -1443,17 +1446,12 @@ void BKE_action_frame_range_calc(const bAction *act,
   }
 
   if (foundvert || foundmod) {
-    /* ensure that action is at least 1 frame long (for NLA strips to have a valid length) */
-    if (min == max) {
-      max += 1.0f;
-    }
-
     *r_start = max_ff(min, MINAFRAMEF);
     *r_end = min_ff(max, MAXFRAMEF);
   }
   else {
     *r_start = 0.0f;
-    *r_end = 1.0f;
+    *r_end = 0.0f;
   }
 }
 
@@ -1467,10 +1465,7 @@ void BKE_action_frame_range_get(const bAction *act, float *r_start, float *r_end
     BKE_action_frame_range_calc(act, false, r_start, r_end);
   }
 
-  /* Ensure that action is at least 1 frame long (for NLA strips to have a valid length). */
-  if (*r_start >= *r_end) {
-    *r_end = *r_start + 1.0f;
-  }
+  BLI_assert(*r_start <= *r_end);
 }
 
 bool BKE_action_is_cyclic(const bAction *act)
@@ -1714,7 +1709,9 @@ void what_does_obaction(Object *ob,
   bActionGroup *agrp = BKE_action_group_find_name(act, groupname);
 
   /* clear workob */
+  blender::bke::ObjectRuntime workob_runtime;
   BKE_object_workob_clear(workob);
+  workob->runtime = &workob_runtime;
 
   /* init workob */
   copy_m4_m4(workob->object_to_world, ob->object_to_world);

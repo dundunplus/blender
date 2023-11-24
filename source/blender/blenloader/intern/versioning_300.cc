@@ -15,13 +15,14 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
+#include "BLI_math_base_safe.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 #include "BLI_multi_value_map.hh"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
-#include "BLI_string_utils.h"
+#include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
 /* Define macros in `DNA_genfile.h`. */
@@ -55,12 +56,12 @@
 #include "BKE_action.h"
 #include "BKE_anim_data.h"
 #include "BKE_animsys.h"
-#include "BKE_armature.h"
-#include "BKE_asset.h"
+#include "BKE_armature.hh"
+#include "BKE_asset.hh"
 #include "BKE_attribute.h"
 #include "BKE_collection.h"
 #include "BKE_colortools.h"
-#include "BKE_curve.h"
+#include "BKE_curve.hh"
 #include "BKE_curves.hh"
 #include "BKE_data_transfer.h"
 #include "BKE_deform.h"
@@ -73,10 +74,10 @@
 #include "BKE_main.h"
 #include "BKE_main_namemap.h"
 #include "BKE_mesh.hh"
-#include "BKE_modifier.h"
+#include "BKE_modifier.hh"
 #include "BKE_nla.h"
 #include "BKE_node.hh"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 #include "BKE_workspace.h"
 
 #include "RNA_access.hh"
@@ -87,12 +88,14 @@
 
 #include "readfile.hh"
 
-#include "SEQ_channels.h"
-#include "SEQ_effects.h"
-#include "SEQ_iterator.h"
-#include "SEQ_retiming.h"
-#include "SEQ_sequencer.h"
-#include "SEQ_time.h"
+#include "SEQ_channels.hh"
+#include "SEQ_effects.hh"
+#include "SEQ_iterator.hh"
+#include "SEQ_retiming.hh"
+#include "SEQ_sequencer.hh"
+#include "SEQ_time.hh"
+
+#include "NOD_socket.hh"
 
 #include "versioning_common.hh"
 
@@ -122,12 +125,12 @@ static void version_idproperty_move_data_int(IDPropertyUIDataInt *ui_data,
   IDProperty *soft_min = IDP_GetPropertyFromGroup(prop_ui_data, "soft_min");
   if (soft_min != nullptr) {
     ui_data->soft_min = IDP_coerce_to_int_or_zero(soft_min);
-    ui_data->soft_min = MIN2(ui_data->soft_min, ui_data->min);
+    ui_data->soft_min = std::min(ui_data->soft_min, ui_data->min);
   }
   IDProperty *soft_max = IDP_GetPropertyFromGroup(prop_ui_data, "soft_max");
   if (soft_max != nullptr) {
     ui_data->soft_max = IDP_coerce_to_int_or_zero(soft_max);
-    ui_data->soft_max = MAX2(ui_data->soft_max, ui_data->max);
+    ui_data->soft_max = std::max(ui_data->soft_max, ui_data->max);
   }
   IDProperty *step = IDP_GetPropertyFromGroup(prop_ui_data, "step");
   if (step != nullptr) {
@@ -163,12 +166,12 @@ static void version_idproperty_move_data_float(IDPropertyUIDataFloat *ui_data,
   IDProperty *soft_min = IDP_GetPropertyFromGroup(prop_ui_data, "soft_min");
   if (soft_min != nullptr) {
     ui_data->soft_min = IDP_coerce_to_double_or_zero(soft_min);
-    ui_data->soft_min = MAX2(ui_data->soft_min, ui_data->min);
+    ui_data->soft_min = std::max(ui_data->soft_min, ui_data->min);
   }
   IDProperty *soft_max = IDP_GetPropertyFromGroup(prop_ui_data, "soft_max");
   if (soft_max != nullptr) {
     ui_data->soft_max = IDP_coerce_to_double_or_zero(soft_max);
-    ui_data->soft_max = MIN2(ui_data->soft_max, ui_data->max);
+    ui_data->soft_max = std::min(ui_data->soft_max, ui_data->max);
   }
   IDProperty *step = IDP_GetPropertyFromGroup(prop_ui_data, "step");
   if (step != nullptr) {
@@ -680,10 +683,10 @@ static bool do_versions_sequencer_init_retiming_tool_data(Sequence *seq, void *u
 
   const int content_length = SEQ_time_strip_length_get(scene, seq);
 
-  SEQ_retiming_data_ensure(scene, seq);
+  SEQ_retiming_data_ensure(seq);
 
-  SeqRetimingHandle *handle = &seq->retiming_handles[seq->retiming_handle_num - 1];
-  handle->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);
+  SeqRetimingKey *key = &seq->retiming_keys[seq->retiming_keys_num - 1];
+  key->strip_frame_index = round_fl_to_int(content_length / seq->speed_factor);
   seq->speed_factor = 1.0f;
 
   return true;
@@ -711,11 +714,11 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
         sample_nearest_surface->locy = node->locy;
         static auto socket_remap = []() {
           Map<std::string, std::string> map;
-          map.add_new("Attribute", "Value_Vector");
-          map.add_new("Attribute_001", "Value_Float");
-          map.add_new("Attribute_002", "Value_Color");
-          map.add_new("Attribute_003", "Value_Bool");
-          map.add_new("Attribute_004", "Value_Int");
+          map.add_new("Attribute", "Value");
+          map.add_new("Attribute_001", "Value");
+          map.add_new("Attribute_002", "Value");
+          map.add_new("Attribute_003", "Value");
+          map.add_new("Attribute_004", "Value");
           map.add_new("Source", "Mesh");
           map.add_new("Source Position", "Sample Position");
           return map;
@@ -768,11 +771,11 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
 
         static auto sample_index_remap = []() {
           Map<std::string, std::string> map;
-          map.add_new("Attribute", "Value_Vector");
-          map.add_new("Attribute_001", "Value_Float");
-          map.add_new("Attribute_002", "Value_Color");
-          map.add_new("Attribute_003", "Value_Bool");
-          map.add_new("Attribute_004", "Value_Int");
+          map.add_new("Attribute", "Value");
+          map.add_new("Attribute_001", "Value");
+          map.add_new("Attribute_002", "Value");
+          map.add_new("Attribute_003", "Value");
+          map.add_new("Attribute_004", "Value");
           map.add_new("Source Position", "Sample Position");
           return map;
         }();
@@ -798,11 +801,11 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
         const bool index_was_linked = nodeFindSocket(node, SOCK_IN, "Index")->link != nullptr;
         static auto socket_remap = []() {
           Map<std::string, std::string> map;
-          map.add_new("Attribute", "Value_Vector");
-          map.add_new("Attribute_001", "Value_Float");
-          map.add_new("Attribute_002", "Value_Color");
-          map.add_new("Attribute_003", "Value_Bool");
-          map.add_new("Attribute_004", "Value_Int");
+          map.add_new("Attribute", "Value");
+          map.add_new("Attribute_001", "Value");
+          map.add_new("Attribute_002", "Value");
+          map.add_new("Attribute_003", "Value");
+          map.add_new("Attribute_004", "Value");
           map.add_new("Source", "Geometry");
           map.add_new("Index", "Index");
           return map;
@@ -880,16 +883,13 @@ static void version_geometry_nodes_primitive_uv_maps(bNodeTree &ntree)
      * releases and would make the file crash when trying to open it. */
     storage.data_type = CD_PROP_FLOAT3;
 
+    blender::nodes::update_node_declaration_and_sockets(ntree, *store_attribute_node);
+
     bNodeSocket *store_attribute_geometry_input = static_cast<bNodeSocket *>(
         store_attribute_node->inputs.first);
     bNodeSocket *store_attribute_name_input = store_attribute_geometry_input->next->next;
-    bNodeSocket *store_attribute_value_input = nullptr;
-    LISTBASE_FOREACH (bNodeSocket *, socket, &store_attribute_node->inputs) {
-      if (socket->type == SOCK_VECTOR) {
-        store_attribute_value_input = socket;
-        break;
-      }
-    }
+    bNodeSocket *store_attribute_value_input = store_attribute_geometry_input->next->next->next;
+    BLI_assert(store_attribute_value_input->type == SOCK_VECTOR);
     bNodeSocket *store_attribute_geometry_output = static_cast<bNodeSocket *>(
         store_attribute_node->outputs.first);
     LISTBASE_FOREACH (bNodeLink *, link, &ntree.links) {
@@ -1016,7 +1016,7 @@ static void version_geometry_nodes_extrude_smooth_propagation(bNodeTree &ntree)
                 is_smooth_node,
                 nodeFindSocket(is_smooth_node, SOCK_OUT, "Smooth"),
                 capture_node,
-                nodeFindSocket(capture_node, SOCK_IN, "Value_003"));
+                nodeFindSocket(capture_node, SOCK_IN, "Value"));
     nodeAddLink(&ntree,
                 capture_node,
                 nodeFindSocket(capture_node, SOCK_OUT, "Geometry"),
@@ -1043,7 +1043,7 @@ static void version_geometry_nodes_extrude_smooth_propagation(bNodeTree &ntree)
     }
     nodeAddLink(&ntree,
                 capture_node,
-                nodeFindSocket(capture_node, SOCK_OUT, "Attribute_003"),
+                nodeFindSocket(capture_node, SOCK_OUT, "Attribute"),
                 set_smooth_node,
                 nodeFindSocket(set_smooth_node, SOCK_IN, "Shade Smooth"));
   }
@@ -1548,13 +1548,13 @@ static bool seq_meta_channels_ensure(Sequence *seq, void * /*user_data*/)
 static void do_version_subsurface_methods(bNode *node)
 {
   if (node->type == SH_NODE_SUBSURFACE_SCATTERING) {
-    if (!ELEM(node->custom1, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
-      node->custom1 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
+    if (!ELEM(node->custom1, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK_SKIN)) {
+      node->custom1 = SHD_SUBSURFACE_RANDOM_WALK;
     }
   }
   else if (node->type == SH_NODE_BSDF_PRINCIPLED) {
-    if (!ELEM(node->custom2, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
-      node->custom2 = SHD_SUBSURFACE_RANDOM_WALK_FIXED_RADIUS;
+    if (!ELEM(node->custom2, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK_SKIN)) {
+      node->custom2 = SHD_SUBSURFACE_RANDOM_WALK;
     }
   }
 }
@@ -2476,14 +2476,15 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
     }
     FOREACH_NODETREE_END;
 
-    if (!DNA_struct_member_exists(fd->filesdna, "FileAssetSelectParams", "short", "import_type")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "FileAssetSelectParams", "short", "import_method"))
+    {
       LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
         LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
           LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
             if (sl->spacetype == SPACE_FILE) {
               SpaceFile *sfile = (SpaceFile *)sl;
               if (sfile->asset_params) {
-                sfile->asset_params->import_type = FILE_ASSET_IMPORT_APPEND;
+                sfile->asset_params->import_method = FILE_ASSET_IMPORT_APPEND;
               }
             }
           }
@@ -3035,9 +3036,9 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
                                          FILE_PARAMS_FLAG_UNUSED_3 | FILE_PATH_TOKENS_ALLOW);
               }
 
-              /* New default import type: Append with reuse. */
+              /* New default import method: Append with reuse. */
               if (sfile->asset_params) {
-                sfile->asset_params->import_type = FILE_ASSET_IMPORT_APPEND_REUSE;
+                sfile->asset_params->import_method = FILE_ASSET_IMPORT_APPEND_REUSE;
               }
               break;
             }
@@ -3866,7 +3867,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 302, 14)) {
     /* Compensate for previously wrong squared distance. */
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-      scene->r.bake.max_ray_distance = sasqrt(scene->r.bake.max_ray_distance);
+      scene->r.bake.max_ray_distance = safe_sqrtf(scene->r.bake.max_ray_distance);
     }
   }
 
@@ -4324,8 +4325,8 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
 
           /* When an asset browser uses the default import method, make it follow the new
            * preference setting. This means no effective default behavior change. */
-          if (sfile->asset_params->import_type == FILE_ASSET_IMPORT_APPEND_REUSE) {
-            sfile->asset_params->import_type = FILE_ASSET_IMPORT_FOLLOW_PREFS;
+          if (sfile->asset_params->import_method == FILE_ASSET_IMPORT_APPEND_REUSE) {
+            sfile->asset_params->import_method = FILE_ASSET_IMPORT_FOLLOW_PREFS;
           }
         }
       }
@@ -4517,7 +4518,8 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 306, 10)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       /* Set default values for new members. */
-      scene->toolsettings->snap_mode_tools = SCE_SNAP_TO_GEOM;
+      short snap_mode_geom = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 4) | (1 << 5);
+      scene->toolsettings->snap_mode_tools = snap_mode_geom;
       scene->toolsettings->plane_axis = 2;
     }
   }

@@ -548,9 +548,12 @@ typedef enum eGPUTextureUsage {
   /* When used, the texture will not have any backing storage and can solely exist as a virtual
    * frame-buffer attachment. */
   GPU_TEXTURE_USAGE_MEMORYLESS = (1 << 5),
+  /* Whether a texture can support atomic operations. */
+  GPU_TEXTURE_USAGE_ATOMIC = (1 << 6),
   /* Create a texture whose usage cannot be defined prematurely.
    * This is unoptimized and should not be used. */
-  GPU_TEXTURE_USAGE_GENERAL = (0xFF & (~GPU_TEXTURE_USAGE_MEMORYLESS)),
+  GPU_TEXTURE_USAGE_GENERAL = (0xFF &
+                               (~(GPU_TEXTURE_USAGE_MEMORYLESS | GPU_TEXTURE_USAGE_ATOMIC))),
 } eGPUTextureUsage;
 
 ENUM_OPERATORS(eGPUTextureUsage, GPU_TEXTURE_USAGE_GENERAL);
@@ -776,7 +779,7 @@ void GPU_texture_update_mipmap(GPUTexture *texture,
 
 /**
  * Fills the whole texture with the same data for all pixels.
- * \warning Only work for 2D texture for now.
+ * \warning Only works for 2D and 3D textures.
  * \warning Only clears the MIP 0 of the texture.
  * \param data_format: data format of the pixel data.
  * \note The format is float for UNORM textures.
@@ -986,6 +989,21 @@ bool GPU_texture_has_stencil_format(const GPUTexture *texture);
  * Return true if the texture format is an integer type (non-normalized integers).
  */
 bool GPU_texture_has_integer_format(const GPUTexture *texture);
+
+/**
+ * Return true if the texture format is a float type.
+ */
+bool GPU_texture_has_float_format(const GPUTexture *tex);
+
+/**
+ * Return true if the texture format is an integer normalized type.
+ */
+bool GPU_texture_has_normalized_format(const GPUTexture *tex);
+
+/**
+ * Return true if the texture format is a signed type.
+ */
+bool GPU_texture_has_signed_format(const GPUTexture *tex);
 
 /**
  * Returns the pixel dimensions of a texture's mip-map level.

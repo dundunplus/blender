@@ -208,6 +208,9 @@ enum class BuiltinBits {
    */
   VIEWPORT_INDEX = (1 << 17),
 
+  /* Texture atomics requires usage options to alter compilation flag. */
+  TEXTURE_ATOMIC = (1 << 18),
+
   /* Not a builtin but a flag we use to tag shaders that use the debug features. */
   USE_DEBUG_DRAW = (1 << 29),
   USE_DEBUG_PRINT = (1 << 30),
@@ -802,6 +805,8 @@ struct ShaderCreateInfo {
 
   Self &push_constant(Type type, StringRefNull name, int array_size = 0)
   {
+    /* We don't have support for UINT push constants yet, use INT instead.*/
+    BLI_assert(type != Type::UINT);
     BLI_assert_msg(name.find("[") == -1,
                    "Array syntax is forbidden for push constants."
                    "Use the array_size parameter instead.");

@@ -14,12 +14,12 @@
 
 #include "BLI_blenlib.h"
 
-#include "BKE_context.h"
+#include "BKE_context.hh"
 #include "BKE_global.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
-#include "BKE_screen.h"
+#include "BKE_screen.hh"
 
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
@@ -206,7 +206,7 @@ static void text_operatortypes()
   WM_operatortype_append(TEXT_OT_replace_set_selected);
 
   WM_operatortype_append(TEXT_OT_start_find);
-  WM_operatortype_append(TEXT_OT_jump_to_file_at_point_internal);
+  WM_operatortype_append(TEXT_OT_jump_to_file_at_point);
 
   WM_operatortype_append(TEXT_OT_to_3d_object);
 
