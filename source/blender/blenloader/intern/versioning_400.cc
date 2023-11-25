@@ -15,6 +15,7 @@
 
 #include "BKE_main.h"
 #include "BKE_mesh_legacy_convert.h"
+#include "BKE_node.h"
 #include "BKE_tracking.h"
 
 #include "BLO_readfile.h"
@@ -92,6 +93,23 @@ static void version_movieclips_legacy_camera_object(Main *bmain)
   }
 }
 
+static void version_principled_bsdf_rename_sockets(bNodeTree *ntree)
+{
+  version_node_input_socket_name(ntree, SH_NODE_BSDF_PRINCIPLED, "Emission Color", "Emission");
+  version_node_input_socket_name(ntree, SH_NODE_BSDF_PRINCIPLED, "Specular IOR Level", "Specular");
+  version_node_input_socket_name(
+      ntree, SH_NODE_BSDF_PRINCIPLED, "Subsurface Weight", "Subsurface");
+  version_node_input_socket_name(
+      ntree, SH_NODE_BSDF_PRINCIPLED, "Transmission Weight", "Transmission");
+  version_node_input_socket_name(ntree, SH_NODE_BSDF_PRINCIPLED, "Coat Weight", "Coat");
+  version_node_input_socket_name(ntree, SH_NODE_BSDF_PRINCIPLED, "Sheen Weight", "Sheen");
+  version_node_input_socket_name(ntree, SH_NODE_BSDF_PRINCIPLED, "Coat", "Clearcoat");
+  version_node_input_socket_name(
+      ntree, SH_NODE_BSDF_PRINCIPLED, "Coat Roughness", "Clearcoat Roughness");
+  version_node_input_socket_name(
+      ntree, SH_NODE_BSDF_PRINCIPLED, "Coat Normal", "Clearcoat Normal");
+}
+
 void blo_do_versions_400(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
 {
   // if (!MAIN_VERSION_ATLEAST(bmain, 400, 0)) {
@@ -103,6 +121,35 @@ void blo_do_versions_400(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
   }
   version_movieclips_legacy_camera_object(bmain);
   // }
+
+  if (MAIN_VERSION_ATLEAST(bmain, 400, 0)) {
+    /* Forward compatibility with renamed sockets. */
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      if (ntree->type == NTREE_SHADER) {
+        version_principled_bsdf_rename_sockets(ntree);
+      }
+    }
+    FOREACH_NODETREE_END;
+
+    /* Forward compatibility with repurposed #RGN_FLAG_PREFSIZE_OR_HIDDEN (in 4.0:
+     * #RGN_FLAG_NO_USER_RESIZE), which is set for more regions now. */
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+                                                                 &sl->regionbase;
+          LISTBASE_FOREACH (ARegion *, region, regionbase) {
+            /* The Properties editor navigation region is the only one using the
+             * #RGN_FLAG_PREFSIZE_OR_HIDDEN flag in 3.6. Unset it for others. */
+            if (!((sl->spacetype == SPACE_PROPERTIES) && (region->regiontype == RGN_TYPE_NAV_BAR)))
+            {
+              region->flag &= ~RGN_FLAG_PREFSIZE_OR_HIDDEN;
+            }
+          }
+        }
+      }
+    }
+  }
 
   /**
    * Versioning code until next subversion bump goes here.

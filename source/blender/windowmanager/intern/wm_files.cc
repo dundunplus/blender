@@ -1035,6 +1035,9 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
       ListBase wmbase;
       wm_window_match_init(C, &wmbase);
 
+      /* Close any user-loaded fonts. */
+      BLF_reset_fonts();
+
       /* This flag is initialized by the operator but overwritten on read.
        * need to re-enable it here else drivers and registered scripts won't work. */
       const int G_f_orig = G.f;
@@ -2432,6 +2435,11 @@ static int wm_userpref_read_exec(bContext *C, wmOperator *op)
     U.runtime.is_dirty = true;
   }
 
+  /* Ensure the correct icon textures are loaded. When the current theme didn't had an
+   * #icon_border_intensity, but the loaded theme has, the icon with border intensity needs to be
+   * loaded. */
+  UI_icons_reload_internal_textures();
+
   /* Needed to recalculate UI scaling values (eg, #UserDef.inv_dpi_fac). */
   wm_window_clear_drawable(static_cast<wmWindowManager *>(bmain->wm.first));
 
@@ -2539,6 +2547,9 @@ static int wm_homefile_read_exec(bContext *C, wmOperator *op)
       use_userdef = true;
     }
   }
+
+  /* Close any user-loaded fonts. */
+  BLF_reset_fonts();
 
   char app_template_buf[sizeof(U.app_template)];
   const char *app_template;
@@ -2813,6 +2824,9 @@ static int wm_open_mainfile__open(bContext *C, wmOperator *op)
   RNA_string_get(op->ptr, "filepath", filepath);
   BLI_path_canonicalize_native(filepath, sizeof(filepath));
 
+  /* For file opening, also print in console for warnings, not only errors. */
+  BKE_report_print_level_set(op->reports, RPT_WARNING);
+
   /* re-use last loaded setting so we can reload a file without changing */
   wm_open_init_load_ui(op, false);
   wm_open_init_use_scripts(op, false);
@@ -2820,9 +2834,6 @@ static int wm_open_mainfile__open(bContext *C, wmOperator *op)
   SET_FLAG_FROM_TEST(G.fileflags, !RNA_boolean_get(op->ptr, "load_ui"), G_FILE_NO_UI);
   SET_FLAG_FROM_TEST(G.f, RNA_boolean_get(op->ptr, "use_scripts"), G_FLAG_SCRIPT_AUTOEXEC);
   success = wm_file_read_opwrap(C, filepath, op->reports);
-
-  /* for file open also popup for warnings, not only errors */
-  BKE_report_print_level_set(op->reports, RPT_WARNING);
 
   if (success) {
     if (G.fileflags & G_FILE_NO_UI) {
