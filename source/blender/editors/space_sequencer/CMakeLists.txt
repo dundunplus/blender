@@ -7,10 +7,8 @@ set(INC
   ../../blenkernel
   ../../blenloader
   ../../blentranslation
-  ../../depsgraph
   ../../draw
   ../../gpu
-  ../../imbuf
   ../../makesrna
   ../../sequencer
   ../../windowmanager
@@ -34,6 +32,7 @@ set(SRC
   sequencer_preview.cc
   sequencer_preview_draw.cc
   sequencer_proxy.cc
+  sequencer_quads_batch.cc
   sequencer_retiming.cc
   sequencer_retiming_draw.cc
   sequencer_scopes.cc
@@ -44,14 +43,17 @@ set(SRC
   space_sequencer.cc
 
   sequencer_intern.hh
+  sequencer_quads_batch.hh
 )
 
 set(LIB
   PRIVATE bf::blenfont
   PRIVATE bf::blenlib
+  PRIVATE bf::depsgraph
   PRIVATE bf::dna
   bf_editor_interface
   bf_editor_util
+  PRIVATE bf::imbuf
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::guardedalloc
 )

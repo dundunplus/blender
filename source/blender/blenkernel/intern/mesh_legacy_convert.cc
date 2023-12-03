@@ -35,7 +35,7 @@
 #include "BKE_customdata.hh"
 #include "BKE_global.h"
 #include "BKE_idprop.hh"
-#include "BKE_main.h"
+#include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_modifier.hh"
@@ -2271,6 +2271,8 @@ void BKE_main_mesh_legacy_convert_auto_smooth(Main &bmain)
     STRNCPY(md->modifier.name, DATA_("Auto Smooth"));
     BKE_modifier_unique_name(&object->modifiers, &md->modifier);
     md->node_group = auto_smooth_node_tree;
+    mesh->flag &= ~ME_AUTOSMOOTH_LEGACY;
+
     if (!BLI_listbase_is_empty(&object->modifiers) &&
         static_cast<ModifierData *>(object->modifiers.last)->type == eModifierType_Subsurf)
     {
