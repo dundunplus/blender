@@ -1654,8 +1654,10 @@ static void sculpt_update_persistent_base(Object *ob)
       ob, ATTR_DOMAIN_POINT, CD_PROP_FLOAT, SCULPT_ATTRIBUTE_NAME(persistent_disp));
 }
 
-static void sculpt_update_object(
-    Depsgraph *depsgraph, Object *ob, Object *ob_eval, bool /*need_pmap*/, bool is_paint_tool)
+static void sculpt_update_object(Depsgraph *depsgraph,
+                                 Object *ob,
+                                 Object *ob_eval,
+                                 bool is_paint_tool)
 {
   Scene *scene = DEG_get_input_scene(depsgraph);
   Sculpt *sd = scene->toolsettings->sculpt;
@@ -1744,7 +1746,7 @@ static void sculpt_update_object(
   ss->hide_poly = (bool *)CustomData_get_layer_named_for_write(
       &me->face_data, CD_PROP_BOOL, ".hide_poly", me->faces_num);
 
-  ss->subdiv_ccg = me_eval->runtime->subdiv_ccg;
+  ss->subdiv_ccg = me_eval->runtime->subdiv_ccg.get();
 
   PBVH *pbvh = BKE_sculpt_object_pbvh_ensure(depsgraph, ob);
   BLI_assert(pbvh == ss->pbvh);
@@ -1898,7 +1900,7 @@ void BKE_sculpt_update_object_after_eval(Depsgraph *depsgraph, Object *ob_eval)
    * other data when modifiers change the mesh. */
   Object *ob_orig = DEG_get_original_object(ob_eval);
 
-  sculpt_update_object(depsgraph, ob_orig, ob_eval, false, false);
+  sculpt_update_object(depsgraph, ob_orig, ob_eval, false);
 }
 
 void BKE_sculpt_color_layer_create_if_needed(Object *object)
@@ -1929,14 +1931,13 @@ void BKE_sculpt_color_layer_create_if_needed(Object *object)
   }
 }
 
-void BKE_sculpt_update_object_for_edit(
-    Depsgraph *depsgraph, Object *ob_orig, bool need_pmap, bool /*need_mask*/, bool is_paint_tool)
+void BKE_sculpt_update_object_for_edit(Depsgraph *depsgraph, Object *ob_orig, bool is_paint_tool)
 {
   BLI_assert(ob_orig == DEG_get_original_object(ob_orig));
 
   Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob_orig);
 
-  sculpt_update_object(depsgraph, ob_orig, ob_eval, need_pmap, is_paint_tool);
+  sculpt_update_object(depsgraph, ob_orig, ob_eval, is_paint_tool);
 }
 
 int *BKE_sculpt_face_sets_ensure(Object *ob)
@@ -2045,8 +2046,8 @@ void BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
         for (const int corner : face) {
           GridPaintMask *gpm = &gmask[corner];
           const int vert = corner_verts[corner];
-          const int prev = corner_verts[mesh::face_corner_prev(face, vert)];
-          const int next = corner_verts[mesh::face_corner_next(face, vert)];
+          const int prev = corner_verts[mesh::face_corner_prev(face, corner)];
+          const int next = corner_verts[mesh::face_corner_next(face, corner)];
 
           gpm->data[0] = avg;
           gpm->data[1] = (mask_span[vert] + mask_span[next]) * 0.5f;
@@ -2156,8 +2157,6 @@ void BKE_sculpt_sync_face_visibility_to_grids(Mesh *mesh, SubdivCCG *subdiv_ccg)
   const OffsetIndices<int> faces = mesh->faces();
 
   const VArraySpan<bool> hide_poly_span(hide_poly);
-  CCGKey key;
-  BKE_subdiv_ccg_key_top_level(key, *subdiv_ccg);
   BitGroupVector<> &grid_hidden = BKE_subdiv_ccg_grid_hidden_ensure(*subdiv_ccg);
   threading::parallel_for(faces.index_range(), 1024, [&](const IndexRange range) {
     for (const int i : range) {
@@ -2200,8 +2199,7 @@ static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform)
 
 static PBVH *build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg)
 {
-  CCGKey key;
-  BKE_subdiv_ccg_key_top_level(key, *subdiv_ccg);
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(*subdiv_ccg);
   PBVH *pbvh = BKE_pbvh_new(PBVH_GRIDS);
 
   Mesh *base_mesh = BKE_mesh_from_object(ob);
@@ -2230,8 +2228,7 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
       case PBVH_GRIDS: {
         Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
         Mesh *mesh_eval = static_cast<Mesh *>(object_eval->data);
-        SubdivCCG *subdiv_ccg = mesh_eval->runtime->subdiv_ccg;
-        if (subdiv_ccg != nullptr) {
+        if (SubdivCCG *subdiv_ccg = mesh_eval->runtime->subdiv_ccg.get()) {
           BKE_sculpt_bvh_update_from_ccg(pbvh, subdiv_ccg);
         }
         break;
@@ -2257,7 +2254,7 @@ PBVH *BKE_sculpt_object_pbvh_ensure(Depsgraph *depsgraph, Object *ob)
     Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
     Mesh *mesh_eval = static_cast<Mesh *>(object_eval->data);
     if (mesh_eval->runtime->subdiv_ccg != nullptr) {
-      pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime->subdiv_ccg);
+      pbvh = build_pbvh_from_ccg(ob, mesh_eval->runtime->subdiv_ccg.get());
     }
     else if (ob->type == OB_MESH) {
       Mesh *me_eval_deform = object_eval->runtime->mesh_deform_eval;
@@ -2287,8 +2284,7 @@ bool BKE_object_sculpt_use_dyntopo(const Object *object)
 
 void BKE_sculpt_bvh_update_from_ccg(PBVH *pbvh, SubdivCCG *subdiv_ccg)
 {
-  CCGKey key;
-  BKE_subdiv_ccg_key_top_level(key, *subdiv_ccg);
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(*subdiv_ccg);
   BKE_pbvh_grids_update(pbvh, &key);
 }
 

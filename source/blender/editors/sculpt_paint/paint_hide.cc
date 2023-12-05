@@ -142,14 +142,11 @@ static void vert_hide_update(Object &object,
       if (!vert_hide_is_changed(verts, hide_vert.span, new_hide)) {
         continue;
       }
-
       SCULPT_undo_push_node(&object, node, SCULPT_UNDO_HIDDEN);
-
-      /* Don't tag a visibility update, we handle updating the fully hidden status here. */
-      BKE_pbvh_node_mark_rebuild_draw(node);
-      BKE_pbvh_node_fully_hidden_set(node, !new_hide.contains(false));
-
       array_utils::scatter(new_hide.as_span(), verts, hide_vert.span);
+
+      BKE_pbvh_node_mark_update_visibility(node);
+      bke::pbvh::node_update_visibility_mesh(hide_vert.span, *node);
     }
   });
   hide_vert.finish();
@@ -257,25 +254,32 @@ static void grid_hide_update(Depsgraph &depsgraph,
   bool any_changed = false;
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     for (PBVHNode *node : nodes.slice(range)) {
-      bool changed = false;
-      bool any_visible = false;
-      for (const int grid : BKE_pbvh_node_get_grid_indices(*node)) {
-        MutableBoundedBitSpan gh = grid_hidden[grid];
-        const BitVector<1024> old_hide(gh);
-        calc_hide(grid, gh);
-        changed |= !bits::spans_equal(old_hide, gh);
-        any_visible |= bits::any_bit_unset(gh);
+      const Span<int> grids = BKE_pbvh_node_get_grid_indices(*node);
+      BitGroupVector<> new_hide(grids.size(), grid_hidden.group_size());
+      for (const int i : grids.index_range()) {
+        new_hide[i].copy_from(grid_hidden[grids[i]].as_span());
       }
-      if (!changed) {
+
+      for (const int i : grids.index_range()) {
+        calc_hide(grids[i], new_hide[i]);
+      }
+
+      if (std::all_of(grids.index_range().begin(), grids.index_range().end(), [&](const int i) {
+            return bits::spans_equal(grid_hidden[grids[i]], new_hide[i]);
+          }))
+      {
         continue;
       }
-      any_changed = true;
 
+      any_changed = true;
       SCULPT_undo_push_node(&object, node, SCULPT_UNDO_HIDDEN);
 
-      /* Don't tag a visibility update, we handle updating the fully hidden status here. */
-      BKE_pbvh_node_mark_rebuild_draw(node);
-      BKE_pbvh_node_fully_hidden_set(node, !any_visible);
+      for (const int i : grids.index_range()) {
+        grid_hidden[grids[i]].copy_from(new_hide[i].as_span());
+      }
+
+      BKE_pbvh_node_mark_update_visibility(node);
+      bke::pbvh::node_update_visibility_grids(grid_hidden, *node);
     }
   });
 

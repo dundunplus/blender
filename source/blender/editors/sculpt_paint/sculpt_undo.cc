@@ -397,7 +397,7 @@ static bool sculpt_undo_restore_coords(bContext *C, Depsgraph *depsgraph, Sculpt
       if (kb) {
         ob->shapenr = BLI_findindex(&key->block, kb) + 1;
 
-        BKE_sculpt_update_object_for_edit(depsgraph, ob, false, false, false);
+        BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
         WM_event_add_notifier(C, NC_OBJECT | ND_DATA, ob);
       }
       else {
@@ -464,8 +464,7 @@ static bool sculpt_undo_restore_coords(bContext *C, Depsgraph *depsgraph, Sculpt
   }
   else if (!unode->grids.is_empty() && subdiv_ccg != nullptr) {
     const int gridsize = subdiv_ccg->grid_size;
-    CCGKey key;
-    BKE_subdiv_ccg_key_top_level(key, *subdiv_ccg);
+    const CCGKey key = BKE_subdiv_ccg_key_top_level(*subdiv_ccg);
     const Span<int> grid_indices = unode->grids;
 
     blender::MutableSpan<blender::float3> co = unode->co;
@@ -518,11 +517,15 @@ static bool sculpt_undo_restore_hidden(bContext *C, SculptUndoNode *unode, bool 
     blender::BitGroupVector<> &grid_hidden = BKE_subdiv_ccg_grid_hidden_ensure(*subdiv_ccg);
     const Span<int> grids = unode->grids;
     for (const int i : grids.index_range()) {
-      const int grid_index = grids[i];
       /* Swap the two bit spans. */
-      blender::BitVector<512> tmp(grid_hidden[grid_index]);
-      grid_hidden[grid_index].copy_from(unode->grid_hidden[i].as_span());
-      unode->grid_hidden[i].copy_from(tmp);
+      MutableBoundedBitSpan a = unode->grid_hidden[i];
+      MutableBoundedBitSpan b = grid_hidden[grids[i]];
+      for (const int j : a.index_range()) {
+        const bool value_a = a[j];
+        const bool value_b = b[j];
+        a[j].set(value_b);
+        b[j].set(value_a);
+      }
     }
   }
 
@@ -592,11 +595,8 @@ static bool sculpt_undo_restore_mask(bContext *C, SculptUndoNode *unode, bool *m
   }
   else if (!unode->grids.is_empty() && subdiv_ccg != nullptr) {
     const int gridsize = subdiv_ccg->grid_size;
-    CCGKey key;
-    BKE_subdiv_ccg_key_top_level(key, *subdiv_ccg);
+    const CCGKey key = BKE_subdiv_ccg_key_top_level(*subdiv_ccg);
     const Span<int> grid_indices = unode->grids;
-
-    BKE_subdiv_ccg_key_top_level(key, *subdiv_ccg);
 
     blender::MutableSpan<float> mask = unode->mask;
     MutableSpan<CCGElem *> grids = subdiv_ccg->grids;
@@ -868,7 +868,6 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
   SubdivCCG *subdiv_ccg = ss->subdiv_ccg;
   bool update = false, rebuild = false, update_mask = false, update_visibility = false;
   bool update_face_sets = false;
-  bool need_mask = false;
   bool need_refine_subdiv = false;
   bool clear_automask_cache = false;
 
@@ -880,14 +879,6 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
     /* Restore pivot. */
     copy_v3_v3(ss->pivot_pos, unode->pivot_pos);
     copy_v3_v3(ss->pivot_rot, unode->pivot_rot);
-    if (STREQ(unode->idname, ob->id.name)) {
-      if (unode->type == SCULPT_UNDO_MASK) {
-        /* Is possible that we can't do the mask undo (below)
-         * because of the vertex count. */
-        need_mask = true;
-        break;
-      }
-    }
   }
 
   if (clear_automask_cache) {
@@ -902,7 +893,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
      * ensure object is updated after the node is handled. */
     const SculptUndoNode *first_unode = (const SculptUndoNode *)lb->first;
     if (first_unode->type != SCULPT_UNDO_GEOMETRY) {
-      BKE_sculpt_update_object_for_edit(depsgraph, ob, false, need_mask, false);
+      BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
     }
 
     if (sculpt_undo_bmesh_restore(C, static_cast<SculptUndoNode *>(lb->first), ob, ss)) {
@@ -991,7 +982,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
       case SCULPT_UNDO_GEOMETRY:
         need_refine_subdiv = true;
         sculpt_undo_geometry_restore(unode, ob);
-        BKE_sculpt_update_object_for_edit(depsgraph, ob, false, need_mask, false);
+        BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
         break;
 
       case SCULPT_UNDO_DYNTOPO_BEGIN:
@@ -1173,6 +1164,7 @@ static size_t sculpt_undo_alloc_and_store_hidden(SculptSession *ss, SculptUndoNo
   }
 
   const Span<int> grid_indices = BKE_pbvh_node_get_grid_indices(*node);
+  unode->grid_hidden = blender::BitGroupVector<>(grid_indices.size(), grid_hidden.group_size());
   for (const int i : grid_indices.index_range()) {
     unode->grid_hidden[i].copy_from(grid_hidden[grid_indices[i]]);
   }

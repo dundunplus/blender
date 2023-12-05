@@ -338,11 +338,13 @@ static void versioning_replace_splitviewer(bNodeTree *ntree)
     STRNCPY(node->idname, "CompositorNodeSplit");
     node->type = CMP_NODE_SPLIT;
     MEM_freeN(node->storage);
+    node->storage = nullptr;
 
     bNode *viewer_node = nodeAddStaticNode(nullptr, ntree, CMP_NODE_VIEWER);
     /* Nodes are created stacked on top of each other, so separate them a bit. */
     viewer_node->locx = node->locx + node->width + viewer_node->width / 4.0f;
     viewer_node->locy = node->locy;
+    viewer_node->flag &= ~NODE_PREVIEW;
 
     bNodeSocket *split_out_socket = nodeAddStaticSocket(
         ntree, node, SOCK_OUT, SOCK_IMAGE, PROP_NONE, "Image", "Image");
@@ -2537,10 +2539,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
-    LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
-      blender::bke::mesh_sculpt_mask_to_generic(*mesh);
-    }
-
     if (!DNA_struct_member_exists(
             fd->filesdna, "RaytraceEEVEE", "float", "screen_trace_max_roughness"))
     {
@@ -2601,5 +2599,12 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
    */
   {
     /* Keep this block, even when empty. */
+  }
+
+  /* Always run this versioning; meshes are written with the legacy format which always needs to
+   * be converted to the new format on file load. Can be moved to a subversion check in a larger
+   * breaking release. */
+  LISTBASE_FOREACH (Mesh *, mesh, &bmain->meshes) {
+    blender::bke::mesh_sculpt_mask_to_generic(*mesh);
   }
 }
