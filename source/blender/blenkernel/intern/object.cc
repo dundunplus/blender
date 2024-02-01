@@ -79,7 +79,7 @@
 #include "BKE_crazyspace.hh"
 #include "BKE_curve.hh"
 #include "BKE_curves.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_displist.h"
 #include "BKE_duplilist.h"
 #include "BKE_editmesh.hh"
@@ -95,20 +95,20 @@
 #include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idprop.h"
-#include "BKE_idtype.h"
+#include "BKE_idtype.hh"
 #include "BKE_image.h"
-#include "BKE_key.h"
+#include "BKE_key.hh"
 #include "BKE_lattice.hh"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_lib_remap.hh"
 #include "BKE_light.h"
 #include "BKE_lightprobe.h"
 #include "BKE_linestyle.h"
 #include "BKE_main.hh"
 #include "BKE_material.h"
-#include "BKE_mball.h"
+#include "BKE_mball.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
@@ -119,7 +119,7 @@
 #include "BKE_paint.hh"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
-#include "BKE_pointcloud.h"
+#include "BKE_pointcloud.hh"
 #include "BKE_pose_backup.h"
 #include "BKE_preview_image.hh"
 #include "BKE_rigidbody.h"
@@ -135,7 +135,7 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
 
-#include "DRW_engine.h"
+#include "DRW_engine.hh"
 
 #include "BLO_read_write.hh"
 #include "BLO_readfile.h"
@@ -153,6 +153,7 @@ using blender::Bounds;
 using blender::float3;
 using blender::MutableSpan;
 using blender::Span;
+using blender::Vector;
 
 static CLG_LogRef LOG = {"bke.object"};
 
@@ -411,7 +412,8 @@ static void object_foreach_id(ID *id, LibraryForeachIDData *data)
     }
   }
 
-  BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, object->parent, IDWALK_CB_NEVER_SELF);
+  BKE_LIB_FOREACHID_PROCESS_IDSUPER(
+      data, object->parent, IDWALK_CB_NEVER_SELF | IDWALK_CB_OVERRIDE_LIBRARY_HIERARCHY_DEFAULT);
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, object->track, IDWALK_CB_NEVER_SELF);
 
   for (int i = 0; i < object->totcol; i++) {
@@ -526,7 +528,8 @@ static void object_foreach_path_pointcache(ListBase *ptcache_list,
                                            BPathForeachPathData *bpath_data)
 {
   for (PointCache *cache = (PointCache *)ptcache_list->first; cache != nullptr;
-       cache = cache->next) {
+       cache = cache->next)
+  {
     if (cache->flag & PTCACHE_DISK_CACHE) {
       BKE_bpath_foreach_path_fixed_process(bpath_data, cache->path, sizeof(cache->path));
     }
@@ -582,6 +585,22 @@ static void object_foreach_path(ID *id, BPathForeachPathData *bpath_data)
 
   LISTBASE_FOREACH (ParticleSystem *, psys, &ob->particlesystem) {
     object_foreach_path_pointcache(&psys->ptcaches, bpath_data);
+  }
+}
+
+static void object_foreach_cache(ID *id,
+                                 IDTypeForeachCacheFunctionCallback function_callback,
+                                 void *user_data)
+{
+  Object *ob = reinterpret_cast<Object *>(id);
+  LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
+    if (const ModifierTypeInfo *info = BKE_modifier_get_info(ModifierType(md->type))) {
+      if (info->foreach_cache) {
+        info->foreach_cache(ob, md, [&](const IDCacheKey &cache_key, void **cache_p, uint flags) {
+          function_callback(id, &cache_key, cache_p, flags, user_data);
+        });
+      }
+    }
   }
 }
 
@@ -913,12 +932,12 @@ static void object_blend_read_after_liblink(BlendLibReader *reader, ID *id)
     if (ob->id.lib) {
       BLO_reportf_wrap(reports,
                        RPT_INFO,
-                       TIP_("Can't find object data of %s lib %s"),
+                       RPT_("Can't find object data of %s lib %s"),
                        ob->id.name + 2,
                        ob->id.lib->filepath);
     }
     else {
-      BLO_reportf_wrap(reports, RPT_INFO, TIP_("Object %s lost data"), ob->id.name + 2);
+      BLO_reportf_wrap(reports, RPT_INFO, RPT_("Object %s lost data"), ob->id.name + 2);
     }
     reports->count.missing_obdata++;
   }
@@ -1067,7 +1086,7 @@ IDTypeInfo IDType_ID_OB = {
     /*free_data*/ object_free_data,
     /*make_local*/ nullptr,
     /*foreach_id*/ object_foreach_id,
-    /*foreach_cache*/ nullptr,
+    /*foreach_cache*/ object_foreach_cache,
     /*foreach_path*/ object_foreach_path,
     /*owner_pointer_get*/ nullptr,
 
@@ -1491,10 +1510,10 @@ static void copy_ccg_data(Mesh *mesh_destination,
                           Mesh *mesh_source,
                           const eCustomDataType layer_type)
 {
-  BLI_assert(mesh_destination->totloop == mesh_source->totloop);
-  CustomData *data_destination = &mesh_destination->loop_data;
-  CustomData *data_source = &mesh_source->loop_data;
-  const int num_elements = mesh_source->totloop;
+  BLI_assert(mesh_destination->corners_num == mesh_source->corners_num);
+  CustomData *data_destination = &mesh_destination->corner_data;
+  CustomData *data_source = &mesh_source->corner_data;
+  const int num_elements = mesh_source->corners_num;
   if (!CustomData_has_layer(data_source, layer_type)) {
     return;
   }
@@ -1834,9 +1853,9 @@ char *BKE_object_data_editmode_flush_ptr_get(ID *id)
 bool BKE_object_is_in_wpaint_select_vert(const Object *ob)
 {
   if (ob->type == OB_MESH) {
-    Mesh *me = (Mesh *)ob->data;
-    return ((ob->mode & OB_MODE_WEIGHT_PAINT) && (me->edit_mesh == nullptr) &&
-            (ME_EDIT_PAINT_SEL_MODE(me) == SCE_SELECT_VERTEX));
+    Mesh *mesh = (Mesh *)ob->data;
+    return ((ob->mode & OB_MODE_WEIGHT_PAINT) && (mesh->edit_mesh == nullptr) &&
+            (ME_EDIT_PAINT_SEL_MODE(mesh) == SCE_SELECT_VERTEX));
   }
 
   return false;
@@ -2425,55 +2444,47 @@ Object *BKE_object_pose_armature_get_visible(Object *ob,
   return nullptr;
 }
 
-Object **BKE_object_pose_array_get_ex(
-    const Scene *scene, ViewLayer *view_layer, View3D *v3d, uint *r_objects_len, bool unique)
+Vector<Object *> BKE_object_pose_array_get_ex(const Scene *scene,
+                                              ViewLayer *view_layer,
+                                              View3D *v3d,
+                                              bool unique)
 {
   BKE_view_layer_synced_ensure(scene, view_layer);
   Object *ob_active = BKE_view_layer_active_object_get(view_layer);
   Object *ob_pose = BKE_object_pose_armature_get(ob_active);
-  Object **objects = nullptr;
   if (ob_pose == ob_active) {
     ObjectsInModeParams ob_params{};
     ob_params.object_mode = OB_MODE_POSE;
     ob_params.no_dup_data = unique;
 
-    objects = BKE_view_layer_array_from_objects_in_mode_params(
-        scene, view_layer, v3d, r_objects_len, &ob_params);
+    return BKE_view_layer_array_from_objects_in_mode_params(scene, view_layer, v3d, &ob_params);
   }
-  else if (ob_pose != nullptr) {
-    *r_objects_len = 1;
-    objects = (Object **)MEM_mallocN(sizeof(*objects), __func__);
-    objects[0] = ob_pose;
+  if (ob_pose != nullptr) {
+    return {ob_pose};
   }
-  else {
-    *r_objects_len = 0;
-    objects = (Object **)MEM_mallocN(0, __func__);
-  }
-  return objects;
+
+  return {};
 }
-Object **BKE_object_pose_array_get_unique(const Scene *scene,
-                                          ViewLayer *view_layer,
-                                          View3D *v3d,
-                                          uint *r_objects_len)
+Vector<Object *> BKE_object_pose_array_get_unique(const Scene *scene,
+                                                  ViewLayer *view_layer,
+                                                  View3D *v3d)
 {
-  return BKE_object_pose_array_get_ex(scene, view_layer, v3d, r_objects_len, true);
+  return BKE_object_pose_array_get_ex(scene, view_layer, v3d, true);
 }
-Object **BKE_object_pose_array_get(const Scene *scene,
-                                   ViewLayer *view_layer,
-                                   View3D *v3d,
-                                   uint *r_objects_len)
+Vector<Object *> BKE_object_pose_array_get(const Scene *scene, ViewLayer *view_layer, View3D *v3d)
 {
-  return BKE_object_pose_array_get_ex(scene, view_layer, v3d, r_objects_len, false);
+  return BKE_object_pose_array_get_ex(scene, view_layer, v3d, false);
 }
 
-Base **BKE_object_pose_base_array_get_ex(
-    const Scene *scene, ViewLayer *view_layer, View3D *v3d, uint *r_bases_len, bool unique)
+blender::Vector<Base *> BKE_object_pose_base_array_get_ex(const Scene *scene,
+                                                          ViewLayer *view_layer,
+                                                          View3D *v3d,
+                                                          bool unique)
 {
   BKE_view_layer_synced_ensure(scene, view_layer);
   Base *base_active = BKE_view_layer_active_base_get(view_layer);
   Object *ob_pose = base_active ? BKE_object_pose_armature_get(base_active->object) : nullptr;
   Base *base_pose = nullptr;
-  Base **bases = nullptr;
 
   if (base_active) {
     if (ob_pose == base_active->object) {
@@ -2489,33 +2500,25 @@ Base **BKE_object_pose_base_array_get_ex(
     ob_params.object_mode = OB_MODE_POSE;
     ob_params.no_dup_data = unique;
 
-    bases = BKE_view_layer_array_from_bases_in_mode_params(
-        scene, view_layer, v3d, r_bases_len, &ob_params);
+    return BKE_view_layer_array_from_bases_in_mode_params(scene, view_layer, v3d, &ob_params);
   }
-  else if (base_pose != nullptr) {
-    *r_bases_len = 1;
-    bases = (Base **)MEM_mallocN(sizeof(*bases), __func__);
-    bases[0] = base_pose;
+  if (base_pose != nullptr) {
+    return {base_pose};
   }
-  else {
-    *r_bases_len = 0;
-    bases = (Base **)MEM_mallocN(0, __func__);
-  }
-  return bases;
+
+  return {};
 }
-Base **BKE_object_pose_base_array_get_unique(const Scene *scene,
-                                             ViewLayer *view_layer,
-                                             View3D *v3d,
-                                             uint *r_bases_len)
+Vector<Base *> BKE_object_pose_base_array_get_unique(const Scene *scene,
+                                                     ViewLayer *view_layer,
+                                                     View3D *v3d)
 {
-  return BKE_object_pose_base_array_get_ex(scene, view_layer, v3d, r_bases_len, true);
+  return BKE_object_pose_base_array_get_ex(scene, view_layer, v3d, true);
 }
-Base **BKE_object_pose_base_array_get(const Scene *scene,
-                                      ViewLayer *view_layer,
-                                      View3D *v3d,
-                                      uint *r_bases_len)
+Vector<Base *> BKE_object_pose_base_array_get(const Scene *scene,
+                                              ViewLayer *view_layer,
+                                              View3D *v3d)
 {
-  return BKE_object_pose_base_array_get_ex(scene, view_layer, v3d, r_bases_len, false);
+  return BKE_object_pose_base_array_get_ex(scene, view_layer, v3d, false);
 }
 
 void BKE_object_transform_copy(Object *ob_tar, const Object *ob_src)
@@ -3080,15 +3083,15 @@ static void give_parvert(Object *par, int nr, float vec[3])
   zero_v3(vec);
 
   if (par->type == OB_MESH) {
-    Mesh *me = (Mesh *)par->data;
-    BMEditMesh *em = me->edit_mesh;
+    Mesh *mesh = (Mesh *)par->data;
+    BMEditMesh *em = mesh->edit_mesh;
     Mesh *me_eval = (em) ? BKE_object_get_editmesh_eval_final(par) :
                            BKE_object_get_evaluated_mesh(par);
 
     if (me_eval) {
       const Span<float3> positions = me_eval->vert_positions();
       int count = 0;
-      int numVerts = me_eval->totvert;
+      int numVerts = me_eval->verts_num;
 
       if (em && me_eval->runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH) {
         numVerts = em->bm->totvert;
@@ -3106,7 +3109,8 @@ static void give_parvert(Object *par, int nr, float vec[3])
         }
         if (nr < numVerts) {
           if (me_eval && me_eval->runtime->edit_data &&
-              !me_eval->runtime->edit_data->vertexCos.is_empty()) {
+              !me_eval->runtime->edit_data->vertexCos.is_empty())
+          {
             add_v3_v3(vec, me_eval->runtime->edit_data->vertexCos[nr]);
           }
           else {
@@ -3141,7 +3145,7 @@ static void give_parvert(Object *par, int nr, float vec[3])
       }
       else {
         /* use first index if its out of range */
-        if (me_eval->totvert) {
+        if (me_eval->verts_num) {
           copy_v3_v3(vec, positions[0]);
         }
       }
@@ -3514,13 +3518,6 @@ void BKE_object_apply_parent_inverse(Object *ob)
 /** \name Object Bounding Box API
  * \{ */
 
-BoundBox *BKE_boundbox_alloc_unit()
-{
-  BoundBox *bb = MEM_cnew<BoundBox>(__func__);
-  BKE_boundbox_init_from_minmax(bb, float3(-1), float3(1));
-  return bb;
-}
-
 void BKE_boundbox_init_from_minmax(BoundBox *bb, const float min[3], const float max[3])
 {
   bb->vec[0][0] = bb->vec[1][0] = bb->vec[2][0] = bb->vec[3][0] = min[0];
@@ -3531,20 +3528,6 @@ void BKE_boundbox_init_from_minmax(BoundBox *bb, const float min[3], const float
 
   bb->vec[0][2] = bb->vec[3][2] = bb->vec[4][2] = bb->vec[7][2] = min[2];
   bb->vec[1][2] = bb->vec[2][2] = bb->vec[5][2] = bb->vec[6][2] = max[2];
-}
-
-void BKE_boundbox_calc_center_aabb(const BoundBox *bb, float r_cent[3])
-{
-  r_cent[0] = 0.5f * (bb->vec[0][0] + bb->vec[4][0]);
-  r_cent[1] = 0.5f * (bb->vec[0][1] + bb->vec[2][1]);
-  r_cent[2] = 0.5f * (bb->vec[0][2] + bb->vec[1][2]);
-}
-
-void BKE_boundbox_calc_size_aabb(const BoundBox *bb, float r_size[3])
-{
-  r_size[0] = 0.5f * fabsf(bb->vec[0][0] - bb->vec[4][0]);
-  r_size[1] = 0.5f * fabsf(bb->vec[0][1] - bb->vec[2][1]);
-  r_size[2] = 0.5f * fabsf(bb->vec[0][2] - bb->vec[1][2]);
 }
 
 void BKE_boundbox_minmax(const BoundBox *bb,
@@ -3676,8 +3659,10 @@ void BKE_object_minmax(Object *ob, float r_min[3], float r_max[3])
 {
   using namespace blender;
   if (const std::optional<Bounds<float3>> bounds = BKE_object_boundbox_get(ob)) {
-    copy_v3_v3(r_min, math::transform_point(float4x4(ob->object_to_world), bounds->min));
-    copy_v3_v3(r_max, math::transform_point(float4x4(ob->object_to_world), bounds->max));
+    minmax_v3v3_v3(
+        r_min, r_max, math::transform_point(float4x4(ob->object_to_world), bounds->min));
+    minmax_v3v3_v3(
+        r_min, r_max, math::transform_point(float4x4(ob->object_to_world), bounds->max));
     return;
   }
   float3 size = ob->scale;
@@ -4351,13 +4336,13 @@ void BKE_object_delete_ptcache(Object *ob, int index)
 /** Mesh */
 static KeyBlock *insert_meshkey(Main *bmain, Object *ob, const char *name, const bool from_mix)
 {
-  Mesh *me = (Mesh *)ob->data;
-  Key *key = me->key;
+  Mesh *mesh = (Mesh *)ob->data;
+  Key *key = mesh->key;
   KeyBlock *kb;
   int newkey = 0;
 
   if (key == nullptr) {
-    key = me->key = BKE_key_add(bmain, (ID *)me);
+    key = mesh->key = BKE_key_add(bmain, (ID *)mesh);
     key->type = KEY_RELATIVE;
     newkey = 1;
   }
@@ -4365,7 +4350,7 @@ static KeyBlock *insert_meshkey(Main *bmain, Object *ob, const char *name, const
   if (newkey || from_mix == false) {
     /* create from mesh */
     kb = BKE_keyblock_add_ctime(key, name, false);
-    BKE_keyblock_convert_from_mesh(me, key, kb);
+    BKE_keyblock_convert_from_mesh(mesh, key, kb);
   }
   else {
     /* copy from current values */
@@ -4549,7 +4534,7 @@ bool BKE_object_shapekey_remove(Main *bmain, Object *ob, KeyBlock *kb)
           Mesh *mesh = (Mesh *)ob->data;
           MutableSpan<float3> positions = mesh->vert_positions_for_write();
           BKE_keyblock_convert_to_mesh(
-              key->refkey, reinterpret_cast<float(*)[3]>(positions.data()), mesh->totvert);
+              key->refkey, reinterpret_cast<float(*)[3]>(positions.data()), mesh->verts_num);
           break;
         }
         case OB_CURVES_LEGACY:
@@ -4644,7 +4629,8 @@ int BKE_object_is_modified(Scene *scene, Object *ob)
          md = md->next)
     {
       if ((flag & eModifierMode_Render) == 0 &&
-          BKE_modifier_is_enabled(scene, md, eModifierMode_Render)) {
+          BKE_modifier_is_enabled(scene, md, eModifierMode_Render))
+      {
         flag |= eModifierMode_Render;
       }
 
@@ -4790,12 +4776,14 @@ int BKE_object_is_deform_modified(Scene *scene, Object *ob)
 
     if (can_deform) {
       if (!(flag & eModifierMode_Render) &&
-          BKE_modifier_is_enabled(scene, md, eModifierMode_Render)) {
+          BKE_modifier_is_enabled(scene, md, eModifierMode_Render))
+      {
         flag |= eModifierMode_Render;
       }
 
       if (!(flag & eModifierMode_Realtime) &&
-          BKE_modifier_is_enabled(scene, md, eModifierMode_Realtime)) {
+          BKE_modifier_is_enabled(scene, md, eModifierMode_Realtime))
+      {
         flag |= eModifierMode_Realtime;
       }
     }
@@ -5045,7 +5033,7 @@ KDTree_3d *BKE_object_as_kdtree(Object *ob, int *r_tot)
 
   switch (ob->type) {
     case OB_MESH: {
-      Mesh *me = (Mesh *)ob->data;
+      Mesh *mesh = (Mesh *)ob->data;
       uint i;
 
       Mesh *me_eval = ob->runtime->mesh_deform_eval ? ob->runtime->mesh_deform_eval :
@@ -5053,8 +5041,9 @@ KDTree_3d *BKE_object_as_kdtree(Object *ob, int *r_tot)
       const int *index;
 
       if (me_eval &&
-          (index = (const int *)CustomData_get_layer(&me_eval->vert_data, CD_ORIGINDEX))) {
-        const Span<float3> positions = me->vert_positions();
+          (index = (const int *)CustomData_get_layer(&me_eval->vert_data, CD_ORIGINDEX)))
+      {
+        const Span<float3> positions = mesh->vert_positions();
 
         /* Tree over-allocates in case where some verts have #ORIGINDEX_NONE. */
         tot = 0;
@@ -5071,7 +5060,7 @@ KDTree_3d *BKE_object_as_kdtree(Object *ob, int *r_tot)
         }
       }
       else {
-        const Span<float3> positions = me->vert_positions();
+        const Span<float3> positions = mesh->vert_positions();
 
         tot = positions.size();
         tree = BLI_kdtree_3d_new(tot);
@@ -5332,10 +5321,10 @@ void BKE_object_to_curve_clear(Object *object)
   object->runtime->object_as_temp_curve = nullptr;
 }
 
-void BKE_object_check_uuids_unique_and_report(const Object *object)
+void BKE_object_check_uids_unique_and_report(const Object *object)
 {
-  BKE_pose_check_uuids_unique_and_report(object->pose);
-  BKE_modifier_check_uuids_unique_and_report(object);
+  BKE_pose_check_uids_unique_and_report(object->pose);
+  BKE_modifier_check_uids_unique_and_report(object);
 }
 
 SubsurfModifierData *BKE_object_get_last_subsurf_modifier(const Object *ob)

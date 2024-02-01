@@ -281,11 +281,12 @@ class GREASE_PENCIL_MT_layer_active(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         obd = context.active_object.data
-        if not obd.layers:
-            return
 
         nlop = layout.operator("grease_pencil.layer_add", text="New Layer", icon='ADD')
         nlop.new_layer_name = "Layer"
+
+        if not obd.layers:
+            return
 
         layout.separator()
 
@@ -883,9 +884,9 @@ class GreasePencilLayerDisplayPanel:
 
 
 class GreasePencilFlipTintColors(Operator):
+    """Switch tint colors"""
     bl_label = "Flip Colors"
     bl_idname = "gpencil.tint_flip"
-    bl_description = "Switch tint colors"
 
     @classmethod
     def poll(cls, context):

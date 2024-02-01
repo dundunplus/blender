@@ -32,8 +32,8 @@
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_image.h"
-#include "BKE_layer.h"
-#include "BKE_lib_id.h"
+#include "BKE_layer.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mask.h"
 #include "BKE_movieclip.h"
@@ -43,10 +43,10 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
-#include "IMB_metadata.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
+#include "IMB_metadata.hh"
 
 #include "RNA_access.hh"
 #include "RNA_prototypes.h"
@@ -238,6 +238,7 @@ void SEQ_render_new_render_data(Main *bmain,
   r_context->is_proxy_render = false;
   r_context->view_id = 0;
   r_context->gpu_offscreen = nullptr;
+  r_context->gpu_viewport = nullptr;
   r_context->task_id = SEQ_TASK_MAIN_RENDER;
   r_context->is_prefetch_render = false;
 }
@@ -464,14 +465,8 @@ static void sequencer_thumbnail_transform(ImBuf *in, ImBuf *out)
                        blender::float3{scale_x, scale_y, 1.0f});
   transform_pivot_set_m4(transform_matrix, pivot);
   invert_m4(transform_matrix);
-  const int num_subsamples = 1;
-  IMB_transform(in,
-                out,
-                IMB_TRANSFORM_MODE_REGULAR,
-                IMB_FILTER_NEAREST,
-                num_subsamples,
-                transform_matrix,
-                nullptr);
+  IMB_transform(
+      in, out, IMB_TRANSFORM_MODE_REGULAR, IMB_FILTER_NEAREST, transform_matrix, nullptr);
 }
 
 /* Check whether transform introduces transparent ares in the result (happens when the transformed
@@ -535,30 +530,26 @@ static void sequencer_preprocess_transform_crop(
   sequencer_image_crop_init(seq, in, crop_scale_factor, &source_crop);
 
   const StripTransform *transform = seq->strip->transform;
-  eIMBInterpolationFilterMode filter;
-  int num_subsamples = 1;
+  eIMBInterpolationFilterMode filter = IMB_FILTER_NEAREST;
   switch (transform->filter) {
     case SEQ_TRANSFORM_FILTER_NEAREST:
       filter = IMB_FILTER_NEAREST;
-      num_subsamples = 1;
       break;
     case SEQ_TRANSFORM_FILTER_BILINEAR:
       filter = IMB_FILTER_BILINEAR;
-      num_subsamples = 1;
       break;
-    case SEQ_TRANSFORM_FILTER_NEAREST_3x3:
-      filter = IMB_FILTER_NEAREST;
-      num_subsamples = 3;
+    case SEQ_TRANSFORM_FILTER_CUBIC_BSPLINE:
+      filter = IMB_FILTER_CUBIC_BSPLINE;
+      break;
+    case SEQ_TRANSFORM_FILTER_CUBIC_MITCHELL:
+      filter = IMB_FILTER_CUBIC_MITCHELL;
+      break;
+    case SEQ_TRANSFORM_FILTER_BOX:
+      filter = IMB_FILTER_BOX;
       break;
   }
 
-  IMB_transform(in,
-                out,
-                IMB_TRANSFORM_MODE_CROP_SRC,
-                filter,
-                num_subsamples,
-                transform_matrix,
-                &source_crop);
+  IMB_transform(in, out, IMB_TRANSFORM_MODE_CROP_SRC, filter, transform_matrix, &source_crop);
 
   if (!seq_image_transform_transparency_gained(context, seq)) {
     out->planes = in->planes;
@@ -697,7 +688,8 @@ static ImBuf *seq_render_preprocess_ibuf(const SeqRenderData *context,
                                          const bool is_proxy_image)
 {
   if (context->is_proxy_render == false &&
-      (ibuf->x != context->rectx || ibuf->y != context->recty)) {
+      (ibuf->x != context->rectx || ibuf->y != context->recty))
+  {
     use_preprocess = true;
   }
 
@@ -1534,6 +1526,7 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context,
         scene->r.alphamode,
         viewname,
         context->gpu_offscreen,
+        context->gpu_viewport,
         err_out);
     if (ibuf == nullptr) {
       fprintf(stderr, "seq_render_scene_strip failed to get opengl buffer: %s\n", err_out);
@@ -1594,11 +1587,14 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context,
         /* float buffers in the sequencer are not linear */
         seq_imbuf_to_sequencer_space(context->scene, ibufs_arr[view_id], false);
       }
-      else if (rres.ibuf->byte_buffer.data) {
+      else if (rres.ibuf && rres.ibuf->byte_buffer.data) {
         ibufs_arr[view_id] = IMB_allocImBuf(rres.rectx, rres.recty, 32, IB_rect);
         memcpy(ibufs_arr[view_id]->byte_buffer.data,
                rres.ibuf->byte_buffer.data,
                4 * rres.rectx * rres.recty);
+      }
+      else {
+        ibufs_arr[view_id] = IMB_allocImBuf(rres.rectx, rres.recty, 32, IB_rect);
       }
 
       if (view_id != context->view_id) {

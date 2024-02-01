@@ -5,10 +5,11 @@
 #include "BKE_bake_items.hh"
 #include "BKE_bake_items_serialize.hh"
 #include "BKE_curves.hh"
+#include "BKE_customdata.hh"
 #include "BKE_instances.hh"
-#include "BKE_lib_id.h"
+#include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
-#include "BKE_pointcloud.h"
+#include "BKE_pointcloud.hh"
 
 #include "BLI_endian_defines.h"
 #include "BLI_endian_switch.h"
@@ -161,10 +162,10 @@ static StringRefNull get_endian_io_name(const int endian)
   return "big";
 }
 
-static StringRefNull get_domain_io_name(const eAttrDomain domain)
+static StringRefNull get_domain_io_name(const AttrDomain domain)
 {
   const char *io_name = "unknown";
-  RNA_enum_id_from_value(rna_enum_attribute_domain_items, domain, &io_name);
+  RNA_enum_id_from_value(rna_enum_attribute_domain_items, int(domain), &io_name);
   return io_name;
 }
 
@@ -175,13 +176,13 @@ static StringRefNull get_data_type_io_name(const eCustomDataType data_type)
   return io_name;
 }
 
-static std::optional<eAttrDomain> get_domain_from_io_name(const StringRefNull io_name)
+static std::optional<AttrDomain> get_domain_from_io_name(const StringRefNull io_name)
 {
   int domain;
   if (!RNA_enum_value_from_identifier(rna_enum_attribute_domain_items, io_name.c_str(), &domain)) {
     return std::nullopt;
   }
-  return eAttrDomain(domain);
+  return AttrDomain(domain);
 }
 
 static std::optional<eCustomDataType> get_data_type_from_io_name(const StringRefNull io_name)
@@ -333,10 +334,10 @@ static std::shared_ptr<DictionaryValue> write_blob_shared_simple_gspan(
     const int size,
     const ImplicitSharingInfo **r_sharing_info)
 {
+  const char *func = __func__;
   const std::optional<ImplicitSharingInfoAndData> sharing_info_and_data = blob_sharing.read_shared(
       io_data, [&]() -> std::optional<ImplicitSharingInfoAndData> {
-        void *data_mem = MEM_mallocN_aligned(
-            size * cpp_type.size(), cpp_type.alignment(), __func__);
+        void *data_mem = MEM_mallocN_aligned(size * cpp_type.size(), cpp_type.alignment(), func);
         if (!read_blob_simple_gspan(blob_reader, io_data, {cpp_type, data_mem, size})) {
           MEM_freeN(data_mem);
           return std::nullopt;
@@ -364,8 +365,34 @@ template<typename T>
   return *r_data != nullptr;
 }
 
+[[nodiscard]] static bool load_materials(const io::serialize::ArrayValue &io_materials,
+                                         std::unique_ptr<BakeMaterialsList> &materials)
+{
+  if (io_materials.elements().is_empty()) {
+    return true;
+  }
+  materials = std::make_unique<BakeMaterialsList>();
+  for (const auto &io_material_value : io_materials.elements()) {
+    if (io_material_value->type() == io::serialize::eValueType::Null) {
+      materials->append(std::nullopt);
+      continue;
+    }
+    const auto *io_material = io_material_value->as_dictionary_value();
+    if (!io_material) {
+      return false;
+    }
+    std::optional<std::string> id_name = io_material->lookup_str("name");
+    if (!id_name) {
+      return false;
+    }
+    std::string lib_name = io_material->lookup_str("lib_name").value_or("");
+    materials->append(BakeDataBlockID(ID_MA, std::move(*id_name), std::move(lib_name)));
+  }
+  return true;
+}
+
 [[nodiscard]] static bool load_attributes(const io::serialize::ArrayValue &io_attributes,
-                                          bke::MutableAttributeAccessor &attributes,
+                                          MutableAttributeAccessor &attributes,
                                           const BlobReader &blob_reader,
                                           const BlobSharing &blob_sharing)
 {
@@ -377,12 +404,12 @@ template<typename T>
     const std::optional<StringRefNull> name = io_attribute->lookup_str("name");
     const std::optional<StringRefNull> domain_str = io_attribute->lookup_str("domain");
     const std::optional<StringRefNull> type_str = io_attribute->lookup_str("type");
-    auto io_data = io_attribute->lookup_dict("data");
+    const auto *io_data = io_attribute->lookup_dict("data");
     if (!name || !domain_str || !type_str || !io_data) {
       return false;
     }
 
-    const std::optional<eAttrDomain> domain = get_domain_from_io_name(*domain_str);
+    const std::optional<AttrDomain> domain = get_domain_from_io_name(*domain_str);
     const std::optional<eCustomDataType> data_type = get_data_type_from_io_name(*type_str);
     if (!domain || !data_type) {
       return false;
@@ -402,7 +429,7 @@ template<typename T>
 
     if (attributes.contains(*name)) {
       /* If the attribute exists already, copy the values over to the existing array. */
-      bke::GSpanAttributeWriter attribute = attributes.lookup_or_add_for_write_only_span(
+      GSpanAttributeWriter attribute = attributes.lookup_or_add_for_write_only_span(
           *name, *domain, *data_type);
       if (!attribute) {
         return false;
@@ -445,9 +472,15 @@ static PointCloud *try_load_pointcloud(const DictionaryValue &io_geometry,
     return nullptr;
   };
 
-  bke::MutableAttributeAccessor attributes = pointcloud->attributes_for_write();
+  MutableAttributeAccessor attributes = pointcloud->attributes_for_write();
   if (!load_attributes(*io_attributes, attributes, blob_reader, blob_sharing)) {
     return cancel();
+  }
+
+  if (const io::serialize::ArrayValue *io_materials = io_pointcloud->lookup_array("materials")) {
+    if (!load_materials(*io_materials, pointcloud->runtime->bake_materials)) {
+      return cancel();
+    }
   }
   return pointcloud;
 }
@@ -466,8 +499,8 @@ static Curves *try_load_curves(const DictionaryValue &io_geometry,
     return nullptr;
   }
 
-  Curves *curves_id = bke::curves_new_nomain(0, 0);
-  bke::CurvesGeometry &curves = curves_id->geometry.wrap();
+  Curves *curves_id = curves_new_nomain(0, 0);
+  CurvesGeometry &curves = curves_id->geometry.wrap();
   CustomData_free_layer_named(&curves.point_data, "position", 0);
   curves.point_num = io_curves->lookup_int("num_points").value_or(0);
   curves.curve_num = io_curves->lookup_int("num_curves").value_or(0);
@@ -478,7 +511,7 @@ static Curves *try_load_curves(const DictionaryValue &io_geometry,
   };
 
   if (curves.curves_num() > 0) {
-    const auto io_curve_offsets = io_curves->lookup_dict("curve_offsets");
+    const auto *io_curve_offsets = io_curves->lookup_dict("curve_offsets");
     if (!io_curve_offsets) {
       return cancel();
     }
@@ -493,9 +526,15 @@ static Curves *try_load_curves(const DictionaryValue &io_geometry,
     }
   }
 
-  bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
+  MutableAttributeAccessor attributes = curves.attributes_for_write();
   if (!load_attributes(*io_attributes, attributes, blob_reader, blob_sharing)) {
     return cancel();
+  }
+
+  if (const io::serialize::ArrayValue *io_materials = io_curves->lookup_array("materials")) {
+    if (!load_materials(*io_materials, curves.runtime->bake_materials)) {
+      return cancel();
+    }
   }
 
   curves.update_curve_types();
@@ -520,12 +559,12 @@ static Mesh *try_load_mesh(const DictionaryValue &io_geometry,
   Mesh *mesh = BKE_mesh_new_nomain(0, 0, 0, 0);
   CustomData_free_layer_named(&mesh->vert_data, "position", 0);
   CustomData_free_layer_named(&mesh->edge_data, ".edge_verts", 0);
-  CustomData_free_layer_named(&mesh->loop_data, ".corner_vert", 0);
-  CustomData_free_layer_named(&mesh->loop_data, ".corner_edge", 0);
-  mesh->totvert = io_mesh->lookup_int("num_vertices").value_or(0);
-  mesh->totedge = io_mesh->lookup_int("num_edges").value_or(0);
+  CustomData_free_layer_named(&mesh->corner_data, ".corner_vert", 0);
+  CustomData_free_layer_named(&mesh->corner_data, ".corner_edge", 0);
+  mesh->verts_num = io_mesh->lookup_int("num_vertices").value_or(0);
+  mesh->edges_num = io_mesh->lookup_int("num_edges").value_or(0);
   mesh->faces_num = io_mesh->lookup_int("num_polygons").value_or(0);
-  mesh->totloop = io_mesh->lookup_int("num_corners").value_or(0);
+  mesh->corners_num = io_mesh->lookup_int("num_corners").value_or(0);
 
   auto cancel = [&]() {
     BKE_id_free(nullptr, mesh);
@@ -533,7 +572,7 @@ static Mesh *try_load_mesh(const DictionaryValue &io_geometry,
   };
 
   if (mesh->faces_num > 0) {
-    const auto io_poly_offsets = io_mesh->lookup_dict("poly_offsets");
+    const auto *io_poly_offsets = io_mesh->lookup_dict("poly_offsets");
     if (!io_poly_offsets) {
       return cancel();
     }
@@ -548,9 +587,15 @@ static Mesh *try_load_mesh(const DictionaryValue &io_geometry,
     }
   }
 
-  bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
+  MutableAttributeAccessor attributes = mesh->attributes_for_write();
   if (!load_attributes(*io_attributes, attributes, blob_reader, blob_sharing)) {
     return cancel();
+  }
+
+  if (const io::serialize::ArrayValue *io_materials = io_mesh->lookup_array("materials")) {
+    if (!load_materials(*io_materials, mesh->runtime->bake_materials)) {
+      return cancel();
+    }
   }
 
   return mesh;
@@ -560,9 +605,9 @@ static GeometrySet load_geometry(const DictionaryValue &io_geometry,
                                  const BlobReader &blob_reader,
                                  const BlobSharing &blob_sharing);
 
-static std::unique_ptr<bke::Instances> try_load_instances(const DictionaryValue &io_geometry,
-                                                          const BlobReader &blob_reader,
-                                                          const BlobSharing &blob_sharing)
+static std::unique_ptr<Instances> try_load_instances(const DictionaryValue &io_geometry,
+                                                     const BlobReader &blob_reader,
+                                                     const BlobSharing &blob_sharing)
 {
   const DictionaryValue *io_instances = io_geometry.lookup_dict("instances");
   if (!io_instances) {
@@ -581,7 +626,7 @@ static std::unique_ptr<bke::Instances> try_load_instances(const DictionaryValue 
     return nullptr;
   }
 
-  std::unique_ptr<bke::Instances> instances = std::make_unique<bke::Instances>();
+  std::unique_ptr<Instances> instances = std::make_unique<Instances>();
   instances->resize(num_instances);
 
   for (const auto &io_reference_value : io_references->elements()) {
@@ -593,7 +638,7 @@ static std::unique_ptr<bke::Instances> try_load_instances(const DictionaryValue 
     instances->add_reference(std::move(reference_geometry));
   }
 
-  const auto io_transforms = io_instances->lookup_dict("transforms");
+  const auto *io_transforms = io_instances->lookup_dict("transforms");
   if (!io_transforms) {
     return {};
   }
@@ -601,7 +646,7 @@ static std::unique_ptr<bke::Instances> try_load_instances(const DictionaryValue 
     return {};
   }
 
-  const auto io_handles = io_instances->lookup_dict("handles");
+  const auto *io_handles = io_instances->lookup_dict("handles");
   if (!io_handles) {
     return {};
   }
@@ -609,7 +654,7 @@ static std::unique_ptr<bke::Instances> try_load_instances(const DictionaryValue 
     return {};
   }
 
-  bke::MutableAttributeAccessor attributes = instances->attributes_for_write();
+  MutableAttributeAccessor attributes = instances->attributes_for_write();
   if (!load_attributes(*io_attributes, attributes, blob_reader, blob_sharing)) {
     return {};
   }
@@ -629,59 +674,61 @@ static GeometrySet load_geometry(const DictionaryValue &io_geometry,
   return geometry;
 }
 
-static std::shared_ptr<io::serialize::ArrayValue> serialize_material_slots(
-    const Span<const Material *> material_slots)
+static std::shared_ptr<io::serialize::ArrayValue> serialize_materials(
+    const std::unique_ptr<BakeMaterialsList> &materials)
 {
   auto io_materials = std::make_shared<io::serialize::ArrayValue>();
-  for (const Material *material : material_slots) {
-    if (material == nullptr) {
-      io_materials->append_null();
+  if (!materials) {
+    return io_materials;
+  }
+  for (const std::optional<BakeDataBlockID> &material : *materials) {
+    if (material) {
+      auto io_material = io_materials->append_dict();
+      io_material->append_str("name", material->id_name);
+      if (!material->lib_name.empty()) {
+        io_material->append_str("lib_name", material->lib_name);
+      }
     }
     else {
-      auto io_material = io_materials->append_dict();
-      io_material->append_str("name", material->id.name + 2);
-      if (material->id.lib != nullptr) {
-        io_material->append_str("lib_name", material->id.lib->id.name + 2);
-      }
+      io_materials->append_null();
     }
   }
   return io_materials;
 }
 
 static std::shared_ptr<io::serialize::ArrayValue> serialize_attributes(
-    const bke::AttributeAccessor &attributes,
+    const AttributeAccessor &attributes,
     BlobWriter &blob_writer,
     BlobSharing &blob_sharing,
     const Set<std::string> &attributes_to_ignore)
 {
   auto io_attributes = std::make_shared<io::serialize::ArrayValue>();
-  attributes.for_all(
-      [&](const bke::AttributeIDRef &attribute_id, const bke::AttributeMetaData &meta_data) {
-        BLI_assert(!attribute_id.is_anonymous());
-        if (attributes_to_ignore.contains_as(attribute_id.name())) {
-          return true;
-        }
+  attributes.for_all([&](const AttributeIDRef &attribute_id, const AttributeMetaData &meta_data) {
+    BLI_assert(!attribute_id.is_anonymous());
+    if (attributes_to_ignore.contains_as(attribute_id.name())) {
+      return true;
+    }
 
-        auto io_attribute = io_attributes->append_dict();
+    auto io_attribute = io_attributes->append_dict();
 
-        io_attribute->append_str("name", attribute_id.name());
+    io_attribute->append_str("name", attribute_id.name());
 
-        const StringRefNull domain_name = get_domain_io_name(meta_data.domain);
-        io_attribute->append_str("domain", domain_name);
+    const StringRefNull domain_name = get_domain_io_name(meta_data.domain);
+    io_attribute->append_str("domain", domain_name);
 
-        const StringRefNull type_name = get_data_type_io_name(meta_data.data_type);
-        io_attribute->append_str("type", type_name);
+    const StringRefNull type_name = get_data_type_io_name(meta_data.data_type);
+    io_attribute->append_str("type", type_name);
 
-        const bke::GAttributeReader attribute = attributes.lookup(attribute_id);
-        const GVArraySpan attribute_span(attribute.varray);
-        io_attribute->append("data",
-                             write_blob_shared_simple_gspan(
-                                 blob_writer,
-                                 blob_sharing,
-                                 attribute_span,
-                                 attribute.varray.is_span() ? attribute.sharing_info : nullptr));
-        return true;
-      });
+    const GAttributeReader attribute = attributes.lookup(attribute_id);
+    const GVArraySpan attribute_span(attribute.varray);
+    io_attribute->append("data",
+                         write_blob_shared_simple_gspan(
+                             blob_writer,
+                             blob_sharing,
+                             attribute_span,
+                             attribute.varray.is_span() ? attribute.sharing_info : nullptr));
+    return true;
+  });
   return io_attributes;
 }
 
@@ -694,10 +741,10 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
     const Mesh &mesh = *geometry.get_mesh();
     auto io_mesh = io_geometry->append_dict("mesh");
 
-    io_mesh->append_int("num_vertices", mesh.totvert);
-    io_mesh->append_int("num_edges", mesh.totedge);
+    io_mesh->append_int("num_vertices", mesh.verts_num);
+    io_mesh->append_int("num_edges", mesh.edges_num);
     io_mesh->append_int("num_polygons", mesh.faces_num);
-    io_mesh->append_int("num_corners", mesh.totloop);
+    io_mesh->append_int("num_corners", mesh.corners_num);
 
     if (mesh.faces_num > 0) {
       io_mesh->append("poly_offsets",
@@ -707,7 +754,7 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
                                                      mesh.runtime->face_offsets_sharing_info));
     }
 
-    auto io_materials = serialize_material_slots({mesh.mat, mesh.totcol});
+    auto io_materials = serialize_materials(mesh.runtime->bake_materials);
     io_mesh->append("materials", io_materials);
 
     auto io_attributes = serialize_attributes(mesh.attributes(), blob_writer, blob_sharing, {});
@@ -719,7 +766,7 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
 
     io_pointcloud->append_int("num_points", pointcloud.totpoint);
 
-    auto io_materials = serialize_material_slots({pointcloud.mat, pointcloud.totcol});
+    auto io_materials = serialize_materials(pointcloud.runtime->bake_materials);
     io_pointcloud->append("materials", io_materials);
 
     auto io_attributes = serialize_attributes(
@@ -728,7 +775,7 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
   }
   if (geometry.has_curves()) {
     const Curves &curves_id = *geometry.get_curves();
-    const bke::CurvesGeometry &curves = curves_id.geometry.wrap();
+    const CurvesGeometry &curves = curves_id.geometry.wrap();
 
     auto io_curves = io_geometry->append_dict("curves");
 
@@ -744,21 +791,21 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
                                          curves.runtime->curve_offsets_sharing_info));
     }
 
-    auto io_materials = serialize_material_slots({curves_id.mat, curves_id.totcol});
+    auto io_materials = serialize_materials(curves.runtime->bake_materials);
     io_curves->append("materials", io_materials);
 
     auto io_attributes = serialize_attributes(curves.attributes(), blob_writer, blob_sharing, {});
     io_curves->append("attributes", io_attributes);
   }
   if (geometry.has_instances()) {
-    const bke::Instances &instances = *geometry.get_instances();
+    const Instances &instances = *geometry.get_instances();
     auto io_instances = io_geometry->append_dict("instances");
 
     io_instances->append_int("num_instances", instances.instances_num());
 
     auto io_references = io_instances->append_array("references");
-    for (const bke::InstanceReference &reference : instances.references()) {
-      BLI_assert(reference.type() == bke::InstanceReference::Type::GeometrySet);
+    for (const InstanceReference &reference : instances.references()) {
+      BLI_assert(reference.type() == InstanceReference::Type::GeometrySet);
       io_references->append(
           serialize_geometry_set(reference.geometry_set(), blob_writer, blob_sharing));
     }
@@ -1031,8 +1078,7 @@ static std::unique_ptr<BakeItem> deserialize_bake_item(const DictionaryValue &io
       const io::serialize::StringValue &io_string = *io_data->get()->as_string_value();
       return std::make_unique<StringBakeItem>(io_string.value());
     }
-    else if (const io::serialize::DictionaryValue *io_string =
-                 io_data->get()->as_dictionary_value()) {
+    if (const io::serialize::DictionaryValue *io_string = io_data->get()->as_dictionary_value()) {
       const std::optional<int64_t> size = io_string->lookup_int("size");
       if (!size) {
         return {};
@@ -1086,7 +1132,13 @@ std::optional<BakeState> deserialize_bake(std::istream &stream,
                                           const BlobSharing &blob_sharing)
 {
   JsonFormatter formatter;
-  std::unique_ptr<io::serialize::Value> io_root_value = formatter.deserialize(stream);
+  std::unique_ptr<io::serialize::Value> io_root_value;
+  try {
+    io_root_value = formatter.deserialize(stream);
+  }
+  catch (...) {
+    return std::nullopt;
+  }
   if (!io_root_value) {
     return std::nullopt;
   }

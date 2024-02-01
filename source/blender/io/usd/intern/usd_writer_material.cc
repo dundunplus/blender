@@ -15,11 +15,12 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_report.h"
 
-#include "IMB_colormanagement.h"
+#include "IMB_colormanagement.hh"
 
 #include "BLI_fileops.h"
 #include "BLI_linklist.h"
 #include "BLI_listbase.h"
+#include "BLI_map.hh"
 #include "BLI_memory_utils.hh"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
@@ -35,7 +36,8 @@
 #include <pxr/pxr.h>
 #include <pxr/usd/usdGeom/scope.h>
 
-#include <iostream>
+#include "CLG_log.h"
+static CLG_LogRef LOG = {"io.usd"};
 
 /* `TfToken` objects are not cheap to construct, so we do it once. */
 namespace usdtokens {
@@ -103,7 +105,7 @@ struct InputSpec {
 };
 
 /* Map Blender socket names to USD Preview Surface InputSpec structs. */
-using InputSpecMap = std::map<std::string, InputSpec>;
+using InputSpecMap = blender::Map<std::string, InputSpec>;
 
 /* Static function forward declarations. */
 static pxr::UsdShadeShader create_usd_preview_shader(const USDExporterContext &usd_export_context,
@@ -124,7 +126,7 @@ static bNode *find_bsdf_node(Material *material);
 static void get_absolute_path(Image *ima, char *r_path);
 static std::string get_tex_image_asset_filepath(const USDExporterContext &usd_export_context,
                                                 bNode *node);
-static InputSpecMap &preview_surface_input_map();
+static const InputSpecMap &preview_surface_input_map();
 static bNodeLink *traverse_channel(bNodeSocket *input, short target_type);
 
 void set_normal_texture_range(pxr::UsdShadeShader &usd_shader, const InputSpec &input_spec);
@@ -174,16 +176,15 @@ static void create_usd_preview_surface_material(const USDExporterContext &usd_ex
   LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
 
     /* Check if this socket is mapped to a USD preview shader input. */
-    const InputSpecMap::const_iterator it = input_map.find(sock->name);
-
-    if (it == input_map.end()) {
+    const InputSpec *spec = input_map.lookup_ptr(sock->name);
+    if (spec == nullptr) {
       continue;
     }
 
     /* Allow scaling inputs. */
     float scale = 1.0;
 
-    const InputSpec &input_spec = it->second;
+    const InputSpec &input_spec = *spec;
     bNodeLink *input_link = traverse_channel(sock, SH_NODE_TEX_IMAGE);
 
     if (input_spec.input_name == usdtokens::emissive_color) {
@@ -280,8 +281,7 @@ static void create_usd_preview_surface_material(const USDExporterContext &usd_ex
 void set_normal_texture_range(pxr::UsdShadeShader &usd_shader, const InputSpec &input_spec)
 {
   /* Set the scale and bias for normal map textures
-   * The USD spec requires them to be within the -1 to 1 space
-   * */
+   * The USD spec requires them to be within the -1 to 1 space. */
 
   /* Only run if this input_spec is for a normal. */
   if (input_spec.input_name != usdtokens::normal) {
@@ -336,22 +336,27 @@ static void create_usd_viewport_material(const USDExporterContext &usd_export_co
 }
 
 /* Return USD Preview Surface input map singleton. */
-static InputSpecMap &preview_surface_input_map()
+static const InputSpecMap &preview_surface_input_map()
 {
-  static InputSpecMap input_map = {
-      {"Base Color", {usdtokens::diffuse_color, pxr::SdfValueTypeNames->Color3f, true}},
-      {"Emission Color", {usdtokens::emissive_color, pxr::SdfValueTypeNames->Color3f, true}},
-      {"Color", {usdtokens::diffuse_color, pxr::SdfValueTypeNames->Color3f, true}},
-      {"Roughness", {usdtokens::roughness, pxr::SdfValueTypeNames->Float, true}},
-      {"Metallic", {usdtokens::metallic, pxr::SdfValueTypeNames->Float, true}},
-      {"Specular IOR Level", {usdtokens::specular, pxr::SdfValueTypeNames->Float, true}},
-      {"Alpha", {usdtokens::opacity, pxr::SdfValueTypeNames->Float, true}},
-      {"IOR", {usdtokens::ior, pxr::SdfValueTypeNames->Float, true}},
-      /* Note that for the Normal input set_default_value is false. */
-      {"Normal", {usdtokens::normal, pxr::SdfValueTypeNames->Float3, false}},
-      {"Coat Weight", {usdtokens::clearcoat, pxr::SdfValueTypeNames->Float, true}},
-      {"Coat Roughness", {usdtokens::clearcoatRoughness, pxr::SdfValueTypeNames->Float, true}},
-  };
+  static const InputSpecMap input_map = []() {
+    InputSpecMap map;
+    map.add_new("Base Color", {usdtokens::diffuse_color, pxr::SdfValueTypeNames->Color3f, true});
+    map.add_new("Emission Color",
+                {usdtokens::emissive_color, pxr::SdfValueTypeNames->Color3f, true});
+    map.add_new("Color", {usdtokens::diffuse_color, pxr::SdfValueTypeNames->Color3f, true});
+    map.add_new("Roughness", {usdtokens::roughness, pxr::SdfValueTypeNames->Float, true});
+    map.add_new("Metallic", {usdtokens::metallic, pxr::SdfValueTypeNames->Float, true});
+    map.add_new("Specular IOR Level", {usdtokens::specular, pxr::SdfValueTypeNames->Float, true});
+    map.add_new("Alpha", {usdtokens::opacity, pxr::SdfValueTypeNames->Float, true});
+    map.add_new("IOR", {usdtokens::ior, pxr::SdfValueTypeNames->Float, true});
+
+    /* Note that for the Normal input set_default_value is false. */
+    map.add_new("Normal", {usdtokens::normal, pxr::SdfValueTypeNames->Float3, false});
+    map.add_new("Coat Weight", {usdtokens::clearcoat, pxr::SdfValueTypeNames->Float, true});
+    map.add_new("Coat Roughness",
+                {usdtokens::clearcoatRoughness, pxr::SdfValueTypeNames->Float, true});
+    return map;
+  }();
 
   return input_map;
 }
@@ -579,7 +584,7 @@ static void export_in_memory_texture(Image *ima,
     return;
   }
 
-  std::cout << "Exporting in-memory texture to " << export_path << std::endl;
+  CLOG_INFO(&LOG, 2, "Exporting in-memory texture to '%s'", export_path);
 
   if (BKE_imbuf_write_as(imbuf, export_path, &imageFormat, true) == 0) {
     BKE_reportf(
@@ -863,7 +868,7 @@ static void copy_tiled_textures(Image *ima,
 
   /* Only <UDIM> tile formats are supported by USD right now. */
   if (tile_format != UDIM_TILE_FORMAT_UDIM) {
-    std::cout << "WARNING: unsupported tile format for `" << src_path << "`" << std::endl;
+    CLOG_WARN(&LOG, "Unsupported tile format for '%s'", src_path);
     MEM_SAFE_FREE(udim_pattern);
     return;
   }
@@ -889,8 +894,7 @@ static void copy_tiled_textures(Image *ima,
       continue;
     }
 
-    std::cout << "Copying texture tile from " << src_tile_path << " to " << dest_tile_path
-              << std::endl;
+    CLOG_INFO(&LOG, 2, "Copying texture tile from '%s' to '%s'", src_tile_path, dest_tile_path);
 
     /* Copy the file. */
     if (BLI_copy(src_tile_path, dest_tile_path) != 0) {
@@ -928,7 +932,7 @@ static void copy_single_file(Image *ima,
     return;
   }
 
-  std::cout << "Copying texture from " << source_path << " to " << dest_path << std::endl;
+  CLOG_INFO(&LOG, 2, "Copying texture from '%s' to '%s'", source_path, dest_path);
 
   /* Copy the file. */
   if (BLI_copy(source_path, dest_path) != 0) {
@@ -990,13 +994,13 @@ static void export_texture(const USDExporterContext &usd_export_context, bNode *
 const pxr::TfToken token_for_input(const char *input_name)
 {
   const InputSpecMap &input_map = preview_surface_input_map();
-  const InputSpecMap::const_iterator it = input_map.find(input_name);
+  const InputSpec *spec = input_map.lookup_ptr(input_name);
 
-  if (it == input_map.end()) {
-    return pxr::TfToken();
+  if (spec == nullptr) {
+    return {};
   }
 
-  return it->second.input_name;
+  return spec->input_name;
 }
 
 pxr::UsdShadeMaterial create_usd_material(const USDExporterContext &usd_export_context,

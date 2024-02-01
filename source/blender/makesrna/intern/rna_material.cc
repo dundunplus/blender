@@ -22,7 +22,7 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
-#include "rna_internal.h"
+#include "rna_internal.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -65,7 +65,8 @@ const EnumPropertyItem rna_enum_ramp_blend_items[] = {
 #  include "DNA_screen_types.h"
 #  include "DNA_space_types.h"
 
-#  include "BKE_colorband.h"
+#  include "BKE_attribute.hh"
+#  include "BKE_colorband.hh"
 #  include "BKE_context.hh"
 #  include "BKE_gpencil_legacy.h"
 #  include "BKE_grease_pencil.hh"
@@ -130,9 +131,9 @@ static void rna_MaterialLineArt_update(Main * /*bmain*/, Scene * /*scene*/, Poin
   WM_main_add_notifier(NC_MATERIAL | ND_SHADING_DRAW, ma);
 }
 
-static char *rna_MaterialLineArt_path(const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_MaterialLineArt_path(const PointerRNA * /*ptr*/)
 {
-  return BLI_strdup("lineart");
+  return "lineart";
 }
 
 static void rna_Material_draw_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
@@ -163,7 +164,7 @@ static void rna_Material_active_paint_texture_index_update(bContext *C, PointerR
     }
   }
 
-  if (ma->texpaintslot) {
+  if (ma->texpaintslot && (ma->tot_slots > ma->paint_active_slot)) {
     TexPaintSlot *slot = &ma->texpaintslot[ma->paint_active_slot];
     Image *image = slot->ima;
     if (image) {
@@ -352,9 +353,9 @@ static void rna_gpcolordata_uv_update(Main *bmain, Scene *scene, PointerRNA *ptr
   rna_MaterialGpencil_update(bmain, scene, ptr);
 }
 
-static char *rna_GpencilColorData_path(const PointerRNA * /*ptr*/)
+static std::optional<std::string> rna_GpencilColorData_path(const PointerRNA * /*ptr*/)
 {
-  return BLI_strdup("grease_pencil");
+  return "grease_pencil";
 }
 
 static bool rna_GpencilColorData_is_stroke_visible_get(PointerRNA *ptr)

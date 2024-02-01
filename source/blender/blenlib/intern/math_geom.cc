@@ -655,18 +655,19 @@ void aabb_get_near_far_from_plane(const float plane_no[3],
 /** \name dist_squared_to_ray_to_aabb and helpers
  * \{ */
 
-void dist_squared_ray_to_aabb_v3_precalc(DistRayAABB_Precalc *neasrest_precalc,
-                                         const float ray_origin[3],
-                                         const float ray_direction[3])
+DistRayAABB_Precalc dist_squared_ray_to_aabb_v3_precalc(const float ray_origin[3],
+                                                        const float ray_direction[3])
 {
-  copy_v3_v3(neasrest_precalc->ray_origin, ray_origin);
-  copy_v3_v3(neasrest_precalc->ray_direction, ray_direction);
+  DistRayAABB_Precalc nearest_precalc{};
+  copy_v3_v3(nearest_precalc.ray_origin, ray_origin);
+  copy_v3_v3(nearest_precalc.ray_direction, ray_direction);
 
   for (int i = 0; i < 3; i++) {
-    neasrest_precalc->ray_inv_dir[i] = (neasrest_precalc->ray_direction[i] != 0.0f) ?
-                                           (1.0f / neasrest_precalc->ray_direction[i]) :
-                                           FLT_MAX;
+    nearest_precalc.ray_inv_dir[i] = (nearest_precalc.ray_direction[i] != 0.0f) ?
+                                         (1.0f / nearest_precalc.ray_direction[i]) :
+                                         FLT_MAX;
   }
+  return nearest_precalc;
 }
 
 float dist_squared_ray_to_aabb_v3(const DistRayAABB_Precalc *data,
@@ -765,8 +766,7 @@ float dist_squared_ray_to_aabb_v3_simple(const float ray_origin[3],
                                          float r_point[3],
                                          float *r_depth)
 {
-  DistRayAABB_Precalc data;
-  dist_squared_ray_to_aabb_v3_precalc(&data, ray_origin, ray_direction);
+  const DistRayAABB_Precalc data = dist_squared_ray_to_aabb_v3_precalc(ray_origin, ray_direction);
   return dist_squared_ray_to_aabb_v3(&data, bb_min, bb_max, r_point, r_depth);
 }
 
@@ -1260,8 +1260,8 @@ int isect_seg_seg_v2_point_ex(const float v0[2],
     if (equals_v2v2(v0, v1)) {
       if (len_squared_v2v2(v2, v3) > square_f(eps)) {
         /* use non-point segment as basis */
-        SWAP(const float *, v0, v2);
-        SWAP(const float *, v1, v3);
+        std::swap(v0, v2);
+        std::swap(v1, v3);
 
         sub_v2_v2v2(s10, v1, v0);
         sub_v2_v2v2(s30, v3, v0);
@@ -1283,7 +1283,7 @@ int isect_seg_seg_v2_point_ex(const float v0[2],
     u_b = dot_v2v2(s30, s10) / dot_v2v2(s10, s10);
 
     if (u_a > u_b) {
-      SWAP(float, u_a, u_b);
+      std::swap(u_a, u_b);
     }
 
     if (u_a > endpoint_max || u_b < endpoint_min) {
@@ -1795,7 +1795,7 @@ void isect_ray_tri_watertight_v3_precalc(IsectRayPrecalc *isect_precalc,
 
   /* Swap kx and ky dimensions to preserve winding direction of triangles. */
   if (ray_direction[kz] < 0.0f) {
-    SWAP(int, kx, ky);
+    std::swap(kx, ky);
   }
 
   /* Calculate the shear constants. */
@@ -2320,9 +2320,9 @@ bool isect_tri_tri_v3_ex(const float tri_a[3][3],
       double offset1 = fac1 * (dot_c - dot_b);
       if (offset0 > offset1) {
         /* Sort min max. */
-        SWAP(double, offset0, offset1);
-        SWAP(float, fac0, fac1);
-        SWAP(int, tri_i[0], tri_i[2]);
+        std::swap(offset0, offset1);
+        std::swap(fac0, fac1);
+        std::swap(tri_i[0], tri_i[2]);
       }
 
       range[i].min = float(dot_b + offset0);
@@ -2409,56 +2409,56 @@ static bool isect_tri_tri_v2_impl_vert(const float t_a0[2],
     if (line_point_side_v2(t_b2, t_b1, t_a1) <= 0.0f) {
       if (line_point_side_v2(t_a0, t_b0, t_a1) > 0.0f) {
         if (line_point_side_v2(t_a0, t_b1, t_a1) <= 0.0f) {
-          return 1;
+          return true;
         }
 
-        return 0;
+        return false;
       }
 
       if (line_point_side_v2(t_a0, t_b0, t_a2) >= 0.0f) {
         if (line_point_side_v2(t_a1, t_a2, t_b0) >= 0.0f) {
-          return 1;
+          return true;
         }
 
-        return 0;
+        return false;
       }
 
-      return 0;
+      return false;
     }
     if (line_point_side_v2(t_a0, t_b1, t_a1) <= 0.0f) {
       if (line_point_side_v2(t_b2, t_b1, t_a2) <= 0.0f) {
         if (line_point_side_v2(t_a1, t_a2, t_b1) >= 0.0f) {
-          return 1;
+          return true;
         }
 
-        return 0;
+        return false;
       }
 
-      return 0;
+      return false;
     }
 
-    return 0;
+    return false;
   }
   if (line_point_side_v2(t_b2, t_b0, t_a2) >= 0.0f) {
     if (line_point_side_v2(t_a1, t_a2, t_b2) >= 0.0f) {
       if (line_point_side_v2(t_a0, t_b0, t_a2) >= 0.0f) {
-        return 1;
+        return true;
       }
 
-      return 0;
+      return false;
     }
     if (line_point_side_v2(t_a1, t_a2, t_b1) >= 0.0f) {
       if (line_point_side_v2(t_b2, t_a2, t_b1) >= 0.0f) {
-        return 1;
+        return true;
       }
 
-      return 0;
+      return false;
     }
 
-    return 0;
+    return false;
   }
 
-  return 0;
+  return false;
 }
 
 static bool isect_tri_tri_v2_impl_edge(const float t_a0[2],
@@ -2473,40 +2473,40 @@ static bool isect_tri_tri_v2_impl_edge(const float t_a0[2],
   if (line_point_side_v2(t_b2, t_b0, t_a1) >= 0.0f) {
     if (line_point_side_v2(t_a0, t_b0, t_a1) >= 0.0f) {
       if (line_point_side_v2(t_a0, t_a1, t_b2) >= 0.0f) {
-        return 1;
+        return true;
       }
 
-      return 0;
+      return false;
     }
 
     if (line_point_side_v2(t_a1, t_a2, t_b0) >= 0.0f) {
       if (line_point_side_v2(t_a2, t_a0, t_b0) >= 0.0f) {
-        return 1;
+        return true;
       }
 
-      return 0;
+      return false;
     }
 
-    return 0;
+    return false;
   }
 
   if (line_point_side_v2(t_b2, t_b0, t_a2) >= 0.0f) {
     if (line_point_side_v2(t_a0, t_b0, t_a2) >= 0.0f) {
       if (line_point_side_v2(t_a0, t_a2, t_b2) >= 0.0f) {
-        return 1;
+        return true;
       }
 
       if (line_point_side_v2(t_a1, t_a2, t_b2) >= 0.0f) {
-        return 1;
+        return true;
       }
 
-      return 0;
+      return false;
     }
 
-    return 0;
+    return false;
   }
 
-  return 0;
+  return false;
 }
 
 static int isect_tri_tri_impl_ccw_v2(const float t_a0[2],
@@ -2586,7 +2586,7 @@ static bool getLowestRoot(
 
     /* Sort so x1 <= x2 */
     if (r1 > r2) {
-      SWAP(float, r1, r2);
+      std::swap(r1, r2);
     }
 
     /* Get lowest root: */
@@ -2669,7 +2669,7 @@ bool isect_sweeping_sphere_tri_v3(const float p1[3],
     float t1 = (-a - radius) / nordotv;
 
     if (t0 > t1) {
-      SWAP(float, t0, t1);
+      std::swap(t0, t1);
     }
 
     if (t0 > 1.0f || t1 < 0.0f) {
@@ -2701,7 +2701,7 @@ bool isect_sweeping_sphere_tri_v3(const float p1[3],
     z = x + y - (a * c - b * b);
 
     if (z <= 0.0f && (x >= 0.0f && y >= 0.0f)) {
-      //(((uint)z)& ~(((uint)x)|((uint)y))) & 0x80000000) {
+      // ((uint32_t(z) & ~(uint32_t(x) | uint32_t(y))) & 0x80000000)
       *r_lambda = t0;
       copy_v3_v3(ipoint, point);
       return true;
@@ -3589,7 +3589,7 @@ static bool barycentric_weights(const float v1[3],
 
   wtot = w[0] + w[1] + w[2];
 
-#ifdef DEBUG /* Avoid floating point exception when debugging. */
+#ifndef NDEBUG /* Avoid floating point exception when debugging. */
   if (wtot != 0.0f)
 #endif
   {
@@ -3646,7 +3646,7 @@ void interp_weights_quad_v3(float w[4],
     cross_v3_v3v3(n, n1, n2);
 
     ok = barycentric_weights(v1, v2, v4, co, n, w);
-    SWAP(float, w[2], w[3]);
+    std::swap(w[2], w[3]);
 
     if (!ok || (w[0] < 0.0f)) {
       /* if w[1] is negative, co is on the other side of the v1-v3 edge,
@@ -3686,7 +3686,7 @@ bool barycentric_coords_v2(
   const float x3 = v3[0], y3 = v3[1];
   const float det = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
 
-#ifdef DEBUG /* Avoid floating point exception when debugging. */
+#ifndef NDEBUG /* Avoid floating point exception when debugging. */
   if (det != 0.0f)
 #endif
   {
@@ -3711,7 +3711,7 @@ void barycentric_weights_v2(
   w[2] = cross_tri_v2(v1, v2, co);
   wtot = w[0] + w[1] + w[2];
 
-#ifdef DEBUG /* Avoid floating point exception when debugging. */
+#ifndef NDEBUG /* Avoid floating point exception when debugging. */
   if (wtot != 0.0f)
 #endif
   {
@@ -3734,7 +3734,7 @@ void barycentric_weights_v2_clamped(
   w[2] = max_ff(cross_tri_v2(v1, v2, co), 0.0f);
   wtot = w[0] + w[1] + w[2];
 
-#ifdef DEBUG /* Avoid floating point exception when debugging. */
+#ifndef NDEBUG /* Avoid floating point exception when debugging. */
   if (wtot != 0.0f)
 #endif
   {
@@ -3757,7 +3757,7 @@ void barycentric_weights_v2_persp(
   w[2] = cross_tri_v2(v1, v2, co) / v3[3];
   wtot = w[0] + w[1] + w[2];
 
-#ifdef DEBUG /* Avoid floating point exception when debugging. */
+#ifndef NDEBUG /* Avoid floating point exception when debugging. */
   if (wtot != 0.0f)
 #endif
   {
@@ -3849,7 +3849,7 @@ void barycentric_weights_v2_quad(const float v1[2],
 
     wtot = w[0] + w[1] + w[2] + w[3];
 
-#ifdef DEBUG /* Avoid floating point exception when debugging. */
+#ifndef NDEBUG /* Avoid floating point exception when debugging. */
     if (wtot != 0.0f)
 #endif
     {

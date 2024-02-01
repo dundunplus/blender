@@ -10,7 +10,6 @@
 #include "COLLADASWImage.h"
 
 #include "DNA_image_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_texture_types.h"
 
 #include "BKE_customdata.hh"
@@ -24,7 +23,7 @@
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf_types.hh"
 
 #include "ImageExporter.h"
 #include "MaterialExporter.h"

@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "AS_asset_library.h"
+#include "AS_asset_library.hh"
 
 #include "DNA_listBase.h"
 #include "DNA_scene_types.h"
@@ -42,7 +42,7 @@
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.hh"
-#include "BKE_undo_system.h"
+#include "BKE_undo_system.hh"
 #include "BKE_workspace.h"
 
 #include "BKE_sound.h"
@@ -66,15 +66,15 @@
 
 #include "WM_api.hh"
 #include "WM_message.hh"
-#include "WM_toolsystem.h"
+#include "WM_toolsystem.hh"
 #include "WM_types.hh"
 
 #include "wm.hh"
-#include "wm_event_system.h"
+#include "wm_event_system.hh"
 #include "wm_event_types.hh"
 #include "wm_surface.hh"
 #include "wm_window.hh"
-#include "wm_window_private.h"
+#include "wm_window_private.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
@@ -397,7 +397,7 @@ void WM_main_remove_notifier_reference(const void *reference)
 
 static void wm_main_remap_assetlist(ID *old_id, ID *new_id, void * /*user_data*/)
 {
-  ED_assetlist_storage_id_remap(old_id, new_id);
+  blender::ed::asset::list::storage_id_remap(old_id, new_id);
 }
 
 static void wm_main_remap_msgbus_notify(ID *old_id, ID *new_id, void *user_data)
@@ -606,7 +606,8 @@ void wm_event_do_notifiers(bContext *C)
       }
 
       if (note->window == win ||
-          (note->window == nullptr && ELEM(note->reference, nullptr, scene))) {
+          (note->window == nullptr && ELEM(note->reference, nullptr, scene)))
+      {
         if (note->category == NC_SCENE) {
           if (note->data == ND_FRAME) {
             do_anim = true;
@@ -640,7 +641,8 @@ void wm_event_do_notifiers(bContext *C)
 
   /* The notifiers are sent without context, to keep it clean. */
   while (
-      const wmNotifier *note = static_cast<const wmNotifier *>(BLI_pophead(&wm->notifier_queue))) {
+      const wmNotifier *note = static_cast<const wmNotifier *>(BLI_pophead(&wm->notifier_queue)))
+  {
     if (wm_notifier_is_clear(note)) {
       MEM_freeN((void *)note);
       continue;
@@ -961,7 +963,7 @@ void WM_reportf(eReportType type, const char *format, ...)
 {
   va_list args;
 
-  format = TIP_(format);
+  format = RPT_(format);
   va_start(args, format);
   char *str = BLI_vsprintfN(format, args);
   WM_report(type, str);
@@ -1095,7 +1097,8 @@ static void wm_operator_reports(bContext *C,
   }
 
   if (retval & OPERATOR_FINISHED) {
-    CLOG_STR_INFO_N(WM_LOG_OPERATORS, 1, WM_operator_pystring(C, op, false, true));
+    std::string pystring = WM_operator_pystring(C, op, false, true);
+    CLOG_STR_INFO_N(WM_LOG_OPERATORS, 1, pystring.c_str());
 
     if (caller_owns_reports == false) {
       BKE_reports_print(op->reports, RPT_DEBUG); /* Print out reports to console. */
@@ -1103,10 +1106,8 @@ static void wm_operator_reports(bContext *C,
 
     if (op->type->flag & OPTYPE_REGISTER) {
       if (G.background == 0) { /* Ends up printing these in the terminal, gets annoying. */
-        /* Report the python string representation of the operator. */
-        char *buf = WM_operator_pystring(C, op, false, true);
-        BKE_report(CTX_wm_reports(C), RPT_OPERATOR, buf);
-        MEM_freeN(buf);
+                               /* Report the python string representation of the operator. */
+        BKE_report(CTX_wm_reports(C), RPT_OPERATOR, pystring.c_str());
       }
     }
   }
@@ -1187,9 +1188,8 @@ static void wm_operator_finished(bContext *C,
 
   if (repeat == 0) {
     if (G.debug & G_DEBUG_WM) {
-      char *buf = WM_operator_pystring(C, op, false, true);
-      BKE_report(CTX_wm_reports(C), RPT_OPERATOR, buf);
-      MEM_freeN(buf);
+      std::string pystring = WM_operator_pystring(C, op, false, true);
+      BKE_report(CTX_wm_reports(C), RPT_OPERATOR, pystring.c_str());
     }
 
     if (do_register) {
@@ -1999,8 +1999,8 @@ void WM_operator_name_call_ptr_with_depends_on_cursor(bContext *C,
     char header_text[UI_MAX_DRAW_STR];
     SNPRINTF(header_text,
              "%s %s",
-             IFACE_("Input pending "),
-             (drawstr && drawstr[0]) ? drawstr : CTX_IFACE_(ot->translation_context, ot->name));
+             RPT_("Input pending "),
+             (drawstr && drawstr[0]) ? drawstr : CTX_RPT_(ot->translation_context, ot->name));
     if (area != nullptr) {
       ED_area_status_text(area, header_text);
     }
@@ -2930,7 +2930,7 @@ static const char *keymap_handler_log_kmi_op_str(bContext *C,
                                                  size_t buf_maxncpy)
 {
   /* The key-map item properties can further help distinguish this item from others. */
-  char *kmi_props = nullptr;
+  std::optional<std::string> kmi_props;
   if (kmi->properties != nullptr) {
     wmOperatorType *ot = WM_operatortype_find(kmi->idname, false);
     if (ot) {
@@ -2940,10 +2940,7 @@ static const char *keymap_handler_log_kmi_op_str(bContext *C,
       kmi_props = IDP_reprN(kmi->properties, nullptr);
     }
   }
-  BLI_snprintf(buf, buf_maxncpy, "%s(%s)", kmi->idname, kmi_props ? kmi_props : "");
-  if (kmi_props != nullptr) {
-    MEM_freeN(kmi_props);
-  }
+  BLI_snprintf(buf, buf_maxncpy, "%s(%s)", kmi->idname, kmi_props.value_or("").c_str());
   return buf;
 }
 
@@ -3193,7 +3190,8 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
           LISTBASE_FOREACH (wmKeyMapItem *, kmi, &keymap->items) {
             if ((kmi->flag & KMI_INACTIVE) == 0) {
               if (wm_eventmatch(&event_test_click, kmi) ||
-                  wm_eventmatch(&event_test_click_drag, kmi)) {
+                  wm_eventmatch(&event_test_click_drag, kmi))
+              {
                 wmOperatorType *ot = WM_operatortype_find(kmi->idname, false);
                 if (WM_operator_poll_context(C, ot, WM_OP_INVOKE_DEFAULT)) {
                   is_event_handle_all = true;
@@ -3351,8 +3349,10 @@ static eHandlerActionFlag wm_handlers_do_intern(bContext *C,
                   event->customdata = &single_lb;
 
                   const wmOperatorCallContext opcontext = wm_drop_operator_context_get(drop);
-                  int op_retval = wm_operator_call_internal(
-                      C, drop->ot, drop->ptr, nullptr, opcontext, false, event);
+                  int op_retval =
+                      drop->ot ? wm_operator_call_internal(
+                                     C, drop->ot, drop->ptr, nullptr, opcontext, false, event) :
+                                 OPERATOR_CANCELLED;
                   OPERATOR_RETVAL_CHECK(op_retval);
 
                   if ((op_retval & OPERATOR_CANCELLED) && drop->cancel) {
@@ -5343,7 +5343,7 @@ static wmEvent *wm_event_add_mousemove_to_head(wmWindow *win)
 
 static wmEvent *wm_event_add_trackpad(wmWindow *win, const wmEvent *event, int deltax, int deltay)
 {
-  /* Ignore in between track-pad events for performance, we only need high accuracy
+  /* Ignore in between trackpad events for performance, we only need high accuracy
    * for painting with mouse moves, for navigation using the accumulated value is ok. */
   const wmEvent *event_last = static_cast<wmEvent *>(win->event_queue.last);
   if (event_last && event_last->type == event->type) {
@@ -6233,7 +6233,8 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
   {
     bToolRef *tref = nullptr;
     if ((region->regiontype == RGN_TYPE_WINDOW) &&
-        ((1 << area->spacetype) & WM_TOOLSYSTEM_SPACE_MASK)) {
+        ((1 << area->spacetype) & WM_TOOLSYSTEM_SPACE_MASK))
+    {
       const Scene *scene = WM_window_get_active_scene(win);
       ViewLayer *view_layer = WM_window_get_active_view_layer(win);
       WorkSpace *workspace = WM_window_get_active_workspace(win);
@@ -6355,7 +6356,8 @@ bool WM_window_modal_keymap_status_draw(bContext *C, wmWindow *win, uiLayout *la
       continue;
     }
     if ((keymap->poll_modal_item != nullptr) &&
-        (keymap->poll_modal_item(op, items[i].value) == false)) {
+        (keymap->poll_modal_item(op, items[i].value) == false))
+    {
       continue;
     }
 

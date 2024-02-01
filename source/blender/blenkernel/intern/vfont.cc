@@ -6,6 +6,7 @@
  * \ingroup bke
  */
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -39,8 +40,8 @@
 #include "BKE_bpath.h"
 #include "BKE_curve.hh"
 #include "BKE_global.h"
-#include "BKE_idtype.h"
-#include "BKE_lib_id.h"
+#include "BKE_idtype.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_object_types.hh"
 #include "BKE_packedFile.h"
@@ -117,7 +118,8 @@ static void vfont_foreach_path(ID *id, BPathForeachPathData *bpath_data)
   VFont *vfont = (VFont *)id;
 
   if ((vfont->packedfile != nullptr) &&
-      (bpath_data->flag & BKE_BPATH_FOREACH_PATH_SKIP_PACKED) != 0) {
+      (bpath_data->flag & BKE_BPATH_FOREACH_PATH_SKIP_PACKED) != 0)
+  {
     return;
   }
 
@@ -1130,7 +1132,7 @@ static bool vfont_to_curve(Object *ob,
         current_line_length += twidth;
       }
       else {
-        longest_line_length = MAX2(current_line_length, longest_line_length);
+        longest_line_length = std::max(current_line_length, longest_line_length);
         current_line_length = 0.0f;
       }
 
@@ -1189,7 +1191,7 @@ static bool vfont_to_curve(Object *ob,
   }
 
   current_line_length += xof + twidth - MARGIN_X_MIN;
-  longest_line_length = MAX2(current_line_length, longest_line_length);
+  longest_line_length = std::max(current_line_length, longest_line_length);
 
   cu->lines = 1;
   for (i = 0; i <= slen; i++) {
@@ -1249,7 +1251,8 @@ static bool vfont_to_curve(Object *ob,
       }
       for (i = 0; i <= slen; i++) {
         for (j = i; !ELEM(mem[j], '\0', '\n') && (chartransdata[j].dobreak == 0) && (j < slen);
-             j++) {
+             j++)
+        {
           /* do nothing */
         }
 
@@ -1263,7 +1266,8 @@ static bool vfont_to_curve(Object *ob,
       float curofs = 0.0f;
       for (i = 0; i <= slen; i++) {
         for (j = i; (mem[j]) && (mem[j] != '\n') && (chartransdata[j].dobreak == 0) && (j < slen);
-             j++) {
+             j++)
+        {
           /* pass */
         }
 

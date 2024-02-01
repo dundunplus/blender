@@ -15,7 +15,7 @@
 #include "DNA_ID.h"
 #include "DNA_armature_types.h"
 #include "DNA_listBase.h"
-#include "DNA_session_uuid_types.h"
+#include "DNA_session_uid_types.h"
 #include "DNA_userdef_types.h" /* ThemeWireColor */
 #include "DNA_vec_types.h"
 #include "DNA_view2d_types.h"
@@ -197,7 +197,7 @@ typedef struct bPoseChannel_BBoneSegmentBoundary {
 } bPoseChannel_BBoneSegmentBoundary;
 
 typedef struct bPoseChannel_Runtime {
-  SessionUUID session_uuid;
+  SessionUID session_uid;
 
   /* Cached dual quaternion for deformation. */
   struct DualQuat deform_dual_quat;
@@ -827,6 +827,9 @@ typedef enum eDopeSheet_FilterFlag2 {
   ADS_FILTER_NOHAIR = (1 << 3),
   ADS_FILTER_NOPOINTCLOUD = (1 << 4),
   ADS_FILTER_NOVOLUME = (1 << 5),
+
+  /** Include working drivers with variables using their fallback values into Only Show Errors. */
+  ADS_FILTER_DRIVER_FALLBACK_AS_ERROR = (1 << 6),
 } eDopeSheet_FilterFlag2;
 
 /* DopeSheet general flags */

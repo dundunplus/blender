@@ -16,6 +16,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_base.h"
 #include "BLI_math_vector.h"
+#include "BLI_time.h" /* USER_ZOOM_CONTINUE */
 #include "BLI_utildefines.h"
 
 #include "BKE_context.hh"
@@ -30,8 +31,6 @@
 
 #include "UI_interface.hh"
 #include "UI_view2d.hh"
-
-#include "PIL_time.h" /* USER_ZOOM_CONTINUE */
 
 #include "view2d_intern.hh"
 
@@ -785,7 +784,8 @@ static void view_zoomstep_apply_ex(bContext *C,
 
         /* only move view to mouse if zoom fac is inside minzoom/maxzoom */
         if (((v2d->keepzoom & V2D_LIMITZOOM) == 0) ||
-            IN_RANGE_INCL(zoomx, v2d->minzoom, v2d->maxzoom)) {
+            IN_RANGE_INCL(zoomx, v2d->minzoom, v2d->maxzoom))
+        {
           const float mval_fac = (vzd->mx_2d - cur_old.xmin) / BLI_rctf_size_x(&cur_old);
           const float mval_faci = 1.0f - mval_fac;
           const float ofs = (mval_fac * dx) - (mval_faci * dx);
@@ -820,7 +820,8 @@ static void view_zoomstep_apply_ex(bContext *C,
 
         /* only move view to mouse if zoom fac is inside minzoom/maxzoom */
         if (((v2d->keepzoom & V2D_LIMITZOOM) == 0) ||
-            IN_RANGE_INCL(zoomy, v2d->minzoom, v2d->maxzoom)) {
+            IN_RANGE_INCL(zoomy, v2d->minzoom, v2d->maxzoom))
+        {
           const float mval_fac = (vzd->my_2d - cur_old.ymin) / BLI_rctf_size_y(&cur_old);
           const float mval_faci = 1.0f - mval_fac;
           const float ofs = (mval_fac * dy) - (mval_faci * dy);
@@ -1031,7 +1032,7 @@ static void view_zoomdrag_apply(bContext *C, wmOperator *op)
   /* Check if the 'timer' is initialized, as zooming with the trackpad
    * never uses the "Continuous" zoom method, and the 'timer' is not initialized. */
   if ((U.viewzoom == USER_ZOOM_CONTINUE) && vzd->timer) { /* XXX store this setting as RNA prop? */
-    const double time = PIL_check_seconds_timer();
+    const double time = BLI_check_seconds_timer();
     const float time_step = float(time - vzd->timer_lastdraw);
 
     dx *= time_step * 5.0f;
@@ -1174,7 +1175,8 @@ static int view_zoomdrag_invoke(bContext *C, wmOperator *op, const wmEvent *even
     /* Only respect user setting zoom axis if the view does not have any zoom restrictions
      * any will be scaled uniformly. */
     if (((v2d->keepzoom & (V2D_LOCKZOOM_X | V2D_LOCKZOOM_Y)) == 0) &&
-        (v2d->keepzoom & V2D_KEEPASPECT)) {
+        (v2d->keepzoom & V2D_KEEPASPECT))
+    {
       if (U.uiflag & USER_ZOOM_HORIZ) {
         facy = 0.0f;
       }
@@ -1230,7 +1232,7 @@ static int view_zoomdrag_invoke(bContext *C, wmOperator *op, const wmEvent *even
   if (U.viewzoom == USER_ZOOM_CONTINUE) {
     /* needs a timer to continue redrawing */
     vzd->timer = WM_event_timer_add(CTX_wm_manager(C), window, TIMER, 0.01f);
-    vzd->timer_lastdraw = PIL_check_seconds_timer();
+    vzd->timer_lastdraw = BLI_check_seconds_timer();
   }
 
   return OPERATOR_RUNNING_MODAL;

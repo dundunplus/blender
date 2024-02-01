@@ -32,8 +32,6 @@ struct ColorBand;
 
 /* ************************ style definitions ******************** */
 
-#define MAX_STYLE_NAME 64
-
 /**
  * Default offered by Blender.
  * #uiFont.uifont_id
@@ -90,7 +88,7 @@ typedef struct uiFontStyle {
 typedef struct uiStyle {
   struct uiStyle *next, *prev;
 
-  /** MAX_STYLE_NAME. */
+  /** #MAX_NAME */
   char name[64];
 
   uiFontStyle paneltitle;
@@ -625,12 +623,22 @@ typedef struct bUserExtensionRepo {
    */
   char module[48];
 
+  /**
+   * The "local" directory where extensions are stored.
+   * When unset, use `{BLENDER_USER_SCRIPTS}/extensions/{bUserExtensionRepo::module}`.
+   */
   char dirpath[1024];     /* FILE_MAX */
   char remote_path[1024]; /* FILE_MAX */
 
   int flag;
   char _pad0[4];
 } bUserExtensionRepo;
+
+typedef enum eUserExtensionRepo_Flag {
+  /** Maintain disk cache. */
+  USER_EXTENSION_REPO_FLAG_NO_CACHE = 1 << 0,
+  USER_EXTENSION_REPO_FLAG_DISABLED = 1 << 1,
+} eUserExtensionRepo_Flag;
 
 typedef struct SolidLight {
   int flag;
@@ -704,7 +712,6 @@ typedef struct UserDef_Experimental {
   char use_full_frame_compositor;
   char use_sculpt_tools_tilt;
   char use_extended_asset_browser;
-  char use_override_templates;
   char use_sculpt_texture_paint;
   char use_grease_pencil_version3;
   char enable_overlay_next;
@@ -712,7 +719,7 @@ typedef struct UserDef_Experimental {
   char use_shader_node_previews;
   char use_extension_repos;
 
-  char _pad[3];
+  char _pad[4];
   /** `makesdna` does not allow empty structs. */
 } UserDef_Experimental;
 
@@ -953,8 +960,8 @@ typedef struct UserDef {
 
   /** #eAutokey_Mode, auto-keying mode. */
   short autokey_mode;
-  /** Flags for autokeying. */
-  short autokey_flag;
+  /** Flags for inserting keyframes. */
+  short keying_flag;
   /** Flags for which channels to insert keys at. */
   short key_insert_channels;  // eKeyInsertChannels
   char _pad15[6];
@@ -1283,19 +1290,25 @@ typedef enum eZoomFrame_Mode {
 /**
  * Defines how keyframes are inserted.
  * Used for regular keying and auto-keying.
+ * Not all of those flags are stored in the user preferences (U.keying_flag).
+ * Some are stored on the scene (toolsettings.keying_flag).
  */
-typedef enum eKeyInsert_Flag {
+typedef enum eKeying_Flag {
+  /* Settings used across manual and auto-keying. */
+  KEYING_FLAG_VISUALKEY = (1 << 2),
+  KEYING_FLAG_XYZ2RGB = (1 << 3),
+  KEYING_FLAG_CYCLEAWARE = (1 << 8),
+
+  /* Auto-key options. */
   AUTOKEY_FLAG_INSERTAVAILABLE = (1 << 0),
   AUTOKEY_FLAG_INSERTNEEDED = (1 << 1),
-  AUTOKEY_FLAG_VISUALKEY = (1 << 2),
-  AUTOKEY_FLAG_XYZ2RGB = (1 << 3),
-
-  /* toolsettings->autokey_flag */
   AUTOKEY_FLAG_ONLYKEYINGSET = (1 << 6),
   AUTOKEY_FLAG_NOWARNING = (1 << 7),
-  AUTOKEY_FLAG_CYCLEAWARE = (1 << 8),
   AUTOKEY_FLAG_LAYERED_RECORD = (1 << 10),
-} eKeyInsert_Flag;
+
+  /* Manual Keying options. */
+  MANUALKEY_FLAG_INSERTNEEDED = (1 << 11),
+} eKeying_Flag;
 
 typedef enum eKeyInsertChannels {
   USER_ANIM_KEY_CHANNEL_LOCATION = (1 << 0),
@@ -1308,7 +1321,7 @@ typedef enum eKeyInsertChannels {
 /**
  * Animation flags
  * #UserDef.animation_flag, used for animation flags that aren't covered by more specific flags
- * (like eKeyInsert_Flag).
+ * (like eKeying_Flag).
  */
 typedef enum eUserpref_Anim_Flags {
   USER_ANIM_SHOW_CHANNEL_GROUP_COLORS = (1 << 0),
@@ -1320,7 +1333,7 @@ typedef enum eUserpref_Anim_Flags {
 typedef enum eUserpref_Translation_Flags {
   USER_TR_TOOLTIPS = (1 << 0),
   USER_TR_IFACE = (1 << 1),
-  USER_TR_UNUSED_2 = (1 << 2),            /* cleared */
+  USER_TR_REPORTS = (1 << 2),
   USER_TR_UNUSED_3 = (1 << 3),            /* cleared */
   USER_TR_UNUSED_4 = (1 << 4),            /* cleared */
   USER_DOTRANSLATE_DEPRECATED = (1 << 5), /* Deprecated in 2.83. */

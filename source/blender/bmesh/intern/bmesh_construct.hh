@@ -122,27 +122,32 @@ BMFace *BM_face_create_ngon_verts(BMesh *bm,
                                   bool create_edges);
 
 /**
- * Copies attributes, e.g. customdata, header flags, etc, from one element
- * to another of the same type.
+ * Copy attributes between elements with a precalculated map of copy operations. This significantly
+ * improves performance when copying, since all the work of finding common layers doesn't have to
+ * be done for every element.
  */
-void BM_elem_attrs_copy_ex(BMesh *bm_src,
-                           BMesh *bm_dst,
-                           const void *ele_src_v,
-                           void *ele_dst_v,
-                           char hflag_mask,
-                           uint64_t cd_mask_exclude);
-
-/** Copy attributes between elements in two BMeshes (though they may match). */
-void BM_elem_attrs_copy(const BMesh *bm_src, BMesh *bm_dst, const BMVert *src, BMVert *dst);
-void BM_elem_attrs_copy(const BMesh *bm_src, BMesh *bm_dst, const BMEdge *src, BMEdge *dst);
-void BM_elem_attrs_copy(const BMesh *bm_src, BMesh *bm_dst, const BMFace *src, BMFace *dst);
-void BM_elem_attrs_copy(const BMesh *bm_src, BMesh *bm_dst, const BMLoop *src, BMLoop *dst);
+void BM_elem_attrs_copy(BMesh *bm,
+                        const BMCustomDataCopyMap &cd_map,
+                        const BMVert *src,
+                        BMVert *dst);
+void BM_elem_attrs_copy(BMesh *bm,
+                        const BMCustomDataCopyMap &cd_map,
+                        const BMEdge *src,
+                        BMEdge *dst);
+void BM_elem_attrs_copy(BMesh *bm,
+                        const BMCustomDataCopyMap &cd_map,
+                        const BMFace *src,
+                        BMFace *dst);
+void BM_elem_attrs_copy(BMesh *bm,
+                        const BMCustomDataCopyMap &cd_map,
+                        const BMLoop *src,
+                        BMLoop *dst);
 
 /** Copy attributes between elements in the same BMesh. */
-void BM_elem_attrs_copy(BMesh &bm, const BMVert *src, BMVert *dst);
-void BM_elem_attrs_copy(BMesh &bm, const BMEdge *src, BMEdge *dst);
-void BM_elem_attrs_copy(BMesh &bm, const BMFace *src, BMFace *dst);
-void BM_elem_attrs_copy(BMesh &bm, const BMLoop *src, BMLoop *dst);
+void BM_elem_attrs_copy(BMesh *bm, const BMVert *src, BMVert *dst);
+void BM_elem_attrs_copy(BMesh *bm, const BMEdge *src, BMEdge *dst);
+void BM_elem_attrs_copy(BMesh *bm, const BMFace *src, BMFace *dst);
+void BM_elem_attrs_copy(BMesh *bm, const BMLoop *src, BMLoop *dst);
 
 void BM_elem_select_copy(BMesh *bm_dst, void *ele_dst_v, const void *ele_src_v);
 
@@ -156,15 +161,13 @@ void BM_elem_select_copy(BMesh *bm_dst, void *ele_dst_v, const void *ele_src_v);
  * as this is the mesh they have control over (active UV layer for rendering for example).
  */
 void BM_mesh_copy_init_customdata_from_mesh_array(BMesh *bm_dst,
-                                                  const struct Mesh *me_src_array[],
+                                                  const Mesh *me_src_array[],
                                                   int me_src_array_len,
-                                                  const struct BMAllocTemplate *allocsize);
+                                                  const BMAllocTemplate *allocsize);
 void BM_mesh_copy_init_customdata_from_mesh(BMesh *bm_dst,
-                                            const struct Mesh *me_src,
-                                            const struct BMAllocTemplate *allocsize);
-void BM_mesh_copy_init_customdata(BMesh *bm_dst,
-                                  BMesh *bm_src,
-                                  const struct BMAllocTemplate *allocsize);
+                                            const Mesh *me_src,
+                                            const BMAllocTemplate *allocsize);
+void BM_mesh_copy_init_customdata(BMesh *bm_dst, BMesh *bm_src, const BMAllocTemplate *allocsize);
 /**
  * Similar to #BM_mesh_copy_init_customdata but copies all layers ignoring
  * flags like #CD_FLAG_NOCOPY.
@@ -177,5 +180,5 @@ void BM_mesh_copy_init_customdata(BMesh *bm_dst,
 void BM_mesh_copy_init_customdata_all_layers(BMesh *bm_dst,
                                              BMesh *bm_src,
                                              char htype,
-                                             const struct BMAllocTemplate *allocsize);
+                                             const BMAllocTemplate *allocsize);
 BMesh *BM_mesh_copy(BMesh *bm_old);

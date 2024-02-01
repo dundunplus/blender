@@ -14,7 +14,7 @@
 #include "DNA_customdata_types.h"
 
 #include "GPU_context.h"
-#include "GPU_material.h"
+#include "GPU_material.hh"
 #include "GPU_shader.h"
 #include "GPU_texture.h"
 #include "GPU_uniform_buffer.h"
@@ -41,7 +41,8 @@ using namespace nodes::derived_node_tree_types;
 ShaderOperation::ShaderOperation(Context &context, ShaderCompileUnit &compile_unit)
     : Operation(context), compile_unit_(compile_unit)
 {
-  material_ = GPU_material_from_callbacks(&construct_material, &generate_code, this);
+  material_ = GPU_material_from_callbacks(
+      GPU_MAT_COMPOSITOR, &construct_material, &generate_code, this);
   GPU_material_status_set(material_, GPU_MAT_QUEUED);
   GPU_material_compile(material_);
 }

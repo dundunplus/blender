@@ -23,19 +23,19 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BKE_colorband.h"
-#include "BKE_colortools.h"
+#include "BKE_colorband.hh"
+#include "BKE_colortools.hh"
 #include "BKE_curveprofile.h"
 #include "BKE_node.hh"
 #include "BKE_tracking.h"
 
-#include "IMB_colormanagement.h"
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_colormanagement.hh"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "BIF_glutil.hh"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"

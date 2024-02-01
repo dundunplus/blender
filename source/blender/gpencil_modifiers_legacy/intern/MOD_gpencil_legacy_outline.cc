@@ -28,7 +28,7 @@
 #include "BKE_gpencil_geom_legacy.h"
 #include "BKE_gpencil_legacy.h"
 #include "BKE_gpencil_modifier_legacy.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_query.hh"
 #include "BKE_main.hh"
 #include "BKE_material.h"
 #include "BKE_scene.h"
@@ -307,7 +307,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   Scene *scene = CTX_data_scene(C);
   if (scene->camera == nullptr) {
-    uiItemL(layout, IFACE_("Outline requires an active camera"), ICON_ERROR);
+    uiItemL(layout, RPT_("Outline requires an active camera"), ICON_ERROR);
   }
 
   gpencil_modifier_panel_end(layout, ptr);

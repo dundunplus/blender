@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'72b6c44e759b')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'8b1da14f0a3d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-04 11:06:00\n"
-"PO-Revision-Date: 2023-10-12 15:54+0000\n"
+"POT-Creation-Date: 2024-01-22 11:04+0000\n"
+"PO-Revision-Date: 2023-12-12 02:28+0000\n"
 "Last-Translator: Zdeněk Doležal <Griperis@outlook.cz>\n"
 "Language-Team: Czech <https://translate.blender.org/projects/blender-ui/ui/cs/>\n"
 "Language: cs\n"
@@ -339,8 +339,28 @@ msgid "Optimize all kernels. Fastest rendering, may result in extra background C
 msgstr "Optimalizovat všechna jádra. Nejrychlejší renderování, může způsobit dodatečnou zátěž CPU na pozadí"
 
 
+msgid "MetalRT"
+msgstr "MetalRT"
+
+
+msgid "Disable MetalRT (uses BVH2 layout for intersection queries)"
+msgstr "Vypnout MetalRT (používá BVH2 rozložení pro výpočet kolizí)"
+
+
+msgid "On"
+msgstr "Zapnout"
+
+
+msgid "Enable MetalRT for intersection queries"
+msgstr "Zapnout MetalRT pro výpočet kolizí"
+
+
 msgid "Auto"
 msgstr "Automaticky"
+
+
+msgid "Automatically pick the fastest intersection method"
+msgstr "Automaticky vybrat nejrychlejší metodu výpočtu kolizí"
 
 
 msgid "Distribute memory across devices"
@@ -2665,6 +2685,10 @@ msgstr "Relativní cesta"
 
 msgid "Bones"
 msgstr "Kosti"
+
+
+msgid "Index"
+msgstr "Index"
 
 
 msgid "Visible"
@@ -5584,10 +5608,6 @@ msgid "Only First"
 msgstr "Pouze První"
 
 
-msgid "Index"
-msgstr "Index"
-
-
 msgid "Segments"
 msgstr "Segmenty"
 
@@ -7129,6 +7149,18 @@ msgstr "Skryje označené plošky"
 
 msgid "Save"
 msgstr "Uložit"
+
+
+msgid "File Extensions"
+msgstr "Přípony souborů"
+
+
+msgid "Operator"
+msgstr "Operátor"
+
+
+msgid "Label"
+msgstr "Úroveň"
 
 
 msgid "Icon ID"
@@ -10713,10 +10745,6 @@ msgid "Proxy Custom Directory"
 msgstr "Adresář zvuků"
 
 
-msgid "Label"
-msgstr "Úroveň"
-
-
 msgid "Grease Pencil Data"
 msgstr "Kresba skicovací tužkou"
 
@@ -11978,10 +12006,6 @@ msgstr "Nastavení jednotek"
 
 msgid "Unit editing settings"
 msgstr "Zobrazit nastaveni hran"
-
-
-msgid "Audio Muted"
-msgstr "Audio hlasitost"
 
 
 msgid "Audio Scrubbing"
@@ -17821,6 +17845,10 @@ msgid "Pixelate"
 msgstr "Pixely"
 
 
+msgid "Pixel Size"
+msgstr "Velikost Pixelu"
+
+
 msgid "Alpha Convert"
 msgstr "Činitel"
 
@@ -18746,6 +18774,10 @@ msgid "Value to Normal"
 msgstr "Hodnota k Normále"
 
 
+msgid "Socket Type"
+msgstr "Stejné typy"
+
+
 msgid "Node Inputs"
 msgstr "Vstupy Uzlu"
 
@@ -18832,10 +18864,6 @@ msgstr "Výchozí hodnota"
 
 msgid "Geometry socket of a node"
 msgstr "Soket geometrického uzlu"
-
-
-msgid "Socket Type"
-msgstr "Stejné typy"
 
 
 msgid "Collection of Nodes"
@@ -21152,6 +21180,23 @@ msgid "Reset Original Length"
 msgstr "Uchovat originál"
 
 
+msgid "Duplicate"
+msgstr "Zdvojit"
+
+
+msgid "Extrude selected control point(s)"
+msgstr "Zobrazit neoznačení řídící body"
+
+
+msgctxt "Operator"
+msgid "Extrude Curve and Move"
+msgstr "Opakované tažení"
+
+
+msgid "Extrude curve and move result"
+msgstr "Opakované tažení"
+
+
 msgid "(De)select all control points"
 msgstr "O(d)značit vše"
 
@@ -21159,6 +21204,15 @@ msgstr "O(d)značit vše"
 msgctxt "Operator"
 msgid "Select Random"
 msgstr "Vybrat Náhodně"
+
+
+msgctxt "Operator"
+msgid "Clear Tilt"
+msgstr "Původni velikost"
+
+
+msgid "Clear the tilt of selected control points"
+msgstr "Vyrovná úhly označených plošek"
 
 
 msgctxt "Operator"
@@ -21225,10 +21279,6 @@ msgid "Duplicate Curve"
 msgstr "Zdvojit křivku"
 
 
-msgid "Extrude selected control point(s)"
-msgstr "Zobrazit neoznačení řídící body"
-
-
 msgid "Resize"
 msgstr "Původni velikost"
 
@@ -21259,15 +21309,6 @@ msgstr "Čas Bake"
 
 msgid "Edge Slide"
 msgstr "Posouvat hranu"
-
-
-msgctxt "Operator"
-msgid "Extrude Curve and Move"
-msgstr "Opakované tažení"
-
-
-msgid "Extrude curve and move result"
-msgstr "Opakované tažení"
 
 
 msgctxt "Operator"
@@ -21515,15 +21556,6 @@ msgid "Subdivide selected segments"
 msgstr "Rozdělit vybrané úseky"
 
 
-msgctxt "Operator"
-msgid "Clear Tilt"
-msgstr "Původni velikost"
-
-
-msgid "Clear the tilt of selected control points"
-msgstr "Vyrovná úhly označených plošek"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Vybrat nový font pro uživatelské rozhraní"
 
@@ -21738,16 +21770,8 @@ msgstr "Původni rotace"
 
 
 msgctxt "Operator"
-msgid "Export STL"
+msgid "Export PLY"
 msgstr "Exportovat"
-
-
-msgid "Ascii"
-msgstr "Ascii"
-
-
-msgid "Save the file in ASCII file format"
-msgstr "Uložit současný soubor na vybrané umístění"
 
 
 msgid "X Forward"
@@ -21794,20 +21818,12 @@ msgid "-Z Up"
 msgstr "-Z nahoru"
 
 
-msgid "Batch Mode"
-msgstr "Pózy kostí"
-
-
-msgid "All data in one file"
-msgstr "Všechna data v jednom souboru"
+msgid "ASCII"
+msgstr "ASCII"
 
 
 msgid "Apply Modifiers"
 msgstr "Aplikovat modifikátor"
-
-
-msgid "Apply the modifiers before saving"
-msgstr "Před kreslením aplikovat normály vertexů"
 
 
 msgid "Selection Only"
@@ -21816,6 +21832,26 @@ msgstr "Pouze vybrané"
 
 msgid "Export selected objects only"
 msgstr "Ostranit označené Objekt(y) Globálně"
+
+
+msgid "Ascii"
+msgstr "Ascii"
+
+
+msgid "Save the file in ASCII file format"
+msgstr "Uložit současný soubor na vybrané umístění"
+
+
+msgid "Batch Mode"
+msgstr "Pózy kostí"
+
+
+msgid "All data in one file"
+msgstr "Všechna data v jednom souboru"
+
+
+msgid "Apply the modifiers before saving"
+msgstr "Před kreslením aplikovat normály vertexů"
 
 
 msgctxt "Operator"
@@ -21982,6 +22018,14 @@ msgstr "Vykreslovatelné objekty"
 
 msgid "Remember Export Settings"
 msgstr "Zapamatovat si Nastavení Exportu"
+
+
+msgid "Material Groups"
+msgstr "Materiál"
+
+
+msgid "Smooth Groups"
+msgstr "Přidat do skupiny"
 
 
 msgctxt "Operator"
@@ -23095,10 +23139,6 @@ msgid "Flat"
 msgstr "Ploché"
 
 
-msgid "Duplicate"
-msgstr "Zdvojit"
-
-
 msgctxt "Operator"
 msgid "Select Mode"
 msgstr "Seskupený objekt"
@@ -23372,7 +23412,7 @@ msgstr "Shader záření"
 
 
 msgctxt "Operator"
-msgid "Import STL"
+msgid "Import PLY"
 msgstr "Importovat"
 
 
@@ -23412,6 +23452,10 @@ msgstr "Data Dělení"
 msgctxt "Operator"
 msgid "Import glTF 2.0"
 msgstr "Importovat glTF 2.0"
+
+
+msgid "Import OBJ groups as vertex groups"
+msgstr "Odstranit ze skupiny vertexů"
 
 
 msgctxt "Operator"
@@ -23892,10 +23936,6 @@ msgstr "Vložit nastavení materiálu"
 msgctxt "Operator"
 msgid "Reverse Colors"
 msgstr "Nová vertexová barva"
-
-
-msgid "Flip direction of vertex colors inside faces"
-msgstr "Přepíná směr vybraných ploškových vrcholů a ploškových normál"
 
 
 msgctxt "Operator"
@@ -26905,6 +26945,10 @@ msgid "Clear Shape Keys"
 msgstr "Zrušit šev"
 
 
+msgid "Lock action to execute on vertex groups"
+msgstr "Vybrat řádek"
+
+
 msgctxt "Operator"
 msgid "Mirror Shape Key"
 msgstr "Zrcadlit UV"
@@ -27109,10 +27153,6 @@ msgstr "Číslo ve stupních určující počet otočení"
 msgctxt "Operator"
 msgid "Change the Lock On Vertex Groups"
 msgstr "Aktuální skupina vertexů"
-
-
-msgid "Lock action to execute on vertex groups"
-msgstr "Vybrat řádek"
 
 
 msgid "Lock all vertex groups"
@@ -29029,6 +29069,10 @@ msgid "Editing"
 msgstr "Úpravy"
 
 
+msgid "Extensions"
+msgstr "Rozšíření"
+
+
 msgid "Add-ons"
 msgstr "Rozšíření"
 
@@ -29039,10 +29083,6 @@ msgstr "Mapa kláves"
 
 msgid "File Paths"
 msgstr "Cesty k souborům"
-
-
-msgid "Extensions"
-msgstr "Rozšíření"
 
 
 msgid "Experimental"
@@ -29177,10 +29217,6 @@ msgstr "Zvýšit Kontrast"
 
 msgid "Decrease Contrast"
 msgstr "Snížit Kontrast"
-
-
-msgid "Operator"
-msgstr "Operátor"
 
 
 msgctxt "Operator"
@@ -31769,10 +31805,6 @@ msgid "Object Properties"
 msgstr "Vlastnosti objektu"
 
 
-msgid "Import OBJ groups as vertex groups"
-msgstr "Odstranit ze skupiny vertexů"
-
-
 msgctxt "Operator"
 msgid "Open"
 msgstr "Otevřít"
@@ -31810,16 +31842,6 @@ msgstr "Přidat, nebo odstranit přednastavení operátoru"
 
 msgid "Open a path in a file browser"
 msgstr "Skrýt skryté soubory"
-
-
-msgctxt "Operator"
-msgid "Export PLY"
-msgstr "Exportovat"
-
-
-msgctxt "Operator"
-msgid "Import PLY"
-msgstr "Importovat"
 
 
 msgid "Save Backups"
@@ -32099,6 +32121,16 @@ msgstr "O Blenderu"
 
 msgid "Open a window with information about Blender"
 msgstr "Otevřít okno s informacemi o Blenderu"
+
+
+msgctxt "Operator"
+msgid "Export STL"
+msgstr "Exportovat"
+
+
+msgctxt "Operator"
+msgid "Import STL"
+msgstr "Importovat"
 
 
 msgctxt "Operator"
@@ -32425,14 +32457,6 @@ msgstr "Textový editor"
 
 msgid "Restrict"
 msgstr "Omezit"
-
-
-msgid "Refraction"
-msgstr "Lom"
-
-
-msgid "Denoising"
-msgstr "Odstranění šumu"
 
 
 msgid "Integrator Presets"
@@ -33011,12 +33035,12 @@ msgid "Helpers"
 msgstr "Pomocníci"
 
 
-msgid "Viscosity"
-msgstr "Viskozita"
-
-
 msgid "Indirect Lighting"
 msgstr "Nepřímé osvětlení"
+
+
+msgid "Denoising"
+msgstr "Odstranění šumu"
 
 
 msgid "Shadows"
@@ -35767,10 +35791,6 @@ msgid "Vertical aspect ratio - for anamorphic or non-square pixel output"
 msgstr "Svislý poměr stran - pro anamorfní a nečtvercové pixelové výstupy"
 
 
-msgid "Pixel Size"
-msgstr "Velikost Pixelu"
-
-
 msgid "Resolution Scale"
 msgstr "Měřítko rozlišení"
 
@@ -35913,10 +35933,6 @@ msgstr "Oříznout do Oblasti Vykreslení"
 
 msgid "Crop the rendered frame to the defined render region size"
 msgstr "Oříznout vykreslený snímek do definovaný velikosti vykreslovací oblasti"
-
-
-msgid "File Extensions"
-msgstr "Přípony souborů"
 
 
 msgid "Draw stylized strokes using Freestyle"
@@ -36141,6 +36157,10 @@ msgstr "Základní síť"
 
 msgid "All modifiers"
 msgstr "Všechny modifikátor"
+
+
+msgid "Viscosity"
+msgstr "Viskozita"
 
 
 msgid "Linear viscosity"
@@ -39715,6 +39735,10 @@ msgid "Show dashed lines indicating parent or constraint relationships"
 msgstr "Zobrazuje čárkované čáry naznačující vztahy s nadřazenými objekty, nebo vazby mezi objekty"
 
 
+msgid "Mesh Analysis"
+msgstr "Analýza sítě"
+
+
 msgid "Display vertex normals as lines"
 msgstr "Zobrazí normály vertexů pomocí čárek"
 
@@ -41214,6 +41238,10 @@ msgid "Light Clamping"
 msgstr "Svorka Světla"
 
 
+msgid "Refraction"
+msgstr "Lom"
+
+
 msgid "Cascade Size"
 msgstr "Velikost kaskády"
 
@@ -41910,10 +41938,6 @@ msgid "Online Manual"
 msgstr "Online Návod"
 
 
-msgid "Inputs:"
-msgstr "Vstupy:"
-
-
 msgctxt "Operator"
 msgid "Show One Level"
 msgstr "Zobrazit jednu úroveň"
@@ -42553,16 +42577,16 @@ msgid "Minimum Grid Spacing"
 msgstr "Minimální rozestupy mřížky"
 
 
+msgid "Enable in New Scenes"
+msgstr "Povolit v nových scénách"
+
+
 msgid "Show Warning"
 msgstr "Zobrazit upozornění"
 
 
 msgid "Only Insert Available"
 msgstr "Vložit hodnotu"
-
-
-msgid "Enable in New Scenes"
-msgstr "Povolit v nových scénách"
 
 
 msgid "XYZ to RGB"
@@ -43109,16 +43133,6 @@ msgstr "Sada Ploch z Viditelného"
 
 
 msgctxt "Operator"
-msgid "Invert Visible Face Sets"
-msgstr "Invertovat Viditelné Sady Ploch"
-
-
-msgctxt "Operator"
-msgid "Show All Face Sets"
-msgstr "Zobrazit Všechny Viditelné Sady Ploch"
-
-
-msgctxt "Operator"
 msgid "Randomize Colors"
 msgstr "Randomizovat barvy"
 
@@ -43350,10 +43364,6 @@ msgid "Seams"
 msgstr "Švy"
 
 
-msgid "Mesh Analysis"
-msgstr "Analýza sítě"
-
-
 msgid "Face Angle"
 msgstr "Úhel plochy"
 
@@ -43523,36 +43533,6 @@ msgstr "Odstranit segmenth"
 msgctxt "Operator"
 msgid "Delete Point"
 msgstr "Odstranit bod"
-
-
-msgctxt "Operator"
-msgid "Copyright"
-msgstr "Autorská práva"
-
-
-msgctxt "Operator"
-msgid "Dutch Florin"
-msgstr "Holandský Florin"
-
-
-msgctxt "Operator"
-msgid "British Pound"
-msgstr "Britská libra"
-
-
-msgctxt "Operator"
-msgid "Japanese Yen"
-msgstr "Japonský jen"
-
-
-msgctxt "Operator"
-msgid "Spanish Question Mark"
-msgstr "Španělský Otazník"
-
-
-msgctxt "Operator"
-msgid "Spanish Exclamation Mark"
-msgstr "Španělský Vykřičník"
 
 
 msgctxt "Operator"
@@ -44378,38 +44358,6 @@ msgid "Unsupported context"
 msgstr "Nepodporovaný kontext"
 
 
-msgid "Shortcut: %s"
-msgstr "Zkratka: %s"
-
-
-msgid "Python: %s"
-msgstr "Python: %s"
-
-
-msgid "Value: %s"
-msgstr "Hodnota: %s"
-
-
-msgid "Radians: %f"
-msgstr "Radiány: %f"
-
-
-msgid "Expression: %s"
-msgstr "Výraz: %s"
-
-
-msgid "Library: %s"
-msgstr "Knihovna: %s"
-
-
-msgid "Disabled: %s"
-msgstr "Zakázané: %s"
-
-
-msgid "Python: %s.%s"
-msgstr "Python: %s.%s"
-
-
 msgctxt "Operator"
 msgid "Click"
 msgstr "Kliknout"
@@ -44494,10 +44442,6 @@ msgstr "Seřadit podle:"
 
 msgid "Anim Player"
 msgstr "Přehrávač animací"
-
-
-msgid "Can't edit external library data"
-msgstr "Nelze upravovat data externí knihovny"
 
 
 msgid "Reset operator defaults"
@@ -44674,6 +44618,26 @@ msgstr "Procházet Data Objemu k připojení"
 
 msgid "Browse ID data to be linked"
 msgstr "Procházet ID Data k připojení"
+
+
+msgid "Can't edit external library data"
+msgstr "Nelze upravovat data externí knihovny"
+
+
+msgid "File Not Found"
+msgstr "Soubor nebyl nalezen"
+
+
+msgid "Today"
+msgstr "Dnes"
+
+
+msgid "Yesterday"
+msgstr "Včera"
+
+
+msgid "Modified"
+msgstr "Modifikátory"
 
 
 msgctxt "Object"
@@ -44854,18 +44818,6 @@ msgstr "Nelze vytvořit exportní soubor"
 
 msgid "Can't overwrite export file"
 msgstr "Nelze přepsat exportní soubor"
-
-
-msgid "Material Groups"
-msgstr "Materiál"
-
-
-msgid "Smooth Groups"
-msgstr "Přidat do skupiny"
-
-
-msgid "ASCII"
-msgstr "ASCII"
 
 
 msgctxt "Mesh"
@@ -45655,14 +45607,6 @@ msgid "No object to apply orientation on"
 msgstr "Animace"
 
 
-msgid "Today"
-msgstr "Dnes"
-
-
-msgid "Yesterday"
-msgstr "Včera"
-
-
 msgid "File path"
 msgstr "Cesta souboru"
 
@@ -45743,16 +45687,16 @@ msgid "Update Dependencies"
 msgstr "Přehrát animaci"
 
 
+msgid "Delete target variable"
+msgstr "Renderovat plošky z obou stran"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "F-Křivka má pouze F-Modifikátory"
 
 
 msgid "No active keyframe on F-Curve"
 msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
-
-
-msgid "Delete target variable"
-msgstr "Renderovat plošky z obou stran"
 
 
 msgid "Active F-Curve is not editable"
@@ -45875,6 +45819,10 @@ msgid "Mask not found"
 msgstr "Maska nebyla nalezena"
 
 
+msgid "Please select all related strips"
+msgstr "Odstranit označené značky"
+
+
 msgid "Cannot apply effects to audio sequence strips"
 msgstr "První frame animace"
 
@@ -45885,10 +45833,6 @@ msgstr "První frame animace"
 
 msgid "No valid inputs to swap"
 msgstr "Jméno skriptu"
-
-
-msgid "Please select all related strips"
-msgstr "Odstranit označené značky"
 
 
 msgid "Please select two strips"
@@ -46659,14 +46603,6 @@ msgstr "Neukládat"
 
 msgid "unable to open the file"
 msgstr "není možné otevřít soubor"
-
-
-msgid "File Not Found"
-msgstr "Soubor nebyl nalezen"
-
-
-msgid "Modified"
-msgstr "Modifikátory"
 
 
 msgid "Save changes before closing?"

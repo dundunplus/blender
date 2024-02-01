@@ -33,8 +33,8 @@
 #include "ED_screen.hh"
 #include "ED_transform.hh"
 
-#include "IMB_imbuf.h"
-#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.hh"
+#include "IMB_imbuf_types.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -80,7 +80,7 @@ static bool image_drop_poll(bContext * /*C*/, wmDrag *drag, const wmEvent *event
 {
   if (drag->type == WM_DRAG_PATH) {
     const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-    if (ELEM(file_type, 0, FILE_TYPE_IMAGE)) {
+    if (file_type == FILE_TYPE_IMAGE) {
       generic_poll_operations(event, TH_SEQ_IMAGE);
       return true;
     }
@@ -98,7 +98,7 @@ static bool is_movie(wmDrag *drag)
 {
   if (drag->type == WM_DRAG_PATH) {
     const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-    if (ELEM(file_type, 0, FILE_TYPE_MOVIE)) {
+    if (file_type == FILE_TYPE_MOVIE) {
       return true;
     }
   }
@@ -122,7 +122,7 @@ static bool is_sound(wmDrag *drag)
 {
   if (drag->type == WM_DRAG_PATH) {
     const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-    if (ELEM(file_type, 0, FILE_TYPE_SOUND)) {
+    if (file_type == FILE_TYPE_SOUND) {
       return true;
     }
   }
@@ -249,7 +249,7 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
     return;
   }
 
-  const char *path = WM_drag_get_path(drag);
+  const char *path = WM_drag_get_single_path(drag);
   /* Path dropped. */
   if (path) {
     if (RNA_struct_find_property(drop->ptr, "filepath")) {
@@ -335,7 +335,7 @@ static void get_drag_path(const bContext *C, wmDrag *drag, char r_path[FILE_MAX]
     BLI_path_abs(r_path, BKE_main_blendfile_path_from_global());
   }
   else {
-    BLI_strncpy(r_path, WM_drag_get_path(drag), FILE_MAX);
+    BLI_strncpy(r_path, WM_drag_get_single_path(drag), FILE_MAX);
   }
 }
 
@@ -537,7 +537,7 @@ static void prefetch_data_fn(void *custom_data, wmJobWorkerStatus * /*worker_sta
   }
 
   char colorspace[64] = "\0"; /* 64 == MAX_COLORSPACE_NAME length. */
-  anim *anim = openanim(job_data->path, IB_rect, 0, colorspace);
+  ImBufAnim *anim = openanim(job_data->path, IB_rect, 0, colorspace);
 
   if (anim != nullptr) {
     g_drop_coords.strip_len = IMB_anim_get_duration(anim, IMB_TC_NONE);
@@ -690,7 +690,7 @@ static bool image_drop_preview_poll(bContext * /*C*/, wmDrag *drag, const wmEven
 {
   if (drag->type == WM_DRAG_PATH) {
     const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-    if (ELEM(file_type, 0, FILE_TYPE_IMAGE)) {
+    if (file_type == FILE_TYPE_IMAGE) {
       return true;
     }
   }
@@ -702,7 +702,7 @@ static bool movie_drop_preview_poll(bContext * /*C*/, wmDrag *drag, const wmEven
 {
   if (drag->type == WM_DRAG_PATH) {
     const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-    if (ELEM(file_type, 0, FILE_TYPE_MOVIE)) {
+    if (file_type == FILE_TYPE_MOVIE) {
       return true;
     }
   }
@@ -714,7 +714,7 @@ static bool sound_drop_preview_poll(bContext * /*C*/, wmDrag *drag, const wmEven
 {
   if (drag->type == WM_DRAG_PATH) {
     const eFileSel_File_Types file_type = eFileSel_File_Types(WM_drag_get_path_file_type(drag));
-    if (ELEM(file_type, 0, FILE_TYPE_SOUND)) {
+    if (file_type == FILE_TYPE_SOUND) {
       return true;
     }
   }

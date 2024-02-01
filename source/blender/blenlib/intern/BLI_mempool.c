@@ -528,7 +528,7 @@ void BLI_mempool_free(BLI_mempool *pool, void *addr)
     pool->totalloc = pool->pchunk;
 #endif
 
-    /* Temp alloc so valgrind doesn't complain when setting free'd blocks 'next'. */
+    /* Temporary allocation so VALGRIND doesn't complain when setting freed blocks 'next'. */
 #ifdef WITH_MEM_VALGRIND
     VALGRIND_MEMPOOL_ALLOC(pool, CHUNK_DATA(first), pool->csize);
 #endif
@@ -807,10 +807,8 @@ void *mempool_iter_threadsafe_step(BLI_mempool_threadsafe_iter *ts_iter)
           mempool_asan_unlock(iter->pool);
           return NULL;
         }
-        else {
-          mempool_asan_unlock(iter->pool);
-          return ret;
-        }
+        mempool_asan_unlock(iter->pool);
+        return ret;
       }
       /* End `threadsafe` exception. */
 
@@ -824,10 +822,8 @@ void *mempool_iter_threadsafe_step(BLI_mempool_threadsafe_iter *ts_iter)
           mempool_asan_unlock(iter->pool);
           return NULL;
         }
-        else {
-          mempool_asan_unlock(iter->pool);
-          return ret;
-        }
+        mempool_asan_unlock(iter->pool);
+        return ret;
       }
 
       curnode = CHUNK_DATA(iter->curchunk);

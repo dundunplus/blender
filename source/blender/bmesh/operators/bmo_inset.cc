@@ -310,12 +310,12 @@ static void bmo_face_inset_individual(BMesh *bm,
 
     /* copy loop data */
     l_other = l_iter->radial_next;
-    BM_elem_attrs_copy(*bm, l_iter->next, l_other->prev);
-    BM_elem_attrs_copy(*bm, l_iter, l_other->next->next);
+    BM_elem_attrs_copy(bm, l_iter->next, l_other->prev);
+    BM_elem_attrs_copy(bm, l_iter, l_other->next->next);
 
     if (use_interpolate == false) {
-      BM_elem_attrs_copy(*bm, l_iter->next, l_other);
-      BM_elem_attrs_copy(*bm, l_iter, l_other->next);
+      BM_elem_attrs_copy(bm, l_iter->next, l_other);
+      BM_elem_attrs_copy(bm, l_iter, l_other->next);
     }
   } while ((void)i++, ((l_iter = l_iter->next) != l_first));
 
@@ -393,8 +393,8 @@ static void bmo_face_inset_individual(BMesh *bm,
       /* copy loop data */
       l_other = l_iter->radial_next;
 
-      BM_elem_attrs_copy(*bm, l_iter->next, l_other);
-      BM_elem_attrs_copy(*bm, l_iter, l_other->next);
+      BM_elem_attrs_copy(bm, l_iter->next, l_other);
+      BM_elem_attrs_copy(bm, l_iter, l_other->next);
     } while ((l_iter = l_iter->next) != l_first);
 
     bm_interp_face_free(iface, bm);
@@ -904,7 +904,8 @@ void bmo_inset_region_exec(BMesh *bm, BMOperator *op)
           /* find adjacent */
           BM_ITER_ELEM (e, &iter, v_split, BM_EDGES_OF_VERT) {
             if (BM_elem_flag_test(e, BM_ELEM_TAG) && e->l &&
-                BM_elem_flag_test(e->l->f, BM_ELEM_TAG)) {
+                BM_elem_flag_test(e->l->f, BM_ELEM_TAG))
+            {
               if (vert_edge_tag_tot < 2) {
                 vecpair[vert_edge_tag_tot] = BM_elem_index_get(e);
                 BLI_assert(vecpair[vert_edge_tag_tot] != -1);
@@ -1220,8 +1221,8 @@ void bmo_inset_region_exec(BMesh *bm, BMOperator *op)
       /* we know this side has a radial_next because of the order of created verts in the quad */
       l_a_other = BM_edge_other_loop(l_a->e, l_a);
       l_b_other = BM_edge_other_loop(l_a->e, l_b);
-      BM_elem_attrs_copy(*bm, l_a_other, l_a);
-      BM_elem_attrs_copy(*bm, l_b_other, l_b);
+      BM_elem_attrs_copy(bm, l_a_other, l_a);
+      BM_elem_attrs_copy(bm, l_b_other, l_b);
 
       BLI_assert(l_a->f != l_a_other->f);
       BLI_assert(l_b->f != l_b_other->f);
@@ -1291,8 +1292,8 @@ void bmo_inset_region_exec(BMesh *bm, BMOperator *op)
 #endif /* USE_LOOP_CUSTOMDATA_MERGE */
       }
       else {
-        BM_elem_attrs_copy(*bm, l_a_other, l_b);
-        BM_elem_attrs_copy(*bm, l_b_other, l_a);
+        BM_elem_attrs_copy(bm, l_a_other, l_b);
+        BM_elem_attrs_copy(bm, l_b_other, l_a);
       }
     }
   }

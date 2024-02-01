@@ -161,9 +161,8 @@ static void id_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
   ID *id = WM_drag_get_local_ID(drag, 0);
 
   /* copy drag path to properties */
-  char *text = RNA_path_full_ID_py(id);
-  RNA_string_set(drop->ptr, "text", text);
-  MEM_freeN(text);
+  std::string text = RNA_path_full_ID_py(id);
+  RNA_string_set(drop->ptr, "text", text.c_str());
 }
 
 static bool path_drop_poll(bContext * /*C*/, wmDrag *drag, const wmEvent * /*event*/)
@@ -174,7 +173,7 @@ static bool path_drop_poll(bContext * /*C*/, wmDrag *drag, const wmEvent * /*eve
 static void path_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
 {
   char pathname[FILE_MAX + 2];
-  SNPRINTF(pathname, "\"%s\"", WM_drag_get_path(drag));
+  SNPRINTF(pathname, "\"%s\"", WM_drag_get_single_path(drag));
   RNA_string_set(drop->ptr, "text", pathname);
 }
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 4.1.0 Alpha (b'72b6c44e759b')\n"
+"Project-Id-Version: Blender 4.1.0 Alpha (b'8b1da14f0a3d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-04 11:06:00\n"
+"POT-Creation-Date: 2024-01-22 11:04+0000\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1265,6 +1265,10 @@ msgstr "Relativna putanja"
 
 msgid "Bones"
 msgstr "Kosti"
+
+
+msgid "Index"
+msgstr "Indeks"
 
 
 msgid "Visible"
@@ -2956,10 +2960,6 @@ msgid "View"
 msgstr "Pogled"
 
 
-msgid "Index"
-msgstr "Indeks"
-
-
 msgid "Segments"
 msgstr "Segmenata"
 
@@ -4239,6 +4239,18 @@ msgstr "Parametri izbora datoteka"
 
 msgid "Save"
 msgstr "Sačuvaj"
+
+
+msgid "File Extensions"
+msgstr "Nastavci datoteka"
+
+
+msgid "Operator"
+msgstr "Operator"
+
+
+msgid "Label"
+msgstr "Naziv"
 
 
 msgid "Relative Path"
@@ -6694,10 +6706,6 @@ msgid "Node tree consisting of linked nodes used for shading, textures and compo
 msgstr "Drvo čvorova koje čine povezani čvorovi senčenja, tekstura i slaganja"
 
 
-msgid "Label"
-msgstr "Naziv"
-
-
 msgid "Grease Pencil Data"
 msgstr "Podaci skiciranja"
 
@@ -7672,14 +7680,6 @@ msgstr "Podešavanja jedinice"
 
 msgid "Unit editing settings"
 msgstr "Podešavanja uvoza"
-
-
-msgid "Audio Muted"
-msgstr "Zvuk je utišan"
-
-
-msgid "Play back of audio from Sequence Editor will be muted"
-msgstr "Reprodukcija zvuka u sekvenceru će biti utišana"
 
 
 msgid "Global Gravity"
@@ -11407,6 +11407,10 @@ msgid "Pixelate"
 msgstr "Tačkasto"
 
 
+msgid "Pixel Size"
+msgstr "Veličina piksela"
+
+
 msgid "Alpha Convert"
 msgstr "Pretvori alfu"
 
@@ -11561,6 +11565,10 @@ msgstr "Veće od"
 
 msgid "Component"
 msgstr "Komponenta"
+
+
+msgid "Bake"
+msgstr "Ispeci"
 
 
 msgid "Original"
@@ -13551,9 +13559,35 @@ msgid "Reset Original Length"
 msgstr "Vrati originalnu dužinu"
 
 
+msgid "Duplicate"
+msgstr "Dupliraj"
+
+
+msgid "Extrude selected control point(s)"
+msgstr "Izvuci izabrane i pomeri kontrolne tačke"
+
+
+msgctxt "Operator"
+msgid "Extrude Curve and Move"
+msgstr "Izvuci krivu i pomeri"
+
+
+msgid "Extrude curve and move result"
+msgstr "Izvlači krivu i pomera rezultat"
+
+
 msgctxt "Operator"
 msgid "Select Random"
 msgstr "Izaberi nasumično"
+
+
+msgctxt "Operator"
+msgid "Clear Tilt"
+msgstr "Očisti uvrtanje"
+
+
+msgid "Clear the tilt of selected control points"
+msgstr "Čisti uvrtanje izabranih kontrolnih tačaka"
 
 
 msgid "Cyclic U"
@@ -13604,10 +13638,6 @@ msgid "Duplicate Curve"
 msgstr "Dupliraj krivu"
 
 
-msgid "Extrude selected control point(s)"
-msgstr "Izvuci izabrane i pomeri kontrolne tačke"
-
-
 msgid "Resize"
 msgstr "Uvećanje"
 
@@ -13630,15 +13660,6 @@ msgstr "Klizaj ivicu"
 
 msgid "Sequence Slide"
 msgstr "Klizaj sekvencu"
-
-
-msgctxt "Operator"
-msgid "Extrude Curve and Move"
-msgstr "Izvuci krivu i pomeri"
-
-
-msgid "Extrude curve and move result"
-msgstr "Izvlači krivu i pomera rezultat"
 
 
 msgctxt "Operator"
@@ -13850,15 +13871,6 @@ msgid "Subdivide selected segments"
 msgstr "Izdeli izabrane segmente"
 
 
-msgctxt "Operator"
-msgid "Clear Tilt"
-msgstr "Očisti uvrtanje"
-
-
-msgid "Clear the tilt of selected control points"
-msgstr "Čisti uvrtanje izabranih kontrolnih tačaka"
-
-
 msgid "Add a new control point (linked to only selected end-curve one, if any)"
 msgstr "Dodaje novu kontrolnu tačku (povezanu sa izabranim delom krive, ukoliko postoji)"
 
@@ -13991,12 +14003,8 @@ msgstr "Ojler (ZYX)"
 
 
 msgctxt "Operator"
-msgid "Export STL"
-msgstr "Izvoz u STL"
-
-
-msgid "Ascii"
-msgstr "Ascii"
+msgid "Export PLY"
+msgstr "Izvoz PLY"
 
 
 msgid "Y Up"
@@ -14017,6 +14025,10 @@ msgstr "Gore po -Z"
 
 msgid "Selection Only"
 msgstr "Samo izabrano"
+
+
+msgid "Ascii"
+msgstr "Ascii"
 
 
 msgctxt "Operator"
@@ -14114,6 +14126,14 @@ msgstr "Trouglaste stranice"
 
 msgid "Convert all faces to triangles"
 msgstr "Pretvroi sve stranice u trouglove"
+
+
+msgid "Material Groups"
+msgstr "Grupa materijala"
+
+
+msgid "Smooth Groups"
+msgstr "Grupe umekšanja"
 
 
 msgid "Compress"
@@ -14872,10 +14892,6 @@ msgid "Flat"
 msgstr "Ravno"
 
 
-msgid "Duplicate"
-msgstr "Dupliraj"
-
-
 msgctxt "Operator"
 msgid "Select Mode"
 msgstr "Mod izabora"
@@ -15070,8 +15086,8 @@ msgstr "Senčenja"
 
 
 msgctxt "Operator"
-msgid "Import STL"
-msgstr "Uvoz u STL"
+msgid "Import PLY"
+msgstr "Uvoz PLY"
 
 
 msgctxt "Operator"
@@ -17264,6 +17280,10 @@ msgid "Clear Shape Keys"
 msgstr "Obriši ključeve oblika"
 
 
+msgid "Lock action to execute on vertex groups"
+msgstr "Postavlja aktivnu grupu temena"
+
+
 msgctxt "Operator"
 msgid "Transfer Shape Key"
 msgstr "Premesti ključ oblika"
@@ -17390,10 +17410,6 @@ msgstr "Vrednost za koju se uvećava vrednost težine."
 msgctxt "Operator"
 msgid "Limit Number of Weights per Vertex"
 msgstr "Ograničen broj težina po temenu"
-
-
-msgid "Lock action to execute on vertex groups"
-msgstr "Postavlja aktivnu grupu temena"
 
 
 msgid "Invert the lock state of all vertex groups"
@@ -18068,10 +18084,6 @@ msgid "Bake physics"
 msgstr "Peče fiziku"
 
 
-msgid "Bake"
-msgstr "Ispeci"
-
-
 msgctxt "Operator"
 msgid "Bake All Physics"
 msgstr "Ispeci svu fiziku"
@@ -18460,10 +18472,6 @@ msgstr "Ignoriši klik na pozadinu"
 
 msgid "Falloff Type"
 msgstr "Vrsta opadanja"
-
-
-msgid "Operator"
-msgstr "Operator"
 
 
 msgid "Sharpen"
@@ -20202,16 +20210,6 @@ msgstr "Otvori putanju u pregledaču datoteka"
 
 
 msgctxt "Operator"
-msgid "Export PLY"
-msgstr "Izvoz PLY"
-
-
-msgctxt "Operator"
-msgid "Import PLY"
-msgstr "Uvoz PLY"
-
-
-msgctxt "Operator"
 msgid "Add Property"
 msgstr "Dodaj osobinu"
 
@@ -20366,6 +20364,16 @@ msgstr "Meni pretrage"
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "Početni ekran"
+
+
+msgctxt "Operator"
+msgid "Export STL"
+msgstr "Izvoz u STL"
+
+
+msgctxt "Operator"
+msgid "Import STL"
+msgstr "Uvoz u STL"
 
 
 msgid "URL"
@@ -22085,10 +22093,6 @@ msgid "Line thickness mode for Freestyle line drawing"
 msgstr "Režim debljine linije pri slobodoručnom iscrtavanju linije"
 
 
-msgid "Pixel Size"
-msgstr "Veličina piksela"
-
-
 msgid "Percentage scale for render resolution"
 msgstr "Procentualno uvećanje rezolucije renderinga"
 
@@ -22127,10 +22131,6 @@ msgstr "Ručno odredi broj procesa"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "Obradi rezultat renderovanja kroz proces slaganje, ako su omogućeni čvorovi slaganja"
-
-
-msgid "File Extensions"
-msgstr "Nastavci datoteka"
 
 
 msgid "Draw stylized strokes using Freestyle"
@@ -26150,38 +26150,6 @@ msgid "Menu \"%s\" not found"
 msgstr "Nije pronađen meni \"%s\""
 
 
-msgid "Shortcut: %s"
-msgstr "Prečica: %s"
-
-
-msgid "Python: %s"
-msgstr "Python: %s"
-
-
-msgid "Value: %s"
-msgstr "Vrednost: %s"
-
-
-msgid "Radians: %f"
-msgstr "Radijana: %f"
-
-
-msgid "Expression: %s"
-msgstr "Izraz: %s"
-
-
-msgid "Library: %s"
-msgstr "Zbirka: %s"
-
-
-msgid "Disabled: %s"
-msgstr "Onemogućeno: %s"
-
-
-msgid "Python: %s.%s"
-msgstr "Python: %s.%s"
-
-
 msgid "ID-Block:"
 msgstr "ID-blok"
 
@@ -26322,6 +26290,10 @@ msgid "Browse Particle Settings to be linked"
 msgstr "Izaberite postavke čestica za povezivanje"
 
 
+msgid "Modified"
+msgstr "Izmenjen"
+
+
 msgctxt "Object"
 msgid "New"
 msgstr "Novo"
@@ -26419,14 +26391,6 @@ msgstr "Novo"
 
 msgid "%d items"
 msgstr "%d stavki"
-
-
-msgid "Material Groups"
-msgstr "Grupa materijala"
-
-
-msgid "Smooth Groups"
-msgstr "Grupe umekšanja"
 
 
 msgctxt "Mesh"
@@ -27483,10 +27447,6 @@ msgstr "Blender-ov pregled datoteka"
 
 msgid "unable to open the file"
 msgstr "Ne mogu da otvorim datoteku"
-
-
-msgid "Modified"
-msgstr "Izmenjen"
 
 
 msgid "Not a library"

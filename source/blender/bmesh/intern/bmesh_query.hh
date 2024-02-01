@@ -547,7 +547,7 @@ BMFace *BM_face_find_double(BMFace *f) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
  * This is for use in cases where creating a face is possible but would result in
  * many overlapping faces.
  *
- * An example of how this is used: when 2 tri's are selected that share an edge,
+ * An example of how this is used: when 2 triangles are selected that share an edge,
  * pressing F-key would make a new overlapping quad (without a check like this)
  *
  * \a earr and \a varr can be in any order, however they _must_ form a closed loop.
@@ -700,7 +700,7 @@ bool BM_face_is_any_edge_flag_test(const BMFace *f, char hflag) ATTR_WARN_UNUSED
 bool BM_edge_is_any_face_len_test(const BMEdge *e, int len) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
 
 /**
- * Use within assert's to check normals are valid.
+ * Use within asserts to check normals are valid.
  */
 bool BM_face_is_normal_valid(const BMFace *f) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
 

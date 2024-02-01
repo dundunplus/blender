@@ -22,11 +22,10 @@
 
 #include "ED_view3d.hh"
 
-#include "DRW_render.h"
-
-#include "IMB_colormanagement.h"
+#include "DRW_render.hh"
 
 #include "COM_context.hh"
+#include "COM_domain.hh"
 #include "COM_evaluator.hh"
 #include "COM_result.hh"
 #include "COM_texture_pool.hh"
@@ -154,7 +153,7 @@ class Context : public realtime_compositor::Context {
     return DRW_viewport_texture_list_get()->color;
   }
 
-  GPUTexture *get_viewer_output_texture(int2 /* size */) override
+  GPUTexture *get_viewer_output_texture(realtime_compositor::Domain /* domain */) override
   {
     return DRW_viewport_texture_list_get()->color;
   }

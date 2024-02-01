@@ -9,6 +9,7 @@ set(INC
   ../../blenkernel
   ../../blentranslation
   ../../editors/include
+  ../../functions
   ../../makesrna
   ../../windowmanager
 )
@@ -35,6 +36,7 @@ set(SRC
   nodes/node_fn_random_value.cc
   nodes/node_fn_replace_string.cc
   nodes/node_fn_rotate_euler.cc
+  nodes/node_fn_rotate_rotation.cc
   nodes/node_fn_rotate_vector.cc
   nodes/node_fn_rotation_to_axis_angle.cc
   nodes/node_fn_rotation_to_euler.cc
@@ -52,7 +54,7 @@ set(SRC
 set(LIB
   PRIVATE bf::blenlib
   PRIVATE bf::dna
-  PRIVATE bf::functions
+  bf_functions
   PRIVATE bf::intern::guardedalloc
 )
 
@@ -71,7 +73,4 @@ list(APPEND LIB
 blender_add_lib(bf_nodes_function "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 target_link_libraries(bf_nodes_functions_generated bf_nodes_function)
 
-if(WITH_UNITY_BUILD)
-  set_target_properties(bf_nodes_function PROPERTIES UNITY_BUILD ON)
-  set_target_properties(bf_nodes_function PROPERTIES UNITY_BUILD_BATCH_SIZE 10)
-endif()
+blender_set_target_unity_build(bf_nodes_function 10)

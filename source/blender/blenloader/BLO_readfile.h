@@ -57,6 +57,11 @@ typedef struct BlendFileData {
 
   int fileflags;
   int globalf;
+  /** Typically the actual filepath of the read blend-file, except when recovering
+   * save-on-exit/autosave files. In the latter case, it will be the path of the file that
+   * generated the auto-saved one being recovered.
+   *
+   * NOTE: Currently expected to be the same path as #BlendFileData.filepath. */
   char filepath[1024]; /* 1024 = FILE_MAX */
 
   /** TODO: think this isn't needed anymore? */
@@ -533,6 +538,14 @@ void BLO_sanitize_experimental_features_userpref_blend(struct UserDef *userdef);
  * to convert it to ImBuf image).
  */
 struct BlendThumbnail *BLO_thumbnail_from_file(const char *filepath);
+
+/**
+ * Does a very light reading of given .blend file to extract its version.
+ *
+ * \param filepath: The path of the blend file to extract version from.
+ * \return The file version
+ */
+short BLO_version_from_file(const char *filepath);
 
 /** Default theme, see: `release/datafiles/userdef/userdef_default_theme.c`. */
 extern const struct bTheme U_theme_default;

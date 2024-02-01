@@ -26,7 +26,7 @@
 
 #include "BKE_curveprofile.h"
 #include "BKE_customdata.hh"
-#include "BKE_deform.h"
+#include "BKE_deform.hh"
 #include "BKE_mesh.hh"
 
 #include "eigen_capi.h"
@@ -40,7 +40,7 @@ using blender::Vector;
 
 // #define BEVEL_DEBUG_TIME
 #ifdef BEVEL_DEBUG_TIME
-#  include "PIL_time.h"
+#  include "BLI_time.h"
 #endif
 
 #define BEVEL_EPSILON_D 1e-6
@@ -58,7 +58,7 @@ using blender::Vector;
 #define BEVEL_MAX_AUTO_ADJUST_PCT 300.0f
 #define BEVEL_MATCH_SPEC_WEIGHT 0.2
 
-//#define DEBUG_CUSTOM_PROFILE_CUTOFF
+// #define DEBUG_CUSTOM_PROFILE_CUTOFF
 /* Happens far too often, uncomment for development. */
 // #define BEVEL_ASSERT_PROJECT
 
@@ -684,7 +684,7 @@ static BMFace *bev_create_ngon(BMesh *bm,
   BMFace *f = BM_face_create_verts(bm, vert_arr, totv, facerep, BM_CREATE_NOP, true);
 
   if ((facerep || (face_arr && face_arr[0])) && f) {
-    BM_elem_attrs_copy(*bm, facerep ? facerep : face_arr[0], f);
+    BM_elem_attrs_copy(bm, facerep ? facerep : face_arr[0], f);
     if (do_interp) {
       int i = 0;
       BMIter iter;
@@ -763,7 +763,7 @@ static bool contig_ldata_across_edge(BMesh *bm, BMEdge *e, BMFace *f1, BMFace *f
    * should now have lef1 and lef2 being f1 and f2 in either order.
    */
   if (lef1->f == f2) {
-    SWAP(BMLoop *, lef1, lef2);
+    std::swap(lef1, lef2);
   }
   if (lef1->f != f1 || lef2->f != f2) {
     return false;
@@ -2299,7 +2299,8 @@ static void check_edge_data_seam_sharp_edges(BevVert *bv, int flag, bool neg)
 
   /* If no such edge found, return. */
   if ((!neg && !BEV_EXTEND_EDGE_DATA_CHECK(e, flag)) ||
-      (neg && BEV_EXTEND_EDGE_DATA_CHECK(e, flag))) {
+      (neg && BEV_EXTEND_EDGE_DATA_CHECK(e, flag)))
+  {
     return;
   }
 
@@ -6404,13 +6405,13 @@ static BevVert *bevel_vert_construct(BMesh *bm, BevelParams *bp, BMVert *v)
     }
     if (ccw_test_sum < 0) {
       for (int i = 0; i <= (tot_edges / 2) - 1; i++) {
-        SWAP(EdgeHalf, bv->edges[i], bv->edges[tot_edges - i - 1]);
-        SWAP(BMFace *, bv->edges[i].fprev, bv->edges[i].fnext);
-        SWAP(BMFace *, bv->edges[tot_edges - i - 1].fprev, bv->edges[tot_edges - i - 1].fnext);
+        std::swap(bv->edges[i], bv->edges[tot_edges - i - 1]);
+        std::swap(bv->edges[i].fprev, bv->edges[i].fnext);
+        std::swap(bv->edges[tot_edges - i - 1].fprev, bv->edges[tot_edges - i - 1].fnext);
       }
       if (tot_edges % 2 == 1) {
         int i = tot_edges / 2;
-        SWAP(BMFace *, bv->edges[i].fprev, bv->edges[i].fnext);
+        std::swap(bv->edges[i].fprev, bv->edges[i].fnext);
       }
     }
   }
@@ -6740,7 +6741,7 @@ static bool bev_rebuild_polygon(BMesh *bm, BevelParams *bp, BMFace *f)
       BMEdge *bme_new = BM_edge_exists(vv[k], vv[(k + 1) % n]);
       BLI_assert(ee[k] && bme_new);
       if (ee[k] != bme_new) {
-        BM_elem_attrs_copy(*bm, ee[k], bme_new);
+        BM_elem_attrs_copy(bm, ee[k], bme_new);
         /* Want to undo seam and smooth for corner segments
          * if those attrs aren't contiguous around face. */
         if (k < n - 1 && ee[k] == ee[k + 1]) {
@@ -6750,7 +6751,8 @@ static bool bev_rebuild_polygon(BMesh *bm, BevelParams *bp, BMFace *f)
           }
           /* Actually want "sharp" to be contiguous, so reverse the test. */
           if (!BM_elem_flag_test(ee[k], BM_ELEM_SMOOTH) &&
-              BM_elem_flag_test(bme_prev, BM_ELEM_SMOOTH)) {
+              BM_elem_flag_test(bme_prev, BM_ELEM_SMOOTH))
+          {
             BM_elem_flag_enable(bme_new, BM_ELEM_SMOOTH);
           }
         }
@@ -6924,7 +6926,7 @@ static void weld_cross_attrs_copy(BMesh *bm, BevVert *bv, VMesh *vm, int vmindex
     BMEdge *bme = BM_edge_exists(mesh_vert(vm, vmindex, 0, i)->v,
                                  mesh_vert(vm, vmindex, 0, i + 1)->v);
     BLI_assert(bme);
-    BM_elem_attrs_copy(*bm, bme_prev, bme);
+    BM_elem_attrs_copy(bm, bme_prev, bme);
     if (disable_seam) {
       BM_elem_flag_disable(bme, BM_ELEM_SEAM);
     }
@@ -7094,8 +7096,8 @@ static void bevel_build_edge_polygons(BMesh *bm, BevelParams *bp, BMEdge *bme)
   BMEdge *bme1 = BM_edge_exists(bmv1, bmv2);
   BMEdge *bme2 = BM_edge_exists(bmv3, bmv4);
   BLI_assert(bme1 && bme2);
-  BM_elem_attrs_copy(*bm, bme, bme1);
-  BM_elem_attrs_copy(*bm, bme, bme2);
+  BM_elem_attrs_copy(bm, bme, bme1);
+  BM_elem_attrs_copy(bm, bme, bme2);
 
   /* If either end is a "weld cross", want continuity of edge attributes across end edge(s). */
   if (bevvert_is_weld_cross(bv1)) {
@@ -7762,7 +7764,7 @@ void BM_mesh_bevel(BMesh *bm,
   }
 
 #ifdef BEVEL_DEBUG_TIME
-  double start_time = PIL_check_seconds_timer();
+  double start_time = BLI_check_seconds_timer();
 #endif
 
   /* Disable the miters with the cutoff vertex mesh method, the combination isn't useful anyway. */
@@ -7930,7 +7932,7 @@ void BM_mesh_bevel(BMesh *bm,
   BLI_memarena_free(bp.mem_arena);
 
 #ifdef BEVEL_DEBUG_TIME
-  double end_time = PIL_check_seconds_timer();
+  double end_time = BLI_check_seconds_timer();
   printf("BMESH BEVEL TIME = %.3f\n", end_time - start_time);
 #endif
 }

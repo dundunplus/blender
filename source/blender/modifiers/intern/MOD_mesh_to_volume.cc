@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "BKE_geometry_set.hh"
-#include "BKE_lib_id.h"
-#include "BKE_lib_query.h"
+#include "BKE_lib_id.hh"
+#include "BKE_lib_query.hh"
 #include "BKE_mesh_runtime.hh"
 #include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
@@ -128,7 +128,7 @@ static Volume *mesh_to_volume(ModifierData *md,
     return input_volume;
   }
   BKE_mesh_wrapper_ensure_mdata(mesh);
-  if (mesh->totvert == 0) {
+  if (mesh->verts_num == 0) {
     return input_volume;
   }
 
@@ -226,4 +226,5 @@ ModifierTypeInfo modifierType_MeshToVolume = {
     /*panel_register*/ panel_register,
     /*blend_write*/ nullptr,
     /*blend_read*/ nullptr,
+    /*foreach_cache*/ nullptr,
 };

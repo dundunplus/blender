@@ -87,13 +87,21 @@ class Context(StructRNA):
         new_context = {}
         generic_attrs = (
             *StructRNA.__dict__.keys(),
-            "bl_rna", "rna_type", "copy",
+            "bl_rna",
+            "rna_type",
+            "copy",
         )
+        function_types = {BuiltinMethodType, bpy_types.bpy_func}
         for attr in dir(self):
-            if not (attr.startswith("_") or attr in generic_attrs):
-                value = getattr(self, attr)
-                if type(value) != BuiltinMethodType:
-                    new_context[attr] = value
+            if attr.startswith("_"):
+                continue
+            if attr in generic_attrs:
+                continue
+            value = getattr(self, attr)
+            if type(value) in function_types:
+                continue
+
+            new_context[attr] = value
 
         return new_context
 
@@ -528,6 +536,22 @@ class EditBone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
 
         if roll:
             self.align_roll(matrix @ z_vec)
+
+
+class BoneCollection(StructRNA, metaclass=StructMetaPropGroup):
+    __slots__ = ()
+
+    @property
+    def bones_recursive(self):
+        """A set of all bones assigned to this bone collection and its child collections."""
+        bones = set()
+        collections = [self]
+
+        while collections:
+            visit = collections.pop()
+            bones.update(visit.bones)
+            collections.extend(visit.children)
+        return bones
 
 
 def ord_ind(i1, i2):
@@ -1020,7 +1044,12 @@ class _GenericUI:
 
     @classmethod
     def is_extended(cls):
-        return bool(getattr(cls.draw, "_draw_funcs", None))
+        draw_funcs = getattr(cls.draw, "_draw_funcs", None)
+        if draw_funcs is None:
+            return False
+        # Ignore the first item (the original draw function).
+        # This can happen when enabling then disabling add-ons.
+        return len(draw_funcs) > 1
 
     @classmethod
     def append(cls, draw_func):
@@ -1200,6 +1229,10 @@ class AssetShelf(StructRNA, metaclass=RNAMeta):
     __slots__ = ()
 
 
+class FileHandler(StructRNA, metaclass=RNAMeta):
+    __slots__ = ()
+
+
 class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):
     __slots__ = ()
 
@@ -1277,6 +1310,19 @@ class GeometryNode(NodeInternal):
 
 class RenderEngine(StructRNA, metaclass=RNAMeta):
     __slots__ = ()
+
+
+class UserExtensionRepo(StructRNA):
+    __slots__ = ()
+
+    @property
+    def directory_or_default(self):
+        """Return ``directory`` or a default path derived from the users scripts path."""
+        if directory := self.directory:
+            return directory
+        import os
+        import bpy
+        return os.path.join(bpy.utils.user_resource('SCRIPTS', path="extensions"), self.module)
 
 
 class HydraRenderEngine(RenderEngine):

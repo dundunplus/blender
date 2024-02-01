@@ -18,8 +18,6 @@
 #include <pxr/usd/usdLux/shapingAPI.h>
 #include <pxr/usd/usdLux/sphereLight.h>
 
-#include <iostream>
-
 namespace blender::io::usd {
 
 void USDLightReader::create_object(Main *bmain, const double /*motionSampleTime*/)
@@ -104,7 +102,8 @@ void USDLightReader::read_object_data(Main *bmain, const double motionSampleTime
       pxr::UsdAttribute treatAsPoint_attr = sphere_light.GetTreatAsPointAttr();
       bool treatAsPoint;
       if (treatAsPoint_attr && treatAsPoint_attr.Get(&treatAsPoint, motionSampleTime) &&
-          treatAsPoint) {
+          treatAsPoint)
+      {
         blight->radius = 0.0f;
       }
       else if (pxr::UsdAttribute radius_attr = sphere_light.GetRadiusAttr()) {

@@ -36,7 +36,7 @@
 
 #include "WM_api.hh"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
 #include "ED_screen.hh"
 
@@ -651,7 +651,8 @@ static void ui_view2d_curRect_validate_resize(View2D *v2d, bool resize)
 
     /* width */
     if ((curwidth > totwidth) &&
-        !(v2d->keepzoom & (V2D_KEEPZOOM | V2D_LOCKZOOM_X | V2D_LIMITZOOM))) {
+        !(v2d->keepzoom & (V2D_KEEPZOOM | V2D_LOCKZOOM_X | V2D_LIMITZOOM)))
+    {
       /* if zoom doesn't have to be maintained, just clamp edges */
       if (cur->xmin < tot->xmin) {
         cur->xmin = tot->xmin;
@@ -740,7 +741,8 @@ static void ui_view2d_curRect_validate_resize(View2D *v2d, bool resize)
 
     /* height */
     if ((curheight > totheight) &&
-        !(v2d->keepzoom & (V2D_KEEPZOOM | V2D_LOCKZOOM_Y | V2D_LIMITZOOM))) {
+        !(v2d->keepzoom & (V2D_KEEPZOOM | V2D_LOCKZOOM_Y | V2D_LIMITZOOM)))
+    {
       /* if zoom doesn't have to be maintained, just clamp edges */
       if (cur->ymin < tot->ymin) {
         cur->ymin = tot->ymin;

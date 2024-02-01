@@ -38,13 +38,13 @@
 #include "BLI_string_utf8.h"
 #include "BLI_threads.h"
 
-#include "BLF_api.h"
+#include "BLF_api.hh"
 
 #include "GPU_batch.h"
 #include "GPU_matrix.h"
 
-#include "blf_internal.h"
-#include "blf_internal_types.h"
+#include "blf_internal.hh"
+#include "blf_internal_types.hh"
 
 #include "BLI_strict_flags.h"
 
@@ -65,7 +65,7 @@ static FTC_CMapCache ftc_charmap_cache = nullptr;
 static ThreadMutex ft_lib_mutex;
 
 /* May be set to #UI_widgetbase_draw_cache_flush. */
-static void (*blf_draw_cache_flush)(void) = nullptr;
+static void (*blf_draw_cache_flush)() = nullptr;
 
 static ft_pix blf_font_height_max_ft_pix(FontBLF *font);
 static ft_pix blf_font_width_max_ft_pix(FontBLF *font);
@@ -769,7 +769,7 @@ size_t blf_font_width_to_rstrlen(
 
   i_tmp = i;
   g = blf_glyph_from_utf8_and_step(font, gc, nullptr, str, str_len, &i_tmp, nullptr);
-  for (width_new = pen_x = 0; (s != nullptr);
+  for (width_new = pen_x = 0; (s != nullptr && i > 0);
        i = i_prev, s = s_prev, g = g_prev, g_prev = nullptr, width_new = pen_x)
   {
     s_prev = BLI_str_find_prev_char_utf8(s, str);
@@ -1334,7 +1334,7 @@ void blf_font_exit()
   blf_batch_draw_exit();
 }
 
-void BLF_cache_flush_set_fn(void (*cache_flush_fn)(void))
+void BLF_cache_flush_set_fn(void (*cache_flush_fn)())
 {
   blf_draw_cache_flush = cache_flush_fn;
 }

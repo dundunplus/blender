@@ -9,7 +9,7 @@
  */
 
 /* debug builds only */
-#ifdef DEBUG
+#ifndef NDEBUG
 
 #  include "BLI_map.hh"
 #  include "BLI_ordered_edge.hh"
@@ -42,7 +42,7 @@ template<> struct blender::DefaultHash<blender::Set<const BMVert *>> {
   {
     uint64_t hash = 0;
     for (const BMVert *vert : value) {
-      hash = get_default_hash_2(hash, vert);
+      hash = get_default_hash(hash, vert);
     }
     return hash;
   }
