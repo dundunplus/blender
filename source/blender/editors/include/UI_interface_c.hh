@@ -1010,8 +1010,6 @@ uiBut *uiDefButF(uiBlock *block,
                  float *poin,
                  float min,
                  float max,
-                 float a1,
-                 float a2,
                  const char *tip);
 uiBut *uiDefButI(uiBlock *block,
                  int type,
@@ -1146,7 +1144,7 @@ uiBut *uiDefButO_ptr(uiBlock *block,
                      int type,
                      wmOperatorType *ot,
                      wmOperatorCallContext opcontext,
-                     const char *str,
+                     blender::StringRef str,
                      int x,
                      int y,
                      short width,
@@ -1383,7 +1381,7 @@ uiBut *uiDefIconTextButO(uiBlock *block,
                          const char *opname,
                          wmOperatorCallContext opcontext,
                          int icon,
-                         const char *str,
+                         blender::StringRef str,
                          int x,
                          int y,
                          short width,
@@ -1394,7 +1392,7 @@ uiBut *uiDefIconTextButO_ptr(uiBlock *block,
                              wmOperatorType *ot,
                              wmOperatorCallContext opcontext,
                              int icon,
-                             const char *str,
+                             blender::StringRef str,
                              int x,
                              int y,
                              short width,
@@ -1733,6 +1731,9 @@ void UI_but_node_link_set(uiBut *but, bNodeSocket *socket, const float draw_colo
 
 void UI_but_number_step_size_set(uiBut *but, float step_size);
 void UI_but_number_precision_set(uiBut *but, float precision);
+
+void UI_but_number_slider_step_size_set(uiBut *but, float step_size);
+void UI_but_number_slider_precision_set(uiBut *but, float precision);
 
 void UI_block_func_handle_set(uiBlock *block, uiBlockHandleFunc func, void *arg);
 void UI_block_func_butmenu_set(uiBlock *block, uiMenuHandleFunc func, void *arg);
