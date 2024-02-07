@@ -75,7 +75,8 @@ static bool rna_KeyMapItem_compare(wmKeyMapItem *k1, wmKeyMapItem *k2)
 
 static void rna_KeyMapItem_to_string(wmKeyMapItem *kmi, bool compact, char *result)
 {
-  WM_keymap_item_to_string(kmi, compact, result, UI_MAX_SHORTCUT_STR);
+  BLI_strncpy(
+      result, WM_keymap_item_to_string(kmi, compact).value_or("").c_str(), UI_MAX_SHORTCUT_STR);
 }
 
 static wmKeyMap *rna_keymap_active(wmKeyMap *km, bContext *C)
@@ -342,7 +343,7 @@ static wmKeyMapItem *rna_KeyMap_item_new_from_item(wmKeyMap *km,
   // wmWindowManager *wm = CTX_wm_manager(C);
 
   if ((km->flag & KEYMAP_MODAL) == (kmi_src->idname[0] != '\0')) {
-    BKE_report(reports, RPT_ERROR, "Can not mix modal/non-modal items");
+    BKE_report(reports, RPT_ERROR, "Cannot mix modal/non-modal items");
     return nullptr;
   }
 

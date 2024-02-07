@@ -1134,11 +1134,12 @@ class VIEW3D_MT_editor_menus(Menu):
                 elif mode_string == 'VERTEX_GPENCIL':
                     layout.menu("VIEW3D_MT_select_edit_gpencil")
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
-            mesh = obj.data
-            if mesh.use_paint_mask:
-                layout.menu("VIEW3D_MT_select_paint_mask")
-            elif mesh.use_paint_mask_vertex and mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX'}:
-                layout.menu("VIEW3D_MT_select_paint_mask_vertex")
+            if obj.type == 'MESH':
+                mesh = obj.data
+                if mesh.use_paint_mask:
+                    layout.menu("VIEW3D_MT_select_paint_mask")
+                elif mesh.use_paint_mask_vertex and mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX'}:
+                    layout.menu("VIEW3D_MT_select_paint_mask_vertex")
         elif mode_string not in {'SCULPT', 'SCULPT_CURVES', 'PAINT_GREASE_PENCIL'}:
             layout.menu("VIEW3D_MT_select_%s" % mode_string.lower())
 
@@ -2403,7 +2404,7 @@ class VIEW3D_MT_curve_add(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("curve.primitive_bezier_curve_add", text="Bezier", icon='CURVE_BEZCURVE')
+        layout.operator("curve.primitive_bezier_curve_add", text="Bézier", icon='CURVE_BEZCURVE')
         layout.operator("curve.primitive_bezier_circle_add", text="Circle", icon='CURVE_BEZCIRCLE')
 
         layout.separator()
@@ -3173,6 +3174,7 @@ class VIEW3D_MT_object_parent(Menu):
 
 class VIEW3D_MT_object_track(Menu):
     bl_label = "Track"
+    bl_translation_context = i18n_contexts.constraint
 
     def draw(self, _context):
         layout = self.layout
@@ -3558,8 +3560,10 @@ class VIEW3D_MT_paint_weight(Menu):
 
         layout.menu("VIEW3D_MT_paint_weight_lock", text="Locks")
 
-    def draw(self, _context):
-        self.draw_generic(self.layout, is_editmode=False)
+    def draw(self, context):
+        obj = context.active_object
+        if obj.type == 'MESH':
+            self.draw_generic(self.layout, is_editmode=False)
 
 
 class VIEW3D_MT_sculpt(Menu):
@@ -4465,6 +4469,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.operator("mesh.mark_sharp")
             col.operator("mesh.mark_sharp", text="Clear Sharp").clear = True
+            col.operator("mesh.set_sharpness_by_angle")
 
             if with_freestyle:
                 col.separator()
@@ -5822,6 +5827,10 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout = self.layout
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
+
+        layout.separator()
+
+        layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
 
         layout.separator()
 
@@ -8225,6 +8234,10 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.menu("VIEW3D_MT_mirror", text="Mirror Points")
 
+            col.separator()
+
+            col.operator("grease_pencil.separate", text="Separate").mode = 'SELECTED'
+
             # Removal Operators
             col.separator()
 
@@ -8253,6 +8266,10 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             col.menu("VIEW3D_MT_mirror")
+
+            col.separator()
+
+            col.operator("grease_pencil.separate", text="Separate").mode = 'SELECTED'
 
 
 def draw_gpencil_layer_active(context, layout):
