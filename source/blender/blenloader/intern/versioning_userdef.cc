@@ -34,7 +34,8 @@
 #include "BKE_main.hh"
 #include "BKE_preferences.h"
 
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
+#include "BLO_userdef_default.h"
 
 #include "BLT_translation.h"
 
@@ -913,6 +914,14 @@ void blo_do_versions_userdef(UserDef *userdef)
       userdef->keying_flag |= MANUALKEY_FLAG_INSERTNEEDED;
     }
     userdef->keying_flag |= AUTOKEY_FLAG_INSERTNEEDED;
+  }
+
+  if (!USER_VERSION_ATLEAST(401, 21)) {
+    LISTBASE_FOREACH (wmKeyMap *, km, &userdef->user_keymaps) {
+      if (STREQ(km->idname, "NLA Channels")) {
+        STRNCPY(km->idname, "NLA Tracks");
+      }
+    }
   }
 
   /**

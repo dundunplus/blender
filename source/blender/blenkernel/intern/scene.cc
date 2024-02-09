@@ -50,7 +50,7 @@
 #include "BLI_time.h"
 #include "BLI_utildefines.h"
 
-#include "BLO_readfile.h"
+#include "BLO_readfile.hh"
 
 #include "BLT_translation.h"
 
@@ -89,6 +89,7 @@
 #include "BKE_preview_image.hh"
 #include "BKE_rigidbody.h"
 #include "BKE_scene.h"
+#include "BKE_scene_runtime.hh"
 #include "BKE_screen.hh"
 #include "BKE_sound.h"
 #include "BKE_unit.hh"
@@ -119,6 +120,8 @@
 #include "DRW_engine.hh"
 
 #include "bmesh.hh"
+
+using blender::bke::SceneRuntime;
 
 CurveMapping *BKE_sculpt_default_cavity_curve()
 
@@ -249,6 +252,8 @@ static void scene_init_data(ID *id)
   scene->master_collection = BKE_collection_master_add(scene);
 
   BKE_view_layer_add(scene, DATA_("ViewLayer"), nullptr, VIEWLAYER_ADD_NEW);
+
+  scene->runtime = MEM_new<SceneRuntime>(__func__);
 }
 
 static void scene_copy_markers(Scene *scene_dst, const Scene *scene_src, const int flag)
@@ -369,6 +374,8 @@ static void scene_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int
   }
 
   BKE_scene_copy_data_eevee(scene_dst, scene_src);
+
+  scene_dst->runtime = MEM_new<SceneRuntime>(__func__);
 }
 
 static void scene_free_markers(Scene *scene, bool do_id_user)
@@ -464,6 +471,8 @@ static void scene_free_data(ID *id)
 
   /* These are freed on `do_versions`. */
   BLI_assert(scene->layer_properties == nullptr);
+
+  MEM_delete(scene->runtime);
 }
 
 static void scene_foreach_rigidbodyworldSceneLooper(RigidBodyWorld * /*rbw*/,
@@ -892,6 +901,7 @@ static void scene_foreach_id(ID *id, LibraryForeachIDData *data)
 
   LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
     BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, view_layer->mat_override, IDWALK_CB_USER);
+    BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, view_layer->world_override, IDWALK_CB_USER);
     BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(
         data,
         IDP_foreach_property(view_layer->id_properties,
@@ -1258,6 +1268,8 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
 
   /* set users to one by default, not in lib-link, this will increase it for compo nodes */
   id_us_ensure_real(&sce->id);
+
+  sce->runtime = MEM_new<SceneRuntime>(__func__);
 
   BLO_read_list(reader, &(sce->base));
 

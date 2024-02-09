@@ -557,8 +557,6 @@ def km_outliner(params):
         # Copy/paste.
         ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("outliner.id_paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
-
-        ("object.duplicate", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
     ])
 
     return keymap
@@ -4375,7 +4373,7 @@ def km_3d_view_tool_select(params):
 
 def km_image_editor_tool_uv_select(params):
     return (
-        "Image Editor Tool: UV, Tweak",
+        "Image Editor Tool: Uv, Tweak",
         {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
         {"items": _template_items_tool_select(params, "uv.select", extend="extend")},
     )
