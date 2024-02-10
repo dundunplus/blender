@@ -62,10 +62,10 @@
 #undef DNA_GENFILE_VERSIONING_MACROS
 
 #include "BKE_animsys.h"
-#include "BKE_blender.h"
+#include "BKE_blender.hh"
 #include "BKE_brush.hh"
 #include "BKE_cloth.hh"
-#include "BKE_collection.h"
+#include "BKE_collection.hh"
 #include "BKE_colortools.hh"
 #include "BKE_constraint.h"
 #include "BKE_curveprofile.h"
@@ -106,7 +106,7 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "BLT_translation.h"
+#include "BLT_translation.hh"
 
 #include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
