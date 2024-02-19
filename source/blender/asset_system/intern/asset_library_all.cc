@@ -16,25 +16,28 @@ namespace blender::asset_system {
 
 AllAssetLibrary::AllAssetLibrary() : AssetLibrary(ASSET_LIBRARY_ALL) {}
 
-void AllAssetLibrary::rebuild(const bool reload_catalogs)
+void AllAssetLibrary::rebuild_catalogs_from_nested(const bool reload_nested_catalogs)
 {
-  /* Start with empty catalog storage. */
-  catalog_service = std::make_unique<AssetCatalogService>(AssetCatalogService::read_only_tag());
+  /* Start with empty catalog storage. Don't do this directly in #this.catalog_service to avoid
+   * race conditions. Rather build into a new service and replace the current one when done. */
+  std::unique_ptr<AssetCatalogService> new_catalog_service = std::make_unique<AssetCatalogService>(
+      AssetCatalogService::read_only_tag());
 
   AssetLibrary::foreach_loaded(
       [&](AssetLibrary &nested) {
-        if (reload_catalogs) {
+        if (reload_nested_catalogs) {
           nested.catalog_service->reload_catalogs();
         }
-        catalog_service->add_from_existing(*nested.catalog_service);
+        new_catalog_service->add_from_existing(*nested.catalog_service);
       },
       false);
-  catalog_service->rebuild_tree();
+  new_catalog_service->rebuild_tree();
+  this->catalog_service = std::move(new_catalog_service);
 }
 
 void AllAssetLibrary::refresh_catalogs()
 {
-  rebuild(/*reload_catalogs=*/true);
+  rebuild_catalogs_from_nested(/*reload_nested_catalogs=*/true);
 }
 
 }  // namespace blender::asset_system
