@@ -41,6 +41,9 @@ using OwningAssetCatalogMap = Map<CatalogID, std::unique_ptr<AssetCatalog>>;
  * directory hierarchy). */
 class AssetCatalogService {
   std::unique_ptr<AssetCatalogCollection> catalog_collection_;
+  /**
+   * Cached catalog tree storage. Lazy-created by #AssetCatalogService::catalog_tree().
+   */
   std::unique_ptr<AssetCatalogTree> catalog_tree_;
   CatalogFilePath asset_library_root_;
 
@@ -130,15 +133,6 @@ class AssetCatalogService {
    */
   void reload_catalogs();
 
-  /**
-   * Make sure the tree is updated to the latest collection of catalogs stored in this service.
-   * Does not depend on a CDF file being available so this can be called on a service that stores
-   * catalogs that are not stored in a CDF.
-   * Most API functions that modify catalog data will trigger this, unless otherwise specified (for
-   * batch operations).
-   */
-  void rebuild_tree();
-
   /** Return catalog with the given ID. Return nullptr if not found. */
   AssetCatalog *find_catalog(CatalogID catalog_id) const;
 
@@ -183,7 +177,7 @@ class AssetCatalogService {
    */
   void update_catalog_path(CatalogID catalog_id, const AssetCatalogPath &new_catalog_path);
 
-  const AssetCatalogTree *get_catalog_tree() const;
+  const AssetCatalogTree &catalog_tree();
 
   /** Return true only if there are no catalogs known. */
   bool is_empty() const;
@@ -256,6 +250,9 @@ class AssetCatalogService {
       const CatalogFilePath &blend_file_path);
 
   std::unique_ptr<AssetCatalogTree> read_into_tree() const;
+  /** Ensure a #catalog_tree() will update the tree. Must be called whenever the contained user
+   * visible catalogs change. */
+  void invalidate_catalog_tree();
 
   /**
    * For every catalog, ensure that its parent path also has a known catalog.
