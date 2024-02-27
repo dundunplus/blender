@@ -115,16 +115,16 @@ bool AssetCatalogService::is_empty() const
   return catalog_collection_->catalogs_.is_empty();
 }
 
-OwningAssetCatalogMap &AssetCatalogService::get_catalogs() const
+const OwningAssetCatalogMap &AssetCatalogService::get_catalogs() const
 {
   return catalog_collection_->catalogs_;
 }
-OwningAssetCatalogMap &AssetCatalogService::get_deleted_catalogs() const
+const OwningAssetCatalogMap &AssetCatalogService::get_deleted_catalogs() const
 {
   return catalog_collection_->deleted_catalogs_;
 }
 
-AssetCatalogDefinitionFile *AssetCatalogService::get_catalog_definition_file() const
+const AssetCatalogDefinitionFile *AssetCatalogService::get_catalog_definition_file() const
 {
   return catalog_collection_->catalog_definition_file_.get();
 }
@@ -589,11 +589,13 @@ std::unique_ptr<AssetCatalogTree> AssetCatalogService::read_into_tree() const
 
 void AssetCatalogService::invalidate_catalog_tree()
 {
+  std::lock_guard lock{catalog_tree_mutex_};
   this->catalog_tree_ = nullptr;
 }
 
 const AssetCatalogTree &AssetCatalogService::catalog_tree()
 {
+  std::lock_guard lock{catalog_tree_mutex_};
   if (!catalog_tree_) {
     /* Ensure all catalog paths lead to valid catalogs. This is important for the catalog tree to
      * be usable, e.g. it makes sure every item in the tree maps to an actual catalog. */
