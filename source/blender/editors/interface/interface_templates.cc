@@ -260,18 +260,8 @@ static uiBlock *template_common_search_menu(const bContext *C,
     /* fake button, it holds space for search items */
     uiDefBut(block, UI_BTYPE_LABEL, 0, "", 10, 26, w, h, nullptr, 0, 0, 0, 0, nullptr);
 
-    but = uiDefSearchBut(block,
-                         search,
-                         0,
-                         ICON_VIEWZOOM,
-                         sizeof(search),
-                         10,
-                         0,
-                         w,
-                         UI_UNIT_Y,
-                         preview_rows,
-                         preview_cols,
-                         "");
+    but = uiDefSearchBut(block, search, 0, ICON_VIEWZOOM, sizeof(search), 10, 0, w, UI_UNIT_Y, "");
+    UI_but_search_preview_grid_size_set(but, preview_rows, preview_cols);
   }
   /* list view */
   else {
@@ -302,8 +292,6 @@ static uiBlock *template_common_search_menu(const bContext *C,
                          0,
                          searchbox_width,
                          UI_UNIT_Y - 1,
-                         0,
-                         0,
                          "");
   }
   UI_but_func_search_set(but,
@@ -3255,8 +3243,6 @@ void uiTemplatePreview(uiLayout *layout,
                 &ui_preview->height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 50.0f,
-                0.0f,
-                0.0f,
                 "");
 
   /* add buttons */
@@ -3300,8 +3286,6 @@ void uiTemplatePreview(uiLayout *layout,
                 pr_texture,
                 10,
                 TEX_PR_TEXTURE,
-                0,
-                0,
                 "");
       if (GS(parent->name) == ID_MA) {
         uiDefButS(block,
@@ -3315,8 +3299,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       else if (GS(parent->name) == ID_LA) {
@@ -3331,8 +3313,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       else if (GS(parent->name) == ID_WO) {
@@ -3347,8 +3327,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       else if (GS(parent->name) == ID_LS) {
@@ -3363,8 +3341,6 @@ void uiTemplatePreview(uiLayout *layout,
                   pr_texture,
                   10,
                   TEX_PR_OTHER,
-                  0,
-                  0,
                   "");
       }
       uiDefButS(block,
@@ -3378,8 +3354,6 @@ void uiTemplatePreview(uiLayout *layout,
                 pr_texture,
                 10,
                 TEX_PR_BOTH,
-                0,
-                0,
                 "");
 
       /* Alpha button for texture preview */
@@ -3738,8 +3712,6 @@ static void colorband_buttons_layout(uiLayout *layout,
                      &coba->cur,
                      0.0,
                      float(std::max(0, coba->tot - 1)),
-                     0,
-                     0,
                      TIP_("Choose active color stop"));
       UI_but_number_step_size_set(bt, 1);
 
@@ -3765,8 +3737,6 @@ static void colorband_buttons_layout(uiLayout *layout,
                      &coba->cur,
                      0.0,
                      float(std::max(0, coba->tot - 1)),
-                     0,
-                     0,
                      TIP_("Choose active color stop"));
       UI_but_number_step_size_set(bt, 1);
 
@@ -4039,8 +4009,6 @@ void uiTemplateHistogram(uiLayout *layout, PointerRNA *ptr, const char *propname
                 &hist->height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 20.0f,
-                0.0f,
-                0.0f,
                 "");
 }
 
@@ -4101,8 +4069,6 @@ void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const char *propname)
                 &scopes->wavefrm_height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 20.0f,
-                0.0f,
-                0.0f,
                 "");
 }
 
@@ -4163,8 +4129,6 @@ void uiTemplateVectorscope(uiLayout *layout, PointerRNA *ptr, const char *propna
                 &scopes->vecscope_height,
                 UI_UNIT_Y,
                 UI_UNIT_Y * 20.0f,
-                0.0f,
-                0.0f,
                 "");
 }
 
@@ -5631,7 +5595,6 @@ void uiTemplateColorPicker(uiLayout *layout,
   if (lock_luminosity) {
     float color[4]; /* in case of alpha */
     RNA_property_float_get_array(ptr, prop, color);
-    but->a2 = len_v3(color);
     cpicker->luminosity_lock_value = len_v3(color);
   }
 

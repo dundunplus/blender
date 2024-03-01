@@ -4387,8 +4387,6 @@ static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p)
                                      &handle->retvalue,
                                      item->value,
                                      0.0,
-                                     0,
-                                     -1,
                                      item->description);
       }
       else {
@@ -5078,8 +5076,6 @@ uiBut *uiDefButS(uiBlock *block,
                  short *poin,
                  float min,
                  float max,
-                 float a1,
-                 float a2,
                  const char *tip)
 {
   return uiDefBut(block,
@@ -5093,8 +5089,8 @@ uiBut *uiDefButS(uiBlock *block,
                   (void *)poin,
                   min,
                   max,
-                  a1,
-                  a2,
+                  0.0f,
+                  0.0f,
                   tip);
 }
 uiBut *uiDefButBitS(uiBlock *block,
@@ -5291,8 +5287,6 @@ static uiBut *uiDefIconButBit(uiBlock *block,
                               void *poin,
                               float min,
                               float max,
-                              float a1,
-                              float a2,
                               const char *tip)
 {
   const int bitIdx = findBitIndex(bit);
@@ -5310,8 +5304,8 @@ static uiBut *uiDefIconButBit(uiBlock *block,
                       poin,
                       min,
                       max,
-                      a1,
-                      a2,
+                      0.0f,
+                      0.0f,
                       tip);
 }
 
@@ -5326,8 +5320,6 @@ uiBut *uiDefIconButI(uiBlock *block,
                      int *poin,
                      float min,
                      float max,
-                     float a1,
-                     float a2,
                      const char *tip)
 {
   return uiDefIconBut(block,
@@ -5341,8 +5333,8 @@ uiBut *uiDefIconButI(uiBlock *block,
                       (void *)poin,
                       min,
                       max,
-                      a1,
-                      a2,
+                      0.0f,
+                      0.0f,
                       tip);
 }
 uiBut *uiDefIconButBitI(uiBlock *block,
@@ -5357,8 +5349,6 @@ uiBut *uiDefIconButBitI(uiBlock *block,
                         int *poin,
                         float min,
                         float max,
-                        float a1,
-                        float a2,
                         const char *tip)
 {
   return uiDefIconButBit(block,
@@ -5373,8 +5363,6 @@ uiBut *uiDefIconButBitI(uiBlock *block,
                          (void *)poin,
                          min,
                          max,
-                         a1,
-                         a2,
                          tip);
 }
 uiBut *uiDefIconButS(uiBlock *block,
@@ -5388,8 +5376,6 @@ uiBut *uiDefIconButS(uiBlock *block,
                      short *poin,
                      float min,
                      float max,
-                     float a1,
-                     float a2,
                      const char *tip)
 {
   return uiDefIconBut(block,
@@ -5403,8 +5389,8 @@ uiBut *uiDefIconButS(uiBlock *block,
                       (void *)poin,
                       min,
                       max,
-                      a1,
-                      a2,
+                      0.0f,
+                      0.0f,
                       tip);
 }
 uiBut *uiDefIconButBitS(uiBlock *block,
@@ -5419,8 +5405,6 @@ uiBut *uiDefIconButBitS(uiBlock *block,
                         short *poin,
                         float min,
                         float max,
-                        float a1,
-                        float a2,
                         const char *tip)
 {
   return uiDefIconButBit(block,
@@ -5435,8 +5419,6 @@ uiBut *uiDefIconButBitS(uiBlock *block,
                          (void *)poin,
                          min,
                          max,
-                         a1,
-                         a2,
                          tip);
 }
 uiBut *uiDefIconButBitC(uiBlock *block,
@@ -5451,8 +5433,6 @@ uiBut *uiDefIconButBitC(uiBlock *block,
                         char *poin,
                         float min,
                         float max,
-                        float a1,
-                        float a2,
                         const char *tip)
 {
   return uiDefIconButBit(block,
@@ -5467,8 +5447,6 @@ uiBut *uiDefIconButBitC(uiBlock *block,
                          (void *)poin,
                          min,
                          max,
-                         a1,
-                         a2,
                          tip);
 }
 uiBut *uiDefIconButR(uiBlock *block,
@@ -5564,38 +5542,6 @@ uiBut *uiDefIconTextBut(uiBlock *block,
   but->drawflag |= UI_BUT_ICON_LEFT;
   return but;
 }
-uiBut *uiDefIconTextButF(uiBlock *block,
-                         int type,
-                         int retval,
-                         int icon,
-                         const StringRef str,
-                         int x,
-                         int y,
-                         short width,
-                         short height,
-                         float *poin,
-                         float min,
-                         float max,
-                         float a1,
-                         float a2,
-                         const char *tip)
-{
-  return uiDefIconTextBut(block,
-                          type | UI_BUT_POIN_FLOAT,
-                          retval,
-                          icon,
-                          str,
-                          x,
-                          y,
-                          width,
-                          height,
-                          (void *)poin,
-                          min,
-                          max,
-                          a1,
-                          a2,
-                          tip);
-}
 uiBut *uiDefIconTextButI(uiBlock *block,
                          int type,
                          int retval,
@@ -5608,8 +5554,6 @@ uiBut *uiDefIconTextButI(uiBlock *block,
                          int *poin,
                          float min,
                          float max,
-                         float a1,
-                         float a2,
                          const char *tip)
 {
   return uiDefIconTextBut(block,
@@ -5624,8 +5568,8 @@ uiBut *uiDefIconTextButI(uiBlock *block,
                           (void *)poin,
                           min,
                           max,
-                          a1,
-                          a2,
+                          0.0f,
+                          0.0f,
                           tip);
 }
 uiBut *uiDefIconTextButR(uiBlock *block,
@@ -6132,8 +6076,6 @@ uiBut *uiDefSearchBut(uiBlock *block,
                       int y,
                       short width,
                       short height,
-                      float a1,
-                      float a2,
                       const char *tip)
 {
   uiBut *but = ui_def_but(block,
@@ -6147,8 +6089,8 @@ uiBut *uiDefSearchBut(uiBlock *block,
                           arg,
                           0.0,
                           maxncpy,
-                          a1,
-                          a2,
+                          0.0f,
+                          0.0f,
                           tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
@@ -6334,11 +6276,9 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
                            int y,
                            short width,
                            short height,
-                           float a1,
-                           float a2,
                            const char *tip)
 {
-  uiBut *but = uiDefSearchBut(block, arg, retval, icon, maxncpy, x, y, width, height, a1, a2, tip);
+  uiBut *but = uiDefSearchBut(block, arg, retval, icon, maxncpy, x, y, width, height, tip);
   UI_but_func_search_set(but,
                          ui_searchbox_create_generic,
                          operator_enum_search_update_fn,
@@ -6413,6 +6353,14 @@ void UI_but_number_slider_precision_set(uiBut *but, float precision)
   but_number->precision = precision;
   /* -1 is a valid value, UI code figures out an appropriate precision then. */
   BLI_assert(precision > -2);
+}
+
+void UI_but_search_preview_grid_size_set(uiBut *but, int rows, int cols)
+{
+  BLI_assert(but->type == UI_BTYPE_SEARCH_MENU);
+  uiButSearch *but_search = reinterpret_cast<uiButSearch *>(but);
+  but_search->preview_rows = rows;
+  but_search->preview_cols = cols;
 }
 
 void UI_but_focus_on_enter_event(wmWindow *win, uiBut *but)
