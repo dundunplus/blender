@@ -995,8 +995,6 @@ uiBut *uiDefBut(uiBlock *block,
                 void *poin,
                 float min,
                 float max,
-                float a1,
-                float a2,
                 const char *tip);
 uiBut *uiDefButF(uiBlock *block,
                  int type,
@@ -1021,8 +1019,6 @@ uiBut *uiDefButI(uiBlock *block,
                  int *poin,
                  float min,
                  float max,
-                 float a1,
-                 float a2,
                  const char *tip);
 uiBut *uiDefButBitI(uiBlock *block,
                     int type,
@@ -1136,9 +1132,6 @@ uiBut *uiDefButO_ptr(uiBlock *block,
                      short height,
                      const char *tip);
 
-/**
- * If a1==1.0 then a2 is an extra icon blending factor (alpha 0.0 - 1.0).
- */
 uiBut *uiDefIconBut(uiBlock *block,
                     int type,
                     int retval,
@@ -1150,8 +1143,6 @@ uiBut *uiDefIconBut(uiBlock *block,
                     void *poin,
                     float min,
                     float max,
-                    float a1,
-                    float a2,
                     const char *tip);
 uiBut *uiDefIconButI(uiBlock *block,
                      int type,
@@ -1280,8 +1271,6 @@ uiBut *uiDefIconTextBut(uiBlock *block,
                         void *poin,
                         float min,
                         float max,
-                        float a1,
-                        float a2,
                         const char *tip);
 uiBut *uiDefIconTextButI(uiBlock *block,
                          int type,
@@ -1686,10 +1675,11 @@ void UI_but_number_precision_set(uiBut *but, float precision);
 void UI_but_number_slider_step_size_set(uiBut *but, float step_size);
 void UI_but_number_slider_precision_set(uiBut *but, float precision);
 
+void UI_but_label_alpha_factor_set(uiBut *but, float alpha_factor);
+
 void UI_but_search_preview_grid_size_set(uiBut *but, int rows, int cols);
 
 void UI_block_func_handle_set(uiBlock *block, uiBlockHandleFunc func, void *arg);
-void UI_block_func_butmenu_set(uiBlock *block, uiMenuHandleFunc func, void *arg);
 void UI_block_func_set(uiBlock *block, uiButHandleFunc func, void *arg1, void *arg2);
 void UI_block_funcN_set(uiBlock *block, uiButHandleNFunc funcN, void *argN, void *arg2);
 
@@ -3187,9 +3177,6 @@ const uiStyle *UI_style_get(); /* use for fonts etc */
  * Read a style (with the current DPI applied).
  */
 const uiStyle *UI_style_get_dpi();
-
-/* linker workaround ack! */
-void UI_template_fix_linking();
 
 /* UI_OT_editsource helpers */
 bool UI_editsource_enable_check();
