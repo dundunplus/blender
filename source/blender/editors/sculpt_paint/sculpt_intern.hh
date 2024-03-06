@@ -1665,10 +1665,15 @@ void modal_keymap(wmKeyConfig *keyconf);
  * \{ */
 
 namespace blender::ed::sculpt_paint::gesture {
-enum eShapeType {
-  SCULPT_GESTURE_SHAPE_BOX,
-  SCULPT_GESTURE_SHAPE_LASSO,
-  SCULPT_GESTURE_SHAPE_LINE,
+enum ShapeType {
+  Box = 0,
+  Lasso = 1,
+  Line = 2,
+};
+
+enum class SelectionType {
+  Inside = 0,
+  Outside = 1,
 };
 
 struct LassoData {
@@ -1707,15 +1712,15 @@ struct GestureData {
   ePaintSymmetryFlags symmpass;
 
   /* Operation parameters. */
-  eShapeType shape_type;
+  ShapeType shape_type;
   bool front_faces_only;
+  SelectionType selection_type;
 
   Operation *operation;
 
   /* Gesture data. */
   /* Screen space points that represent the gesture shape. */
-  float (*gesture_points)[2];
-  int tot_gesture_points;
+  Array<float2> gesture_points;
 
   /* View parameters. */
   float3 true_view_normal;
