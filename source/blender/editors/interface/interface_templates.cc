@@ -104,7 +104,7 @@ using blender::Vector;
 // #define USE_OP_RESET_BUT
 
 /* defines for templateID/TemplateSearch */
-#define TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH (UI_UNIT_X * 6)
+#define TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH (UI_UNIT_X * 4)
 #define TEMPLATE_SEARCH_TEXTBUT_HEIGHT UI_UNIT_Y
 
 /* -------------------------------------------------------------------- */
@@ -142,7 +142,7 @@ static int template_search_textbut_width(PointerRNA *ptr, PropertyRNA *name_prop
 
   /* Clamp to some min/max width. */
   return std::clamp(
-      estimated_width, TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH, TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH * 3);
+      estimated_width, TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH, TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH * 4);
 }
 
 static int template_search_textbut_height()
@@ -1206,13 +1206,11 @@ static uiBut *template_id_def_new_but(uiBlock *block,
                                       StructRNA *type,
                                       const char *const newop,
                                       const bool editable,
-                                      const bool id_open,
                                       const bool use_tab_but,
                                       int but_height)
 {
   ID *idfrom = template_ui->ptr.owner_id;
   uiBut *but;
-  const int w = id ? UI_UNIT_X : id_open ? UI_UNIT_X * 3 : UI_UNIT_X * 6;
   const int but_type = use_tab_but ? UI_BTYPE_TAB : UI_BTYPE_BUT;
 
   /* i18n markup, does nothing! */
@@ -1252,13 +1250,19 @@ static uiBut *template_id_def_new_but(uiBlock *block,
    * check the definition to see if a new call must be added when the limit
    * is exceeded. */
 
+  const char *button_text = (id) ? "" : CTX_IFACE_(template_id_context(type), "New");
+  const int icon = (id && !use_tab_but) ? ICON_DUPLICATE : ICON_ADD;
+  const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
+  const int w = id ? UI_UNIT_X :
+                     UI_fontstyle_string_width(fstyle, button_text) + (UI_UNIT_X * 1.5);
+
   if (newop) {
     but = uiDefIconTextButO(block,
                             but_type,
                             newop,
                             WM_OP_INVOKE_DEFAULT,
-                            (id && !use_tab_but) ? ICON_DUPLICATE : ICON_ADD,
-                            (id) ? "" : CTX_IFACE_(template_id_context(type), "New"),
+                            icon,
+                            button_text,
                             0,
                             0,
                             w,
@@ -1268,19 +1272,8 @@ static uiBut *template_id_def_new_but(uiBlock *block,
         but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ADD_NEW));
   }
   else {
-    but = uiDefIconTextBut(block,
-                           but_type,
-                           0,
-                           (id && !use_tab_but) ? ICON_DUPLICATE : ICON_ADD,
-                           (id) ? "" : CTX_IFACE_(template_id_context(type), "New"),
-                           0,
-                           0,
-                           w,
-                           but_height,
-                           nullptr,
-                           0,
-                           0,
-                           nullptr);
+    but = uiDefIconTextBut(
+        block, but_type, 0, icon, button_text, 0, 0, w, but_height, nullptr, 0, 0, nullptr);
     UI_but_funcN_set(
         but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ADD_NEW));
   }
@@ -1351,8 +1344,13 @@ static void template_ID(const bContext *C,
     char name[UI_MAX_NAME_STR];
     const bool user_alert = (id->us <= 0);
 
-    const int width = template_search_textbut_width(&idptr,
-                                                    RNA_struct_find_property(&idptr, "name"));
+    int width = template_search_textbut_width(&idptr, RNA_struct_find_property(&idptr, "name"));
+
+    if ((template_ui->idcode == ID_SCE) && (template_ui->ptr.type == &RNA_Window)) {
+      /* More room needed for "pin" icon. */
+      width += UI_UNIT_X;
+    }
+
     const int height = template_search_textbut_height();
 
     // text_idbutton(id, name);
@@ -1512,8 +1510,7 @@ static void template_ID(const bContext *C,
   }
 
   if ((flag & UI_ID_ADD_NEW) && (hide_buttons == false)) {
-    template_id_def_new_but(
-        block, id, template_ui, type, newop, editable, flag & UI_ID_OPEN, false, UI_UNIT_X);
+    template_id_def_new_but(block, id, template_ui, type, newop, editable, false, UI_UNIT_X);
   }
 
   /* Due to space limit in UI - skip the "open" icon for packed data, and allow to unpack.
@@ -1535,7 +1532,10 @@ static void template_ID(const bContext *C,
     RNA_int_set(but->opptr, "id_type", GS(id->name));
   }
   else if (flag & UI_ID_OPEN) {
-    const int w = id ? UI_UNIT_X : (flag & UI_ID_ADD_NEW) ? UI_UNIT_X * 3 : UI_UNIT_X * 6;
+    const char *button_text = (id) ? "" : IFACE_("Open");
+    const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
+    const int w = id ? UI_UNIT_X :
+                       UI_fontstyle_string_width(fstyle, button_text) + (UI_UNIT_X * 1.5);
 
     if (openop) {
       but = uiDefIconTextButO(block,
@@ -1702,7 +1702,6 @@ static void template_ID_tabs(const bContext *C,
                                   type,
                                   newop,
                                   editable,
-                                  flag & UI_ID_OPEN,
                                   true,
                                   but_height);
     UI_but_drawflag_enable(but, but_align);
