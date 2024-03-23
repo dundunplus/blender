@@ -198,6 +198,7 @@ class RENDER_PT_eevee_next_horizon_scan(RenderButtonsPanel, Panel):
         col.prop(props, "horizon_quality", text="Precision")
         col.prop(props, "horizon_thickness", text="Thickness")
         col.prop(props, "horizon_bias", text="Bias")
+        col.prop(props, "horizon_resolution", text="Resolution")
 
 
 class RENDER_PT_eevee_motion_blur(RenderButtonsPanel, Panel):
@@ -725,6 +726,9 @@ class RENDER_PT_eevee_next_shadows(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(props, "shadow_normal_bias", text="Normal Bias")
+
+        col = layout.column()
+        col.prop(props, "use_shadow_jittered_viewport", text="Jittered Transparency (Viewport)")
 
 
 class RENDER_PT_eevee_sampling(RenderButtonsPanel, Panel):

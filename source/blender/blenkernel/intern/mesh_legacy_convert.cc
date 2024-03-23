@@ -36,6 +36,7 @@
 #include "BKE_idprop.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
+#include "BKE_main_namemap.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_modifier.hh"
@@ -2127,11 +2128,10 @@ static bNodeTree *add_auto_smooth_node_tree(Main &bmain)
   }
   group->geometry_node_asset_traits->flag |= GEO_NODE_ASSET_MODIFIER;
 
-  group->tree_interface.add_socket(DATA_("Geometry"),
-                                   "",
-                                   "NodeSocketGeometry",
-                                   NODE_INTERFACE_SOCKET_INPUT | NODE_INTERFACE_SOCKET_OUTPUT,
-                                   nullptr);
+  group->tree_interface.add_socket(
+      DATA_("Geometry"), "", "NodeSocketGeometry", NODE_INTERFACE_SOCKET_OUTPUT, nullptr);
+  group->tree_interface.add_socket(
+      DATA_("Geometry"), "", "NodeSocketGeometry", NODE_INTERFACE_SOCKET_INPUT, nullptr);
   bNodeTreeInterfaceSocket *angle_io_socket = group->tree_interface.add_socket(
       DATA_("Angle"), "", "NodeSocketFloat", NODE_INTERFACE_SOCKET_INPUT, nullptr);
   auto &angle_data = *static_cast<bNodeSocketValueFloat *>(angle_io_socket->socket_data);
@@ -2146,7 +2146,7 @@ static bNodeTree *add_auto_smooth_node_tree(Main &bmain)
   group_input_angle->locx = -420.0f;
   group_input_angle->locy = -300.0f;
   LISTBASE_FOREACH (bNodeSocket *, socket, &group_input_angle->outputs) {
-    if (!STREQ(socket->identifier, "Socket_1")) {
+    if (!STREQ(socket->identifier, "Socket_2")) {
       socket->flag |= SOCK_HIDDEN;
     }
   }
@@ -2154,7 +2154,7 @@ static bNodeTree *add_auto_smooth_node_tree(Main &bmain)
   group_input_mesh->locx = -60.0f;
   group_input_mesh->locy = -100.0f;
   LISTBASE_FOREACH (bNodeSocket *, socket, &group_input_mesh->outputs) {
-    if (!STREQ(socket->identifier, "Socket_0")) {
+    if (!STREQ(socket->identifier, "Socket_1")) {
       socket->flag |= SOCK_HIDDEN;
     }
   }
@@ -2197,7 +2197,7 @@ static bNodeTree *add_auto_smooth_node_tree(Main &bmain)
               nodeFindSocket(group_output, SOCK_IN, "Socket_0"));
   nodeAddLink(group,
               group_input_angle,
-              nodeFindSocket(group_input_angle, SOCK_OUT, "Socket_1"),
+              nodeFindSocket(group_input_angle, SOCK_OUT, "Socket_2"),
               less_than_or_equal,
               nodeFindSocket(less_than_or_equal, SOCK_IN, "B"));
   nodeAddLink(group,
@@ -2212,7 +2212,7 @@ static bNodeTree *add_auto_smooth_node_tree(Main &bmain)
               nodeFindSocket(boolean_and, SOCK_IN, "Boolean_001"));
   nodeAddLink(group,
               group_input_mesh,
-              nodeFindSocket(group_input_mesh, SOCK_OUT, "Socket_0"),
+              nodeFindSocket(group_input_mesh, SOCK_OUT, "Socket_1"),
               shade_smooth_edge,
               nodeFindSocket(shade_smooth_edge, SOCK_IN, "Geometry"));
   nodeAddLink(group,
@@ -2336,14 +2336,14 @@ static ModifierData *create_auto_smooth_modifier(
   id_us_plus(&md->node_group->id);
 
   md->settings.properties = idprop::create_group("Nodes Modifier Settings").release();
-  IDProperty *angle_prop = idprop::create("Socket_1", angle).release();
+  IDProperty *angle_prop = idprop::create("Socket_2", angle).release();
   auto *ui_data = reinterpret_cast<IDPropertyUIDataFloat *>(IDP_ui_data_ensure(angle_prop));
   ui_data->base.rna_subtype = PROP_ANGLE;
   ui_data->soft_min = 0.0f;
   ui_data->soft_max = DEG2RADF(180.0f);
   IDP_AddToGroup(md->settings.properties, angle_prop);
-  IDP_AddToGroup(md->settings.properties, idprop::create("Socket_1_use_attribute", 0).release());
-  IDP_AddToGroup(md->settings.properties, idprop::create("Socket_1_attribute_name", "").release());
+  IDP_AddToGroup(md->settings.properties, idprop::create("Socket_2_use_attribute", 0).release());
+  IDP_AddToGroup(md->settings.properties, idprop::create("Socket_2_attribute_name", "").release());
 
   BKE_modifiers_persistent_uid_init(object, md->modifier);
   return &md->modifier;
@@ -2381,6 +2381,7 @@ void BKE_main_mesh_legacy_convert_auto_smooth(Main &bmain)
       /* Move the node group to the requested library so that library data-blocks don't point to
        * local data-blocks. This requires making sure the name is unique in that library and
        * changing the name maps to be consistent with the new state. */
+      BKE_main_namemap_remove_name(&bmain, &new_group->id, new_group->id.name + 2);
       new_group->id.lib = library;
       BKE_id_new_name_validate(&bmain, &bmain.nodetrees, &new_group->id, nullptr, false);
       if (library) {
