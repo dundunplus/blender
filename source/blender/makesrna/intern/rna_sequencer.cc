@@ -116,7 +116,7 @@ const EnumPropertyItem rna_enum_strip_color_items[] = {
 #  include <fmt/format.h>
 
 #  include "BKE_global.hh"
-#  include "BKE_idprop.h"
+#  include "BKE_idprop.hh"
 #  include "BKE_movieclip.h"
 #  include "BKE_report.hh"
 
@@ -970,7 +970,7 @@ static int rna_Sequence_input_count_get(PointerRNA *ptr)
 }
 
 static void rna_Sequence_input_set(PointerRNA *ptr,
-                                   PointerRNA ptr_value,
+                                   const PointerRNA &ptr_value,
                                    ReportList *reports,
                                    int input_num)
 {

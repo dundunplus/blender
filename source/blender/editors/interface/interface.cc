@@ -33,7 +33,7 @@
 
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
-#include "BKE_idprop.h"
+#include "BKE_idprop.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
@@ -1258,9 +1258,8 @@ static std::optional<std::string> ui_but_event_operator_string_from_menu(const b
   MenuType *mt = UI_but_menutype_get(but);
   BLI_assert(mt != nullptr);
 
-  /* annoying, create a property */
-  const IDPropertyTemplate val = {0};
-  IDProperty *prop_menu = IDP_New(IDP_GROUP, &val, __func__); /* Dummy, name is unimportant. */
+  /* Dummy, name is unimportant. */
+  IDProperty *prop_menu = blender::bke::idprop::create_group(__func__).release();
   IDP_AddToGroup(prop_menu, IDP_NewStringMaxSize(mt->idname, sizeof(mt->idname), "name"));
 
   const std::optional<std::string> result = WM_key_event_operator_string(
@@ -1273,29 +1272,21 @@ static std::optional<std::string> ui_but_event_operator_string_from_menu(const b
 static std::optional<std::string> ui_but_event_operator_string_from_panel(const bContext *C,
                                                                           uiBut *but)
 {
+  using namespace blender;
   /** Nearly exact copy of #ui_but_event_operator_string_from_menu */
   PanelType *pt = UI_but_paneltype_get(but);
   BLI_assert(pt != nullptr);
 
-  /* annoying, create a property */
-  const IDPropertyTemplate group_val = {0};
-  IDProperty *prop_panel = IDP_New(
-      IDP_GROUP, &group_val, __func__); /* Dummy, name is unimportant. */
+  /* Dummy, name is unimportant. */
+  IDProperty *prop_panel = bke::idprop::create_group(__func__).release();
   IDP_AddToGroup(prop_panel, IDP_NewStringMaxSize(pt->idname, sizeof(pt->idname), "name"));
-  IDPropertyTemplate space_type_val = {0};
-  space_type_val.i = pt->space_type;
-  IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &space_type_val, "space_type"));
-  IDPropertyTemplate region_type_val = {0};
-  region_type_val.i = pt->region_type;
-  IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &region_type_val, "region_type"));
+  IDP_AddToGroup(prop_panel, bke::idprop::create("space_type", pt->space_type).release());
+  IDP_AddToGroup(prop_panel, bke::idprop::create("region_type", pt->region_type).release());
   BLI_SCOPED_DEFER([&]() { IDP_FreeProperty(prop_panel); });
 
   for (int i = 0; i < 2; i++) {
     /* FIXME(@ideasman42): We can't reasonably search all configurations - long term. */
-    IDPropertyTemplate val = {0};
-    val.i = i;
-
-    IDP_ReplaceInGroup(prop_panel, IDP_New(IDP_INT, &val, "keep_open"));
+    IDP_ReplaceInGroup(prop_panel, bke::idprop::create("keep_open", i).release());
     if (std::optional<std::string> result = WM_key_event_operator_string(
             C, "WM_OT_call_panel", WM_OP_INVOKE_REGION_WIN, prop_panel, true))
     {
@@ -1448,21 +1439,14 @@ static std::optional<std::string> ui_but_event_property_operator_string(const bC
   }
 
   /* We have a data-path! */
-  bool found = false;
-
-  for (int data_path_index = 0; data_path_index < data_path_variations.size() && (found == false);
-       data_path_index++)
-  {
+  for (int data_path_index = 0; data_path_index < data_path_variations.size(); data_path_index++) {
     const StringRefNull data_path = data_path_variations[data_path_index];
     if (!data_path.is_empty() || (prop_enum_value_ok && prop_enum_value_id)) {
       /* Create a property to host the "data_path" property we're sending to the operators. */
-      IDProperty *prop_path;
-
-      const IDPropertyTemplate group_val = {0};
-      prop_path = IDP_New(IDP_GROUP, &group_val, __func__);
+      IDProperty *prop_path = blender::bke::idprop::create_group(__func__).release();
       BLI_SCOPED_DEFER([&]() { IDP_FreeProperty(prop_path); });
       if (!data_path.is_empty()) {
-        IDP_AddToGroup(prop_path, IDP_NewString(data_path.c_str(), "data_path"));
+        IDP_AddToGroup(prop_path, bke::idprop::create("data_path", data_path).release());
       }
       if (prop_enum_value_ok) {
         const EnumPropertyItem *item;
@@ -1473,13 +1457,10 @@ static std::optional<std::string> ui_but_event_property_operator_string(const bC
           IDProperty *prop_value;
           if (prop_enum_value_is_int) {
             const int value = item[index].value;
-            IDPropertyTemplate val = {};
-            val.i = value;
-            prop_value = IDP_New(IDP_INT, &val, prop_enum_value_id);
+            prop_value = bke::idprop::create(prop_enum_value_id, value).release();
           }
           else {
-            const char *id = item[index].identifier;
-            prop_value = IDP_NewString(id, prop_enum_value_id);
+            prop_value = bke::idprop::create(prop_enum_value_id, item[index].identifier).release();
           }
           IDP_AddToGroup(prop_path, prop_value);
         }
@@ -6436,7 +6417,7 @@ std::string UI_but_string_get_rna_label(uiBut &but)
   }
   if (but.optype) {
     PointerRNA *opptr = UI_but_operator_ptr_ensure(&but);
-    return WM_operatortype_name(but.optype, opptr).c_str();
+    return WM_operatortype_name(but.optype, opptr);
   }
   if (ELEM(but.type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER)) {
     if (MenuType *mt = UI_but_menutype_get(&but)) {
@@ -6444,7 +6425,7 @@ std::string UI_but_string_get_rna_label(uiBut &but)
     }
 
     if (wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(&but, nullptr)) {
-      return WM_operatortype_name(ot, nullptr).c_str();
+      return WM_operatortype_name(ot, nullptr);
     }
 
     if (PanelType *pt = UI_but_paneltype_get(&but)) {
@@ -6509,7 +6490,7 @@ std::string UI_but_string_get_rna_tooltip(bContext &C, uiBut &but)
     }
 
     if (wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(&but, nullptr)) {
-      return WM_operatortype_description(&C, ot, nullptr).c_str();
+      return WM_operatortype_description(&C, ot, nullptr);
     }
   }
 

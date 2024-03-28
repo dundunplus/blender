@@ -1,4 +1,6 @@
-/* SPDX-License-Identifier: Apache-2.0 */
+/* SPDX-FileCopyrightText: 2024 Blender Authors
+ *
+ * SPDX-License-Identifier: Apache-2.0 */
 
 #include "BLI_fixed_width_int.hh"
 #include "BLI_fixed_width_int_str.hh"
@@ -25,6 +27,30 @@ TEST(fixed_width_int, IsZero)
   EXPECT_TRUE(is_zero(Int256(10) - Int256(15) + Int256(5)));
   EXPECT_FALSE(is_zero(Int256(10)));
   EXPECT_FALSE(is_zero(Int256(-10)));
+}
+
+TEST(fixed_width_int, ToString)
+{
+  {
+    const std::string str = "4875677549274093345634534";
+    EXPECT_EQ(UInt256(str).to_string(), str);
+  }
+  {
+    const std::string str = "0";
+    EXPECT_EQ(UInt256(str).to_string(), str);
+  }
+  {
+    const std::string str = "4875677549274093345634534";
+    EXPECT_EQ(Int256(str).to_string(), str);
+  }
+  {
+    const std::string str = "-4875677549274093345634534";
+    EXPECT_EQ(Int256(str).to_string(), str);
+  }
+  {
+    const std::string str = "0";
+    EXPECT_EQ(Int256(str).to_string(), str);
+  }
 }
 
 TEST(fixed_width_int, Add256)
