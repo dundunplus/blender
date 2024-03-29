@@ -26,6 +26,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_DerivedMesh.hh"
+#include "BKE_attribute.hh"
 #include "BKE_cdderivedmesh.h"
 #include "BKE_modifier.hh"
 #include "BKE_shrinkwrap.hh"
@@ -96,6 +97,7 @@ bool BKE_shrinkwrap_needs_normals(int shrinkType, int shrinkMode)
 bool BKE_shrinkwrap_init_tree(
     ShrinkwrapTreeData *data, Mesh *mesh, int shrinkType, int shrinkMode, bool force_normals)
 {
+  using namespace blender::bke;
   *data = {};
 
   if (mesh == nullptr) {
@@ -115,8 +117,8 @@ bool BKE_shrinkwrap_init_tree(
   data->faces = mesh->faces();
   data->corner_edges = mesh->corner_edges();
   data->vert_normals = mesh->vert_normals();
-  data->sharp_faces = static_cast<const bool *>(
-      CustomData_get_layer_named(&mesh->face_data, CD_PROP_BOOL, "sharp_face"));
+  const AttributeAccessor attributes = mesh->attributes();
+  data->sharp_faces = *attributes.lookup<bool>("sharp_face", AttrDomain::Face);
 
   if (shrinkType == MOD_SHRINKWRAP_NEAREST_VERTEX) {
     data->bvh = BKE_bvhtree_from_mesh_get(&data->treeData, mesh, BVHTREE_FROM_VERTS, 2);
@@ -1030,7 +1032,9 @@ static void mesh_corner_tris_target_project(void *userdata,
     update_hit(nearest, index, co, hit_co, hit_no);
   }
   /* Boundary edges */
-  else if (tree->boundary && tree->boundary->tri_has_boundary[index]) {
+  else if (tree->boundary && tree->boundary->has_boundary() &&
+           tree->boundary->tri_has_boundary[index])
+  {
     const BitSpan is_boundary = tree->boundary->edge_is_boundary;
     const int3 edges = bke::mesh::corner_tri_get_real_edges(
         data->edges, data->corner_verts, tree->corner_edges, tri);
@@ -1160,7 +1164,7 @@ void BKE_shrinkwrap_compute_smooth_normal(const ShrinkwrapTreeData *tree,
   const int face_i = tree->mesh->corner_tri_faces()[corner_tri_idx];
 
   /* Interpolate smooth normals if enabled. */
-  if (!(tree->sharp_faces && tree->sharp_faces[face_i])) {
+  if (tree->sharp_faces.is_empty() || tree->sharp_faces[face_i]) {
     const int vert_indices[3] = {treeData->corner_verts[tri[0]],
                                  treeData->corner_verts[tri[1]],
                                  treeData->corner_verts[tri[2]]};
@@ -1205,6 +1209,9 @@ void BKE_shrinkwrap_compute_smooth_normal(const ShrinkwrapTreeData *tree,
   /* Use the face normal if flat. */
   else if (!tree->face_normals.is_empty()) {
     copy_v3_v3(r_no, tree->face_normals[face_i]);
+    if (transform) {
+      BLI_space_transform_invert_normal(transform, r_no);
+    }
   }
   /* Finally fallback to the corner_tris normal. */
   else {
