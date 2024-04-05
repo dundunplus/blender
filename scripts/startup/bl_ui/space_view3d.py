@@ -5911,6 +5911,8 @@ class VIEW3D_MT_edit_curves(Menu):
         layout.separator()
         layout.operator("curves.attribute_set")
         layout.operator("curves.delete")
+        layout.operator("curves.cyclic_toggle")
+        layout.operator_menu_enum("curves.curve_type_set", "type")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
@@ -7860,6 +7862,8 @@ class VIEW3D_PT_overlay_grease_pencil_options(Panel):
             'EDIT_GREASE_PENCIL': iface_("Edit Grease Pencil"),
             'OBJECT': iface_("Grease Pencil"),
         }[context.mode], translate=False)
+
+        layout.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
 
         if ob.mode in {'EDIT'}:
             split = layout.split()

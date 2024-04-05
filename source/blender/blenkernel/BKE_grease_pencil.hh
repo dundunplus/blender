@@ -245,20 +245,23 @@ class TreeNode : public ::GreasePencilLayerTreeNode {
   /**
    * \returns this node as a #Layer.
    */
-  Layer &as_layer();
   const Layer &as_layer() const;
+  Layer &as_layer();
 
   /**
    * \returns this node as a #LayerGroup.
    */
-  LayerGroup &as_group();
   const LayerGroup &as_group() const;
+  LayerGroup &as_group();
 
   /**
    * \returns the parent layer group or nullptr for the root group.
    */
-  LayerGroup *parent_group() const;
-  TreeNode *parent_node() const;
+  const LayerGroup *parent_group() const;
+  LayerGroup *parent_group();
+
+  const TreeNode *parent_node() const;
+  TreeNode *parent_node();
 
   /**
    * \returns the number of non-null parents of the node.
@@ -374,7 +377,8 @@ class Layer : public ::GreasePencilLayer {
   /**
    * \returns the parent #LayerGroup of this layer.
    */
-  LayerGroup &parent_group() const;
+  const LayerGroup &parent_group() const;
+  LayerGroup &parent_group();
 
   /**
    * \returns the frames mapping.
@@ -703,7 +707,8 @@ inline void TreeNode::set_selected(const bool selected)
 }
 inline bool TreeNode::use_onion_skinning() const
 {
-  return ((this->flag & GP_LAYER_TREE_NODE_USE_ONION_SKINNING) != 0);
+  return ((this->flag & GP_LAYER_TREE_NODE_HIDE_ONION_SKINNING) == 0) &&
+         (!this->parent_group() || this->parent_group()->as_node().use_onion_skinning());
 }
 inline bool TreeNode::use_masks() const
 {
@@ -749,7 +754,11 @@ inline bool Layer::is_empty() const
 {
   return (this->frames().is_empty());
 }
-inline LayerGroup &Layer::parent_group() const
+inline const LayerGroup &Layer::parent_group() const
+{
+  return *this->as_node().parent_group();
+}
+inline LayerGroup &Layer::parent_group()
 {
   return *this->as_node().parent_group();
 }
