@@ -4301,6 +4301,11 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
   /* XXX: for now putting this in presets is silly - its just Default */
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
+  prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
+  RNA_def_property_string_sdna(prop, nullptr, "filepath");
+  RNA_def_property_ui_text(
+      prop, "File Path", "The path to the preset loaded into this theme (if any)");
+
   prop = RNA_def_property(srna, "theme_area", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "active_theme_area");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
@@ -6496,14 +6501,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
       prop,
       "Lock Camera Pan/Zoom",
       "Pan/zoom the camera view instead of leaving the camera view when orbiting");
-
-  /* let Python know whether NDOF is enabled */
-  prop = RNA_def_boolean(srna, "use_ndof", true, "", "");
-#  else
-  prop = RNA_def_boolean(srna, "use_ndof", false, "", "");
 #  endif /* WITH_INPUT_NDOF */
-  RNA_def_property_flag(prop, PROP_IDPROPERTY);
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
   prop = RNA_def_property(srna, "mouse_double_click_time", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "dbl_click_time");
