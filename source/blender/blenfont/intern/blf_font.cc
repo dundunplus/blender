@@ -980,7 +980,8 @@ void blf_font_boundbox_foreach_glyph(FontBLF *font,
     const size_t i_curr = i;
     g = blf_glyph_from_utf8_and_step(font, gc, g, str, str_len, &i, &pen_x);
 
-    if (UNLIKELY(g == nullptr)) {
+    if (UNLIKELY(g == nullptr || g->advance_x == 0)) {
+      /* Ignore combining characters like diacritical marks. */
       continue;
     }
     rcti bounds;
@@ -1024,9 +1025,17 @@ size_t blf_str_offset_from_cursor_position(FontBLF *font,
                                            size_t str_len,
                                            int location_x)
 {
+  if (!str || !str[0] || !str_len) {
+    return 0;
+  }
+
   CursorPositionForeachGlyph_Data data{};
   data.location_x = location_x;
   data.r_offset = size_t(-1);
+
+  /* For negative position, don't early exit with 0 but instead test as
+   * if it were zero. First glyph might not be from first character. */
+  location_x = std::max(location_x, 0);
 
   blf_font_boundbox_foreach_glyph(font, str, str_len, blf_cursor_position_foreach_glyph, &data);
 
@@ -1073,6 +1082,48 @@ void blf_str_offset_to_glyph_bounds(FontBLF *font,
 
   blf_font_boundbox_foreach_glyph(font, str, str_offset + 1, blf_str_offset_foreach_glyph, &data);
   *glyph_bounds = data.bounds;
+}
+
+int blf_str_offset_to_cursor(
+    FontBLF *font, const char *str, size_t str_len, size_t str_offset, float cursor_width)
+{
+  if (!str || !str[0]) {
+    return 0;
+  }
+
+  /* Right edge of the previous character, if available. */
+  rcti prev = {0};
+  if (str_offset > 0) {
+    blf_str_offset_to_glyph_bounds(font, str, str_offset - 1, &prev);
+  }
+
+  /* Left edge of the next character, if available. */
+  rcti next = {0};
+  if (str_offset < strlen(str)) {
+    blf_str_offset_to_glyph_bounds(font, str, str_offset, &next);
+  }
+
+  if ((prev.xmax == prev.xmin) && next.xmax) {
+    /* Nothing (or a space) to the left, so align to right character. */
+    return next.xmin - int(cursor_width);
+  }
+  if ((prev.xmax != prev.xmin) && !next.xmax) {
+    /* End of string, so align to last character. */
+    return prev.xmax;
+  }
+  if (prev.xmax && next.xmax) {
+    /* Between two characters, so use the center. */
+    if (next.xmin >= prev.xmax) {
+      return int((float(prev.xmax + next.xmin) - cursor_width) / 2.0f);
+    }
+    /* A nicer center if reversed order - RTL. */
+    return int((float(next.xmax + prev.xmin) - cursor_width) / 2.0f);
+  }
+  if (!str_offset) {
+    /* Start of string. */
+    return 0 - int(cursor_width);
+  }
+  return int(blf_font_width(font, str, str_len, nullptr));
 }
 
 /** \} */
@@ -1737,7 +1788,13 @@ struct FaceDetails {
 /* Details about the fallback fonts we ship, so that we can load only when needed. */
 static const FaceDetails static_face_details[] = {
     {"lastresort.woff2", UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX},
-    {"Noto Sans CJK Regular.woff2", 0x30000083L, 0x29DF3C10L, 0x16L, 0},
+    {"Noto Sans CJK Regular.woff2",
+     0,
+     TT_UCR_CJK_SYMBOLS | TT_UCR_HIRAGANA | TT_UCR_KATAKANA | TT_UCR_BOPOMOFO | TT_UCR_CJK_MISC |
+         TT_UCR_ENCLOSED_CJK_LETTERS_MONTHS | TT_UCR_CJK_COMPATIBILITY |
+         TT_UCR_CJK_UNIFIED_IDEOGRAPHS | TT_UCR_CJK_COMPATIBILITY_IDEOGRAPHS,
+     TT_UCR_CJK_COMPATIBILITY_FORMS,
+     0},
     {"NotoEmoji-VariableFont_wght.woff2", 0x80000003L, 0x241E4ACL, 0x14000000L, 0x4000000L},
     {"NotoSansArabic-VariableFont_wdth,wght.woff2",
      TT_UCR_ARABIC,
