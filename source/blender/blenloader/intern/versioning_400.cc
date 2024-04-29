@@ -2541,12 +2541,11 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
-    if (!DNA_struct_member_exists(fd->filesdna, "SceneEEVEE", "float", "shadow_normal_bias")) {
+    if (!DNA_struct_member_exists(fd->filesdna, "SceneEEVEE", "int", "shadow_step_count")) {
       SceneEEVEE default_scene_eevee = *DNA_struct_default_get(SceneEEVEE);
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         scene->eevee.shadow_ray_count = default_scene_eevee.shadow_ray_count;
         scene->eevee.shadow_step_count = default_scene_eevee.shadow_step_count;
-        scene->eevee.shadow_normal_bias = default_scene_eevee.shadow_normal_bias;
       }
     }
 
@@ -2946,9 +2945,6 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       input_sample_values[2] = ts->curves_sculpt != nullptr ?
                                    ts->curves_sculpt->paint.num_input_samples_deprecated :
                                    1;
-      input_sample_values[3] = ts->uvsculpt != nullptr ?
-                                   ts->uvsculpt->paint.num_input_samples_deprecated :
-                                   1;
 
       input_sample_values[4] = ts->gp_paint != nullptr ?
                                    ts->gp_paint->paint.num_input_samples_deprecated :
@@ -3122,7 +3118,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 8)) {
     LISTBASE_FOREACH (Light *, light, &bmain->lights) {
-      light->shadow_filter_radius = 3.0f;
+      light->shadow_filter_radius = 1.0f;
     }
   }
 
@@ -3223,6 +3219,18 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed != nullptr) {
         scene->ed->show_missing_media_flag |= SEQ_EDIT_SHOW_MISSING_MEDIA;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 23)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      ToolSettings *ts = scene->toolsettings;
+      if (!ts->uvsculpt.strength_curve) {
+        ts->uvsculpt.size = 50;
+        ts->uvsculpt.strength = 1.0f;
+        ts->uvsculpt.curve_preset = BRUSH_CURVE_SMOOTH;
+        ts->uvsculpt.strength_curve = BKE_curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
       }
     }
   }

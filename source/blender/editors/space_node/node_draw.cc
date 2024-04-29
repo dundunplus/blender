@@ -2067,7 +2067,7 @@ static void node_draw_preview(const Scene *scene, ImBuf *preview, rctf *prv)
   node_draw_preview_background(&draw_rect);
 
   GPU_blend(GPU_BLEND_ALPHA);
-  /* Premul graphics. */
+  /* Pre-multiply graphics. */
   GPU_blend(GPU_BLEND_ALPHA);
 
   ED_draw_imbuf(preview,
@@ -3424,7 +3424,8 @@ static void node_draw_basis(const bContext &C,
                         nullptr,
                         0,
                         0,
-                        "");
+                        TIP_(node.typeinfo->ui_description));
+
   if (node.flag & NODE_MUTED) {
     UI_but_flag_enable(but, UI_BUT_INACTIVE);
   }
@@ -3661,7 +3662,7 @@ static void node_draw_hidden(const bContext &C,
                         nullptr,
                         0,
                         0,
-                        "");
+                        TIP_(node.typeinfo->ui_description));
 
   /* Outline. */
   {

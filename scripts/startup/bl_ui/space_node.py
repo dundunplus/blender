@@ -171,6 +171,7 @@ class NODE_HT_header(Header):
                 if snode.node_tree:
                     layout.popover(panel="NODE_PT_geometry_node_tool_object_types", text="Types")
                     layout.popover(panel="NODE_PT_geometry_node_tool_mode", text="Modes")
+                    layout.popover(panel="NODE_PT_geometry_node_tool_options", text="Options")
                 display_pin = False
         else:
             # Custom node tree is edited as independent ID block
@@ -403,7 +404,7 @@ class NODE_PT_material_slots(Panel):
     def draw_header(self, context):
         ob = context.object
         self.bl_label = (
-            iface_("Slot %d") % (ob.active_material_index + 1) if ob.material_slots else
+            iface_("Slot {:d}").format(ob.active_material_index + 1) if ob.material_slots else
             iface_("Slot")
         )
 
@@ -488,6 +489,21 @@ class NODE_PT_geometry_node_tool_mode(Panel):
             row = col.row(align=True)
             row.label(text=name, icon=icon)
             row.prop(group, prop, text="")
+
+
+class NODE_PT_geometry_node_tool_options(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Options"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+
+        snode = context.space_data
+        group = snode.node_tree
+
+        layout.prop(group, "use_wait_for_click")
 
 
 class NODE_PT_node_color_presets(PresetPanel, Panel):
@@ -1320,6 +1336,7 @@ classes = (
     NODE_PT_material_slots,
     NODE_PT_geometry_node_tool_object_types,
     NODE_PT_geometry_node_tool_mode,
+    NODE_PT_geometry_node_tool_options,
     NODE_PT_node_color_presets,
     NODE_MT_node_tree_interface_context_menu,
     NODE_PT_node_tree_interface,
