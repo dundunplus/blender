@@ -167,6 +167,7 @@ bool raycast_node(PBVH &pbvh,
                   float (*origco)[3],
                   bool use_origco,
                   Span<int> corner_verts,
+                  Span<int> corner_tri_faces,
                   Span<bool> hide_poly,
                   const float ray_start[3],
                   const float ray_normal[3],
@@ -206,6 +207,7 @@ bool find_nearest_to_ray_node(PBVH &pbvh,
                               float (*origco)[3],
                               bool use_origco,
                               Span<int> corner_verts,
+                              Span<int> corner_tri_faces,
                               Span<bool> hide_poly,
                               const float ray_start[3],
                               const float ray_normal[3],
@@ -310,7 +312,9 @@ Span<int> node_corners(const PBVHNode &node);
  * Gather the indices of all faces (not triangles) used by the node.
  * For convenience, pass a reference to the data in the result.
  */
-Span<int> node_face_indices_calc_mesh(const PBVH &pbvh, const PBVHNode &node, Vector<int> &faces);
+Span<int> node_face_indices_calc_mesh(Span<int> corner_tri_faces,
+                                      const PBVHNode &node,
+                                      Vector<int> &faces);
 
 /**
  * Gather the indices of all base mesh faces in the node.
@@ -542,6 +546,7 @@ void BKE_pbvh_store_colors(PBVH &pbvh,
 
 /* Like BKE_pbvh_store_colors but handles loop->vert conversion */
 void BKE_pbvh_store_colors_vertex(PBVH &pbvh,
+                                  blender::GroupedSpan<int> vert_to_face_map,
                                   blender::Span<int> indices,
                                   blender::MutableSpan<blender::float4> r_colors);
 
@@ -549,13 +554,17 @@ bool BKE_pbvh_is_drawing(const PBVH &pbvh);
 
 void BKE_pbvh_update_active_vcol(PBVH &pbvh, Mesh *mesh);
 
-void BKE_pbvh_vertex_color_set(PBVH &pbvh, PBVHVertRef vertex, const float color[4]);
-void BKE_pbvh_vertex_color_get(const PBVH &pbvh, PBVHVertRef vertex, float r_color[4]);
+void BKE_pbvh_vertex_color_set(PBVH &pbvh,
+                               blender::GroupedSpan<int> vert_to_face_map,
+                               PBVHVertRef vertex,
+                               const float color[4]);
+void BKE_pbvh_vertex_color_get(const PBVH &pbvh,
+                               blender::GroupedSpan<int> vert_to_face_map,
+                               PBVHVertRef vertex,
+                               float r_color[4]);
 
 void BKE_pbvh_ensure_node_loops(PBVH &pbvh);
 int BKE_pbvh_debug_draw_gen_get(PBVHNode &node);
-
-void BKE_pbvh_pmap_set(PBVH &pbvh, blender::GroupedSpan<int> vert_to_face_map);
 
 namespace blender::bke::pbvh {
 Vector<PBVHNode *> search_gather(PBVH &pbvh,
