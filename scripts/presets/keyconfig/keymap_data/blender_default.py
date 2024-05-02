@@ -4648,6 +4648,11 @@ def km_grease_pencil_edit_mode(params):
          "alt": True}, {"properties": [("type", "TOGGLE")]}),
 
         ("grease_pencil.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        
+        # Extrude and move selected points
+        op_tool_optional(
+            ("grease_pencil.extrude_move", {"type": 'E', "value": 'PRESS'}, None),
+            (op_tool_cycle, "builtin.extrude"), params),
 
         # Active layer
         op_menu("GREASE_PENCIL_MT_layer_active", {"type": 'Y', "value": 'PRESS'}),
@@ -8131,6 +8136,16 @@ def km_3d_view_tool_sculpt_lasso_trim(params):
     )
 
 
+def km_3d_view_tool_sculpt_line_trim(params):
+    return (
+        "3D View Tool: Sculpt, Line Trim",
+        {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+        {"items": [
+            ("sculpt.trim_line_gesture", params.tool_maybe_tweak_event, None),
+        ]},
+    )
+
+
 def km_3d_view_tool_sculpt_line_mask(params):
     return (
         "3D View Tool: Sculpt, Line Mask",
@@ -9059,6 +9074,7 @@ def generate_keymaps(params=None):
         km_3d_view_tool_sculpt_lasso_face_set(params),
         km_3d_view_tool_sculpt_box_trim(params),
         km_3d_view_tool_sculpt_lasso_trim(params),
+        km_3d_view_tool_sculpt_line_trim(params),
         km_3d_view_tool_sculpt_line_mask(params),
         km_3d_view_tool_sculpt_line_project(params),
         km_3d_view_tool_sculpt_mesh_filter(params),
