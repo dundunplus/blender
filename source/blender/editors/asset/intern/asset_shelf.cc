@@ -88,7 +88,8 @@ AssetShelf *create_shelf_from_type(AssetShelfType &type)
 {
   AssetShelf *shelf = MEM_new<AssetShelf>(__func__);
   *shelf = dna::shallow_zero_initialize();
-  shelf->settings.preview_size = DEFAULT_TILE_SIZE;
+  shelf->settings.preview_size = type.default_preview_size ? type.default_preview_size :
+                                                             DEFAULT_TILE_SIZE;
   shelf->settings.asset_library_reference = asset_system::all_library_reference();
   shelf->type = &type;
   shelf->preferred_row_count = 1;
@@ -141,7 +142,7 @@ static AssetShelf *update_active_shelf(const bContext &C,
                                        RegionAssetShelf &shelf_regiondata,
                                        FunctionRef<void(AssetShelf &new_shelf)> on_create)
 {
-  /* Note: Don't access #AssetShelf.type directly, use #type_ensure(). */
+  /* NOTE: Don't access #AssetShelf.type directly, use #type_ensure(). */
 
   /* Case 1: */
   if (shelf_regiondata.active_shelf &&
