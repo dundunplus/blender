@@ -38,6 +38,8 @@ CHECKER_ISOLATE_BUILD_DIR = False
 # To add files use a relative path.
 CHECKER_EXCLUDE_SOURCE_FILES = set(os.path.join(*f.split("/")) for f in (
     "source/blender/draw/engines/eevee_next/eevee_lut.cc",
+    # Hangs for hours CPPCHECK-2.14.0.
+    "intern/cycles/blender/output_driver.cpp",
 ))
 
 CHECKER_ARGS = (
@@ -106,6 +108,14 @@ CHECKER_EXCLUDE_FROM_SUMMARY = {
     "useStlAlgorithm",
     # May be interesting to handle but very noisy currently.
     "variableScope",
+
+    # These could be added back, currently there are so many warnings and they don't seem especially error-prone.
+    "missingMemberCopy",
+    "missingOverride",
+    "noExplicitConstructor",
+    "uninitDerivedMemberVar",
+    "uninitMemberVar",
+    "useInitializationList",
 }
 
 
