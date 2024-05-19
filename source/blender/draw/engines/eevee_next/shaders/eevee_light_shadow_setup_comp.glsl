@@ -28,8 +28,11 @@ void orthographic_sync(int tilemap_id,
   object_to_world.z.w = 0.0;
 
   int clip_index = tilemaps_buf[tilemap_id].clip_data_index;
+  /* Avoid qualifier problems on NVidia (see #121968). */
+  Transform object_to_world_history = tilemaps_clip_buf[clip_index].object_to_world;
+
   if (tilemaps_buf[tilemap_id].is_dirty ||
-      !transform_equal(tilemaps_clip_buf[clip_index].object_to_world, object_to_world))
+      !transform_equal(object_to_world_history, object_to_world))
   {
     /* Set dirty as the light direction changed. */
     tilemaps_buf[tilemap_id].grid_shift = int2(SHADOW_TILEMAP_RES);
@@ -200,8 +203,10 @@ void cubeface_sync(int tilemap_id,
   object_to_world.z.w = world_jitter_offset.z;
 
   int clip_index = tilemaps_buf[tilemap_id].clip_data_index;
+  /* Avoid qualifier problems on NVidia (see #121968). */
+  Transform object_to_world_history = tilemaps_clip_buf[clip_index].object_to_world;
   if (tilemaps_buf[tilemap_id].is_dirty ||
-      !transform_equal(tilemaps_clip_buf[clip_index].object_to_world, object_to_world))
+      !transform_equal(object_to_world_history, object_to_world))
   {
     /* Set dirty as the light direction changed. */
     tilemaps_buf[tilemap_id].grid_shift = int2(SHADOW_TILEMAP_RES);
