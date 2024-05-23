@@ -62,7 +62,6 @@ enum eMRDataType {
   MR_DATA_NONE = 0,
   MR_DATA_POLY_NOR = 1 << 1,
   MR_DATA_LOOP_NOR = 1 << 2,
-  MR_DATA_CORNER_TRI = 1 << 3,
   MR_DATA_LOOSE_GEOM = 1 << 4,
   /** Force loop normals calculation. */
   MR_DATA_TAN_LOOP_NOR = 1 << 5,
@@ -70,7 +69,7 @@ enum eMRDataType {
 };
 ENUM_OPERATORS(eMRDataType, MR_DATA_POLYS_SORTED)
 
-int mesh_render_mat_len_get(const Object *object, const Mesh *mesh);
+int mesh_render_mat_len_get(const Object &object, const Mesh &mesh);
 
 struct MeshBufferList {
   /* Every VBO below contains at least enough data for every loop in the mesh
@@ -302,18 +301,18 @@ struct MeshBatchCache {
   (MBC_EDITUV_FACES_STRETCH_AREA | MBC_EDITUV_FACES_STRETCH_ANGLE | MBC_EDITUV_FACES | \
    MBC_EDITUV_EDGES | MBC_EDITUV_VERTS | MBC_EDITUV_FACEDOTS | MBC_WIRE_LOOPS_UVS)
 
-void mesh_buffer_cache_create_requested(TaskGraph *task_graph,
+void mesh_buffer_cache_create_requested(TaskGraph &task_graph,
                                         MeshBatchCache &cache,
                                         MeshBufferCache &mbc,
-                                        Object *object,
-                                        Mesh *mesh,
+                                        Object &object,
+                                        Mesh &mesh,
                                         bool is_editmode,
                                         bool is_paint_mode,
                                         bool edit_mode_active,
                                         const float4x4 &object_to_world,
                                         bool do_final,
                                         bool do_uvedit,
-                                        const Scene *scene,
+                                        const Scene &scene,
                                         const ToolSettings *ts,
                                         bool use_hide);
 

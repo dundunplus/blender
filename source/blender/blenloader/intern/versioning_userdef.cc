@@ -511,7 +511,7 @@ void blo_do_versions_userdef(UserDef *userdef)
   if (!USER_VERSION_ATLEAST(278, 6)) {
     /* Clear preference flags for re-use. */
     userdef->flag &= ~(USER_FLAG_NUMINPUT_ADVANCED | (1 << 2) | USER_FLAG_UNUSED_3 |
-                       USER_FLAG_UNUSED_6 | USER_FLAG_UNUSED_7 | USER_FLAG_UNUSED_9 |
+                       USER_FLAG_UNUSED_6 | USER_FLAG_UNUSED_7 | USER_INTERNET_ALLOW |
                        USER_DEVELOPER_UI);
     userdef->uiflag &= ~(USER_HEADER_BOTTOM);
     userdef->transopts &= ~(USER_TR_UNUSED_3 | USER_TR_UNUSED_4 | USER_TR_UNUSED_6 |
@@ -952,6 +952,13 @@ void blo_do_versions_userdef(UserDef *userdef)
 
     BKE_preferences_extension_repo_add_default(userdef);
     BKE_preferences_extension_repo_add_default_user(userdef);
+  }
+
+  if (!USER_VERSION_ATLEAST(402, 42)) {
+    /* 80 was the old default. */
+    if (userdef->node_margin == 80) {
+      userdef->node_margin = 40;
+    }
   }
 
   /**

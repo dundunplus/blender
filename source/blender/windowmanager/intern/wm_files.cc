@@ -489,6 +489,11 @@ static void wm_init_userdef(Main *bmain)
     SET_FLAG_FROM_TEST(G.f, (U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0, G_FLAG_SCRIPT_AUTOEXEC);
   }
 
+  /* Only reset "offline mode" if they weren't passes via command line arguments. */
+  if ((G.f & G_FLAG_INTERNET_OVERRIDE_PREF_ANY) == 0) {
+    SET_FLAG_FROM_TEST(G.f, U.flag & USER_INTERNET_ALLOW, G_FLAG_INTERNET_ALLOW);
+  }
+
   MEM_CacheLimiter_set_maximum(size_t(U.memcachelimit) * 1024 * 1024);
   BKE_sound_init(bmain);
 
@@ -1360,6 +1365,7 @@ void wm_homefile_read_ex(bContext *C,
     if (BLI_access(filepath_startup, R_OK) == 0) {
       BlendFileReadParams params{};
       params.is_startup = true;
+      params.is_factory_settings = use_factory_settings;
       params.skip_flags = skip_flags | BLO_READ_SKIP_USERDEF;
       BlendFileReadReport bf_reports{};
       bf_reports.reports = reports;
@@ -1402,6 +1408,7 @@ void wm_homefile_read_ex(bContext *C,
   if (success == false) {
     BlendFileReadParams read_file_params{};
     read_file_params.is_startup = true;
+    read_file_params.is_factory_settings = use_factory_settings;
     read_file_params.skip_flags = skip_flags;
     BlendFileData *bfd = BKE_blendfile_read_from_memory(
         datatoc_startup_blend, datatoc_startup_blend_size, &read_file_params, nullptr);
