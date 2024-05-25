@@ -189,8 +189,8 @@ void Light::shape_parameters_set(const ::Light *la,
     this->area.size = float2(la->area_size, is_irregular ? la->area_sizey : la->area_size);
     /* Scale and clamp to minimum value before float imprecision artifacts appear. */
     this->area.size *= scale.xy() / 2.0f;
-    /* In this case, this is just the scaling factor. */
-    this->local.shadow_radius = trace_scaling_fac;
+    this->area.shadow_scale = trace_scaling_fac;
+    this->local.shadow_radius = length(this->area.size) * trace_scaling_fac;
     /* Set to default position. */
     this->local.shadow_position = float3(0.0f);
     /* Do not render lights that have no area. */
@@ -353,8 +353,11 @@ void LightModule::begin_sync()
     la.r = la.g = la.b = -1.0f; /* Tag as world sun light. */
     la.energy = 1.0f;
     la.sun_angle = inst_.world.sun_angle();
+    la.shadow_filter_radius = inst_.world.sun_shadow_filter_radius();
+    la.shadow_jitter_overblur = inst_.world.sun_shadow_jitter_overblur();
     la.shadow_maximum_resolution = inst_.world.sun_shadow_max_resolution();
     SET_FLAG_FROM_TEST(la.mode, inst_.world.use_sun_shadow(), LA_SHADOW);
+    SET_FLAG_FROM_TEST(la.mode, inst_.world.use_sun_shadow_jitter(), LA_SHADOW_JITTER);
 
     Light &light = light_map_.lookup_or_add_default(world_sunlight_key);
     light.used = true;
