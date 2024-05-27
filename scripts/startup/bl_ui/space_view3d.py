@@ -2852,6 +2852,7 @@ class VIEW3D_MT_image_add(Menu):
         # auto detect which mode to use otherwise.
         layout.operator("object.empty_image_add", text="Reference", icon='IMAGE_REFERENCE').background = False
         layout.operator("object.empty_image_add", text="Background", icon='IMAGE_BACKGROUND').background = True
+        layout.operator("image.import_as_mesh_planes", text="Mesh Plane", icon='MESH_PLANE')
 
 
 class VIEW3D_MT_object_relations(Menu):
@@ -7954,6 +7955,8 @@ class VIEW3D_PT_gpencil_origin(Panel):
             row = layout.row()
             if context.preferences.experimental.use_grease_pencil_version3:
                 row.prop(tool_settings, "gpencil_surface_offset", text="")
+                row = layout.row()
+                row.prop(tool_settings, "use_gpencil_project_only_selected")
             else:
                 row.prop(gpd, "zdepth_offset", text="")
 
