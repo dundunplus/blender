@@ -207,6 +207,8 @@ static void do_draw_face_sets_brush_faces(Object &ob,
   const Span<float3> positions = SCULPT_mesh_deformed_positions_get(ss);
 
   Mesh &mesh = *static_cast<Mesh *>(ob.data);
+  const OffsetIndices<int> faces = mesh.faces();
+  const Span<int> corner_verts = mesh.corner_verts();
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan<bool> hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
 
@@ -231,12 +233,10 @@ static void do_draw_face_sets_brush_faces(Object &ob,
         auto_mask::node_update(automask_data, vd);
 
         for (const int face_i : ss.vert_to_face_map[vd.index]) {
-          const IndexRange face = ss.faces[face_i];
+          const IndexRange face = faces[face_i];
+          const float3 center = bke::mesh::face_center_calc(positions, corner_verts.slice(face));
 
-          const float3 poly_center = bke::mesh::face_center_calc(positions,
-                                                                 ss.corner_verts.slice(face));
-
-          if (!sculpt_brush_test_sq_fn(test, poly_center)) {
+          if (!sculpt_brush_test_sq_fn(test, center)) {
             continue;
           }
           if (!hide_poly.is_empty() && hide_poly[face_i]) {
@@ -1892,21 +1892,65 @@ static int gesture_lasso_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-void SCULPT_OT_face_set_lasso_gesture(wmOperatorType *ot)
+static int gesture_line_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
+  if (!BKE_base_is_visible(v3d, base)) {
+    return OPERATOR_CANCELLED;
+  }
+
+  return WM_gesture_straightline_active_side_invoke(C, op, event);
+}
+
+static int gesture_line_exec(bContext *C, wmOperator *op)
+{
+  std::unique_ptr<gesture::GestureData> gesture_data = gesture::init_from_line(C, op);
+  if (!gesture_data) {
+    return OPERATOR_CANCELLED;
+  }
+  init_operation(*gesture_data, *op);
+  gesture::apply(*C, *gesture_data, *op);
+  return OPERATOR_FINISHED;
+}
+
+static int gesture_polyline_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+  const View3D *v3d = CTX_wm_view3d(C);
+  const Base *base = CTX_data_active_base(C);
+  if (!BKE_base_is_visible(v3d, base)) {
+    return OPERATOR_CANCELLED;
+  }
+
+  return WM_gesture_polyline_invoke(C, op, event);
+}
+
+static int gesture_polyline_exec(bContext *C, wmOperator *op)
+{
+  std::unique_ptr<gesture::GestureData> gesture_data = gesture::init_from_polyline(C, op);
+  if (!gesture_data) {
+    return OPERATOR_CANCELLED;
+  }
+  init_operation(*gesture_data, *op);
+  gesture::apply(*C, *gesture_data, *op);
+  return OPERATOR_FINISHED;
+}
+
+void SCULPT_OT_face_set_polyline_gesture(wmOperatorType *ot)
 {
   ot->name = "Face Set Lasso Gesture";
-  ot->idname = "SCULPT_OT_face_set_lasso_gesture";
+  ot->idname = "SCULPT_OT_face_set_polyline_gesture";
   ot->description = "Add a face set in a shape defined by the cursor";
 
-  ot->invoke = gesture_lasso_invoke;
-  ot->modal = WM_gesture_lasso_modal;
-  ot->exec = gesture_lasso_exec;
+  ot->invoke = gesture_polyline_invoke;
+  ot->modal = WM_gesture_polyline_modal;
+  ot->exec = gesture_polyline_exec;
 
   ot->poll = SCULPT_mode_poll_view3d;
 
   ot->flag = OPTYPE_DEPENDS_ON_CURSOR;
 
-  WM_operator_properties_gesture_lasso(ot);
+  WM_operator_properties_gesture_polyline(ot);
   gesture::operator_properties(ot, gesture::ShapeType::Lasso);
 }
 
@@ -1926,6 +1970,42 @@ void SCULPT_OT_face_set_box_gesture(wmOperatorType *ot)
 
   WM_operator_properties_border(ot);
   gesture::operator_properties(ot, gesture::ShapeType::Box);
+}
+
+void SCULPT_OT_face_set_lasso_gesture(wmOperatorType *ot)
+{
+  ot->name = "Face Set Lasso Gesture";
+  ot->idname = "SCULPT_OT_face_set_lasso_gesture";
+  ot->description = "Add a face set in a shape defined by the cursor";
+
+  ot->invoke = gesture_lasso_invoke;
+  ot->modal = WM_gesture_lasso_modal;
+  ot->exec = gesture_lasso_exec;
+
+  ot->poll = SCULPT_mode_poll_view3d;
+
+  ot->flag = OPTYPE_DEPENDS_ON_CURSOR;
+
+  WM_operator_properties_gesture_lasso(ot);
+  gesture::operator_properties(ot, gesture::ShapeType::Lasso);
+}
+
+void SCULPT_OT_face_set_line_gesture(wmOperatorType *ot)
+{
+  ot->name = "Face Set Line Gesture";
+  ot->idname = "SCULPT_OT_face_set_line_gesture";
+  ot->description = "Add a face set to one side of a line defined by the cursor";
+
+  ot->invoke = gesture_line_invoke;
+  ot->modal = WM_gesture_straightline_oneshot_modal;
+  ot->exec = gesture_line_exec;
+
+  ot->poll = SCULPT_mode_poll_view3d;
+
+  ot->flag = OPTYPE_REGISTER;
+
+  WM_operator_properties_gesture_straightline(ot, WM_CURSOR_EDIT);
+  gesture::operator_properties(ot, gesture::ShapeType::Line);
 }
 /** \} */
 
