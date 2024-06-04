@@ -338,7 +338,7 @@ class notify_info:
 
 def extensions_panel_draw_online_extensions_request_impl(
         self,
-        context,
+        _context,
 ):
     layout = self.layout
     layout_header, layout_panel = layout.panel("advanced", default_closed=False)
@@ -353,7 +353,6 @@ def extensions_panel_draw_online_extensions_request_impl(
         ):
             layout_panel.label(text=line)
 
-        row = layout.row()
         row = layout_panel.row(align=True)
         row.alignment = 'LEFT'
         row.label(text="To continue offline, \"Install from Disk\" instead.")
@@ -367,14 +366,14 @@ def extensions_panel_draw_online_extensions_request_impl(
         ).url = "https://docs.blender.org/manual/en/dev/editors/preferences/extensions.html#install"
         layout_panel.separator()
 
-        row = layout.row()
+        row = layout_panel.row()
         props = row.operator("wm.context_set_boolean", text="Dismiss", icon='X')
         props.data_path = "preferences.extensions.use_online_access_handled"
         props.value = True
 
         # The only reason to prefer this over `screen.userpref_show`
         # is it will be disabled when `--offline-mode` is forced with a useful error for why.
-        row.operator("extensions.userpref_show_online", text="Allow Online Access", icon='CHECKMARK')
+        row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK')
 
 
 def extensions_panel_draw_impl(
@@ -976,6 +975,8 @@ def tags_current(wm):
 
     tags = set()
     for pkg_manifest_remote in repo_cache_store.pkg_manifest_from_remote_ensure(error_fn=print):
+        if pkg_manifest_remote is None:
+            continue
         for item_remote in pkg_manifest_remote.values():
             if filter_by_type != item_remote["type"]:
                 continue
