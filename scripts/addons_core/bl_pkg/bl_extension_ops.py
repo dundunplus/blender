@@ -82,10 +82,10 @@ def rna_prop_repo_enum_local_only_itemf(_self, context):
                 repo_item.name if repo_item.enabled else (repo_item.name + " (disabled)"),
                 "",
             )
-            for repo_item in repo_iter_valid_local_only(context)
+            for repo_item in repo_iter_valid_local_only(context, exclude_system=True)
         ]
     # Prevent the strings from being freed.
-    rna_prop_repo_enum_local_only_itemf._result = result
+    rna_prop_repo_enum_local_only_itemf.result = result
     return result
 
 
@@ -255,12 +255,15 @@ def extension_theme_enable(repo_directory, pkg_idname):
     extension_theme_enable_filepath(os.path.join(theme_dir, theme_files[0]))
 
 
-def repo_iter_valid_local_only(context):
+def repo_iter_valid_local_only(context, *, exclude_system):
     from . import repo_paths_or_none
     extension_repos = context.preferences.extensions.repos
     for repo_item in extension_repos:
         if not repo_item.enabled:
             continue
+        if exclude_system:
+            if (not repo_item.use_custom_directory) and (repo_item.source == 'SYSTEM'):
+                continue
         # Ignore repositories that have invalid settings.
         directory, remote_url = repo_paths_or_none(repo_item)
         if directory is None:
@@ -277,6 +280,15 @@ def wm_wait_cursor(value):
                 window.cursor_modal_set('WAIT')
             else:
                 window.cursor_modal_restore()
+
+
+def operator_finished_result(operator_result):
+    # Inspect results for modal operator, return None when the result isn't known.
+    if 'CANCELLED' in operator_result:
+        return True
+    if 'FINISHED' in operator_result:
+        return False
+    return None
 
 
 # A named-tuple copy of `context.preferences.extensions.repos` (`bpy.types.UserExtensionRepo`).
@@ -296,6 +308,7 @@ def wm_wait_cursor(value):
 class RepoItem(NamedTuple):
     name: str
     directory: str
+    source: str
     remote_url: str
     module: str
     use_cache: bool
@@ -516,6 +529,7 @@ def extension_repos_read_index(index, *, include_disabled=False):
             return RepoItem(
                 name=repo_item.name,
                 directory=directory,
+                source="" if repo_item.use_custom_directory else repo_item.source,
                 remote_url=remote_url,
                 module=repo_item.module,
                 use_cache=repo_item.use_cache,
@@ -553,6 +567,7 @@ def extension_repos_read(*, include_disabled=False, use_active_only=False):
         result.append(RepoItem(
             name=repo_item.name,
             directory=directory,
+            source="" if repo_item.use_custom_directory else repo_item.source,
             remote_url=remote_url,
             module=repo_item.module,
             use_cache=repo_item.use_cache,
@@ -831,7 +846,7 @@ class CommandHandle:
 
         handle = CommandHandle()
         handle.cmd_batch = cmd_batch
-        handle.modal_timer = context.window_manager.event_timer_add(0.01, window=context.window)
+        handle.modal_timer = context.window_manager.event_timer_add(0.1, window=context.window)
         handle.wm = context.window_manager
 
         handle.wm.modal_handler_add(op)
@@ -906,6 +921,13 @@ class CommandHandle:
             return {'RUNNING_MODAL', 'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
 
+    def op_modal_cancel(self, op, context):
+        import time
+        self.request_exit = True
+        while operator_finished_result(self.op_modal_step(op, context)) is None:
+            # Avoid high CPU use on exit.
+            time.sleep(0.1)
+
 
 def _report(ty, msg):
     if ty == 'DONE':
@@ -952,7 +974,7 @@ def _extensions_maybe_online_action_poll_impl(cls, repo, action_text):
             return False
 
     repos_all = extension_repos_read(use_active_only=False)
-    if not len(repos_all):
+    if not repos_all:
         cls.poll_message_set("No repositories available")
         return False
 
@@ -1006,30 +1028,23 @@ class _ExtCmdMixIn:
         repo_status_text.title = cmd_batch.title
 
         result = CommandHandle.op_exec_from_iter(self, context, cmd_batch, is_modal)
-        canceled = None
-        if 'FINISHED' in result:
-            canceled = False
-        elif 'CANCELLED' in result:
-            canceled = True
-
-        if canceled is not None:
+        if (canceled := operator_finished_result(result)) is not None:
             self.exec_command_finish(canceled)
         return result
 
     def modal(self, context, event):
         result = self._runtime_handle.op_modal_impl(self, context, event)
-        canceled = None
-        if 'FINISHED' in result:
-            canceled = False
-        elif 'CANCELLED' in result:
-            canceled = True
-
-        if canceled is not None:
+        if (canceled := operator_finished_result(result)) is not None:
             wm_wait_cursor(True)
             self.exec_command_finish(canceled)
             wm_wait_cursor(False)
 
         return result
+
+    def cancel(self, context):
+        canceled = True
+        self._runtime_handle.op_modal_cancel(self, context)
+        self.exec_command_finish(canceled)
 
 
 class EXTENSIONS_OT_dummy_progress(Operator, _ExtCmdMixIn):
@@ -1138,7 +1153,7 @@ class EXTENSIONS_OT_repo_sync_all(Operator, _ExtCmdMixIn):
         return _extensions_maybe_online_action_poll_impl(cls, repo, "check for updates")
 
     @classmethod
-    def description(cls, context, props):
+    def description(cls, _context, props):
         if props.use_active_only:
             return "Refresh the list of extensions for the active repository"
         return ""  # Default.
@@ -1237,7 +1252,7 @@ class EXTENSIONS_OT_package_upgrade_all(Operator, _ExtCmdMixIn):
         return _extensions_maybe_online_action_poll_impl(cls, repo, "install updates")
 
     @classmethod
-    def description(cls, context, props):
+    def description(cls, _context, props):
         if props.use_active_only:
             return "Upgrade all the extensions to their latest version for the active repository"
         return ""  # Default.
@@ -1813,7 +1828,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
 
     @classmethod
     def poll(cls, context):
-        if next(repo_iter_valid_local_only(context), None) is None:
+        if next(repo_iter_valid_local_only(context, exclude_system=True), None) is None:
             cls.poll_message_set("There must be at least one \"Local\" repository set to install extensions into")
             return False
         return True
@@ -1830,9 +1845,11 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
 
     def draw(self, context):
         if self._drop_variables is not None:
-            return self._draw_for_drop(context)
+            self._draw_for_drop(context)
+            return
         elif self._legacy_drop is not None:
-            return self._draw_for_legacy_drop(context)
+            self._draw_for_legacy_drop(context)
+            return
 
         # Override draw because the repository names may be over-long and not fit well in the UI.
         # Show the text & repository names in two separate rows.
@@ -1858,7 +1875,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
             body.prop(self, "target", text="Target Path")
             body.prop(self, "overwrite", text="Overwrite")
 
-    def _invoke_for_drop(self, context, event):
+    def _invoke_for_drop(self, context, _event):
         # Drop logic.
         print("DROP FILE:", self.url)
 
@@ -1878,11 +1895,10 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
             self._drop_variables = True
             self._legacy_drop = None
 
-            from .bl_extension_ops import repo_iter_valid_local_only
             from .bl_extension_utils import pkg_manifest_dict_from_file_or_error
 
-            if not list(repo_iter_valid_local_only(bpy.context)):
-                self.report({'ERROR'}, "No Local Repositories")
+            if not list(repo_iter_valid_local_only(context, exclude_system=True)):
+                self.report({'ERROR'}, "No local user repositories")
                 return {'CANCELLED'}
 
             if isinstance(result := pkg_manifest_dict_from_file_or_error(filepath), str):
@@ -1907,7 +1923,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
 
         return {'RUNNING_MODAL'}
 
-    def _draw_for_drop(self, context):
+    def _draw_for_drop(self, _context):
 
         layout = self.layout
         layout.operator_context = 'EXEC_DEFAULT'
@@ -1919,7 +1935,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
 
         layout.prop(self, "enable_on_install", text=rna_prop_enable_on_install_type_map[pkg_type])
 
-    def _draw_for_legacy_drop(self, context):
+    def _draw_for_legacy_drop(self, _context):
 
         layout = self.layout
         layout.operator_context = 'EXEC_DEFAULT'
@@ -1957,7 +1973,7 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
     )
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         if not bpy.app.online_access:
             if bpy.app.online_access_override:
                 cls.poll_message_set(
@@ -2079,7 +2095,7 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
 
         return self.execute(context)
 
-    def _invoke_for_drop(self, context, event):
+    def _invoke_for_drop(self, context, _event):
         from .bl_extension_utils import url_parse_for_blender
 
         url = self.url
@@ -2117,15 +2133,15 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
 
     def draw(self, context):
         if self._drop_variables is not None:
-            return self._draw_for_drop(context)
+            self._draw_for_drop(context)
 
-    def _draw_for_drop(self, context):
+    def _draw_for_drop(self, _context):
         from .bl_extension_ui import (
             size_as_fmt_string,
         )
         layout = self.layout
 
-        repo_index, repo_name, pkg_id, item_remote = self._drop_variables
+        _repo_index, repo_name, pkg_id, item_remote = self._drop_variables
 
         layout.label(text="Do you want to install the following {:s}?".format(item_remote["type"]))
 
@@ -2165,6 +2181,7 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
 
 
 class EXTENSIONS_OT_package_uninstall(Operator, _ExtCmdMixIn):
+    """Disable and uninstall the extension"""
     bl_idname = "extensions.package_uninstall"
     bl_label = "Ext Package Uninstall"
     __slots__ = _ExtCmdMixIn.cls_slots
@@ -2248,6 +2265,27 @@ class EXTENSIONS_OT_package_uninstall(Operator, _ExtCmdMixIn):
         _preferences_ui_refresh_addons()
 
 
+# Only exists for an error message.
+class EXTENSIONS_OT_package_uninstall_system(Operator):
+    # Copy `EXTENSIONS_OT_package_uninstall` doc-string.
+    bl_label = "Uninstall"
+
+    bl_idname = "extensions.package_uninstall_system"
+    bl_options = {'INTERNAL'}
+
+    @classmethod
+    def poll(cls, _contest):
+        cls.poll_message_set("System extensions are read-only and cannot be uninstalled")
+        return False
+
+    @classmethod
+    def description(cls, _context, _props):
+        return EXTENSIONS_OT_package_uninstall.__doc__
+
+    def execute(self, _context):
+        return {'CANCELLED'}
+
+
 class EXTENSIONS_OT_package_disable(Operator):
     """Turn off this extension"""
     bl_idname = "extensions.package_disable"
@@ -2266,8 +2304,7 @@ class EXTENSIONS_OT_package_theme_enable(Operator):
     pkg_id: rna_prop_pkg_id
     repo_index: rna_prop_repo_index
 
-    def execute(self, context):
-        self.repo_index
+    def execute(self, _context):
         repo_item = extension_repos_read_index(self.repo_index)
         extension_theme_enable(repo_item.directory, self.pkg_id)
         print(repo_item.directory, self.pkg_id)
@@ -2283,7 +2320,6 @@ class EXTENSIONS_OT_package_theme_disable(Operator):
     repo_index: rna_prop_repo_index
 
     def execute(self, context):
-        import os
         repo_item = extension_repos_read_index(self.repo_index)
         dirpath = os.path.join(repo_item.directory, self.pkg_id)
         if os.path.samefile(dirpath, os.path.dirname(context.preferences.themes[0].filepath)):
@@ -2537,7 +2573,7 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
     bl_options = {'INTERNAL'}
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         if bpy.app.online_access_override:
             if not bpy.app.online_access:
                 cls.poll_message_set("Blender was launched in offline-mode which cannot be changed at runtime")
@@ -2644,6 +2680,7 @@ classes = (
     EXTENSIONS_OT_package_install_files,
     EXTENSIONS_OT_package_install,
     EXTENSIONS_OT_package_uninstall,
+    EXTENSIONS_OT_package_uninstall_system,
     EXTENSIONS_OT_package_disable,
 
     EXTENSIONS_OT_package_theme_enable,
