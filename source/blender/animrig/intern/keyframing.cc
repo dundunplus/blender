@@ -82,7 +82,7 @@ bool CombinedKeyingResult::has_errors() const
   return false;
 }
 
-void CombinedKeyingResult::generate_reports(ReportList *reports)
+void CombinedKeyingResult::generate_reports(ReportList *reports, const eReportType report_level)
 {
   if (!this->has_errors() && this->get_count(SingleKeyingResult::SUCCESS) == 0) {
     BKE_reportf(
@@ -173,7 +173,7 @@ void CombinedKeyingResult::generate_reports(ReportList *reports)
   }
 
   if (errors.size() == 1) {
-    BKE_report(reports, RPT_ERROR, errors[0].c_str());
+    BKE_report(reports, report_level, errors[0].c_str());
     return;
   }
 
@@ -181,7 +181,7 @@ void CombinedKeyingResult::generate_reports(ReportList *reports)
   for (const std::string &error : errors) {
     error_message.append(fmt::format("\n- {}", error));
   }
-  BKE_report(reports, RPT_ERROR, error_message.c_str());
+  BKE_report(reports, report_level, error_message.c_str());
 }
 
 const char *default_channel_group_for_path(const PointerRNA *animated_struct,
@@ -1123,11 +1123,9 @@ CombinedKeyingResult insert_key_rna(PointerRNA *rna_pointer,
   BLI_assert(action != nullptr);
 
   if (USER_EXPERIMENTAL_TEST(&U, use_animation_baklava) && action->wrap().is_action_layered()) {
-    /* TODO: Don't hardcode key settings. */
-    KeyframeSettings key_settings;
+    KeyframeSettings key_settings = get_keyframe_settings(
+        (insert_key_flags & INSERTKEY_NO_USERPREF) == 0);
     key_settings.keyframe_type = key_type;
-    key_settings.handle = HD_AUTO_ANIM;
-    key_settings.interpolation = BEZT_IPO_BEZ;
     return insert_key_layered_action(action->wrap(),
                                      adt->binding_handle,
                                      rna_pointer,
@@ -1141,7 +1139,7 @@ CombinedKeyingResult insert_key_rna(PointerRNA *rna_pointer,
   ListBase nla_cache = {nullptr, nullptr};
   NlaKeyframingContext *nla_context = nullptr;
 
-  if (adt && adt->action == action) {
+  if (adt->action == action) {
     PointerRNA id_pointer = RNA_id_pointer_create(id);
     nla_context = BKE_animsys_get_nla_keyframing_context(
         &nla_cache, &id_pointer, adt, &anim_eval_context);

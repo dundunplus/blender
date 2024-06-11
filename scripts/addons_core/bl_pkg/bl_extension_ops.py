@@ -254,7 +254,7 @@ def repo_iter_valid_local_only(context, *, exclude_system):
         if not repo_item.enabled:
             continue
         if exclude_system:
-            if (not repo_item.use_custom_directory) and (repo_item.source == 'SYSTEM'):
+            if (not repo_item.use_remote_url) and (repo_item.source == 'SYSTEM'):
                 continue
         # Ignore repositories that have invalid settings.
         directory, remote_url = repo_paths_or_none(repo_item)
@@ -520,7 +520,7 @@ def extension_repos_read_index(index, *, include_disabled=False):
             return RepoItem(
                 name=repo_item.name,
                 directory=directory,
-                source="" if repo_item.use_custom_directory else repo_item.source,
+                source="" if repo_item.use_remote_url else repo_item.source,
                 remote_url=remote_url,
                 module=repo_item.module,
                 use_cache=repo_item.use_cache,
@@ -558,7 +558,7 @@ def extension_repos_read(*, include_disabled=False, use_active_only=False):
         result.append(RepoItem(
             name=repo_item.name,
             directory=directory,
-            source="" if repo_item.use_custom_directory else repo_item.source,
+            source="" if repo_item.use_remote_url else repo_item.source,
             remote_url=remote_url,
             module=repo_item.module,
             use_cache=repo_item.use_cache,
@@ -1088,13 +1088,8 @@ class EXTENSIONS_OT_repo_sync(Operator, _ExtCmdMixIn):
         # Needed to refresh.
         self.repo_directory = directory
 
-        # Lock repositories.
-        self.repo_lock = bl_extension_utils.RepoLock(
-            repo_directories=[directory],
-            cookie=cookie_from_session(),
-        )
-        if lock_result_any_failed_with_report(self, self.repo_lock.acquire()):
-            return None
+        # See comment for `EXTENSIONS_OT_repo_sync_all`.
+        repos_lock = []
 
         cmd_batch = []
         if repo_item.remote_url:
@@ -1109,6 +1104,15 @@ class EXTENSIONS_OT_repo_sync(Operator, _ExtCmdMixIn):
                     use_idle=is_modal,
                 )
             )
+            repos_lock.append(repo_item.directory)
+
+        # Lock repositories.
+        self.repo_lock = bl_extension_utils.RepoLock(
+            repo_directories=repos_lock,
+            cookie=cookie_from_session(),
+        )
+        if lock_result_any_failed_with_report(self, self.repo_lock.acquire()):
+            return None
 
         return bl_extension_utils.CommandBatch(
             title="Sync",
@@ -1136,7 +1140,7 @@ class EXTENSIONS_OT_repo_sync(Operator, _ExtCmdMixIn):
 class EXTENSIONS_OT_repo_sync_all(Operator, _ExtCmdMixIn):
     """Refresh the list of extensions for all the remote repositories"""
     bl_idname = "extensions.repo_sync_all"
-    bl_label = "Check for Updates"
+    bl_label = "Refresh Remote"
     __slots__ = _ExtCmdMixIn.cls_slots
 
     use_active_only: BoolProperty(
@@ -1176,6 +1180,10 @@ class EXTENSIONS_OT_repo_sync_all(Operator, _ExtCmdMixIn):
                     self.report({'WARNING'}, str(ex))
                     return None
 
+        # It's only required to lock remote repositories, local repositories can refresh without being modified,
+        # this is essential for system repositories which may be read-only.
+        repos_lock = []
+
         cmd_batch = []
         for repo_item in repos_all:
             # Local only repositories should still refresh, but not run the sync.
@@ -1189,8 +1197,7 @@ class EXTENSIONS_OT_repo_sync_all(Operator, _ExtCmdMixIn):
                     access_token=repo_item.access_token,
                     use_idle=is_modal,
                 ))
-
-        repos_lock = [repo_item.directory for repo_item in repos_all]
+                repos_lock.append(repo_item.directory)
 
         # Lock repositories.
         self.repo_lock = bl_extension_utils.RepoLock(
@@ -1226,10 +1233,10 @@ class EXTENSIONS_OT_repo_sync_all(Operator, _ExtCmdMixIn):
 
 
 class EXTENSIONS_OT_repo_refresh_all(Operator):
-    """Scan extension & legacy add-ons for changes to modules & meta-data (similar to restarting).\n""" \
+    """Scan extension & legacy add-ons for changes to modules & meta-data (similar to restarting). """ \
         """Any issues are reported as warnings"""
     bl_idname = "extensions.repo_refresh_all"
-    bl_label = "Refresh All"
+    bl_label = "Refresh Local"
 
     def _exceptions_as_report(self, repo_name, ex):
         self.report({'WARNING'}, "{:s}: {:s}".format(repo_name, str(ex)))
