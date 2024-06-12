@@ -1591,8 +1591,7 @@ float4 neighbor_color_average(SculptSession &ss, PBVHVertRef vertex);
  */
 float3 neighbor_coords_average_interior(const SculptSession &ss, PBVHVertRef vertex);
 
-void do_smooth_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes, float bstrength);
-void do_smooth_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes);
+void enhance_details_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes);
 
 void do_smooth_mask_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes, float bstrength);
 
@@ -2016,20 +2015,13 @@ bool SCULPT_use_image_paint_brush(PaintModeSettings &settings, Object &ob);
 float SCULPT_clay_thumb_get_stabilized_pressure(
     const blender::ed::sculpt_paint::StrokeCache &cache);
 
-void SCULPT_do_draw_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
-
-void SCULPT_do_fill_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
-void SCULPT_do_scrape_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_clay_thumb_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
-void SCULPT_do_flatten_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_clay_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_clay_strips_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_snake_hook_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_thumb_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_rotate_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_layer_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
-void SCULPT_do_inflate_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
-void SCULPT_do_nudge_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_crease_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_pinch_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_grab_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
@@ -2040,9 +2032,6 @@ void SCULPT_do_slide_relax_brush(const Sculpt &sd, Object &ob, blender::Span<PBV
 void SCULPT_do_displacement_smear_brush(const Sculpt &sd,
                                         Object &ob,
                                         blender::Span<PBVHNode *> nodes);
-void SCULPT_do_displacement_eraser_brush(const Sculpt &sd,
-                                         Object &ob,
-                                         blender::Span<PBVHNode *> nodes);
 void SCULPT_do_mask_brush_draw(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 void SCULPT_do_mask_brush(const Sculpt &sd, Object &ob, blender::Span<PBVHNode *> nodes);
 /** \} */
