@@ -28,35 +28,6 @@
 
 namespace blender::ed::sculpt_paint {
 
-BLI_NOINLINE void scrape_calc_translations(const Span<float3> vert_positions,
-                                           const Span<int> verts,
-                                           const float4 &plane,
-                                           const MutableSpan<float3> translations)
-{
-  for (const int i : verts.index_range()) {
-    const float3 &position = vert_positions[verts[i]];
-    float3 closest;
-    closest_to_plane_normalized_v3(closest, plane, position);
-    translations[i] = closest - position;
-  }
-}
-
-BLI_NOINLINE void scrape_calc_plane_trim_limit(const Brush &brush,
-                                               const StrokeCache &cache,
-                                               const Span<float3> translations,
-                                               const MutableSpan<float> factors)
-{
-  if (!(brush.flag & BRUSH_PLANE_TRIM)) {
-    return;
-  }
-  const float threshold = cache.radius_squared * cache.plane_trim_squared;
-  for (const int i : translations.index_range()) {
-    if (math::length_squared(translations[i]) <= threshold) {
-      factors[i] = 0.0f;
-    }
-  }
-}
-
 inline namespace scrape_cc {
 
 struct LocalData {
@@ -64,18 +35,6 @@ struct LocalData {
   Vector<float> distances;
   Vector<float3> translations;
 };
-
-BLI_NOINLINE static void calc_plane_side_factors(const Span<float3> vert_positions,
-                                                 const Span<int> verts,
-                                                 const float4 &plane,
-                                                 const MutableSpan<float> factors)
-{
-  for (const int i : verts.index_range()) {
-    if (plane_point_side_v3(plane, vert_positions[verts[i]]) <= 0.0f) {
-      factors[i] = 0.0f;
-    }
-  }
-}
 
 static void calc_faces(const Sculpt &sd,
                        const Brush &brush,
@@ -89,7 +48,7 @@ static void calc_faces(const Sculpt &sd,
                        const MutableSpan<float3> positions_orig)
 {
   SculptSession &ss = *object.sculpt;
-  StrokeCache &cache = *ss.cache;
+  const StrokeCache &cache = *ss.cache;
   Mesh &mesh = *static_cast<Mesh *>(object.data);
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
@@ -106,34 +65,25 @@ static void calc_faces(const Sculpt &sd,
   const MutableSpan<float> distances = tls.distances;
   calc_distance_falloff(
       ss, positions_eval, verts, eBrushFalloffShape(brush.falloff_shape), distances, factors);
-  calc_brush_strength_factors(ss, brush, verts, distances, factors);
+  calc_brush_strength_factors(cache, brush, distances, factors);
 
-  if (ss.cache->automasking) {
-    auto_mask::calc_vert_factors(object, *ss.cache->automasking, node, verts, factors);
+  if (cache.automasking) {
+    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, factors);
   }
 
   calc_brush_texture_factors(ss, brush, positions_eval, verts, factors);
 
   scale_factors(factors, strength);
 
-  calc_plane_side_factors(positions_eval, verts, plane, factors);
+  filter_below_plane_factors(positions_eval, verts, plane, factors);
 
   tls.translations.reinitialize(verts.size());
   const MutableSpan<float3> translations = tls.translations;
-  scrape_calc_translations(positions_eval, verts, plane, translations);
-  scrape_calc_plane_trim_limit(brush, *ss.cache, translations, factors);
+  calc_translations_to_plane(positions_eval, verts, plane, translations);
+  filter_plane_trim_limit_factors(brush, cache, translations, factors);
   scale_translations(translations, factors);
 
-  clip_and_lock_translations(sd, ss, positions_eval, verts, translations);
-
-  apply_translations_to_pbvh(*ss.pbvh, verts, translations);
-
-  if (!ss.deform_imats.is_empty()) {
-    apply_crazyspace_to_translations(ss.deform_imats, verts, translations);
-  }
-
-  apply_translations(translations, verts, positions_orig);
-  apply_translations_to_shape_keys(object, verts, translations, positions_orig);
+  write_translations(sd, object, positions_eval, verts, translations, positions_orig);
 }
 
 static void calc_grids(

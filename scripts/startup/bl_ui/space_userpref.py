@@ -735,11 +735,14 @@ class USERPREF_PT_system_network(SystemPanel, CenterAlignMixIn, Panel):
         if system.use_online_access != runtime_online_access:
             row = layout.split(factor=0.4)
             row.label(text="")
-            row.label(
-                text="{:s} on startup, overriding the preference.".format(
-                    "Enabled" if runtime_online_access else "Disabled"
-                ),
-            )
+            if runtime_online_access:
+                text = iface_("Enabled on startup, overriding the preference.")
+            else:
+                text = iface_("Disabled on startup, overriding the preference.")
+            row.label(text=text, translate=False)
+
+        layout.row().prop(system, "network_timeout", text="Time Out")
+        layout.row().prop(system, "network_connection_limit", text="Connection Limit")
 
 
 class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
@@ -2813,8 +2816,6 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
                 ({"property": "use_new_curves_tools"}, ("blender/blender/issues/68981", "#68981")),
                 ({"property": "use_new_point_cloud_type"}, ("blender/blender/issues/75717", "#75717")),
                 ({"property": "use_sculpt_texture_paint"}, ("blender/blender/issues/96225", "#96225")),
-                ({"property": "use_grease_pencil_version3"}, ("blender/blender/projects/6", "Grease Pencil 3.0")),
-                ({"property": "use_grease_pencil_version3_convert_on_load"}, ("blender/blender/projects/6", "Grease Pencil 3.0")),
                 ({"property": "enable_overlay_next"}, ("blender/blender/issues/102179", "#102179")),
                 ({"property": "use_animation_baklava"}, ("/blender/blender/issues/120406", "#120406")),
             ),

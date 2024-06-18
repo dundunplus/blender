@@ -3406,11 +3406,6 @@ const EnumPropertyItem *rna_SpaceSpreadsheet_attribute_domain_itemf(bContext * /
         continue;
       }
     }
-    if (!U.experimental.use_grease_pencil_version3 &&
-        bke::AttrDomain(item->value) == bke::AttrDomain::Layer)
-    {
-      continue;
-    }
     if (bke::AttrDomain(item->value) == bke::AttrDomain::Point &&
         component_type == bke::GeometryComponent::Type::Mesh)
     {
@@ -7772,12 +7767,6 @@ static void rna_def_space_node(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_annotation", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SNODE_SHOW_GPENCIL);
   RNA_def_property_ui_text(prop, "Show Annotation", "Show annotations for this view");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
-
-  prop = RNA_def_property(srna, "use_auto_render", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SNODE_AUTO_RENDER);
-  RNA_def_property_ui_text(
-      prop, "Auto Render", "Re-render and composite changed layers on 3D edits");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
   prop = RNA_def_property(srna, "backdrop_zoom", PROP_FLOAT, PROP_NONE);

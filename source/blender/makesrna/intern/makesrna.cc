@@ -3632,6 +3632,8 @@ static const char *rna_property_subtypename(PropertySubType type)
       return "PROP_TEMPERATURE";
     case PROP_WAVELENGTH:
       return "PROP_WAVELENGTH";
+    case PROP_COLOR_TEMPERATURE:
+      return "PROP_COLOR_TEMPERATURE";
     default: {
       /* in case we don't have a type preset that includes the subtype */
       if (RNA_SUBTYPE_UNIT(type)) {
@@ -3673,6 +3675,8 @@ static const char *rna_property_subtype_unit(PropertySubType type)
       return "PROP_UNIT_TEMPERATURE";
     case PROP_UNIT_WAVELENGTH:
       return "PROP_UNIT_WAVELENGTH";
+    case PROP_UNIT_COLOR_TEMPERATURE:
+      return "PROP_UNIT_COLOR_TEMPERATURE";
     default:
       return "PROP_UNIT_UNKNOWN";
   }
@@ -4809,9 +4813,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_dynamicpaint.cc", nullptr, RNA_def_dynamic_paint},
     {"rna_fcurve.cc", "rna_fcurve_api.cc", RNA_def_fcurve},
     {"rna_gpencil_legacy.cc", nullptr, RNA_def_gpencil},
-#ifdef WITH_GREASE_PENCIL_V3
     {"rna_grease_pencil.cc", nullptr, RNA_def_grease_pencil},
-#endif
     {"rna_curves.cc", nullptr, RNA_def_curves},
     {"rna_image.cc", "rna_image_api.cc", RNA_def_image},
     {"rna_key.cc", nullptr, RNA_def_key},

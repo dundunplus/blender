@@ -1187,24 +1187,16 @@ enum StrokeFlags {
   CLIP_Z = 4,
 };
 
-void SCULPT_orig_vert_data_unode_init(SculptOrigVertData &data,
-                                      const Object &ob,
+static void orig_vert_data_unode_init(SculptOrigVertData &data,
                                       const blender::ed::sculpt_paint::undo::Node &unode)
 {
-  const SculptSession &ss = *ob.sculpt;
-
   memset(&data, 0, sizeof(data));
-  data.unode = &unode;
+  data.undo_type = unode.type;
 
-  if (ss.bm) {
-    data.bm_log = ss.bm_log;
-  }
-  else {
-    data.coords = data.unode->position.data();
-    data.normals = data.unode->normal.data();
-    data.vmasks = data.unode->mask.data();
-    data.colors = data.unode->col.data();
-  }
+  data.coords = unode.position.data();
+  data.normals = unode.normal.data();
+  data.vmasks = unode.mask.data();
+  data.colors = unode.col.data();
 }
 
 void SCULPT_orig_vert_data_init(SculptOrigVertData &data,
@@ -1213,8 +1205,13 @@ void SCULPT_orig_vert_data_init(SculptOrigVertData &data,
                                 const blender::ed::sculpt_paint::undo::Type type)
 {
   using namespace blender::ed::sculpt_paint;
-  if (undo::Node *unode = undo::get_node(&node, type)) {
-    SCULPT_orig_vert_data_unode_init(data, ob, *unode);
+  data.undo_type = type;
+  const SculptSession &ss = *ob.sculpt;
+  if (ss.bm) {
+    data.bm_log = ss.bm_log;
+  }
+  else if (undo::Node *unode = undo::get_node(&node, type)) {
+    orig_vert_data_unode_init(data, *unode);
   }
   else {
     data = {};
@@ -1224,7 +1221,7 @@ void SCULPT_orig_vert_data_init(SculptOrigVertData &data,
 void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const PBVHVertexIter &iter)
 {
   using namespace blender::ed::sculpt_paint;
-  if (orig_data.unode->type == undo::Type::Position) {
+  if (orig_data.undo_type == undo::Type::Position) {
     if (orig_data.bm_log) {
       BM_log_original_vert_data(orig_data.bm_log, iter.bm_vert, &orig_data.co, &orig_data.no);
     }
@@ -1233,10 +1230,10 @@ void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const PBVHVerte
       orig_data.no = orig_data.normals[iter.i];
     }
   }
-  else if (orig_data.unode->type == undo::Type::Color) {
+  else if (orig_data.undo_type == undo::Type::Color) {
     orig_data.col = orig_data.colors[iter.i];
   }
-  else if (orig_data.unode->type == undo::Type::Mask) {
+  else if (orig_data.undo_type == undo::Type::Mask) {
     if (orig_data.bm_log) {
       orig_data.mask = BM_log_original_mask(orig_data.bm_log, iter.bm_vert);
     }
@@ -1249,11 +1246,11 @@ void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const PBVHVerte
 void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const BMVert &vert)
 {
   using namespace blender::ed::sculpt_paint;
-  if (orig_data.unode->type == undo::Type::Position) {
+  if (orig_data.undo_type == undo::Type::Position) {
     BM_log_original_vert_data(
         orig_data.bm_log, &const_cast<BMVert &>(vert), &orig_data.co, &orig_data.no);
   }
-  else if (orig_data.unode->type == undo::Type::Mask) {
+  else if (orig_data.undo_type == undo::Type::Mask) {
     orig_data.mask = BM_log_original_mask(orig_data.bm_log, &const_cast<BMVert &>(vert));
   }
 }
@@ -1261,14 +1258,14 @@ void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const BMVert &v
 void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const int i)
 {
   using namespace blender::ed::sculpt_paint;
-  if (orig_data.unode->type == undo::Type::Position) {
+  if (orig_data.undo_type == undo::Type::Position) {
     orig_data.co = orig_data.coords[i];
     orig_data.no = orig_data.normals[i];
   }
-  else if (orig_data.unode->type == undo::Type::Color) {
+  else if (orig_data.undo_type == undo::Type::Color) {
     orig_data.col = orig_data.colors[i];
   }
-  else if (orig_data.unode->type == undo::Type::Mask) {
+  else if (orig_data.undo_type == undo::Type::Mask) {
     orig_data.mask = orig_data.vmasks[i];
   }
 }
@@ -1380,7 +1377,7 @@ static void restore_color(Object &object, const Span<PBVHNode *> nodes)
   SculptSession &ss = *object.sculpt;
   const auto restore_generic = [&](PBVHNode *node, undo::Node *unode) {
     SculptOrigVertData orig_vert_data;
-    SCULPT_orig_vert_data_unode_init(orig_vert_data, object, *unode);
+    orig_vert_data_unode_init(orig_vert_data, *unode);
     PBVHVertexIter vd;
     BKE_pbvh_vertex_iter_begin (*ss.pbvh, node, vd, PBVH_ITER_UNIQUE) {
       SCULPT_orig_vert_data_update(orig_vert_data, vd);
@@ -2605,9 +2602,9 @@ static float brush_strength(const Sculpt &sd,
   }
 }
 
-static float sculpt_apply_hardness(const SculptSession &ss, const float input_len)
+static float sculpt_apply_hardness(const blender::ed::sculpt_paint::StrokeCache &cache,
+                                   const float input_len)
 {
-  const blender::ed::sculpt_paint::StrokeCache &cache = *ss.cache;
   float final_len = input_len;
   const float hardness = cache.paint_brush.hardness;
   float p = input_len / cache.radius;
@@ -2712,7 +2709,7 @@ float SCULPT_brush_strength_factor(
   sculpt_apply_texture(ss, brush, brush_point, thread_id, &avg, rgba);
 
   /* Hardness. */
-  const float final_len = sculpt_apply_hardness(ss, len);
+  const float final_len = sculpt_apply_hardness(*cache, len);
 
   /* Falloff curve. */
   avg *= BKE_brush_curve_strength(&brush, final_len, cache->radius);
@@ -2747,7 +2744,7 @@ void SCULPT_brush_strength_color(
   sculpt_apply_texture(ss, brush, brush_point, thread_id, &avg, r_rgba);
 
   /* Hardness. */
-  const float final_len = sculpt_apply_hardness(ss, len);
+  const float final_len = sculpt_apply_hardness(*cache, len);
 
   /* Falloff curve. */
   const float falloff = BKE_brush_curve_strength(&brush, final_len, cache->radius) *
@@ -3755,10 +3752,10 @@ static void do_brush_action(const Sculpt &sd,
       const bool use_vector_displacement = (brush.flag2 & BRUSH_USE_COLOR_AS_DISPLACEMENT &&
                                             (brush.mtex.brush_map_mode == MTEX_MAP_MODE_AREA));
       if (use_vector_displacement) {
-        ed::sculpt_paint::do_draw_vector_displacement_brush(sd, ob, nodes);
+        do_draw_vector_displacement_brush(sd, ob, nodes);
       }
       else {
-        ed::sculpt_paint::do_draw_brush(sd, ob, nodes);
+        do_draw_brush(sd, ob, nodes);
       }
       break;
     }
@@ -3773,7 +3770,7 @@ static void do_brush_action(const Sculpt &sd,
           smooth::enhance_details_brush(sd, ob, nodes);
         }
         else {
-          do_smooth_brush(sd, ob, nodes, ss.cache->bstrength);
+          do_smooth_brush(sd, ob, nodes, std::clamp(ss.cache->bstrength, 0.0f, 1.0f));
         }
       }
       else if (brush.smooth_deform_type == BRUSH_SMOOTH_DEFORM_SURFACE) {
@@ -3842,7 +3839,14 @@ static void do_brush_action(const Sculpt &sd,
       }
       break;
     case SCULPT_TOOL_MASK:
-      SCULPT_do_mask_brush(sd, ob, nodes);
+      switch ((BrushMaskTool)brush.mask_tool) {
+        case BRUSH_MASK_DRAW:
+          do_mask_brush(sd, ob, nodes);
+          break;
+        case BRUSH_MASK_SMOOTH:
+          smooth::do_smooth_mask_brush(sd, ob, nodes, ss.cache->bstrength);
+          break;
+      }
       break;
     case SCULPT_TOOL_POSE:
       pose::do_pose_brush(sd, ob, nodes);
@@ -6510,28 +6514,39 @@ void SCULPT_cube_tip_init(const Sculpt & /*sd*/,
 
 namespace blender::ed::sculpt_paint {
 
+void fill_factor_from_hide(const Mesh &mesh,
+                           const Span<int> verts,
+                           const MutableSpan<float> r_factors)
+{
+  BLI_assert(verts.size() == r_factors.size());
+
+  /* TODO: Avoid overhead of accessing attributes for every PBVH node. */
+  const bke::AttributeAccessor attributes = mesh.attributes();
+  if (const VArray hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point)) {
+    const VArraySpan span(hide_vert);
+    for (const int i : verts.index_range()) {
+      r_factors[i] = span[verts[i]] ? 0.0f : 1.0f;
+    }
+  }
+  else {
+    r_factors.fill(1.0f);
+  }
+}
+
 void fill_factor_from_hide_and_mask(const Mesh &mesh,
                                     const Span<int> verts,
                                     const MutableSpan<float> r_factors)
 {
   BLI_assert(verts.size() == r_factors.size());
 
+  fill_factor_from_hide(mesh, verts, r_factors);
+
   /* TODO: Avoid overhead of accessing attributes for every PBVH node. */
   const bke::AttributeAccessor attributes = mesh.attributes();
   if (const VArray mask = *attributes.lookup<float>(".sculpt_mask", bke::AttrDomain::Point)) {
     const VArraySpan span(mask);
     for (const int i : verts.index_range()) {
-      r_factors[i] = 1.0f - span[verts[i]];
-    }
-  }
-  else {
-    r_factors.fill(1.0f);
-  }
-
-  if (const VArray hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point)) {
-    const VArraySpan span(hide_vert);
-    for (const int i : verts.index_range()) {
-      r_factors[i] = span[verts[i]] ? 0.0f : r_factors[i];
+      r_factors[i] -= std::max(1.0f - span[verts[i]], 0.0f);
     }
   }
 }
@@ -6577,18 +6592,14 @@ void calc_distance_falloff(SculptSession &ss,
   }
 }
 
-void calc_brush_strength_factors(const SculptSession &ss,
+void calc_brush_strength_factors(const StrokeCache &cache,
                                  const Brush &brush,
-                                 const Span<int> verts,
                                  const Span<float> distances,
                                  const MutableSpan<float> factors)
 {
-  BLI_assert(verts.size() == distances.size());
-  BLI_assert(verts.size() == factors.size());
+  BLI_assert(factors.size() == distances.size());
 
-  const StrokeCache &cache = *ss.cache;
-
-  for (const int i : verts.index_range()) {
+  for (const int i : factors.index_range()) {
     if (factors[i] == 0.0f) {
       /* Skip already masked-out points, as they might be outside of the brush radius and be
        * unaffected anyway. Having such large values in the calculations below might lead to
@@ -6596,7 +6607,7 @@ void calc_brush_strength_factors(const SculptSession &ss,
       continue;
     }
 
-    const float hardness = sculpt_apply_hardness(ss, distances[i]);
+    const float hardness = sculpt_apply_hardness(cache, distances[i]);
     const float strength = BKE_brush_curve_strength(&brush, hardness, cache.radius);
 
     factors[i] *= strength;
@@ -6739,6 +6750,27 @@ void apply_translations_to_pbvh(PBVH &pbvh, Span<int> verts, const Span<float3> 
   }
 }
 
+void write_translations(const Sculpt &sd,
+                        Object &object,
+                        const Span<float3> positions_eval,
+                        const Span<int> verts,
+                        const MutableSpan<float3> translations,
+                        const MutableSpan<float3> positions_orig)
+{
+  SculptSession &ss = *object.sculpt;
+
+  clip_and_lock_translations(sd, ss, positions_eval, verts, translations);
+
+  apply_translations_to_pbvh(*ss.pbvh, verts, translations);
+
+  if (!ss.deform_imats.is_empty()) {
+    apply_crazyspace_to_translations(ss.deform_imats, verts, translations);
+  }
+
+  apply_translations(translations, verts, positions_orig);
+  apply_translations_to_shape_keys(object, verts, translations, positions_orig);
+}
+
 void scale_translations(const MutableSpan<float3> translations, const Span<float> factors)
 {
   for (const int i : translations.index_range()) {
@@ -6791,6 +6823,59 @@ void calc_vert_neighbors_interior(const OffsetIndices<int> faces,
         /* Only include other boundary vertices as neighbors of boundary vertices. */
         neighbors.remove_if([&](const int vert) { return !boundary_verts[vert]; });
       }
+    }
+  }
+}
+
+void calc_translations_to_plane(const Span<float3> vert_positions,
+                                const Span<int> verts,
+                                const float4 &plane,
+                                const MutableSpan<float3> translations)
+{
+  for (const int i : verts.index_range()) {
+    const float3 &position = vert_positions[verts[i]];
+    float3 closest;
+    closest_to_plane_normalized_v3(closest, plane, position);
+    translations[i] = closest - position;
+  }
+}
+
+void filter_plane_trim_limit_factors(const Brush &brush,
+                                     const StrokeCache &cache,
+                                     const Span<float3> translations,
+                                     const MutableSpan<float> factors)
+{
+  if (!(brush.flag & BRUSH_PLANE_TRIM)) {
+    return;
+  }
+  const float threshold = cache.radius_squared * cache.plane_trim_squared;
+  for (const int i : translations.index_range()) {
+    if (math::length_squared(translations[i]) <= threshold) {
+      factors[i] = 0.0f;
+    }
+  }
+}
+
+void filter_below_plane_factors(const Span<float3> vert_positions,
+                                const Span<int> verts,
+                                const float4 &plane,
+                                const MutableSpan<float> factors)
+{
+  for (const int i : verts.index_range()) {
+    if (plane_point_side_v3(plane, vert_positions[verts[i]]) <= 0.0f) {
+      factors[i] = 0.0f;
+    }
+  }
+}
+
+void filter_above_plane_factors(const Span<float3> vert_positions,
+                                const Span<int> verts,
+                                const float4 &plane,
+                                const MutableSpan<float> factors)
+{
+  for (const int i : verts.index_range()) {
+    if (plane_point_side_v3(plane, vert_positions[verts[i]]) > 0.0f) {
+      factors[i] = 0.0f;
     }
   }
 }
