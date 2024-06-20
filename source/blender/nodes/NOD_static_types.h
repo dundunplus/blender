@@ -95,6 +95,7 @@ DefNode(ShaderNode,     SH_NODE_TANGENT,            def_sh_tangent,         "TAN
 DefNode(ShaderNode,     SH_NODE_SCRIPT,             def_sh_script,          "SCRIPT",             Script,           "Script",            "Generate an OSL shader from a file or text data-block.\nNote: OSL shaders are not supported on all GPU backends")
 DefNode(ShaderNode,     SH_NODE_TEX_IMAGE,          def_sh_tex_image,       "TEX_IMAGE",          TexImage,         "Image Texture",     "Sample an image file as a texture")
 DefNode(ShaderNode,     SH_NODE_TEX_ENVIRONMENT,    def_sh_tex_environment, "TEX_ENVIRONMENT",    TexEnvironment,   "Environment Texture","Sample an image file as an environment texture. Typically used to light the scene with the background node")
+DefNode(ShaderNode,     SH_NODE_TEX_GABOR,          def_sh_tex_gabor,       "TEX_GABOR",          TexGabor,         "Gabor Texture",     "Generate Gabor noise")
 DefNode(ShaderNode,     SH_NODE_TEX_SKY,            def_sh_tex_sky,         "TEX_SKY",            TexSky,           "Sky Texture",       "Generate a procedural sky texture")
 DefNode(ShaderNode,     SH_NODE_TEX_GRADIENT,       def_sh_tex_gradient,    "TEX_GRADIENT",       TexGradient,      "Gradient Texture",  "Generate interpolated color and intensity values based on the input vector")
 DefNode(ShaderNode,     SH_NODE_TEX_NOISE,          def_sh_tex_noise,       "TEX_NOISE",          TexNoise,         "Noise Texture",     "Generate fractal Perlin noise")
@@ -377,7 +378,7 @@ DefNode(GeometryNode, GEO_NODE_INPUT_MESH_FACE_NEIGHBORS, 0, "MESH_FACE_NEIGHBOR
 DefNode(GeometryNode, GEO_NODE_INPUT_MESH_ISLAND, 0, "MESH_ISLAND", InputMeshIsland, "Mesh Island", "Retrieve information about separate connected regions in a mesh")
 DefNode(GeometryNode, GEO_NODE_INPUT_MESH_VERTEX_NEIGHBORS, 0, "MESH_VERTEX_NEIGHBORS", InputMeshVertexNeighbors, "Vertex Neighbors", "Retrieve topology information relating to each vertex of a mesh")
 DefNode(GeometryNode, GEO_NODE_INPUT_NAMED_ATTRIBUTE, 0, "INPUT_ATTRIBUTE", InputNamedAttribute, "Named Attribute", "Retrieve the data of a specified attribute")
-DefNode(GeometryNode, GEO_NODE_INPUT_NAMED_LAYER_SELECTION, 0, "INPUT_NAMED_LAYER_SELECTION", InputNamedLayerSelection, "Named Layer Selection", "Output a selection of a grease pencil layer");
+DefNode(GeometryNode, GEO_NODE_INPUT_NAMED_LAYER_SELECTION, 0, "INPUT_NAMED_LAYER_SELECTION", InputNamedLayerSelection, "Named Layer Selection", "Output a selection of a grease pencil layer")
 DefNode(GeometryNode, GEO_NODE_INPUT_NORMAL, 0, "INPUT_NORMAL", InputNormal, "Normal", "Retrieve a unit length vector indicating the direction pointing away from the geometry at each element")
 DefNode(GeometryNode, GEO_NODE_INPUT_POSITION, 0, "POSITION", InputPosition, "Position", "Retrieve a vector indicating the location of each element")
 DefNode(GeometryNode, GEO_NODE_INPUT_RADIUS, 0, "INPUT_RADIUS", InputRadius, "Radius", "Retrieve the radius at each point on curve or point cloud geometry")

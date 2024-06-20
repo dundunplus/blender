@@ -144,6 +144,20 @@ int active_update_and_get(bContext *C, Object &ob, const float mval[2])
   return active_face_set_get(ss);
 }
 
+bool create_face_sets_mesh(Object &object)
+{
+  Mesh &mesh = *static_cast<Mesh *>(object.data);
+  bke::MutableAttributeAccessor attributes = mesh.attributes_for_write();
+  if (attributes.contains(".sculpt_face_set")) {
+    return false;
+  }
+  attributes.add<int>(".sculpt_face_set",
+                      bke::AttrDomain::Face,
+                      bke::AttributeInitVArray(VArray<int>::ForSingle(1, mesh.faces_num)));
+  mesh.face_sets_color_default = 1;
+  return true;
+}
+
 bke::SpanAttributeWriter<int> ensure_face_sets_mesh(Object &object)
 {
   Mesh &mesh = *static_cast<Mesh *>(object.data);
@@ -472,10 +486,10 @@ void do_draw_face_sets_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> node
 
   if (ss.cache->alt_smooth) {
     SCULPT_boundary_info_ensure(ob);
-    for (int i = 0; i < 4; i++) {
+    for (int iteration = 0; iteration < 4; iteration++) {
       threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
         for (const int i : range) {
-          do_relax_face_sets_brush_task(ob, brush, i, nodes[i]);
+          do_relax_face_sets_brush_task(ob, brush, iteration, nodes[i]);
         }
       });
     }
