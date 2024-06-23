@@ -38,6 +38,7 @@ struct SimulationData;
 }
 namespace undo {
 struct Node;
+struct StepData;
 enum class Type : int8_t;
 }
 }
@@ -123,6 +124,7 @@ enum eBoundaryAutomaskMode {
 namespace blender::ed::sculpt_paint::undo {
 
 enum class Type : int8_t {
+  None,
   Position,
   HideVert,
   HideFace,
@@ -135,28 +137,7 @@ enum class Type : int8_t {
   Color,
 };
 
-/* Storage of geometry for the undo node.
- * Is used as a storage for either original or modified geometry. */
-struct NodeGeometry {
-  /* Is used for sanity check, helping with ensuring that two and only two
-   * geometry pushes happened in the undo stack. */
-  bool is_initialized;
-
-  CustomData vert_data;
-  CustomData edge_data;
-  CustomData corner_data;
-  CustomData face_data;
-  int *face_offset_indices;
-  const ImplicitSharingInfo *face_offsets_sharing_info;
-  int totvert;
-  int totedge;
-  int totloop;
-  int faces_num;
-};
-
 struct Node {
-  Type type;
-
   Array<float3> position;
   Array<float3> orig_position;
   Array<float3> normal;
@@ -168,10 +149,6 @@ struct Node {
 
   /* Mesh. */
 
-  /* to verify if totvert it still the same */
-  int mesh_verts_num;
-  int mesh_corners_num;
-
   Array<int> vert_indices;
   int unique_verts_num;
 
@@ -182,44 +159,14 @@ struct Node {
 
   /* Multires. */
 
-  /** The number of grids in the entire mesh. */
-  int mesh_grids_num;
-  /** A copy of #SubdivCCG::grid_size. */
-  int grid_size;
   /** Indices of grids in the PBVH node. */
   Array<int> grids;
   BitGroupVector<> grid_hidden;
-
-  /* bmesh */
-  BMLogEntry *bm_entry;
-  bool applied;
-
-  /* shape keys */
-  char shapeName[MAX_NAME]; /* `sizeof(KeyBlock::name)`. */
-
-  /* Geometry modification operations.
-   *
-   * Original geometry is stored before some modification is run and is used to restore state of
-   * the object when undoing the operation
-   *
-   * Modified geometry is stored after the modification and is used to redo the modification. */
-  bool geometry_clear_pbvh;
-  undo::NodeGeometry geometry_original;
-  undo::NodeGeometry geometry_modified;
-
-  /* Geometry at the bmesh enter moment. */
-  undo::NodeGeometry geometry_bmesh_enter;
-
-  /* pivot */
-  float3 pivot_pos;
-  float pivot_rot[4];
 
   /* Sculpt Face Sets */
   Array<int> face_sets;
 
   Vector<int> face_indices;
-
-  size_t undo_size;
 };
 
 }
@@ -1253,7 +1200,7 @@ ENUM_OPERATORS(WarnFlag, MODIFIER);
 
 /** Enable dynamic topology; mesh will be triangulated */
 void enable_ex(Main &bmain, Depsgraph &depsgraph, Object &ob);
-void disable(bContext *C, undo::Node *unode);
+void disable(bContext *C, undo::StepData *undo_step);
 void disable_with_undo(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob);
 
 /**
@@ -1656,11 +1603,13 @@ void SCULPT_cache_free(blender::ed::sculpt_paint::StrokeCache *cache);
 namespace blender::ed::sculpt_paint::undo {
 
 /**
- * Store undo data of the given type for a PBVH node.
+ * Store undo data of the given type for a PBVH node. This function can be called by multiple
+ * threads concurrently, as long as they don't pass the same PBVH node.
  *
  * This is only possible when building an undo step, in between #push_begin and #push_end.
  */
-undo::Node *push_node(const Object &object, const PBVHNode *node, undo::Type type);
+void push_node(const Object &object, const PBVHNode *node, undo::Type type);
+void push_nodes(Object &object, Span<const PBVHNode *> nodes, undo::Type type);
 
 /**
  * Retrieve the undo data of a given type for the active undo step. For example, this is used to
@@ -1668,7 +1617,7 @@ undo::Node *push_node(const Object &object, const PBVHNode *node, undo::Type typ
  *
  * This is only possible when building an undo step, in between #push_begin and #push_end.
  */
-undo::Node *get_node(const PBVHNode *node, undo::Type type);
+const undo::Node *get_node(const PBVHNode *node, undo::Type type);
 
 /**
  * Pushes an undo step using the operator name. This is necessary for
@@ -1684,6 +1633,9 @@ void push_begin(Object &ob, const wmOperator *op);
 void push_begin_ex(Object &ob, const char *name);
 void push_end(Object &ob);
 void push_end_ex(Object &ob, const bool use_nested_undo);
+
+void restore_from_bmesh_enter_geometry(const StepData &step_data, Mesh &mesh);
+BMLogEntry *get_bmesh_log_entry();
 
 }
 
@@ -1813,7 +1765,7 @@ struct GestureData {
 /* Common abstraction structure for gesture operations. */
 struct Operation {
   /* Initial setup (data updates, special undo push...). */
-  void (*begin)(bContext &, GestureData &);
+  void (*begin)(bContext &, wmOperator &, GestureData &);
 
   /* Apply the gesture action for each symmetry pass. */
   void (*apply_for_symmetry_pass)(bContext &, GestureData &);
