@@ -70,6 +70,7 @@
 #include "DEG_depsgraph.hh"
 
 #include "WM_api.hh"
+#include "WM_toolsystem.hh"
 #include "WM_types.hh"
 
 #include "ED_gpencil_legacy.hh"
@@ -3124,6 +3125,7 @@ struct SculptRaycastData {
   float depth;
   bool original;
   Span<int> corner_verts;
+  Span<blender::int3> corner_tris;
   Span<int> corner_tri_faces;
   blender::VArraySpan<bool> hide_poly;
 
@@ -3143,6 +3145,7 @@ struct SculptFindNearestToRayData {
   float dist_sq_to_ray;
   bool original;
   Span<int> corner_verts;
+  Span<blender::int3> corner_tris;
   Span<int> corner_tri_faces;
   blender::VArraySpan<bool> hide_poly;
 };
@@ -3604,7 +3607,8 @@ static void do_brush_action(const Scene &scene,
       return;
     }
 
-    BKE_pbvh_ensure_node_loops(*ss.pbvh);
+    const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
+    BKE_pbvh_ensure_node_loops(*ss.pbvh, mesh.corner_tris());
   }
 
   const bool use_original = sculpt_tool_needs_original(brush.sculpt_tool) ? true :
@@ -4301,6 +4305,51 @@ bool SCULPT_poll(bContext *C)
 {
   using namespace blender::ed::sculpt_paint;
   return SCULPT_mode_poll(C) && blender::ed::sculpt_paint::paint_brush_tool_poll(C);
+}
+
+/**
+ * While most non-brush tools in sculpt mode do not use the brush cursor, the trim tools
+ * and the filter tools are expected to have the cursor visible so that some functionality is
+ * easier to visually estimate.
+ *
+ * See: #122856
+ */
+static bool is_brush_related_tool(bContext *C)
+{
+  Paint *paint = BKE_paint_get_active_from_context(C);
+  Object *ob = CTX_data_active_object(C);
+  ScrArea *area = CTX_wm_area(C);
+  ARegion *region = CTX_wm_region(C);
+
+  if (paint && ob && BKE_paint_brush(paint) &&
+      (area && ELEM(area->spacetype, SPACE_VIEW3D, SPACE_IMAGE)) &&
+      (region && region->regiontype == RGN_TYPE_WINDOW))
+  {
+    bToolRef *tref = area->runtime.tool;
+    if (tref && tref->runtime && tref->runtime->keymap[0]) {
+      std::array<wmOperatorType *, 7> trim_operators = {
+          WM_operatortype_find("SCULPT_OT_trim_box_gesture", false),
+          WM_operatortype_find("SCULPT_OT_trim_lasso_gesture", false),
+          WM_operatortype_find("SCULPT_OT_trim_line_gesture", false),
+          WM_operatortype_find("SCULPT_OT_trim_polyline_gesture", false),
+          WM_operatortype_find("SCULPT_OT_mesh_filter", false),
+          WM_operatortype_find("SCULPT_OT_cloth_filter", false),
+          WM_operatortype_find("SCULPT_OT_color_filter", false),
+      };
+
+      return std::any_of(trim_operators.begin(), trim_operators.end(), [tref](wmOperatorType *ot) {
+        PointerRNA ptr;
+        return WM_toolsystem_ref_properties_get_from_operator(tref, ot, &ptr);
+      });
+    }
+  }
+  return false;
+}
+
+bool SCULPT_brush_cursor_poll(bContext *C)
+{
+  using namespace blender::ed::sculpt_paint;
+  return SCULPT_mode_poll(C) && (paint_brush_tool_poll(C) || is_brush_related_tool(C));
 }
 
 static const char *sculpt_tool_name(const Sculpt &sd)
@@ -5091,6 +5140,7 @@ static void sculpt_raycast_cb(PBVHNode &node, SculptRaycastData &srd, float *tmi
                               origco,
                               use_origco,
                               srd.corner_verts,
+                              srd.corner_tris,
                               srd.corner_tri_faces,
                               srd.hide_poly,
                               srd.ray_start,
@@ -5135,6 +5185,7 @@ static void sculpt_find_nearest_to_ray_cb(PBVHNode &node,
                                           origco,
                                           use_origco,
                                           srd.corner_verts,
+                                          srd.corner_tris,
                                           srd.corner_tri_faces,
                                           srd.hide_poly,
                                           srd.ray_start,
@@ -5230,6 +5281,7 @@ bool SCULPT_cursor_geometry_info_update(bContext *C,
   if (BKE_pbvh_type(*ss.pbvh) == PBVH_FACES) {
     const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
     srd.corner_verts = mesh.corner_verts();
+    srd.corner_tris = mesh.corner_tris();
     srd.corner_tri_faces = mesh.corner_tri_faces();
     const bke::AttributeAccessor attributes = mesh.attributes();
     srd.hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
@@ -5380,6 +5432,7 @@ bool SCULPT_stroke_get_location_ex(bContext *C,
     if (BKE_pbvh_type(*ss.pbvh) == PBVH_FACES) {
       const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
       srd.corner_verts = mesh.corner_verts();
+      srd.corner_tris = mesh.corner_tris();
       srd.corner_tri_faces = mesh.corner_tri_faces();
       const bke::AttributeAccessor attributes = mesh.attributes();
       srd.hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
@@ -5414,6 +5467,7 @@ bool SCULPT_stroke_get_location_ex(bContext *C,
   if (BKE_pbvh_type(*ss.pbvh) == PBVH_FACES) {
     const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
     srd.corner_verts = mesh.corner_verts();
+    srd.corner_tris = mesh.corner_tris();
     srd.corner_tri_faces = mesh.corner_tri_faces();
     const bke::AttributeAccessor attributes = mesh.attributes();
     srd.hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
@@ -6360,6 +6414,7 @@ bool SCULPT_vertex_is_occluded(SculptSession &ss, PBVHVertRef vertex, bool origi
   srd.face_normal = face_normal;
   srd.corner_verts = ss.corner_verts;
   if (BKE_pbvh_type(*ss.pbvh) == PBVH_FACES) {
+    srd.corner_tris = BKE_pbvh_get_mesh(*ss.pbvh)->corner_tris();
     srd.corner_tri_faces = BKE_pbvh_get_mesh(*ss.pbvh)->corner_tri_faces();
   }
 
