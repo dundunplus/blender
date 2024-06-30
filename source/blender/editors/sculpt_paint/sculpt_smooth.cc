@@ -167,14 +167,21 @@ float neighbor_mask_average(SculptSession &ss,
   return 0.0f;
 }
 
-float4 neighbor_color_average(SculptSession &ss, PBVHVertRef vertex)
+float4 neighbor_color_average(SculptSession &ss,
+                              const OffsetIndices<int> faces,
+                              const Span<int> corner_verts,
+                              const GroupedSpan<int> vert_to_face_map,
+                              const GSpan color_attribute,
+                              const bke::AttrDomain color_domain,
+                              const int vert)
 {
   float4 avg(0);
   int total = 0;
 
   SculptVertexNeighborIter ni;
-  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vertex, ni) {
-    float4 tmp = SCULPT_vertex_color_get(ss, ni.vertex);
+  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, PBVHVertRef{vert}, ni) {
+    float4 tmp = color::color_vert_get(
+        faces, corner_verts, vert_to_face_map, color_attribute, color_domain, ni.index);
 
     avg += tmp;
     total++;
@@ -184,7 +191,8 @@ float4 neighbor_color_average(SculptSession &ss, PBVHVertRef vertex)
   if (total > 0) {
     return avg / total;
   }
-  return SCULPT_vertex_color_get(ss, vertex);
+  return color::color_vert_get(
+      faces, corner_verts, vert_to_face_map, color_attribute, color_domain, vert);
 }
 
 static void do_enhance_details_brush_task(Object &ob,
@@ -317,14 +325,13 @@ static void do_surface_smooth_brush_laplacian_task(Object &ob, const Brush &brus
   float alpha = brush.surface_smooth_shape_preservation;
 
   PBVHVertexIter vd;
-  SculptOrigVertData orig_data;
 
   SculptBrushTest test;
   SculptBrushTestFn sculpt_brush_test_sq_fn = SCULPT_brush_test_init_with_falloff_shape(
       ss, test, brush.falloff_shape);
   const int thread_id = BLI_task_parallel_thread_id(nullptr);
 
-  SCULPT_orig_vert_data_init(orig_data, ob, *node, undo::Type::Position);
+  SculptOrigVertData orig_data = SCULPT_orig_vert_data_init(ob, *node, undo::Type::Position);
   auto_mask::NodeData automask_data = auto_mask::node_begin(
       ob, ss.cache->automasking.get(), *node);
 

@@ -2088,7 +2088,6 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   }
 
   BLF_batch_draw_begin();
-  UI_icon_draw_cache_begin();
   UI_widgetbase_draw_cache_begin();
 
   /* widgets */
@@ -2111,7 +2110,6 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   }
 
   UI_widgetbase_draw_cache_end();
-  UI_icon_draw_cache_end();
   BLF_batch_draw_end();
 
   ui_block_views_draw_overlays(region, block);
@@ -4783,7 +4781,7 @@ uiBut *uiDefButImage(
   return but;
 }
 
-uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
+uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short /*height*/)
 {
   ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon, float(width));
   if (ibuf) {
