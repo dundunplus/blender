@@ -730,9 +730,9 @@ Action *get_action(ID &animated_id);
  * Get the Action and the Slot that animate this ID.
  *
  * \return One of two options:
- *  - pair<Action, Slot> when an Action and a Slot are assigned. In other
+ *  - `pair<Action, Slot>` when an Action and a Slot are assigned. In other
  *    words, when this ID is actually animated by this Action+Slot pair.
- *  - nullopt: when this ID is not animated. This can have several causes: not
+ *  - `nullopt`: when this ID is not animated. This can have several causes: not
  *    an animatable type, no Action assigned, or no Slot assigned.
  */
 std::optional<std::pair<Action *, Slot *>> get_action_slot_pair(ID &animated_id);
@@ -779,6 +779,40 @@ FCurve *action_fcurve_ensure(Main *bmain,
  * Find the F-Curve from the given Action. This assumes that all the destinations are valid.
  */
 FCurve *action_fcurve_find(bAction *act, FCurveDescriptor fcurve_descriptor);
+
+/**
+ * Find an appropriate user of the given Action + Slot for keyframing purposes.
+ *
+ * (NOTE: although this function exists for handling situations caused by the
+ * expanded capabilities of layered actions, for convenience it also works with
+ * legacy actions. For legacy actions this simply returns `primary_id` as long
+ * as it's a user of `action`.)
+ *
+ * Usually this function shouldn't be necessary, because you'll already have an
+ * obvious ID that you're keying. But in some cases (such as the action editor
+ * where multiple slots are accessible) the active ID that would normally get
+ * keyed might have nothing to do with the slot that's actually getting keyed.
+ *
+ * This function handles such cases by attempting to find an actual user of the
+ * slot that's appropriate for keying. More specifically:
+ *
+ * - If `primary_id` is a user of the slot, `primary_id` is always returned.
+ * - If the slot has precisely one user, that user is returned.
+ * - Otherwise, nullptr is returned.
+ *
+ * In other words, the cases where a user of the slot is *not* returned are:
+ *
+ * - The slot has no users at all.
+ * - The slot has multiple users, none of which are `primary_id`, and therefore
+ *   there is no single, clear user that can be appropriately used for keying.
+ *
+ * \param primary_id: whenever this is among the users of the action + slot, it
+ * is given priority and is returned. May be null.
+ */
+ID *action_slot_get_id_for_keying(Main &bmain,
+                                  Action &action,
+                                  slot_handle_t slot_handle,
+                                  ID *primary_id);
 
 /**
  * Assert the invariants of Project Baklava phase 1.
