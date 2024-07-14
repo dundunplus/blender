@@ -4030,7 +4030,7 @@ static void do_brush_action(const Scene &scene,
       break;
     case SCULPT_TOOL_SLIDE_RELAX:
       if (ss.cache->alt_smooth) {
-        SCULPT_do_topology_relax_brush(sd, ob, nodes);
+        do_topology_relax_brush(sd, ob, nodes);
       }
       else {
         do_topology_slide_brush(sd, ob, nodes);
@@ -5657,10 +5657,10 @@ static void sculpt_restore_mesh(const Sculpt &sd, Object &ob)
    *  - SCULPT_TOOL_POSE
    */
   if (ELEM(brush->sculpt_tool,
+           SCULPT_TOOL_ELASTIC_DEFORM,
            SCULPT_TOOL_GRAB,
            SCULPT_TOOL_THUMB,
-           SCULPT_TOOL_ROTATE,
-           SCULPT_TOOL_ELASTIC_DEFORM))
+           SCULPT_TOOL_ROTATE))
   {
     undo::restore_from_undo_step(sd, ob);
     return;
@@ -6032,20 +6032,15 @@ static void sculpt_stroke_update_step(bContext *C,
    *
    * For some brushes, flushing is done in the brush code itself.
    */
-  if (!(ELEM(brush.sculpt_tool,
-             SCULPT_TOOL_BLOB,
-             SCULPT_TOOL_CLAY,
-             SCULPT_TOOL_CLAY_STRIPS,
-             SCULPT_TOOL_CREASE,
-             SCULPT_TOOL_DRAW,
-             SCULPT_TOOL_DRAW_FACE_SETS,
-             SCULPT_TOOL_ELASTIC_DEFORM,
-             SCULPT_TOOL_FILL,
-             SCULPT_TOOL_GRAB,
-             SCULPT_TOOL_SCRAPE,
-             SCULPT_TOOL_SNAKE_HOOK,
-             SCULPT_TOOL_THUMB) &&
-        BKE_pbvh_type(*ss.pbvh) == PBVH_FACES))
+  if ((ELEM(brush.sculpt_tool,
+            SCULPT_TOOL_BOUNDARY,
+            SCULPT_TOOL_CLOTH,
+            SCULPT_TOOL_LAYER,
+            SCULPT_TOOL_MASK,
+            SCULPT_TOOL_PAINT,
+            SCULPT_TOOL_POSE,
+            SCULPT_TOOL_SMOOTH) ||
+       BKE_pbvh_type(*ss.pbvh) != PBVH_FACES))
   {
     if (ss.deform_modifiers_active) {
       SCULPT_flush_stroke_deform(sd, ob, sculpt_tool_is_proxy_used(brush.sculpt_tool));
