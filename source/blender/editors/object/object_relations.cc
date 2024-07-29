@@ -192,8 +192,8 @@ static int vertex_parent_set_exec(bContext *C, wmOperator *op)
       }
       else {
         BPoint *bp = nu->bp;
-        const int num_points = nu->pntsu * nu->pntsv;
-        for (int nurb_index = 0; nurb_index < num_points; nurb_index++, bp++, curr_index++) {
+        const int points_num = nu->pntsu * nu->pntsv;
+        for (int nurb_index = 0; nurb_index < points_num; nurb_index++, bp++, curr_index++) {
           if (bp->f1 & SELECT) {
             if (par1 == INDEX_UNSET) {
               par1 = curr_index;
@@ -218,10 +218,10 @@ static int vertex_parent_set_exec(bContext *C, wmOperator *op)
   else if (obedit->type == OB_LATTICE) {
     Lattice *lt = static_cast<Lattice *>(obedit->data);
 
-    const int num_points = lt->editlatt->latt->pntsu * lt->editlatt->latt->pntsv *
+    const int points_num = lt->editlatt->latt->pntsu * lt->editlatt->latt->pntsv *
                            lt->editlatt->latt->pntsw;
     BPoint *bp = lt->editlatt->latt->def;
-    for (int curr_index = 0; curr_index < num_points; curr_index++, bp++) {
+    for (int curr_index = 0; curr_index < points_num; curr_index++, bp++) {
       if (bp->f1 & SELECT) {
         if (par1 == INDEX_UNSET) {
           par1 = curr_index;
@@ -735,16 +735,6 @@ bool parent_set(ReportList *reports,
       WM_cursor_wait(true);
       ED_gpencil_add_armature_weights(C, reports, ob, par, GP_PAR_ARMATURE_AUTO);
       WM_cursor_wait(false);
-    }
-    /* get corrected inverse */
-    ob->partype = PAROBJECT;
-
-    invert_m4_m4(ob->parentinv, BKE_object_calc_parent(depsgraph, scene, ob).ptr());
-  }
-  else if ((ob->type == OB_GPENCIL_LEGACY) && (par->type == OB_LATTICE)) {
-    /* Add Lattice modifier */
-    if (partype == PAR_LATTICE) {
-      ED_gpencil_add_lattice_modifier(C, reports, ob, par);
     }
     /* get corrected inverse */
     ob->partype = PAROBJECT;
@@ -1425,7 +1415,7 @@ static bool allow_make_links_data(const int type, Object *ob_src, Object *ob_dst
           /* Linking non-grease-pencil materials to a grease-pencil object causes issues.
            * We make sure that if one of the objects is a grease-pencil object, the other must be
            * as well. */
-          ((ob_src->type == OB_GPENCIL_LEGACY) == (ob_dst->type == OB_GPENCIL_LEGACY)))
+          ((ob_src->type == OB_GREASE_PENCIL) == (ob_dst->type == OB_GREASE_PENCIL)))
       {
         return true;
       }
@@ -1450,7 +1440,7 @@ static bool allow_make_links_data(const int type, Object *ob_src, Object *ob_dst
       }
       break;
     case MAKE_LINKS_SHADERFX:
-      if ((ob_src->type == OB_GPENCIL_LEGACY) && (ob_dst->type == OB_GPENCIL_LEGACY)) {
+      if ((ob_src->type == OB_GREASE_PENCIL) && (ob_dst->type == OB_GREASE_PENCIL)) {
         return true;
       }
       break;

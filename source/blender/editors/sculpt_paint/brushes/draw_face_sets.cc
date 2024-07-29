@@ -11,7 +11,6 @@
 #include "BKE_pbvh.hh"
 #include "BKE_subdiv_ccg.hh"
 
-#include "BLI_array_utils.hh"
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_math_base.hh"
 #include "BLI_task.h"
@@ -69,7 +68,7 @@ BLI_NOINLINE static void fill_factor_from_hide_and_mask(const Mesh &mesh,
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
 
-  /* TODO: Avoid overhead of accessing attributes for every PBVH node. */
+  /* TODO: Avoid overhead of accessing attributes for every bke::pbvh::Tree node. */
   const bke::AttributeAccessor attributes = mesh.attributes();
   if (const VArray mask = *attributes.lookup<float>(".sculpt_mask", bke::AttrDomain::Point)) {
     const VArraySpan span(mask);
@@ -116,7 +115,7 @@ static void calc_faces(Object &object,
                        const float strength,
                        const int face_set_id,
                        Span<float3> positions_eval,
-                       const PBVHNode &node,
+                       const bke::pbvh::Node &node,
                        const Span<int> face_indices,
                        MeshLocalData &tls,
                        const MutableSpan<int> face_sets)
@@ -127,15 +126,15 @@ static void calc_faces(Object &object,
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
 
-  tls.positions.reinitialize(face_indices.size());
+  tls.positions.resize(face_indices.size());
   const MutableSpan<float3> face_centers = tls.positions;
   calc_face_centers(faces, corner_verts, positions_eval, face_indices, face_centers);
 
-  tls.normals.reinitialize(face_indices.size());
+  tls.normals.resize(face_indices.size());
   const MutableSpan<float3> face_normals = tls.normals;
   calc_face_normals(faces, corner_verts, positions_eval, face_indices, face_normals);
 
-  tls.factors.reinitialize(face_indices.size());
+  tls.factors.resize(face_indices.size());
   const MutableSpan<float> factors = tls.factors;
 
   fill_factor_from_hide_and_mask(mesh, face_indices, factors);
@@ -145,7 +144,7 @@ static void calc_faces(Object &object,
     calc_front_face(cache.view_normal, face_normals, factors);
   }
 
-  tls.distances.reinitialize(face_indices.size());
+  tls.distances.resize(face_indices.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, face_centers, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -167,10 +166,10 @@ static void calc_faces(Object &object,
 
 static void do_draw_face_sets_brush_mesh(Object &object,
                                          const Brush &brush,
-                                         const Span<PBVHNode *> nodes)
+                                         const Span<bke::pbvh::Node *> nodes)
 {
   const SculptSession &ss = *object.sculpt;
-  const PBVH &pbvh = *ss.pbvh;
+  const bke::pbvh::Tree &pbvh = *ss.pbvh;
   const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
 
   Mesh &mesh = *static_cast<Mesh *>(object.data);
@@ -229,7 +228,7 @@ static void calc_grids(Object &object,
                        const Brush &brush,
                        const float strength,
                        const int face_set_id,
-                       const PBVHNode &node,
+                       const bke::pbvh::Node &node,
                        GridLocalData &tls,
                        const MutableSpan<int> face_sets)
 {
@@ -240,7 +239,7 @@ static void calc_grids(Object &object,
   const Span<int> grids = bke::pbvh::node_grid_indices(node);
   const MutableSpan positions = gather_grids_positions(subdiv_ccg, grids, tls.positions);
 
-  tls.factors.reinitialize(positions.size());
+  tls.factors.resize(positions.size());
   const MutableSpan<float> factors = tls.factors;
   blender::ed::sculpt_paint::fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -248,7 +247,7 @@ static void calc_grids(Object &object,
     calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
   }
 
-  tls.distances.reinitialize(positions.size());
+  tls.distances.resize(positions.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -262,7 +261,7 @@ static void calc_grids(Object &object,
   calc_brush_texture_factors(ss, brush, positions, factors);
   scale_factors(factors, strength);
 
-  tls.face_indices.reinitialize(positions.size());
+  tls.face_indices.resize(positions.size());
   MutableSpan<int> face_indices = tls.face_indices;
 
   calc_face_indices_grids(subdiv_ccg, grids, face_indices);
@@ -271,7 +270,7 @@ static void calc_grids(Object &object,
 
 static void do_draw_face_sets_brush_grids(Object &object,
                                           const Brush &brush,
-                                          const Span<PBVHNode *> nodes)
+                                          const Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *object.sculpt;
 
@@ -281,7 +280,7 @@ static void do_draw_face_sets_brush_grids(Object &object,
   threading::EnumerableThreadSpecific<GridLocalData> all_tls;
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     GridLocalData &tls = all_tls.local();
-    for (PBVHNode *node : nodes.slice(range)) {
+    for (bke::pbvh::Node *node : nodes.slice(range)) {
       for (const int i : range) {
         undo::push_node(object, node, undo::Type::FaceSet);
 
@@ -309,7 +308,7 @@ BLI_NOINLINE static void fill_factor_from_hide_and_mask(const BMesh &bm,
 {
   BLI_assert(faces.size() == r_factors.size());
 
-  /* TODO: Avoid overhead of accessing attributes for every PBVH node. */
+  /* TODO: Avoid overhead of accessing attributes for every bke::pbvh::Tree node. */
   const int mask_offset = CustomData_get_offset_named(&bm.vdata, CD_PROP_FLOAT, ".sculpt_mask");
   int i = 0;
   for (BMFace *f : faces) {
@@ -367,7 +366,7 @@ static void calc_bmesh(Object &object,
                        const Brush &brush,
                        const float strength,
                        const int face_set_id,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        BMeshLocalData &tls,
                        const int cd_offset)
 {
@@ -375,11 +374,11 @@ static void calc_bmesh(Object &object,
   const StrokeCache &cache = *ss.cache;
 
   const Set<BMFace *, 0> &faces = BKE_pbvh_bmesh_node_faces(&node);
-  tls.positions.reinitialize(faces.size());
+  tls.positions.resize(faces.size());
   const MutableSpan<float3> positions = tls.positions;
   calc_face_centers(faces, positions);
 
-  tls.factors.reinitialize(faces.size());
+  tls.factors.resize(faces.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(*ss.bm, faces, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -387,7 +386,7 @@ static void calc_bmesh(Object &object,
     calc_front_face(cache.view_normal, faces, factors);
   }
 
-  tls.distances.reinitialize(faces.size());
+  tls.distances.resize(faces.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -414,7 +413,7 @@ static void calc_bmesh(Object &object,
 
 static void do_draw_face_sets_brush_bmesh(Object &object,
                                           const Brush &brush,
-                                          const Span<PBVHNode *> nodes)
+                                          const Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *object.sculpt;
   const int cd_offset = face_set::ensure_face_sets_bmesh(object);
@@ -432,19 +431,19 @@ static void do_draw_face_sets_brush_bmesh(Object &object,
 
 }  // namespace draw_face_sets_cc
 
-void do_draw_face_sets_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
+void do_draw_face_sets_brush(const Sculpt &sd, Object &object, Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *object.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
-  switch (BKE_pbvh_type(*ss.pbvh)) {
-    case PBVH_FACES:
+  switch (ss.pbvh->type()) {
+    case bke::pbvh::Type::Mesh:
       do_draw_face_sets_brush_mesh(object, brush, nodes);
       break;
-    case PBVH_GRIDS:
+    case bke::pbvh::Type::Grids:
       do_draw_face_sets_brush_grids(object, brush, nodes);
       break;
-    case PBVH_BMESH:
+    case bke::pbvh::Type::BMesh:
       do_draw_face_sets_brush_bmesh(object, brush, nodes);
       break;
   }

@@ -22,6 +22,7 @@
 
 #include "ED_view3d.hh"
 
+#include "DRW_gpu_wrapper.hh"
 #include "DRW_render.hh"
 
 #include "COM_context.hh"
@@ -69,6 +70,11 @@ class Context : public realtime_compositor::Context {
   }
 
   bool use_file_output() const override
+  {
+    return false;
+  }
+
+  bool should_compute_node_previews() const override
   {
     return false;
   }
@@ -145,15 +151,25 @@ class Context : public realtime_compositor::Context {
       return nullptr;
     }
 
+    /* The combined pass is a special case where we return the viewport color texture, because it
+     * includes Grease Pencil objects since GP is drawn using their own engine. */
     if (STREQ(pass_name, RE_PASSNAME_COMBINED)) {
-      return get_output_texture();
+      return DRW_viewport_texture_list_get()->color;
     }
-    else if (STREQ(pass_name, RE_PASSNAME_Z)) {
+
+    /* Return the pass that was written by the engine if such pass was found. */
+    GPUTexture *pass_texture = DRW_viewport_pass_texture_get(pass_name).gpu_texture();
+    if (pass_texture) {
+      return pass_texture;
+    }
+
+    /* If no Z pass was found above, return the viewport depth as a fallback, which might be
+     * populated if overlays are enabled. */
+    if (STREQ(pass_name, RE_PASSNAME_Z)) {
       return DRW_viewport_texture_list_get()->depth;
     }
-    else {
-      return nullptr;
-    }
+
+    return nullptr;
   }
 
   StringRef get_view_name() const override

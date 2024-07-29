@@ -627,15 +627,8 @@ static void deg_tag_after_keyframe_delete(Main *bmain, ID *id, AnimData *adt)
   }
 }
 
-int delete_keyframe(Main *bmain,
-                    ReportList *reports,
-                    ID *id,
-                    bAction *act,
-                    const char rna_path[],
-                    int array_index,
-                    float cfra)
+int delete_keyframe(Main *bmain, ReportList *reports, ID *id, const RNAPath &rna_path, float cfra)
 {
-  BLI_assert(rna_path != nullptr);
   AnimData *adt = BKE_animdata_from_id(id);
 
   if (ELEM(nullptr, id, adt)) {
@@ -646,33 +639,27 @@ int delete_keyframe(Main *bmain,
   PointerRNA ptr;
   PropertyRNA *prop;
   PointerRNA id_ptr = RNA_id_pointer_create(id);
-  if (RNA_path_resolve_property(&id_ptr, rna_path, &ptr, &prop) == false) {
+  if (RNA_path_resolve_property(&id_ptr, rna_path.path.c_str(), &ptr, &prop) == false) {
     BKE_reportf(
         reports,
         RPT_ERROR,
         "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)",
         id->name,
-        rna_path);
+        rna_path.path.c_str());
     return 0;
   }
 
-  if (act == nullptr) {
-    if (adt->action) {
-      act = adt->action;
-      cfra = BKE_nla_tweakedit_remap(adt, cfra, NLATIME_CONVERT_UNMAP);
-    }
-    else {
-      BKE_reportf(reports, RPT_ERROR, "No action to delete keyframes from for ID = %s", id->name);
-      return 0;
-    }
+  if (!adt->action) {
+    BKE_reportf(reports, RPT_ERROR, "No action to delete keyframes from for ID = %s", id->name);
+    return 0;
   }
-
+  bAction *act = adt->action;
+  cfra = BKE_nla_tweakedit_remap(adt, cfra, NLATIME_CONVERT_UNMAP);
+  int array_index = rna_path.index.value_or(0);
   int array_index_max = array_index + 1;
 
-  if (array_index == -1) {
-    array_index = 0;
+  if (!rna_path.index.has_value()) {
     array_index_max = RNA_property_array_length(&ptr, prop);
-
     /* For single properties, increase max_index so that the property itself gets included,
      * but don't do this for standard arrays since that can cause corruption issues
      * (extra unused curves).
@@ -695,7 +682,7 @@ int delete_keyframe(Main *bmain,
      * paths. In the future when legacy actions are removed, we can restructure
      * it to be clearer. */
     for (; array_index < array_index_max; array_index++) {
-      FCurve *fcurve = fcurve_find(fcurves, {rna_path, array_index});
+      FCurve *fcurve = fcurve_find(fcurves, {rna_path.path, array_index});
       if (fcurve == nullptr) {
         continue;
       }
@@ -708,7 +695,7 @@ int delete_keyframe(Main *bmain,
   /* Will only loop once unless the array index was -1. */
   int key_count = 0;
   for (; array_index < array_index_max; array_index++) {
-    FCurve *fcu = action_fcurve_find(act, {rna_path, array_index});
+    FCurve *fcu = action_fcurve_find(act, {rna_path.path, array_index});
 
     if (fcu == nullptr) {
       continue;
@@ -736,16 +723,8 @@ int delete_keyframe(Main *bmain,
 /* ************************************************** */
 /* KEYFRAME CLEAR */
 
-int clear_keyframe(Main *bmain,
-                   ReportList *reports,
-                   ID *id,
-                   bAction *act,
-                   const char rna_path[],
-                   int array_index,
-                   eInsertKeyFlags /*flag*/)
+int clear_keyframe(Main *bmain, ReportList *reports, ID *id, const RNAPath &rna_path)
 {
-  BLI_assert(rna_path != nullptr);
-
   AnimData *adt = BKE_animdata_from_id(id);
 
   if (ELEM(nullptr, id, adt)) {
@@ -756,29 +735,25 @@ int clear_keyframe(Main *bmain,
   PointerRNA ptr;
   PropertyRNA *prop;
   PointerRNA id_ptr = RNA_id_pointer_create(id);
-  if (RNA_path_resolve_property(&id_ptr, rna_path, &ptr, &prop) == false) {
+  if (RNA_path_resolve_property(&id_ptr, rna_path.path.c_str(), &ptr, &prop) == false) {
     BKE_reportf(
         reports,
         RPT_ERROR,
         "Could not clear keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)",
         id->name,
-        rna_path);
+        rna_path.path.c_str());
     return 0;
   }
 
-  if (act == nullptr) {
-    if (adt->action) {
-      act = adt->action;
-    }
-    else {
-      BKE_reportf(reports, RPT_ERROR, "No action to delete keyframes from for ID = %s", id->name);
-      return 0;
-    }
+  if (!adt->action) {
+    BKE_reportf(reports, RPT_ERROR, "No action to delete keyframes from for ID = %s", id->name);
+    return 0;
   }
+  bAction *act = adt->action;
 
+  int array_index = rna_path.index.value_or(0);
   int array_index_max = array_index + 1;
-  if (array_index == -1) {
-    array_index = 0;
+  if (!rna_path.index.has_value()) {
     array_index_max = RNA_property_array_length(&ptr, prop);
 
     /* For single properties, increase max_index so that the property itself gets included,
@@ -793,7 +768,7 @@ int clear_keyframe(Main *bmain,
   int key_count = 0;
   /* Will only loop once unless the array index was -1. */
   for (; array_index < array_index_max; array_index++) {
-    FCurve *fcu = action_fcurve_find(act, {rna_path, array_index});
+    FCurve *fcu = action_fcurve_find(act, {rna_path.path, array_index});
 
     if (fcu == nullptr) {
       continue;
@@ -877,7 +852,8 @@ struct KeyInsertData {
   int array_index;
 };
 
-static SingleKeyingResult insert_key_layer(Layer &layer,
+static SingleKeyingResult insert_key_layer(Main *bmain,
+                                           Layer &layer,
                                            const Slot &slot,
                                            const std::string &rna_path,
                                            const std::optional<PropertySubType> prop_subtype,
@@ -889,14 +865,16 @@ static SingleKeyingResult insert_key_layer(Layer &layer,
   BLI_assert(layer.strips().size() == 1);
 
   Strip *strip = layer.strip(0);
-  return strip->as<KeyframeStrip>().keyframe_insert(slot,
+  return strip->as<KeyframeStrip>().keyframe_insert(bmain,
+                                                    slot,
                                                     {rna_path, key_data.array_index, prop_subtype},
                                                     key_data.position,
                                                     key_settings,
                                                     insert_key_flags);
 }
 
-static CombinedKeyingResult insert_key_layered_action(Action &action,
+static CombinedKeyingResult insert_key_layered_action(Main *bmain,
+                                                      Action &action,
                                                       PointerRNA *rna_pointer,
                                                       const blender::Span<RNAPath> rna_paths,
                                                       const float scene_frame,
@@ -913,9 +891,7 @@ static CombinedKeyingResult insert_key_layered_action(Action &action,
       "The conditions that would cause this Slot assigment to fail (such as the ID not being "
       "animatible) should have been caught and handled by higher-level functions.");
 
-  /* Ensure that at least one layer exists. If not, create the default layer
-   * with the default infinite keyframe strip. */
-  action.layer_ensure_at_least_one();
+  action.layer_keystrip_ensure();
 
   /* TODO: we currently assume this will always successfully find a layer.
    * However, that may not be true in the future when we implement features like
@@ -955,7 +931,8 @@ static CombinedKeyingResult insert_key_layered_action(Action &action,
       }
 
       const KeyInsertData key_data = {{scene_frame, rna_values[property_index]}, property_index};
-      const SingleKeyingResult result = insert_key_layer(*layer,
+      const SingleKeyingResult result = insert_key_layer(bmain,
+                                                         *layer,
                                                          slot,
                                                          *rna_path_id_to_prop,
                                                          prop_subtype,
@@ -992,14 +969,23 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
     return combined_result;
   }
 
-  bAction *action = id_action_ensure(bmain, id);
-  BLI_assert(action != nullptr);
+  if ((adt->action == nullptr) && (insert_key_flags & INSERTKEY_AVAILABLE)) {
+    combined_result.add(SingleKeyingResult::CANNOT_CREATE_FCURVE, rna_paths.size());
+    return combined_result;
+  }
 
-  if (USER_EXPERIMENTAL_TEST(&U, use_animation_baklava) && action->wrap().is_action_layered()) {
+  bAction *dna_action = id_action_ensure(bmain, id);
+  BLI_assert(dna_action != nullptr);
+
+  Action &action = dna_action->wrap();
+  if (!action.is_action_legacy() ||
+      (action.is_empty() && USER_EXPERIMENTAL_TEST(&U, use_animation_baklava)))
+  {
     KeyframeSettings key_settings = get_keyframe_settings(
         (insert_key_flags & INSERTKEY_NO_USERPREF) == 0);
     key_settings.keyframe_type = key_type;
-    return insert_key_layered_action(action->wrap(),
+    return insert_key_layered_action(bmain,
+                                     action,
                                      struct_pointer,
                                      rna_paths,
                                      scene_frame.value_or(anim_eval_context.eval_time),
@@ -1014,7 +1000,7 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
                                          &anim_eval_context,
                                          &id_pointer,
                                          adt,
-                                         action,
+                                         dna_action,
                                          &nla_cache,
                                          &nla_context);
   const bool visual_keyframing = insert_key_flags & INSERTKEY_MATRIX;
@@ -1065,7 +1051,7 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
       /* Determine if at least one element would succeed getting keyed. */
       bool at_least_one_would_succeed = false;
       for (int i = 0; i < rna_values.size(); i++) {
-        const FCurve *fcu = action_fcurve_find(action, {*rna_path_id_to_prop, i});
+        const FCurve *fcu = action_fcurve_find(dna_action, {*rna_path_id_to_prop, i});
         if (!fcu) {
           continue;
         }
@@ -1095,7 +1081,7 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
     }
 
     const CombinedKeyingResult result = insert_key_legacy_action(bmain,
-                                                                 action,
+                                                                 dna_action,
                                                                  struct_pointer,
                                                                  prop,
                                                                  channel_group,
@@ -1111,14 +1097,14 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
   BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
 
   if (combined_result.get_count(SingleKeyingResult::SUCCESS) > 0) {
-    DEG_id_tag_update(&action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+    DEG_id_tag_update(&dna_action->id, ID_RECALC_ANIMATION_NO_FLUSH);
 
     /* TODO: it's not entirely clear why the action we got wouldn't be the same
      * as the action in AnimData. Further, it's not clear why it would need to
      * be tagged for a depsgraph update regardless. This code is here because it
      * was part of the function this one was refactored from, but at some point
      * this should be investigated and either documented or removed. */
-    if (!ELEM(adt->action, nullptr, action)) {
+    if (!ELEM(adt->action, nullptr, dna_action)) {
       DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
     }
   }

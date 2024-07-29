@@ -156,6 +156,11 @@ void DNA_sdna_free(SDNA *sdna)
   MEM_freeN(sdna);
 }
 
+int DNA_struct_size(const SDNA *sdna, int struct_index)
+{
+  return sdna->types_size[sdna->structs[struct_index]->type];
+}
+
 /**
  * Return true if the name indicates a pointer of some kind.
  */
@@ -502,7 +507,7 @@ static bool init_structDNA(SDNA *sdna, bool do_endian_swap, const char **r_error
     }
 
     /* finally pointer_size: use struct #ListBase to test it, never change the size of it! */
-    SDNA_Struct *struct_info = sdna->structs[nr];
+    const SDNA_Struct *struct_info = sdna->structs[nr];
     /* Weird; I have no memory of that... I think I used `sizeof(void *)` before... (ton). */
 
     sdna->pointer_size = sdna->types_size[struct_info->type] / 2;
@@ -647,8 +652,8 @@ static void set_compare_flags_for_struct(const SDNA *oldsdna,
 
   /* Compare each member individually. */
   for (int member_index = 0; member_index < old_struct->members_len; member_index++) {
-    SDNA_StructMember *old_member = &old_struct->members[member_index];
-    SDNA_StructMember *new_member = &new_struct->members[member_index];
+    const SDNA_StructMember *old_member = &old_struct->members[member_index];
+    const SDNA_StructMember *new_member = &new_struct->members[member_index];
 
     const char *old_type_name = oldsdna->types[old_member->type];
     const char *new_type_name = newsdna->types[new_member->type];
@@ -1266,7 +1271,8 @@ static void reconstruct_structs(const DNA_ReconstructInfo *reconstruct_info,
 void *DNA_struct_reconstruct(const DNA_ReconstructInfo *reconstruct_info,
                              int old_struct_nr,
                              int blocks,
-                             const void *old_blocks)
+                             const void *old_blocks,
+                             const char *alloc_name)
 {
   const SDNA *oldsdna = reconstruct_info->oldsdna;
   const SDNA *newsdna = reconstruct_info->newsdna;
@@ -1284,7 +1290,7 @@ void *DNA_struct_reconstruct(const DNA_ReconstructInfo *reconstruct_info,
 
   const int alignment = DNA_struct_alignment(newsdna, new_struct_nr);
   char *new_blocks = static_cast<char *>(
-      MEM_calloc_arrayN_aligned(new_block_size, blocks, alignment, "reconstruct"));
+      MEM_calloc_arrayN_aligned(new_block_size, blocks, alignment, alloc_name));
   reconstruct_structs(reconstruct_info,
                       blocks,
                       old_struct_nr,
@@ -1719,6 +1725,13 @@ int DNA_elem_type_size(const eSDNA_Type elem_nr)
 int DNA_struct_alignment(const SDNA *sdna, const int struct_nr)
 {
   return sdna->types_alignment[struct_nr];
+}
+
+const char *DNA_struct_identifier(struct SDNA *sdna, const int struct_index)
+{
+  DNA_sdna_alias_data_ensure(sdna);
+  SDNA_Struct *struct_info = sdna->structs[struct_index];
+  return sdna->alias.types[struct_info->type];
 }
 
 /* -------------------------------------------------------------------- */

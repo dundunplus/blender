@@ -76,7 +76,7 @@ using blender::Vector;
 
 /* prototypes. */
 static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p);
-static void ui_def_but_rna__panel_type(bContext * /*C*/, uiLayout *layout, void *but_p);
+static void ui_def_but_rna__panel_type(bContext * /*C*/, uiLayout *layout, void *arg);
 static void ui_def_but_rna__menu_type(bContext * /*C*/, uiLayout *layout, void *but_p);
 
 /* avoid unneeded calls to ui_but_value_get */
@@ -2044,8 +2044,8 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   /* scale fonts */
   ui_fontscale(&style.paneltitle.points, block->aspect);
   ui_fontscale(&style.grouplabel.points, block->aspect);
-  ui_fontscale(&style.widgetlabel.points, block->aspect);
   ui_fontscale(&style.widget.points, block->aspect);
+  ui_fontscale(&style.tooltip.points, block->aspect);
 
   /* scale block min/max to rect */
   rcti rect;
@@ -4268,7 +4268,7 @@ static void ui_def_but_rna__menu(bContext *C, uiLayout *layout, void *but_p)
   const int max_rows = (win->sizey - (4 * row_height)) / row_height;
   float text_width = 0.0f;
 
-  BLF_size(BLF_default(), UI_style_get()->widgetlabel.points * UI_SCALE_FAC);
+  BLF_size(BLF_default(), UI_style_get()->widget.points * UI_SCALE_FAC);
   int col_rows = 0;
   float col_width = 0.0f;
 
@@ -5635,15 +5635,15 @@ uiBut *uiDefIconTextButO(uiBlock *block,
 void UI_but_operator_set(uiBut *but,
                          wmOperatorType *optype,
                          wmOperatorCallContext opcontext,
-                         const PointerRNA *op_props)
+                         const PointerRNA *opptr)
 {
   but->optype = optype;
   but->opcontext = opcontext;
   but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
 
   MEM_SAFE_FREE(but->opptr);
-  if (op_props) {
-    but->opptr = MEM_cnew<PointerRNA>(__func__, *op_props);
+  if (opptr) {
+    but->opptr = MEM_cnew<PointerRNA>(__func__, *opptr);
   }
 }
 
@@ -6660,8 +6660,8 @@ void UI_update_text_styles()
   const int weight = BLF_default_weight(0);
   style->paneltitle.character_weight = weight;
   style->grouplabel.character_weight = weight;
-  style->widgetlabel.character_weight = weight;
   style->widget.character_weight = weight;
+  style->tooltip.character_weight = weight;
 }
 
 void UI_exit()

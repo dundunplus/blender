@@ -78,7 +78,7 @@ static void cloth_brush_simulation_location_get(const SculptSession &ss,
   copy_v3_v3(r_location, ss.cache->location);
 }
 
-Vector<PBVHNode *> brush_affected_nodes_gather(SculptSession &ss, const Brush &brush)
+Vector<bke::pbvh::Node *> brush_affected_nodes_gather(SculptSession &ss, const Brush &brush)
 {
   BLI_assert(ss.cache);
   BLI_assert(brush.sculpt_tool == SCULPT_TOOL_CLOTH);
@@ -87,7 +87,7 @@ Vector<PBVHNode *> brush_affected_nodes_gather(SculptSession &ss, const Brush &b
     case BRUSH_CLOTH_SIMULATION_AREA_LOCAL: {
       const float radius_squared = math::square(ss.cache->initial_radius *
                                                 (1.0 + brush.cloth_sim_limit));
-      return bke::pbvh::search_gather(*ss.pbvh, [&](PBVHNode &node) {
+      return bke::pbvh::search_gather(*ss.pbvh, [&](bke::pbvh::Node &node) {
         return node_in_sphere(node, ss.cache->initial_location, radius_squared, false);
       });
     }
@@ -95,7 +95,7 @@ Vector<PBVHNode *> brush_affected_nodes_gather(SculptSession &ss, const Brush &b
       return bke::pbvh::search_gather(*ss.pbvh, {});
     case BRUSH_CLOTH_SIMULATION_AREA_DYNAMIC: {
       const float radius_squared = math::square(ss.cache->radius * (1.0 + brush.cloth_sim_limit));
-      return bke::pbvh::search_gather(*ss.pbvh, [&](PBVHNode &node) {
+      return bke::pbvh::search_gather(*ss.pbvh, [&](bke::pbvh::Node &node) {
         return node_in_sphere(node, ss.cache->location, radius_squared, false);
       });
     }
@@ -276,7 +276,7 @@ static void do_cloth_brush_build_constraints_task(Object &ob,
                                                   SimulationData &cloth_sim,
                                                   float *cloth_sim_initial_location,
                                                   float cloth_sim_radius,
-                                                  PBVHNode *node)
+                                                  bke::pbvh::Node *node)
 {
   SculptSession &ss = *ob.sculpt;
 
@@ -410,7 +410,7 @@ static void do_cloth_brush_apply_forces_task(Object &ob,
                                              const float *grab_delta,
                                              float (*imat)[4],
                                              float *area_co,
-                                             PBVHNode *node)
+                                             bke::pbvh::Node *node)
 {
   SculptSession &ss = *ob.sculpt;
   SimulationData &cloth_sim = *ss.cache->cloth_sim;
@@ -698,7 +698,7 @@ static void do_cloth_brush_solve_simulation_task(Object &ob,
                                                  const Brush *brush,
                                                  SimulationData &cloth_sim,
                                                  const float time_step,
-                                                 PBVHNode *node)
+                                                 bke::pbvh::Node *node)
 {
   SculptSession &ss = *ob.sculpt;
 
@@ -765,15 +765,15 @@ static float get_vert_mask(const SculptSession &ss,
                            const SimulationData &cloth_sim,
                            const int vert_index)
 {
-  switch (BKE_pbvh_type(*ss.pbvh)) {
-    case PBVH_FACES:
+  switch (ss.pbvh->type()) {
+    case bke::pbvh::Type::Mesh:
       return cloth_sim.mask_mesh.is_empty() ? 0.0f : cloth_sim.mask_mesh[vert_index];
-    case PBVH_BMESH:
+    case bke::pbvh::Type::BMesh:
       return cloth_sim.mask_cd_offset_bmesh == -1 ?
                  0.0f :
-                 BM_ELEM_CD_GET_FLOAT(BM_vert_at_index(BKE_pbvh_get_bmesh(*ss.pbvh), vert_index),
+                 BM_ELEM_CD_GET_FLOAT(BM_vert_at_index(ss.bm, vert_index),
                                       cloth_sim.mask_cd_offset_bmesh);
-    case PBVH_GRIDS:
+    case bke::pbvh::Type::Grids:
       return SCULPT_mask_get_at_grids_vert_index(*ss.subdiv_ccg, cloth_sim.grid_key, vert_index);
   }
   BLI_assert_unreachable();
@@ -887,7 +887,7 @@ static void cloth_brush_satisfy_constraints(SculptSession &ss,
 void do_simulation_step(const Sculpt &sd,
                         Object &ob,
                         SimulationData &cloth_sim,
-                        Span<PBVHNode *> nodes)
+                        Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *ob.sculpt;
   const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
@@ -903,7 +903,9 @@ void do_simulation_step(const Sculpt &sd,
   });
 }
 
-static void cloth_brush_apply_brush_foces(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
+static void cloth_brush_apply_brush_foces(const Sculpt &sd,
+                                          Object &ob,
+                                          Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *ob.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
@@ -975,7 +977,7 @@ static void cloth_brush_apply_brush_foces(const Sculpt &sd, Object &ob, Span<PBV
  * them. */
 static void cloth_sim_initialize_default_node_state(SculptSession &ss, SimulationData &cloth_sim)
 {
-  Vector<PBVHNode *> nodes = bke::pbvh::search_gather(*ss.pbvh, {});
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(*ss.pbvh, {});
 
   cloth_sim.node_state = Array<NodeSimState>(nodes.size());
   cloth_sim.node_state_index = BLI_ghash_ptr_new("node sim state indices");
@@ -1025,18 +1027,18 @@ std::unique_ptr<SimulationData> brush_simulation_create(Object &ob,
 
   cloth_sim_initialize_default_node_state(ss, *cloth_sim);
 
-  switch (BKE_pbvh_type(*ss.pbvh)) {
-    case PBVH_FACES: {
+  switch (ss.pbvh->type()) {
+    case bke::pbvh::Type::Mesh: {
       const Mesh *mesh = static_cast<const Mesh *>(ob.data);
       const bke::AttributeAccessor attributes = mesh->attributes();
       cloth_sim->mask_mesh = *attributes.lookup<float>(".sculpt_mask", bke::AttrDomain::Point);
       break;
     }
-    case PBVH_BMESH:
+    case bke::pbvh::Type::BMesh:
       cloth_sim->mask_cd_offset_bmesh = CustomData_get_offset_named(
           &ss.bm->vdata, CD_PROP_FLOAT, ".sculpt_mask");
       break;
-    case PBVH_GRIDS:
+    case bke::pbvh::Type::Grids:
       cloth_sim->grid_key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
       break;
   }
@@ -1046,7 +1048,7 @@ std::unique_ptr<SimulationData> brush_simulation_create(Object &ob,
 
 void ensure_nodes_constraints(const Sculpt &sd,
                               Object &ob,
-                              Span<PBVHNode *> nodes,
+                              Span<bke::pbvh::Node *> nodes,
                               SimulationData &cloth_sim,
                               /* Cannot be `const`, because it is assigned to a `non-const`
                                * variable. NOLINTNEXTLINE: readability-non-const-parameter. */
@@ -1102,10 +1104,10 @@ void brush_store_simulation_state(const SculptSession &ss, SimulationData &cloth
   }
 }
 
-void sim_activate_nodes(SimulationData &cloth_sim, Span<PBVHNode *> nodes)
+void sim_activate_nodes(SimulationData &cloth_sim, Span<bke::pbvh::Node *> nodes)
 {
   /* Activate the nodes inside the simulation area. */
-  for (PBVHNode *node : nodes) {
+  for (bke::pbvh::Node *node : nodes) {
     const int node_index = POINTER_AS_INT(BLI_ghash_lookup(cloth_sim.node_state_index, node));
     cloth_sim.node_state[node_index] = SCULPT_CLOTH_NODE_ACTIVE;
   }
@@ -1113,7 +1115,7 @@ void sim_activate_nodes(SimulationData &cloth_sim, Span<PBVHNode *> nodes)
 
 static void sculpt_cloth_ensure_constraints_in_simulation_area(const Sculpt &sd,
                                                                Object &ob,
-                                                               Span<PBVHNode *> nodes)
+                                                               Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *ob.sculpt;
   const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
@@ -1124,7 +1126,7 @@ static void sculpt_cloth_ensure_constraints_in_simulation_area(const Sculpt &sd,
   ensure_nodes_constraints(sd, ob, nodes, *ss.cache->cloth_sim, sim_location, limit);
 }
 
-void do_cloth_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
+void do_cloth_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *ob.sculpt;
   const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
@@ -1253,20 +1255,24 @@ void plane_falloff_preview_draw(const uint gpuattr,
 
 /* Cloth Filter. */
 
-enum eSculptClothFilterType {
-  CLOTH_FILTER_GRAVITY,
-  CLOTH_FILTER_INFLATE,
-  CLOTH_FILTER_EXPAND,
-  CLOTH_FILTER_PINCH,
-  CLOTH_FILTER_SCALE,
+enum class ClothFilterType {
+  Gravity,
+  Inflate,
+  Expand,
+  Pinch,
+  Scale,
 };
 
 static EnumPropertyItem prop_cloth_filter_type[] = {
-    {CLOTH_FILTER_GRAVITY, "GRAVITY", 0, "Gravity", "Applies gravity to the simulation"},
-    {CLOTH_FILTER_INFLATE, "INFLATE", 0, "Inflate", "Inflates the cloth"},
-    {CLOTH_FILTER_EXPAND, "EXPAND", 0, "Expand", "Expands the cloth's dimensions"},
-    {CLOTH_FILTER_PINCH, "PINCH", 0, "Pinch", "Pulls the cloth to the cursor's start position"},
-    {CLOTH_FILTER_SCALE,
+    {int(ClothFilterType::Gravity), "GRAVITY", 0, "Gravity", "Applies gravity to the simulation"},
+    {int(ClothFilterType::Inflate), "INFLATE", 0, "Inflate", "Inflates the cloth"},
+    {int(ClothFilterType::Expand), "EXPAND", 0, "Expand", "Expands the cloth's dimensions"},
+    {int(ClothFilterType::Pinch),
+     "PINCH",
+     0,
+     "Pinch",
+     "Pulls the cloth to the cursor's start position"},
+    {int(ClothFilterType::Scale),
      "SCALE",
      0,
      "Scale",
@@ -1275,17 +1281,17 @@ static EnumPropertyItem prop_cloth_filter_type[] = {
 };
 
 static EnumPropertyItem prop_cloth_filter_orientation_items[] = {
-    {SCULPT_FILTER_ORIENTATION_LOCAL,
+    {int(filter::FilterOrientation::Local),
      "LOCAL",
      0,
      "Local",
      "Use the local axis to limit the force and set the gravity direction"},
-    {SCULPT_FILTER_ORIENTATION_WORLD,
+    {int(filter::FilterOrientation::World),
      "WORLD",
      0,
      "World",
      "Use the global axis to limit the force and set the gravity direction"},
-    {SCULPT_FILTER_ORIENTATION_VIEW,
+    {int(filter::FilterOrientation::View),
      "VIEW",
      0,
      "View",
@@ -1306,40 +1312,34 @@ static EnumPropertyItem prop_cloth_filter_force_axis_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static bool cloth_filter_is_deformation_filter(eSculptClothFilterType filter_type)
+static bool cloth_filter_is_deformation_filter(ClothFilterType filter_type)
 {
-  return ELEM(filter_type, CLOTH_FILTER_SCALE);
+  return ELEM(filter_type, ClothFilterType::Scale);
 }
 
 static void cloth_filter_apply_displacement_to_deform_co(const int v_index,
-                                                         const float disp[3],
+                                                         const float3 &disp,
                                                          filter::Cache &filter_cache)
 {
-  float final_disp[3];
-  copy_v3_v3(final_disp, disp);
-  filter::zero_disabled_axis_components(final_disp, filter_cache);
-  add_v3_v3v3(filter_cache.cloth_sim->deformation_pos[v_index],
-              filter_cache.cloth_sim->init_pos[v_index],
-              final_disp);
+  float3 final_disp = filter::zero_disabled_axis_components(filter_cache, disp);
+  filter_cache.cloth_sim->deformation_pos[v_index] = filter_cache.cloth_sim->init_pos[v_index] +
+                                                     final_disp;
 }
 
 static void cloth_filter_apply_forces_to_vertices(const int v_index,
-                                                  const float force[3],
-                                                  const float gravity[3],
+                                                  const float3 &force,
+                                                  const float3 &gravity,
                                                   filter::Cache &filter_cache)
 {
-  float final_force[3];
-  copy_v3_v3(final_force, force);
-  filter::zero_disabled_axis_components(final_force, filter_cache);
-  add_v3_v3(final_force, gravity);
+  const float3 final_force = filter::zero_disabled_axis_components(filter_cache, force) + gravity;
   cloth_brush_apply_force_to_vertex(*filter_cache.cloth_sim, final_force, v_index);
 }
 
 static void cloth_filter_apply_forces_task(Object &ob,
                                            const Sculpt &sd,
-                                           const eSculptClothFilterType filter_type,
+                                           const ClothFilterType filter_type,
                                            const float filter_strength,
-                                           PBVHNode *node)
+                                           bke::pbvh::Node *node)
 {
   SculptSession &ss = *ob.sculpt;
 
@@ -1347,9 +1347,9 @@ static void cloth_filter_apply_forces_task(Object &ob,
 
   const bool is_deformation_filter = cloth_filter_is_deformation_filter(filter_type);
 
-  float sculpt_gravity[3] = {0.0f};
+  float3 sculpt_gravity(0.0f);
   if (sd.gravity_object) {
-    copy_v3_v3(sculpt_gravity, sd.gravity_object->object_to_world().ptr()[2]);
+    sculpt_gravity = sd.gravity_object->object_to_world().ptr()[2];
   }
   else {
     sculpt_gravity[2] = -1.0f;
@@ -1366,8 +1366,8 @@ static void cloth_filter_apply_forces_task(Object &ob,
     fade *= auto_mask::factor_get(
         ss.filter_cache->automasking.get(), ss, vd.vertex, &automask_data);
     fade = 1.0f - fade;
-    float force[3] = {0.0f, 0.0f, 0.0f};
-    float disp[3], temp[3], transform[3][3];
+    float3 force(0.0f);
+    float3 disp, temp;
 
     if (ss.filter_cache->active_face_set != SCULPT_FACE_SET_NONE) {
       if (!face_set::vert_has_face_set(ss, vd.vertex, ss.filter_cache->active_face_set)) {
@@ -1376,8 +1376,8 @@ static void cloth_filter_apply_forces_task(Object &ob,
     }
 
     switch (filter_type) {
-      case CLOTH_FILTER_GRAVITY:
-        if (ss.filter_cache->orientation == SCULPT_FILTER_ORIENTATION_VIEW) {
+      case ClothFilterType::Gravity:
+        if (ss.filter_cache->orientation == filter::FilterOrientation::View) {
           /* When using the view orientation apply gravity in the -Y axis, this way objects will
            * fall down instead of backwards. */
           force[1] = -filter_strength * fade;
@@ -1385,29 +1385,28 @@ static void cloth_filter_apply_forces_task(Object &ob,
         else {
           force[2] = -filter_strength * fade;
         }
-        filter::to_object_space(force, *ss.filter_cache);
+        force = filter::to_object_space(*ss.filter_cache, force);
         break;
-      case CLOTH_FILTER_INFLATE: {
+      case ClothFilterType::Inflate: {
         float3 normal = SCULPT_vertex_normal_get(ss, vd.vertex);
-        mul_v3_v3fl(force, normal, fade * filter_strength);
+        force = normal * fade * filter_strength;
         break;
       }
-      case CLOTH_FILTER_EXPAND:
+      case ClothFilterType::Expand:
         cloth_sim.length_constraint_tweak[vd.index] += fade * filter_strength * 0.01f;
-        zero_v3(force);
+        force = float3(0);
         break;
-      case CLOTH_FILTER_PINCH:
-        sub_v3_v3v3(force, ss.filter_cache->cloth_sim_pinch_point, vd.co);
-        normalize_v3(force);
-        mul_v3_fl(force, fade * filter_strength);
+      case ClothFilterType::Pinch:
+        force = math::normalize(ss.filter_cache->cloth_sim_pinch_point - float3(vd.co));
+        force *= fade * filter_strength;
         break;
-      case CLOTH_FILTER_SCALE:
-        unit_m3(transform);
-        scale_m3_fl(transform, 1.0f + (fade * filter_strength));
-        copy_v3_v3(temp, cloth_sim.init_pos[vd.index]);
-        mul_m3_v3(transform, temp);
-        sub_v3_v3v3(disp, temp, cloth_sim.init_pos[vd.index]);
-        zero_v3(force);
+      case ClothFilterType::Scale:
+        float3x3 transform = float3x3::identity();
+        scale_m3_fl(transform.ptr(), 1.0f + (fade * filter_strength));
+        temp = cloth_sim.init_pos[vd.index];
+        temp = transform * temp;
+        disp = temp - cloth_sim.init_pos[vd.index];
+        force = float3(0);
 
         break;
     }
@@ -1463,7 +1462,7 @@ static int sculpt_cloth_filter_modal(bContext *C, wmOperator *op, const wmEvent 
   threading::parallel_for(ss.filter_cache->nodes.index_range(), 1, [&](const IndexRange range) {
     for (const int i : range) {
       cloth_filter_apply_forces_task(
-          ob, sd, eSculptClothFilterType(filter_type), filter_strength, ss.filter_cache->nodes[i]);
+          ob, sd, ClothFilterType(filter_type), filter_strength, ss.filter_cache->nodes[i]);
     }
   });
 
@@ -1473,7 +1472,7 @@ static int sculpt_cloth_filter_modal(bContext *C, wmOperator *op, const wmEvent 
   /* Update and write the simulation to the nodes. */
   do_simulation_step(sd, ob, *ss.filter_cache->cloth_sim, ss.filter_cache->nodes);
 
-  for (PBVHNode *node : ss.filter_cache->nodes) {
+  for (bke::pbvh::Node *node : ss.filter_cache->nodes) {
     BKE_pbvh_node_mark_positions_update(node);
   }
 
@@ -1497,7 +1496,7 @@ static int sculpt_cloth_filter_invoke(bContext *C, wmOperator *op, const wmEvent
     return OPERATOR_CANCELLED;
   }
 
-  const eSculptClothFilterType filter_type = eSculptClothFilterType(RNA_enum_get(op->ptr, "type"));
+  const ClothFilterType filter_type = ClothFilterType(RNA_enum_get(op->ptr, "type"));
 
   /* Update the active vertex */
   float mval_fl[2] = {float(event->mval[0]), float(event->mval[1])};
@@ -1558,7 +1557,7 @@ static int sculpt_cloth_filter_invoke(bContext *C, wmOperator *op, const wmEvent
   ss.filter_cache->enabled_force_axis[1] = force_axis & CLOTH_FILTER_FORCE_Y;
   ss.filter_cache->enabled_force_axis[2] = force_axis & CLOTH_FILTER_FORCE_Z;
 
-  SculptFilterOrientation orientation = SculptFilterOrientation(
+  filter::FilterOrientation orientation = filter::FilterOrientation(
       RNA_enum_get(op->ptr, "orientation"));
   ss.filter_cache->orientation = orientation;
 
@@ -1583,7 +1582,7 @@ void SCULPT_OT_cloth_filter(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna,
                           "type",
                           prop_cloth_filter_type,
-                          CLOTH_FILTER_GRAVITY,
+                          int(ClothFilterType::Gravity),
                           "Filter Type",
                           "Operation that is going to be applied to the mesh");
   RNA_def_property_translation_context(ot->prop, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
@@ -1596,7 +1595,7 @@ void SCULPT_OT_cloth_filter(wmOperatorType *ot)
   RNA_def_enum(ot->srna,
                "orientation",
                prop_cloth_filter_orientation_items,
-               SCULPT_FILTER_ORIENTATION_LOCAL,
+               int(filter::FilterOrientation::Local),
                "Orientation",
                "Orientation of the axis to limit the filter force");
   RNA_def_float(ot->srna,

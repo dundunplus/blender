@@ -60,7 +60,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
                                                const Brush &brush,
                                                const Span<float3> positions_eval,
                                                const Span<float3> vert_normals,
-                                               const PBVHNode &node,
+                                               const bke::pbvh::Node &node,
                                                const float strength,
                                                Object &object,
                                                LocalData &tls,
@@ -73,7 +73,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(mesh, verts, factors);
   filter_region_clip_factors(ss, positions_eval, verts, factors);
@@ -81,7 +81,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
     calc_front_face(cache.view_normal, vert_normals, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(
       ss, positions_eval, verts, eBrushFalloffShape(brush.falloff_shape), distances);
@@ -97,7 +97,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
 
   calc_brush_texture_factors(ss, brush, positions_eval, verts, factors);
 
-  tls.translations.reinitialize(verts.size());
+  tls.translations.resize(verts.size());
   const MutableSpan<float3> translations = tls.translations;
   translations_from_new_positions(new_positions, verts, positions_eval, translations);
   scale_translations(translations, factors);
@@ -108,7 +108,7 @@ BLI_NOINLINE static void apply_positions_faces(const Sculpt &sd,
 BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
                                               const Brush &brush,
                                               Object &object,
-                                              Span<PBVHNode *> nodes,
+                                              Span<bke::pbvh::Node *> nodes,
                                               const float brush_strength)
 {
   const SculptSession &ss = *object.sculpt;
@@ -118,7 +118,7 @@ BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
 
-  const PBVH &pbvh = *ss.pbvh;
+  const bke::pbvh::Tree &pbvh = *ss.pbvh;
 
   const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
   const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(pbvh);
@@ -132,13 +132,13 @@ BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
 
   /* Calculate the new positions into a separate array in a separate loop because multiple loops
    * are updated in parallel. Without this there would be non-threadsafe access to changing
-   * positions in other PBVH nodes. */
+   * positions in other bke::pbvh::Tree nodes. */
   for (const float strength : iteration_strengths(brush_strength)) {
     threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
       LocalData &tls = all_tls.local();
       for (const int i : range) {
         const Span<int> verts = bke::pbvh::node_unique_verts(*nodes[i]);
-        tls.vert_neighbors.reinitialize(verts.size());
+        tls.vert_neighbors.resize(verts.size());
         calc_vert_neighbors_interior(faces,
                                      corner_verts,
                                      ss.vert_to_face_map,
@@ -146,7 +146,7 @@ BLI_NOINLINE static void do_smooth_brush_mesh(const Sculpt &sd,
                                      hide_poly,
                                      verts,
                                      tls.vert_neighbors);
-        smooth::neighbor_position_average_mesh(
+        smooth::neighbor_data_average_mesh_check_loose(
             positions_eval,
             verts,
             tls.vert_neighbors,
@@ -179,7 +179,7 @@ static void calc_grids(const Sculpt &sd,
                        Object &object,
                        const Brush &brush,
                        const float strength,
-                       const PBVHNode &node,
+                       const bke::pbvh::Node &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
@@ -189,7 +189,7 @@ static void calc_grids(const Sculpt &sd,
   const Span<int> grids = bke::pbvh::node_grid_indices(node);
   const MutableSpan positions = gather_grids_positions(subdiv_ccg, grids, tls.positions);
 
-  tls.factors.reinitialize(positions.size());
+  tls.factors.resize(positions.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -197,7 +197,7 @@ static void calc_grids(const Sculpt &sd,
     calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
   }
 
-  tls.distances.reinitialize(positions.size());
+  tls.distances.resize(positions.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -212,12 +212,12 @@ static void calc_grids(const Sculpt &sd,
 
   calc_brush_texture_factors(ss, brush, positions, factors);
 
-  tls.new_positions.reinitialize(positions.size());
+  tls.new_positions.resize(positions.size());
   const MutableSpan<float3> new_positions = tls.new_positions;
   smooth::neighbor_position_average_interior_grids(
       faces, corner_verts, boundary_verts, subdiv_ccg, grids, new_positions);
 
-  tls.translations.reinitialize(positions.size());
+  tls.translations.resize(positions.size());
   const MutableSpan<float3> translations = tls.translations;
   translations_from_new_positions(new_positions, positions, translations);
   scale_translations(translations, factors);
@@ -230,7 +230,7 @@ static void calc_bmesh(const Sculpt &sd,
                        Object &object,
                        const Brush &brush,
                        const float strength,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls)
 {
   SculptSession &ss = *object.sculpt;
@@ -239,7 +239,7 @@ static void calc_bmesh(const Sculpt &sd,
   const Set<BMVert *, 0> &verts = BKE_pbvh_bmesh_node_unique_verts(&node);
   const MutableSpan positions = gather_bmesh_positions(verts, tls.positions);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(*ss.bm, verts, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -247,7 +247,7 @@ static void calc_bmesh(const Sculpt &sd,
     calc_front_face(cache.view_normal, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -262,11 +262,11 @@ static void calc_bmesh(const Sculpt &sd,
 
   calc_brush_texture_factors(ss, brush, positions, factors);
 
-  tls.new_positions.reinitialize(verts.size());
+  tls.new_positions.resize(verts.size());
   const MutableSpan<float3> new_positions = tls.new_positions;
   smooth::neighbor_position_average_interior_bmesh(verts, new_positions);
 
-  tls.translations.reinitialize(verts.size());
+  tls.translations.resize(verts.size());
   const MutableSpan<float3> translations = tls.translations;
   translations_from_new_positions(new_positions, positions, translations);
   scale_translations(translations, factors);
@@ -279,19 +279,19 @@ static void calc_bmesh(const Sculpt &sd,
 
 void do_smooth_brush(const Sculpt &sd,
                      Object &object,
-                     const Span<PBVHNode *> nodes,
+                     const Span<bke::pbvh::Node *> nodes,
                      const float brush_strength)
 {
   SculptSession &ss = *object.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
-  SCULPT_boundary_info_ensure(object);
+  boundary::ensure_boundary_info(object);
 
-  switch (BKE_pbvh_type(*object.sculpt->pbvh)) {
-    case PBVH_FACES:
+  switch (object.sculpt->pbvh->type()) {
+    case bke::pbvh::Type::Mesh:
       do_smooth_brush_mesh(sd, brush, object, nodes, brush_strength);
       break;
-    case PBVH_GRIDS: {
+    case bke::pbvh::Type::Grids: {
       const Mesh &base_mesh = *static_cast<const Mesh *>(object.data);
       const OffsetIndices faces = base_mesh.faces();
       const Span<int> corner_verts = base_mesh.corner_verts();
@@ -315,7 +315,7 @@ void do_smooth_brush(const Sculpt &sd,
       }
       break;
     }
-    case PBVH_BMESH: {
+    case bke::pbvh::Type::BMesh: {
       BM_mesh_elem_index_ensure(ss.bm, BM_VERT);
       BM_mesh_elem_table_ensure(ss.bm, BM_VERT);
       threading::EnumerableThreadSpecific<LocalData> all_tls;

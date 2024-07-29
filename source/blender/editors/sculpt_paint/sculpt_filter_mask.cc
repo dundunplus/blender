@@ -36,21 +36,11 @@ enum class FilterType {
   ContrastDecrease = 6,
 };
 
-static EnumPropertyItem prop_mask_filter_types[] = {
-    {int(FilterType::Smooth), "SMOOTH", 0, "Smooth Mask", ""},
-    {int(FilterType::Sharpen), "SHARPEN", 0, "Sharpen Mask", ""},
-    {int(FilterType::Grow), "GROW", 0, "Grow Mask", ""},
-    {int(FilterType::Shrink), "SHRINK", 0, "Shrink Mask", ""},
-    {int(FilterType::ContrastIncrease), "CONTRAST_INCREASE", 0, "Increase Contrast", ""},
-    {int(FilterType::ContrastDecrease), "CONTRAST_DECREASE", 0, "Decrease Contrast", ""},
-    {0, nullptr, 0, nullptr, nullptr},
-};
-
 static void mask_filter_task(SculptSession &ss,
                              const FilterType mode,
                              const Span<float> prev_mask,
                              const SculptMaskWriteInfo mask_write,
-                             PBVHNode *node)
+                             bke::pbvh::Node *node)
 {
   bool update = false;
 
@@ -131,7 +121,7 @@ static void mask_filter_task(SculptSession &ss,
     }
     mask = clamp_f(mask, 0.0f, 1.0f);
     if (mask != vd.mask) {
-      SCULPT_mask_vert_set(BKE_pbvh_type(*ss.pbvh), mask_write, mask, vd);
+      SCULPT_mask_vert_set(ss.pbvh->type(), mask_write, mask, vd);
       update = true;
     }
   }
@@ -161,18 +151,15 @@ static int sculpt_mask_filter_exec(bContext *C, wmOperator *op)
   BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
 
   SculptSession &ss = *ob.sculpt;
-  PBVH &pbvh = *ob.sculpt->pbvh;
+  bke::pbvh::Tree &pbvh = *ob.sculpt->pbvh;
 
   SCULPT_vertex_random_access_ensure(ss);
 
   int num_verts = SCULPT_vertex_count_get(ss);
 
-  Vector<PBVHNode *> nodes = bke::pbvh::search_gather(pbvh, {});
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(pbvh, {});
   undo::push_begin(ob, op);
-
-  for (PBVHNode *node : nodes) {
-    undo::push_node(ob, node, undo::Type::Mask);
-  }
+  undo::push_nodes(ob, nodes, undo::Type::Mask);
 
   Array<float> prev_mask;
   int iterations = RNA_int_get(op->ptr, "iterations");
@@ -217,9 +204,19 @@ void SCULPT_OT_mask_filter(wmOperatorType *ot)
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
+  static EnumPropertyItem type_items[] = {
+      {int(FilterType::Smooth), "SMOOTH", 0, "Smooth Mask", ""},
+      {int(FilterType::Sharpen), "SHARPEN", 0, "Sharpen Mask", ""},
+      {int(FilterType::Grow), "GROW", 0, "Grow Mask", ""},
+      {int(FilterType::Shrink), "SHRINK", 0, "Shrink Mask", ""},
+      {int(FilterType::ContrastIncrease), "CONTRAST_INCREASE", 0, "Increase Contrast", ""},
+      {int(FilterType::ContrastDecrease), "CONTRAST_DECREASE", 0, "Decrease Contrast", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   RNA_def_enum(ot->srna,
                "filter_type",
-               prop_mask_filter_types,
+               type_items,
                int(FilterType::Smooth),
                "Type",
                "Filter that is going to be applied to the mask");

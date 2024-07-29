@@ -16,7 +16,6 @@
 #include "BKE_subdiv_ccg.hh"
 
 #include "BLI_array.hh"
-#include "BLI_array_utils.hh"
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_math_vector.h"
 #include "BLI_math_vector.hh"
@@ -123,7 +122,7 @@ static void calc_faces(const Sculpt &sd,
                        const Span<float3> persistent_base_positions,
                        const Span<float3> persistent_base_normals,
                        Object &object,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls,
                        MutableSpan<float> layer_displacement_factor,
                        MutableSpan<float3> positions_orig)
@@ -133,9 +132,9 @@ static void calc_faces(const Sculpt &sd,
   const Mesh &mesh = *static_cast<Mesh *>(object.data);
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
-  const MutableSpan positions = gather_mesh_positions(positions_eval, verts, tls.positions);
+  const MutableSpan positions = gather_data_mesh(positions_eval, verts, tls.positions);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(mesh, verts, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -143,7 +142,7 @@ static void calc_faces(const Sculpt &sd,
     calc_front_face(cache.view_normal, vert_normals, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -160,14 +159,14 @@ static void calc_faces(const Sculpt &sd,
     tls.masks.clear();
   }
   else {
-    tls.masks.reinitialize(verts.size());
-    array_utils::gather(mask_attribute, verts, tls.masks.as_mutable_span());
+    tls.masks.resize(verts.size());
+    gather_data_mesh(mask_attribute, verts, tls.masks.as_mutable_span());
   }
   const MutableSpan<float> masks = tls.masks;
 
-  tls.displacement_factors.reinitialize(verts.size());
+  tls.displacement_factors.resize(verts.size());
   const MutableSpan<float> displacement_factors = tls.displacement_factors;
-  array_utils::gather(layer_displacement_factor.as_span(), verts, displacement_factors);
+  gather_data_mesh(layer_displacement_factor.as_span(), verts, displacement_factors);
 
   if (use_persistent_base) {
     if (cache.invert) {
@@ -178,9 +177,9 @@ static void calc_faces(const Sculpt &sd,
     }
     clamp_displacement_factors(displacement_factors, masks);
 
-    array_utils::scatter(displacement_factors.as_span(), verts, layer_displacement_factor);
+    scatter_data_mesh(displacement_factors.as_span(), verts, layer_displacement_factor);
 
-    tls.translations.reinitialize(verts.size());
+    tls.translations.resize(verts.size());
     const MutableSpan<float3> translations = tls.translations;
     calc_translations(persistent_base_positions,
                       persistent_base_normals,
@@ -197,11 +196,11 @@ static void calc_faces(const Sculpt &sd,
     offset_displacement_factors(displacement_factors, factors, cache.bstrength);
     clamp_displacement_factors(displacement_factors, masks);
 
-    array_utils::scatter(displacement_factors.as_span(), verts, layer_displacement_factor);
+    scatter_data_mesh(displacement_factors.as_span(), verts, layer_displacement_factor);
 
     const OrigPositionData orig_data = orig_position_data_get_mesh(object, node);
 
-    tls.translations.reinitialize(verts.size());
+    tls.translations.resize(verts.size());
     const MutableSpan<float3> translations = tls.translations;
     calc_translations(orig_data.positions,
                       orig_data.normals,
@@ -218,7 +217,7 @@ static void calc_faces(const Sculpt &sd,
 static void calc_grids(const Sculpt &sd,
                        const Brush &brush,
                        Object &object,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls,
                        MutableSpan<float> layer_displacement_factor)
 {
@@ -230,7 +229,7 @@ static void calc_grids(const Sculpt &sd,
   const Span<int> grids = bke::pbvh::node_grid_indices(node);
   const MutableSpan positions = gather_grids_positions(subdiv_ccg, grids, tls.positions);
 
-  tls.factors.reinitialize(positions.size());
+  tls.factors.resize(positions.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(subdiv_ccg, grids, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -238,7 +237,7 @@ static void calc_grids(const Sculpt &sd,
     calc_front_face(cache.view_normal, subdiv_ccg, grids, factors);
   }
 
-  tls.distances.reinitialize(positions.size());
+  tls.distances.resize(positions.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -251,13 +250,13 @@ static void calc_grids(const Sculpt &sd,
 
   calc_brush_texture_factors(ss, brush, positions, factors);
 
-  tls.displacement_factors.reinitialize(positions.size());
+  tls.displacement_factors.resize(positions.size());
   const MutableSpan<float> displacement_factors = tls.displacement_factors;
   gather_data_grids(subdiv_ccg, layer_displacement_factor.as_span(), grids, displacement_factors);
 
   offset_displacement_factors(displacement_factors, factors, cache.bstrength);
   if (key.has_mask) {
-    tls.masks.reinitialize(positions.size());
+    tls.masks.resize(positions.size());
     mask::gather_mask_grids(subdiv_ccg, grids, tls.masks);
   }
   else {
@@ -269,7 +268,7 @@ static void calc_grids(const Sculpt &sd,
 
   const OrigPositionData orig_data = orig_position_data_get_grids(object, node);
 
-  tls.translations.reinitialize(positions.size());
+  tls.translations.resize(positions.size());
   const MutableSpan<float3> translations = tls.translations;
   calc_translations(orig_data.positions,
                     orig_data.normals,
@@ -286,7 +285,7 @@ static void calc_grids(const Sculpt &sd,
 static void calc_bmesh(const Sculpt &sd,
                        const Brush &brush,
                        Object &object,
-                       PBVHNode &node,
+                       bke::pbvh::Node &node,
                        LocalData &tls,
                        MutableSpan<float> layer_displacement_factor)
 {
@@ -297,7 +296,7 @@ static void calc_bmesh(const Sculpt &sd,
 
   const MutableSpan positions = gather_bmesh_positions(verts, tls.positions);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(*ss.bm, verts, factors);
   filter_region_clip_factors(ss, positions, factors);
@@ -305,7 +304,7 @@ static void calc_bmesh(const Sculpt &sd,
     calc_front_face(cache.view_normal, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(ss, positions, eBrushFalloffShape(brush.falloff_shape), distances);
   filter_distances_with_radius(cache.radius, distances, factors);
@@ -318,13 +317,13 @@ static void calc_bmesh(const Sculpt &sd,
 
   calc_brush_texture_factors(ss, brush, positions, factors);
 
-  tls.displacement_factors.reinitialize(verts.size());
+  tls.displacement_factors.resize(verts.size());
   const MutableSpan<float> displacement_factors = tls.displacement_factors;
   gather_data_vert_bmesh(layer_displacement_factor.as_span(), verts, displacement_factors);
 
   offset_displacement_factors(displacement_factors, factors, cache.bstrength);
 
-  tls.masks.reinitialize(verts.size());
+  tls.masks.resize(verts.size());
   const MutableSpan<float> masks = tls.masks;
   mask::gather_mask_bmesh(*ss.bm, verts, masks);
   clamp_displacement_factors(displacement_factors, masks);
@@ -335,7 +334,7 @@ static void calc_bmesh(const Sculpt &sd,
   Array<float3> orig_normals(verts.size());
   orig_position_data_gather_bmesh(*ss.bm_log, verts, orig_positions, orig_normals);
 
-  tls.translations.reinitialize(verts.size());
+  tls.translations.resize(verts.size());
   const MutableSpan<float3> translations = tls.translations;
   calc_translations(orig_positions,
                     orig_normals,
@@ -351,16 +350,16 @@ static void calc_bmesh(const Sculpt &sd,
 
 }  // namespace layer_cc
 
-void do_layer_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
+void do_layer_brush(const Sculpt &sd, Object &object, Span<bke::pbvh::Node *> nodes)
 {
   SculptSession &ss = *object.sculpt;
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
 
   threading::EnumerableThreadSpecific<LocalData> all_tls;
-  switch (BKE_pbvh_type(*object.sculpt->pbvh)) {
-    case PBVH_FACES: {
+  switch (object.sculpt->pbvh->type()) {
+    case bke::pbvh::Type::Mesh: {
       Mesh &mesh = *static_cast<Mesh *>(object.data);
-      const PBVH &pbvh = *ss.pbvh;
+      const bke::pbvh::Tree &pbvh = *ss.pbvh;
       const Span<float3> positions_eval = BKE_pbvh_get_vert_positions(pbvh);
       const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(pbvh);
       const MutableSpan<float3> positions_orig = mesh.vert_positions_for_write();
@@ -392,28 +391,26 @@ void do_layer_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
 
       threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
         LocalData &tls = all_tls.local();
-        threading::isolate_task([&]() {
-          for (const int i : range) {
-            calc_faces(sd,
-                       brush,
-                       positions_eval,
-                       vert_normals,
-                       masks,
-                       use_persistent_base,
-                       persistent_position,
-                       persistent_normal,
-                       object,
-                       *nodes[i],
-                       tls,
-                       displacement,
-                       positions_orig);
-          }
-        });
+        for (const int i : range) {
+          calc_faces(sd,
+                     brush,
+                     positions_eval,
+                     vert_normals,
+                     masks,
+                     use_persistent_base,
+                     persistent_position,
+                     persistent_normal,
+                     object,
+                     *nodes[i],
+                     tls,
+                     displacement,
+                     positions_orig);
+        }
       });
       persistent_disp_attr.finish();
       break;
     }
-    case PBVH_GRIDS: {
+    case bke::pbvh::Type::Grids: {
       if (ss.cache->layer_displacement_factor.is_empty()) {
         ss.cache->layer_displacement_factor = Array<float>(SCULPT_vertex_count_get(ss), 0.0f);
       }
@@ -426,7 +423,7 @@ void do_layer_brush(const Sculpt &sd, Object &object, Span<PBVHNode *> nodes)
       });
       break;
     }
-    case PBVH_BMESH: {
+    case bke::pbvh::Type::BMesh: {
       if (ss.cache->layer_displacement_factor.is_empty()) {
         ss.cache->layer_displacement_factor = Array<float>(SCULPT_vertex_count_get(ss), 0.0f);
       }

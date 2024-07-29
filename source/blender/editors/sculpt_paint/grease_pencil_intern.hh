@@ -4,10 +4,20 @@
 
 #pragma once
 
+#include "BLI_color.hh"
+#include "BLI_task.hh"
+
 #include "DNA_scene_types.h"
+
 #include "ED_grease_pencil.hh"
 
+#include "IMB_imbuf_types.hh"
+
 #include "paint_intern.hh"
+
+#ifdef WITH_POTRACE
+#  include "potracelib.h"
+#endif
 
 namespace blender::bke::greasepencil {
 class Drawing;
@@ -124,7 +134,7 @@ class GreasePencilStrokeOperationCommon : public GreasePencilStrokeOperation {
 };
 
 std::unique_ptr<GreasePencilStrokeOperation> new_paint_operation();
-std::unique_ptr<GreasePencilStrokeOperation> new_erase_operation();
+std::unique_ptr<GreasePencilStrokeOperation> new_erase_operation(bool temp_eraser);
 std::unique_ptr<GreasePencilStrokeOperation> new_tint_operation();
 std::unique_ptr<GreasePencilStrokeOperation> new_weight_paint_draw_operation(
     const BrushStrokeMode &brush_mode);

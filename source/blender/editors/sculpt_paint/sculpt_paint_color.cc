@@ -247,30 +247,12 @@ bke::GSpanAttributeWriter active_color_attribute_for_write(Mesh &mesh)
 
 struct LocalData {
   Vector<float> factors;
+  Vector<float> auto_mask;
   Vector<float> distances;
   Vector<float4> colors;
   Vector<float4> new_colors;
   Vector<Vector<int>> vert_neighbors;
 };
-
-BLI_NOINLINE static void calc_smooth_colors(const OffsetIndices<int> faces,
-                                            const Span<int> corner_verts,
-                                            const GroupedSpan<int> vert_to_face_map,
-                                            const Span<Vector<int>> vert_neighbors,
-                                            const GSpan colors,
-                                            const bke::AttrDomain color_domain,
-                                            const MutableSpan<float4> smooth_colors)
-{
-  for (const int i : vert_neighbors.index_range()) {
-    float4 sum(0);
-    const Span<int> neighbors = vert_neighbors[i];
-    for (const int vert : neighbors) {
-      sum += color::color_vert_get(
-          faces, corner_verts, vert_to_face_map, colors, color_domain, vert);
-    }
-    smooth_colors[i] = sum / neighbors.size();
-  }
-}
 
 static void do_color_smooth_task(const Object &object,
                                  const Span<float3> vert_positions,
@@ -280,7 +262,7 @@ static void do_color_smooth_task(const Object &object,
                                  const GroupedSpan<int> vert_to_face_map,
                                  const Span<bool> hide_poly,
                                  const Brush &brush,
-                                 const PBVHNode &node,
+                                 const bke::pbvh::Node &node,
                                  LocalData &tls,
                                  bke::GSpanAttributeWriter &color_attribute)
 {
@@ -290,7 +272,7 @@ static void do_color_smooth_task(const Object &object,
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(mesh, verts, factors);
   filter_region_clip_factors(ss, vert_positions, verts, factors);
@@ -298,7 +280,7 @@ static void do_color_smooth_task(const Object &object,
     calc_front_face(cache.view_normal, vert_normals, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(
       ss, vert_positions, verts, eBrushFalloffShape(brush.falloff_shape), distances);
@@ -313,7 +295,7 @@ static void do_color_smooth_task(const Object &object,
   calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
   scale_factors(factors, cache.bstrength);
 
-  tls.colors.reinitialize(verts.size());
+  tls.colors.resize(verts.size());
   MutableSpan<float4> colors = tls.colors;
   for (const int i : verts.index_range()) {
     colors[i] = color_vert_get(faces,
@@ -324,19 +306,19 @@ static void do_color_smooth_task(const Object &object,
                                verts[i]);
   }
 
-  tls.vert_neighbors.reinitialize(verts.size());
+  tls.vert_neighbors.resize(verts.size());
   calc_vert_neighbors(faces, corner_verts, vert_to_face_map, hide_poly, verts, tls.vert_neighbors);
   const Span<Vector<int>> vert_neighbors = tls.vert_neighbors;
 
-  tls.new_colors.reinitialize(verts.size());
+  tls.new_colors.resize(verts.size());
   MutableSpan<float4> new_colors = tls.new_colors;
-  calc_smooth_colors(faces,
-                     corner_verts,
-                     vert_to_face_map,
-                     vert_neighbors,
-                     color_attribute.span,
-                     color_attribute.domain,
-                     new_colors);
+  smooth::neighbor_color_average(faces,
+                                 corner_verts,
+                                 vert_to_face_map,
+                                 color_attribute.span,
+                                 color_attribute.domain,
+                                 vert_neighbors,
+                                 new_colors);
 
   for (const int i : colors.index_range()) {
     blend_color_interpolate_float(new_colors[i], colors[i], new_colors[i], factors[i]);
@@ -362,7 +344,7 @@ static void do_paint_brush_task(Object &object,
                                 const Brush &brush,
                                 const float4x4 &mat,
                                 const float4 wet_mix_sampled_color,
-                                PBVHNode &node,
+                                bke::pbvh::Node &node,
                                 LocalData &tls,
                                 bke::GSpanAttributeWriter &color_attribute)
 {
@@ -375,7 +357,7 @@ static void do_paint_brush_task(Object &object,
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(mesh, verts, factors);
   filter_region_clip_factors(ss, vert_positions, verts, factors);
@@ -383,7 +365,7 @@ static void do_paint_brush_task(Object &object,
     calc_front_face(cache.view_normal, vert_normals, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   if (brush.tip_roundness < 1.0f) {
     calc_brush_cube_distances(ss, brush, mat, vert_positions, verts, distances, factors);
@@ -397,8 +379,13 @@ static void do_paint_brush_task(Object &object,
   apply_hardness_to_distances(cache, distances);
   calc_brush_strength_factors(cache, brush, distances, factors);
 
+  MutableSpan<float> auto_mask;
   if (cache.automasking) {
-    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, factors);
+    tls.auto_mask.resize(verts.size());
+    auto_mask = tls.auto_mask;
+    auto_mask.fill(1.0f);
+    auto_mask::calc_vert_factors(object, *cache.automasking, node, verts, auto_mask);
+    scale_factors(factors, auto_mask);
   }
 
   calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
@@ -443,14 +430,18 @@ static void do_paint_brush_task(Object &object,
     }
   }
 
-  auto_mask::NodeData automask_data = auto_mask::node_begin(
-      object, ss.cache->automasking.get(), node);
+  tls.new_colors.resize(verts.size());
+  MutableSpan<float4> new_colors = tls.new_colors;
+  for (const int i : verts.index_range()) {
+    new_colors[i] = color_vert_get(faces,
+                                   corner_verts,
+                                   vert_to_face_map,
+                                   color_attribute.span,
+                                   color_attribute.domain,
+                                   verts[i]);
+  }
 
   for (const int i : verts.index_range()) {
-    const int vert = verts[i];
-
-    auto_mask::node_update(automask_data, i);
-
     /* Brush paint color, brush test falloff and flow. */
     float4 paint_color = brush_color * factors[i] * ss.cache->paint_brush.flow;
     float4 wet_mix_color = wet_mix_sampled_color * factors[i] * ss.cache->paint_brush.flow;
@@ -462,22 +453,20 @@ static void do_paint_brush_task(Object &object,
 
     /* Final mix over the original color using brush alpha. We apply auto-making again
      * at this point to avoid washing out non-binary masking modes like cavity masking. */
-    float automasking = auto_mask::factor_get(ss.cache->automasking.get(),
-                                              const_cast<SculptSession &>(ss),
-                                              PBVHVertRef{vert},
-                                              &automask_data);
+    float automasking = auto_mask.is_empty() ? 1.0f : auto_mask[i];
     const float4 buffer_color = float4(color_buffer->color[i]) * alpha * automasking;
 
-    float4 col = color_vert_get(
-        faces, corner_verts, vert_to_face_map, color_attribute.span, color_attribute.domain, vert);
-    IMB_blend_color_float(col, orig_colors[i], buffer_color, IMB_BlendMode(brush.blend));
-    col = math::clamp(col, 0.0f, 1.0f);
+    IMB_blend_color_float(new_colors[i], orig_colors[i], buffer_color, IMB_BlendMode(brush.blend));
+    new_colors[i] = math::clamp(new_colors[i], 0.0f, 1.0f);
+  }
+
+  for (const int i : verts.index_range()) {
     color_vert_set(faces,
                    corner_verts,
                    vert_to_face_map,
                    color_attribute.domain,
-                   vert,
-                   col,
+                   verts[i],
+                   new_colors[i],
                    color_attribute.span);
   }
 }
@@ -495,7 +484,7 @@ static void do_sample_wet_paint_task(const Object &object,
                                      const GSpan color_attribute,
                                      const bke::AttrDomain color_domain,
                                      const Brush &brush,
-                                     const PBVHNode &node,
+                                     const bke::pbvh::Node &node,
                                      LocalData &tls,
                                      SampleWetPaintData &swptd)
 {
@@ -505,12 +494,12 @@ static void do_sample_wet_paint_task(const Object &object,
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
 
   fill_factor_from_hide(mesh, verts, factors);
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(
       ss, vert_positions, verts, eBrushFalloffShape(brush.falloff_shape), distances);
@@ -528,8 +517,8 @@ static void do_sample_wet_paint_task(const Object &object,
 void do_paint_brush(PaintModeSettings &paint_mode_settings,
                     const Sculpt &sd,
                     Object &ob,
-                    Span<PBVHNode *> nodes,
-                    Span<PBVHNode *> texnodes)
+                    Span<bke::pbvh::Node *> nodes,
+                    Span<bke::pbvh::Node *> texnodes)
 {
   if (SCULPT_use_image_paint_brush(paint_mode_settings, ob)) {
     SCULPT_do_paint_brush_image(paint_mode_settings, sd, ob, texnodes);
@@ -672,8 +661,9 @@ static void do_smear_brush_task(Object &object,
                                 const OffsetIndices<int> faces,
                                 const Span<int> corner_verts,
                                 const GroupedSpan<int> vert_to_face_map,
+                                const Span<bool> hide_poly,
                                 const Brush &brush,
-                                PBVHNode &node,
+                                bke::pbvh::Node &node,
                                 LocalData &tls,
                                 bke::GSpanAttributeWriter &color_attribute)
 {
@@ -684,7 +674,7 @@ static void do_smear_brush_task(Object &object,
 
   const Span<int> verts = bke::pbvh::node_unique_verts(node);
 
-  tls.factors.reinitialize(verts.size());
+  tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;
   fill_factor_from_hide_and_mask(mesh, verts, factors);
   filter_region_clip_factors(ss, vert_positions, verts, factors);
@@ -692,7 +682,7 @@ static void do_smear_brush_task(Object &object,
     calc_front_face(cache.view_normal, vert_normals, verts, factors);
   }
 
-  tls.distances.reinitialize(verts.size());
+  tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   calc_brush_distances(
       ss, vert_positions, verts, eBrushFalloffShape(brush.falloff_shape), distances);
@@ -714,6 +704,9 @@ static void do_smear_brush_task(Object &object,
   else {
     brush_delta = ss.cache->location - ss.cache->last_location;
   }
+
+  Vector<int> neighbors;
+  Vector<int> neighbor_neighbors;
 
   for (const int i : verts.index_range()) {
     const int vert = verts[i];
@@ -752,23 +745,24 @@ static void do_smear_brush_task(Object &object,
      * costly.
      */
 
-    SculptVertexNeighborIter ni2;
-    SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, PBVHVertRef{vert}, ni2) {
-      const float3 &nco = vert_positions[ni2.index];
-
-      SculptVertexNeighborIter ni;
-      SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, ni2.vertex, ni) {
-        if (ni.index == vert) {
+    for (const int neigbor : vert_neighbors_get_mesh(
+             vert, faces, corner_verts, vert_to_face_map, hide_poly, neighbors))
+    {
+      const float3 &nco = vert_positions[neigbor];
+      for (const int neighbor_neighbor : vert_neighbors_get_mesh(
+               vert, faces, corner_verts, vert_to_face_map, hide_poly, neighbor_neighbors))
+      {
+        if (neighbor_neighbor == vert) {
           continue;
         }
 
-        float3 vertex_disp = vert_positions[ni.index] - vert_positions[vert];
+        float3 vertex_disp = vert_positions[neighbor_neighbor] - vert_positions[vert];
 
         /* Weight by how close we are to our target distance from vd.co. */
         float w = (1.0f + fabsf(math::length(vertex_disp) / strength - 1.0f));
 
         /* TODO: use cotangents (or at least face areas) here. */
-        float len = math::distance(vert_positions[ni.index], nco);
+        float len = math::distance(vert_positions[neighbor_neighbor], nco);
         if (len > 0.0f) {
           len = strength / len;
         }
@@ -790,7 +784,7 @@ static void do_smear_brush_task(Object &object,
           continue;
         }
 
-        const float4 &neighbor_color = ss.cache->prev_colors[ni.index];
+        const float4 &neighbor_color = ss.cache->prev_colors[neighbor_neighbor];
         float color_interp = -math::dot(current_disp_norm, vertex_disp_norm);
 
         /* Square directional weight to get a somewhat sharper result. */
@@ -799,9 +793,7 @@ static void do_smear_brush_task(Object &object,
         accum += neighbor_color * w;
         totw += w;
       }
-      SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
     }
-    SCULPT_VERTEX_NEIGHBORS_ITER_END(ni2);
 
     if (totw != 0.0f) {
       accum /= totw;
@@ -820,7 +812,7 @@ static void do_smear_brush_task(Object &object,
   }
 }
 
-void do_smear_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
+void do_smear_brush(const Sculpt &sd, Object &ob, Span<bke::pbvh::Node *> nodes)
 {
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
   SculptSession &ss = *ob.sculpt;
@@ -903,6 +895,7 @@ void do_smear_brush(const Sculpt &sd, Object &ob, Span<PBVHNode *> nodes)
                             faces,
                             corner_verts,
                             vert_to_face_map,
+                            hide_poly,
                             brush,
                             *nodes[i],
                             tls,

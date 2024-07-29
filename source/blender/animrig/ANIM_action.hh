@@ -121,10 +121,12 @@ class Action : public ::bAction {
   bool layer_remove(Layer &layer_to_remove);
 
   /**
-   * If the Action is empty, create a default layer with a single infinite
-   * keyframe strip.
+   * Ensure that there is at least one layer with the infinite keyframe strip.
+   *
+   * \note Within the limits of Project Baklava Phase 1, this means that there
+   * will be exactly one layer with one keyframe strip on it.
    */
-  void layer_ensure_at_least_one();
+  void layer_keystrip_ensure();
 
   /* Action Slot access. */
   blender::Span<const Slot *> slots() const;
@@ -675,7 +677,8 @@ class KeyframeStrip : public ::KeyframeActionStrip {
   /** Return the channelbag's index, or -1 if there is none for this slot handle. */
   int64_t find_channelbag_index(const ChannelBag &channelbag) const;
 
-  SingleKeyingResult keyframe_insert(const Slot &slot,
+  SingleKeyingResult keyframe_insert(Main *bmain,
+                                     const Slot &slot,
                                      FCurveDescriptor fcurve_descriptor,
                                      float2 time_value,
                                      const KeyframeSettings &settings,
@@ -713,15 +716,27 @@ class ChannelBag : public ::ActionChannelBag {
   /**
    * Find an FCurve matching the fcurve descriptor, or create one if it doesn't
    * exist.
+   *
+   * \param bmain: Used to tag the dependency graph(s) for relationship
+   * rebuilding. This is necessary when adding a new F-Curve, as a
+   * previously-unanimated depsgraph component may become animated now. Can be
+   * nullptr, in which case the tagging is skipped and is left as the
+   * responsibility of the caller.
    */
-  FCurve &fcurve_ensure(FCurveDescriptor fcurve_descriptor);
+  FCurve &fcurve_ensure(Main *bmain, FCurveDescriptor fcurve_descriptor);
 
   /**
    * Create an F-Curve, but only if it doesn't exist yet in this ChannelBag.
    *
    * \return the F-Curve it it was created, or nullptr if it already existed.
+   *
+   * \param bmain: Used to tag the dependency graph(s) for relationship
+   * rebuilding. This is necessary when adding a new F-Curve, as a
+   * previously-unanimated depsgraph component may become animated now. Can be
+   * nullptr, in which case the tagging is skipped and is left as the
+   * responsibility of the caller.
    */
-  FCurve *fcurve_create_unique(FCurveDescriptor fcurve_descriptor);
+  FCurve *fcurve_create_unique(Main *bmain, FCurveDescriptor fcurve_descriptor);
 
   /**
    * Remove an F-Curve from the ChannelBag.
@@ -742,9 +757,16 @@ class ChannelBag : public ::ActionChannelBag {
   /**
    * Create an F-Curve.
    *
-   * Assumes that there is no such F-Curve yet on this ChannelBag.
+   * Assumes that there is no such F-Curve yet on this ChannelBag. If it is
+   * uncertain whether this is the case, use `fcurve_create_unique()` instead.
+   *
+   * \param bmain: Used to tag the dependency graph(s) for relationship
+   * rebuilding. This is necessary when adding a new F-Curve, as a
+   * previously-unanimated depsgraph component may become animated now. Can be
+   * nullptr, in which case the tagging is skipped and is left as the
+   * responsibility of the caller.
    */
-  FCurve &fcurve_create(FCurveDescriptor fcurve_descriptor);
+  FCurve &fcurve_create(Main *bmain, FCurveDescriptor fcurve_descriptor);
 };
 static_assert(sizeof(ChannelBag) == sizeof(::ActionChannelBag),
               "DNA struct and its C++ wrapper must have the same size");
@@ -830,7 +852,7 @@ Span<const FCurve *> fcurves_for_action_slot(const Action &action, slot_handle_t
  *
  * This is a utility function whose purpose is unclear after multi-layer Actions are introduced.
  * It might still be useful, it might not be.
-
+ *
  * The use of this function is an indicator for code that might have to be altered when
  * multi-layered Actions are getting implemented.
  */
@@ -847,6 +869,10 @@ Vector<FCurve *> fcurves_all(Action &action);
  * `owner_id` that already uses `act`. Otherwise this function will return
  * nullptr for layered actions. See the comments in the implementation for more
  * details.
+ *
+ * \note This function also ensures that dependency graph relationships are
+ * rebuilt. This is necessary when adding a new F-Curve, as a
+ * previously-unanimated depsgraph component may become animated now.
  *
  * \param ptr: RNA pointer for the struct the fcurve is being looked up/created
  * for. For legacy actions this is optional and may be null.
@@ -949,7 +975,7 @@ void assert_baklava_phase_1_invariants(const Strip &strip);
  * Creates a new `Action` that matches the old action but is converted to have layers.
  * Returns a nullptr if the action is empty or already layered.
  */
-Action *convert_to_layered_action(Main &bmain, const Action &action);
+Action *convert_to_layered_action(Main &bmain, const Action &legacy_action);
 
 /**
  * Deselect the keys of all actions in the Span. Duplicate entries are only visited once.
