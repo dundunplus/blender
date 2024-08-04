@@ -430,7 +430,7 @@ struct WriteData {
      */
     bool critical_error;
     /**
-     * A set of all 'old' adresses used as uid of written blocks for the current ID. Allows
+     * A set of all 'old' addresses used as UID of written blocks for the current ID. Allows
      * detecting invalid re-uses of the same address multiple times.
      */
     blender::Set<const void *> per_id_addresses_set;
@@ -1492,7 +1492,7 @@ static bool write_file_handle(Main *mainvar,
    *
    * Note that we *borrow* the pointer to 'DNAstr',
    * so writing each time uses the same address and doesn't cause unnecessary undo overhead. */
-  writedata(wd, BLO_CODE_DNA1, size_t(wd->sdna->data_len), wd->sdna->data);
+  writedata(wd, BLO_CODE_DNA1, size_t(wd->sdna->data_size), wd->sdna->data);
 
   /* End of file. */
   memset(&bhead, 0, sizeof(BHead));

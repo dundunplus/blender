@@ -64,7 +64,7 @@ const EnumPropertyItem rna_enum_keying_flag_items[] = {
      0,
      "XYZ=RGB Colors (ignored)",
      "This flag is no longer in use, and is here so that code that uses it doesn't break. The "
-     "XYZ=RGB coloring is determined by the animation preferences"},
+     "XYZ=RGB coloring is determined by the animation preferences."},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -85,7 +85,7 @@ const EnumPropertyItem rna_enum_keying_flag_api_items[] = {
      0,
      "XYZ=RGB Colors (ignored)",
      "This flag is no longer in use, and is here so that code that uses it doesn't break. The "
-     "XYZ=RGB coloring is determined by the animation preferences"},
+     "XYZ=RGB coloring is determined by the animation preferences."},
     {INSERTKEY_REPLACE,
      "INSERTKEY_REPLACE",
      0,
@@ -922,6 +922,11 @@ static FCurve *rna_Driver_find(AnimData *adt,
   return BKE_fcurve_find(&adt->drivers, data_path, index);
 }
 
+std::optional<std::string> rna_AnimData_path(const PointerRNA * /*ptr*/)
+{
+  return std::string{"animation_data"};
+}
+
 bool rna_AnimaData_override_apply(Main *bmain, RNAPropertyOverrideApplyContext &rnaapply_ctx)
 {
   PointerRNA *ptr_dst = &rnaapply_ctx.ptr_dst;
@@ -1540,6 +1545,7 @@ static void rna_def_animdata(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "AnimData", nullptr);
   RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for data-block");
   RNA_def_struct_ui_icon(srna, ICON_ANIM_DATA);
+  RNA_def_struct_path_func(srna, "rna_AnimData_path");
 
   /* NLA */
   prop = RNA_def_property(srna, "nla_tracks", PROP_COLLECTION, PROP_NONE);
@@ -1654,7 +1660,7 @@ static void rna_def_animdata(BlenderRNA *brna)
       "Action Slot Name",
       "The name of the action slot. The slot identifies which sub-set of the Action "
       "is considered to be for this data-block, and its name is used to find the right slot "
-      "when assigning an Action");
+      "when assigning an Action.");
 
   prop = RNA_def_property(srna, "action_slot", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "ActionSlot");

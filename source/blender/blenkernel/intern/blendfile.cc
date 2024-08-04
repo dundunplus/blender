@@ -1038,14 +1038,14 @@ static void setup_app_data(bContext *C,
   if (mode == LOAD_UNDO) {
     /* It's possible to undo into a time before the scene existed, in this case the window's scene
      * will be null. Since it doesn't make sense to remove the window, set it to the current scene.
+     *
      * NOTE: Redo will restore the active scene to the window so a reasonably consistent state
-     * is maintained. We could do better by keeping a window/scene map for each undo step. */
-    wmWindowManager *wm = static_cast<wmWindowManager *>(bfd->main->wm.first);
-    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-      if (win->scene == nullptr) {
-        win->scene = curscene;
-      }
-    }
+     * is maintained. We could do better by keeping a window/scene map for each undo step.
+     *
+     * Another source of potential inconsistency is undoing into a step where the active camera
+     * object does not exist (see e.g. #125636).
+     */
+    wm_data_consistency_ensure(CTX_wm_manager(C), curscene, cur_view_layer);
   }
 
   BLI_assert(BKE_main_namemap_validate(bfd->main));
@@ -2132,129 +2132,5 @@ bool PartialWriteContext::write(const char *write_filepath, ReportList &reports)
 }
 
 }  // namespace blender::bke::blendfile
-
-static void blendfile_write_partial_clear_flags(Main *bmain_src)
-{
-  ListBase *lbarray[INDEX_ID_MAX];
-  int a = set_listbasepointers(bmain_src, lbarray);
-  while (a--) {
-    LISTBASE_FOREACH (ID *, id, lbarray[a]) {
-      id->tag &= ~(LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT);
-      id->flag &= ~(LIB_CLIPBOARD_MARK);
-    }
-  }
-}
-
-void BKE_blendfile_write_partial_begin(Main *bmain_src)
-{
-  blendfile_write_partial_clear_flags(bmain_src);
-}
-
-void BKE_blendfile_write_partial_tag_ID(ID *id, bool set)
-{
-  if (set) {
-    id->tag |= LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT;
-    id->flag |= LIB_CLIPBOARD_MARK;
-  }
-  else {
-    id->tag &= ~(LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT);
-    id->flag &= ~LIB_CLIPBOARD_MARK;
-  }
-}
-
-static void blendfile_write_partial_cb(void * /*handle*/, Main * /*bmain*/, void *vid)
-{
-  if (vid) {
-    ID *id = static_cast<ID *>(vid);
-    /* only tag for need-expand if not done, prevents eternal loops */
-    if ((id->tag & LIB_TAG_DOIT) == 0) {
-      id->tag |= LIB_TAG_NEED_EXPAND | LIB_TAG_DOIT;
-    }
-
-    if (id->lib && (id->lib->id.tag & LIB_TAG_DOIT) == 0) {
-      id->lib->id.tag |= LIB_TAG_DOIT;
-    }
-  }
-}
-
-bool BKE_blendfile_write_partial(Main *bmain_src,
-                                 const char *filepath,
-                                 const int write_flags,
-                                 const int remap_mode,
-                                 ReportList *reports)
-{
-  Main *bmain_dst = MEM_cnew<Main>("copybuffer");
-  ListBase *lbarray_dst[INDEX_ID_MAX], *lbarray_src[INDEX_ID_MAX];
-  int a, retval;
-
-  void *path_list_backup = nullptr;
-  const eBPathForeachFlag path_list_flag = (BKE_BPATH_FOREACH_PATH_SKIP_LINKED |
-                                            BKE_BPATH_FOREACH_PATH_SKIP_MULTIFILE);
-
-  /* This is needed to be able to load that file as a real one later
-   * (otherwise `main->filepath` will not be set at read time). */
-  STRNCPY(bmain_dst->filepath, bmain_src->filepath);
-
-  BLO_expand_main(nullptr, bmain_src, blendfile_write_partial_cb);
-
-  /* move over all tagged blocks */
-  set_listbasepointers(bmain_src, lbarray_src);
-  a = set_listbasepointers(bmain_dst, lbarray_dst);
-  while (a--) {
-    ID *id, *nextid;
-    ListBase *lb_dst = lbarray_dst[a], *lb_src = lbarray_src[a];
-
-    for (id = static_cast<ID *>(lb_src->first); id; id = nextid) {
-      nextid = static_cast<ID *>(id->next);
-      if (id->tag & LIB_TAG_DOIT) {
-        BLI_remlink(lb_src, id);
-        BLI_addtail(lb_dst, id);
-      }
-    }
-  }
-
-  /* Backup paths because remap relative will overwrite them.
-   *
-   * NOTE: we do this only on the list of data-blocks that we are writing
-   * because the restored full list is not guaranteed to be in the same
-   * order as before, as expected by BKE_bpath_list_restore.
-   *
-   * This happens because id_sort_by_name does not take into account
-   * string case or the library name, so the order is not strictly
-   * defined for two linked data-blocks with the same name! */
-  if (remap_mode != BLO_WRITE_PATH_REMAP_NONE) {
-    path_list_backup = BKE_bpath_list_backup(bmain_dst, path_list_flag);
-  }
-
-  /* save the buffer */
-  BlendFileWriteParams blend_file_write_params{};
-  blend_file_write_params.remap_mode = eBLO_WritePathRemap(remap_mode);
-  retval = BLO_write_file(bmain_dst, filepath, write_flags, &blend_file_write_params, reports);
-
-  if (path_list_backup) {
-    BKE_bpath_list_restore(bmain_dst, path_list_flag, path_list_backup);
-    BKE_bpath_list_free(path_list_backup);
-  }
-
-  /* move back the main, now sorted again */
-  set_listbasepointers(bmain_src, lbarray_dst);
-  a = set_listbasepointers(bmain_dst, lbarray_src);
-  while (a--) {
-    ListBase *lb_dst = lbarray_dst[a], *lb_src = lbarray_src[a];
-    while (ID *id = static_cast<ID *>(BLI_pophead(lb_src))) {
-      BLI_addtail(lb_dst, id);
-      id_sort_by_name(lb_dst, id, nullptr);
-    }
-  }
-
-  MEM_freeN(bmain_dst);
-
-  return retval;
-}
-
-void BKE_blendfile_write_partial_end(Main *bmain_src)
-{
-  blendfile_write_partial_clear_flags(bmain_src);
-}
 
 /** \} */

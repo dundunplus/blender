@@ -539,7 +539,7 @@ void WM_window_title(wmWindowManager *wm, wmWindow *win, const char *title)
   }
 
   str += " - Blender ";
-  str += BKE_blender_version_string_compact();
+  str += BKE_blender_version_string();
 
   GHOST_SetTitle(handle, str.c_str());
 
@@ -1093,7 +1093,7 @@ wmWindow *WM_window_open(bContext *C,
   }
 
   /* Refresh screen dimensions, after the effective window size is known. */
-  ED_screen_refresh(wm, win);
+  ED_screen_refresh(C, wm, win);
 
   if (win->ghostwin) {
     wm_window_raise(win);

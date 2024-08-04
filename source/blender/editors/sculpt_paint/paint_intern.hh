@@ -29,6 +29,8 @@ struct bContext;
 struct BMesh;
 struct BMVert;
 struct Brush;
+struct CCGElem;
+struct CCGKey;
 struct ColorManagedDisplay;
 struct ColorSpace;
 struct Depsgraph;
@@ -450,36 +452,34 @@ bool mask_paint_poll(bContext *C);
 bool paint_curve_poll(bContext *C);
 
 bool facemask_paint_poll(bContext *C);
-/**
- * Uses symm to selectively flip any axis of a coordinate.
- */
 
-BLI_INLINE void flip_v3_v3(float out[3], const float in[3], const ePaintSymmetryFlags symm)
+namespace blender::ed::sculpt_paint {
+
+inline float3 symmetry_flip(const float3 &src, const ePaintSymmetryFlags symm)
 {
+  float3 dst;
   if (symm & PAINT_SYMM_X) {
-    out[0] = -in[0];
+    dst.x = -src.x;
   }
   else {
-    out[0] = in[0];
+    dst.x = src.x;
   }
   if (symm & PAINT_SYMM_Y) {
-    out[1] = -in[1];
+    dst.y = -src.y;
   }
   else {
-    out[1] = in[1];
+    dst.y = src.y;
   }
   if (symm & PAINT_SYMM_Z) {
-    out[2] = -in[2];
+    dst.z = -src.z;
   }
   else {
-    out[2] = in[2];
+    dst.z = src.z;
   }
+  return dst;
 }
 
-BLI_INLINE void flip_v3(float v[3], const ePaintSymmetryFlags symm)
-{
-  flip_v3_v3(v, v, symm);
-}
+}  // namespace blender::ed::sculpt_paint
 
 /* stroke operator */
 enum BrushStrokeMode {
@@ -531,7 +531,7 @@ void average_neighbor_mask_bmesh(int mask_offset,
 
 /** Write to the mask attribute for each node, storing undo data. */
 void write_mask_mesh(Object &object,
-                     const Span<bke::pbvh::Node *> nodes,
+                     Span<bke::pbvh::Node *> nodes,
                      FunctionRef<void(MutableSpan<float>, Span<int>)> write_fn);
 
 /**
@@ -539,8 +539,15 @@ void write_mask_mesh(Object &object,
  * if the data is actually changed.
  */
 void update_mask_mesh(Object &object,
-                      const Span<bke::pbvh::Node *> nodes,
+                      Span<bke::pbvh::Node *> nodes,
                       FunctionRef<void(MutableSpan<float>, Span<int>)> update_fn);
+
+/** Check whether array data is the same as the stored mask for the referenced geometry. */
+bool mask_equals_array_grids(Span<CCGElem *> elems,
+                             const CCGKey &key,
+                             Span<int> grids,
+                             Span<float> values);
+bool mask_equals_array_bmesh(int mask_offset, const Set<BMVert *, 0> &verts, Span<float> values);
 
 void PAINT_OT_mask_flood_fill(wmOperatorType *ot);
 void PAINT_OT_mask_lasso_gesture(wmOperatorType *ot);
