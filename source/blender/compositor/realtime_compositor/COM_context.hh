@@ -51,6 +51,9 @@ class Context {
   /* Get the node tree used for compositing. */
   virtual const bNodeTree &get_node_tree() const = 0;
 
+  /* True if the compositor should use GPU acceleration. */
+  virtual bool use_gpu() const = 0;
+
   /* True if the compositor should write file outputs, false otherwise. */
   virtual bool use_file_output() const = 0;
 
@@ -168,14 +171,6 @@ class Context {
 
   /* Create a result of the given type using the context's precision. */
   Result create_result(ResultType type);
-
-  /* Create a temporary result of the given type and precision; See Result::Temporary for more
-   * information. */
-  Result create_temporary_result(ResultType type, ResultPrecision precision);
-
-  /* Create a temporary result of the given type using the context's precision. See
-   * Result::Temporary for more information. */
-  Result create_temporary_result(ResultType type);
 
   /* Get a reference to the texture pool of this context. */
   TexturePool &texture_pool();
