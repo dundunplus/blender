@@ -318,6 +318,132 @@ class USDExportTest(AbstractUSDTest):
         self.assertEqual(UsdGeom.PrimvarsAPI(mesh2).GetPrimvar("test").GetTimeSamples(), [])
         self.assertEqual(UsdGeom.PrimvarsAPI(mesh3).GetPrimvar("test").GetTimeSamples(), sparse_frames)
 
+    def test_export_mesh_subd(self):
+        """Test exporting Subdivision Surface attributes and values"""
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_mesh_subd.blend"))
+        export_path = self.tempdir / "usd_mesh_subd.usda"
+        res = bpy.ops.wm.usd_export(
+            filepath=str(export_path),
+            export_subdivision='BEST_MATCH',
+            evaluation_mode="RENDER",
+        )
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {export_path}")
+
+        stage = Usd.Stage.Open(str(export_path))
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_none_boundary_smooth_all/mesh1"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'all')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_corners_boundary_smooth_all/mesh2"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'cornersOnly')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_corners_junctions_boundary_smooth_all/mesh3"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'cornersPlus1')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_corners_junctions_concave_boundary_smooth_all/mesh4"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'cornersPlus2')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_boundaries_boundary_smooth_all/mesh5"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'boundaries')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_all_boundary_smooth_all/mesh6"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'none')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/uv_smooth_boundaries_boundary_smooth_keep/mesh7"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'boundaries')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeAndCorner')
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/crease_verts/crease_verts"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'boundaries')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+        self.assertEqual(len(mesh.GetCornerIndicesAttr().Get()), 7)
+        usd_vert_sharpness = mesh.GetCornerSharpnessesAttr().Get()
+        self.assertEqual(len(usd_vert_sharpness), 7)
+        # A 1.0 crease is INFINITE (10) in USD
+        self.assertAlmostEqual(min(usd_vert_sharpness), 0.1, 5)
+        self.assertEqual(len([sharp for sharp in usd_vert_sharpness if sharp < 1]), 6)
+        self.assertEqual(len([sharp for sharp in usd_vert_sharpness if sharp == 10]), 1)
+
+        mesh = UsdGeom.Mesh(stage.GetPrimAtPath("/root/crease_edge/crease_edge"))
+        self.assertEqual(mesh.GetSubdivisionSchemeAttr().Get(), 'catmullClark')
+        self.assertEqual(mesh.GetFaceVaryingLinearInterpolationAttr().Get(), 'boundaries')
+        self.assertEqual(mesh.GetInterpolateBoundaryAttr().Get(), 'edgeOnly')
+        self.assertEqual(len(mesh.GetCreaseIndicesAttr().Get()), 20)
+        usd_crease_lengths = mesh.GetCreaseLengthsAttr().Get()
+        self.assertEqual(len(usd_crease_lengths), 10)
+        self.assertTrue(all([length == 2 for length in usd_crease_lengths]))
+        usd_crease_sharpness = mesh.GetCreaseSharpnessesAttr().Get()
+        self.assertEqual(len(usd_crease_sharpness), 10)
+        # A 1.0 crease is INFINITE (10) in USD
+        self.assertAlmostEqual(min(usd_crease_sharpness), 0.1, 5)
+        self.assertEqual(len([sharp for sharp in usd_crease_sharpness if sharp < 1]), 9)
+        self.assertEqual(len([sharp for sharp in usd_crease_sharpness if sharp == 10]), 1)
+
+    def test_export_mesh_triangulate(self):
+        """Test exporting with different triangulation options for meshes."""
+
+        # Use the current scene to create simple geometry to triangulate
+        bpy.ops.mesh.primitive_plane_add(size=1)
+        bpy.ops.mesh.primitive_circle_add(fill_type='NGON', radius=1, vertices=7)
+
+        # We assume that triangulation is thoroughly tested elsewhere. Here we are only interested
+        # in checking that USD passes its operator properties through correctly. We use a minimal
+        # combination of quad and ngon methods to test.
+        tri_export_path1 = self.tempdir / "usd_mesh_tri_setup1.usda"
+        res = bpy.ops.wm.usd_export(
+            filepath=str(tri_export_path1),
+            triangulate_meshes=True,
+            quad_method='FIXED',
+            ngon_method='BEAUTY',
+            evaluation_mode="RENDER",
+        )
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {tri_export_path1}")
+
+        tri_export_path2 = self.tempdir / "usd_mesh_tri_setup2.usda"
+        res = bpy.ops.wm.usd_export(
+            filepath=str(tri_export_path2),
+            triangulate_meshes=True,
+            quad_method='FIXED_ALTERNATE',
+            ngon_method='CLIP',
+            evaluation_mode="RENDER",
+        )
+        self.assertEqual({'FINISHED'}, res, f"Unable to export to {tri_export_path2}")
+
+        stage1 = Usd.Stage.Open(str(tri_export_path1))
+        stage2 = Usd.Stage.Open(str(tri_export_path2))
+
+        # The Plane should have different vertex ordering because of the quad methods chosen
+        plane1 = UsdGeom.Mesh(stage1.GetPrimAtPath("/root/Plane/Plane"))
+        plane2 = UsdGeom.Mesh(stage2.GetPrimAtPath("/root/Plane/Plane"))
+        indices1 = plane1.GetFaceVertexIndicesAttr().Get()
+        indices2 = plane2.GetFaceVertexIndicesAttr().Get()
+        self.assertEqual(len(indices1), 6)
+        self.assertEqual(len(indices2), 6)
+        self.assertNotEqual(indices1, indices2)
+
+        # The Circle should have different vertex ordering because of the ngon methods chosen
+        circle1 = UsdGeom.Mesh(stage1.GetPrimAtPath("/root/Circle/Circle"))
+        circle2 = UsdGeom.Mesh(stage2.GetPrimAtPath("/root/Circle/Circle"))
+        indices1 = circle1.GetFaceVertexIndicesAttr().Get()
+        indices2 = circle2.GetFaceVertexIndicesAttr().Get()
+        self.assertEqual(len(indices1), 15)
+        self.assertEqual(len(indices2), 15)
+        self.assertNotEqual(indices1, indices2)
+
     def test_animation(self):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_anim_test.blend"))
         export_path = self.tempdir / "usd_anim_test.usda"
