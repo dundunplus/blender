@@ -44,6 +44,7 @@ struct Mesh;
 struct SubdivCCG;
 struct Image;
 struct ImageUser;
+struct Object;
 namespace blender {
 namespace bke::pbvh {
 class Node;
@@ -231,8 +232,6 @@ BLI_INLINE BMesh *BKE_pbvh_get_bmesh(blender::bke::pbvh::Tree &pbvh)
   return pbvh.bm_;
 }
 
-Mesh *BKE_pbvh_get_mesh(blender::bke::pbvh::Tree &pbvh);
-
 BLI_INLINE PBVHVertRef BKE_pbvh_make_vref(intptr_t i)
 {
   PBVHVertRef ret = {i};
@@ -372,7 +371,7 @@ Bounds<float3> bounds_get(const Tree &pbvh);
 
 }  // namespace blender::bke::pbvh
 
-void BKE_pbvh_sync_visibility_from_verts(blender::bke::pbvh::Tree &pbvh, Mesh *mesh);
+void BKE_pbvh_sync_visibility_from_verts(Object &object);
 
 namespace blender::bke::pbvh {
 
@@ -500,7 +499,10 @@ namespace blender::bke::pbvh {
  * Recalculate node bounding boxes based on the current coordinates. Calculation is only done for
  * affected nodes with the #PBVH_UpdateBB flag set.
  */
-void update_bounds(Tree &pbvh);
+void update_bounds(const Object &object, Tree &pbvh);
+void update_bounds_mesh(Span<float3> vert_positions, Tree &pbvh);
+void update_bounds_grids(const CCGKey &key, Span<CCGElem *> elems, Tree &pbvh);
+void update_bounds_bmesh(const Object &object, Tree &pbvh);
 
 /**
  * Copy all current node bounds to the original bounds. "Original" bounds are typically from before
@@ -510,9 +512,10 @@ void update_bounds(Tree &pbvh);
  */
 void store_bounds_orig(Tree &pbvh);
 
-void update_mask(Tree &pbvh);
-void update_visibility(Tree &pbvh);
+void update_mask(const Object &object, Tree &pbvh);
+void update_visibility(const Object &object, Tree &pbvh);
 void update_normals(Tree &pbvh, SubdivCCG *subdiv_ccg);
+
 }  // namespace blender::bke::pbvh
 
 blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(blender::bke::pbvh::Tree &pbvh);
@@ -532,10 +535,6 @@ void BKE_pbvh_node_get_bm_orco_data(blender::bke::pbvh::Node *node,
                                     int *r_orco_tris_num,
                                     float (**r_orco_coords)[3],
                                     BMVert ***r_orco_verts);
-
-bool pbvh_has_mask(const blender::bke::pbvh::Tree &pbvh);
-
-bool pbvh_has_face_sets(blender::bke::pbvh::Tree &pbvh);
 
 blender::Span<blender::float3> BKE_pbvh_get_vert_positions(const blender::bke::pbvh::Tree &pbvh);
 blender::MutableSpan<blender::float3> BKE_pbvh_get_vert_positions(blender::bke::pbvh::Tree &pbvh);

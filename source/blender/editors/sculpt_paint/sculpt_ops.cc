@@ -779,7 +779,7 @@ static void sculpt_mask_by_color_contiguous(Object &object,
   flood_fill::FillData flood = flood_fill::init_fill(ss);
   flood_fill::add_initial(flood, vertex);
 
-  flood_fill::execute(ss, flood, [&](PBVHVertRef from_v, PBVHVertRef to_v, bool is_duplicate) {
+  flood_fill::execute(object, flood, [&](PBVHVertRef from_v, PBVHVertRef to_v, bool is_duplicate) {
     return sculpt_mask_by_color_contiguous_floodfill(
         ss, from_v, to_v, is_duplicate, colors, active_color, threshold, invert, new_mask);
   });
@@ -870,7 +870,7 @@ static int sculpt_mask_by_color_invoke(bContext *C, wmOperator *op, const wmEven
     sculpt_mask_by_color_full_mesh(ob, active_vertex, threshold, invert, preserve_mask);
   }
 
-  bke::pbvh::update_mask(*ss.pbvh);
+  bke::pbvh::update_mask(ob, *ss.pbvh);
   undo::push_end(ob);
 
   flush_update_done(C, ob, UpdateType::Mask);
@@ -1179,7 +1179,7 @@ static int sculpt_bake_cavity_exec(bContext *C, wmOperator *op)
           BKE_pbvh_node_mark_update_mask(nodes[i]);
         }
       });
-      bke::pbvh::update_mask(*ss.pbvh);
+      bke::pbvh::update_mask(ob, *ss.pbvh);
       break;
     }
     case bke::pbvh::Type::BMesh: {
@@ -1190,7 +1190,7 @@ static int sculpt_bake_cavity_exec(bContext *C, wmOperator *op)
           BKE_pbvh_node_mark_update_mask(nodes[i]);
         }
       });
-      bke::pbvh::update_mask(*ss.pbvh);
+      bke::pbvh::update_mask(ob, *ss.pbvh);
       break;
     }
   }

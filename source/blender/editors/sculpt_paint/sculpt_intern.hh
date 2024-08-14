@@ -872,7 +872,9 @@ const float *SCULPT_vertex_co_get(const SculptSession &ss, PBVHVertRef vertex);
 /** Get the normal for a given sculpt vertex; do not modify the result */
 const blender::float3 SCULPT_vertex_normal_get(const SculptSession &ss, PBVHVertRef vertex);
 
-bool SCULPT_vertex_is_occluded(SculptSession &ss, PBVHVertRef vertex, bool original);
+bool SCULPT_vertex_is_occluded(const Object &object,
+                               const blender::float3 &position,
+                               bool original);
 
 namespace blender::ed::sculpt_paint {
 
@@ -960,7 +962,6 @@ bool vert_is_boundary(Span<bool> hide_poly,
                       BitSpan boundary,
                       int vert);
 bool vert_is_boundary(const SubdivCCG &subdiv_ccg,
-                      Span<bool> hide_poly,
                       Span<int> corner_verts,
                       OffsetIndices<int> faces,
                       BitSpan boundary,
@@ -981,7 +982,7 @@ Span<int> node_visible_verts(const bke::pbvh::Node &node,
                              Span<bool> hide_vert,
                              Vector<int> &indices);
 
-bool vert_visible_get(const SculptSession &ss, PBVHVertRef vertex);
+bool vert_visible_get(const Object &object, PBVHVertRef vertex);
 
 /* Determines if all faces attached to a given vertex are visible. */
 bool vert_all_faces_visible_get(const SculptSession &ss, PBVHVertRef vertex);
@@ -990,8 +991,6 @@ bool vert_all_faces_visible_get(Span<bool> hide_poly,
                                 const SubdivCCG &subdiv_ccg,
                                 SubdivCCGCoord vert);
 bool vert_all_faces_visible_get(BMVert *vert);
-
-bool vert_any_face_visible_get(const SculptSession &ss, PBVHVertRef vertex);
 
 }
 
@@ -1061,25 +1060,6 @@ void filter_verts_with_unique_face_sets_bmesh(bool unique,
 }
 
 }
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Original Data API
- * \{ */
-
-/**
- * Initialize a #SculptOrigVertData for accessing original vertex data;
- * handles #BMesh, #Mesh, and multi-resolution.
- */
-SculptOrigVertData SCULPT_orig_vert_data_init(const Object &ob,
-                                              const blender::bke::pbvh::Node &node,
-                                              blender::ed::sculpt_paint::undo::Type type);
-/**
- * Update a #SculptOrigVertData for a particular vertex from the blender::bke::pbvh::Tree iterator.
- */
-void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, const BMVert &vert);
-void SCULPT_orig_vert_data_update(SculptOrigVertData &orig_data, int i);
 
 /** \} */
 
@@ -1277,7 +1257,7 @@ void add_initial(FillData &flood, PBVHVertRef vertex);
 void add_and_skip_initial(FillData &flood, PBVHVertRef vertex);
 void add_initial_with_symmetry(
     const Object &ob, const SculptSession &ss, FillData &flood, PBVHVertRef vertex, float radius);
-void execute(SculptSession &ss,
+void execute(Object &object,
              FillData &flood,
              FunctionRef<bool(PBVHVertRef from_v, PBVHVertRef to_v, bool is_duplicate)> func);
 
@@ -1393,27 +1373,6 @@ struct Cache {
   bool can_reuse_mask;
   uchar current_stroke_id;
 };
-
-struct NodeData {
-  std::optional<SculptOrigVertData> orig_data;
-};
-
-/**
- * Call before pbvh::Tree vertex iteration.
- */
-NodeData node_begin(const Object &object, const Cache *automasking, const bke::pbvh::Node &node);
-
-/* Call before factor_get. */
-void node_update(NodeData &automask_data, const BMVert &vert);
-/**
- * Call before factor_get. The index is in the range of the pbvh::Tree node's vertex indices.
- */
-void node_update(NodeData &automask_data, int i);
-
-float factor_get(const Cache *automasking,
-                 SculptSession &ss,
-                 PBVHVertRef vertex,
-                 const NodeData *automask_data);
 
 /* Returns the automasking cache depending on the active tool. Used for code that can run both for
  * brushes and filter. */
