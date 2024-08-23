@@ -1057,7 +1057,8 @@ def km_mask_editing(params):
         ("mask.select_circle", {"type": 'C', "value": 'PRESS'}, None),
         ("mask.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "ctrl": True, "alt": True},
          {"properties": [("mode", 'ADD')]}),
-        ("mask.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "shift": True, "ctrl": True, "alt": True},
+        ("mask.select_lasso",
+         {"type": params.action_mouse, "value": 'CLICK_DRAG', "shift": True, "ctrl": True, "alt": True},
          {"properties": [("mode", 'SUB')]}),
         ("mask.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("mask.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
@@ -2944,6 +2945,8 @@ def km_sequencer(params):
          {"properties": [("unselected", True)]}),
         ("sequencer.lock", {"type": 'H', "value": 'PRESS', "ctrl": True}, None),
         ("sequencer.unlock", {"type": 'H', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+        ("sequencer.connect", {"type": 'C', "value": 'PRESS', "ctrl": True, "alt": True},
+         {"properties": [("toggle", True)]}),
         ("sequencer.reassign_inputs", {"type": 'R', "value": 'PRESS'}, None),
         ("sequencer.reload", {"type": 'R', "value": 'PRESS', "alt": True}, None),
         ("sequencer.reload", {"type": 'R', "value": 'PRESS', "shift": True, "alt": True},
@@ -2997,6 +3000,10 @@ def km_sequencer(params):
             value=params.select_mouse_value_fallback,
             legacy=params.legacy,
         ),
+        ("sequencer.select", {"type": params.select_mouse, "value": 'PRESS', "alt": True},
+         {"properties": [("deselect_all", True), ("ignore_connections", True)]}),
+        ("sequencer.select", {"type": params.select_mouse, "value": 'PRESS', "alt": True, "shift": True},
+         {"properties": [("toggle", True), ("ignore_connections", True)]}),
         ("sequencer.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("sequencer.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("sequencer.select_linked_pick", {"type": 'L', "value": 'PRESS'}, None),
@@ -3009,6 +3016,8 @@ def km_sequencer(params):
          {"properties": [("tweak", True), ("mode", 'ADD')]}),
         ("sequencer.select_box", {"type": params.select_mouse, "value": 'CLICK_DRAG', "ctrl": True},
          {"properties": [("tweak", True), ("mode", 'SUB')]}),
+        ("sequencer.select_box", {"type": params.select_mouse, "value": 'CLICK_DRAG', "alt": True},
+         {"properties": [("tweak", True), ("ignore_connections", True), ("mode", 'SET')]}),
         ("sequencer.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("sequencer.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True},
          {"properties": [("include_handles", True)]}),
@@ -3022,6 +3031,8 @@ def km_sequencer(params):
         ("transform.seq_slide", {"type": 'G', "value": 'PRESS'},
          {"properties": [("view2d_edge_pan", True)]}),
         ("transform.seq_slide", {"type": params.select_mouse, "value": 'CLICK_DRAG'},
+         {"properties": [("view2d_edge_pan", True), ("use_restore_handle_selection", True)]}),
+        ("transform.seq_slide", {"type": params.select_mouse, "value": 'CLICK_DRAG', "alt": True},
          {"properties": [("view2d_edge_pan", True), ("use_restore_handle_selection", True)]}),
         ("transform.transform", {"type": 'E', "value": 'PRESS'},
          {"properties": [("mode", 'TIME_EXTEND')]}),
@@ -3325,7 +3336,8 @@ def km_clip_editor(params):
         op_menu("CLIP_MT_select_grouped", {"type": 'G', "value": 'PRESS', "shift": True}),
         ("clip.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "ctrl": True, "alt": True},
          {"properties": [("mode", 'ADD')]}),
-        ("clip.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "shift": True, "ctrl": True, "alt": True},
+        ("clip.select_lasso",
+         {"type": params.action_mouse, "value": 'CLICK_DRAG', "shift": True, "ctrl": True, "alt": True},
          {"properties": [("mode", 'SUB')]}),
         ("clip.add_marker_slide", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
         ("clip.delete_marker", {"type": 'X', "value": 'PRESS', "shift": True}, None),
@@ -4725,6 +4737,8 @@ def km_grease_pencil_edit_mode(params):
         # Select mode
         ("grease_pencil.set_selection_mode", {"type": 'ONE', "value": 'PRESS'}, {"properties": [("mode", 'POINT')]}),
         ("grease_pencil.set_selection_mode", {"type": 'TWO', "value": 'PRESS'}, {"properties": [("mode", 'STROKE')]}),
+        ("grease_pencil.set_selection_mode", {"type": 'THREE',
+         "value": 'PRESS'}, {"properties": [("mode", 'SEGMENT')]}),
 
         # Set Handle Type
         ("grease_pencil.set_handle_type", {"type": 'V', "value": 'PRESS'}, None),
@@ -5349,10 +5363,12 @@ def _template_sequencer_preview_select(*, type, value, legacy):
         {"properties": [(c, True) for c in props]},
     ) for props, mods in (
         (("center",), ("ctrl",)),
+        (("ignore_connections",), ("alt",)),
         # TODO:
         # (("enumerate",), ("alt",)),
         (("toggle", "center"), ("shift", "ctrl")),
         # (("center", "enumerate"), ("ctrl", "alt")),
+        (("toggle", "ignore_connections"), ("shift", "alt")),
         # (("toggle", "enumerate"), ("shift", "alt")),
         # (("toggle", "center", "enumerate"), ("shift", "ctrl", "alt")),
     )]
@@ -5366,9 +5382,6 @@ def _template_sequencer_timeline_select(*, type, value, legacy):
         {"type": type, "value": value, **{m: True for m in mods}},
         {"properties": [(c, True) for c in props]},
     ) for props, mods in (
-        (("linked_handle",), ("alt",)),
-        (("linked_handle", "extend"), ("shift", "alt",)),
-
         (("side_of_frame", "linked_time"), ("ctrl",)),
         (("side_of_frame", "linked_time", "extend"), ("ctrl", "shift")),
     )]
@@ -8619,6 +8632,23 @@ def km_3d_view_tool_paint_gpencil_eyedropper(params):
     )
 
 
+def km_3d_view_tool_paint_grease_pencil_eyedropper(params):
+    return (
+        "3D View Tool: Paint Grease Pencil, Eyedropper",
+        {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+        {"items": [
+            ("ui.eyedropper_grease_pencil_color",
+             {"type": params.tool_mouse, "value": 'PRESS'}, None),
+            ("ui.eyedropper_grease_pencil_color",
+             {"type": params.tool_mouse, "value": 'PRESS', "shift": True}, None),
+            ("ui.eyedropper_grease_pencil_color",
+             {"type": params.tool_mouse, "value": 'PRESS', "ctrl": True}, None),
+            ("ui.eyedropper_grease_pencil_color",
+             {"type": params.tool_mouse, "value": 'PRESS', "shift": True, "ctrl": True}, None),
+        ]},
+    )
+
+
 def km_3d_view_tool_paint_gpencil_interpolate(params):
     return (
         "3D View Tool: Paint Gpencil, Interpolate",
@@ -8839,8 +8869,12 @@ def km_3d_view_tool_sculpt_gpencil_select_lasso(params):
 def km_sequencer_editor_tool_generic_select_timeline_rcs(params, fallback):
     return [
         ("sequencer.select_handle", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+        ("sequencer.select_handle", {"type": 'LEFTMOUSE', "value": 'PRESS',
+         "alt": True}, {"properties": [("ignore_connections", True)]}),
         *_template_items_change_frame(params),
-        # Frame change can be canceled if click happens on strip handle. In such case move the handle.
+        # Change frame takes precedence over the sequence slide operator. If a
+        # mouse press happens on a strip handle, it is canceled, and the sequence
+        # slide below activates instead.
         ("transform.seq_slide", {"type": 'LEFTMOUSE', "value": 'PRESS'},
          {"properties": [("view2d_edge_pan", True), ("use_restore_handle_selection", True)]}),
     ]
@@ -8859,8 +8893,9 @@ def km_sequencer_editor_tool_generic_select_timeline(params, *, fallback):
         _fallback_id("Sequencer Timeline Tool: Tweak", fallback),
         {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
         {"items": [
-            *(km_sequencer_editor_tool_generic_select_timeline_rcs(params, fallback) if (params.select_mouse == 'RIGHTMOUSE')
-              else km_sequencer_editor_tool_generic_select_timeline_lcs(params, fallback)),
+            *(km_sequencer_editor_tool_generic_select_timeline_rcs(params, fallback)
+              if (params.select_mouse == 'RIGHTMOUSE') else
+              km_sequencer_editor_tool_generic_select_timeline_lcs(params, fallback)),
         ]},
     )
 
@@ -9302,10 +9337,14 @@ def generate_keymaps(params=None):
         km_3d_view_tool_sculpt_gpencil_select_box(params),
         km_3d_view_tool_sculpt_gpencil_select_circle(params),
         km_3d_view_tool_sculpt_gpencil_select_lasso(params),
-        *(km_sequencer_editor_tool_generic_select_timeline(params, fallback=fallback) for fallback in (False, True)),
-        *(km_sequencer_editor_tool_generic_select_box_timeline(params, fallback=fallback) for fallback in (False, True)),
-        *(km_sequencer_editor_tool_generic_select_preview(params, fallback=fallback) for fallback in (False, True)),
-        *(km_sequencer_editor_tool_generic_select_box_preview(params, fallback=fallback) for fallback in (False, True)),
+        *(km_sequencer_editor_tool_generic_select_timeline(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_editor_tool_generic_select_box_timeline(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_editor_tool_generic_select_preview(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_editor_tool_generic_select_box_preview(params, fallback=fallback)
+          for fallback in (False, True)),
         km_3d_view_tool_paint_grease_pencil_cutter(params),
         km_sequencer_editor_tool_generic_cursor(params),
         km_sequencer_editor_tool_blade(params),
@@ -9315,6 +9354,7 @@ def generate_keymaps(params=None):
         km_sequencer_editor_tool_scale(params),
         km_3d_view_tool_edit_grease_pencil_interpolate(params),
         km_3d_view_tool_paint_grease_pencil_interpolate(params),
+        km_3d_view_tool_paint_grease_pencil_eyedropper(params),
     ]
 
 # ------------------------------------------------------------------------------

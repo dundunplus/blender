@@ -545,6 +545,7 @@ class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
         edit = prefs.edit
 
         layout.prop(edit, "use_sequencer_simplified_tweaking")
+        layout.prop(edit, "connect_strips_by_default")
 
 
 class USERPREF_PT_edit_misc(EditingPanel, CenterAlignMixIn, Panel):
@@ -1203,6 +1204,7 @@ class USERPREF_PT_theme_interface_icons(ThemePanel, CenterAlignMixIn, Panel):
         flow.prop(ui, "icon_modifier")
         flow.prop(ui, "icon_shading")
         flow.prop(ui, "icon_folder")
+        flow.prop(ui, "icon_autokey")
         flow.prop(ui, "icon_border_intensity")
 
 

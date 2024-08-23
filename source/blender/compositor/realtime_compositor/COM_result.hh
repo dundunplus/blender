@@ -160,6 +160,9 @@ class Result {
   MetaData meta_data;
 
  public:
+  /* Construct a result within the given context. */
+  Result(Context &context);
+
   /* Construct a result of the given type and precision within the given context. */
   Result(Context &context, ResultType type, ResultPrecision precision);
 
@@ -175,6 +178,9 @@ class Result {
 
   /* Returns the type of the given GPU texture format. */
   static ResultType type(eGPUTextureFormat format);
+
+  /* Returns the float type of the result given the channels count. */
+  static ResultType float_type(const int channels_count);
 
   /* Implicit conversion to the internal GPU texture. */
   operator GPUTexture *() const;
@@ -337,6 +343,9 @@ class Result {
   /* Returns the precision of the result. */
   ResultPrecision precision() const;
 
+  /* Sets the type of the result. */
+  void set_type(ResultType type);
+
   /* Sets the precision of the result. */
   void set_precision(ResultPrecision precision);
 
@@ -353,10 +362,34 @@ class Result {
   /* Returns a reference to the domain of the result. See the Domain class. */
   const Domain &domain() const;
 
+  /* Returns a reference to the allocate float data. */
+  float *float_texture();
+
+  /* Loads the float pixel at the given texel coordinates and returns it in a float4. If the number
+   * of channels in the result are less than 4, then the rest of the returned float4 will have its
+   * vales initialized as follows: float4(0, 0, 0, 1). This is similar to how the texelFetch
+   * function in GLSL works. If the result is a single value result, then that single value is
+   * returned for all texel coordinates. */
+  float4 load_pixel(const int2 &texel) const;
+
+  /* Stores the given pixel value in the float pixel at the given texel coordinates. While a float4
+   * is given, only the number of channels of the result will be written, while the rest of the
+   * float4 will be ignored. This is similar to how the imageStore function in GLSL works. */
+  void store_pixel(const int2 &texel, const float4 &pixel_value);
+
  private:
   /* Allocates the texture data for the given size, either on the GPU or CPU based on the result's
    * context. See the allocate_texture method for information about the from_pool argument. */
   void allocate_data(int2 size, bool from_pool);
+
+  /* Computes the number of channels of the result based on its type. */
+  int64_t channels_count() const;
+
+  /* Get a pointer to the float pixel at the given texel position. */
+  float *get_float_pixel(const int2 &texel) const;
+
+  /* Copy the float pixel from the source pointer to the target pointer. */
+  void copy_pixel(float *target, const float *source) const;
 };
 
 }  // namespace blender::realtime_compositor

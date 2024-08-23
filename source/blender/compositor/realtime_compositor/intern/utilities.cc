@@ -198,7 +198,7 @@ void compute_preview_from_result(Context &context, const DNode &node, Result &in
   bNodeTree *root_tree = const_cast<bNodeTree *>(
       &node.context()->derived_tree().root_context().btree());
   if (!root_tree->previews) {
-    root_tree->previews = bke::BKE_node_instance_hash_new("node previews");
+    root_tree->previews = bke::node_instance_hash_new("node previews");
   }
 
   const int2 preview_size = compute_preview_size(input_result.domain().size);
@@ -252,6 +252,17 @@ void compute_preview_from_result(Context &context, const DNode &node, Result &in
 
   IMB_colormanagement_processor_free(color_processor);
   MEM_freeN(preview_pixels);
+}
+
+void parallel_for(const int2 range, FunctionRef<void(int2)> function)
+{
+  threading::parallel_for(IndexRange(range.y), 1, [&](const IndexRange sub_y_range) {
+    for (const int64_t y : sub_y_range) {
+      for (const int64_t x : IndexRange(range.x)) {
+        function(int2(x, y));
+      }
+    }
+  });
 }
 
 }  // namespace blender::realtime_compositor

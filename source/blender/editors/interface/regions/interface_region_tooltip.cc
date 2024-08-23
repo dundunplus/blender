@@ -1044,7 +1044,7 @@ static std::unique_ptr<uiTooltipData> ui_tooltip_data_from_button_or_extra_icon(
 
     uchar rgb_hex_uchar[4];
     rgba_float_to_uchar(rgb_hex_uchar, color);
-    const std::string hex_st = fmt::format("Hex: {:X}{:X}{:X}{:X}",
+    const std::string hex_st = fmt::format("Hex: {:02X}{:02X}{:02X}{:02X}",
                                            int(rgb_hex_uchar[0]),
                                            int(rgb_hex_uchar[1]),
                                            int(rgb_hex_uchar[2]),
@@ -1664,7 +1664,7 @@ static void ui_tooltip_from_clip(MovieClip &clip, uiTooltipData &data)
     if (ibuf) {
       /* Resize. */
       float scale = float(200.0f * UI_SCALE_FAC) / float(std::max(ibuf->x, ibuf->y));
-      IMB_scaleImBuf(ibuf, scale * ibuf->x, scale * ibuf->y);
+      IMB_scale(ibuf, scale * ibuf->x, scale * ibuf->y, IMBScaleFilter::Box, false);
       IMB_rect_from_float(ibuf);
 
       uiTooltipImage image_data;

@@ -349,7 +349,7 @@ SeqRetimingKey *SEQ_retiming_add_key(const Scene *scene, Sequence *seq, const in
   return added_key;
 }
 
-void SEQ_retiming_transition_key_frame_set(const Scene * /*scene */,
+void SEQ_retiming_transition_key_frame_set(const Scene * /*scene*/,
                                            const Sequence *seq,
                                            SeqRetimingKey *key,
                                            const int timeline_frame)
@@ -1085,6 +1085,12 @@ void SEQ_retiming_selection_append(
 void SEQ_retiming_selection_remove(SeqRetimingKey *key)
 {
   key->flag &= ~SEQ_KEY_SELECTED;
+}
+
+void SEQ_retiming_selection_copy(SeqRetimingKey *dst, const SeqRetimingKey *src)
+{
+  SEQ_retiming_selection_remove(dst);
+  dst->flag |= (src->flag & SEQ_KEY_SELECTED);
 }
 
 blender::Map<SeqRetimingKey *, Sequence *> SEQ_retiming_selection_get(const Editing *ed)

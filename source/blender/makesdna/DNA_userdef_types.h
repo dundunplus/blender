@@ -202,6 +202,9 @@ typedef struct ThemeUI {
   unsigned char icon_shading[4];
   /** File folders. */
   unsigned char icon_folder[4];
+  /** Auto Keying indicator. */
+  unsigned char icon_autokey[4];
+  char _pad3[4];
   /** Intensity of the border icons. >0 will render an border around themed
    * icons. */
   float icon_border_intensity;
@@ -1594,6 +1597,7 @@ typedef enum eUserpref_SeqProxySetup {
 
 typedef enum eUserpref_SeqEditorFlags {
   USER_SEQ_ED_SIMPLE_TWEAKING = (1 << 0),
+  USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT = (1 << 1),
 } eUserpref_SeqEditorFlags;
 
 /* Locale Ids. Auto will try to get local from OS. Our default is English though. */

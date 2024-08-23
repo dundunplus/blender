@@ -580,29 +580,30 @@ void VKShader::init(const shader::ShaderCreateInfo &info, bool /*is_batch_compil
 
 VKShader::~VKShader()
 {
-  VK_ALLOCATION_CALLBACKS
-  const VKDevice &device = VKBackend::get().device;
+  VKDevice &device = VKBackend::get().device;
+  VKDiscardPool &discard_pool = device.discard_pool_for_current_thread();
+
   if (vertex_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device.vk_handle(), vertex_module_, vk_allocation_callbacks);
+    discard_pool.discard_shader_module(vertex_module_);
     vertex_module_ = VK_NULL_HANDLE;
   }
   if (geometry_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device.vk_handle(), geometry_module_, vk_allocation_callbacks);
+    discard_pool.discard_shader_module(geometry_module_);
     geometry_module_ = VK_NULL_HANDLE;
   }
   if (fragment_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device.vk_handle(), fragment_module_, vk_allocation_callbacks);
+    discard_pool.discard_shader_module(fragment_module_);
     fragment_module_ = VK_NULL_HANDLE;
   }
   if (compute_module_ != VK_NULL_HANDLE) {
-    vkDestroyShaderModule(device.vk_handle(), compute_module_, vk_allocation_callbacks);
+    discard_pool.discard_shader_module(compute_module_);
     compute_module_ = VK_NULL_HANDLE;
   }
   if (vk_pipeline_layout != VK_NULL_HANDLE) {
-    vkDestroyPipelineLayout(device.vk_handle(), vk_pipeline_layout, vk_allocation_callbacks);
+    discard_pool.discard_pipeline_layout(vk_pipeline_layout);
     vk_pipeline_layout = VK_NULL_HANDLE;
   }
-  /* Reset not owning handles. */
+  /* Unset not owning handles. */
   vk_descriptor_set_layout_ = VK_NULL_HANDLE;
 }
 
@@ -882,7 +883,11 @@ std::string VKShader::vertex_interface_declare(const shader::ShaderCreateInfo &i
 
   /* Retarget depth from -1..1 to 0..1. This will be done by geometry stage, when geometry shaders
    * are used. */
-  const bool has_geometry_stage = bool(info.builtins_ & BuiltinBits::BARYCENTRIC_COORD) ||
+  const bool has_geometry_stage = bool(info.builtins_ & (BuiltinBits::BARYCENTRIC_COORD)) ||
+                                  (bool(info.builtins_ & (BuiltinBits::LAYER)) &&
+                                   workarounds.shader_output_layer) ||
+                                  (bool(info.builtins_ & (BuiltinBits::VIEWPORT_INDEX)) &&
+                                   workarounds.shader_output_viewport_index) ||
                                   !info.geometry_source_.is_empty();
   const bool retarget_depth = !has_geometry_stage;
   if (retarget_depth) {

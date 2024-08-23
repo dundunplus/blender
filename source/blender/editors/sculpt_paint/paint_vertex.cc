@@ -21,6 +21,7 @@
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_geom.h"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_rotation.h"
 #include "BLI_rect.h"
 #include "BLI_string.h"
@@ -32,7 +33,6 @@
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
-#include "DNA_particle_types.h"
 #include "DNA_scene_types.h"
 
 #include "RNA_access.hh"
@@ -46,7 +46,6 @@
 #include "BKE_editmesh.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_mesh.hh"
-#include "BKE_mesh_mapping.hh"
 #include "BKE_object.hh"
 #include "BKE_object_deform.h"
 #include "BKE_object_types.hh"
@@ -77,7 +76,12 @@
 
 #include "mesh_brush_common.hh"
 #include "paint_intern.hh" /* own include */
+#include "sculpt_automask.hh"
+#include "sculpt_boundary.hh"
+#include "sculpt_cloth.hh"
 #include "sculpt_intern.hh"
+#include "sculpt_pose.hh"
+#include "sculpt_undo.hh"
 
 using blender::IndexRange;
 using blender::bke::AttrDomain;
@@ -293,7 +297,10 @@ void init_session_data(const ToolSettings &ts, Object &ob)
   }
 }
 
-Vector<bke::pbvh::Node *> pbvh_gather_generic(Object &ob, const VPaint &wp, const Brush &brush)
+Vector<bke::pbvh::Node *> pbvh_gather_generic(const Depsgraph &depsgraph,
+                                              Object &ob,
+                                              const VPaint &wp,
+                                              const Brush &brush)
 {
   SculptSession &ss = *ob.sculpt;
   const bool use_normal = vwpaint::use_normal(wp);
@@ -305,9 +312,8 @@ Vector<bke::pbvh::Node *> pbvh_gather_generic(Object &ob, const VPaint &wp, cons
       return node_in_sphere(node, ss.cache->location, ss.cache->radius_squared, true);
     });
 
-    ss.cache->sculpt_normal_symm = use_normal ?
-                                       calc_area_normal(brush, ob, nodes).value_or(float3(0)) :
-                                       float3(0);
+    ss.cache->sculpt_normal_symm =
+        use_normal ? calc_area_normal(depsgraph, brush, ob, nodes).value_or(float3(0)) : float3(0);
   }
   else {
     const DistRayAABB_Precalc ray_dist_precalc = dist_squared_ray_to_aabb_v3_precalc(
@@ -520,6 +526,7 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
 {
   using namespace blender;
   Scene *scene = CTX_data_scene(C);
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   SculptSession &ss = *ob.sculpt;
   StrokeCache *cache = ss.cache;
   Brush &brush = *BKE_paint_brush(&vp.paint);
@@ -559,7 +566,7 @@ void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr)
   cache->radius_squared = cache->radius * cache->radius;
 
   if (ss.pbvh) {
-    bke::pbvh::update_bounds(ob, *ss.pbvh);
+    bke::pbvh::update_bounds(depsgraph, ob, *ss.pbvh);
   }
 }
 
@@ -913,7 +920,12 @@ struct VPaintData : public PaintModeData {
   ColorPaint4f paintcol;
 
   VertProjHandle *vp_handle;
-  CoNo *vertexcosnos;
+  /**
+   * Owned by #vp_handle.
+   * \todo Look into replacing this with just using the evaluated/deform positions.
+   */
+  Span<float3> vert_positions;
+  Span<float3> vert_normals;
 
   bool is_texbrush;
 
@@ -969,7 +981,8 @@ static std::unique_ptr<VPaintData> vpaint_init_vpaint(bContext *C,
   /* Create projection handle */
   if (vpd->is_texbrush) {
     ob.sculpt->building_vp_handle = true;
-    vpd->vp_handle = ED_vpaint_proj_handle_create(depsgraph, scene, ob, &vpd->vertexcosnos);
+    vpd->vp_handle = ED_vpaint_proj_handle_create(
+        depsgraph, scene, ob, vpd->vert_positions, vpd->vert_normals);
     ob.sculpt->building_vp_handle = false;
   }
 
@@ -1040,6 +1053,7 @@ static void do_vpaint_brush_blur_loops(const bContext *C,
 
   const Brush &brush = *ob.sculpt->cache->brush;
   const Scene &scene = *CTX_data_scene(C);
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
   vwpaint::get_brush_alpha_data(
@@ -1054,11 +1068,11 @@ static void do_vpaint_brush_blur_loops(const bContext *C,
 
   GMutableSpan g_previous_color = ss.cache->prev_colors_vpaint;
 
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(*ss.pbvh);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
   VArraySpan<bool> select_vert;
@@ -1196,6 +1210,7 @@ static void do_vpaint_brush_blur_verts(const bContext *C,
 
   const Brush &brush = *ss.cache->brush;
   const Scene &scene = *CTX_data_scene(C);
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
   vwpaint::get_brush_alpha_data(
@@ -1210,11 +1225,11 @@ static void do_vpaint_brush_blur_verts(const bContext *C,
 
   GMutableSpan g_previous_color = ss.cache->prev_colors_vpaint;
 
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(*ss.pbvh);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
   VArraySpan<bool> select_vert;
@@ -1346,6 +1361,7 @@ static void do_vpaint_brush_smear(const bContext *C,
 
   const Brush &brush = *cache.brush;
   const Scene &scene = *CTX_data_scene(C);
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   GMutableSpan g_color_curr = vpd.smear.color_curr;
   GMutableSpan g_color_prev_smear = vpd.smear.color_prev;
   GMutableSpan g_color_prev = cache.prev_colors_vpaint;
@@ -1369,11 +1385,11 @@ static void do_vpaint_brush_smear(const bContext *C,
   const float *sculpt_normal_frontface = SCULPT_brush_frontface_normal_from_falloff_shape(
       ss, brush.falloff_shape);
 
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(*ss.pbvh);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
   VArraySpan<bool> select_vert;
@@ -1541,11 +1557,12 @@ static void calculate_average_color(VPaintData &vpd,
 {
   SculptSession &ss = *ob.sculpt;
   const StrokeCache &cache = *ss.cache;
+  const Depsgraph &depsgraph = *vpd.vc.depsgraph;
 
   const bool use_vert_sel = (mesh.editflag & (ME_EDIT_PAINT_FACE_SEL | ME_EDIT_PAINT_VERT_SEL)) !=
                             0;
 
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
@@ -1666,9 +1683,9 @@ static void vpaint_do_draw(const bContext *C,
 {
   SculptSession &ss = *ob.sculpt;
   const StrokeCache &cache = *ss.cache;
-
   const Brush &brush = *ob.sculpt->cache->brush;
   const Scene &scene = *CTX_data_scene(C);
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   float brush_size_pressure, brush_alpha_value, brush_alpha_pressure;
   vwpaint::get_brush_alpha_data(
@@ -1683,10 +1700,10 @@ static void vpaint_do_draw(const bContext *C,
 
   GMutableSpan g_previous_color = ss.cache->prev_colors_vpaint;
 
-  const Span<float3> vert_positions = BKE_pbvh_get_vert_positions(*ss.pbvh);
+  const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const Span<float3> vert_normals = BKE_pbvh_get_vert_normals(*ss.pbvh);
+  const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const GroupedSpan<int> vert_to_face = mesh.vert_to_face_map();
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
@@ -1757,14 +1774,15 @@ static void vpaint_do_draw(const bContext *C,
 
             /* If the active area is being applied for symmetry, flip it
              * across the symmetry axis and rotate it back to the original
-             * position in order to project it. This insures that the
+             * position in order to project it. This ensures that the
              * brush texture will be oriented correctly.
              * This is the method also used in #sculpt_apply_texture(). */
+            float3 position = vpd.vert_positions[vert];
             if (cache.radial_symmetry_pass) {
-              mul_m4_v3(cache.symm_rot_mat_inv.ptr(), vpd.vertexcosnos[vert].co);
+              position = blender::math::transform_point(cache.symm_rot_mat_inv, position);
             }
             const float3 symm_point = blender::ed::sculpt_paint::symmetry_flip(
-                vpd.vertexcosnos[vert].co, cache.mirror_symmetry_pass);
+                position, cache.mirror_symmetry_pass);
 
             tex_alpha = paint_and_tex_color_alpha<Color>(vp, vpd, symm_point, &color_final);
           }
@@ -1845,7 +1863,8 @@ static void vpaint_paint_leaves(bContext *C,
                                 GMutableSpan attribute,
                                 const Span<bke::pbvh::Node *> nodes)
 {
-  undo::push_nodes(ob, nodes, undo::Type::Color);
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
+  undo::push_nodes(depsgraph, ob, nodes, undo::Type::Color);
 
   const Brush &brush = *ob.sculpt->cache->brush;
 
@@ -1879,11 +1898,12 @@ static void vpaint_do_paint(bContext *C,
                             const int i,
                             const float angle)
 {
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   SculptSession &ss = *ob.sculpt;
   ss.cache->radial_symmetry_pass = i;
   SCULPT_cache_calc_brushdata_symm(*ss.cache, symm, axis, angle);
 
-  Vector<bke::pbvh::Node *> nodes = vwpaint::pbvh_gather_generic(ob, vp, brush);
+  Vector<bke::pbvh::Node *> nodes = vwpaint::pbvh_gather_generic(depsgraph, ob, vp, brush);
 
   bke::GSpanAttributeWriter attribute = mesh.attributes_for_write().lookup_for_write_span(
       mesh.active_color_attribute);
@@ -2271,7 +2291,7 @@ static int vertex_color_set_exec(bContext *C, wmOperator *op)
   using namespace blender::ed::sculpt_paint;
   Scene &scene = *CTX_data_scene(C);
   Object &obact = *CTX_data_active_object(C);
-
+  const Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
   if (!BKE_mesh_from_object(&obact)) {
     return OPERATOR_CANCELLED;
   }
@@ -2283,19 +2303,19 @@ static int vertex_color_set_exec(bContext *C, wmOperator *op)
   BKE_sculpt_update_object_for_edit(CTX_data_ensure_evaluated_depsgraph(C), &obact, true);
 
   undo::push_begin(obact, op);
-  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(*obact.sculpt->pbvh, {});
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::all_leaf_nodes(*obact.sculpt->pbvh);
 
   const Mesh &mesh = *static_cast<const Mesh *>(obact.data);
   /* The sculpt undo system needs bke::pbvh::Tree node corner indices for corner domain
    * color attributes. */
   BKE_pbvh_ensure_node_face_corners(*obact.sculpt->pbvh, mesh.corner_tris());
 
-  undo::push_nodes(obact, nodes, undo::Type::Color);
+  undo::push_nodes(depsgraph, obact, nodes, undo::Type::Color);
 
   fill_active_color(obact, paintcol, true, affect_alpha);
 
   for (bke::pbvh::Node *node : nodes) {
-    BKE_pbvh_node_mark_update_color(node);
+    BKE_pbvh_node_mark_update_color(*node);
   }
   undo::push_end(obact);
 

@@ -19,6 +19,8 @@
 
 namespace blender::realtime_compositor {
 
+Result::Result(Context &context) : context_(&context) {}
+
 Result::Result(Context &context, ResultType type, ResultPrecision precision)
     : context_(&context), type_(type), precision_(precision)
 {
@@ -161,6 +163,25 @@ ResultType Result::type(eGPUTextureFormat format)
     case GPU_RG16I:
     case GPU_RG32I:
       return ResultType::Int2;
+    default:
+      break;
+  }
+
+  BLI_assert_unreachable();
+  return ResultType::Color;
+}
+
+ResultType Result::float_type(const int channels_count)
+{
+  switch (channels_count) {
+    case 1:
+      return ResultType::Float;
+    case 2:
+      return ResultType::Float2;
+    case 3:
+      return ResultType::Float3;
+    case 4:
+      return ResultType::Color;
     default:
       break;
   }
@@ -606,6 +627,10 @@ void Result::release()
     return;
   }
 
+  if (!this->is_allocated()) {
+    return;
+  }
+
   switch (storage_type_) {
     case ResultStorageType::GPU:
       if (is_from_pool_) {
@@ -640,6 +665,13 @@ ResultType Result::type() const
 ResultPrecision Result::precision() const
 {
   return precision_;
+}
+
+void Result::set_type(ResultType type)
+{
+  /* Changing the type can only be done if it wasn't allocated yet. */
+  BLI_assert(!this->is_allocated());
+  type_ = type;
 }
 
 void Result::set_precision(ResultPrecision precision)
@@ -682,6 +714,29 @@ const Domain &Result::domain() const
   return domain_;
 }
 
+float *Result::float_texture()
+{
+  BLI_assert(storage_type_ == ResultStorageType::FloatCPU);
+  return float_texture_;
+}
+
+float4 Result::load_pixel(const int2 &texel) const
+{
+  float4 pixel_value = float4(0.0f, 0.0f, 0.0f, 1.0f);
+  if (is_single_value_) {
+    this->copy_pixel(pixel_value, float_texture_);
+  }
+  else {
+    this->copy_pixel(pixel_value, this->get_float_pixel(texel));
+  }
+  return pixel_value;
+}
+
+void Result::store_pixel(const int2 &texel, const float4 &pixel_value)
+{
+  this->copy_pixel(this->get_float_pixel(texel), pixel_value);
+}
+
 void Result::allocate_data(int2 size, bool from_pool)
 {
   if (context_->use_gpu()) {
@@ -702,36 +757,62 @@ void Result::allocate_data(int2 size, bool from_pool)
   else {
     switch (type_) {
       case ResultType::Float:
-        float_texture_ = static_cast<float *>(
-            MEM_malloc_arrayN(size.x * size.y, sizeof(float), __func__));
-        storage_type_ = ResultStorageType::FloatCPU;
-        break;
-
       case ResultType::Vector:
       case ResultType::Color:
-        float_texture_ = static_cast<float *>(
-            MEM_malloc_arrayN(size.x * size.y, sizeof(float4), __func__));
-        storage_type_ = ResultStorageType::FloatCPU;
-        break;
-
       case ResultType::Float2:
-        float_texture_ = static_cast<float *>(
-            MEM_malloc_arrayN(size.x * size.y, sizeof(float2), __func__));
-        storage_type_ = ResultStorageType::FloatCPU;
-        break;
-
       case ResultType::Float3:
-        float_texture_ = static_cast<float *>(
-            MEM_malloc_arrayN(size.x * size.y, sizeof(float3), __func__));
+        float_texture_ = static_cast<float *>(MEM_malloc_arrayN(
+            int64_t(size.x) * int64_t(size.y), this->channels_count() * sizeof(float), __func__));
         storage_type_ = ResultStorageType::FloatCPU;
         break;
-
       case ResultType::Int2:
-        integer_texture_ = static_cast<int *>(
-            MEM_malloc_arrayN(size.x * size.y, sizeof(int2), __func__));
+        integer_texture_ = static_cast<int *>(MEM_malloc_arrayN(
+            int64_t(size.x) * int64_t(size.y), this->channels_count() * sizeof(int), __func__));
         storage_type_ = ResultStorageType::IntegerCPU;
         break;
     }
+  }
+}
+
+int64_t Result::channels_count() const
+{
+  switch (type_) {
+    case ResultType::Float:
+      return 1;
+    case ResultType::Float2:
+    case ResultType::Int2:
+      return 2;
+    case ResultType::Float3:
+      return 3;
+    case ResultType::Vector:
+    case ResultType::Color:
+      return 4;
+  }
+  return 4;
+}
+
+float *Result::get_float_pixel(const int2 &texel) const
+{
+  return float_texture_ + (texel.y * domain_.size.x + texel.x) * this->channels_count();
+}
+
+void Result::copy_pixel(float *target, const float *source) const
+{
+  switch (type_) {
+    case ResultType::Float:
+      *target = *source;
+      break;
+    case ResultType::Float2:
+    case ResultType::Int2:
+      copy_v2_v2(target, source);
+      break;
+    case ResultType::Float3:
+      copy_v3_v3(target, source);
+      break;
+    case ResultType::Vector:
+    case ResultType::Color:
+      copy_v4_v4(target, source);
+      break;
   }
 }
 

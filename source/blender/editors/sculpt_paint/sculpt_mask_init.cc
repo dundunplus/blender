@@ -31,12 +31,13 @@
 #include "RNA_define.hh"
 
 #include "paint_intern.hh"
+#include "sculpt_face_set.hh"
+#include "sculpt_hide.hh"
 #include "sculpt_intern.hh"
+#include "sculpt_islands.hh"
+#include "sculpt_undo.hh"
 
 #include "bmesh.hh"
-
-#include <cmath>
-#include <cstdlib>
 
 namespace blender::ed::sculpt_paint::mask {
 
@@ -46,7 +47,8 @@ enum class InitMode {
   Island,
 };
 
-void write_mask_mesh(Object &object,
+void write_mask_mesh(const Depsgraph &depsgraph,
+                     Object &object,
                      const Span<bke::pbvh::Node *> nodes,
                      FunctionRef<void(MutableSpan<float>, Span<int>)> write_fn)
 {
@@ -54,7 +56,7 @@ void write_mask_mesh(Object &object,
   bke::MutableAttributeAccessor attributes = mesh.attributes_for_write();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
 
-  undo::push_nodes(object, nodes, undo::Type::Mask);
+  undo::push_nodes(depsgraph, object, nodes, undo::Type::Mask);
 
   bke::SpanAttributeWriter mask = attributes.lookup_or_add_for_write_span<float>(
       ".sculpt_mask", bke::AttrDomain::Point);
@@ -66,7 +68,7 @@ void write_mask_mesh(Object &object,
     Vector<int> &index_data = all_index_data.local();
     for (const int i : range) {
       write_fn(mask.span, hide::node_visible_verts(*nodes[i], hide_vert, index_data));
-      BKE_pbvh_node_mark_redraw(nodes[i]);
+      BKE_pbvh_node_mark_redraw(*nodes[i]);
       bke::pbvh::node_update_mask_mesh(mask.span, *nodes[i]);
     }
   });
@@ -88,14 +90,14 @@ static void init_mask_grids(Main &bmain,
   const Span<CCGElem *> grids = subdiv_ccg.grids;
   const BitGroupVector<> &grid_hidden = subdiv_ccg.grid_hidden;
 
-  undo::push_nodes(object, nodes, undo::Type::Mask);
+  undo::push_nodes(depsgraph, object, nodes, undo::Type::Mask);
 
   threading::parallel_for(nodes.index_range(), 1, [&](const IndexRange range) {
     for (const int i : range) {
       for (const int grid : bke::pbvh::node_grid_indices(*nodes[i])) {
         write_fn(grid_hidden, grid, grids[grid]);
       }
-      BKE_pbvh_node_mark_update_mask(nodes[i]);
+      BKE_pbvh_node_mark_update_mask(*nodes[i]);
     }
   });
   BKE_subdiv_ccg_average_grids(subdiv_ccg);
@@ -116,7 +118,7 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
   BKE_sculpt_update_object_for_edit(&depsgraph, &ob, false);
 
   bke::pbvh::Tree &pbvh = *ob.sculpt->pbvh;
-  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(pbvh, {});
+  Vector<bke::pbvh::Node *> nodes = bke::pbvh::all_leaf_nodes(pbvh);
   if (nodes.is_empty()) {
     return OPERATOR_CANCELLED;
   }
@@ -130,14 +132,14 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
     case bke::pbvh::Type::Mesh: {
       switch (mode) {
         case InitMode::Random:
-          write_mask_mesh(ob, nodes, [&](MutableSpan<float> mask, Span<int> verts) {
+          write_mask_mesh(depsgraph, ob, nodes, [&](MutableSpan<float> mask, Span<int> verts) {
             for (const int vert : verts) {
               mask[vert] = BLI_hash_int_01(vert + seed);
             }
           });
           break;
         case InitMode::FaceSet:
-          write_mask_mesh(ob, nodes, [&](MutableSpan<float> mask, Span<int> verts) {
+          write_mask_mesh(depsgraph, ob, nodes, [&](MutableSpan<float> mask, Span<int> verts) {
             for (const int vert : verts) {
               const int face_set = face_set::vert_face_set_get(ss, PBVHVertRef{vert});
               mask[vert] = BLI_hash_int_01(face_set + seed);
@@ -146,7 +148,7 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
           break;
         case InitMode::Island:
           islands::ensure_cache(ob);
-          write_mask_mesh(ob, nodes, [&](MutableSpan<float> mask, Span<int> verts) {
+          write_mask_mesh(depsgraph, ob, nodes, [&](MutableSpan<float> mask, Span<int> verts) {
             for (const int vert : verts) {
               const int island = islands::vert_id_get(ss, vert);
               mask[vert] = BLI_hash_int_01(island + seed);
@@ -246,7 +248,7 @@ static int sculpt_mask_init_exec(bContext *C, wmOperator *op)
                 break;
             }
           }
-          BKE_pbvh_node_mark_update_mask(nodes[i]);
+          BKE_pbvh_node_mark_update_mask(*nodes[i]);
         }
       });
       bke::pbvh::update_mask(ob, *ss.pbvh);

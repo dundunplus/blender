@@ -386,48 +386,6 @@ static BitVector<> nla_map_keyframe_values_and_generate_reports(
   return successful_remaps;
 }
 
-/**
- * Move the point where a key is about to be inserted to be inside the main cycle range.
- * Returns the type of the cycle if it is enabled and valid.
- */
-static eFCU_Cycle_Type remap_cyclic_keyframe_location(FCurve *fcu, float *px, float *py)
-{
-  if (fcu->totvert < 2 || !fcu->bezt) {
-    return FCU_CYCLE_NONE;
-  }
-
-  eFCU_Cycle_Type type = BKE_fcurve_get_cycle_type(fcu);
-
-  if (type == FCU_CYCLE_NONE) {
-    return FCU_CYCLE_NONE;
-  }
-
-  BezTriple *first = &fcu->bezt[0], *last = &fcu->bezt[fcu->totvert - 1];
-  const float start = first->vec[1][0], end = last->vec[1][0];
-
-  if (start >= end) {
-    return FCU_CYCLE_NONE;
-  }
-
-  if (*px < start || *px > end) {
-    float period = end - start;
-    float step = floorf((*px - start) / period);
-    *px -= step * period;
-
-    if (type == FCU_CYCLE_OFFSET) {
-      /* Nasty check to handle the case when the modes are different better. */
-      FMod_Cycles *data = static_cast<FMod_Cycles *>(((FModifier *)fcu->modifiers.first)->data);
-      short mode = (step >= 0) ? data->after_mode : data->before_mode;
-
-      if (mode == FCM_EXTRAPOLATE_CYCLIC_OFFSET) {
-        *py -= step * (last->vec[1][1] - first->vec[1][1]);
-      }
-    }
-  }
-
-  return type;
-}
-
 static float nla_time_remap(float time,
                             const AnimationEvalContext *anim_eval_context,
                             PointerRNA *id_ptr,
@@ -454,14 +412,6 @@ static SingleKeyingResult insert_keyframe_value(
 {
   if (!BKE_fcurve_is_keyframable(fcu)) {
     return SingleKeyingResult::FCURVE_NOT_KEYFRAMEABLE;
-  }
-
-  /* Adjust coordinates for cycle aware insertion. */
-  if (flag & INSERTKEY_CYCLE_AWARE) {
-    if (remap_cyclic_keyframe_location(fcu, &cfra, &curval) != FCU_CYCLE_PERFECT) {
-      /* Inhibit action from insert_vert_fcurve unless it's a perfect cycle. */
-      flag &= ~INSERTKEY_CYCLE_AWARE;
-    }
   }
 
   KeyframeSettings settings = get_keyframe_settings((flag & INSERTKEY_NO_USERPREF) == 0);
@@ -885,25 +835,28 @@ struct KeyInsertData {
   int array_index;
 };
 
-static SingleKeyingResult insert_key_layer(Main *bmain,
-                                           Layer &layer,
-                                           const Slot &slot,
-                                           const std::string &rna_path,
-                                           const std::optional<PropertySubType> prop_subtype,
-                                           const KeyInsertData &key_data,
-                                           const KeyframeSettings &key_settings,
-                                           const eInsertKeyFlags insert_key_flags)
+static SingleKeyingResult insert_key_layer(
+    Main *bmain,
+    Layer &layer,
+    const Slot &slot,
+    const std::string &rna_path,
+    const std::optional<PropertySubType> prop_subtype,
+    const std::optional<blender::StringRefNull> channel_group,
+    const KeyInsertData &key_data,
+    const KeyframeSettings &key_settings,
+    const eInsertKeyFlags insert_key_flags)
 {
   assert_baklava_phase_1_invariants(layer);
   BLI_assert(layer.strips().size() == 1);
 
   Strip *strip = layer.strip(0);
-  return strip->as<KeyframeStrip>().keyframe_insert(bmain,
-                                                    slot,
-                                                    {rna_path, key_data.array_index, prop_subtype},
-                                                    key_data.position,
-                                                    key_settings,
-                                                    insert_key_flags);
+  return strip->as<KeyframeStrip>().keyframe_insert(
+      bmain,
+      slot,
+      {rna_path, key_data.array_index, prop_subtype, channel_group},
+      key_data.position,
+      key_settings,
+      insert_key_flags);
 }
 
 static CombinedKeyingResult insert_key_layered_action(Main *bmain,
@@ -953,6 +906,10 @@ static CombinedKeyingResult insert_key_layered_action(Main *bmain,
     const std::optional<std::string> rna_path_id_to_prop = RNA_path_from_ID_to_property(&ptr,
                                                                                         prop);
     BLI_assert(rna_path_id_to_prop.has_value());
+
+    const std::optional<blender::StringRefNull> channel_group = default_channel_group_for_path(
+        &ptr, *rna_path_id_to_prop);
+
     const PropertySubType prop_subtype = RNA_property_subtype(prop);
     Vector<float> rna_values = get_keyframe_values(&ptr, prop, use_visual_keyframing);
 
@@ -969,6 +926,7 @@ static CombinedKeyingResult insert_key_layered_action(Main *bmain,
                                                          slot,
                                                          *rna_path_id_to_prop,
                                                          prop_subtype,
+                                                         channel_group,
                                                          key_data,
                                                          key_settings,
                                                          insert_key_flags);

@@ -410,7 +410,7 @@ void BKE_id_newptr_and_tag_clear(ID *id)
   if (key != nullptr) {
     BKE_id_newptr_and_tag_clear(&key->id);
   }
-  bNodeTree *ntree = blender::bke::ntreeFromID(id);
+  bNodeTree *ntree = blender::bke::node_tree_from_id(id);
   if (ntree != nullptr) {
     BKE_id_newptr_and_tag_clear(&ntree->id);
   }
@@ -553,8 +553,8 @@ void BKE_lib_id_make_local_generic(Main *bmain, ID *id, const int flags)
       if (key && key_new) {
         ID_NEW_SET(key, key_new);
       }
-      bNodeTree *ntree = blender::bke::ntreeFromID(id),
-                *ntree_new = blender::bke::ntreeFromID(id_new);
+      bNodeTree *ntree = blender::bke::node_tree_from_id(id),
+                *ntree_new = blender::bke::node_tree_from_id(id_new);
       if (ntree && ntree_new) {
         ID_NEW_SET(ntree, ntree_new);
       }
@@ -925,8 +925,8 @@ static void id_swap(Main *bmain,
     id_b->recalc = id_a_back.recalc;
   }
 
-  id_embedded_swap((ID **)blender::bke::BKE_ntree_ptr_from_id(id_a),
-                   (ID **)blender::bke::BKE_ntree_ptr_from_id(id_b),
+  id_embedded_swap((ID **)blender::bke::node_tree_ptr_from_id(id_a),
+                   (ID **)blender::bke::node_tree_ptr_from_id(id_b),
                    do_full_id,
                    remapper_id_a,
                    remapper_id_b);
@@ -1275,19 +1275,19 @@ void BKE_main_lib_objects_recalc_all(Main *bmain)
  *
  * **************************** */
 
-size_t BKE_libblock_get_alloc_info(short type, const char **name)
+size_t BKE_libblock_get_alloc_info(short type, const char **r_name)
 {
   const IDTypeInfo *id_type = BKE_idtype_get_info_from_idcode(type);
 
   if (id_type == nullptr) {
-    if (name != nullptr) {
-      *name = nullptr;
+    if (r_name != nullptr) {
+      *r_name = nullptr;
     }
     return 0;
   }
 
-  if (name != nullptr) {
-    *name = id_type->name;
+  if (r_name != nullptr) {
+    *r_name = id_type->name;
   }
   return id_type->struct_size;
 }
@@ -2032,7 +2032,7 @@ void BKE_library_make_local(Main *bmain,
     const bool do_skip = (id && !BKE_idtype_idcode_is_linkable(GS(id->name)));
 
     for (; id; id = static_cast<ID *>(id->next)) {
-      ID *ntree = (ID *)blender::bke::ntreeFromID(id);
+      ID *ntree = (ID *)blender::bke::node_tree_from_id(id);
 
       id->tag &= ~ID_TAG_DOIT;
       if (ntree != nullptr) {

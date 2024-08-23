@@ -177,7 +177,11 @@ if(WITH_BLENDER)
       anim_data
       antialiased
       append_blend
+      area_dock
       area_join
+      area_join_down
+      area_join_left
+      area_join_up
       area_swap
       armature_data
       arrow_leftright
@@ -308,6 +312,7 @@ if(WITH_BLENDER)
       file_large
       filebrowser
       file_3d
+      file_alias
       file_archive
       file_backup
       file_blank

@@ -1370,7 +1370,7 @@ static void icon_copy_rect(ImBuf *ibuf, uint w, uint h, uint *rect)
   dx = (w - ex) / 2;
   dy = (h - ey) / 2;
 
-  IMB_scalefastImBuf(ima, ex, ey);
+  IMB_scale(ima, ex, ey, IMBScaleFilter::Nearest, false);
 
   /* if needed, convert to 32 bits */
   if (ima->byte_buffer.data == nullptr) {
@@ -1605,9 +1605,8 @@ static void icon_preview_startjob_all_sizes(void *customdata, wmJobWorkerStatus 
           if (object_preview_is_type_supported((Object *)ip->id)) {
             /* Much simpler than the ShaderPreview mess used for other ID types. */
             object_preview_render(ip, cur_size);
-            continue;
           }
-          break;
+          continue;
         case ID_GR:
           BLI_assert(collection_preview_contains_geometry_recursive((Collection *)ip->id));
           /* A collection instance empty was created, so this can just reuse the object preview

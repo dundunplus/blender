@@ -64,10 +64,10 @@ static PyStructSequence_Field app_builtopts_info_fields[] = {
 };
 
 static PyStructSequence_Desc app_builtopts_info_desc = {
-    "bpy.app.build_options",                                                /* name */
-    "This module contains information about options blender is built with", /* doc */
-    app_builtopts_info_fields,                                              /* fields */
-    ARRAY_SIZE(app_builtopts_info_fields) - 1,
+    /*name*/ "bpy.app.build_options",
+    /*doc*/ "This module contains information about options blender is built with",
+    /*fields*/ app_builtopts_info_fields,
+    /*n_in_sequence*/ ARRAY_SIZE(app_builtopts_info_fields) - 1,
 };
 
 static PyObject *make_builtopts_info()
@@ -263,7 +263,7 @@ static PyObject *make_builtopts_info()
   SetObjIncref(Py_False);
 #endif
 
-#ifdef WITH_IO_GPENCIL
+#ifdef WITH_IO_GREASE_PENCIL
   SetObjIncref(Py_True);
 #else
   SetObjIncref(Py_False);

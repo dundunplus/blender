@@ -410,13 +410,17 @@ static void image_blend_read_data(BlendDataReader *reader, ID *id)
   BLO_read_struct_list(reader, ImagePackedFile, &(ima->packedfiles));
 
   if (ima->packedfiles.first) {
-    LISTBASE_FOREACH (ImagePackedFile *, imapf, &ima->packedfiles) {
-      BKE_packedfile_blend_read(reader, &imapf->packedfile);
+    LISTBASE_FOREACH_MUTABLE (ImagePackedFile *, imapf, &ima->packedfiles) {
+      BKE_packedfile_blend_read(reader, &imapf->packedfile, imapf->filepath);
+      if (!imapf->packedfile) {
+        BLI_remlink(&ima->packedfiles, imapf);
+        MEM_freeN(imapf);
+      }
     }
     ima->packedfile = nullptr;
   }
   else {
-    BKE_packedfile_blend_read(reader, &ima->packedfile);
+    BKE_packedfile_blend_read(reader, &ima->packedfile, ima->filepath);
   }
 
   BLI_listbase_clear(&ima->anims);
@@ -795,7 +799,7 @@ bool BKE_image_scale(Image *image, int width, int height, ImageUser *iuser)
   ibuf = BKE_image_acquire_ibuf(image, iuser, &lock);
 
   if (ibuf) {
-    IMB_scaleImBuf(ibuf, width, height);
+    IMB_scale(ibuf, width, height, IMBScaleFilter::Box, false);
     BKE_image_mark_dirty(image, ibuf);
   }
 
@@ -4188,15 +4192,13 @@ static ImBuf *load_image_single(Image *ima,
 {
   char filepath[FILE_MAX];
   ImBuf *ibuf = nullptr;
-  int flag = IB_rect | IB_multilayer;
+  int flag = IB_rect | IB_multilayer | IB_metadata | imbuf_alpha_flags_for_image(ima);
 
   *r_cache_ibuf = true;
   const int tile_number = image_get_tile_number_from_iuser(ima, iuser);
 
   /* is there a PackedFile with this image ? */
   if (has_packed && !is_sequence) {
-    flag |= imbuf_alpha_flags_for_image(ima);
-
     LISTBASE_FOREACH (ImagePackedFile *, imapf, &ima->packedfiles) {
       if (imapf->view == view_id && imapf->tile_number == tile_number) {
         if (imapf->packedfile) {
@@ -4234,8 +4236,6 @@ static ImBuf *load_image_single(Image *ima,
     BKE_image_user_file_path(&iuser_t, ima, filepath);
 
     /* read ibuf */
-    flag |= IB_metadata;
-    flag |= imbuf_alpha_flags_for_image(ima);
     ibuf = IMB_loadiffname(filepath, flag, ima->colorspace_settings.name);
   }
 
@@ -4919,7 +4919,7 @@ ImBuf *BKE_image_preview(Image *ima, const short max_size, short *r_width, short
   BKE_image_release_ibuf(ima, image_ibuf, lock);
 
   /* Resize. */
-  IMB_scaleImBuf(preview, scale * image_ibuf->x, scale * image_ibuf->y);
+  IMB_scale(preview, scale * image_ibuf->x, scale * image_ibuf->y, IMBScaleFilter::Box, false);
   IMB_rect_from_float(preview);
 
   return preview;
