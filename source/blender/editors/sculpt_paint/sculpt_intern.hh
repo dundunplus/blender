@@ -178,8 +178,7 @@ struct StrokeCache {
    */
   float bstrength;
   float normal_weight; /* from brush (with optional override) */
-  float x_tilt;
-  float y_tilt;
+  float2 tilt;
 
   /* Position of the mouse corresponding to the stroke location, modified by the paint_stroke
    * operator according to the stroke type. */
@@ -260,8 +259,6 @@ struct StrokeCache {
    */
   bool accum;
 
-  float3 anchored_location;
-
   /* Paint Brush. */
   struct {
     float hardness;
@@ -332,8 +329,6 @@ struct StrokeCache {
 
   rcti previous_r; /* previous redraw rectangle */
   rcti current_r;  /* current redraw rectangle */
-
-  int stroke_id;
 
   ~StrokeCache();
 };

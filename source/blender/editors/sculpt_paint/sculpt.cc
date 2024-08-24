@@ -263,84 +263,6 @@ int active_face_set_get(const SculptSession &ss)
 
 }  // namespace face_set
 
-namespace hide {
-
-bool vert_visible_get(const Object &object, PBVHVertRef vertex)
-{
-  const SculptSession &ss = *object.sculpt;
-  switch (ss.pbvh->type()) {
-    case bke::pbvh::Type::Mesh: {
-      const Mesh &mesh = *static_cast<const Mesh *>(object.data);
-      const bke::AttributeAccessor attributes = mesh.attributes();
-      const VArray hide_vert = *attributes.lookup_or_default<bool>(
-          ".hide_vert", bke::AttrDomain::Point, false);
-      return !hide_vert[vertex.i];
-    }
-    case bke::pbvh::Type::BMesh:
-      return !BM_elem_flag_test((BMVert *)vertex.i, BM_ELEM_HIDDEN);
-    case bke::pbvh::Type::Grids: {
-      const CCGKey key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
-      const int grid_index = vertex.i / key.grid_area;
-      const int index_in_grid = vertex.i - grid_index * key.grid_area;
-      if (!ss.subdiv_ccg->grid_hidden.is_empty()) {
-        return !ss.subdiv_ccg->grid_hidden[grid_index][index_in_grid];
-      }
-    }
-  }
-  return true;
-}
-
-bool vert_all_faces_visible_get(const Span<bool> hide_poly,
-                                const GroupedSpan<int> vert_to_face_map,
-                                const int vert)
-{
-  if (hide_poly.is_empty()) {
-    return true;
-  }
-
-  for (const int face : vert_to_face_map[vert]) {
-    if (hide_poly[face]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool vert_all_faces_visible_get(const Span<bool> hide_poly,
-                                const SubdivCCG &subdiv_ccg,
-                                const SubdivCCGCoord vert)
-{
-  const int face_index = BKE_subdiv_ccg_grid_to_face_index(subdiv_ccg, vert.grid_index);
-  return hide_poly[face_index];
-}
-
-bool vert_all_faces_visible_get(BMVert *vert)
-{
-  BMEdge *edge = vert->e;
-
-  if (!edge) {
-    return true;
-  }
-
-  do {
-    BMLoop *loop = edge->l;
-
-    if (!loop) {
-      continue;
-    }
-
-    do {
-      if (BM_elem_flag_test(loop->f, BM_ELEM_HIDDEN)) {
-        return false;
-      }
-    } while ((loop = loop->radial_next) != edge->l);
-  } while ((edge = BM_DISK_EDGE_NEXT(edge, vert)) != vert->e);
-
-  return true;
-}
-
-}  // namespace hide
-
 namespace face_set {
 
 int vert_face_set_get(const SculptSession &ss, PBVHVertRef vertex)
@@ -884,6 +806,29 @@ bool SCULPT_check_vertex_pivot_symmetry(const float vco[3], const float pco[3], 
     }
   }
   return is_in_symmetry_area;
+}
+
+void sculpt_project_v3_normal_align(const SculptSession &ss,
+                                    const float normal_weight,
+                                    float grab_delta[3])
+{
+  /* Signed to support grabbing in (to make a hole) as well as out. */
+  const float len_signed = dot_v3v3(ss.cache->sculpt_normal_symm, grab_delta);
+
+  /* This scale effectively projects the offset so dragging follows the cursor,
+   * as the normal points towards the view, the scale increases. */
+  float len_view_scale;
+  {
+    float view_aligned_normal[3];
+    project_plane_v3_v3v3(
+        view_aligned_normal, ss.cache->sculpt_normal_symm, ss.cache->view_normal);
+    len_view_scale = fabsf(dot_v3v3(view_aligned_normal, ss.cache->sculpt_normal_symm));
+    len_view_scale = (len_view_scale > FLT_EPSILON) ? 1.0f / len_view_scale : 1.0f;
+  }
+
+  mul_v3_fl(grab_delta, 1.0f - normal_weight);
+  madd_v3_v3fl(
+      grab_delta, ss.cache->sculpt_normal_symm, (len_signed * normal_weight) * len_view_scale);
 }
 
 namespace blender::ed::sculpt_paint {
@@ -2866,10 +2811,10 @@ void SCULPT_tilt_apply_to_normal(float r_normal[3],
   const float rot_max = M_PI_2 * tilt_strength * SCULPT_TILT_SENSITIVITY;
   mul_v3_mat3_m4v3(r_normal, cache->vc->obact->object_to_world().ptr(), r_normal);
   float normal_tilt_y[3];
-  rotate_v3_v3v3fl(normal_tilt_y, r_normal, cache->vc->rv3d->viewinv[0], cache->y_tilt * rot_max);
+  rotate_v3_v3v3fl(normal_tilt_y, r_normal, cache->vc->rv3d->viewinv[0], cache->tilt.y * rot_max);
   float normal_tilt_xy[3];
   rotate_v3_v3v3fl(
-      normal_tilt_xy, normal_tilt_y, cache->vc->rv3d->viewinv[1], cache->x_tilt * rot_max);
+      normal_tilt_xy, normal_tilt_y, cache->vc->rv3d->viewinv[1], cache->tilt.x * rot_max);
   mul_v3_mat3_m4v3(r_normal, cache->vc->obact->world_to_object().ptr(), normal_tilt_xy);
   normalize_v3(r_normal);
 }
@@ -4467,21 +4412,6 @@ static void brush_delta_update(const Depsgraph &depsgraph,
 
   copy_v3_v3(cache->old_grab_location, grab_location);
 
-  if (tool == SCULPT_TOOL_GRAB) {
-    if (brush.flag & BRUSH_GRAB_ACTIVE_VERTEX) {
-      copy_v3_v3(cache->anchored_location, cache->orig_grab_location);
-    }
-    else {
-      copy_v3_v3(cache->anchored_location, cache->true_location);
-    }
-  }
-  else if (tool == SCULPT_TOOL_ELASTIC_DEFORM || cloth::is_cloth_deform_brush(brush)) {
-    copy_v3_v3(cache->anchored_location, cache->true_location);
-  }
-  else if (tool == SCULPT_TOOL_THUMB) {
-    copy_v3_v3(cache->anchored_location, cache->orig_grab_location);
-  }
-
   if (need_delta_from_anchored_origin(brush)) {
     /* Location stays the same for finding vertices in brush radius. */
     copy_v3_v3(cache->true_location, cache->orig_grab_location);
@@ -4614,8 +4544,7 @@ static void sculpt_update_cache_variants(bContext *C, Sculpt &sd, Object &ob, Po
     cache.pressure = RNA_float_get(ptr, "pressure");
   }
 
-  cache.x_tilt = RNA_float_get(ptr, "x_tilt");
-  cache.y_tilt = RNA_float_get(ptr, "y_tilt");
+  cache.tilt = {RNA_float_get(ptr, "x_tilt"), RNA_float_get(ptr, "y_tilt")};
 
   /* Truly temporary data that isn't stored in properties. */
   if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(*ss.cache)) {
@@ -4666,8 +4595,6 @@ static void sculpt_update_cache_variants(bContext *C, Sculpt &sd, Object &ob, Po
     cache.radius = paint_calc_object_space_radius(
         *cache.vc, cache.true_location, ups.pixel_radius);
     cache.radius_squared = cache.radius * cache.radius;
-
-    copy_v3_v3(cache.anchored_location, cache.true_location);
   }
 
   brush_delta_update(depsgraph, ups, ob, brush);
@@ -4677,7 +4604,6 @@ static void sculpt_update_cache_variants(bContext *C, Sculpt &sd, Object &ob, Po
 
     ups.draw_anchored = true;
     copy_v2_v2(ups.anchored_initial_mouse, cache.initial_mouse);
-    copy_v3_v3(cache.anchored_location, cache.true_location);
     ups.anchored_size = ups.pixel_radius;
   }
 
@@ -5500,7 +5426,6 @@ static bool stroke_test_start(bContext *C, wmOperator *op, const float mval[2])
     stroke_undo_begin(C, op);
 
     SCULPT_stroke_id_next(ob);
-    ss.cache->stroke_id = ss.stroke_id;
 
     return true;
   }
