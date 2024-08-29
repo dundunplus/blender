@@ -27,6 +27,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_rotation.h"
+#include "BLI_math_rotation.hh"
 #include "BLI_set.hh"
 #include "BLI_span.hh"
 #include "BLI_task.h"
@@ -1840,7 +1841,7 @@ static void calc_area_normal_and_center_node_bmesh(const Object &object,
                                                    const bool use_area_nos,
                                                    const bool use_area_cos,
                                                    const bool has_bm_orco,
-                                                   const bke::pbvh::Node &node,
+                                                   const bke::pbvh::BMeshNode &node,
                                                    SampleLocalData &tls,
                                                    AreaNormalCenterData &anctd)
 {
@@ -1869,8 +1870,11 @@ static void calc_area_normal_and_center_node_bmesh(const Object &object,
     float(*orco_coords)[3];
     int(*orco_tris)[3];
     int orco_tris_num;
-    BKE_pbvh_node_get_bm_orco_data(
-        &const_cast<bke::pbvh::Node &>(node), &orco_tris, &orco_tris_num, &orco_coords, nullptr);
+    BKE_pbvh_node_get_bm_orco_data(&const_cast<bke::pbvh::BMeshNode &>(node),
+                                   &orco_tris,
+                                   &orco_tris_num,
+                                   &orco_coords,
+                                   nullptr);
 
     tls.positions.resize(orco_tris_num);
     const MutableSpan<float3> positions = tls.positions;
@@ -1912,7 +1916,7 @@ static void calc_area_normal_and_center_node_bmesh(const Object &object,
   }
 
   const Set<BMVert *, 0> &verts = BKE_pbvh_bmesh_node_unique_verts(
-      &const_cast<bke::pbvh::Node &>(node));
+      &const_cast<bke::pbvh::BMeshNode &>(node));
   if (use_original) {
     tls.positions.resize(verts.size());
     const MutableSpan<float3> positions = tls.positions;
@@ -2055,7 +2059,14 @@ void calc_area_center(const Depsgraph &depsgraph,
             SampleLocalData &tls = all_tls.local();
             for (const int i : range) {
               calc_area_normal_and_center_node_bmesh(
-                  ob, brush, false, true, has_bm_orco, *nodes[i], tls, anctd);
+                  ob,
+                  brush,
+                  false,
+                  true,
+                  has_bm_orco,
+                  static_cast<const blender::bke::pbvh::BMeshNode &>(*nodes[i]),
+                  tls,
+                  anctd);
             }
             return anctd;
           },
@@ -2152,7 +2163,14 @@ std::optional<float3> calc_area_normal(const Depsgraph &depsgraph,
             SampleLocalData &tls = all_tls.local();
             for (const int i : range) {
               calc_area_normal_and_center_node_bmesh(
-                  ob, brush, true, false, has_bm_orco, *nodes[i], tls, anctd);
+                  ob,
+                  brush,
+                  true,
+                  false,
+                  has_bm_orco,
+                  static_cast<const blender::bke::pbvh::BMeshNode &>(*nodes[i]),
+                  tls,
+                  anctd);
             }
             return anctd;
           },
@@ -2241,7 +2259,14 @@ void calc_area_normal_and_center(const Depsgraph &depsgraph,
             SampleLocalData &tls = all_tls.local();
             for (const int i : range) {
               calc_area_normal_and_center_node_bmesh(
-                  ob, brush, true, true, has_bm_orco, *nodes[i], tls, anctd);
+                  ob,
+                  brush,
+                  true,
+                  true,
+                  has_bm_orco,
+                  static_cast<const blender::bke::pbvh::BMeshNode &>(*nodes[i]),
+                  tls,
+                  anctd);
             }
             return anctd;
           },
@@ -3237,7 +3262,8 @@ static void dynamic_topology_update(const Depsgraph &depsgraph,
     BKE_pbvh_node_mark_update(*node);
 
     BKE_pbvh_node_mark_topology_update(*node);
-    BKE_pbvh_bmesh_node_save_orig(ss.bm, ss.bm_log, node, false);
+    BKE_pbvh_bmesh_node_save_orig(
+        ss.bm, ss.bm_log, static_cast<blender::bke::pbvh::BMeshNode *>(node), false);
   }
 
   float max_edge_len;
@@ -3253,7 +3279,8 @@ static void dynamic_topology_update(const Depsgraph &depsgraph,
   }
   const float min_edge_len = max_edge_len * dyntopo::detail_size::EDGE_LENGTH_MIN_FACTOR;
 
-  bke::pbvh::bmesh_update_topology(*ss.pbvh,
+  bke::pbvh::bmesh_update_topology(*ss.bm,
+                                   *ss.pbvh,
                                    *ss.bm_log,
                                    mode,
                                    min_edge_len,
@@ -3688,8 +3715,14 @@ void SCULPT_cache_calc_brushdata_symm(blender::ed::sculpt_paint::StrokeCache &ca
     mul_m4_v3(cache.symm_rot_mat.ptr(), cache.gravity_direction);
   }
 
-  if (cache.is_rake_rotation_valid) {
-    flip_qt_qt(cache.rake_rotation_symmetry, cache.rake_rotation, symm);
+  if (cache.rake_rotation) {
+    float4 new_quat;
+    float4 existing(cache.rake_rotation->w,
+                    cache.rake_rotation->x,
+                    cache.rake_rotation->y,
+                    cache.rake_rotation->z);
+    flip_qt_qt(new_quat, existing, symm);
+    cache.rake_rotation_symmetry = math::Quaternion(existing);
   }
 }
 
@@ -4423,8 +4456,6 @@ static void brush_delta_update(const Depsgraph &depsgraph,
   }
 
   /* Handle 'rake' */
-  cache->is_rake_rotation_valid = false;
-
   invert_m4_m4(imat, ob.object_to_world().ptr());
   mul_mat3_m4_v3(imat, grab_location);
 
@@ -4455,18 +4486,10 @@ static void brush_delta_update(const Depsgraph &depsgraph,
                                   1.0f :
                                   sqrtf(rake_dist_sq) / cache->rake_data.follow_dist;
 
-      float axis[3], angle;
-      float tquat[4];
-
-      rotation_between_vecs_to_quat(tquat, v1, v2);
-
-      /* Use axis-angle to scale rotation since the factor may be above 1. */
-      quat_to_axis_angle(axis, &angle, tquat);
-      normalize_v3(axis);
-
-      angle *= brush.rake_factor * rake_fade;
-      axis_angle_normalized_to_quat(cache->rake_rotation, axis, angle);
-      cache->is_rake_rotation_valid = true;
+      const math::AxisAngle between_vecs(v1, v2);
+      const math::AxisAngle rotated(between_vecs.axis(),
+                                    between_vecs.angle() * brush.rake_factor * rake_fade);
+      cache->rake_rotation = math::to_quaternion(rotated);
     }
   }
   rake_data_update(&cache->rake_data, grab_location);
@@ -4862,7 +4885,7 @@ bool SCULPT_cursor_geometry_info_update(bContext *C,
   /* Update the active vertex of the SculptSession. */
   const PBVHVertRef active_vertex = srd.active_vertex;
   ss.set_active_vert(active_vertex);
-  copy_v3_v3(out->active_vertex_co, SCULPT_vertex_co_get(*depsgraph, ob, active_vertex));
+  out->active_vertex_co = ss.active_vert_position(*depsgraph, ob);
 
   switch (ss.pbvh->type()) {
     case bke::pbvh::Type::Mesh:
@@ -5316,7 +5339,7 @@ void flush_update_done(const bContext *C, Object &ob, UpdateType update_type)
 
   if (update_type == UpdateType::Position) {
     if (ss.pbvh->type() == bke::pbvh::Type::BMesh) {
-      BKE_pbvh_bmesh_after_stroke(*ss.pbvh);
+      BKE_pbvh_bmesh_after_stroke(*ss.bm, *ss.pbvh);
     }
   }
 
@@ -5736,36 +5759,24 @@ static void fake_neighbor_init(Object &object, const float max_dist)
   ss.fake_neighbors.current_max_distance = max_dist;
 }
 
-static void fake_neighbor_add(SculptSession &ss, PBVHVertRef v_a, PBVHVertRef v_b)
-{
-  int v_index_a = BKE_pbvh_vertex_to_index(*ss.pbvh, v_a);
-  int v_index_b = BKE_pbvh_vertex_to_index(*ss.pbvh, v_b);
-
-  if (ss.fake_neighbors.fake_neighbor_index[v_index_a] == FAKE_NEIGHBOR_NONE) {
-    ss.fake_neighbors.fake_neighbor_index[v_index_a] = v_index_b;
-    ss.fake_neighbors.fake_neighbor_index[v_index_b] = v_index_a;
-  }
-}
-
 static void pose_fake_neighbors_free(SculptSession &ss)
 {
   ss.fake_neighbors.fake_neighbor_index = {};
 }
 
-struct NearestVertexFakeNeighborData {
-  PBVHVertRef nearest_vertex;
-  float distance_sq;
+struct NearestVertData {
+  int vert = -1;
+  float distance_sq = std::numeric_limits<float>::max();
 
-  static NearestVertexFakeNeighborData join(const NearestVertexFakeNeighborData &a,
-                                            const NearestVertexFakeNeighborData &b)
+  static NearestVertData join(const NearestVertData &a, const NearestVertData &b)
   {
-    NearestVertexFakeNeighborData joined = a;
-    if (joined.nearest_vertex.i == PBVH_REF_NONE) {
-      joined.nearest_vertex = b.nearest_vertex;
+    NearestVertData joined = a;
+    if (joined.vert == -1) {
+      joined.vert = b.vert;
       joined.distance_sq = b.distance_sq;
     }
     else if (b.distance_sq < joined.distance_sq) {
-      joined.nearest_vertex = b.nearest_vertex;
+      joined.vert = b.vert;
       joined.distance_sq = b.distance_sq;
     }
     return joined;
@@ -5779,7 +5790,7 @@ static void fake_neighbor_search_mesh(const SculptSession &ss,
                                       const float max_distance_sq,
                                       const int island_id,
                                       const bke::pbvh::Node &node,
-                                      NearestVertexFakeNeighborData &nvtd)
+                                      NearestVertData &nvtd)
 {
   for (const int vert : bke::pbvh::node_unique_verts(node)) {
     if (!hide_vert.is_empty() && hide_vert[vert]) {
@@ -5793,7 +5804,7 @@ static void fake_neighbor_search_mesh(const SculptSession &ss,
     }
     const float distance_sq = math::distance_squared(vert_positions[vert], location);
     if (distance_sq < max_distance_sq && distance_sq < nvtd.distance_sq) {
-      nvtd.nearest_vertex = PBVHVertRef{vert};
+      nvtd.vert = vert;
       nvtd.distance_sq = distance_sq;
     }
   }
@@ -5807,7 +5818,7 @@ static void fake_neighbor_search_grids(const SculptSession &ss,
                                        const float max_distance_sq,
                                        const int island_id,
                                        const bke::pbvh::Node &node,
-                                       NearestVertexFakeNeighborData &nvtd)
+                                       NearestVertData &nvtd)
 {
   for (const int grid : bke::pbvh::node_grid_indices(node)) {
     const int verts_start = grid * key.grid_area;
@@ -5823,7 +5834,8 @@ static void fake_neighbor_search_grids(const SculptSession &ss,
       const float distance_sq = math::distance_squared(CCG_elem_offset_co(key, elem, offset),
                                                        location);
       if (distance_sq < max_distance_sq && distance_sq < nvtd.distance_sq) {
-        nvtd.nearest_vertex = PBVHVertRef{verts_start + offset};
+        nvtd.vert = vert;
+        BLI_assert(nvtd.vert < key.grid_area * elems.size());
         nvtd.distance_sq = distance_sq;
       }
     });
@@ -5835,44 +5847,35 @@ static void fake_neighbor_search_bmesh(const SculptSession &ss,
                                        const float max_distance_sq,
                                        const int island_id,
                                        bke::pbvh::Node &node,
-                                       NearestVertexFakeNeighborData &nvtd)
+                                       NearestVertData &nvtd)
 {
-  for (const BMVert *vert : BKE_pbvh_bmesh_node_unique_verts(&node)) {
-    if (BM_elem_flag_test(vert, BM_ELEM_HIDDEN)) {
+  for (const BMVert *bm_vert : BKE_pbvh_bmesh_node_unique_verts(&node)) {
+    if (BM_elem_flag_test(bm_vert, BM_ELEM_HIDDEN)) {
       continue;
     }
-    if (ss.fake_neighbors.fake_neighbor_index[BM_elem_index_get(vert)] != FAKE_NEIGHBOR_NONE) {
+    const int vert = BM_elem_index_get(bm_vert);
+    if (ss.fake_neighbors.fake_neighbor_index[vert] != FAKE_NEIGHBOR_NONE) {
       continue;
     }
-    if (islands::vert_id_get(ss, BM_elem_index_get(vert)) == island_id) {
+    if (islands::vert_id_get(ss, vert) == island_id) {
       continue;
     }
-    const float distance_sq = math::distance_squared(float3(vert->co), location);
+    const float distance_sq = math::distance_squared(float3(bm_vert->co), location);
     if (distance_sq < max_distance_sq && distance_sq < nvtd.distance_sq) {
-      nvtd.nearest_vertex = PBVHVertRef{intptr_t(vert)};
+      nvtd.vert = vert;
       nvtd.distance_sq = distance_sq;
     }
   }
 }
 
-static PBVHVertRef fake_neighbor_search(const Depsgraph &depsgraph,
-                                        Object &ob,
-                                        const PBVHVertRef vertex,
-                                        float max_distance_sq)
+static void fake_neighbor_search(const Depsgraph &depsgraph,
+                                 const Object &ob,
+                                 const float max_distance_sq,
+                                 MutableSpan<int> fake_neighbors)
 {
+  /* NOTE: This algorithm is extremely slow, it has O(n^2) runtime for the entire mesh. This looks
+   * like the "closest pair of points" problem which should have far better solutions. */
   SculptSession &ss = *ob.sculpt;
-  const float3 location = SCULPT_vertex_co_get(depsgraph, ob, vertex);
-  Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(*ss.pbvh, [&](bke::pbvh::Node &node) {
-    return node_in_sphere(node, location, max_distance_sq, false);
-  });
-  if (nodes.is_empty()) {
-    return BKE_pbvh_make_vref(PBVH_REF_NONE);
-  }
-
-  NearestVertexFakeNeighborData nvtd;
-  nvtd.nearest_vertex.i = -1;
-  nvtd.distance_sq = FLT_MAX;
-  const int island_id = islands::vert_id_get(ss, BKE_pbvh_vertex_to_index(*ss.pbvh, vertex));
 
   switch (ss.pbvh->type()) {
     case bke::pbvh::Type::Mesh: {
@@ -5881,24 +5884,43 @@ static PBVHVertRef fake_neighbor_search(const Depsgraph &depsgraph,
       const bke::AttributeAccessor attributes = mesh.attributes();
       const VArraySpan<bool> hide_vert = *attributes.lookup<bool>(".hide_vert",
                                                                   bke::AttrDomain::Point);
-      nvtd = threading::parallel_reduce(
-          nodes.index_range(),
-          1,
-          nvtd,
-          [&](const IndexRange range, NearestVertexFakeNeighborData nvtd) {
-            for (const int i : range) {
-              fake_neighbor_search_mesh(ss,
-                                        vert_positions,
-                                        hide_vert,
-                                        location,
-                                        max_distance_sq,
-                                        island_id,
-                                        *nodes[i],
-                                        nvtd);
-            }
-            return nvtd;
-          },
-          NearestVertexFakeNeighborData::join);
+      for (const int vert : vert_positions.index_range()) {
+        if (fake_neighbors[vert] != FAKE_NEIGHBOR_NONE) {
+          continue;
+        }
+        const int island_id = islands::vert_id_get(ss, vert);
+        const float3 &location = vert_positions[vert];
+        Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(
+            *ss.pbvh, [&](bke::pbvh::Node &node) {
+              return node_in_sphere(node, location, max_distance_sq, false);
+            });
+        if (nodes.is_empty()) {
+          continue;
+        }
+        const NearestVertData nvtd = threading::parallel_reduce(
+            nodes.index_range(),
+            1,
+            NearestVertData(),
+            [&](const IndexRange range, NearestVertData nvtd) {
+              for (const int i : range) {
+                fake_neighbor_search_mesh(ss,
+                                          vert_positions,
+                                          hide_vert,
+                                          location,
+                                          max_distance_sq,
+                                          island_id,
+                                          *nodes[i],
+                                          nvtd);
+              }
+              return nvtd;
+            },
+            NearestVertData::join);
+        if (nvtd.vert == -1) {
+          continue;
+        }
+        fake_neighbors[vert] = nvtd.vert;
+        fake_neighbors[nvtd.vert] = vert;
+      }
       break;
     }
     case bke::pbvh::Type::Grids: {
@@ -5906,45 +5928,83 @@ static PBVHVertRef fake_neighbor_search(const Depsgraph &depsgraph,
       const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
       const Span<CCGElem *> elems = subdiv_ccg.grids;
       const BitGroupVector<> grid_hidden = subdiv_ccg.grid_hidden;
-      nvtd = threading::parallel_reduce(
-          nodes.index_range(),
-          1,
-          nvtd,
-          [&](const IndexRange range, NearestVertexFakeNeighborData nvtd) {
-            for (const int i : range) {
-              fake_neighbor_search_grids(ss,
-                                         key,
-                                         elems,
-                                         grid_hidden,
-                                         location,
-                                         max_distance_sq,
-                                         island_id,
-                                         *nodes[i],
-                                         nvtd);
-            }
-            return nvtd;
-          },
-          NearestVertexFakeNeighborData::join);
+      for (const int vert : IndexRange(elems.size() * key.grid_area)) {
+        if (fake_neighbors[vert] != FAKE_NEIGHBOR_NONE) {
+          continue;
+        }
+        const int island_id = islands::vert_id_get(ss, vert);
+        const SubdivCCGCoord coord = SubdivCCGCoord::from_index(key, vert);
+        const float3 &location = CCG_grid_elem_co(key, elems[coord.grid_index], coord.x, coord.y);
+        Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(
+            *ss.pbvh, [&](bke::pbvh::Node &node) {
+              return node_in_sphere(node, location, max_distance_sq, false);
+            });
+        if (nodes.is_empty()) {
+          continue;
+        }
+        const NearestVertData nvtd = threading::parallel_reduce(
+            nodes.index_range(),
+            1,
+            NearestVertData(),
+            [&](const IndexRange range, NearestVertData nvtd) {
+              for (const int i : range) {
+                fake_neighbor_search_grids(ss,
+                                           key,
+                                           elems,
+                                           grid_hidden,
+                                           location,
+                                           max_distance_sq,
+                                           island_id,
+                                           *nodes[i],
+                                           nvtd);
+              }
+              return nvtd;
+            },
+            NearestVertData::join);
+        if (nvtd.vert == -1) {
+          continue;
+        }
+        fake_neighbors[vert] = nvtd.vert;
+        fake_neighbors[nvtd.vert] = vert;
+      }
       break;
     }
     case bke::pbvh::Type::BMesh: {
-      nvtd = threading::parallel_reduce(
-          nodes.index_range(),
-          1,
-          nvtd,
-          [&](const IndexRange range, NearestVertexFakeNeighborData nvtd) {
-            for (const int i : range) {
-              fake_neighbor_search_bmesh(
-                  ss, location, max_distance_sq, island_id, *nodes[i], nvtd);
-            }
-            return nvtd;
-          },
-          NearestVertexFakeNeighborData::join);
+      const BMesh &bm = *ss.bm;
+      for (const int vert : IndexRange(bm.totvert)) {
+        if (fake_neighbors[vert] != FAKE_NEIGHBOR_NONE) {
+          continue;
+        }
+        const int island_id = islands::vert_id_get(ss, vert);
+        const float3 &location = BM_vert_at_index(&const_cast<BMesh &>(bm), vert)->co;
+        Vector<bke::pbvh::Node *> nodes = bke::pbvh::search_gather(
+            *ss.pbvh, [&](bke::pbvh::Node &node) {
+              return node_in_sphere(node, location, max_distance_sq, false);
+            });
+        if (nodes.is_empty()) {
+          continue;
+        }
+        const NearestVertData nvtd = threading::parallel_reduce(
+            nodes.index_range(),
+            1,
+            NearestVertData(),
+            [&](const IndexRange range, NearestVertData nvtd) {
+              for (const int i : range) {
+                fake_neighbor_search_bmesh(
+                    ss, location, max_distance_sq, island_id, *nodes[i], nvtd);
+              }
+              return nvtd;
+            },
+            NearestVertData::join);
+        if (nvtd.vert == -1) {
+          continue;
+        }
+        fake_neighbors[vert] = nvtd.vert;
+        fake_neighbors[nvtd.vert] = vert;
+      }
       break;
     }
   }
-
-  return nvtd.nearest_vertex;
 }
 
 struct SculptTopologyIDFloodFillData {
@@ -5984,11 +6044,9 @@ void SCULPT_fake_neighbors_ensure(const Depsgraph &depsgraph, Object &ob, const 
 {
   using namespace blender::ed::sculpt_paint;
   SculptSession &ss = *ob.sculpt;
-  const int totvert = SCULPT_vertex_count_get(ob);
 
   /* Fake neighbors were already initialized with the same distance, so no need to be
-   * recalculated.
-   */
+   * recalculated. */
   if (!ss.fake_neighbors.fake_neighbor_index.is_empty() &&
       ss.fake_neighbors.current_max_distance == max_dist)
   {
@@ -5997,22 +6055,7 @@ void SCULPT_fake_neighbors_ensure(const Depsgraph &depsgraph, Object &ob, const 
 
   islands::ensure_cache(ob);
   fake_neighbor_init(ob, max_dist);
-  const float max_distance_sq = max_dist * max_dist;
-
-  /* NOTE: This algorithm is extremely slow, it has O(n^2) runtime for the entire mesh. This looks
-   * like the "closest pair of points" problem which should have far better solutions. */
-  for (int i = 0; i < totvert; i++) {
-    const PBVHVertRef from_v = BKE_pbvh_index_to_vertex(*ss.pbvh, i);
-
-    /* This vertex does not have a fake neighbor yet, search one for it. */
-    if (ss.fake_neighbors.fake_neighbor_index[i] == FAKE_NEIGHBOR_NONE) {
-      const PBVHVertRef to_v = fake_neighbor_search(depsgraph, ob, from_v, max_distance_sq);
-      if (to_v.i != PBVH_REF_NONE) {
-        /* Add the fake neighbor if available. */
-        fake_neighbor_add(ss, from_v, to_v);
-      }
-    }
-  }
+  fake_neighbor_search(depsgraph, ob, max_dist * max_dist, ss.fake_neighbors.fake_neighbor_index);
 }
 
 void SCULPT_fake_neighbors_enable(Object &ob)

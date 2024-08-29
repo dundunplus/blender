@@ -200,26 +200,6 @@ class Action : public ::bAction {
   Slot &slot_add_for_id(const ID &animated_id);
 
   /**
-   * Ensure that an appropriate Slot exists for the given ID.
-   *
-   * If a suitable Slot can be found, that Slot is returned.  Otherwise,
-   * one is created.
-   *
-   * This is essentially a wrapper for `find_suitable_slot_for()` and
-   * `slot_add_for_id()`, and follows their semantics. Notably, like both of
-   * those methods, this Action does not need to already be assigned to the ID.
-   * And like `find_suitable_slot_for()`, if this Action *is* already
-   * assigned to the ID with a valid Slot, that Slot is returned.
-   *
-   * Note that this assigns neither this Action nor the Slot to the ID. This
-   * merely ensures that an appropriate Slot exists.
-   *
-   * \see `Action::find_suitable_slot_for()`
-   * \see `Action::slot_add_for_id()`
-   */
-  Slot &slot_ensure_for_id(const ID &animated_id);
-
-  /**
    * Set the active Slot, ensuring only one Slot is flagged as the Active one.
    *
    * \param slot_handle if Slot::unassigned, there will not be any active slot.
@@ -240,7 +220,12 @@ class Action : public ::bAction {
    */
   Slot *slot_active_get();
 
-  /** Assign this Action to the ID.
+  /**
+   * Assign this Action + Slot to the ID.
+   *
+   * If another Action is already assigned to this ID, the caller should unassign the ID from its
+   * existing Action first, or use the top-level function `assign_action(action, ID)` to do things
+   * all in one go.
    *
    * \param slot: The slot this ID should be animated by, may be nullptr if it is to be
    * assigned later. In that case, the ID will not actually receive any animation.
@@ -931,6 +916,24 @@ static_assert(sizeof(ChannelBag) == sizeof(::ActionChannelBag),
 bool assign_action(Action &action, ID &animated_id);
 
 /**
+ * Assign the Action, ensuring that a Slot is also assigned.
+ *
+ * If this Action happens to already be assigned, and a Slot is assigned too, that Slot is
+ * returned. Otherwise a new Slot is created + assigned.
+ *
+ * \returns the assigned slot if the assignment was succesful, or `nullptr` otherwise. The only
+ * reason the assignment can fail is when the given ID is of an animatable type.
+ *
+ * \note Contrary to `assign_action()` this skips the search by slot name when the Action is
+ * already assigned. It should be possible for an animator to un-assign a slot, then create a new
+ * slot by inserting a new key. This shouldn't auto-assign the old slot (by name) and _then_ insert
+ * the key.
+ *
+ * \see assign_action()
+ */
+Slot *assign_action_ensure_slot_for_keying(Action &action, ID &animated_id);
+
+/**
  * Return whether the given Action can be assigned to the ID.
  *
  * This always returns `true` for layered Actions. For legacy Actions it
@@ -1018,22 +1021,24 @@ Vector<const FCurve *> fcurves_all(const Action &action);
 Vector<FCurve *> fcurves_all(Action &action);
 
 /**
- * Get (or add relevant data to be able to do so) an F-Curve from the given
- * Action. This assumes that all the destinations are valid.
+ * Find or create an F-Curve on the given action that matches the given fcurve
+ * descriptor.
  *
- * NOTE: this function is primarily intended for use with legacy actions, but
- * for reasons of expedience it now also works with layered actions under the
+ * This function is primarily intended for use with legacy actions, but for
+ * reasons of expedience it now also works with layered actions under the
  * following limited circumstances: `ptr` must be non-null and must have an
- * `owner_id` that already uses `act`. Otherwise this function will return
- * nullptr for layered actions. See the comments in the implementation for more
- * details.
+ * `owner_id` that already uses `act`. See the comments in the implementation
+ * for more details.
  *
  * \note This function also ensures that dependency graph relationships are
  * rebuilt. This is necessary when adding a new F-Curve, as a
  * previously-unanimated depsgraph component may become animated now.
  *
  * \param ptr: RNA pointer for the struct the fcurve is being looked up/created
- * for. For legacy actions this is optional and may be null.
+ * for. For legacy actions this is optional and may be null, but if provided is
+ * used to do things like set the fcurve color properly. For layered actions
+ * this parameter is required, and is used to create and assign an appropriate
+ * slot if needed when creating the fcurve.
  *
  * \param fcurve_descriptor: description of the fcurve to lookup/create. Note
  * that this is *not* relative to `ptr` (e.g. if `ptr` is not an ID). It should
