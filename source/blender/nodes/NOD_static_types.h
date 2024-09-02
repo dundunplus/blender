@@ -277,6 +277,7 @@ DefNode(FunctionNode, FN_NODE_COMBINE_TRANSFORM, 0, "COMBINE_TRANSFORM", Combine
 DefNode(FunctionNode, FN_NODE_COMPARE, 0, "COMPARE", Compare, "Compare", "")
 DefNode(FunctionNode, FN_NODE_EULER_TO_ROTATION, 0, "EULER_TO_ROTATION", EulerToRotation, "Euler to Rotation", "")
 DefNode(FunctionNode, FN_NODE_FLOAT_TO_INT, def_float_to_int, "FLOAT_TO_INT", FloatToInt, "Float to Integer", "")
+DefNode(FunctionNode, FN_NODE_HASH_VALUE, 0, "HASH_VALUE", HashValue, "Hash Value", "")
 DefNode(FunctionNode, FN_NODE_INPUT_BOOL, def_fn_input_bool, "INPUT_BOOL", InputBool, "Boolean", "")
 DefNode(FunctionNode, FN_NODE_INPUT_COLOR, def_fn_input_color, "INPUT_COLOR", InputColor, "Color", "")
 DefNode(FunctionNode, FN_NODE_INPUT_INT, def_fn_input_int, "INPUT_INT", InputInt, "Integer", "")
@@ -501,6 +502,7 @@ DefNode(GeometryNode, GEO_NODE_UV_UNWRAP, 0, "UV_UNWRAP", UVUnwrap, "UV Unwrap",
 DefNode(GeometryNode, GEO_NODE_VIEWER, 0, "VIEWER", Viewer, "Viewer", "Display the input data in the Spreadsheet Editor")
 DefNode(GeometryNode, GEO_NODE_VOLUME_CUBE, 0, "VOLUME_CUBE", VolumeCube, "Volume Cube", "Generate a dense volume with a field that controls the density at each grid voxel based on its position")
 DefNode(GeometryNode, GEO_NODE_VOLUME_TO_MESH, 0, "VOLUME_TO_MESH", VolumeToMesh, "Volume to Mesh", "Generate a mesh on the \"surface\" of a volume")
+DefNode(GeometryNode, GEO_NODE_WARNING, 0, "WARNING", Warning, "Warning", "Create custom warnings in node groups")
 
 /* undefine macros */
 #undef DefNode

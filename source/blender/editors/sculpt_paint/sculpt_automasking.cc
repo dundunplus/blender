@@ -221,7 +221,7 @@ static float calc_brush_normal_factor(const Depsgraph &depsgraph,
   float3 initial_normal;
 
   if (ss.cache) {
-    initial_normal = ss.cache->initial_normal;
+    initial_normal = ss.cache->initial_normal_symm;
   }
   else {
     initial_normal = ss.filter_cache->initial_normal;
@@ -248,7 +248,7 @@ static float calc_view_normal_factor(const Depsgraph &depsgraph,
   float3 view_normal;
 
   if (ss.cache) {
-    view_normal = ss.cache->view_normal;
+    view_normal = ss.cache->view_normal_symm;
   }
   else {
     view_normal = ss.filter_cache->view_normal;
@@ -615,7 +615,7 @@ static float factor_get(const Depsgraph &depsgraph,
 void calc_vert_factors(const Depsgraph &depsgraph,
                        const Object &object,
                        const Cache &cache,
-                       const bke::pbvh::Node &node,
+                       const bke::pbvh::MeshNode &node,
                        const Span<int> verts,
                        const MutableSpan<float> factors)
 {
@@ -641,7 +641,7 @@ void calc_face_factors(const Depsgraph &depsgraph,
                        const OffsetIndices<int> faces,
                        const Span<int> corner_verts,
                        const Cache &cache,
-                       const bke::pbvh::Node & /*node*/,
+                       const bke::pbvh::MeshNode & /*node*/,
                        const Span<int> face_indices,
                        const MutableSpan<float> factors)
 {
@@ -658,7 +658,7 @@ void calc_face_factors(const Depsgraph &depsgraph,
 void calc_grids_factors(const Depsgraph &depsgraph,
                         const Object &object,
                         const Cache &cache,
-                        const bke::pbvh::Node &node,
+                        const bke::pbvh::GridsNode &node,
                         const Span<int> grids,
                         const MutableSpan<float> factors)
 {
@@ -691,7 +691,7 @@ void calc_grids_factors(const Depsgraph &depsgraph,
 void calc_vert_factors(const Depsgraph &depsgraph,
                        const Object &object,
                        const Cache &cache,
-                       const bke::pbvh::Node & /*node*/,
+                       const bke::pbvh::BMeshNode & /*node*/,
                        const Set<BMVert *, 0> &verts,
                        const MutableSpan<float> factors)
 {
@@ -822,8 +822,6 @@ static void fill_topology_automasking_factors(const Depsgraph &depsgraph,
     case bke::pbvh::Type::BMesh:
       fill_topology_automasking_factors_bmesh(sd, ob, *ss.bm);
       break;
-    default:
-      BLI_assert_unreachable();
   }
 }
 
