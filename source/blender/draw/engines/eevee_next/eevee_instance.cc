@@ -13,6 +13,7 @@
 #include "BKE_global.hh"
 #include "BKE_object.hh"
 #include "BLI_rect.h"
+#include "BLT_translation.hh"
 #include "DEG_depsgraph_query.hh"
 #include "DNA_ID.h"
 #include "DNA_lightprobe_types.h"
@@ -64,7 +65,7 @@ void Instance::init(const int2 &output_res,
   manager = DRW_manager_get();
   update_eval_members();
 
-  info = "";
+  info_ = "";
 
   shaders_are_ready_ = shaders.is_ready(is_image_render());
   if (!shaders_are_ready_) {
@@ -133,7 +134,7 @@ void Instance::init_light_bake(Depsgraph *depsgraph, draw::Manager *manager)
 
   is_light_bake = true;
   debug_mode = (eDebugMode)G.debug_value;
-  info = "";
+  info_ = "";
 
   shaders.is_ready(true);
 
@@ -205,8 +206,6 @@ void Instance::begin_sync()
   cryptomatte.begin_sync();
   sphere_probes.begin_sync();
   light_probes.begin_sync();
-
-  gpencil_engine_enabled = false;
 
   depth_of_field.sync();
   raytracing.sync();
@@ -419,9 +418,9 @@ void Instance::render_sample()
   /* Motion blur may need to do re-sync after a certain number of sample. */
   if (!is_viewport() && sampling.do_render_sync()) {
     render_sync();
-    if (!info.empty()) {
-      printf("%s", info.c_str());
-      info = "";
+    if (!info_.empty()) {
+      printf("%s", info_.c_str());
+      info_ = "";
     }
   }
 
@@ -563,7 +562,7 @@ void Instance::draw_viewport()
   if (!shaders_are_ready_) {
     DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
     GPU_framebuffer_clear_color_depth(dfbl->default_fb, float4(0.0f), 1.0f);
-    info += "Compiling EEVEE Engine Shaders\n";
+    info_append_i18n("Compiling EEVEE engine shaders");
     DRW_viewport_request_redraw();
     return;
   }
@@ -583,22 +582,19 @@ void Instance::draw_viewport()
   }
 
   if (materials.queued_shaders_count > 0) {
-    std::stringstream ss;
-    ss << "Compiling Shaders (" << materials.queued_shaders_count << " remaining)";
+    info_append_i18n("Compiling shaders ({} remaining)", materials.queued_shaders_count);
+
     if (!GPU_use_parallel_compilation() &&
         GPU_type_matches_ex(GPU_DEVICE_ANY, GPU_OS_ANY, GPU_DRIVER_ANY, GPU_BACKEND_OPENGL))
     {
-      ss << "\n"
-         << "Increasing Preferences > System > Max Shader Compilation Subprocesses "
-         << "may improve compilation time.";
+      info_append_i18n(
+          "Increasing Preferences > System > Max Shader Compilation Subprocesses may improve "
+          "compilation time.");
     }
-    info = ss.str();
     DRW_viewport_request_redraw();
   }
   else if (materials.queued_optimize_shaders_count > 0) {
-    std::stringstream ss;
-    ss << "Optimizing Shaders (" << materials.queued_optimize_shaders_count << " remaining)";
-    info = ss.str();
+    info_append_i18n("Optimizing shaders ({} remaining)", materials.queued_optimize_shaders_count);
   }
 }
 

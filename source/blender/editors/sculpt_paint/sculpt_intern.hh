@@ -137,7 +137,7 @@ struct StrokeCache {
   float initial_radius;
   float3 scale;
   struct {
-    int flag = 0;
+    uint8_t flag = 0;
     float3 tolerance;
     float4x4 mat;
     float4x4 mat_inv;
@@ -250,7 +250,7 @@ struct StrokeCache {
 
   /**
    * Accumulate mode.
-   * \note inverted for #SCULPT_TOOL_DRAW_SHARP.
+   * \note inverted for #SCULPT_BRUSH_TYPE_DRAW_SHARP.
    */
   bool accum;
 
@@ -566,7 +566,7 @@ void SCULPT_fake_neighbors_free(Object &ob);
 /** \name Brush Utilities.
  * \{ */
 
-bool SCULPT_tool_needs_all_pbvh_nodes(const Brush &brush);
+bool SCULPT_brush_type_needs_all_pbvh_nodes(const Brush &brush);
 
 namespace blender::ed::sculpt_paint {
 
@@ -718,14 +718,45 @@ struct OrigPositionData {
  * Retrieve positions from the latest undo state. This is often used for modal actions that depend
  * on the initial state of the geometry from before the start of the action.
  */
-OrigPositionData orig_position_data_get_mesh(const Object &object, const bke::pbvh::Node &node);
-OrigPositionData orig_position_data_get_grids(const Object &object, const bke::pbvh::Node &node);
+std::optional<OrigPositionData> orig_position_data_lookup_mesh(const Object &object,
+                                                               const bke::pbvh::MeshNode &node);
+inline OrigPositionData orig_position_data_get_mesh(const Object &object,
+                                                    const bke::pbvh::MeshNode &node)
+{
+  return *orig_position_data_lookup_mesh(object, node);
+}
+
+std::optional<OrigPositionData> orig_position_data_lookup_grids(const Object &object,
+                                                                const bke::pbvh::GridsNode &node);
+inline OrigPositionData orig_position_data_get_grids(const Object &object,
+                                                     const bke::pbvh::GridsNode &node)
+{
+  return *orig_position_data_lookup_grids(object, node);
+}
+
 void orig_position_data_gather_bmesh(const BMLog &bm_log,
                                      const Set<BMVert *, 0> &verts,
                                      MutableSpan<float3> positions,
                                      MutableSpan<float3> normals);
 
-Span<float4> orig_color_data_get_mesh(const Object &object, const bke::pbvh::Node &node);
+std::optional<Span<float4>> orig_color_data_lookup_mesh(const Object &object,
+                                                        const bke::pbvh::MeshNode &node);
+inline Span<float4> orig_color_data_get_mesh(const Object &object, const bke::pbvh::MeshNode &node)
+{
+  return *orig_color_data_lookup_mesh(object, node);
+}
+
+std::optional<Span<int>> orig_face_set_data_lookup_mesh(const Object &object,
+                                                        const bke::pbvh::MeshNode &node);
+
+std::optional<Span<int>> orig_face_set_data_lookup_grids(const Object &object,
+                                                         const bke::pbvh::GridsNode &node);
+
+std::optional<Span<float>> orig_mask_data_lookup_mesh(const Object &object,
+                                                      const bke::pbvh::MeshNode &node);
+
+std::optional<Span<float>> orig_mask_data_lookup_grids(const Object &object,
+                                                       const bke::pbvh::GridsNode &node);
 
 }
 
@@ -894,20 +925,20 @@ void SCULPT_OT_brush_stroke(wmOperatorType *ot);
 
 }
 
-inline bool SCULPT_tool_is_paint(int tool)
+inline bool SCULPT_brush_type_is_paint(int tool)
 {
-  return ELEM(tool, SCULPT_TOOL_PAINT, SCULPT_TOOL_SMEAR);
+  return ELEM(tool, SCULPT_BRUSH_TYPE_PAINT, SCULPT_BRUSH_TYPE_SMEAR);
 }
 
-inline bool SCULPT_tool_is_mask(int tool)
+inline bool SCULPT_brush_type_is_mask(int tool)
 {
-  return ELEM(tool, SCULPT_TOOL_MASK);
+  return ELEM(tool, SCULPT_BRUSH_TYPE_MASK);
 }
 
-BLI_INLINE bool SCULPT_tool_is_attribute_only(int tool)
+BLI_INLINE bool SCULPT_brush_type_is_attribute_only(int tool)
 {
-  return SCULPT_tool_is_paint(tool) || SCULPT_tool_is_mask(tool) ||
-         ELEM(tool, SCULPT_TOOL_DRAW_FACE_SETS);
+  return SCULPT_brush_type_is_paint(tool) || SCULPT_brush_type_is_mask(tool) ||
+         ELEM(tool, SCULPT_BRUSH_TYPE_DRAW_FACE_SETS);
 }
 
 void SCULPT_stroke_id_ensure(Object &ob);

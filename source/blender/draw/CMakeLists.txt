@@ -225,7 +225,6 @@ set(SRC
   intern/draw_manager_testing.hh
   intern/draw_manager_text.hh
   intern/draw_pass.hh
-  intern/draw_pbvh.hh
   intern/draw_resource.hh
   intern/draw_sculpt.hh
   intern/draw_shader.hh
@@ -338,6 +337,7 @@ set(LIB
   bf_realtime_compositor
   bf_windowmanager
   PRIVATE bf::intern::atomic
+  PRIVATE bf::extern::fmtlib
 )
 
 set(GLSL_SRC
@@ -640,10 +640,12 @@ set(GLSL_SRC
   engines/overlay/shaders/overlay_armature_envelope_solid_frag.glsl
   engines/overlay/shaders/overlay_armature_envelope_solid_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_outline_geom.glsl
+  engines/overlay/shaders/overlay_armature_shape_outline_next_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_outline_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_outline_vert_no_geom.glsl
   engines/overlay/shaders/overlay_armature_shape_solid_frag.glsl
   engines/overlay/shaders/overlay_armature_shape_solid_vert.glsl
+  engines/overlay/shaders/overlay_armature_shape_wire_next_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_wire_vert.glsl
   engines/overlay/shaders/overlay_armature_shape_wire_vert_no_geom.glsl
   engines/overlay/shaders/overlay_armature_shape_wire_frag.glsl
