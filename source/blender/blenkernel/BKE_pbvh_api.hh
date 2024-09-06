@@ -96,10 +96,27 @@ class Node {
 };
 
 struct MeshNode : public Node {
-  /** Indices into the #Mesh::corner_tris() array. Refers to a subset of Tree::prim_indices_. */
-  Span<int> prim_indices_;
+  /**
+   * Use a 16 bit integer for the slot index type because there will always be less than
+   * #leaf_limit vertices in a node.
+   */
+  using LocalVertMapIndexT = int16_t;
+  /**
+   * Global vertices are mapped to local indices with a vector set, with a specialized type in
+   * order to use 32 bit integers for slot values. .
+   */
+  using LocalVertMap = VectorSet<int,
+                                 DefaultProbingStrategy,
+                                 DefaultHash<int>,
+                                 DefaultEquality<int>,
+                                 SimpleVectorSetSlot<int, LocalVertMapIndexT>,
+                                 GuardedAllocator>;
 
-  /* Array of indices into the mesh's vertex array. Contains the
+  /** Indices into the #Mesh::faces() array. Refers to a subset of Tree::prim_indices_. */
+  Span<int> face_indices_;
+
+  /**
+   * Array of indices into the mesh's vertex array. Contains the
    * indices of all vertices used by faces that are within this
    * node's bounding box.
    *
@@ -117,28 +134,30 @@ struct MeshNode : public Node {
    * be above that node's 'uniq_verts' value.
    *
    * Used for leaf nodes.
+   *
+   * \todo Find a way to disable the #VectorSet inline buffer.
    */
-  Array<int, 0> vert_indices_;
+  LocalVertMap vert_indices_;
   /** The number of vertices in #vert_indices not shared with (owned by) another node. */
   int unique_verts_num_ = 0;
 
-  /** Array of indices into the Mesh's corner array. */
-  Array<int, 0> corner_indices_;
-
-  /* An array mapping face corners into the vert_indices
-   * array. The array is sized to match 'totprim', and each of
-   * the face's corners gets an index into the vert_indices
-   * array, in the same order as the corners in the original
-   * triangle.
-   *
-   * Used for leaf nodes.
+  /** Return the faces contained by the node. */
+  Span<int> faces() const;
+  /** Return the "unique" vertices owned by the node, excluding vertices owned by other nodes. */
+  Span<int> verts() const;
+  /**
+   * Return all vertices used by faces in this node. The same as #verts(), with the shared
+   * vertices added at the end of the array.
    */
-  Array<int3, 0> face_vert_indices_;
+  Span<int> all_verts() const;
 };
 
 struct GridsNode : public Node {
   /** Multires grid indices for this node. Refers to a subset of Tree::prim_indices_. */
   Span<int> prim_indices_;
+
+  /** Return grid indices contained by the node. */
+  Span<int> grids() const;
 };
 
 struct BMeshNode : public Node {
@@ -150,11 +169,10 @@ struct BMeshNode : public Node {
   Set<BMVert *, 0> bm_unique_verts_;
   Set<BMVert *, 0> bm_other_verts_;
 
-  /* Deprecated. Stores original coordinates of triangles. */
-  float (*bm_orco_)[3] = nullptr;
-  int (*bm_ortri_)[3] = nullptr;
-  BMVert **bm_orvert_ = nullptr;
-  int bm_tot_ortri_ = 0;
+  /* Stores original coordinates of triangles. */
+  Array<float3, 0> orig_positions_;
+  Array<int3, 0> orig_tris_;
+  Array<BMVert *, 0> orig_verts_;
 };
 
 class DrawCache {
@@ -210,7 +228,7 @@ BLI_INLINE PBVHVertRef BKE_pbvh_make_vref(intptr_t i)
   return ret;
 }
 
-BLI_INLINE int BKE_pbvh_vertex_to_index(blender::bke::pbvh::Tree &pbvh, PBVHVertRef v)
+BLI_INLINE int BKE_pbvh_vertex_to_index(const blender::bke::pbvh::Tree &pbvh, PBVHVertRef v)
 {
   return (pbvh.type() == blender::bke::pbvh::Type::BMesh && v.i != PBVH_REF_NONE ?
               BM_elem_index_get((BMVert *)(v.i)) :
@@ -231,7 +249,6 @@ std::unique_ptr<Tree> build_grids(const Mesh &base_mesh, const SubdivCCG &subdiv
 std::unique_ptr<Tree> build_bmesh(BMesh *bm);
 
 void build_pixels(const Depsgraph &depsgraph, Object &object, Image &image, ImageUser &image_user);
-void free(std::unique_ptr<Tree> &pbvh);
 
 /* Ray-cast
  * the hit callback is called for all leaf nodes intersecting the ray;
@@ -249,9 +266,9 @@ bool raycast_node(Tree &pbvh,
                   Span<float3> node_positions,
                   bool use_origco,
                   Span<float3> vert_positions,
+                  OffsetIndices<int> faces,
                   Span<int> corner_verts,
                   Span<int3> corner_tris,
-                  Span<int> corner_tri_faces,
                   Span<bool> hide_poly,
                   const SubdivCCG *subdiv_ccg,
                   const float3 &ray_start,
@@ -292,9 +309,9 @@ bool find_nearest_to_ray_node(Tree &pbvh,
                               Span<float3> node_positions,
                               bool use_origco,
                               Span<float3> vert_positions,
+                              const OffsetIndices<int> faces,
                               Span<int> corner_verts,
                               Span<int3> corner_tris,
-                              Span<int> corner_tri_faces,
                               Span<bool> hide_poly,
                               const SubdivCCG *subdiv_ccg,
                               const float ray_start[3],
@@ -379,21 +396,6 @@ namespace blender::bke::pbvh {
 
 void remove_node_draw_tags(bke::pbvh::Tree &pbvh, const IndexMask &node_mask);
 
-Span<int> node_grid_indices(const GridsNode &node);
-
-Span<int> node_tri_indices(const MeshNode &node);
-Span<int> node_verts(const MeshNode &node);
-Span<int> node_unique_verts(const MeshNode &node);
-Span<int> node_corners(const MeshNode &node);
-
-/**
- * Gather the indices of all faces (not triangles) used by the node.
- * For convenience, pass a reference to the data in the result.
- */
-Span<int> node_face_indices_calc_mesh(Span<int> corner_tri_faces,
-                                      const MeshNode &node,
-                                      Vector<int> &faces);
-
 /**
  * Gather the indices of all base mesh faces in the node.
  * For convenience, pass a reference to the data in the result.
@@ -467,7 +469,7 @@ void update_normals_from_eval(Object &object_eval, Tree &pbvh);
 
 }  // namespace blender::bke::pbvh
 
-blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(blender::bke::pbvh::Tree &pbvh);
+blender::Bounds<blender::float3> BKE_pbvh_redraw_BB(const blender::bke::pbvh::Tree &pbvh);
 namespace blender::bke::pbvh {
 IndexMask nodes_to_face_selection_grids(const SubdivCCG &subdiv_ccg,
                                         Span<GridsNode> nodes,
@@ -478,11 +480,9 @@ IndexMask nodes_to_face_selection_grids(const SubdivCCG &subdiv_ccg,
 void BKE_pbvh_vert_coords_apply(blender::bke::pbvh::Tree &pbvh,
                                 blender::Span<blender::float3> vert_positions);
 
-void BKE_pbvh_node_get_bm_orco_data(blender::bke::pbvh::BMeshNode *node,
-                                    int (**r_orco_tris)[3],
-                                    int *r_orco_tris_num,
-                                    float (**r_orco_coords)[3],
-                                    BMVert ***r_orco_verts);
+void BKE_pbvh_node_get_bm_orco_data(const blender::bke::pbvh::BMeshNode &node,
+                                    blender::Span<blender::float3> &r_orig_positions,
+                                    blender::Span<blender::int3> &r_orig_tris);
 
 namespace blender::bke::pbvh {
 
@@ -513,8 +513,6 @@ Span<float3> face_normals_eval_from_eval(const Object &object_eval);
 
 }  // namespace blender::bke::pbvh
 
-void BKE_pbvh_ensure_node_face_corners(blender::bke::pbvh::Tree &pbvh,
-                                       blender::Span<blender::int3> corner_tris);
 int BKE_pbvh_debug_draw_gen_get(blender::bke::pbvh::Node &node);
 
 namespace blender::bke::pbvh {
@@ -542,5 +540,23 @@ void node_update_visibility_bmesh(BMeshNode &node);
 void update_node_bounds_mesh(Span<float3> positions, MeshNode &node);
 void update_node_bounds_grids(const CCGKey &key, Span<CCGElem *> grids, GridsNode &node);
 void update_node_bounds_bmesh(BMeshNode &node);
+
+inline Span<int> MeshNode::faces() const
+{
+  return this->face_indices_;
+}
+inline Span<int> MeshNode::verts() const
+{
+  return this->vert_indices_.as_span().slice(0, this->unique_verts_num_);
+}
+inline Span<int> MeshNode::all_verts() const
+{
+  return this->vert_indices_;
+}
+
+inline Span<int> GridsNode::grids() const
+{
+  return this->prim_indices_;
+}
 
 }  // namespace blender::bke::pbvh
