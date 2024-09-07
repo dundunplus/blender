@@ -535,44 +535,46 @@ static void vert_neighbors_get_bmesh(PBVHVertRef vertex, SculptVertexNeighborIte
   }
 }
 
-Span<BMVert *> vert_neighbors_get_bmesh(BMVert &vert, Vector<BMVert *, 64> &neighbors)
+Span<BMVert *> vert_neighbors_get_bmesh(BMVert &vert, Vector<BMVert *, 64> &r_neighbors)
 {
+  r_neighbors.clear();
   BMIter liter;
   BMLoop *l;
   BM_ITER_ELEM (l, &liter, &vert, BM_LOOPS_OF_VERT) {
     for (BMVert *other_vert : {l->prev->v, l->next->v}) {
       if (other_vert != &vert) {
-        neighbors.append(other_vert);
+        r_neighbors.append(other_vert);
       }
     }
   }
-  return neighbors;
+  return r_neighbors;
 }
 
-Span<BMVert *> vert_neighbors_get_interior_bmesh(BMVert &vert, Vector<BMVert *, 64> &neighbors)
+Span<BMVert *> vert_neighbors_get_interior_bmesh(BMVert &vert, Vector<BMVert *, 64> &r_neighbors)
 {
+  r_neighbors.clear();
   BMIter liter;
   BMLoop *l;
   BM_ITER_ELEM (l, &liter, &vert, BM_LOOPS_OF_VERT) {
     for (BMVert *other_vert : {l->prev->v, l->next->v}) {
       if (other_vert != &vert) {
-        neighbors.append(other_vert);
+        r_neighbors.append(other_vert);
       }
     }
   }
 
   if (BM_vert_is_boundary(&vert)) {
-    if (neighbors.size() == 2) {
+    if (r_neighbors.size() == 2) {
       /* Do not include neighbors of corner vertices. */
-      neighbors.clear();
+      r_neighbors.clear();
     }
     else {
       /* Only include other boundary vertices as neighbors of boundary vertices. */
-      neighbors.remove_if([&](const BMVert *vert) { return !BM_vert_is_boundary(vert); });
+      r_neighbors.remove_if([&](const BMVert *vert) { return !BM_vert_is_boundary(vert); });
     }
   }
 
-  return neighbors;
+  return r_neighbors;
 }
 
 static void vertex_neighbors_get_faces(const SculptSession &ss,
@@ -4800,8 +4802,9 @@ static void sculpt_raycast_cb(blender::bke::pbvh::Node &node, SculptRaycastData 
   if (srd.original && srd.ss->cache) {
     switch (pbvh.type()) {
       case bke::pbvh::Type::Mesh:
-        if (const std::optional<OrigPositionData> orig_data = orig_position_data_lookup_mesh(
-                *srd.object, static_cast<const bke::pbvh::MeshNode &>(node)))
+        if (const std::optional<OrigPositionData> orig_data =
+                orig_position_data_lookup_mesh_all_verts(
+                    *srd.object, static_cast<const bke::pbvh::MeshNode &>(node)))
         {
           use_origco = true;
           origco = orig_data->positions;
@@ -4859,8 +4862,9 @@ static void sculpt_find_nearest_to_ray_cb(blender::bke::pbvh::Node &node,
   if (srd.original && srd.ss->cache) {
     switch (pbvh.type()) {
       case bke::pbvh::Type::Mesh:
-        if (const std::optional<OrigPositionData> orig_data = orig_position_data_lookup_mesh(
-                *srd.object, static_cast<const bke::pbvh::MeshNode &>(node)))
+        if (const std::optional<OrigPositionData> orig_data =
+                orig_position_data_lookup_mesh_all_verts(
+                    *srd.object, static_cast<const bke::pbvh::MeshNode &>(node)))
         {
           use_origco = true;
           origco = orig_data->positions;
@@ -6582,9 +6586,9 @@ void gather_data_grids(const SubdivCCG &subdiv_ccg,
 }
 
 template<typename T>
-void gather_data_vert_bmesh(const Span<T> src,
-                            const Set<BMVert *, 0> &verts,
-                            const MutableSpan<T> node_data)
+void gather_data_bmesh(const Span<T> src,
+                       const Set<BMVert *, 0> &verts,
+                       const MutableSpan<T> node_data)
 {
   BLI_assert(verts.size() == node_data.size());
 
@@ -6622,9 +6626,9 @@ void scatter_data_grids(const SubdivCCG &subdiv_ccg,
 }
 
 template<typename T>
-void scatter_data_vert_bmesh(const Span<T> node_data,
-                             const Set<BMVert *, 0> &verts,
-                             const MutableSpan<T> dst)
+void scatter_data_bmesh(const Span<T> node_data,
+                        const Set<BMVert *, 0> &verts,
+                        const MutableSpan<T> dst)
 {
   BLI_assert(verts.size() == node_data.size());
 
@@ -6649,13 +6653,11 @@ template void gather_data_grids<float3>(const SubdivCCG &,
                                         Span<float3>,
                                         Span<int>,
                                         MutableSpan<float3>);
-template void gather_data_vert_bmesh<int>(Span<int>, const Set<BMVert *, 0> &, MutableSpan<int>);
-template void gather_data_vert_bmesh<float>(Span<float>,
-                                            const Set<BMVert *, 0> &,
-                                            MutableSpan<float>);
-template void gather_data_vert_bmesh<float3>(Span<float3>,
-                                             const Set<BMVert *, 0> &,
-                                             MutableSpan<float3>);
+template void gather_data_bmesh<int>(Span<int>, const Set<BMVert *, 0> &, MutableSpan<int>);
+template void gather_data_bmesh<float>(Span<float>, const Set<BMVert *, 0> &, MutableSpan<float>);
+template void gather_data_bmesh<float3>(Span<float3>,
+                                        const Set<BMVert *, 0> &,
+                                        MutableSpan<float3>);
 
 template void scatter_data_mesh<bool>(Span<bool>, Span<int>, MutableSpan<bool>);
 template void scatter_data_mesh<float>(Span<float>, Span<int>, MutableSpan<float>);
@@ -6669,12 +6671,10 @@ template void scatter_data_grids<float3>(const SubdivCCG &,
                                          Span<float3>,
                                          Span<int>,
                                          MutableSpan<float3>);
-template void scatter_data_vert_bmesh<float>(Span<float>,
-                                             const Set<BMVert *, 0> &,
-                                             MutableSpan<float>);
-template void scatter_data_vert_bmesh<float3>(Span<float3>,
-                                              const Set<BMVert *, 0> &,
-                                              MutableSpan<float3>);
+template void scatter_data_bmesh<float>(Span<float>, const Set<BMVert *, 0> &, MutableSpan<float>);
+template void scatter_data_bmesh<float3>(Span<float3>,
+                                         const Set<BMVert *, 0> &,
+                                         MutableSpan<float3>);
 
 void fill_factor_from_hide(const Mesh &mesh,
                            const Span<int> verts,
@@ -7580,8 +7580,8 @@ void calc_vert_neighbors(Set<BMVert *, 0> verts, const MutableSpan<Vector<BMVert
   int i = 0;
   Vector<BMVert *, 64> neighbor_data;
   for (BMVert *vert : verts) {
-    Span<BMVert *> verts = vert_neighbors_get_bmesh(*vert, neighbor_data);
-    result[i] = Vector<BMVert *>(verts);
+    Span<BMVert *> neighbors = vert_neighbors_get_bmesh(*vert, neighbor_data);
+    result[i] = Vector<BMVert *>(neighbors);
     i++;
   }
 }
@@ -7674,7 +7674,6 @@ void calc_vert_neighbors_interior(const Set<BMVert *, 0> &verts,
 
   int i = 0;
   for (BMVert *vert : verts) {
-    neighbor_data.clear();
     vert_neighbors_get_interior_bmesh(*vert, neighbor_data);
     result[i] = neighbor_data;
     i++;

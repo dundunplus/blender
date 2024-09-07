@@ -44,8 +44,10 @@ struct State {
   const ViewLayer *view_layer;
   const Scene *scene;
   const View3D *v3d;
+  const ARegion *region;
   const RegionView3D *rv3d;
   const Base *active_base;
+  DRWTextStore *dt;
   View3DOverlay overlay;
   float pixelsize;
   enum eSpace_Type space_type;
@@ -233,6 +235,7 @@ class ShaderModule {
   ShaderPtr depth_curves = selectable_shader("overlay_depth_curves");
   ShaderPtr depth_grease_pencil = selectable_shader("overlay_depth_gpencil");
   ShaderPtr depth_mesh = selectable_shader("overlay_depth_mesh");
+  ShaderPtr depth_mesh_conservative = selectable_shader("overlay_depth_mesh_conservative");
   ShaderPtr depth_point_cloud = selectable_shader("overlay_depth_pointcloud");
   ShaderPtr extra_grid;
   ShaderPtr extra_shape;
