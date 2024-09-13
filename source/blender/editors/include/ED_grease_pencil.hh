@@ -41,7 +41,6 @@ namespace bke {
 enum class AttrDomain : int8_t;
 class CurvesGeometry;
 namespace crazyspace {
-struct GeometryDeformation;
 }
 }  // namespace bke
 }  // namespace blender
@@ -497,6 +496,9 @@ void normalize_vertex_weights(MDeformVert &dvert,
                               int active_vertex_group,
                               Span<bool> vertex_group_is_locked,
                               Span<bool> vertex_group_is_bone_deformed);
+
+/** Adds vertex groups for the bones in the armature (with matching names). */
+bool add_armature_vertex_groups(Object &object, const Object &armature);
 
 void clipboard_free();
 const bke::CurvesGeometry &clipboard_curves();

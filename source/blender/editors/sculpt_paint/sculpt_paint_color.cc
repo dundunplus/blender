@@ -564,7 +564,7 @@ void do_paint_brush(const Depsgraph &depsgraph,
   const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
   const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
@@ -591,6 +591,7 @@ void do_paint_brush(const Depsgraph &depsgraph,
                              nodes[i],
                              tls,
                              color_attribute);
+        BKE_pbvh_node_mark_update_color(nodes[i]);
       });
     });
     color_attribute.finish();
@@ -667,6 +668,7 @@ void do_paint_brush(const Depsgraph &depsgraph,
                           tls,
                           ss.cache->paint_brush.mix_colors,
                           color_attribute);
+      BKE_pbvh_node_mark_update_color(nodes[i]);
     });
   });
   color_attribute.finish();
@@ -845,7 +847,7 @@ void do_smear_brush(const Depsgraph &depsgraph,
 
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
   const Span<float3> vert_positions = bke::pbvh::vert_positions_eval(depsgraph, ob);
   const Span<float3> vert_normals = bke::pbvh::vert_normals_eval(depsgraph, ob);
   const bke::AttributeAccessor attributes = mesh.attributes();
@@ -890,6 +892,7 @@ void do_smear_brush(const Depsgraph &depsgraph,
                              nodes[i],
                              tls,
                              color_attribute);
+        BKE_pbvh_node_mark_update_color(nodes[i]);
       });
     });
   }
@@ -921,6 +924,7 @@ void do_smear_brush(const Depsgraph &depsgraph,
                             nodes[i],
                             tls,
                             color_attribute);
+        BKE_pbvh_node_mark_update_color(nodes[i]);
       });
     });
   }

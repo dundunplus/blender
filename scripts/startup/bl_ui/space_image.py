@@ -73,6 +73,7 @@ class IMAGE_MT_view(Menu):
 
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
+        show_maskedit = sima.show_maskedit
 
         layout.prop(sima, "show_region_toolbar")
         layout.prop(sima, "show_region_ui")
@@ -87,7 +88,7 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        if show_uvedit:
+        if show_uvedit or show_maskedit:
             layout.operator("image.view_selected", text="Frame Selected")
 
         layout.operator("image.view_all")
@@ -197,7 +198,7 @@ class IMAGE_MT_image(Menu):
         ima = sima.image
         show_render = sima.show_render
 
-        layout.operator("image.new", text="New", text_ctxt=i18n_contexts.id_image)
+        layout.operator("image.new", text="New...", text_ctxt=i18n_contexts.id_image, icon='FILE_NEW')
         layout.operator("image.open", text="Open...", icon='FILE_FOLDER')
 
         layout.operator("image.read_viewlayers")

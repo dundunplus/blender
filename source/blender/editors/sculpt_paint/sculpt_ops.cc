@@ -178,11 +178,15 @@ static void SCULPT_OT_optimize(wmOperatorType *ot)
 static bool sculpt_no_multires_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  if (ob) {
-    const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(*ob);
-    if (SCULPT_mode_poll(C) && ob->sculpt && pbvh) {
-      return pbvh->type() != bke::pbvh::Type::Grids;
-    }
+  if (!ob) {
+    return false;
+  }
+  if (ob->type != OB_MESH) {
+    return false;
+  }
+  const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(*ob);
+  if (SCULPT_mode_poll(C) && ob->sculpt && pbvh) {
+    return pbvh->type() != bke::pbvh::Type::Grids;
   }
   return false;
 }
@@ -667,7 +671,7 @@ static int sculpt_sample_color_invoke(bContext *C, wmOperator *op, const wmEvent
   const Mesh &mesh = *static_cast<const Mesh *>(ob.data);
   const OffsetIndices<int> faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
   const bke::GAttributeReader color_attribute = color::active_color_attribute(mesh);
 
   float4 active_vertex_color;
@@ -762,9 +766,9 @@ static void sculpt_mask_by_color_contiguous_mesh(const Depsgraph &depsgraph,
                                                  const bool invert,
                                                  const bool preserve_mask)
 {
-  SculptSession &ss = *object.sculpt;
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Mesh &mesh = *static_cast<const Mesh *>(object.data);
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
   const bke::AttributeAccessor attributes = mesh.attributes();
   const VArraySpan colors = *attributes.lookup_or_default<ColorGeometry4f>(
       mesh.active_color_attribute, bke::AttrDomain::Point, {});
@@ -775,7 +779,7 @@ static void sculpt_mask_by_color_contiguous_mesh(const Depsgraph &depsgraph,
   flood_fill::FillDataMesh flood(mesh.verts_num);
   flood.add_initial(vert);
 
-  flood.execute(object, ss.vert_to_face_map, [&](int /*from_v*/, int to_v) {
+  flood.execute(object, vert_to_face_map, [&](int /*from_v*/, int to_v) {
     const float4 current_color = float4(colors[to_v]);
 
     float new_vertex_mask = sculpt_mask_by_color_delta_get(
@@ -1154,8 +1158,6 @@ static int sculpt_bake_cavity_exec(bContext *C, wmOperator *op)
   brush2.automasking_flags = 0;
   brush2.automasking_boundary_edges_propagation_steps = 1;
   brush2.automasking_cavity_curve = sd2.automasking_cavity_curve;
-
-  SCULPT_stroke_id_next(ob);
 
   std::unique_ptr<auto_mask::Cache> automasking = auto_mask::cache_init(
       *depsgraph, sd2, &brush2, ob);

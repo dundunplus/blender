@@ -1180,12 +1180,11 @@ static void edit_grow_shrink(const Depsgraph &depsgraph,
                              const bool modify_hidden,
                              wmOperator *op)
 {
-  SculptSession &ss = *object.sculpt;
   bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   Mesh &mesh = *static_cast<Mesh *>(object.data);
   const OffsetIndices faces = mesh.faces();
   const Span<int> corner_verts = mesh.corner_verts();
-  const GroupedSpan<int> vert_to_face_map = ss.vert_to_face_map;
+  const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
   const bke::AttributeAccessor attributes = mesh.attributes();
 
   BLI_assert(attributes.contains(".sculpt_face_set"));
@@ -1471,6 +1470,7 @@ static void edit_modify_coordinates(
       BLI_assert_unreachable();
   }
 
+  bke::pbvh::update_bounds(depsgraph, ob, pbvh);
   flush_update_step(C, UpdateType::Position);
   flush_update_done(C, ob, UpdateType::Position);
   undo::push_end(ob);

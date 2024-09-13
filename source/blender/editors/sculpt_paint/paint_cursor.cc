@@ -1415,7 +1415,7 @@ static void paint_cursor_sculpt_session_update_and_init(PaintCursorContext *pcon
 
   /* Ensure that the PBVH is generated before we call #SCULPT_cursor_geometry_info_update because
    * the PBVH is needed to do a ray-cast to find the active vertex. */
-  BKE_sculpt_object_pbvh_ensure(pcontext->depsgraph, pcontext->vc.obact);
+  bke::object::pbvh_ensure(*pcontext->depsgraph, *pcontext->vc.obact);
 
   /* This updates the active vertex, which is needed for most of the Sculpt/Vertex Colors tools to
    * work correctly */
@@ -1841,9 +1841,11 @@ static void paint_cursor_draw_3d_view_brush_cursor_inactive(PaintCursorContext *
     cursor_draw_point_screen_space(
         pcontext->pos,
         pcontext->region,
-        SCULPT_vertex_co_get(*pcontext->depsgraph,
-                             active_object,
-                             pcontext->ss->expand_cache->initial_active_vertex),
+        SCULPT_vertex_co_get(
+            *pcontext->depsgraph,
+            active_object,
+            BKE_pbvh_index_to_vertex(*pcontext->vc.obact,
+                                     pcontext->ss->expand_cache->initial_active_vert)),
         active_object.object_to_world().ptr(),
         2);
   }

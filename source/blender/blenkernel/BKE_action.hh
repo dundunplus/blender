@@ -60,7 +60,7 @@ void BKE_action_frame_range_get(const bAction *act, float *r_start, float *r_end
 /**
  * Check if the given action has any keyframes.
  */
-bool BKE_action_has_motion(const bAction *act) ATTR_WARN_UNUSED_RESULT;
+bool BKE_action_has_motion(const bAction *act, int32_t action_slot_handle) ATTR_WARN_UNUSED_RESULT;
 
 /**
  * Is the action configured as cyclic.
@@ -122,7 +122,7 @@ void action_groups_add_channel(bAction *act, bActionGroup *agrp, FCurve *fcurve)
 void action_groups_remove_channel(bAction *act, FCurve *fcu);
 
 /**
- * Recongroup channel pointers.
+ * Reconstruct channel pointers.
  * Assumes that the groups referred to by the FCurves are already in act->groups.
  * Reorders the main channel list to match group order.
  */
