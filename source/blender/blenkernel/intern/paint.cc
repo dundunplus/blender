@@ -1629,10 +1629,10 @@ void BKE_sculptsession_free_vwpaint_data(SculptSession *ss)
 {
   if (ss->mode_type == OB_MODE_WEIGHT_PAINT) {
     MEM_SAFE_FREE(ss->mode.wpaint.alpha_weight);
-    if (ss->mode.wpaint.dvert_prev) {
-      BKE_defvert_array_free_elems(ss->mode.wpaint.dvert_prev, ss->totvert);
-      MEM_freeN(ss->mode.wpaint.dvert_prev);
-      ss->mode.wpaint.dvert_prev = nullptr;
+    if (!ss->mode.wpaint.dvert_prev.is_empty()) {
+      BKE_defvert_array_free_elems(ss->mode.wpaint.dvert_prev.data(),
+                                   ss->mode.wpaint.dvert_prev.size());
+      ss->mode.wpaint.dvert_prev = {};
     }
   }
 }
@@ -1964,7 +1964,6 @@ static void sculpt_update_object(Depsgraph *depsgraph,
    * evaluated yet. */
   Mesh *mesh_eval = BKE_object_get_evaluated_mesh_unchecked(ob_eval);
   MultiresModifierData *mmd = sculpt_multires_modifier_get(scene, ob, true);
-  const bool use_face_sets = (ob->mode & OB_MODE_SCULPT) != 0;
 
   BLI_assert(mesh_eval != nullptr);
 
@@ -1978,8 +1977,6 @@ static void sculpt_update_object(Depsgraph *depsgraph,
 
   ss.building_vp_handle = false;
 
-  ss.scene = scene;
-
   ss.shapekey_active = (mmd == nullptr) ? BKE_keyblock_from_object(ob) : nullptr;
 
   /* NOTE: Weight pPaint require mesh info for loop lookup, but it never uses multires code path,
@@ -1988,30 +1985,12 @@ static void sculpt_update_object(Depsgraph *depsgraph,
     ss.multires.active = true;
     ss.multires.modifier = mmd;
     ss.multires.level = mmd->sculptlvl;
-    ss.totvert = mesh_eval->verts_num;
-    ss.faces_num = mesh_eval->faces_num;
-    ss.totfaces = mesh_orig->faces_num;
   }
   else {
-    ss.totvert = mesh_orig->verts_num;
-    ss.faces_num = mesh_orig->faces_num;
-    ss.totfaces = mesh_orig->faces_num;
     ss.multires.active = false;
     ss.multires.modifier = nullptr;
     ss.multires.level = 0;
   }
-
-  /* Sculpt Face Sets. */
-  if (use_face_sets) {
-    ss.face_sets = static_cast<const int *>(
-        CustomData_get_layer_named(&mesh_orig->face_data, CD_PROP_INT32, ".sculpt_face_set"));
-  }
-  else {
-    ss.face_sets = nullptr;
-  }
-
-  ss.hide_poly = (bool *)CustomData_get_layer_named(
-      &mesh_orig->face_data, CD_PROP_BOOL, ".hide_poly");
 
   ss.subdiv_ccg = mesh_eval->runtime->subdiv_ccg.get();
 
@@ -2150,6 +2129,7 @@ void BKE_sculpt_update_object_before_eval(Object *ob_eval)
   else if (pbvh) {
     IndexMaskMemory memory;
     const IndexMask node_mask = bke::pbvh::all_leaf_nodes(*pbvh, memory);
+    pbvh->tag_positions_changed(node_mask);
     switch (pbvh->type()) {
       case bke::pbvh::Type::Mesh: {
         MutableSpan<bke::pbvh::MeshNode> nodes = pbvh->nodes<bke::pbvh::MeshNode>();
@@ -2210,13 +2190,6 @@ void BKE_sculpt_update_object_for_edit(Depsgraph *depsgraph, Object *ob_orig, bo
   Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob_orig);
 
   sculpt_update_object(depsgraph, ob_orig, ob_eval, is_paint_tool);
-}
-
-void BKE_sculpt_hide_poly_pointer_update(Object &object)
-{
-  const Mesh &mesh = *static_cast<const Mesh *>(object.data);
-  object.sculpt->hide_poly = static_cast<const bool *>(
-      CustomData_get_layer_named(&mesh.face_data, CD_PROP_BOOL, ".hide_poly"));
 }
 
 void BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
@@ -2508,15 +2481,4 @@ void BKE_paint_face_set_overlay_color_get(const int face_set, const int seed, uc
              &rgba[1],
              &rgba[2]);
   rgba_float_to_uchar(r_color, rgba);
-}
-
-int BKE_sculptsession_vertex_count(const SculptSession *ss)
-{
-  if (ss->bm) {
-    return ss->bm->totvert;
-  }
-  if (ss->subdiv_ccg) {
-    return ss->subdiv_ccg->positions.size();
-  }
-  return ss->totvert;
 }

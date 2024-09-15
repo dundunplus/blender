@@ -396,8 +396,6 @@ static void calc_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -439,8 +437,6 @@ static void calc_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -478,8 +474,6 @@ static void calc_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -530,8 +524,6 @@ static void calc_inflate_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -563,8 +555,6 @@ static void calc_inflate_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -598,8 +588,6 @@ static void calc_inflate_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -650,8 +638,6 @@ static void calc_scale_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -683,8 +669,6 @@ static void calc_scale_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -717,8 +701,6 @@ static void calc_scale_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -785,8 +767,6 @@ static void calc_sphere_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -817,8 +797,6 @@ static void calc_sphere_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -850,8 +828,6 @@ static void calc_sphere_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -915,8 +891,6 @@ static void calc_random_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -949,8 +923,6 @@ static void calc_random_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -985,8 +957,6 @@ static void calc_random_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1019,6 +989,8 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
       const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
       const bke::AttributeAccessor attributes = mesh.attributes();
       const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
+      const VArraySpan face_sets = *attributes.lookup<int>(".sculpt_face_set",
+                                                           bke::AttrDomain::Face);
       threading::EnumerableThreadSpecific<LocalData> all_tls;
       MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
       threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
@@ -1042,7 +1014,7 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
                                                   corner_verts,
                                                   vert_to_face_map,
                                                   ss.vertex_info.boundary,
-                                                  ss.face_sets,
+                                                  face_sets,
                                                   hide_poly,
                                                   false,
                                                   verts,
@@ -1053,8 +1025,6 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1070,6 +1040,9 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
       const OffsetIndices faces = base_mesh.faces();
       const Span<int> corner_verts = base_mesh.corner_verts();
       const GroupedSpan<int> vert_to_face_map = base_mesh.vert_to_face_map();
+      const bke::AttributeAccessor attributes = base_mesh.attributes();
+      const VArraySpan face_sets = *attributes.lookup<int>(".sculpt_face_set",
+                                                           bke::AttrDomain::Face);
       SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
       threading::EnumerableThreadSpecific<LocalData> all_tls;
       MutableSpan<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
@@ -1092,7 +1065,7 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
           smooth::calc_relaxed_translations_grids(subdiv_ccg,
                                                   faces,
                                                   corner_verts,
-                                                  ss.face_sets,
+                                                  face_sets,
                                                   vert_to_face_map,
                                                   ss.vertex_info.boundary,
                                                   grids,
@@ -1104,8 +1077,6 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1142,8 +1113,6 @@ static void calc_relax_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1183,6 +1152,8 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
       const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
       const bke::AttributeAccessor attributes = mesh.attributes();
       const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
+      const VArraySpan face_sets = *attributes.lookup<int>(".sculpt_face_set",
+                                                           bke::AttrDomain::Face);
       threading::EnumerableThreadSpecific<LocalData> all_tls;
       MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
       threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
@@ -1199,7 +1170,7 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
           clamp_factors(factors, 0.0f, 1.0f);
 
           face_set::filter_verts_with_unique_face_sets_mesh(
-              vert_to_face_map, ss.face_sets, relax_face_sets, verts, factors);
+              vert_to_face_map, face_sets, relax_face_sets, verts, factors);
 
           tls.translations.resize(verts.size());
           const MutableSpan<float3> translations = tls.translations;
@@ -1209,7 +1180,7 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
                                                   corner_verts,
                                                   vert_to_face_map,
                                                   ss.vertex_info.boundary,
-                                                  ss.face_sets,
+                                                  face_sets,
                                                   hide_poly,
                                                   relax_face_sets,
                                                   verts,
@@ -1220,8 +1191,6 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1237,6 +1206,10 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
       const OffsetIndices faces = base_mesh.faces();
       const Span<int> corner_verts = base_mesh.corner_verts();
       const GroupedSpan<int> vert_to_face_map = base_mesh.vert_to_face_map();
+      const bke::AttributeAccessor attributes = base_mesh.attributes();
+      const VArraySpan face_sets = *attributes.lookup<int>(".sculpt_face_set",
+                                                           bke::AttrDomain::Face);
+
       SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
       threading::EnumerableThreadSpecific<LocalData> all_tls;
       MutableSpan<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
@@ -1258,7 +1231,7 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
                                                              corner_verts,
                                                              faces,
                                                              subdiv_ccg,
-                                                             ss.face_sets,
+                                                             face_sets,
                                                              relax_face_sets,
                                                              grids,
                                                              factors);
@@ -1268,7 +1241,7 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
           smooth::calc_relaxed_translations_grids(subdiv_ccg,
                                                   faces,
                                                   corner_verts,
-                                                  ss.face_sets,
+                                                  face_sets,
                                                   vert_to_face_map,
                                                   ss.vertex_info.boundary,
                                                   grids,
@@ -1280,8 +1253,6 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1320,8 +1291,6 @@ static void calc_relax_face_sets_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1399,8 +1368,6 @@ static void calc_surface_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
@@ -1437,8 +1404,6 @@ static void calc_surface_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1484,8 +1449,6 @@ static void calc_surface_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
@@ -1519,8 +1482,6 @@ static void calc_surface_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1563,8 +1524,6 @@ static void calc_surface_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       threading::parallel_for(node_mask.index_range(), 1, [&](const IndexRange range) {
@@ -1599,8 +1558,6 @@ static void calc_surface_smooth_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1719,8 +1676,6 @@ static void calc_sharpen_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[node_index]);
         });
       });
       break;
@@ -1808,8 +1763,6 @@ static void calc_sharpen_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[node_index]);
         });
       });
       break;
@@ -1882,8 +1835,6 @@ static void calc_sharpen_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[node_index]);
         });
       });
       break;
@@ -1934,8 +1885,6 @@ static void calc_enhance_details_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           write_translations(
               depsgraph, sd, object, positions_eval, verts, translations, positions_orig);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1966,8 +1915,6 @@ static void calc_enhance_details_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_data.positions, translations);
           apply_translations(translations, grids, subdiv_ccg);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -1999,8 +1946,6 @@ static void calc_enhance_details_filter(const Depsgraph &depsgraph,
           zero_disabled_axis_components(*ss.filter_cache, translations);
           clip_and_lock_translations(sd, ss, orig_positions, translations);
           apply_translations(translations, verts);
-
-          BKE_pbvh_node_mark_positions_update(nodes[i]);
         });
       });
       break;
@@ -2051,8 +1996,6 @@ static void calc_erase_displacement_filter(const Depsgraph &depsgraph,
       zero_disabled_axis_components(*ss.filter_cache, translations);
       clip_and_lock_translations(sd, ss, orig_data.positions, translations);
       apply_translations(translations, grids, subdiv_ccg);
-
-      BKE_pbvh_node_mark_positions_update(nodes[i]);
     });
   });
 }
@@ -2295,9 +2238,12 @@ static void sculpt_mesh_filter_apply(bContext *C, wmOperator *op)
       break;
   }
 
+  bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(ob);
+  pbvh.tag_positions_changed(node_mask);
+
   ss.filter_cache->iteration_count++;
 
-  bke::pbvh::update_bounds(depsgraph, ob, *bke::object::pbvh_get(ob));
+  bke::pbvh::update_bounds(depsgraph, ob, pbvh);
   flush_update_step(C, UpdateType::Position);
 }
 
