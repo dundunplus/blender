@@ -183,29 +183,6 @@ const float *SCULPT_vertex_co_get(const Depsgraph &depsgraph,
   return nullptr;
 }
 
-const blender::float3 SCULPT_vertex_normal_get(const Depsgraph &depsgraph,
-                                               const Object &object,
-                                               PBVHVertRef vertex)
-{
-  const SculptSession &ss = *object.sculpt;
-  switch (blender::bke::object::pbvh_get(object)->type()) {
-    case blender::bke::pbvh::Type::Mesh: {
-      const Span<float3> vert_normals = blender::bke::pbvh::vert_normals_eval(depsgraph, object);
-      return vert_normals[vertex.i];
-    }
-    case blender::bke::pbvh::Type::BMesh: {
-      BMVert *v = (BMVert *)vertex.i;
-      return v->no;
-    }
-    case blender::bke::pbvh::Type::Grids: {
-      const SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
-      return subdiv_ccg.normals[vertex.i];
-    }
-  }
-  BLI_assert_unreachable();
-  return {};
-}
-
 namespace blender::ed::sculpt_paint {
 
 Span<float3> vert_positions_for_grab_active_get(const Depsgraph &depsgraph, const Object &object)
@@ -318,6 +295,11 @@ int vert_face_set_get(const GroupedSpan<int> vert_to_face_map,
   return face_set;
 }
 
+int vert_face_set_get(const int /*face_set_offset*/, const BMVert & /*vert*/)
+{
+  return SCULPT_FACE_SET_NONE;
+}
+
 bool vert_has_face_set(const GroupedSpan<int> vert_to_face_map,
                        const Span<int> face_sets,
                        const int vert,
@@ -408,8 +390,10 @@ bool vert_has_unique_face_set(const Object &object, PBVHVertRef vertex)
       return vert_has_unique_face_set(vert_to_face_map, face_sets, vertex.i);
     }
     case bke::pbvh::Type::BMesh: {
-      BMVert *v = (BMVert *)vertex.i;
-      return vert_has_unique_face_set(v);
+      const int face_set_offset = CustomData_get_offset_named(
+          &object.sculpt->bm->pdata, CD_PROP_INT32, ".sculpt_face_set");
+      BMVert *v = reinterpret_cast<BMVert *>(vertex.i);
+      return vert_has_unique_face_set(face_set_offset, *v);
     }
     case bke::pbvh::Type::Grids: {
       const Mesh &base_mesh = *static_cast<const Mesh *>(object.data);
@@ -422,7 +406,7 @@ bool vert_has_unique_face_set(const Object &object, PBVHVertRef vertex)
       const CCGKey key = BKE_subdiv_ccg_key_top_level(*ss.subdiv_ccg);
       SubdivCCGCoord coord = SubdivCCGCoord::from_index(key, vertex.i);
       return vert_has_unique_face_set(
-          vert_to_face_map, corner_verts, faces, face_sets, *ss.subdiv_ccg, coord);
+          faces, corner_verts, vert_to_face_map, face_sets, *ss.subdiv_ccg, coord);
     }
   }
   return false;
@@ -487,9 +471,9 @@ static bool sculpt_check_unique_face_set_for_edge_in_base_mesh(
   return true;
 }
 
-bool vert_has_unique_face_set(const GroupedSpan<int> vert_to_face_map,
+bool vert_has_unique_face_set(const OffsetIndices<int> faces,
                               const Span<int> corner_verts,
-                              const OffsetIndices<int> faces,
+                              const GroupedSpan<int> vert_to_face_map,
                               const Span<int> face_sets,
                               const SubdivCCG &subdiv_ccg,
                               SubdivCCGCoord coord)
@@ -514,7 +498,7 @@ bool vert_has_unique_face_set(const GroupedSpan<int> vert_to_face_map,
   return true;
 }
 
-bool vert_has_unique_face_set(const BMVert * /*vert*/)
+bool vert_has_unique_face_set(const int /*face_set_offset*/, const BMVert & /*vert*/)
 {
   /* TODO: Obviously not fully implemented yet. Needs to be implemented for Relax Face Sets brush
    * to work. */
@@ -640,11 +624,11 @@ static void vertex_neighbors_get_faces(const Object &object,
   }
 }
 
-Span<int> vert_neighbors_get_mesh(const int vert,
-                                  const OffsetIndices<int> faces,
+Span<int> vert_neighbors_get_mesh(const OffsetIndices<int> faces,
                                   const Span<int> corner_verts,
                                   const GroupedSpan<int> vert_to_face,
                                   const Span<bool> hide_poly,
+                                  const int vert,
                                   Vector<int> &r_neighbors)
 {
   r_neighbors.clear();
@@ -768,8 +752,8 @@ bool vert_is_boundary(const Object &object, const PBVHVertRef vertex)
   return false;
 }
 
-bool vert_is_boundary(const Span<bool> hide_poly,
-                      const GroupedSpan<int> vert_to_face_map,
+bool vert_is_boundary(const GroupedSpan<int> vert_to_face_map,
+                      const Span<bool> hide_poly,
                       const BitSpan boundary,
                       const int vert)
 {
@@ -779,10 +763,10 @@ bool vert_is_boundary(const Span<bool> hide_poly,
   return boundary[vert].test();
 }
 
-bool vert_is_boundary(const SubdivCCG &subdiv_ccg,
+bool vert_is_boundary(const OffsetIndices<int> faces,
                       const Span<int> corner_verts,
-                      const OffsetIndices<int> faces,
                       const BitSpan boundary,
+                      const SubdivCCG &subdiv_ccg,
                       const SubdivCCGCoord vert)
 {
   /* TODO: Unlike the base mesh implementation this method does NOT take into account face
@@ -3251,7 +3235,9 @@ void SCULPT_vertcos_to_key(Object &ob, KeyBlock *kb, const Span<float3> vertCos)
   const int kb_act_idx = ob.shapenr - 1;
 
   /* For relative keys editing of base should update other keys. */
-  if (bool *dependent = BKE_keyblock_get_dependent_keys(mesh->key, kb_act_idx)) {
+  if (std::optional<blender::Array<bool>> dependent = BKE_keyblock_get_dependent_keys(mesh->key,
+                                                                                      kb_act_idx))
+  {
     ofs = BKE_keyblock_convert_to_vertcos(&ob, kb);
 
     /* Calculate key coord offsets (from previous location). */
@@ -3261,13 +3247,12 @@ void SCULPT_vertcos_to_key(Object &ob, KeyBlock *kb, const Span<float3> vertCos)
 
     /* Apply offsets on other keys. */
     LISTBASE_FOREACH_INDEX (KeyBlock *, currkey, &mesh->key->block, currkey_i) {
-      if ((currkey != kb) && dependent[currkey_i]) {
+      if ((currkey != kb) && (*dependent)[currkey_i]) {
         BKE_keyblock_update_from_offset(&ob, currkey, ofs);
       }
     }
 
     MEM_freeN(ofs);
-    MEM_freeN(dependent);
   }
 
   /* Modifying of basis key should update mesh. */
@@ -3994,7 +3979,7 @@ static bool is_brush_related_tool(bContext *C)
 bool SCULPT_brush_cursor_poll(bContext *C)
 {
   using namespace blender::ed::sculpt_paint;
-  return SCULPT_mode_poll(C) && (paint_brush_tool_poll(C) || is_brush_related_tool(C));
+  return SCULPT_mode_poll(C) && (paint_brush_cursor_poll(C) || is_brush_related_tool(C));
 }
 
 static const char *sculpt_brush_type_name(const Sculpt &sd)
@@ -7258,15 +7243,16 @@ void update_shape_keys(Object &object,
     apply_translations(translations, verts, active_key_data);
   }
 
-  if (bool *dependent = BKE_keyblock_get_dependent_keys(mesh.key, object.shapenr - 1)) {
+  if (std::optional<Array<bool>> dependent = BKE_keyblock_get_dependent_keys(mesh.key,
+                                                                             object.shapenr - 1))
+  {
     int i;
     LISTBASE_FOREACH_INDEX (KeyBlock *, other_key, &mesh.key->block, i) {
-      if ((other_key != &active_key) && dependent[i]) {
+      if ((other_key != &active_key) && (*dependent)[i]) {
         MutableSpan<float3> data(static_cast<float3 *>(other_key->data), other_key->totelem);
         apply_translations(translations, verts, data);
       }
     }
-    MEM_freeN(dependent);
   }
 }
 
@@ -7437,7 +7423,7 @@ void calc_vert_neighbors(const OffsetIndices<int> faces,
   BLI_assert(result.size() == verts.size());
   BLI_assert(corner_verts.size() == faces.total_size());
   for (const int i : verts.index_range()) {
-    vert_neighbors_get_mesh(verts[i], faces, corner_verts, vert_to_face, hide_poly, result[i]);
+    vert_neighbors_get_mesh(faces, corner_verts, vert_to_face, hide_poly, verts[i], result[i]);
   }
 }
 
@@ -7496,7 +7482,7 @@ void calc_vert_neighbors_interior(const OffsetIndices<int> faces,
   for (const int i : verts.index_range()) {
     const int vert = verts[i];
     Vector<int> &neighbors = result[i];
-    vert_neighbors_get_mesh(verts[i], faces, corner_verts, vert_to_face, hide_poly, neighbors);
+    vert_neighbors_get_mesh(faces, corner_verts, vert_to_face, hide_poly, verts[i], neighbors);
 
     if (boundary_verts[vert]) {
       if (neighbors.size() == 2) {
