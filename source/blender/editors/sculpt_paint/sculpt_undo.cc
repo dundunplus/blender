@@ -82,6 +82,7 @@
 #include "mesh_brush_common.hh"
 #include "paint_hide.hh"
 #include "paint_intern.hh"
+#include "sculpt_automask.hh"
 #include "sculpt_color.hh"
 #include "sculpt_dyntopo.hh"
 #include "sculpt_face_set.hh"
@@ -249,10 +250,6 @@ struct StepData {
    * amount of time we wait for the lock.
    *
    * This is only accessible when building the undo step, in between #push_begin and #push_end.
-   *
-   * \todo All nodes in a single step have the same type, so using the type as part of the map key
-   * should be unnecessary. However, to remove it, first the storage of the undo type should be
-   * moved to #StepData from #Node.
    */
   Map<const bke::pbvh::Node *, std::unique_ptr<Node>> undo_nodes_by_pbvh_node;
 
