@@ -1747,41 +1747,9 @@ SculptSession::~SculptSession()
   MEM_SAFE_FREE(this->last_paint_canvas_key);
 }
 
-PBVHVertRef SculptSession::active_vert_ref() const
-{
-  if (std::holds_alternative<int>(active_vert_)) {
-    return {std::get<int>(active_vert_)};
-  }
-  if (std::holds_alternative<SubdivCCGCoord>(active_vert_)) {
-    const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
-    const int index = std::get<SubdivCCGCoord>(active_vert_).to_index(key);
-    return {index};
-  }
-  if (std::holds_alternative<BMVert *>(active_vert_)) {
-    return {reinterpret_cast<intptr_t>(std::get<BMVert *>(active_vert_))};
-  }
-  return {PBVH_REF_NONE};
-}
-
 ActiveVert SculptSession::active_vert() const
 {
   return active_vert_;
-}
-
-PBVHVertRef SculptSession::last_active_vert_ref() const
-{
-  if (std::holds_alternative<int>(last_active_vert_)) {
-    return {std::get<int>(last_active_vert_)};
-  }
-  if (std::holds_alternative<SubdivCCGCoord>(last_active_vert_)) {
-    const CCGKey key = BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg);
-    const int index = std::get<SubdivCCGCoord>(last_active_vert_).to_index(key);
-    return {index};
-  }
-  if (std::holds_alternative<BMVert *>(last_active_vert_)) {
-    return {reinterpret_cast<intptr_t>(std::get<BMVert *>(last_active_vert_))};
-  }
-  return {PBVH_REF_NONE};
 }
 
 ActiveVert SculptSession::last_active_vert() const
@@ -1800,6 +1768,23 @@ int SculptSession::active_vert_index() const
   }
   if (std::holds_alternative<BMVert *>(active_vert_)) {
     BMVert *bm_vert = std::get<BMVert *>(active_vert_);
+    return BM_elem_index_get(bm_vert);
+  }
+
+  return -1;
+}
+
+int SculptSession::last_active_vert_index() const
+{
+  if (std::holds_alternative<int>(last_active_vert_)) {
+    return std::get<int>(last_active_vert_);
+  }
+  if (std::holds_alternative<SubdivCCGCoord>(last_active_vert_)) {
+    const SubdivCCGCoord coord = std::get<SubdivCCGCoord>(last_active_vert_);
+    return coord.to_index(BKE_subdiv_ccg_key_top_level(*this->subdiv_ccg));
+  }
+  if (std::holds_alternative<BMVert *>(last_active_vert_)) {
+    BMVert *bm_vert = std::get<BMVert *>(last_active_vert_);
     return BM_elem_index_get(bm_vert);
   }
 
@@ -2363,14 +2348,14 @@ static std::unique_ptr<pbvh::Tree> build_pbvh_for_dynamic_topology(Object *ob)
   BM_data_layer_ensure_named(&bm, &bm.vdata, CD_PROP_INT32, ".sculpt_dyntopo_node_id_vertex");
   BM_data_layer_ensure_named(&bm, &bm.pdata, CD_PROP_INT32, ".sculpt_dyntopo_node_id_face");
 
-  return pbvh::build_bmesh(&bm);
+  return std::make_unique<pbvh::Tree>(pbvh::Tree::from_bmesh(bm));
 }
 
 static std::unique_ptr<pbvh::Tree> build_pbvh_from_regular_mesh(Object *ob,
                                                                 const Mesh *me_eval_deform)
 {
   const Mesh &mesh = *BKE_object_get_original_mesh(ob);
-  std::unique_ptr<pbvh::Tree> pbvh = pbvh::build_mesh(mesh);
+  std::unique_ptr<pbvh::Tree> pbvh = std::make_unique<pbvh::Tree>(pbvh::Tree::from_mesh(mesh));
 
   const bool is_deformed = check_sculpt_object_deformed(ob, true);
   if (is_deformed && me_eval_deform != nullptr) {
@@ -2385,7 +2370,7 @@ static std::unique_ptr<pbvh::Tree> build_pbvh_from_ccg(Object *ob, SubdivCCG &su
   const Mesh &base_mesh = *BKE_mesh_from_object(ob);
   BKE_sculpt_sync_face_visibility_to_grids(base_mesh, subdiv_ccg);
 
-  return pbvh::build_grids(base_mesh, subdiv_ccg);
+  return std::make_unique<pbvh::Tree>(pbvh::Tree::from_grids(base_mesh, subdiv_ccg));
 }
 
 }  // namespace blender::bke

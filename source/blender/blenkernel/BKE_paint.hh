@@ -486,10 +486,8 @@ struct SculptSession : blender::NonCopyable, blender::NonMovable {
   SculptSession();
   ~SculptSession();
 
-  PBVHVertRef active_vert_ref() const;
   ActiveVert active_vert() const;
 
-  PBVHVertRef last_active_vert_ref() const;
   ActiveVert last_active_vert() const;
 
   /**
@@ -502,6 +500,7 @@ struct SculptSession : blender::NonCopyable, blender::NonMovable {
    * \returns -1 if there is no currently active vertex.
    */
   int active_vert_index() const;
+  int last_active_vert_index() const;
 
   /**
    * Retrieves the active vertex position.

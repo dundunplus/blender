@@ -119,8 +119,9 @@ DrawingPlacement::DrawingPlacement(const Scene &scene,
                                    const View3D &view3d,
                                    const Object &eval_object,
                                    const bke::greasepencil::Layer *layer,
-                                   const ReprojectMode reproject_mode)
-    : region_(&region), view3d_(&view3d)
+                                   const ReprojectMode reproject_mode,
+                                   const float surface_offset)
+    : region_(&region), view3d_(&view3d), surface_offset_(surface_offset)
 {
   layer_space_to_world_space_ = (layer != nullptr) ? layer->to_world_space(eval_object) :
                                                      eval_object.object_to_world();
@@ -170,11 +171,14 @@ DrawingPlacement::DrawingPlacement(const Scene &scene,
       surface_offset_ = 0.0f;
       placement_loc_ = layer_space_to_world_space_.location();
       break;
-    /* TODO: Implement ReprojectMode::Surface for reproject operator */
+    case ReprojectMode::Surface:
+      depth_ = DrawingPlacementDepth::Surface;
+      placement_loc_ = layer_space_to_world_space_.location();
+      break;
     default:
       depth_ = DrawingPlacementDepth::ObjectOrigin;
       surface_offset_ = 0.0f;
-      placement_loc_ = float3(0.0f);
+      placement_loc_ = layer_space_to_world_space_.location();
       break;
   }
 
@@ -741,7 +745,7 @@ Array<Vector<MutableDrawingInfo>> retrieve_editable_drawings_grouped_per_frame(
 
     /* Add drawing at current frame. */
     Drawing *current_drawing = grease_pencil.get_drawing_at(layer, current_frame);
-    if (!added_drawings.contains(current_drawing)) {
+    if (current_drawing != nullptr && !added_drawings.contains(current_drawing)) {
       const int frame_group = selected_frames.index_of(current_frame);
       drawings_grouped_per_frame[frame_group].append(
           {*current_drawing, layer_i, current_frame, falloff_per_selected_frame[frame_group]});

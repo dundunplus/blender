@@ -239,7 +239,7 @@ class VIEW3D_HT_tool_header(Header):
                 panel="TOPBAR_PT_gpencil_layers",
                 text=text,
             )
-        elif mode_string in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}:
+        elif mode_string in {'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL', 'SCULPT_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL'}:
             layer = context.object.data.layers.active
             group = context.object.data.layer_groups.active
             text = "Layer"
@@ -6183,6 +6183,8 @@ class VIEW3D_MT_edit_greasepencil_cleanup(Menu):
         if ob.mode != 'PAINT_GREASE_PENCIL':
             layout.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance")
 
+        layout.operator("grease_pencil.reproject")
+
 
 class VIEW3D_MT_edit_greasepencil(Menu):
     bl_label = "Grease Pencil"
@@ -6255,6 +6257,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.operator_menu_enum("grease_pencil.set_curve_type", property="type")
         layout.operator("grease_pencil.set_curve_resolution")
+
+        layout.separator()
+
+        layout.operator("grease_pencil.reset_uvs")
 
 
 class VIEW3D_MT_edit_greasepencil_point(Menu):
