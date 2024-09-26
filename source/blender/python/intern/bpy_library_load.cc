@@ -34,19 +34,19 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "bpy_capi_utils.h"
-#include "bpy_library.h"
+#include "bpy_capi_utils.hh"
+#include "bpy_library.hh"
 
-#include "../generic/py_capi_utils.h"
-#include "../generic/python_compat.h"
-#include "../generic/python_utildefines.h"
+#include "../generic/py_capi_utils.hh"
+#include "../generic/python_compat.hh"
+#include "../generic/python_utildefines.hh"
 
 /* nifty feature. swap out strings for RNA data */
 #define USE_RNA_DATABLOCKS
 
 #ifdef USE_RNA_DATABLOCKS
 #  include "RNA_access.hh"
-#  include "bpy_rna.h"
+#  include "bpy_rna.hh"
 #endif
 
 struct BPy_Library {

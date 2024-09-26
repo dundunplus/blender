@@ -1589,6 +1589,8 @@ static void split_groups_action_temp(bAction *act, bActionGroup *tgrp)
     return;
   }
 
+  BLI_assert(act->wrap().is_action_legacy());
+
   /* Separate F-Curves into lists per group */
   LISTBASE_FOREACH (bActionGroup *, agrp, &act->groups) {
     FCurve *const group_fcurves_first = static_cast<FCurve *>(agrp->channels.first);
@@ -3566,7 +3568,7 @@ static void ANIM_OT_channels_select_all(wmOperatorType *ot)
 /** \name Box Select Operator
  * \{ */
 
-static void box_select_anim_channels(bAnimContext *ac, rcti *rect, short selectmode)
+static void box_select_anim_channels(bAnimContext *ac, const rcti &rect, short selectmode)
 {
   ListBase anim_data = {nullptr, nullptr};
   int filter;
@@ -3576,8 +3578,8 @@ static void box_select_anim_channels(bAnimContext *ac, rcti *rect, short selectm
   rctf rectf;
 
   /* convert border-region to view coordinates */
-  UI_view2d_region_to_view(v2d, rect->xmin, rect->ymin + 2, &rectf.xmin, &rectf.ymin);
-  UI_view2d_region_to_view(v2d, rect->xmax, rect->ymax - 2, &rectf.xmax, &rectf.ymax);
+  UI_view2d_region_to_view(v2d, rect.xmin, rect.ymin + 2, &rectf.xmin, &rectf.ymin);
+  UI_view2d_region_to_view(v2d, rect.xmax, rect.ymax - 2, &rectf.xmax, &rectf.ymax);
 
   /* filter data */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
@@ -3723,7 +3725,7 @@ static int animchannels_box_select_exec(bContext *C, wmOperator *op)
   }
 
   /* apply box_select animation channels */
-  box_select_anim_channels(&ac, &rect, selectmode);
+  box_select_anim_channels(&ac, rect, selectmode);
 
   /* send notifier that things have changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN | NA_SELECTED, nullptr);
