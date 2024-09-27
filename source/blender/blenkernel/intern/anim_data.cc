@@ -195,10 +195,16 @@ bool BKE_animdata_set_action(ReportList *reports, ID *id, bAction *act)
 {
   using namespace blender;
 
-  AnimData *adt = BKE_animdata_from_id(id);
+  /* If we're unassigning (null action pointer) and there's no animdata, we can
+   * skip the whole song and dance of creating animdata just to "unassign" the
+   * action from it. */
+  if (act == nullptr && BKE_animdata_from_id(id) == nullptr) {
+    return true;
+  }
 
+  AnimData *adt = BKE_animdata_ensure_id(id);
   if (adt == nullptr) {
-    BKE_report(reports, RPT_WARNING, "No AnimData to set action on");
+    BKE_report(reports, RPT_WARNING, "Attempt to set action on non-animatable ID");
     return false;
   }
 
@@ -238,7 +244,7 @@ bool BKE_animdata_action_ensure_idroot(const ID *owner, bAction *action)
   }
 
 #ifdef WITH_ANIM_BAKLAVA
-  if (action->wrap().is_action_layered()) {
+  if (!blender::animrig::legacy::action_treat_as_legacy(*action)) {
     /* TODO: for layered Actions, this function doesn't make sense. Once all Actions are
      * auto-versioned to layered Actions, this entire function can be removed. */
     action->idroot = 0;
