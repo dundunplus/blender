@@ -122,7 +122,9 @@ set(SRC
   NOD_socket_declarations.hh
   NOD_socket_declarations_geometry.hh
   NOD_socket_items.hh
+  NOD_socket_items_blend.hh
   NOD_socket_items_ops.hh
+  NOD_socket_items_ui.hh
   NOD_socket_search_link.hh
   NOD_static_types.h
   NOD_texture.h
