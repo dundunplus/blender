@@ -2328,7 +2328,8 @@ def km_file_browser(params):
         ("file.next", {"type": 'BACK_SPACE', "value": 'PRESS', "shift": True}, None),
         ("wm.context_toggle", {"type": 'H', "value": 'PRESS'},
          {"properties": [("data_path", "space_data.params.show_hidden")]}),
-        ("file.directory_new", {"type": 'I', "value": 'PRESS'}, None),
+        ("file.directory_new", {"type": 'I', "value": 'PRESS'},
+         {"properties": [("confirm", False)]}),
         ("file.rename", {"type": 'F2', "value": 'PRESS'}, None),
         ("file.delete", {"type": 'X', "value": 'PRESS'}, None),
         ("file.delete", {"type": 'DEL', "value": 'PRESS'}, None),
@@ -3745,7 +3746,8 @@ def km_grease_pencil_paint_mode(params):
 
         # Show/hide
         *_template_items_hide_reveal_actions("grease_pencil.layer_hide", "grease_pencil.layer_reveal"),
-
+        # Flip primary and secondary color
+        ("paint.brush_colors_flip", {"type": 'X', "value": 'PRESS'}, None),
         ("paint.sample_color", {"type": 'X', "value": 'PRESS', "shift": True}, None),
 
         # Isolate Layer
@@ -4021,6 +4023,9 @@ def km_grease_pencil_vertex_paint(params):
          {"properties": [("data_path", "scene.tool_settings.use_gpencil_vertex_select_mask_stroke")]}),
         ("wm.context_toggle", {"type": 'THREE', "value": 'PRESS'},
          {"properties": [("data_path", "scene.tool_settings.use_gpencil_vertex_select_mask_segment")]}),
+        # Flip primary and secondary color
+        ("paint.brush_colors_flip", {"type": 'X', "value": 'PRESS'}, None),
+
         # Radial controls
         *_template_paint_radial_control("gpencil_vertex_paint"),
         # Context menu

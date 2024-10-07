@@ -25,6 +25,14 @@ set(INC
   ../compositor/realtime_compositor/cached_resources
   ../windowmanager
 
+  # For shader includes
+  engines/eevee_next/shaders
+  engines/workbench/shaders
+  engines/overlay/shaders
+  intern/shaders
+  ../gpu/shaders/common
+  ../gpu/shaders
+
   ../../../intern/opensubdiv
 )
 
@@ -800,7 +808,7 @@ set(GLSL_SRC
 set(GLSL_C)
 
 foreach(GLSL_FILE ${GLSL_SRC})
-  data_to_c_simple(${GLSL_FILE} GLSL_C STRIP_LEADING_C_COMMENTS)
+  glsl_to_c(${GLSL_FILE} GLSL_C)
 endforeach()
 
 blender_add_lib(bf_draw_shaders "${GLSL_C}" "" "" "")

@@ -1078,17 +1078,17 @@ class ChannelBag : public ::ActionChannelBag {
    * the groups, dots indicate ungrouped areas, and f* are the fcurves, so e.g.
    * group g0 currently contains f1 and f2, but ought to contain f0 and f1):
    *
-   * ```
+   * \code{.unparsed}
    * |..| g0  |..|g1|.....| g2  |..|
    * |f0|f1|f2|f3|f4|f5|f6|f7|f8|f9|
-   * ```
+   * \endcode
    *
    * Then after calling this function they will look like this:
    *
-   * ```
+   * \code{.unparsed}
    * | g0  |g1| g2  |..............|
    * |f0|f1|f2|f3|f4|f5|f6|f7|f8|f9|
-   * ```
+   * \endcode
    *
    * Note that this specifically does *not* move the fcurves, but rather moves
    * the groups *over* the fcurves, changing membership.
@@ -1281,6 +1281,9 @@ ActionSlotAssignmentResult assign_action_slot(Slot *slot_to_assign, ID &animated
 ActionSlotAssignmentResult assign_action_and_slot(Action *action,
                                                   Slot *slot_to_assign,
                                                   ID &animated_id);
+
+[[nodiscard]] ActionSlotAssignmentResult assign_tmpaction_and_slot_handle(
+    bAction *action, slot_handle_t slot_handle, OwnedAnimData owned_adt);
 
 /**
  * Return the Action of this ID, or nullptr if it has none.
