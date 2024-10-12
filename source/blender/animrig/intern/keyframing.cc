@@ -891,14 +891,14 @@ static CombinedKeyingResult insert_key_layered_action(
     Main *bmain,
     Action &action,
     Layer &layer,
-    Slot &slot,
+    const Slot &slot,
     PropertyRNA *prop,
     const std::optional<StringRefNull> channel_group,
     const std::string &rna_path,
     const float frame,
     const Span<float> values,
     const eInsertKeyFlags insert_key_flags,
-    const KeyframeSettings key_settings,
+    const KeyframeSettings &key_settings,
     const BitSpan keying_mask)
 {
   BLI_assert(bmain != nullptr);
@@ -1073,12 +1073,16 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
        * moved out of the for-loop. */
       auto [layer, slot] = prep_action_layer_for_keying(action, *struct_pointer->owner_id);
 
+      const std::optional<blender::StringRefNull> this_rna_path_channel_group =
+          channel_group.has_value() ? *channel_group :
+                                      default_channel_group_for_path(&ptr, *rna_path_id_to_prop);
+
       result = insert_key_layered_action(bmain,
                                          action,
                                          *layer,
                                          *slot,
                                          prop,
-                                         channel_group,
+                                         this_rna_path_channel_group,
                                          *rna_path_id_to_prop,
                                          nla_frame,
                                          rna_values,
