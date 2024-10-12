@@ -58,9 +58,18 @@ int main(int argc, char **argv)
         error++;
       };
 
+  const bool is_info = std::string(output_file_name).find("info.hh") != std::string::npos;
+  const bool is_glsl = std::string(output_file_name).find(".glsl") != std::string::npos;
+
+  if (is_info) {
+    std::cerr << "File " << output_file_name
+              << " is a create info file and should not be processed as glsl" << std::endl;
+    return 1;
+  }
+
   blender::gpu::shader::Preprocessor processor;
 
-  output_file << processor.process(buffer.str(), report_error);
+  output_file << processor.process(buffer.str(), true, is_glsl, is_glsl, report_error);
 
   input_file.close();
   output_file.close();
