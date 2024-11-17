@@ -1012,13 +1012,11 @@ static void do_blend_mode_effect(const SeqRenderData *context,
 
 static void init_colormix_effect(Sequence *seq)
 {
-  ColorMixVars *data;
-
   if (seq->effectdata) {
     MEM_freeN(seq->effectdata);
   }
   seq->effectdata = MEM_callocN(sizeof(ColorMixVars), "colormixvars");
-  data = (ColorMixVars *)seq->effectdata;
+  ColorMixVars *data = (ColorMixVars *)seq->effectdata;
   data->blend_effect = SEQ_TYPE_OVERLAY;
   data->factor = 1.0f;
 }
@@ -1434,15 +1432,13 @@ static ImBuf *do_wipe_effect(const SeqRenderData *context,
 
 static void init_transform_effect(Sequence *seq)
 {
-  TransformVars *transform;
-
   if (seq->effectdata) {
     MEM_freeN(seq->effectdata);
   }
 
   seq->effectdata = MEM_callocN(sizeof(TransformVars), "transformvars");
 
-  transform = (TransformVars *)seq->effectdata;
+  TransformVars *transform = (TransformVars *)seq->effectdata;
 
   transform->ScalexIni = 1.0f;
   transform->ScaleyIni = 1.0f;
@@ -1711,15 +1707,13 @@ static void blur_isolate_highlights(const float4 *in,
 
 static void init_glow_effect(Sequence *seq)
 {
-  GlowVars *glow;
-
   if (seq->effectdata) {
     MEM_freeN(seq->effectdata);
   }
 
   seq->effectdata = MEM_callocN(sizeof(GlowVars), "glowvars");
 
-  glow = (GlowVars *)seq->effectdata;
+  GlowVars *glow = (GlowVars *)seq->effectdata;
   glow->fMini = 0.25;
   glow->fClamp = 1.0;
   glow->fBoost = 0.5;
@@ -1853,15 +1847,13 @@ static ImBuf *do_glow_effect(const SeqRenderData *context,
 
 static void init_solid_color(Sequence *seq)
 {
-  SolidColorVars *cv;
-
   if (seq->effectdata) {
     MEM_freeN(seq->effectdata);
   }
 
   seq->effectdata = MEM_callocN(sizeof(SolidColorVars), "solidcolor");
 
-  cv = (SolidColorVars *)seq->effectdata;
+  SolidColorVars *cv = (SolidColorVars *)seq->effectdata;
   cv->col[0] = cv->col[1] = cv->col[2] = 0.5;
 }
 
@@ -2065,15 +2057,13 @@ static ImBuf *do_adjustment(const SeqRenderData *context,
 
 static void init_speed_effect(Sequence *seq)
 {
-  SpeedControlVars *v;
-
   if (seq->effectdata) {
     MEM_freeN(seq->effectdata);
   }
 
   seq->effectdata = MEM_callocN(sizeof(SpeedControlVars), "speedcontrolvars");
 
-  v = (SpeedControlVars *)seq->effectdata;
+  SpeedControlVars *v = (SpeedControlVars *)seq->effectdata;
   v->speed_control_type = SEQ_SPEED_STRETCH;
   v->speed_fader = 1.0f;
   v->speed_fader_length = 0.0f;
@@ -2298,7 +2288,7 @@ static void init_gaussian_blur_effect(Sequence *seq)
     MEM_freeN(seq->effectdata);
   }
 
-  seq->effectdata = MEM_callocN(sizeof(WipeVars), "wipevars");
+  seq->effectdata = MEM_callocN(sizeof(GaussianBlurVars), "gaussianblurvars");
 }
 
 static int num_inputs_gaussian_blur()
@@ -2371,10 +2361,18 @@ static void gaussian_blur_x(const Span<float> gaussian,
         accum_weight += weight;
       }
       accum *= (1.0f / accum_weight);
-      dst[0] = accum[0];
-      dst[1] = accum[1];
-      dst[2] = accum[2];
-      dst[3] = accum[3];
+      if constexpr (math::is_math_float_type<T>) {
+        dst[0] = accum[0];
+        dst[1] = accum[1];
+        dst[2] = accum[2];
+        dst[3] = accum[3];
+      }
+      else {
+        dst[0] = accum[0] + 0.5f;
+        dst[1] = accum[1] + 0.5f;
+        dst[2] = accum[2] + 0.5f;
+        dst[3] = accum[3] + 0.5f;
+      }
       dst += 4;
     }
   }
@@ -2404,10 +2402,18 @@ static void gaussian_blur_y(const Span<float> gaussian,
         accum_weight += weight;
       }
       accum *= (1.0f / accum_weight);
-      dst[0] = accum[0];
-      dst[1] = accum[1];
-      dst[2] = accum[2];
-      dst[3] = accum[3];
+      if constexpr (math::is_math_float_type<T>) {
+        dst[0] = accum[0];
+        dst[1] = accum[1];
+        dst[2] = accum[2];
+        dst[3] = accum[3];
+      }
+      else {
+        dst[0] = accum[0] + 0.5f;
+        dst[1] = accum[1] + 0.5f;
+        dst[2] = accum[2] + 0.5f;
+        dst[3] = accum[3] + 0.5f;
+      }
       dst += 4;
     }
   }
@@ -2502,13 +2508,12 @@ static ImBuf *do_gaussian_blur_effect(const SeqRenderData *context,
 
 static void init_text_effect(Sequence *seq)
 {
-  TextVars *data;
-
   if (seq->effectdata) {
     MEM_freeN(seq->effectdata);
   }
 
-  data = static_cast<TextVars *>(seq->effectdata = MEM_callocN(sizeof(TextVars), "textvars"));
+  TextVars *data = static_cast<TextVars *>(
+      seq->effectdata = MEM_callocN(sizeof(TextVars), "textvars"));
   data->text_font = nullptr;
   data->text_blf_id = -1;
   data->text_size = 60.0f;
@@ -2523,6 +2528,7 @@ static void init_text_effect(Sequence *seq)
   data->box_color[2] = 0.2f;
   data->box_color[3] = 0.7f;
   data->box_margin = 0.01f;
+  data->box_roundness = 0.0f;
   data->outline_color[3] = 0.7f;
   data->outline_width = 0.05f;
 
@@ -3032,10 +3038,42 @@ static rcti draw_text_outline(const SeqRenderData *context,
   return outline_rect;
 }
 
+static inline void fill_ellipse_alpha_under(const ImBuf *ibuf,
+                                            const float col[4],
+                                            int x1,
+                                            int y1,
+                                            int x2,
+                                            int y2,
+                                            float origin_x,
+                                            float origin_y,
+                                            float radius)
+{
+  float curve_pow = 2.1f;
+  float4 color;
+  float4 premul_color;
+  for (int y = y1; y < y2; y++) {
+    uchar *dst = ibuf->byte_buffer.data + (size_t(ibuf->x) * y + x1) * 4;
+    for (int x = x1; x < x2; x++) {
+      color = col;
+
+      float r = powf(powf(abs(x - origin_x), curve_pow) + powf(abs(y - origin_y), curve_pow),
+                     1.0f / curve_pow);
+      color.w = math::clamp(radius - r, 0.0f, color.w);
+
+      straight_to_premul_v4_v4(premul_color, color);
+      float4 pix = load_premul_pixel(dst);
+      float fac = 1.0f - pix.w;
+      float4 dst_fl = fac * premul_color + pix;
+      store_premul_pixel(dst_fl, dst);
+      dst += 4;
+    }
+  }
+}
+
 /* Similar to #IMB_rectfill_area but blends the given color under the
  * existing image. Also only works on byte buffers. */
 static void fill_rect_alpha_under(
-    const ImBuf *ibuf, const float col[4], int x1, int y1, int x2, int y2)
+    const ImBuf *ibuf, const float col[4], int x1, int y1, int x2, int y2, float corner_radius)
 {
   const int width = ibuf->x;
   const int height = ibuf->y;
@@ -3053,17 +3091,74 @@ static void fill_rect_alpha_under(
     return;
   }
 
-  float4 premul_col = col;
-  straight_to_premul_v4(premul_col);
+  corner_radius = math::clamp(corner_radius, 0.0f, math::min(x2 - x1, y2 - y1) / 2.0f);
 
-  for (int y = y1; y < y2; y++) {
-    uchar *dst = ibuf->byte_buffer.data + (size_t(width) * y + x1) * 4;
-    for (int x = x1; x < x2; x++) {
-      float4 pix = load_premul_pixel(dst);
-      float fac = 1.0f - pix.w;
-      float4 dst_fl = fac * premul_col + pix;
-      store_premul_pixel(dst_fl, dst);
-      dst += 4;
+  if (corner_radius > 0.0f) {
+    int cr = (int)corner_radius;
+    /* bottom left */
+    fill_ellipse_alpha_under(ibuf,
+                             col,
+                             x1,
+                             y1,
+                             x1 + cr,
+                             y1 + cr,
+                             x1 + corner_radius - 1,
+                             y1 + corner_radius - 1,
+                             corner_radius);
+
+    /* top left */
+    fill_ellipse_alpha_under(ibuf,
+                             col,
+                             x1,
+                             y2 - cr,
+                             x1 + cr,
+                             y2,
+                             x1 + corner_radius - 1,
+                             y2 - corner_radius,
+                             corner_radius);
+
+    /* top right */
+    fill_ellipse_alpha_under(ibuf,
+                             col,
+                             x2 - cr,
+                             y2 - cr,
+                             x2,
+                             y2,
+                             x2 - corner_radius,
+                             y2 - corner_radius,
+                             corner_radius);
+
+    /* bottom right */
+    fill_ellipse_alpha_under(ibuf,
+                             col,
+                             x2 - cr,
+                             y1,
+                             x2,
+                             y1 + cr,
+                             x2 - corner_radius,
+                             y1 + corner_radius - 1,
+                             corner_radius);
+
+    /* fill in areas between corners */
+    /* bottom */
+    fill_rect_alpha_under(ibuf, col, x1 + cr, y1, x2 - cr, y1 + cr, 0.0f);
+    /* middle */
+    fill_rect_alpha_under(ibuf, col, x1, y1 + cr, x2, y2 - cr, 0.0f);
+    /* top */
+    fill_rect_alpha_under(ibuf, col, x1 + cr, y2, x2 - cr, y2 - cr, 0.0f);
+  }
+  else {
+    float4 premul_col;
+    straight_to_premul_v4_v4(premul_col, col);
+    for (int y = y1; y < y2; y++) {
+      uchar *dst = ibuf->byte_buffer.data + (size_t(width) * y + x1) * 4;
+      for (int x = x1; x < x2; x++) {
+        float4 pix = load_premul_pixel(dst);
+        float fac = 1.0f - pix.w;
+        float4 dst_fl = fac * premul_col + pix;
+        store_premul_pixel(dst_fl, dst);
+        dst += 4;
+      }
     }
   }
 }
@@ -3326,7 +3421,8 @@ static ImBuf *do_text_effect(const SeqRenderData *context,
       const int maxx = runtime.text_boundbox.xmax + margin;
       const int miny = runtime.text_boundbox.ymin - margin;
       const int maxy = runtime.text_boundbox.ymax + margin;
-      fill_rect_alpha_under(out, data->box_color, minx, miny, maxx, maxy);
+      float corner_radius = data->box_roundness * (maxy - miny) / 2.0f;
+      fill_rect_alpha_under(out, data->box_color, minx, miny, maxx, maxy, corner_radius);
     }
   }
 
