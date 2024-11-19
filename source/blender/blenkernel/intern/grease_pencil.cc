@@ -270,10 +270,10 @@ IDTypeInfo IDType_ID_GP = {
 
 namespace blender::bke::greasepencil {
 
-static const std::string ATTR_RADIUS = "radius";
-static const std::string ATTR_OPACITY = "opacity";
-static const std::string ATTR_VERTEX_COLOR = "vertex_color";
-static const std::string ATTR_FILL_COLOR = "fill_color";
+constexpr StringRef ATTR_RADIUS = "radius";
+constexpr StringRef ATTR_OPACITY = "opacity";
+constexpr StringRef ATTR_VERTEX_COLOR = "vertex_color";
+constexpr StringRef ATTR_FILL_COLOR = "fill_color";
 
 /* Curves attributes getters */
 static int domain_num(const CurvesGeometry &curves, const AttrDomain domain)
@@ -3939,6 +3939,18 @@ void GreasePencil::print_layer_tree()
 {
   using namespace blender::bke::greasepencil;
   this->root_group().print_nodes("Layer Tree:");
+}
+
+blender::bke::AttributeAccessor GreasePencil::attributes() const
+{
+  return blender::bke::AttributeAccessor(
+      this, blender::bke::greasepencil::get_attribute_accessor_functions());
+}
+
+blender::bke::MutableAttributeAccessor GreasePencil::attributes_for_write()
+{
+  return blender::bke::MutableAttributeAccessor(
+      this, blender::bke::greasepencil::get_attribute_accessor_functions());
 }
 
 /** \} */
