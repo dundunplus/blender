@@ -10,26 +10,20 @@
 
 #include "BKE_paint.hh"
 
-#include "overlay_next_private.hh"
+#include "overlay_next_base.hh"
 
 namespace blender::draw::overlay {
 
-class Facing {
+class Facing : Overlay {
 
  private:
-  const SelectionType selection_type_;
-
   PassMain ps_ = {"Facing"};
 
-  bool enabled_ = false;
-
  public:
-  Facing(const SelectionType selection_type_) : selection_type_(selection_type_) {}
-
-  void begin_sync(Resources &res, const State &state)
+  void begin_sync(Resources &res, const State &state) final
   {
-    enabled_ = state.v3d && (state.overlay.flag & V3D_OVERLAY_FACE_ORIENTATION) &&
-               !state.xray_enabled && (selection_type_ == SelectionType::DISABLED);
+    enabled_ = state.v3d && state.show_face_orientation() && !state.xray_enabled &&
+               !res.is_selection();
     if (!enabled_) {
       /* Not used. But release the data. */
       ps_.init();
@@ -55,7 +49,10 @@ class Facing {
     ps_.bind_ubo("globalsBlock", &res.globals_buf);
   }
 
-  void object_sync(Manager &manager, const ObjectRef &ob_ref, const State &state)
+  void object_sync(Manager &manager,
+                   const ObjectRef &ob_ref,
+                   Resources & /*res*/,
+                   const State &state) final
   {
     if (!enabled_) {
       return;
@@ -85,7 +82,7 @@ class Facing {
     }
   }
 
-  void pre_draw(Manager &manager, View &view)
+  void pre_draw(Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -94,7 +91,7 @@ class Facing {
     manager.generate_commands(ps_, view);
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw(Framebuffer &framebuffer, Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;

@@ -9,20 +9,15 @@
 #pragma once
 
 #include "BKE_camera.h"
-
-#include "DEG_depsgraph_query.hh"
-
 #include "BKE_tracking.h"
-
 #include "BLI_math_rotation.h"
-
+#include "DEG_depsgraph_query.hh"
 #include "DNA_camera_types.h"
-
 #include "ED_view3d.hh"
 
 #include "draw_manager_text.hh"
+#include "overlay_next_base.hh"
 #include "overlay_next_empty.hh"
-#include "overlay_next_private.hh"
 
 namespace blender::draw::overlay {
 struct CameraInstanceData : public ExtraInstanceData {
@@ -51,7 +46,7 @@ struct CameraInstanceData : public ExtraInstanceData {
       : ExtraInstanceData(p_matrix, color, 1.0f){};
 };
 
-class Cameras {
+class Cameras : Overlay {
   using CameraInstanceBuf = ShapeInstanceBuf<ExtraInstanceData>;
 
  private:
@@ -83,7 +78,6 @@ class Cameras {
     Empties::CallBuffers empties{selection_type_};
   } call_buffers_;
 
-  bool enabled_ = false;
   bool images_enabled_ = false;
   bool extras_enabled_ = false;
   bool motion_tracking_enabled_ = false;
@@ -93,10 +87,10 @@ class Cameras {
 
   void begin_sync(Resources &res, State &state, View &view)
   {
-    enabled_ = state.space_type == SPACE_VIEW3D;
-    extras_enabled_ = enabled_ && !(state.overlay.flag & V3D_OVERLAY_HIDE_OBJECT_XTRAS);
+    enabled_ = state.is_space_v3d();
+    extras_enabled_ = enabled_ && state.show_extras();
     motion_tracking_enabled_ = enabled_ && state.v3d->flag2 & V3D_SHOW_RECONSTRUCTION;
-    images_enabled_ = enabled_ && res.selection_type == SelectionType::DISABLED;
+    images_enabled_ = enabled_ && !res.is_selection();
     enabled_ = extras_enabled_ || images_enabled_ || motion_tracking_enabled_;
 
     if (extras_enabled_ || motion_tracking_enabled_) {
@@ -224,7 +218,7 @@ class Cameras {
     manager.generate_commands(foreground_ps_, view);
   }
 
-  void draw(Framebuffer &framebuffer, Manager &manager, View &view)
+  void draw_line(Framebuffer &framebuffer, Manager &manager, View &view)
   {
     if (!extras_enabled_ && !motion_tracking_enabled_) {
       return;
@@ -284,7 +278,7 @@ class Cameras {
 
     const Camera *cam = static_cast<Camera *>(ob->data);
     const Object *camera_object = DEG_get_evaluated_object(state.depsgraph, v3d->camera);
-    const bool is_select = res.selection_type != SelectionType::DISABLED;
+    const bool is_select = res.is_selection();
     const bool is_active = (ob == camera_object);
     const bool is_camera_view = (is_active && (rv3d->persp == RV3D_CAMOB));
 
@@ -416,7 +410,7 @@ class Cameras {
 
     const float4 &color = res.object_wire_color(ob_ref, state);
 
-    const bool is_selection = res.selection_type != SelectionType::DISABLED;
+    const bool is_selection = res.is_selection();
     const bool is_solid_bundle = (v3d->bundle_drawtype == OB_EMPTY_SPHERE) &&
                                  ((v3d->shading.type != OB_SOLID) || !XRAY_FLAG_ENABLED(v3d));
 
@@ -781,7 +775,7 @@ class Cameras {
     const bool is_stereo3d_cameras = (v3d->stereo3d_flag & V3D_S3D_DISPCAMERAS) != 0;
     const bool is_stereo3d_plane = (v3d->stereo3d_flag & V3D_S3D_DISPPLANE) != 0;
     const bool is_stereo3d_volume = (v3d->stereo3d_flag & V3D_S3D_DISPVOLUME) != 0;
-    const bool is_selection = res.selection_type != SelectionType::DISABLED;
+    const bool is_selection = res.is_selection();
 
     if (!is_stereo3d_cameras) {
       /* Draw single camera. */

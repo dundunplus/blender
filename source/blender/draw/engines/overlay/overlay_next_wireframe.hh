@@ -13,11 +13,12 @@
 
 #include "draw_common.hh"
 
+#include "overlay_next_base.hh"
 #include "overlay_next_mesh.hh"
 
 namespace blender::draw::overlay {
 
-class Wireframe {
+class Wireframe : Overlay {
  private:
   PassMain wireframe_ps_ = {"Wireframe"};
   struct ColoringPass {
@@ -35,20 +36,17 @@ class Wireframe {
   /* Force display of wireframe on surface objects, regardless of the object display settings. */
   bool show_wire_ = false;
 
-  bool enabled_ = false;
-
  public:
-  void begin_sync(Resources &res, const State &state)
+  void begin_sync(Resources &res, const State &state) final
   {
-    enabled_ = (state.space_type == SPACE_VIEW3D) &&
-               (state.is_wireframe_mode || !state.hide_overlays);
+    enabled_ = state.is_space_v3d() && (state.is_wireframe_mode || !state.hide_overlays);
     if (!enabled_) {
       return;
     }
 
-    show_wire_ = state.is_wireframe_mode || (state.overlay.flag & V3D_OVERLAY_WIREFRAMES);
+    show_wire_ = state.is_wireframe_mode || state.show_wireframes();
 
-    const bool is_selection = res.selection_type != SelectionType::DISABLED;
+    const bool is_selection = res.is_selection();
     const bool do_smooth_lines = (U.gpu_flag & USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE) != 0;
     const bool is_transform = (G.moving & G_TRANSFORM_OBJ) != 0;
     const float wire_threshold = wire_discard_threshold_get(state.overlay.wireframe_threshold);
@@ -102,8 +100,8 @@ class Wireframe {
 
   void object_sync(Manager &manager,
                    const ObjectRef &ob_ref,
-                   const State &state,
                    Resources &res,
+                   const State &state,
                    const bool in_edit_paint_mode)
   {
     if (!enabled_) {
@@ -210,7 +208,7 @@ class Wireframe {
     }
   }
 
-  void pre_draw(Manager &manager, View &view)
+  void pre_draw(Manager &manager, View &view) final
   {
     if (!enabled_) {
       return;
@@ -219,7 +217,8 @@ class Wireframe {
     manager.generate_commands(wireframe_ps_, view);
   }
 
-  void draw(Framebuffer &framebuffer, Resources &res, Manager &manager, View &view)
+  /* TODO(fclem): Remove dependency on Resources. */
+  void draw_line(Framebuffer &framebuffer, Resources &res, Manager &manager, View &view)
   {
     if (!enabled_) {
       return;
