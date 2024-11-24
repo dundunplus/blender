@@ -12,6 +12,10 @@
 
 namespace blender::draw::overlay {
 
+/**
+ * Draw background color .
+ * It is toggled by Object Panel > Viewport Display > Axes.
+ */
 class Background : Overlay {
  private:
   PassSimple bg_ps_ = {"Background"};
@@ -81,7 +85,7 @@ class Background : Overlay {
 
     bg_ps_.state_set(pass_state);
     bg_ps_.shader_set(res.shaders.background_fill.get());
-    bg_ps_.bind_ubo("globalsBlock", &res.globals_buf);
+    bg_ps_.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     bg_ps_.bind_texture("colorBuffer", &res.color_render_tx);
     bg_ps_.bind_texture("depthBuffer", &res.depth_tx);
     bg_ps_.push_constant("colorOverride", color_override);

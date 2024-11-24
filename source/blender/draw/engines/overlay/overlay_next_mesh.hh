@@ -34,6 +34,9 @@ constexpr int overlay_edit_text = V3D_OVERLAY_EDIT_EDGE_LEN | V3D_OVERLAY_EDIT_F
                                   V3D_OVERLAY_EDIT_FACE_ANG | V3D_OVERLAY_EDIT_EDGE_ANG |
                                   V3D_OVERLAY_EDIT_INDICES;
 
+/**
+ * Draw edit mesh overlays.
+ */
 class Meshes : Overlay {
  private:
   PassSimple edit_mesh_normals_ps_ = {"Normals"};
@@ -141,12 +144,12 @@ class Meshes : Overlay {
 
       auto &pass = edit_mesh_normals_ps_;
       pass.init();
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.state_set(pass_state, state.clipping_plane_count);
 
       auto shader_pass = [&](GPUShader *shader, const char *name) {
         auto &sub = pass.sub(name);
         sub.shader_set(shader);
-        sub.bind_ubo("globalsBlock", &res.globals_buf);
         sub.bind_texture("depthTex", depth_tex);
         sub.push_constant("alpha", backwire_opacity);
         sub.push_constant("isConstantScreenSizeNormals", use_screen_size);
@@ -182,7 +185,7 @@ class Meshes : Overlay {
                      state.clipping_plane_count);
       pass.shader_set(shadeless ? res.shaders.paint_weight.get() :
                                   res.shaders.paint_weight_fake_shading.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.bind_texture("colorramp", &res.weight_ramp_tx);
       pass.push_constant("drawContours", false);
       pass.push_constant("opacity", state.overlay.weight_paint_mode_opacity);
@@ -209,7 +212,7 @@ class Meshes : Overlay {
       pass.push_constant("alpha", alpha);
       pass.push_constant("retopologyOffset", retopology_offset);
       pass.push_constant("dataMask", int4(data_mask));
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     };
 
     {
@@ -267,7 +270,7 @@ class Meshes : Overlay {
                      state.clipping_plane_count);
       pass.shader_set(res.shaders.mesh_edit_skin_root.get());
       pass.push_constant("retopologyOffset", retopology_offset);
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     }
   }
 
@@ -447,6 +450,9 @@ class Meshes : Overlay {
   }
 };
 
+/**
+ * Draw edit uv overlays.
+ */
 class MeshUVs : Overlay {
  private:
   PassSimple analysis_ps_ = {"Mesh Analysis"};
@@ -627,7 +633,7 @@ class MeshUVs : Overlay {
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_wireframe.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("alpha", space_image->uv_opacity);
       pass.push_constant("doSmoothWire", do_smooth_wire);
     }
@@ -641,7 +647,7 @@ class MeshUVs : Overlay {
       GPUShader *sh = res.shaders.uv_edit_edge.get();
       pass.specialize_constant(sh, "use_edge_select", !show_vert_);
       pass.shader_set(sh);
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("lineStyle", int(edit_uv_line_style_from_space_image(space_image)));
       pass.push_constant("alpha", space_image->uv_opacity);
       pass.push_constant("dashLength", dash_length);
@@ -659,7 +665,7 @@ class MeshUVs : Overlay {
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_edit_vert.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("pointSize", (point_size + 1.5f) * float(M_SQRT2));
       pass.push_constant("outlineWidth", 0.75f);
       pass.push_constant("color", theme_color);
@@ -673,7 +679,7 @@ class MeshUVs : Overlay {
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
                      DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_edit_facedot.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("pointSize", point_size);
     }
 
@@ -682,7 +688,7 @@ class MeshUVs : Overlay {
       pass.init();
       pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_ALWAYS | DRW_STATE_BLEND_ALPHA);
       pass.shader_set(res.shaders.uv_edit_face.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("uvOpacity", space_image->uv_opacity);
     }
 
@@ -693,7 +699,7 @@ class MeshUVs : Overlay {
       pass.shader_set(mesh_analysis_type_ == SI_UVDT_STRETCH_ANGLE ?
                           res.shaders.uv_analysis_stretch_angle.get() :
                           res.shaders.uv_analysis_stretch_area.get());
-      pass.bind_ubo("globalsBlock", &res.globals_buf);
+      pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
       pass.push_constant("aspect", state.image_uv_aspect);
       pass.push_constant("stretch_opacity", space_image->stretch_opacity);
       pass.push_constant("totalAreaRatio", &total_area_ratio_);

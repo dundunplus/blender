@@ -46,6 +46,12 @@ struct CameraInstanceData : public ExtraInstanceData {
       : ExtraInstanceData(p_matrix, color, 1.0f){};
 };
 
+/**
+ * Camera object display (including stereoscopy).
+ * Also camera reconstruction bundles.
+ * Also camera reference images (background).
+ */
+/* TODO(fclem): Split into multiple overlay classes. */
 class Cameras : Overlay {
   using CameraInstanceBuf = ShapeInstanceBuf<ExtraInstanceData>;
 
@@ -115,7 +121,7 @@ class Cameras : Overlay {
         pass.init();
         pass.state_set(draw_state, state.clipping_plane_count);
         pass.shader_set(res.shaders.image_plane_depth_bias.get());
-        pass.bind_ubo("globalsBlock", &res.globals_buf);
+        pass.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
         pass.push_constant("depth_bias_winmat", depth_bias_winmat);
         res.select_bind(pass);
       };
@@ -156,6 +162,7 @@ class Cameras : Overlay {
     }
 
     ps_.init();
+    ps_.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     res.select_bind(ps_);
 
     {
@@ -164,7 +171,6 @@ class Cameras : Overlay {
                              DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_CULL_BACK,
                          state.clipping_plane_count);
       sub_pass.shader_set(res.shaders.extra_shape.get());
-      sub_pass.bind_ubo("globalsBlock", &res.globals_buf);
       call_buffers_.volume_buf.end_sync(sub_pass, shapes.camera_volume.get());
     }
     {
@@ -173,7 +179,6 @@ class Cameras : Overlay {
                              DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_CULL_BACK,
                          state.clipping_plane_count);
       sub_pass.shader_set(res.shaders.extra_shape.get());
-      sub_pass.bind_ubo("globalsBlock", &res.globals_buf);
       call_buffers_.volume_wire_buf.end_sync(sub_pass, shapes.camera_volume_wire.get());
     }
 
@@ -183,7 +188,6 @@ class Cameras : Overlay {
                              DRW_STATE_DEPTH_LESS_EQUAL,
                          state.clipping_plane_count);
       sub_pass.shader_set(res.shaders.extra_shape.get());
-      sub_pass.bind_ubo("globalsBlock", &res.globals_buf);
       call_buffers_.distances_buf.end_sync(sub_pass, shapes.camera_distances.get());
       call_buffers_.frame_buf.end_sync(sub_pass, shapes.camera_frame.get());
       call_buffers_.tria_buf.end_sync(sub_pass, shapes.camera_tria.get());
@@ -197,7 +201,6 @@ class Cameras : Overlay {
                              DRW_STATE_DEPTH_LESS_EQUAL,
                          state.clipping_plane_count);
       sub_pass.shader_set(res.shaders.extra_wire.get());
-      sub_pass.bind_ubo("globalsBlock", &res.globals_buf);
       call_buffers_.stereo_connect_lines.end_sync(sub_pass);
       call_buffers_.tracking_path.end_sync(sub_pass);
     }
