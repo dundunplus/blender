@@ -159,7 +159,7 @@ void Instance::begin_sync()
   begin_sync_layer(regular);
   begin_sync_layer(infront);
 
-  grid.begin_sync(resources, shapes, state, view);
+  grid.begin_sync(resources, state);
 
   anti_aliasing.begin_sync(resources, state);
   xray_fade.begin_sync(resources, state);
@@ -192,7 +192,7 @@ void Instance::object_sync(ObjectRef &ob_ref, Manager &manager)
       case OB_MESH:
         /* TODO(fclem): Make it part of a #Meshes. */
         layer.paints.object_sync(manager, ob_ref, resources, state);
-        /* For wireframes. */
+        /* For wire-frames. */
         layer.mesh_uvs.edit_object_sync(manager, ob_ref, resources, state);
         break;
       case OB_GREASE_PENCIL:
