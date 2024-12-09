@@ -210,7 +210,11 @@ class Action : public ::bAction {
   Slot &slot_add_for_id_type(ID_Type idtype);
 
   /**
-   * Create a new slot, named after the given ID, and limited to the ID's type.
+   * Create a new slot suitable for the ID's type.
+   *
+   * The slot will be named after `animated_id.adt.last_slot_identifier`, defaulting to the ID's
+   * name when that is not set. This is done so that toggling Actions works transparently, when
+   * toggling between `this` and the Action last assigned to the ID.
    *
    * Note that this assigns neither this Action nor the new Slot to the ID. This function
    * merely initializes the Slot itself to suitable values to start animating this ID.
@@ -256,20 +260,6 @@ class Action : public ::bAction {
    */
   Span<const StripKeyframeData *> strip_keyframe_data() const;
   Span<StripKeyframeData *> strip_keyframe_data();
-
-  /**
-   * Find the slot that best matches the animated ID.
-   *
-   * If the ID is already animated by this Action, by matching this
-   * Action's slots with (in order):
-   *
-   * - `animated_id.adt->slot_handle`,
-   * - `animated_id.adt->last_slot_identifier`,
-   * - `animated_id.name`.
-   *
-   * Note that this is different from #slot_for_id, which does not use the
-   * slot identifier, and only works when this Action is already assigned. */
-  Slot *find_suitable_slot_for(const ID &animated_id);
 
   /**
    * Return whether this Action actually has any animation data for the given slot.
@@ -1281,6 +1271,8 @@ ActionSlotAssignmentResult assign_action_and_slot(Action *action,
  * This is a low-level function, intended as a building block for higher-level Action assignment
  * functions.
  *
+ * The function is named "generic" as it is independent of whether this is for
+ * direct assignment to the ID, or to an NLA strip, or an Action Constraint.
  */
 [[nodiscard]] bool generic_assign_action(ID &animated_id,
                                          bAction *action_to_assign,
@@ -1293,6 +1285,9 @@ ActionSlotAssignmentResult assign_action_and_slot(Action *action,
  *
  * This is a low-level function, intended as a building block for higher-level slot assignment
  * functions.
+ *
+ * The function is named "generic" as it is independent of whether this is for
+ * direct assignment to the ID, or to an NLA strip, or an Action Constraint.
  */
 [[nodiscard]] ActionSlotAssignmentResult generic_assign_action_slot(Slot *slot_to_assign,
                                                                     ID &animated_id,
@@ -1305,6 +1300,9 @@ ActionSlotAssignmentResult assign_action_and_slot(Action *action,
  *
  * This is a low-level function, intended as a building block for higher-level slot handle
  * assignment functions.
+ *
+ * The function is named "generic" as it is independent of whether this is for
+ * direct assignment to the ID, or to an NLA strip, or an Action Constraint.
  */
 [[nodiscard]] ActionSlotAssignmentResult generic_assign_action_slot_handle(
     slot_handle_t slot_handle_to_assign,
@@ -1527,7 +1525,7 @@ void action_fcurve_move(Action &action_dst,
 /**
  * Moves all F-Curves from one Channelbag to the other.
  *
- * The Channel-bags do not need to be part of the same action, or even belong to
+ * The Channelbags do not need to be part of the same action, or even belong to
  * an action at all.
  *
  * If the F-Curves belonged to channel groups, the group membership also carries
