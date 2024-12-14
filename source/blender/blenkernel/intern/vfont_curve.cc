@@ -44,6 +44,12 @@ static ThreadRWMutex vfont_rwlock = BLI_RWLOCK_INITIALIZER;
 /** \name Private Utilities
  * \{ */
 
+static void mid_v2v2(float a[2], float b[2])
+{
+  a[0] = b[0] = (a[0] * 0.5) + (b[0] * 0.5f);
+  a[1] = b[1] = (a[1] * 0.5) + (b[1] * 0.5f);
+}
+
 static float vfont_metrics_ascent(const VFontData_Metrics *metrics)
 {
   return metrics->ascend_ratio * metrics->em_ratio;
@@ -227,31 +233,37 @@ static VChar *vfont_char_find_or_placeholder(const VFontData *vfd,
 /** \name VFont Build Character
  * \{ */
 
-static void build_underline(Curve *cu,
-                            ListBase *nubase,
-                            const rctf *rect,
-                            float yofs,
-                            float rot,
-                            int charidx,
-                            short mat_nr,
-                            const float font_size)
+/**
+ * \param ul_prev_nu: The previous adjacent underline
+ * which has it's right edge welded with this underlines left edge
+ * to prevent gaps or overlapping geometry which can cause Z-fighting.
+ */
+static Nurb *build_underline(Curve *cu,
+                             ListBase *nubase,
+                             const rctf *rect,
+                             float yofs,
+                             float rot,
+                             int charidx,
+                             short mat_nr,
+                             const float font_size,
+                             Nurb *ul_prev_nu)
 {
-  Nurb *nu2;
+  Nurb *nu;
   BPoint *bp;
 
-  nu2 = (Nurb *)MEM_callocN(sizeof(Nurb), "underline_nurb");
-  nu2->resolu = cu->resolu;
-  nu2->bezt = nullptr;
-  nu2->knotsu = nu2->knotsv = nullptr;
-  nu2->charidx = charidx + 1000;
+  nu = (Nurb *)MEM_callocN(sizeof(Nurb), "underline_nurb");
+  nu->resolu = cu->resolu;
+  nu->bezt = nullptr;
+  nu->knotsu = nu->knotsv = nullptr;
+  nu->charidx = charidx + 1000;
   if (mat_nr >= 0) {
-    nu2->mat_nr = mat_nr;
+    nu->mat_nr = mat_nr;
   }
-  nu2->pntsu = 4;
-  nu2->pntsv = 1;
-  nu2->orderu = 4;
-  nu2->orderv = 1;
-  nu2->flagu = CU_NURB_CYCLIC;
+  nu->pntsu = 4;
+  nu->pntsv = 1;
+  nu->orderu = 4;
+  nu->orderv = 1;
+  nu->flagu = CU_NURB_CYCLIC;
 
   bp = (BPoint *)MEM_calloc_arrayN(4, sizeof(BPoint), "underline_bp");
 
@@ -263,14 +275,14 @@ static void build_underline(Curve *cu,
   /* Used by curve extrusion. */
   bp[0].radius = bp[1].radius = bp[2].radius = bp[3].radius = 1.0f;
 
-  nu2->bp = bp;
-  BLI_addtail(nubase, nu2);
+  nu->bp = bp;
+  BLI_addtail(nubase, nu);
 
   if (rot != 0.0f) {
     float si = sinf(rot);
     float co = cosf(rot);
 
-    for (int i = nu2->pntsu; i > 0; i--) {
+    for (int i = nu->pntsu; i > 0; i--) {
       float *fp = bp->vec;
 
       float x = fp[0] - rect->xmin;
@@ -282,13 +294,22 @@ static void build_underline(Curve *cu,
       bp++;
     }
 
-    bp = nu2->bp;
+    bp = nu->bp;
   }
 
   mul_v2_fl(bp[0].vec, font_size);
   mul_v2_fl(bp[1].vec, font_size);
   mul_v2_fl(bp[2].vec, font_size);
   mul_v2_fl(bp[3].vec, font_size);
+
+  if (ul_prev_nu) {
+    /* Weld locations with the previous, adjacent underline. */
+    BPoint *bp_prev = ul_prev_nu->bp;
+    mid_v2v2(bp_prev[1].vec, bp[0].vec); /* Lower line. */
+    mid_v2v2(bp_prev[2].vec, bp[3].vec); /* Upper line. */
+  }
+
+  return nu;
 }
 
 static void vfont_char_build_impl(Curve *cu,
@@ -307,57 +328,57 @@ static void vfont_char_build_impl(Curve *cu,
   float co = cosf(rot);
 
   /* Select the glyph data */
-  Nurb *nu1 = nullptr;
+  const Nurb *nu_from_vchar = nullptr;
   if (che) {
-    nu1 = static_cast<Nurb *>(che->nurbsbase.first);
+    nu_from_vchar = static_cast<Nurb *>(che->nurbsbase.first);
   }
 
-  /* Create the character */
-  while (nu1) {
-    BezTriple *bezt1 = nu1->bezt;
-    if (bezt1) {
-      Nurb *nu2 = (Nurb *)MEM_mallocN(sizeof(Nurb), "duplichar_nurb");
-      if (nu2 == nullptr) {
+  /* Create the character. */
+  while (nu_from_vchar) {
+    const BezTriple *bezt_from_vchar = nu_from_vchar->bezt;
+    if (bezt_from_vchar) {
+      Nurb *nu = (Nurb *)MEM_mallocN(sizeof(Nurb), "duplichar_nurb");
+      if (nu == nullptr) {
         break;
       }
-      *nu2 = blender::dna::shallow_copy(*nu1);
-      nu2->resolu = cu->resolu;
-      nu2->bp = nullptr;
-      nu2->knotsu = nu2->knotsv = nullptr;
-      nu2->flag = CU_SMOOTH;
-      nu2->charidx = charidx;
+      *nu = blender::dna::shallow_copy(*nu_from_vchar);
+      nu->resolu = cu->resolu;
+      nu->bp = nullptr;
+      nu->knotsu = nu->knotsv = nullptr;
+      nu->flag = CU_SMOOTH;
+      nu->charidx = charidx;
       if (info->mat_nr > 0) {
-        nu2->mat_nr = info->mat_nr;
+        nu->mat_nr = info->mat_nr;
       }
       else {
-        nu2->mat_nr = 0;
+        nu->mat_nr = 0;
       }
-      // nu2->trim.first = 0;
-      // nu2->trim.last = 0;
-      int u = nu2->pntsu;
+      // nu->trim.first = 0;
+      // nu->trim.last = 0;
+      int u = nu->pntsu;
 
-      BezTriple *bezt2 = (BezTriple *)MEM_malloc_arrayN(u, sizeof(BezTriple), "duplichar_bezt2");
-      if (bezt2 == nullptr) {
-        MEM_freeN(nu2);
+      BezTriple *bezt = (BezTriple *)MEM_malloc_arrayN(u, sizeof(BezTriple), "duplichar_bezt2");
+      if (bezt == nullptr) {
+        MEM_freeN(nu);
         break;
       }
-      memcpy(bezt2, bezt1, u * sizeof(BezTriple));
-      nu2->bezt = bezt2;
+      memcpy(bezt, bezt_from_vchar, u * sizeof(BezTriple));
+      nu->bezt = bezt;
 
       if (shear != 0.0f) {
-        bezt2 = nu2->bezt;
+        bezt = nu->bezt;
 
-        for (int i = nu2->pntsu; i > 0; i--) {
-          bezt2->vec[0][0] += shear * bezt2->vec[0][1];
-          bezt2->vec[1][0] += shear * bezt2->vec[1][1];
-          bezt2->vec[2][0] += shear * bezt2->vec[2][1];
-          bezt2++;
+        for (int i = nu->pntsu; i > 0; i--) {
+          bezt->vec[0][0] += shear * bezt->vec[0][1];
+          bezt->vec[1][0] += shear * bezt->vec[1][1];
+          bezt->vec[2][0] += shear * bezt->vec[2][1];
+          bezt++;
         }
       }
       if (rot != 0.0f) {
-        bezt2 = nu2->bezt;
-        for (int i = nu2->pntsu; i > 0; i--) {
-          float *fp = bezt2->vec[0];
+        bezt = nu->bezt;
+        for (int i = nu->pntsu; i > 0; i--) {
+          float *fp = bezt->vec[0];
 
           float x = fp[0];
           fp[0] = co * x + si * fp[1];
@@ -369,41 +390,41 @@ static void vfont_char_build_impl(Curve *cu,
           fp[6] = co * x + si * fp[7];
           fp[7] = -si * x + co * fp[7];
 
-          bezt2++;
+          bezt++;
         }
       }
-      bezt2 = nu2->bezt;
+      bezt = nu->bezt;
 
       if (info->flag & CU_CHINFO_SMALLCAPS_CHECK) {
         const float sca = cu->smallcaps_scale;
-        for (int i = nu2->pntsu; i > 0; i--) {
-          float *fp = bezt2->vec[0];
+        for (int i = nu->pntsu; i > 0; i--) {
+          float *fp = bezt->vec[0];
           fp[0] *= sca;
           fp[1] *= sca;
           fp[3] *= sca;
           fp[4] *= sca;
           fp[6] *= sca;
           fp[7] *= sca;
-          bezt2++;
+          bezt++;
         }
       }
-      bezt2 = nu2->bezt;
+      bezt = nu->bezt;
 
-      for (int i = nu2->pntsu; i > 0; i--) {
-        float *fp = bezt2->vec[0];
+      for (int i = nu->pntsu; i > 0; i--) {
+        float *fp = bezt->vec[0];
         fp[0] = (fp[0] + ofsx) * fsize;
         fp[1] = (fp[1] + ofsy) * fsize;
         fp[3] = (fp[3] + ofsx) * fsize;
         fp[4] = (fp[4] + ofsy) * fsize;
         fp[6] = (fp[6] + ofsx) * fsize;
         fp[7] = (fp[7] + ofsy) * fsize;
-        bezt2++;
+        bezt++;
       }
 
-      BLI_addtail(nubase, nu2);
+      BLI_addtail(nubase, nu);
     }
 
-    nu1 = nu1->next;
+    nu_from_vchar = nu_from_vchar->next;
   }
 }
 
@@ -591,7 +612,7 @@ static bool vfont_to_curve(Object *ob,
   CharTrans *chartransdata = nullptr, *ct;
   TempLineInfo *lineinfo;
   float xof, yof, xtrax, linedist;
-  float twidth = 0, maxlen = 0;
+  float twidth = 0;
   int i, slen, j;
   int curbox;
   /* These values are only set to the selection range when `selboxes` is non-null. */
@@ -867,15 +888,12 @@ static bool vfont_to_curve(Object *ob,
       lineinfo[lnr].char_nr = cnr;
       lineinfo[lnr].wspace_nr = wsnr;
 
-      CLAMP_MIN(maxlen, lineinfo[lnr].x_min);
-
       if (tb_bounds_for_cursor != nullptr) {
         tb_bounds_for_cursor[curbox].char_index_last = i;
       }
 
       if ((tb_scale.h != 0.0f) && (-(yof - tb_scale.y) > (tb_scale.h - linedist) - yof_scale)) {
         if (cu->totbox > (curbox + 1)) {
-          maxlen = 0;
           curbox++;
           i_textbox_array[curbox] = i + 1;
 
@@ -1433,6 +1451,11 @@ static bool vfont_to_curve(Object *ob,
     /* Make NURBS-data. */
     BKE_nurbList_free(r_nubase);
 
+    /* Track the previous underline so contiguous underlines can be welded together.
+     * This is done to prevent overlapping geometry, see: #122540. */
+    int ul_prev_i = -1;
+    Nurb *ul_prev_nu = nullptr;
+
     ct = chartransdata;
     for (i = 0; i < slen; i++) {
       uint cha = uint(mem[i]);
@@ -1472,7 +1495,7 @@ static bool vfont_to_curve(Object *ob,
               ((mem[i + 1] != ' ') || (custrinfo[i + 1].flag & CU_CHINFO_UNDERLINE)) &&
               ((custrinfo[i + 1].flag & CU_CHINFO_WRAP) == 0))
           {
-            uloverlap = xtrax + 0.1f;
+            uloverlap = xtrax;
           }
 
           twidth = vfont_char_width(cu, che, info);
@@ -1484,8 +1507,25 @@ static bool vfont_to_curve(Object *ob,
           rect.ymin = ct->yof;
           rect.ymax = rect.ymin - cu->ulheight;
 
-          build_underline(
-              cu, r_nubase, &rect, cu->ulpos - 0.05f, ct->rot, i, info->mat_nr, font_size);
+          if ((ul_prev_i != -1) &&
+              /* Skip welding underlines when there are gaps. */
+              ((ul_prev_i + 1 != i) ||
+               /* Skip welding on new lines. */
+               (chartransdata[ul_prev_i].linenr != ct->linenr)))
+          {
+            ul_prev_nu = nullptr;
+          }
+
+          ul_prev_nu = build_underline(cu,
+                                       r_nubase,
+                                       &rect,
+                                       cu->ulpos - 0.05f,
+                                       ct->rot,
+                                       i,
+                                       info->mat_nr,
+                                       font_size,
+                                       ul_prev_nu);
+          ul_prev_i = ul_prev_nu ? i : -1;
         }
       }
       ct++;
