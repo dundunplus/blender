@@ -819,13 +819,22 @@ option(WITH_GPU_RENDER_TESTS "\
 Enable GPU render related unit testing (EEVEE, Workbench and Grease Pencil)"
   OFF
 )
+option(WITH_GPU_RENDER_TESTS_VULKAN "\
+Enable GPU render related unit testing using Vulkan"
+  OFF
+)
+mark_as_advanced(WITH_GPU_RENDER_TESTS_VULKAN)
 option(WITH_GPU_RENDER_TESTS_SILENT "\
 Run GPU render tests silently (finished tests will pass). \
 Generated report will show failing tests"
   ON
 )
+option(WITH_GPU_BACKEND_TESTS "\
+Enable GPU backend related unit testing"
+  OFF
+)
 option(WITH_GPU_DRAW_TESTS "\
-Enable GPU drawing related unit testing (GPU backends and draw manager)"
+Enable GPU drawing related unit testing (draw manager)"
   OFF
 )
 option(WITH_COMPOSITOR_REALTIME_TESTS "Enable regression testing for realtime compositor" OFF)
