@@ -611,7 +611,7 @@ inline blender::Span<bNodeTreeInterfaceSocket *> bNodeTree::interface_inputs()
 inline blender::Span<const bNodeTreeInterfaceSocket *> bNodeTree::interface_inputs() const
 {
   BLI_assert(this->tree_interface.items_cache_is_available());
-  return this->tree_interface.runtime->inputs_;
+  return this->tree_interface.runtime->inputs_.as_span();
 }
 
 inline blender::Span<bNodeTreeInterfaceSocket *> bNodeTree::interface_outputs()
@@ -623,7 +623,7 @@ inline blender::Span<bNodeTreeInterfaceSocket *> bNodeTree::interface_outputs()
 inline blender::Span<const bNodeTreeInterfaceSocket *> bNodeTree::interface_outputs() const
 {
   BLI_assert(this->tree_interface.items_cache_is_available());
-  return this->tree_interface.runtime->outputs_;
+  return this->tree_interface.runtime->outputs_.as_span();
 }
 
 inline blender::Span<bNodeTreeInterfaceItem *> bNodeTree::interface_items()
@@ -635,7 +635,25 @@ inline blender::Span<bNodeTreeInterfaceItem *> bNodeTree::interface_items()
 inline blender::Span<const bNodeTreeInterfaceItem *> bNodeTree::interface_items() const
 {
   BLI_assert(this->tree_interface.items_cache_is_available());
-  return this->tree_interface.runtime->items_;
+  return this->tree_interface.runtime->items_.as_span();
+}
+
+inline int bNodeTree::interface_input_index(const bNodeTreeInterfaceSocket &io_socket) const
+{
+  BLI_assert(this->tree_interface.items_cache_is_available());
+  return this->tree_interface.runtime->inputs_.index_of_as(&io_socket);
+}
+
+inline int bNodeTree::interface_output_index(const bNodeTreeInterfaceSocket &io_socket) const
+{
+  BLI_assert(this->tree_interface.items_cache_is_available());
+  return this->tree_interface.runtime->outputs_.index_of_as(&io_socket);
+}
+
+inline int bNodeTree::interface_item_index(const bNodeTreeInterfaceItem &io_item) const
+{
+  BLI_assert(this->tree_interface.items_cache_is_available());
+  return this->tree_interface.runtime->items_.index_of_as(&io_item);
 }
 
 /** \} */
@@ -675,6 +693,26 @@ inline blender::Span<const bNodeSocket *> bNode::output_sockets() const
 {
   BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
   return this->runtime->outputs;
+}
+
+inline blender::IndexRange bNode::input_socket_indices_in_tree() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  const int num_inputs = this->runtime->inputs.size();
+  if (num_inputs == 0) {
+    return {};
+  }
+  return blender::IndexRange::from_begin_size(this->input_socket(0).index_in_tree(), num_inputs);
+}
+
+inline blender::IndexRange bNode::output_socket_indices_in_tree() const
+{
+  BLI_assert(blender::bke::node_tree_runtime::topology_cache_is_available(*this));
+  const int num_outputs = this->runtime->outputs.size();
+  if (num_outputs == 0) {
+    return {};
+  }
+  return blender::IndexRange::from_begin_size(this->output_socket(0).index_in_tree(), num_outputs);
 }
 
 inline bNodeSocket &bNode::input_socket(int index)
