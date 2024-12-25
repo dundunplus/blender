@@ -5,8 +5,6 @@
 set(INC
   ../include
   ../../asset_system
-  ../../blentranslation
-  ../../functions
   ../../geometry
   ../../ikplugin
   ../../imbuf
@@ -60,6 +58,7 @@ set(LIB
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
@@ -67,6 +66,7 @@ set(LIB
   bf_editor_metaball
   bf_editor_grease_pencil
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::functions
   PRIVATE bf::gpu
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc

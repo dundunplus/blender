@@ -4,8 +4,6 @@
 
 set(INC
   ../include
-  ../../blentranslation
-  ../../functions
   ../../geometry
   ../../makesrna
 
@@ -33,11 +31,13 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::extern::curve_fit_nd
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::functions
   PRIVATE bf::gpu
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc

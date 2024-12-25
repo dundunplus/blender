@@ -5,9 +5,7 @@
 set(INC
   ../include
   ../uvedit
-  ../../blentranslation
   ../../draw
-  ../../functions
   ../../geometry
   ../../imbuf
   ../../makesrna
@@ -61,10 +59,12 @@ set(LIB
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::functions
   PRIVATE bf::gpu
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc

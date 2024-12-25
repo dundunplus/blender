@@ -5,8 +5,6 @@
 set(INC
   ../include
   ../../blenfont
-  ../../blenloader
-  ../../blentranslation
   ../../imbuf
   ../../makesrna
   ../../sequencer
@@ -134,6 +132,8 @@ set(LIB
   PRIVATE bf::animrig
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blenloader
+  PRIVATE bf::blentranslation
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   bf_editor_id_management

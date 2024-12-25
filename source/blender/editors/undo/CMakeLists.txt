@@ -5,8 +5,6 @@
 set(INC
   ../include
   ../../asset_system
-  ../../blenloader
-  ../../blentranslation
   ../../makesrna
 )
 
@@ -24,6 +22,8 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
+  PRIVATE bf::blenloader
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::dna
   PRIVATE bf::intern::clog

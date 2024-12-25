@@ -10,10 +10,7 @@ set(INC
   ../uvedit
   ../../asset_system
   ../../blenlib
-  ../../blenloader
-  ../../blentranslation
   ../../draw
-  ../../functions
   ../../geometry
   ../../imbuf
   ../../makesrna
@@ -179,10 +176,13 @@ set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::animrig
   PRIVATE bf::blenlib
+  PRIVATE bf::blenloader
+  PRIVATE bf::blentranslation
   PRIVATE bf::bmesh
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::functions
   PRIVATE bf::gpu
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::clog

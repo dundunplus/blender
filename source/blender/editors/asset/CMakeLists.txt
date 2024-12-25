@@ -6,8 +6,6 @@ set(INC
   .
   ../include
   ../../asset_system
-  ../../blenloader
-  ../../blentranslation
   ../../makesrna
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../../makesdna/intern
@@ -57,7 +55,8 @@ set(SRC
 set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
-  bf_blenloader
+  PRIVATE bf::blenloader
+  PRIVATE bf::blentranslation
   PRIVATE bf::dna
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
