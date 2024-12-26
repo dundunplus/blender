@@ -4,9 +4,7 @@
 
 set(INC
   ../include
-  ../../asset_system
   ../../makesrna
-  ../../nodes
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -25,6 +23,7 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::asset_system
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
   PRIVATE bf::blentranslation
@@ -35,6 +34,7 @@ set(LIB
   PRIVATE bf::extern::fmtlib
   PRIVATE bf::functions
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::nodes
   PRIVATE bf::windowmanager
 )
 

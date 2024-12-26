@@ -6,13 +6,10 @@ set(INC
   .
   ../asset
   ../include
-  ../../asset_system
   ../../draw
   ../../imbuf/movie
   ../../makesrna
-  ../../nodes
   ../../python
-  ../../render
   ../../../../intern/ghost
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -93,6 +90,7 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::asset_system
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
@@ -109,6 +107,8 @@ set(LIB
   PRIVATE bf::imbuf
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::animrig
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 

@@ -8,13 +8,10 @@ set(INC
   ../asset
   ../include
   ../uvedit
-  ../../asset_system
   ../../blenlib
   ../../draw
   ../../geometry
   ../../makesrna
-  ../../nodes
-  ../../render
   ../../../../intern/eigen
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -172,6 +169,7 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::asset_system
   PRIVATE bf::blenkernel
   PRIVATE bf::animrig
   PRIVATE bf::blenlib
@@ -187,6 +185,8 @@ set(LIB
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 

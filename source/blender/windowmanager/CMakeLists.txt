@@ -6,14 +6,11 @@ set(INC
   PUBLIC .
   gizmo
   gizmo/intern
-  ../asset_system
   ../compositor
   ../editors/include
   ../draw
   ../imbuf/movie
   ../makesrna
-  ../nodes
-  ../render
   ../sequencer
   ../../../intern/memutil
 
@@ -91,6 +88,7 @@ set(SRC
 )
 
 set(LIB
+  PRIVATE bf::asset_system
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
@@ -107,6 +105,8 @@ set(LIB
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::animrig
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   bf_sequencer
   bf_intern_ghost
   bf_compositor

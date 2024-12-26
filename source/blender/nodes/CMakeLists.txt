@@ -46,7 +46,7 @@ add_subdirectory(shader)
 add_subdirectory(texture)
 
 set(INC
-  .
+  PUBLIC .
   composite
   function
   geometry
@@ -59,7 +59,6 @@ set(INC
   ../geometry
   ../makesrna
   ../modifiers
-  ../render
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -151,6 +150,7 @@ set(LIB
   bf_nodes_texture
   PRIVATE bf::extern::fmtlib
   PRIVATE bf::extern::xxhash
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 
@@ -208,6 +208,7 @@ if(WITH_OPENVDB)
 endif()
 
 blender_add_lib(bf_nodes "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+add_library(bf::nodes ALIAS bf_nodes)
 
 # RNA_prototypes.hh
 add_dependencies(bf_nodes bf_rna)

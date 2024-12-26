@@ -9,8 +9,6 @@ set(INC
   ../editors/include
   ../geometry
   ../makesrna
-  ../nodes
-  ../render
   ../../../intern/eigen
 
   # RNA_prototypes.hh
@@ -145,6 +143,8 @@ set(LIB
   PRIVATE bf::functions
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::extern::fmtlib
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 

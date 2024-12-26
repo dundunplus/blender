@@ -4,13 +4,11 @@
 
 set(INC
   ../include
-  ../../asset_system
   ../../geometry
   ../../ikplugin
   ../../makesrna
   ../../modifiers
   ../../python
-  ../../render
   ../../shader_fx
 
   # RNA_prototypes.hh
@@ -54,6 +52,7 @@ set(SRC
 
 set(LIB
   PRIVATE bf::animrig
+  PRIVATE bf::asset_system
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
@@ -70,7 +69,7 @@ set(LIB
   PRIVATE bf::imbuf
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
-  bf_render
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 

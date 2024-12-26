@@ -5,12 +5,9 @@
 set(INC
   ../asset
   ../include
-  ../../asset_system
   ../../draw
   ../../makesrna
   ../../modifiers
-  ../../nodes
-  ../../render
   ../../../../intern/mantaflow/extern
 
   # RNA_prototypes.hh
@@ -75,6 +72,7 @@ set(SRC
 
 set(LIB
   PRIVATE bf::animrig
+  PRIVATE bf::asset_system
   PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
@@ -90,6 +88,8 @@ set(LIB
   PRIVATE bf::gpu
   PRIVATE bf::imbuf
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   PRIVATE bf::windowmanager
 )
 

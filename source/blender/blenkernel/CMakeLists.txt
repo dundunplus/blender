@@ -4,14 +4,11 @@
 
 set(INC
   PUBLIC .
-  ../asset_system
   ../draw
   ../ikplugin
   ../makesrna
   ../modifiers
-  ../nodes
   ../nodes/geometry/include
-  ../render
   ../sequencer
   ../shader_fx
   ../simulation
@@ -552,7 +549,7 @@ set(SRC
 
 set(LIB
   PRIVATE bf::animrig
-  bf_asset_system
+  PRIVATE bf::asset_system
   PRIVATE bf::blenfont
   PRIVATE bf::blenlib
   PRIVATE bf::blenloader
@@ -574,7 +571,8 @@ set(LIB
   bf_intern_mikktspace
   bf_intern_opensubdiv  # Uses stub when disabled.
   bf_modifiers
-  bf_nodes
+  PRIVATE bf::nodes
+  PRIVATE bf::render
   bf_rna
   bf_shader_fx
   bf_simulation
