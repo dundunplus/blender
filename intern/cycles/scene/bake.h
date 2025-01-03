@@ -2,14 +2,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0 */
 
-#ifndef __BAKE_H__
-#define __BAKE_H__
+#pragma once
 
 #include "device/device.h"
 #include "scene/scene.h"
 
 #include "util/progress.h"
-#include "util/vector.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -41,5 +39,3 @@ class BakeManager {
 };
 
 CCL_NAMESPACE_END
-
-#endif /* __BAKE_H__ */
