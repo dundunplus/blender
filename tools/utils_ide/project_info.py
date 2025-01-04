@@ -171,7 +171,7 @@ def cmake_advanced_info() -> (
     # Enable to check on nicer XML.
     use_pretty_xml = False
     if use_pretty_xml:
-        with open(".cproject_pretty", 'w') as fh:
+        with open(".cproject_pretty", 'w', encoding="utf-8") as fh:
             fh.write(tree.toprettyxml(indent="    ", newl=""))
 
     ELEMENT_NODE = tree.ELEMENT_NODE
@@ -234,9 +234,8 @@ def cmake_compiler_defines() -> list[str] | None:
 
     os.system("%s -dM -E %s > %s" % (compiler, temp_c, temp_def))
 
-    temp_def_file = open(temp_def)
-    lines = [l.strip() for l in temp_def_file if l.strip()]
-    temp_def_file.close()
+    with open(temp_def) as temp_def_fh:
+        lines = [l.strip() for l in temp_def_fh if l.strip()]
 
     os.remove(temp_c)
     os.remove(temp_def)
