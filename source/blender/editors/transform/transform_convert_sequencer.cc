@@ -33,12 +33,12 @@
 #include "transform_convert.hh"
 #include "transform_mode.hh"
 
-#define SEQ_EDGE_PAN_INSIDE_PAD 3.5
-#define SEQ_EDGE_PAN_OUTSIDE_PAD 0 /* Disable clamping for panning, use whole screen. */
-#define SEQ_EDGE_PAN_SPEED_RAMP 1
-#define SEQ_EDGE_PAN_MAX_SPEED 4 /* In UI units per second, slower than default. */
-#define SEQ_EDGE_PAN_DELAY 1.0f
-#define SEQ_EDGE_PAN_ZOOM_INFLUENCE 0.5f
+#define STRIP_EDGE_PAN_INSIDE_PAD 3.5
+#define STRIP_EDGE_PAN_OUTSIDE_PAD 0 /* Disable clamping for panning, use whole screen. */
+#define STRIP_EDGE_PAN_SPEED_RAMP 1
+#define STRIP_EDGE_PAN_MAX_SPEED 4 /* In UI units per second, slower than default. */
+#define STRIP_EDGE_PAN_DELAY 1.0f
+#define STRIP_EDGE_PAN_ZOOM_INFLUENCE 0.5f
 
 /** Used for sequencer transform. */
 struct TransDataSeq {
@@ -374,10 +374,10 @@ static Strip *effect_input_get(const Scene *scene, Strip *effect, SeqInputSide s
 
 static Strip *effect_base_input_get(const Scene *scene, Strip *effect, SeqInputSide side)
 {
-  Strip *input = effect, *seq_iter = effect;
-  while (seq_iter != nullptr) {
-    input = seq_iter;
-    seq_iter = effect_input_get(scene, seq_iter, side);
+  Strip *input = effect, *strip_iter = effect;
+  while (strip_iter != nullptr) {
+    input = strip_iter;
+    strip_iter = effect_input_get(scene, strip_iter, side);
   }
   return input;
 }
@@ -494,12 +494,12 @@ static void createTransSeqData(bContext * /*C*/, TransInfo *t)
   /* Custom data to enable edge panning during transformation. */
   UI_view2d_edge_pan_init(t->context,
                           &ts->edge_pan,
-                          SEQ_EDGE_PAN_INSIDE_PAD,
-                          SEQ_EDGE_PAN_OUTSIDE_PAD,
-                          SEQ_EDGE_PAN_SPEED_RAMP,
-                          SEQ_EDGE_PAN_MAX_SPEED,
-                          SEQ_EDGE_PAN_DELAY,
-                          SEQ_EDGE_PAN_ZOOM_INFLUENCE);
+                          STRIP_EDGE_PAN_INSIDE_PAD,
+                          STRIP_EDGE_PAN_OUTSIDE_PAD,
+                          STRIP_EDGE_PAN_SPEED_RAMP,
+                          STRIP_EDGE_PAN_MAX_SPEED,
+                          STRIP_EDGE_PAN_DELAY,
+                          STRIP_EDGE_PAN_ZOOM_INFLUENCE);
   UI_view2d_edge_pan_set_limits(&ts->edge_pan, -FLT_MAX, FLT_MAX, 1, SEQ_MAX_CHANNELS + 1);
   ts->initial_v2d_cur = t->region->v2d.cur;
 
@@ -656,7 +656,7 @@ static void recalcData_sequencer(TransInfo *t)
 {
   TransData *td;
   int a;
-  Strip *seq_prev = nullptr;
+  Strip *strip_prev = nullptr;
 
   TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_SINGLE(t);
 
@@ -664,11 +664,11 @@ static void recalcData_sequencer(TransInfo *t)
     TransDataSeq *tdsq = (TransDataSeq *)td->extra;
     Strip *strip = tdsq->strip;
 
-    if (strip != seq_prev) {
+    if (strip != strip_prev) {
       SEQ_relations_invalidate_cache_composite(t->scene, strip);
     }
 
-    seq_prev = strip;
+    strip_prev = strip;
   }
 
   DEG_id_tag_update(&t->scene->id, ID_RECALC_SEQUENCER_STRIPS);

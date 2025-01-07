@@ -58,6 +58,7 @@
 #include "BLI_string_utf8.h"
 #include "BLI_string_utils.hh"
 
+#include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
@@ -96,6 +97,7 @@
 #include "ANIM_action_iterators.hh"
 #include "ANIM_armature_iter.hh"
 #include "ANIM_bone_collections.hh"
+#include "ANIM_versioning.hh"
 
 #include "BLT_translation.hh"
 
@@ -116,181 +118,6 @@ static void version_composite_nodetree_null_id(bNodeTree *ntree, Scene *scene)
                                  node->custom1 == CMP_NODE_CRYPTOMATTE_SOURCE_RENDER)))
     {
       node->id = &scene->id;
-    }
-  }
-}
-
-static void convert_action_in_place(blender::animrig::Action &action)
-{
-  using namespace blender::animrig;
-  if (action.is_action_layered()) {
-    return;
-  }
-
-  /* Store this ahead of time, because adding the slot sets the action's idroot
-   * to 0. We also set the action's idroot to 0 manually, just to be defensive
-   * so we don't depend on esoteric behavior in `slot_add()`. */
-  const int16_t idtype = action.idroot;
-  action.idroot = 0;
-
-  /* Initialize the Action's last_slot_handle field to its default value, before
-   * we create a new slot. */
-  action.last_slot_handle = DNA_DEFAULT_ACTION_LAST_SLOT_HANDLE;
-
-  Slot &slot = action.slot_add();
-  slot.idtype = idtype;
-  slot.identifier_ensure_prefix();
-
-  Layer &layer = action.layer_add("Layer");
-  blender::animrig::Strip &strip = layer.strip_add(action,
-                                                   blender::animrig::Strip::Type::Keyframe);
-  Channelbag &bag = strip.data<StripKeyframeData>(action).channelbag_for_slot_ensure(slot);
-  const int fcu_count = BLI_listbase_count(&action.curves);
-  const int group_count = BLI_listbase_count(&action.groups);
-  bag.fcurve_array = MEM_cnew_array<FCurve *>(fcu_count, "Action versioning - fcurves");
-  bag.fcurve_array_num = fcu_count;
-  bag.group_array = MEM_cnew_array<bActionGroup *>(group_count, "Action versioning - groups");
-  bag.group_array_num = group_count;
-
-  int group_index = 0;
-  int fcurve_index = 0;
-  LISTBASE_FOREACH_INDEX (bActionGroup *, group, &action.groups, group_index) {
-    bag.group_array[group_index] = group;
-
-    group->channelbag = &bag;
-    group->fcurve_range_start = fcurve_index;
-
-    LISTBASE_FOREACH (FCurve *, fcu, &group->channels) {
-      if (fcu->grp != group) {
-        break;
-      }
-      bag.fcurve_array[fcurve_index++] = fcu;
-    }
-
-    group->fcurve_range_length = fcurve_index - group->fcurve_range_start;
-  }
-
-  LISTBASE_FOREACH (FCurve *, fcu, &action.curves) {
-    /* Any fcurves with groups have already been added to the fcurve array. */
-    if (fcu->grp) {
-      continue;
-    }
-    bag.fcurve_array[fcurve_index++] = fcu;
-  }
-
-  BLI_assert(fcurve_index == fcu_count);
-
-  action.curves = {nullptr, nullptr};
-  action.groups = {nullptr, nullptr};
-}
-
-static void version_legacy_actions_to_layered(Main *bmain)
-{
-  using namespace blender::animrig;
-
-  struct ActionUserInfo {
-    ID *id;
-    slot_handle_t *slot_handle;
-    bAction **action_ptr_ptr;
-    char *slot_name;
-  };
-
-  blender::Map<bAction *, blender::Vector<ActionUserInfo>> action_users;
-  LISTBASE_FOREACH (bAction *, dna_action, &bmain->actions) {
-    Action &action = dna_action->wrap();
-    if (action.is_action_layered()) {
-      continue;
-    }
-    action_users.add(dna_action, {});
-  }
-
-  auto callback = [&](ID &animated_id,
-                      bAction *&action_ptr_ref,
-                      slot_handle_t &slot_handle_ref,
-                      char *slot_name) -> bool {
-    blender::Vector<ActionUserInfo> *action_user_vector = action_users.lookup_ptr(action_ptr_ref);
-    /* Only actions that need to be converted are in this map. */
-    if (!action_user_vector) {
-      return true;
-    }
-    ActionUserInfo user_info;
-    user_info.id = &animated_id;
-    user_info.action_ptr_ptr = &action_ptr_ref;
-    user_info.slot_handle = &slot_handle_ref;
-    user_info.slot_name = slot_name;
-    action_user_vector->append(user_info);
-    return true;
-  };
-
-  ID *id;
-  FOREACH_MAIN_ID_BEGIN (bmain, id) {
-    /* Process the ID itself. */
-    foreach_action_slot_use_with_references(*id, callback);
-
-    /* Process embedded IDs, as these are not listed in bmain, but still can
-     * have their own Action+Slot. Unfortunately there is no generic looper
-     * for embedded IDs. At this moment the only animatable embedded ID is a
-     * node tree. */
-    bNodeTree *node_tree = blender::bke::node_tree_from_id(id);
-    if (node_tree) {
-      foreach_action_slot_use_with_references(node_tree->id, callback);
-    }
-  }
-  FOREACH_MAIN_ID_END;
-
-  for (const auto &item : action_users.items()) {
-    Action &action = item.key->wrap();
-    convert_action_in_place(action);
-    blender::Vector<ActionUserInfo> &user_infos = item.value;
-    Slot &slot_to_assign = *action.slot(0);
-
-    if (user_infos.size() == 1) {
-      /* Rename the slot after its single user. If there are multiple users, the name is unchanged
-       * because there is no good way to determine a name. */
-      action.slot_identifier_set(*bmain, slot_to_assign, user_infos[0].id->name);
-    }
-    for (ActionUserInfo &action_user : user_infos) {
-      const ActionSlotAssignmentResult result = generic_assign_action_slot(
-          &slot_to_assign,
-          *action_user.id,
-          *action_user.action_ptr_ptr,
-          *action_user.slot_handle,
-          action_user.slot_name);
-      switch (result) {
-        case ActionSlotAssignmentResult::OK:
-          break;
-        case ActionSlotAssignmentResult::SlotNotSuitable:
-          /* If the slot wasn't suitable for the ID, we force assignment anyway,
-           * but with a warning.
-           *
-           * This happens when the legacy action assigned to the ID had a
-           * mismatched idroot, and therefore the created slot does as well.
-           * This mismatch can happen in a variety of ways, and we opt to
-           * preserve this unusual (but technically valid) state of affairs.
-           */
-          *action_user.slot_handle = slot_to_assign.handle;
-          BLI_strncpy_utf8(
-              action_user.slot_name, slot_to_assign.identifier, Slot::identifier_length_max);
-
-          printf(
-              "Warning: legacy action \"%s\" is assigned to \"%s\", which does not match the "
-              "action's id_root \"%s\". The action has been upgraded to a slotted action with "
-              "slot \"%s\" with an id_type \"%s\", which has also been assigned to \"%s\" despite "
-              "this type mismatch. This likely indicates something odd about the blend file.\n",
-              action.id.name + 2,
-              action_user.id->name,
-              slot_to_assign.identifier_prefix_for_idtype().c_str(),
-              slot_to_assign.identifier_without_prefix().c_str(),
-              slot_to_assign.identifier_prefix_for_idtype().c_str(),
-              action_user.id->name);
-          break;
-        case ActionSlotAssignmentResult::SlotNotFromAction:
-          BLI_assert(!"SlotNotFromAction should not be returned here");
-          break;
-        case ActionSlotAssignmentResult::MissingAction:
-          BLI_assert(!"MissingAction should not be returned here");
-          break;
-      }
     }
   }
 }
@@ -1042,7 +869,7 @@ static bool versioning_convert_strip_speed_factor(Strip *strip, void *user_data)
 
   last_key->strip_frame_index = (strip->len) / speed_factor;
 
-  if (strip->type == SEQ_TYPE_SOUND_RAM) {
+  if (strip->type == STRIP_TYPE_SOUND_RAM) {
     const int prev_length = strip->len - strip->startofs - strip->endofs;
     const float left_handle = SEQ_time_left_handle_frame_get(scene, strip);
     SEQ_time_right_handle_frame_set(scene, strip, left_handle + prev_length);
@@ -1474,7 +1301,8 @@ void do_versions_after_linking_400(FileData *fd, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 2)) {
-    version_legacy_actions_to_layered(bmain);
+    blender::animrig::versioning::convert_legacy_animato_actions(*bmain);
+    blender::animrig::versioning::tag_action_users_for_slotted_actions_conversion(*bmain);
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 404, 7)) {
@@ -3195,7 +3023,7 @@ static void fix_geometry_nodes_object_info_scale(bNodeTree &ntree)
   }
 }
 
-static bool seq_filter_bilinear_to_auto(Strip *strip, void * /*user_data*/)
+static bool strip_filter_bilinear_to_auto(Strip *strip, void * /*user_data*/)
 {
   StripTransform *transform = strip->data->transform;
   if (transform != nullptr && transform->filter == SEQ_TRANSFORM_FILTER_BILINEAR) {
@@ -3269,7 +3097,7 @@ static void hue_correct_set_wrapping(CurveMapping *curve_mapping)
   curve_mapping->curr.ymax = 1.0f;
 }
 
-static bool seq_hue_correct_set_wrapping(Strip *strip, void * /*user_data*/)
+static bool strip_hue_correct_set_wrapping(Strip *strip, void * /*user_data*/)
 {
   LISTBASE_FOREACH (SequenceModifierData *, smd, &strip->modifiers) {
     if (smd->type == seqModifierType_HueCorrect) {
@@ -3289,7 +3117,7 @@ static void versioning_update_timecode(short int *tc)
   }
 }
 
-static bool seq_proxies_timecode_update(Strip *strip, void * /*user_data*/)
+static bool strip_proxies_timecode_update(Strip *strip, void * /*user_data*/)
 {
   if (strip->data == nullptr || strip->data->proxy == nullptr) {
     return true;
@@ -3299,9 +3127,9 @@ static bool seq_proxies_timecode_update(Strip *strip, void * /*user_data*/)
   return true;
 }
 
-static bool seq_text_data_update(Strip *strip, void * /*user_data*/)
+static bool strip_text_data_update(Strip *strip, void * /*user_data*/)
 {
-  if (strip->type != SEQ_TYPE_TEXT || strip->effectdata == nullptr) {
+  if (strip->type != STRIP_TYPE_TEXT || strip->effectdata == nullptr) {
     return true;
   }
 
@@ -3476,7 +3304,7 @@ static void hide_simulation_node_skip_socket_value(Main &bmain)
 
 static bool versioning_convert_seq_text_anchor(Strip *strip, void * /*user_data*/)
 {
-  if (strip->type != SEQ_TYPE_TEXT || strip->effectdata == nullptr) {
+  if (strip->type != STRIP_TYPE_TEXT || strip->effectdata == nullptr) {
     return true;
   }
 
@@ -4507,7 +4335,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 401, 18)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed != nullptr) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_filter_bilinear_to_auto, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_filter_bilinear_to_auto, nullptr);
       }
     }
   }
@@ -4667,7 +4495,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed != nullptr) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_hue_correct_set_wrapping, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_hue_correct_set_wrapping, nullptr);
       }
     }
   }
@@ -4826,7 +4654,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 28)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed != nullptr) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_proxies_timecode_update, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_proxies_timecode_update, nullptr);
       }
     }
 
@@ -4839,7 +4667,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 29)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_text_data_update, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_text_data_update, nullptr);
       }
     }
   }

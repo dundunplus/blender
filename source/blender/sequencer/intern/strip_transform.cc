@@ -53,7 +53,7 @@ bool SEQ_transform_seqbase_isolated_sel_check(ListBase *seqbase)
 
   /* test relationships */
   LISTBASE_FOREACH (Strip *, strip, seqbase) {
-    if ((strip->type & SEQ_TYPE_EFFECT) == 0) {
+    if ((strip->type & STRIP_TYPE_EFFECT) == 0) {
       continue;
     }
 
@@ -78,7 +78,7 @@ bool SEQ_transform_seqbase_isolated_sel_check(ListBase *seqbase)
 
 bool SEQ_transform_sequence_can_be_translated(const Strip *strip)
 {
-  return !(strip->type & SEQ_TYPE_EFFECT) || (SEQ_effect_get_num_inputs(strip->type) == 0);
+  return !(strip->type & STRIP_TYPE_EFFECT) || (SEQ_effect_get_num_inputs(strip->type) == 0);
 }
 
 bool SEQ_transform_test_overlap_seq_seq(const Scene *scene, Strip *seq1, Strip *seq2)
@@ -114,12 +114,12 @@ void SEQ_transform_translate_sequence(Scene *evil_scene, Strip *strip, int delta
   /* Meta strips requires their content is to be translated, and then frame range of the meta is
    * updated based on nested strips. This won't work for empty meta-strips,
    * so they can be treated as normal strip. */
-  if (strip->type == SEQ_TYPE_META && !BLI_listbase_is_empty(&strip->seqbase)) {
-    LISTBASE_FOREACH (Strip *, seq_child, &strip->seqbase) {
-      SEQ_transform_translate_sequence(evil_scene, seq_child, delta);
+  if (strip->type == STRIP_TYPE_META && !BLI_listbase_is_empty(&strip->seqbase)) {
+    LISTBASE_FOREACH (Strip *, strip_child, &strip->seqbase) {
+      SEQ_transform_translate_sequence(evil_scene, strip_child, delta);
     }
     /* Move meta start/end points. */
-    seq_time_translate_handles(evil_scene, strip, delta);
+    strip_time_translate_handles(evil_scene, strip, delta);
   }
   else if (strip->seq1 == nullptr && strip->seq2 == nullptr) { /* All other strip types. */
     strip->start += delta;
@@ -129,9 +129,9 @@ void SEQ_transform_translate_sequence(Scene *evil_scene, Strip *strip, int delta
   }
 
   SEQ_offset_animdata(evil_scene, strip, delta);
-  blender::Span effects = seq_sequence_lookup_effects_by_seq(evil_scene, strip);
-  seq_time_update_effects_strip_range(evil_scene, effects);
-  SEQ_time_update_meta_strip_range(evil_scene, seq_sequence_lookup_meta_by_seq(evil_scene, strip));
+  blender::Span<Strip *> effects = SEQ_lookup_effects_by_strip(evil_scene, strip);
+  strip_time_update_effects_strip_range(evil_scene, effects);
+  SEQ_time_update_meta_strip_range(evil_scene, SEQ_lookup_meta_by_strip(evil_scene, strip));
 }
 
 bool SEQ_transform_seqbase_shuffle_ex(ListBase *seqbasep,
@@ -202,14 +202,14 @@ static int shuffle_seq_time_offset_get(const Scene *scene,
   while (!all_conflicts_resolved) {
     all_conflicts_resolved = true;
     for (Strip *strip : strips_to_shuffle) {
-      LISTBASE_FOREACH (Strip *, seq_other, seqbasep) {
-        if (strips_to_shuffle.contains(seq_other)) {
+      LISTBASE_FOREACH (Strip *, strip_other, seqbasep) {
+        if (strips_to_shuffle.contains(strip_other)) {
           continue;
         }
-        if (SEQ_relation_is_effect_of_strip(seq_other, strip)) {
+        if (SEQ_relation_is_effect_of_strip(strip_other, strip)) {
           continue;
         }
-        if (!shuffle_seq_test_overlap(scene, strip, seq_other, offset)) {
+        if (!shuffle_seq_test_overlap(scene, strip, strip_other, offset)) {
           continue;
         }
 
@@ -217,12 +217,12 @@ static int shuffle_seq_time_offset_get(const Scene *scene,
 
         if (dir == 'L') {
           offset = min_ii(offset,
-                          SEQ_time_left_handle_frame_get(scene, seq_other) -
+                          SEQ_time_left_handle_frame_get(scene, strip_other) -
                               SEQ_time_right_handle_frame_get(scene, strip));
         }
         else {
           offset = max_ii(offset,
-                          SEQ_time_right_handle_frame_get(scene, seq_other) -
+                          SEQ_time_right_handle_frame_get(scene, strip_other) -
                               SEQ_time_left_handle_frame_get(scene, strip));
         }
       }
@@ -285,7 +285,7 @@ static blender::VectorSet<Strip *> extract_standalone_strips(
   blender::VectorSet<Strip *> standalone_strips;
 
   for (Strip *strip : transformed_strips) {
-    if ((strip->type & SEQ_TYPE_EFFECT) == 0 || strip->seq1 == nullptr) {
+    if ((strip->type & STRIP_TYPE_EFFECT) == 0 || strip->seq1 == nullptr) {
       standalone_strips.add(strip);
     }
   }
@@ -324,11 +324,11 @@ static blender::VectorSet<Strip *> query_right_side_strips(
 
 /* Offset all strips positioned after left edge of transformed strips bound-box by amount equal
  * to overlap of transformed strips. */
-static void seq_transform_handle_expand_to_fit(Scene *scene,
-                                               ListBase *seqbasep,
-                                               blender::Span<Strip *> transformed_strips,
-                                               blender::Span<Strip *> time_dependent_strips,
-                                               bool use_sync_markers)
+static void strip_transform_handle_expand_to_fit(Scene *scene,
+                                                 ListBase *seqbasep,
+                                                 blender::Span<Strip *> transformed_strips,
+                                                 blender::Span<Strip *> time_dependent_strips,
+                                                 bool use_sync_markers)
 {
   ListBase *markers = &scene->markers;
 
@@ -365,8 +365,8 @@ static blender::VectorSet<Strip *> query_overwrite_targets(
   overwrite_targets.remove_if([&](Strip *strip) { return transformed_strips.contains(strip); });
   overwrite_targets.remove_if([&](Strip *strip) {
     bool does_overlap = false;
-    for (Strip *seq_transformed : transformed_strips) {
-      if (SEQ_transform_test_overlap_seq_seq(scene, strip, seq_transformed)) {
+    for (Strip *strip_transformed : transformed_strips) {
+      if (SEQ_transform_test_overlap_seq_seq(scene, strip, strip_transformed)) {
         does_overlap = true;
       }
     }
@@ -425,10 +425,10 @@ static eOvelapDescrition overlap_description_get(const Scene *scene,
 }
 
 /* Split strip in 3 parts, remove middle part and fit transformed inside. */
-static void seq_transform_handle_overwrite_split(Scene *scene,
-                                                 ListBase *seqbasep,
-                                                 const Strip *transformed,
-                                                 Strip *target)
+static void strip_transform_handle_overwrite_split(Scene *scene,
+                                                   ListBase *seqbasep,
+                                                   const Strip *transformed,
+                                                   Strip *target)
 {
   /* Because we are doing a soft split, bmain is not used in SEQ_edit_strip_split, so we can
    * pass nullptr here. */
@@ -454,23 +454,23 @@ static void seq_transform_handle_overwrite_split(Scene *scene,
 
 /* Trim strips by adjusting handle position.
  * This is bit more complicated in case overlap happens on effect. */
-static void seq_transform_handle_overwrite_trim(Scene *scene,
-                                                ListBase *seqbasep,
-                                                const Strip *transformed,
-                                                Strip *target,
-                                                const eOvelapDescrition overlap)
+static void strip_transform_handle_overwrite_trim(Scene *scene,
+                                                  ListBase *seqbasep,
+                                                  const Strip *transformed,
+                                                  Strip *target,
+                                                  const eOvelapDescrition overlap)
 {
   blender::VectorSet targets = SEQ_query_by_reference(
       target, scene, seqbasep, SEQ_query_strip_effect_chain);
 
   /* Expand collection by adding all target's children, effects and their children. */
-  if ((target->type & SEQ_TYPE_EFFECT) != 0) {
+  if ((target->type & STRIP_TYPE_EFFECT) != 0) {
     SEQ_iterator_set_expand(scene, seqbasep, targets, SEQ_query_strip_effect_chain);
   }
 
   /* Trim all non effects, that have influence on effect length which is overlapping. */
   for (Strip *strip : targets) {
-    if ((strip->type & SEQ_TYPE_EFFECT) != 0 && SEQ_effect_get_num_inputs(strip->type) > 0) {
+    if ((strip->type & STRIP_TYPE_EFFECT) != 0 && SEQ_effect_get_num_inputs(strip->type) > 0) {
       continue;
     }
     if (overlap == STRIP_OVERLAP_LEFT_SIDE) {
@@ -485,9 +485,9 @@ static void seq_transform_handle_overwrite_trim(Scene *scene,
   }
 }
 
-static void seq_transform_handle_overwrite(Scene *scene,
-                                           ListBase *seqbasep,
-                                           blender::Span<Strip *> transformed_strips)
+static void strip_transform_handle_overwrite(Scene *scene,
+                                             ListBase *seqbasep,
+                                             blender::Span<Strip *> transformed_strips)
 {
   blender::VectorSet targets = query_overwrite_targets(scene, seqbasep, transformed_strips);
   blender::VectorSet<Strip *> strips_to_delete;
@@ -504,10 +504,10 @@ static void seq_transform_handle_overwrite(Scene *scene,
         strips_to_delete.add(target);
       }
       else if (overlap == STRIP_OVERLAP_IS_INSIDE) {
-        seq_transform_handle_overwrite_split(scene, seqbasep, transformed, target);
+        strip_transform_handle_overwrite_split(scene, seqbasep, transformed, target);
       }
       else if (ELEM(overlap, STRIP_OVERLAP_LEFT_SIDE, STRIP_OVERLAP_RIGHT_SIDE)) {
-        seq_transform_handle_overwrite_trim(scene, seqbasep, transformed, target, overlap);
+        strip_transform_handle_overwrite_trim(scene, seqbasep, transformed, target, overlap);
       }
     }
   }
@@ -522,11 +522,11 @@ static void seq_transform_handle_overwrite(Scene *scene,
   }
 }
 
-static void seq_transform_handle_overlap_shuffle(Scene *scene,
-                                                 ListBase *seqbasep,
-                                                 blender::Span<Strip *> transformed_strips,
-                                                 blender::Span<Strip *> time_dependent_strips,
-                                                 bool use_sync_markers)
+static void strip_transform_handle_overlap_shuffle(Scene *scene,
+                                                   ListBase *seqbasep,
+                                                   blender::Span<Strip *> transformed_strips,
+                                                   blender::Span<Strip *> time_dependent_strips,
+                                                   bool use_sync_markers)
 {
   ListBase *markers = &scene->markers;
 
@@ -555,14 +555,14 @@ void SEQ_transform_handle_overlap(Scene *scene,
 
   switch (overlap_mode) {
     case SEQ_OVERLAP_EXPAND:
-      seq_transform_handle_expand_to_fit(
+      strip_transform_handle_expand_to_fit(
           scene, seqbasep, transformed_strips, time_dependent_strips, use_sync_markers);
       break;
     case SEQ_OVERLAP_OVERWRITE:
-      seq_transform_handle_overwrite(scene, seqbasep, transformed_strips);
+      strip_transform_handle_overwrite(scene, seqbasep, transformed_strips);
       break;
     case SEQ_OVERLAP_SHUFFLE:
-      seq_transform_handle_overlap_shuffle(
+      strip_transform_handle_overlap_shuffle(
           scene, seqbasep, transformed_strips, time_dependent_strips, use_sync_markers);
       break;
   }
@@ -649,7 +649,7 @@ void SEQ_image_transform_matrix_get(const Scene *scene,
                                     float r_transform_matrix[4][4])
 {
   float image_size[2] = {float(scene->r.xsch), float(scene->r.ysch)};
-  if (ELEM(strip->type, SEQ_TYPE_MOVIE, SEQ_TYPE_IMAGE)) {
+  if (ELEM(strip->type, STRIP_TYPE_MOVIE, STRIP_TYPE_IMAGE)) {
     image_size[0] = strip->data->stripdata->orig_width;
     image_size[1] = strip->data->stripdata->orig_height;
   }
@@ -667,16 +667,16 @@ void SEQ_image_transform_matrix_get(const Scene *scene,
   transform_pivot_set_m4(r_transform_matrix, pivot);
 }
 
-static void seq_image_transform_quad_get_ex(const Scene *scene,
-                                            const Strip *strip,
-                                            bool apply_rotation,
-                                            float r_quad[4][2])
+static void strip_image_transform_quad_get_ex(const Scene *scene,
+                                              const Strip *strip,
+                                              bool apply_rotation,
+                                              float r_quad[4][2])
 {
   StripTransform *transform = strip->data->transform;
   const StripCrop *crop = strip->data->crop;
 
   float image_size[2] = {float(scene->r.xsch), float(scene->r.ysch)};
-  if (ELEM(strip->type, SEQ_TYPE_MOVIE, SEQ_TYPE_IMAGE)) {
+  if (ELEM(strip->type, STRIP_TYPE_MOVIE, STRIP_TYPE_IMAGE)) {
     image_size[0] = strip->data->stripdata->orig_width;
     image_size[1] = strip->data->stripdata->orig_height;
   }
@@ -725,12 +725,12 @@ void SEQ_image_transform_quad_get(const Scene *scene,
                                   bool apply_rotation,
                                   float r_quad[4][2])
 {
-  seq_image_transform_quad_get_ex(scene, strip, apply_rotation, r_quad);
+  strip_image_transform_quad_get_ex(scene, strip, apply_rotation, r_quad);
 }
 
 void SEQ_image_transform_final_quad_get(const Scene *scene, const Strip *strip, float r_quad[4][2])
 {
-  seq_image_transform_quad_get_ex(scene, strip, true, r_quad);
+  strip_image_transform_quad_get_ex(scene, strip, true, r_quad);
 }
 
 void SEQ_image_preview_unit_to_px(const Scene *scene, const float co_src[2], float co_dst[2])

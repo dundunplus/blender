@@ -196,21 +196,21 @@ static bool seq_snap_source_points_build_preview(const Scene *scene,
 /** \name Snap targets
  * \{ */
 
-/* Add effect strips directly or indirectly connected to `seq_reference` to `collection`. */
+/* Add effect strips directly or indirectly connected to `strip_reference` to `collection`. */
 static void query_strip_effects_fn(const Scene *scene,
-                                   Strip *seq_reference,
+                                   Strip *strip_reference,
                                    ListBase *seqbase,
                                    blender::VectorSet<Strip *> &strips)
 {
-  if (strips.contains(seq_reference)) {
+  if (strips.contains(strip_reference)) {
     return; /* Strip is already in set, so all effects connected to it are as well. */
   }
-  strips.add(seq_reference);
+  strips.add(strip_reference);
 
-  /* Find all strips connected to `seq_reference`. */
-  LISTBASE_FOREACH (Strip *, seq_test, seqbase) {
-    if (SEQ_relation_is_effect_of_strip(seq_test, seq_reference)) {
-      query_strip_effects_fn(scene, seq_test, seqbase, strips);
+  /* Find all strips connected to `strip_reference`. */
+  LISTBASE_FOREACH (Strip *, strip_test, seqbase) {
+    if (SEQ_relation_is_effect_of_strip(strip_test, strip_reference)) {
+      query_strip_effects_fn(scene, strip_test, seqbase, strips);
     }
   }
 }
@@ -228,7 +228,7 @@ static blender::VectorSet<Strip *> query_snap_targets_timeline(
   blender::VectorSet effects_of_snap_sources = snap_sources;
   SEQ_iterator_set_expand(scene, seqbase, effects_of_snap_sources, query_strip_effects_fn);
   effects_of_snap_sources.remove_if([&](Strip *strip) {
-    return (strip->type & SEQ_TYPE_EFFECT) != 0 && SEQ_effect_get_num_inputs(strip->type) == 0;
+    return (strip->type & STRIP_TYPE_EFFECT) != 0 && SEQ_effect_get_num_inputs(strip->type) == 0;
   });
 
   blender::VectorSet<Strip *> snap_targets;
@@ -239,7 +239,7 @@ static blender::VectorSet<Strip *> query_snap_targets_timeline(
     if (SEQ_render_is_muted(channels, strip) && (snap_flag & SEQ_SNAP_IGNORE_MUTED)) {
       continue;
     }
-    if (strip->type == SEQ_TYPE_SOUND_RAM && (snap_flag & SEQ_SNAP_IGNORE_SOUND)) {
+    if (strip->type == STRIP_TYPE_SOUND_RAM && (snap_flag & SEQ_SNAP_IGNORE_SOUND)) {
       continue;
     }
     if (effects_of_snap_sources.contains(strip)) {
@@ -379,7 +379,7 @@ static void seq_snap_target_points_build_timeline(const Scene *scene,
       int content_end = SEQ_time_content_end_frame_get(scene, strip);
 
       /* Effects and single image strips produce incorrect content length. Skip these strips. */
-      if ((strip->type & SEQ_TYPE_EFFECT) != 0 || strip->len == 1) {
+      if ((strip->type & STRIP_TYPE_EFFECT) != 0 || strip->len == 1) {
         content_start = SEQ_time_left_handle_frame_get(scene, strip);
         content_end = SEQ_time_right_handle_frame_get(scene, strip);
       }
@@ -447,12 +447,12 @@ static bool seq_snap_target_points_build_preview(const Scene *scene,
 
   if (snap_mode & SEQ_SNAP_TO_STRIPS_PREVIEW) {
     for (Strip *strip : snap_targets) {
-      float seq_image_quad[4][2];
-      SEQ_image_transform_final_quad_get(scene, strip, seq_image_quad);
+      float strip_image_quad[4][2];
+      SEQ_image_transform_final_quad_get(scene, strip, strip_image_quad);
 
       for (int j = 0; j < 4; j++) {
-        snap_data->target_snap_points[i][0] = seq_image_quad[j][0];
-        snap_data->target_snap_points[i][1] = seq_image_quad[j][1];
+        snap_data->target_snap_points[i][0] = strip_image_quad[j][0];
+        snap_data->target_snap_points[i][1] = strip_image_quad[j][1];
         i++;
       }
 

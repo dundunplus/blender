@@ -59,26 +59,26 @@ static StripElem *rna_Sequence_strip_elem_from_frame(ID *id, Strip *self, int ti
 }
 
 static void rna_Sequence_swap_internal(ID *id,
-                                       Strip *seq_self,
+                                       Strip *strip_self,
                                        ReportList *reports,
-                                       Strip *seq_other)
+                                       Strip *strip_other)
 {
   const char *error_msg;
   Scene *scene = (Scene *)id;
 
-  if (SEQ_edit_sequence_swap(scene, seq_self, seq_other, &error_msg) == false) {
+  if (SEQ_edit_sequence_swap(scene, strip_self, strip_other, &error_msg) == false) {
     BKE_report(reports, RPT_ERROR, error_msg);
   }
 }
 
 static void rna_Sequences_move_strip_to_meta(
-    ID *id, Strip *seq_self, Main *bmain, ReportList *reports, Strip *meta_dst)
+    ID *id, Strip *strip_self, Main *bmain, ReportList *reports, Strip *meta_dst)
 {
   Scene *scene = (Scene *)id;
   const char *error_msg;
 
   /* Move strip to meta. */
-  if (!SEQ_edit_move_strip_to_meta(scene, seq_self, meta_dst, &error_msg)) {
+  if (!SEQ_edit_move_strip_to_meta(scene, strip_self, meta_dst, &error_msg)) {
     BKE_report(reports, RPT_ERROR, error_msg);
   }
 
@@ -86,7 +86,7 @@ static void rna_Sequences_move_strip_to_meta(
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
 
-  SEQ_sequence_lookup_invalidate(scene);
+  SEQ_strip_lookup_invalidate(scene);
 
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 }
@@ -113,12 +113,12 @@ static Strip *rna_Sequence_split(
   return r_seq;
 }
 
-static Strip *rna_Sequence_parent_meta(ID *id, Strip *seq_self)
+static Strip *rna_Sequence_parent_meta(ID *id, Strip *strip_self)
 {
   Scene *scene = (Scene *)id;
   Editing *ed = SEQ_editing_get(scene);
 
-  return SEQ_find_metastrip_by_sequence(&ed->seqbase, nullptr, seq_self);
+  return SEQ_find_metastrip_by_sequence(&ed->seqbase, nullptr, strip_self);
 }
 
 static Strip *rna_Sequences_new_clip(ID *id,
@@ -529,9 +529,9 @@ static Strip *rna_Sequences_meta_new_effect(ID *id,
 }
 
 static void rna_Sequences_remove(
-    ID *id, ListBase *seqbase, Main *bmain, ReportList *reports, PointerRNA *seq_ptr)
+    ID *id, ListBase *seqbase, Main *bmain, ReportList *reports, PointerRNA *strip_ptr)
 {
-  Strip *strip = static_cast<Strip *>(seq_ptr->data);
+  Strip *strip = static_cast<Strip *>(strip_ptr->data);
   Scene *scene = (Scene *)id;
 
   if (BLI_findindex(seqbase, strip) == -1) {
@@ -542,7 +542,7 @@ static void rna_Sequences_remove(
 
   SEQ_edit_flag_for_removal(scene, seqbase, strip);
   SEQ_edit_remove_flagged_sequences(scene, seqbase);
-  RNA_POINTER_INVALIDATE(seq_ptr);
+  RNA_POINTER_INVALIDATE(strip_ptr);
 
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
@@ -550,15 +550,15 @@ static void rna_Sequences_remove(
 }
 
 static void rna_Sequences_editing_remove(
-    ID *id, Editing *ed, Main *bmain, ReportList *reports, PointerRNA *seq_ptr)
+    ID *id, Editing *ed, Main *bmain, ReportList *reports, PointerRNA *strip_ptr)
 {
-  rna_Sequences_remove(id, &ed->seqbase, bmain, reports, seq_ptr);
+  rna_Sequences_remove(id, &ed->seqbase, bmain, reports, strip_ptr);
 }
 
 static void rna_Sequences_meta_remove(
-    ID *id, Strip *strip, Main *bmain, ReportList *reports, PointerRNA *seq_ptr)
+    ID *id, Strip *strip, Main *bmain, ReportList *reports, PointerRNA *strip_ptr)
 {
-  rna_Sequences_remove(id, &strip->seqbase, bmain, reports, seq_ptr);
+  rna_Sequences_remove(id, &strip->seqbase, bmain, reports, strip_ptr);
 }
 
 static StripElem *rna_SequenceElements_append(ID *id, Strip *strip, const char *filename)
@@ -665,14 +665,14 @@ void RNA_api_sequence_strip(StructRNA *srna)
   FunctionRNA *func;
   PropertyRNA *parm;
 
-  static const EnumPropertyItem seq_cahce_type_items[] = {
+  static const EnumPropertyItem strip_cache_type_items[] = {
       {SEQ_CACHE_STORE_RAW, "RAW", 0, "Raw", ""},
       {SEQ_CACHE_STORE_PREPROCESSED, "PREPROCESSED", 0, "Preprocessed", ""},
       {SEQ_CACHE_STORE_COMPOSITE, "COMPOSITE", 0, "Composite", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
-  static const EnumPropertyItem seq_split_method_items[] = {
+  static const EnumPropertyItem strip_split_method_items[] = {
       {SEQ_SPLIT_SOFT, "SOFT", 0, "Soft", ""},
       {SEQ_SPLIT_HARD, "HARD", 0, "Hard", ""},
       {0, nullptr, 0, nullptr, nullptr},
@@ -718,7 +718,7 @@ void RNA_api_sequence_strip(StructRNA *srna)
   RNA_def_function_flag(func, FUNC_USE_SELF_ID);
   RNA_def_function_ui_description(func,
                                   "Invalidate cached images for strip and all dependent strips");
-  parm = RNA_def_enum(func, "type", seq_cahce_type_items, 0, "Type", "Cache Type");
+  parm = RNA_def_enum(func, "type", strip_cache_type_items, 0, "Type", "Cache Type");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
   func = RNA_def_function(srna, "split", "rna_Sequence_split");
@@ -727,7 +727,7 @@ void RNA_api_sequence_strip(StructRNA *srna)
   parm = RNA_def_int(
       func, "frame", 0, INT_MIN, INT_MAX, "", "Frame where to split the strip", INT_MIN, INT_MAX);
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
-  parm = RNA_def_enum(func, "split_method", seq_split_method_items, 0, "", "");
+  parm = RNA_def_enum(func, "split_method", strip_split_method_items, 0, "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
   /* Return type. */
   parm = RNA_def_pointer(func, "sequence", "Strip", "", "Right side Sequence");
@@ -791,25 +791,25 @@ void RNA_api_sequences(BlenderRNA *brna, PropertyRNA *cprop, const bool metastri
   PropertyRNA *parm;
   FunctionRNA *func;
 
-  static const EnumPropertyItem seq_effect_items[] = {
-      {SEQ_TYPE_CROSS, "CROSS", 0, "Cross", ""},
-      {SEQ_TYPE_ADD, "ADD", 0, "Add", ""},
-      {SEQ_TYPE_SUB, "SUBTRACT", 0, "Subtract", ""},
-      {SEQ_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", ""},
-      {SEQ_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", ""},
-      {SEQ_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", ""},
-      {SEQ_TYPE_MUL, "MULTIPLY", 0, "Multiply", ""},
-      {SEQ_TYPE_OVERDROP, "OVER_DROP", 0, "Over Drop", ""},
-      {SEQ_TYPE_WIPE, "WIPE", 0, "Wipe", ""},
-      {SEQ_TYPE_GLOW, "GLOW", 0, "Glow", ""},
-      {SEQ_TYPE_TRANSFORM, "TRANSFORM", 0, "Transform", ""},
-      {SEQ_TYPE_COLOR, "COLOR", 0, "Color", ""},
-      {SEQ_TYPE_SPEED, "SPEED", 0, "Speed", ""},
-      {SEQ_TYPE_MULTICAM, "MULTICAM", 0, "Multicam Selector", ""},
-      {SEQ_TYPE_ADJUSTMENT, "ADJUSTMENT", 0, "Adjustment Layer", ""},
-      {SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", 0, "Gaussian Blur", ""},
-      {SEQ_TYPE_TEXT, "TEXT", 0, "Text", ""},
-      {SEQ_TYPE_COLORMIX, "COLORMIX", 0, "Color Mix", ""},
+  static const EnumPropertyItem strip_effect_items[] = {
+      {STRIP_TYPE_CROSS, "CROSS", 0, "Cross", ""},
+      {STRIP_TYPE_ADD, "ADD", 0, "Add", ""},
+      {STRIP_TYPE_SUB, "SUBTRACT", 0, "Subtract", ""},
+      {STRIP_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", ""},
+      {STRIP_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", ""},
+      {STRIP_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", ""},
+      {STRIP_TYPE_MUL, "MULTIPLY", 0, "Multiply", ""},
+      {STRIP_TYPE_OVERDROP, "OVER_DROP", 0, "Over Drop", ""},
+      {STRIP_TYPE_WIPE, "WIPE", 0, "Wipe", ""},
+      {STRIP_TYPE_GLOW, "GLOW", 0, "Glow", ""},
+      {STRIP_TYPE_TRANSFORM, "TRANSFORM", 0, "Transform", ""},
+      {STRIP_TYPE_COLOR, "COLOR", 0, "Color", ""},
+      {STRIP_TYPE_SPEED, "SPEED", 0, "Speed", ""},
+      {STRIP_TYPE_MULTICAM, "MULTICAM", 0, "Multicam Selector", ""},
+      {STRIP_TYPE_ADJUSTMENT, "ADJUSTMENT", 0, "Adjustment Layer", ""},
+      {STRIP_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", 0, "Gaussian Blur", ""},
+      {STRIP_TYPE_TEXT, "TEXT", 0, "Text", ""},
+      {STRIP_TYPE_COLORMIX, "COLORMIX", 0, "Color Mix", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1084,7 +1084,7 @@ void RNA_api_sequences(BlenderRNA *brna, PropertyRNA *cprop, const bool metastri
   RNA_def_function_ui_description(func, "Add a new effect sequence");
   parm = RNA_def_string(func, "name", "Name", 0, "", "Name for the new sequence");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
-  parm = RNA_def_enum(func, "type", seq_effect_items, 0, "Type", "type for the new sequence");
+  parm = RNA_def_enum(func, "type", strip_effect_items, 0, "Type", "type for the new sequence");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_int(func,
                      "channel",

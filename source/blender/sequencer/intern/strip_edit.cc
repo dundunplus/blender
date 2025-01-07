@@ -39,79 +39,79 @@
 
 #include <cstring>
 
-bool SEQ_edit_sequence_swap(Scene *scene, Strip *seq_a, Strip *seq_b, const char **r_error_str)
+bool SEQ_edit_sequence_swap(Scene *scene, Strip *strip_a, Strip *strip_b, const char **r_error_str)
 {
-  char name[sizeof(seq_a->name)];
+  char name[sizeof(strip_a->name)];
 
-  if (SEQ_time_strip_length_get(scene, seq_a) != SEQ_time_strip_length_get(scene, seq_b)) {
+  if (SEQ_time_strip_length_get(scene, strip_a) != SEQ_time_strip_length_get(scene, strip_b)) {
     *r_error_str = N_("Strips must be the same length");
     return false;
   }
 
   /* type checking, could be more advanced but disallow sound vs non-sound copy */
-  if (seq_a->type != seq_b->type) {
-    if (seq_a->type == SEQ_TYPE_SOUND_RAM || seq_b->type == SEQ_TYPE_SOUND_RAM) {
+  if (strip_a->type != strip_b->type) {
+    if (strip_a->type == STRIP_TYPE_SOUND_RAM || strip_b->type == STRIP_TYPE_SOUND_RAM) {
       *r_error_str = N_("Strips were not compatible");
       return false;
     }
 
     /* disallow effects to swap with non-effects strips */
-    if ((seq_a->type & SEQ_TYPE_EFFECT) != (seq_b->type & SEQ_TYPE_EFFECT)) {
+    if ((strip_a->type & STRIP_TYPE_EFFECT) != (strip_b->type & STRIP_TYPE_EFFECT)) {
       *r_error_str = N_("Strips were not compatible");
       return false;
     }
 
-    if ((seq_a->type & SEQ_TYPE_EFFECT) && (seq_b->type & SEQ_TYPE_EFFECT)) {
-      if (SEQ_effect_get_num_inputs(seq_a->type) != SEQ_effect_get_num_inputs(seq_b->type)) {
+    if ((strip_a->type & STRIP_TYPE_EFFECT) && (strip_b->type & STRIP_TYPE_EFFECT)) {
+      if (SEQ_effect_get_num_inputs(strip_a->type) != SEQ_effect_get_num_inputs(strip_b->type)) {
         *r_error_str = N_("Strips must have the same number of inputs");
         return false;
       }
     }
   }
 
-  blender::dna::shallow_swap(*seq_a, *seq_b);
+  blender::dna::shallow_swap(*strip_a, *strip_b);
 
   /* swap back names so animation fcurves don't get swapped */
-  STRNCPY(name, seq_a->name + 2);
-  BLI_strncpy(seq_a->name + 2, seq_b->name + 2, sizeof(seq_b->name) - 2);
-  BLI_strncpy(seq_b->name + 2, name, sizeof(seq_b->name) - 2);
+  STRNCPY(name, strip_a->name + 2);
+  BLI_strncpy(strip_a->name + 2, strip_b->name + 2, sizeof(strip_b->name) - 2);
+  BLI_strncpy(strip_b->name + 2, name, sizeof(strip_b->name) - 2);
 
   /* swap back opacity, and overlay mode */
-  std::swap(seq_a->blend_mode, seq_b->blend_mode);
-  std::swap(seq_a->blend_opacity, seq_b->blend_opacity);
+  std::swap(strip_a->blend_mode, strip_b->blend_mode);
+  std::swap(strip_a->blend_opacity, strip_b->blend_opacity);
 
-  std::swap(seq_a->prev, seq_b->prev);
-  std::swap(seq_a->next, seq_b->next);
-  std::swap(seq_a->start, seq_b->start);
-  std::swap(seq_a->startofs, seq_b->startofs);
-  std::swap(seq_a->endofs, seq_b->endofs);
-  std::swap(seq_a->machine, seq_b->machine);
-  seq_time_effect_range_set(scene, seq_a);
-  seq_time_effect_range_set(scene, seq_b);
+  std::swap(strip_a->prev, strip_b->prev);
+  std::swap(strip_a->next, strip_b->next);
+  std::swap(strip_a->start, strip_b->start);
+  std::swap(strip_a->startofs, strip_b->startofs);
+  std::swap(strip_a->endofs, strip_b->endofs);
+  std::swap(strip_a->machine, strip_b->machine);
+  strip_time_effect_range_set(scene, strip_a);
+  strip_time_effect_range_set(scene, strip_b);
 
   return true;
 }
 
-static void seq_update_muting_recursive(ListBase *channels,
-                                        ListBase *seqbasep,
-                                        Strip *metaseq,
-                                        const bool mute)
+static void strip_update_muting_recursive(ListBase *channels,
+                                          ListBase *seqbasep,
+                                          Strip *metaseq,
+                                          const bool mute)
 {
   /* For sound we go over full meta tree to update muted state,
    * since sound is played outside of evaluating the imbufs. */
   LISTBASE_FOREACH (Strip *, strip, seqbasep) {
     bool seqmute = (mute || SEQ_render_is_muted(channels, strip));
 
-    if (strip->type == SEQ_TYPE_META) {
+    if (strip->type == STRIP_TYPE_META) {
       /* if this is the current meta sequence, unmute because
        * all sequences above this were set to mute */
       if (strip == metaseq) {
         seqmute = false;
       }
 
-      seq_update_muting_recursive(&strip->channels, &strip->seqbase, metaseq, seqmute);
+      strip_update_muting_recursive(&strip->channels, &strip->seqbase, metaseq, seqmute);
     }
-    else if (ELEM(strip->type, SEQ_TYPE_SOUND_RAM, SEQ_TYPE_SCENE)) {
+    else if (ELEM(strip->type, STRIP_TYPE_SOUND_RAM, STRIP_TYPE_SCENE)) {
       if (strip->scene_sound) {
         BKE_sound_mute_scene_sound(strip->scene_sound, seqmute);
       }
@@ -126,10 +126,10 @@ void SEQ_edit_update_muting(Editing *ed)
     MetaStack *ms = static_cast<MetaStack *>(ed->metastack.last);
 
     if (ms) {
-      seq_update_muting_recursive(&ed->channels, &ed->seqbase, ms->parseq, true);
+      strip_update_muting_recursive(&ed->channels, &ed->seqbase, ms->parseq, true);
     }
     else {
-      seq_update_muting_recursive(&ed->channels, &ed->seqbase, nullptr, false);
+      strip_update_muting_recursive(&ed->channels, &ed->seqbase, nullptr, false);
     }
   }
 }
@@ -138,7 +138,7 @@ static void sequencer_flag_users_for_removal(Scene *scene, ListBase *seqbase, St
 {
   LISTBASE_FOREACH (Strip *, user_seq, seqbase) {
     /* Look in meta-strips for usage of strip. */
-    if (user_seq->type == SEQ_TYPE_META) {
+    if (user_seq->type == STRIP_TYPE_META) {
       sequencer_flag_users_for_removal(scene, &user_seq->seqbase, strip);
     }
 
@@ -165,7 +165,7 @@ void SEQ_edit_flag_for_removal(Scene *scene, ListBase *seqbase, Strip *strip)
   }
 
   /* Flag and remove meta children. */
-  if (strip->type == SEQ_TYPE_META) {
+  if (strip->type == STRIP_TYPE_META) {
     LISTBASE_FOREACH (Strip *, meta_child, &strip->seqbase) {
       SEQ_edit_flag_for_removal(scene, &strip->seqbase, meta_child);
     }
@@ -179,13 +179,13 @@ void SEQ_edit_remove_flagged_sequences(Scene *scene, ListBase *seqbase)
 {
   LISTBASE_FOREACH_MUTABLE (Strip *, strip, seqbase) {
     if (strip->flag & SEQ_FLAG_DELETE) {
-      if (strip->type == SEQ_TYPE_META) {
+      if (strip->type == STRIP_TYPE_META) {
         SEQ_edit_remove_flagged_sequences(scene, &strip->seqbase);
       }
       SEQ_free_animdata(scene, strip);
       BLI_remlink(seqbase, strip);
       SEQ_sequence_free(scene, strip);
-      SEQ_sequence_lookup_invalidate(scene);
+      SEQ_strip_lookup_invalidate(scene);
     }
   }
 }
@@ -217,7 +217,7 @@ bool SEQ_edit_move_strip_to_meta(Scene *scene,
   Editing *ed = SEQ_editing_get(scene);
   ListBase *seqbase = SEQ_get_seqbase_by_seq(scene, src_seq);
 
-  if (dst_seqm->type != SEQ_TYPE_META) {
+  if (dst_seqm->type != STRIP_TYPE_META) {
     *r_error_str = N_("Cannot move strip to non-meta strip");
     return false;
   }
@@ -232,7 +232,7 @@ bool SEQ_edit_move_strip_to_meta(Scene *scene,
     return false;
   }
 
-  if (src_seq->type == SEQ_TYPE_META && SEQ_exists_in_seqbase(dst_seqm, &src_seq->seqbase)) {
+  if (src_seq->type == STRIP_TYPE_META && SEQ_exists_in_seqbase(dst_seqm, &src_seq->seqbase)) {
     *r_error_str = N_("Moved strip is parent of provided meta strip");
     return false;
   }
@@ -352,14 +352,14 @@ static bool seq_edit_split_effect_inputs_intersect(const Scene *scene,
   bool input_does_intersect = false;
   if (strip->seq1) {
     input_does_intersect |= seq_edit_split_intersect_check(scene, strip->seq1, timeline_frame);
-    if ((strip->seq1->type & SEQ_TYPE_EFFECT) != 0) {
+    if ((strip->seq1->type & STRIP_TYPE_EFFECT) != 0) {
       input_does_intersect |= seq_edit_split_effect_inputs_intersect(
           scene, strip->seq1, timeline_frame);
     }
   }
   if (strip->seq2) {
     input_does_intersect |= seq_edit_split_intersect_check(scene, strip->seq2, timeline_frame);
-    if ((strip->seq1->type & SEQ_TYPE_EFFECT) != 0) {
+    if ((strip->seq1->type & STRIP_TYPE_EFFECT) != 0) {
       input_does_intersect |= seq_edit_split_effect_inputs_intersect(
           scene, strip->seq2, timeline_frame);
     }
@@ -378,7 +378,7 @@ static bool seq_edit_split_operation_permitted_check(const Scene *scene,
       *r_error = "Strip is locked.";
       return false;
     }
-    if ((strip->type & SEQ_TYPE_EFFECT) == 0) {
+    if ((strip->type & STRIP_TYPE_EFFECT) == 0) {
       continue;
     }
     if (!seq_edit_split_intersect_check(scene, strip, timeline_frame)) {
@@ -387,7 +387,7 @@ static bool seq_edit_split_operation_permitted_check(const Scene *scene,
     if (SEQ_effect_get_num_inputs(strip->type) <= 1) {
       continue;
     }
-    if (ELEM(strip->type, SEQ_TYPE_CROSS, SEQ_TYPE_GAMCROSS, SEQ_TYPE_WIPE)) {
+    if (ELEM(strip->type, STRIP_TYPE_CROSS, STRIP_TYPE_GAMCROSS, STRIP_TYPE_WIPE)) {
       *r_error = "Splitting transition effect is not permitted.";
       return false;
     }
@@ -439,18 +439,18 @@ Strip *SEQ_edit_strip_split(Main *bmain,
   SEQ_animation_backup_original(scene, &animation_backup);
 
   ListBase left_strips = {nullptr, nullptr};
-  for (Strip *seq_iter : strips) {
+  for (Strip *strip_iter : strips) {
     /* Move strips in collection from seqbase to new ListBase. */
-    BLI_remlink(seqbase, seq_iter);
-    BLI_addtail(&left_strips, seq_iter);
+    BLI_remlink(seqbase, strip_iter);
+    BLI_addtail(&left_strips, strip_iter);
 
     /* Duplicate curves from backup, so they can be renamed along with split strips. */
-    SEQ_animation_duplicate_backup_to_scene(scene, seq_iter, &animation_backup);
+    SEQ_animation_duplicate_backup_to_scene(scene, strip_iter, &animation_backup);
   }
 
   /* Duplicate ListBase. */
   ListBase right_strips = {nullptr, nullptr};
-  SEQ_sequence_base_dupli_recursive(scene, scene, &right_strips, &left_strips, SEQ_DUPE_ALL, 0);
+  SEQ_sequence_base_dupli_recursive(scene, scene, &right_strips, &left_strips, STRIP_DUPE_ALL, 0);
 
   Strip *left_seq = static_cast<Strip *>(left_strips.first);
   Strip *right_seq = static_cast<Strip *>(right_strips.first);
@@ -462,9 +462,9 @@ Strip *SEQ_edit_strip_split(Main *bmain,
 
   /* Rename duplicated strips. This has to be done immediately after adding
    * strips to seqbase, for lookup cache to work correctly. */
-  Strip *seq_rename = right_seq;
-  for (; seq_rename; seq_rename = seq_rename->next) {
-    SEQ_ensure_unique_name(seq_rename, scene);
+  Strip *strip_rename = right_seq;
+  for (; strip_rename; strip_rename = strip_rename->next) {
+    SEQ_ensure_unique_name(strip_rename, scene);
   }
 
   /* Split strips. */
@@ -521,5 +521,5 @@ void SEQ_edit_sequence_name_set(Scene *scene, Strip *strip, const char *new_name
 {
   BLI_strncpy_utf8(strip->name + 2, new_name, MAX_NAME - 2);
   BLI_str_utf8_invalid_strip(strip->name + 2, strlen(strip->name + 2));
-  SEQ_sequence_lookup_invalidate(scene);
+  SEQ_strip_lookup_invalidate(scene);
 }

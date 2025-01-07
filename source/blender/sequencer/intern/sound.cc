@@ -46,12 +46,12 @@ static bool sequencer_refresh_sound_length_recursive(Main *bmain, Scene *scene, 
   bool changed = false;
 
   LISTBASE_FOREACH (Strip *, strip, seqbase) {
-    if (strip->type == SEQ_TYPE_META) {
+    if (strip->type == STRIP_TYPE_META) {
       if (sequencer_refresh_sound_length_recursive(bmain, scene, &strip->seqbase)) {
         changed = true;
       }
     }
-    else if (strip->type == SEQ_TYPE_SOUND_RAM && strip->sound) {
+    else if (strip->type == STRIP_TYPE_SOUND_RAM && strip->sound) {
       SoundInfo info;
       if (!BKE_sound_info_get(bmain, strip->sound, &info)) {
         continue;
@@ -92,10 +92,10 @@ void SEQ_sound_update_bounds_all(Scene *scene)
 
   if (ed) {
     LISTBASE_FOREACH (Strip *, strip, &ed->seqbase) {
-      if (strip->type == SEQ_TYPE_META) {
-        seq_update_sound_bounds_recursive(scene, strip);
+      if (strip->type == STRIP_TYPE_META) {
+        strip_update_sound_bounds_recursive(scene, strip);
       }
-      else if (ELEM(strip->type, SEQ_TYPE_SOUND_RAM, SEQ_TYPE_SCENE)) {
+      else if (ELEM(strip->type, STRIP_TYPE_SOUND_RAM, STRIP_TYPE_SCENE)) {
         SEQ_sound_update_bounds(scene, strip);
       }
     }
@@ -104,7 +104,7 @@ void SEQ_sound_update_bounds_all(Scene *scene)
 
 void SEQ_sound_update_bounds(Scene *scene, Strip *strip)
 {
-  if (strip->type == SEQ_TYPE_SCENE) {
+  if (strip->type == STRIP_TYPE_SCENE) {
     if (strip->scene && strip->scene_sound) {
       /* We have to take into account start frame of the sequence's scene! */
       int startofs = strip->startofs + strip->anim_startofs + strip->scene->r.sfra;
@@ -120,16 +120,16 @@ void SEQ_sound_update_bounds(Scene *scene, Strip *strip)
   else {
     BKE_sound_move_scene_sound_defaults(scene, strip);
   }
-  /* mute is set in seq_update_muting_recursive */
+  /* mute is set in strip_update_muting_recursive */
 }
 
-static void seq_update_sound_recursive(Scene *scene, ListBase *seqbasep, bSound *sound)
+static void strip_update_sound_recursive(Scene *scene, ListBase *seqbasep, bSound *sound)
 {
   LISTBASE_FOREACH (Strip *, strip, seqbasep) {
-    if (strip->type == SEQ_TYPE_META) {
-      seq_update_sound_recursive(scene, &strip->seqbase, sound);
+    if (strip->type == STRIP_TYPE_META) {
+      strip_update_sound_recursive(scene, &strip->seqbase, sound);
     }
-    else if (strip->type == SEQ_TYPE_SOUND_RAM) {
+    else if (strip->type == STRIP_TYPE_SOUND_RAM) {
       if (strip->scene_sound && sound == strip->sound) {
         BKE_sound_update_scene_sound(strip->scene_sound, sound);
       }
@@ -140,13 +140,13 @@ static void seq_update_sound_recursive(Scene *scene, ListBase *seqbasep, bSound 
 void SEQ_sound_update(Scene *scene, bSound *sound)
 {
   if (scene->ed) {
-    seq_update_sound_recursive(scene, &scene->ed->seqbase, sound);
+    strip_update_sound_recursive(scene, &scene->ed->seqbase, sound);
   }
 }
 
 float SEQ_sound_pitch_get(const Scene *scene, const Strip *strip)
 {
-  const Strip *meta_parent = seq_sequence_lookup_meta_by_seq(scene, strip);
+  const Strip *meta_parent = SEQ_lookup_meta_by_strip(scene, strip);
   if (meta_parent != nullptr) {
     return strip->speed_factor * SEQ_sound_pitch_get(scene, meta_parent);
   }

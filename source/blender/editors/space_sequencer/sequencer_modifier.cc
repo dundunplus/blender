@@ -59,7 +59,7 @@ static const EnumPropertyItem *filter_modifiers_by_sequence_type_itemf(bContext 
   Scene *scene = CTX_data_scene(C);
   Strip *strip = SEQ_select_active_get(scene);
   if (strip) {
-    if (ELEM(strip->type, SEQ_TYPE_SOUND_RAM)) {
+    if (ELEM(strip->type, STRIP_TYPE_SOUND_RAM)) {
       return rna_enum_sequence_sound_modifier_type_items;
     }
   }
@@ -111,7 +111,7 @@ static int strip_modifier_remove_exec(bContext *C, wmOperator *op)
   BLI_remlink(&strip->modifiers, smd);
   SEQ_modifier_free(smd);
 
-  if (ELEM(strip->type, SEQ_TYPE_SOUND_RAM)) {
+  if (ELEM(strip->type, STRIP_TYPE_SOUND_RAM)) {
     DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS | ID_RECALC_AUDIO);
   }
   else {
@@ -183,7 +183,7 @@ static int strip_modifier_move_exec(bContext *C, wmOperator *op)
     }
   }
 
-  if (ELEM(strip->type, SEQ_TYPE_SOUND_RAM)) {
+  if (ELEM(strip->type, STRIP_TYPE_SOUND_RAM)) {
     DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS | ID_RECALC_AUDIO);
   }
   else {
@@ -246,40 +246,40 @@ static int strip_modifier_copy_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  int isSound = ELEM(strip->type, SEQ_TYPE_SOUND_RAM);
+  int isSound = ELEM(strip->type, STRIP_TYPE_SOUND_RAM);
 
-  LISTBASE_FOREACH (Strip *, seq_iter, SEQ_active_seqbase_get(ed)) {
-    if (seq_iter->flag & SELECT) {
-      if (seq_iter == strip) {
+  LISTBASE_FOREACH (Strip *, strip_iter, SEQ_active_seqbase_get(ed)) {
+    if (strip_iter->flag & SELECT) {
+      if (strip_iter == strip) {
         continue;
       }
-      int seq_iter_is_sound = ELEM(seq_iter->type, SEQ_TYPE_SOUND_RAM);
+      int strip_iter_is_sound = ELEM(strip_iter->type, STRIP_TYPE_SOUND_RAM);
       /* If original is sound, only copy to "sound" strips
        * If original is not sound, only copy to "not sound" strips
        */
-      if (isSound != seq_iter_is_sound) {
+      if (isSound != strip_iter_is_sound) {
         continue;
       }
 
       if (type == SEQ_MODIFIER_COPY_REPLACE) {
-        if (seq_iter->modifiers.first) {
+        if (strip_iter->modifiers.first) {
           SequenceModifierData *smd_tmp,
-              *smd = static_cast<SequenceModifierData *>(seq_iter->modifiers.first);
+              *smd = static_cast<SequenceModifierData *>(strip_iter->modifiers.first);
           while (smd) {
             smd_tmp = smd->next;
-            BLI_remlink(&seq_iter->modifiers, smd);
+            BLI_remlink(&strip_iter->modifiers, smd);
             SEQ_modifier_free(smd);
             smd = smd_tmp;
           }
-          BLI_listbase_clear(&seq_iter->modifiers);
+          BLI_listbase_clear(&strip_iter->modifiers);
         }
       }
 
-      SEQ_modifier_list_copy(seq_iter, strip);
+      SEQ_modifier_list_copy(strip_iter, strip);
     }
   }
 
-  if (ELEM(strip->type, SEQ_TYPE_SOUND_RAM)) {
+  if (ELEM(strip->type, STRIP_TYPE_SOUND_RAM)) {
     DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS | ID_RECALC_AUDIO);
   }
   else {

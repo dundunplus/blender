@@ -291,7 +291,7 @@ static void do_versions_idproperty_seq_recursive(ListBase *seqbase)
 {
   LISTBASE_FOREACH (Strip *, strip, seqbase) {
     version_idproperty_ui_data(strip->prop);
-    if (strip->type == SEQ_TYPE_META) {
+    if (strip->type == STRIP_TYPE_META) {
       do_versions_idproperty_seq_recursive(&strip->seqbase);
     }
   }
@@ -422,11 +422,11 @@ static void move_vertex_group_names_to_object_data(Main *bmain)
 static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const ListBase *seqbase)
 {
   /* Old SpeedControlVars->flags. */
-#define SEQ_SPEED_INTEGRATE (1 << 0)
-#define SEQ_SPEED_COMPRESS_IPO_Y (1 << 2)
+#define STRIP_SPEED_INTEGRATE (1 << 0)
+#define STRIP_SPEED_COMPRESS_IPO_Y (1 << 2)
 
   LISTBASE_FOREACH (Strip *, strip, seqbase) {
-    if (strip->type == SEQ_TYPE_SPEED) {
+    if (strip->type == STRIP_TYPE_SPEED) {
       SpeedControlVars *v = (SpeedControlVars *)strip->effectdata;
       const char *substr = nullptr;
       float globalSpeed = v->globalSpeed;
@@ -443,11 +443,11 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
                                    1.0f));
         }
       }
-      else if (v->flags & SEQ_SPEED_INTEGRATE) {
+      else if (v->flags & STRIP_SPEED_INTEGRATE) {
         v->speed_control_type = SEQ_SPEED_MULTIPLY;
         v->speed_fader = strip->speed_fader * globalSpeed;
       }
-      else if (v->flags & SEQ_SPEED_COMPRESS_IPO_Y) {
+      else if (v->flags & STRIP_SPEED_COMPRESS_IPO_Y) {
         globalSpeed *= 100.0f;
         v->speed_control_type = SEQ_SPEED_LENGTH;
         v->speed_fader_length = strip->speed_fader * globalSpeed;
@@ -459,7 +459,7 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
         substr = "speed_frame_number";
       }
 
-      v->flags &= ~(SEQ_SPEED_INTEGRATE | SEQ_SPEED_COMPRESS_IPO_Y);
+      v->flags &= ~(STRIP_SPEED_INTEGRATE | STRIP_SPEED_COMPRESS_IPO_Y);
 
       if (substr || globalSpeed != 1.0f) {
         FCurve *fcu = id_data_find_fcurve(
@@ -481,18 +481,18 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene, const Lis
         }
       }
     }
-    else if (strip->type == SEQ_TYPE_META) {
+    else if (strip->type == STRIP_TYPE_META) {
       do_versions_sequencer_speed_effect_recursive(scene, &strip->seqbase);
     }
   }
 
-#undef SEQ_SPEED_INTEGRATE
-#undef SEQ_SPEED_COMPRESS_IPO_Y
+#undef STRIP_SPEED_INTEGRATE
+#undef STRIP_SPEED_COMPRESS_IPO_Y
 }
 
 static bool do_versions_sequencer_color_tags(Strip *strip, void * /*user_data*/)
 {
-  strip->color_tag = SEQUENCE_COLOR_NONE;
+  strip->color_tag = STRIP_COLOR_NONE;
   return true;
 }
 
@@ -631,7 +631,7 @@ static bNodeTree *add_realize_node_tree(Main *bmain)
   return node_tree;
 }
 
-static void seq_speed_factor_fix_rna_path(Strip *strip, ListBase *fcurves)
+static void strip_speed_factor_fix_rna_path(Strip *strip, ListBase *fcurves)
 {
   char name_esc[(sizeof(strip->name) - 2) * 2];
   BLI_str_escape(name_esc, strip->name + 2, sizeof(name_esc));
@@ -647,22 +647,22 @@ static void seq_speed_factor_fix_rna_path(Strip *strip, ListBase *fcurves)
 static bool version_fix_seq_meta_range(Strip *strip, void *user_data)
 {
   Scene *scene = (Scene *)user_data;
-  if (strip->type == SEQ_TYPE_META) {
+  if (strip->type == STRIP_TYPE_META) {
     SEQ_time_update_meta_strip_range(scene, strip);
   }
   return true;
 }
 
-static bool seq_speed_factor_set(Strip *strip, void *user_data)
+static bool strip_speed_factor_set(Strip *strip, void *user_data)
 {
   const Scene *scene = static_cast<const Scene *>(user_data);
-  if (strip->type == SEQ_TYPE_SOUND_RAM) {
+  if (strip->type == STRIP_TYPE_SOUND_RAM) {
     /* Move `pitch` animation to `speed_factor` */
     if (scene->adt && scene->adt->action) {
-      seq_speed_factor_fix_rna_path(strip, &scene->adt->action->curves);
+      strip_speed_factor_fix_rna_path(strip, &scene->adt->action->curves);
     }
     if (scene->adt && !BLI_listbase_is_empty(&scene->adt->drivers)) {
-      seq_speed_factor_fix_rna_path(strip, &scene->adt->drivers);
+      strip_speed_factor_fix_rna_path(strip, &scene->adt->drivers);
     }
 
     /* Pitch value of 0 has been found in some files. This would cause problems. */
@@ -1320,7 +1320,7 @@ void do_versions_after_linking_300(FileData * /*fd*/, Main *bmain)
       if (ed == nullptr) {
         continue;
       }
-      SEQ_for_each_callback(&ed->seqbase, seq_speed_factor_set, scene);
+      SEQ_for_each_callback(&ed->seqbase, strip_speed_factor_set, scene);
       SEQ_for_each_callback(&ed->seqbase, version_fix_seq_meta_range, scene);
     }
   }
@@ -1503,7 +1503,7 @@ static bNodeSocket *do_version_replace_float_size_with_vector(bNodeTree *ntree,
   return new_socket;
 }
 
-static bool seq_transform_origin_set(Strip *strip, void * /*user_data*/)
+static bool strip_transform_origin_set(Strip *strip, void * /*user_data*/)
 {
   StripTransform *transform = strip->data->transform;
   if (strip->data->transform != nullptr) {
@@ -1512,7 +1512,7 @@ static bool seq_transform_origin_set(Strip *strip, void * /*user_data*/)
   return true;
 }
 
-static bool seq_transform_filter_set(Strip *strip, void * /*user_data*/)
+static bool strip_transform_filter_set(Strip *strip, void * /*user_data*/)
 {
   StripTransform *transform = strip->data->transform;
   if (strip->data->transform != nullptr) {
@@ -1521,9 +1521,9 @@ static bool seq_transform_filter_set(Strip *strip, void * /*user_data*/)
   return true;
 }
 
-static bool seq_meta_channels_ensure(Strip *strip, void * /*user_data*/)
+static bool strip_meta_channels_ensure(Strip *strip, void * /*user_data*/)
 {
-  if (strip->type == SEQ_TYPE_META) {
+  if (strip->type == STRIP_TYPE_META) {
     SEQ_channels_ensure(&strip->channels);
   }
   return true;
@@ -1768,8 +1768,8 @@ static bool version_fix_delete_flag(Strip *strip, void * /*user_data*/)
 static bool version_set_seq_single_frame_content(Strip *strip, void * /*user_data*/)
 {
   if ((strip->len == 1) &&
-      (strip->type == SEQ_TYPE_IMAGE ||
-       ((strip->type & SEQ_TYPE_EFFECT) && SEQ_effect_get_num_inputs(strip->type) == 0)))
+      (strip->type == STRIP_TYPE_IMAGE ||
+       ((strip->type & STRIP_TYPE_EFFECT) && SEQ_effect_get_num_inputs(strip->type) == 0)))
   {
     strip->flag |= SEQ_SINGLE_FRAME_CONTENT;
   }
@@ -1778,7 +1778,7 @@ static bool version_set_seq_single_frame_content(Strip *strip, void * /*user_dat
 
 static bool version_seq_fix_broken_sound_strips(Strip *strip, void * /*user_data*/)
 {
-  if (strip->type != SEQ_TYPE_SOUND_RAM || strip->speed_factor != 0.0f) {
+  if (strip->type != STRIP_TYPE_SOUND_RAM || strip->speed_factor != 0.0f) {
     return true;
   }
 
@@ -2939,7 +2939,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
       sequencer_tool_settings->pivot_point = V3D_AROUND_CENTER_MEDIAN;
 
       if (scene->ed != nullptr) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_transform_origin_set, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_transform_origin_set, nullptr);
       }
     }
     LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
@@ -3088,7 +3088,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
       }
     }
 
-    /* Set strip color tags to SEQUENCE_COLOR_NONE. */
+    /* Set strip color tags to STRIP_COLOR_NONE. */
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed != nullptr) {
         SEQ_for_each_callback(&scene->ed->seqbase, do_versions_sequencer_color_tags, nullptr);
@@ -3474,7 +3474,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 302, 2)) {
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed != nullptr) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_transform_filter_set, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_transform_filter_set, nullptr);
       }
     }
   }
@@ -3683,7 +3683,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
         continue;
       }
       SEQ_channels_ensure(&ed->channels);
-      SEQ_for_each_callback(&scene->ed->seqbase, seq_meta_channels_ensure, nullptr);
+      SEQ_for_each_callback(&scene->ed->seqbase, strip_meta_channels_ensure, nullptr);
 
       ed->displayed_channels = &ed->channels;
 

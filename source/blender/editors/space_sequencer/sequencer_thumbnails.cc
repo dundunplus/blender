@@ -79,13 +79,13 @@ static float thumb_calc_next_timeline_frame(const Strip *strip,
   return next_frame;
 }
 
-static void seq_get_thumb_image_dimensions(const Strip *strip,
-                                           float pixelx,
-                                           float pixely,
-                                           float *r_thumb_width,
-                                           float thumb_height,
-                                           float *r_image_width,
-                                           float *r_image_height)
+static void strip_get_thumb_image_dimensions(const Strip *strip,
+                                             float pixelx,
+                                             float pixely,
+                                             float *r_thumb_width,
+                                             float thumb_height,
+                                             float *r_image_width,
+                                             float *r_image_height)
 {
   float image_width = strip->data->stripdata->orig_width;
   float image_height = strip->data->stripdata->orig_height;
@@ -131,13 +131,13 @@ static void get_seq_strip_thumbnails(const View2D *v2d,
   }
 
   float thumb_width, image_width, image_height;
-  seq_get_thumb_image_dimensions(
+  strip_get_thumb_image_dimensions(
       strip.strip, pixelx, pixely, &thumb_width, thumb_height, &image_width, &image_height);
 
   const float crop_x_multiplier = 1.0f / pixelx / (thumb_height / image_height / pixely);
 
   float upper_thumb_bound = min_ff(strip.right_handle, strip.content_end);
-  if (strip.strip->type == SEQ_TYPE_IMAGE) {
+  if (strip.strip->type == STRIP_TYPE_IMAGE) {
     upper_thumb_bound = strip.right_handle;
   }
 

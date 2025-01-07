@@ -422,29 +422,29 @@ static void do_version_bbone_easing_fcurve_fix(ID * /*id*/, FCurve *fcu)
   }
 }
 
-static bool seq_update_proxy_cb(Strip *strip, void * /*user_data*/)
+static bool strip_update_proxy_cb(Strip *strip, void * /*user_data*/)
 {
   strip->stereo3d_format = static_cast<Stereo3dFormat *>(
       MEM_callocN(sizeof(Stereo3dFormat), "Stereo Display 3d Format"));
 
-#define SEQ_USE_PROXY_CUSTOM_DIR (1 << 19)
-#define SEQ_USE_PROXY_CUSTOM_FILE (1 << 21)
+#define STRIP_USE_PROXY_CUSTOM_DIR (1 << 19)
+#define STRIP_USE_PROXY_CUSTOM_FILE (1 << 21)
   if (strip->data && strip->data->proxy && !strip->data->proxy->storage) {
-    if (strip->flag & SEQ_USE_PROXY_CUSTOM_DIR) {
+    if (strip->flag & STRIP_USE_PROXY_CUSTOM_DIR) {
       strip->data->proxy->storage = SEQ_STORAGE_PROXY_CUSTOM_DIR;
     }
-    if (strip->flag & SEQ_USE_PROXY_CUSTOM_FILE) {
+    if (strip->flag & STRIP_USE_PROXY_CUSTOM_FILE) {
       strip->data->proxy->storage = SEQ_STORAGE_PROXY_CUSTOM_FILE;
     }
   }
-#undef SEQ_USE_PROXY_CUSTOM_DIR
-#undef SEQ_USE_PROXY_CUSTOM_FILE
+#undef STRIP_USE_PROXY_CUSTOM_DIR
+#undef STRIP_USE_PROXY_CUSTOM_FILE
   return true;
 }
 
-static bool seq_update_effectdata_cb(Strip *strip, void * /*user_data*/)
+static bool strip_update_effectdata_cb(Strip *strip, void * /*user_data*/)
 {
-  if (strip->type != SEQ_TYPE_TEXT) {
+  if (strip->type != STRIP_TYPE_TEXT) {
     return true;
   }
 
@@ -862,7 +862,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
       STRNCPY(srv->suffix, STEREO_RIGHT_SUFFIX);
 
       if (scene->ed) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_update_proxy_cb, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_update_proxy_cb, nullptr);
       }
     }
 
@@ -1135,7 +1135,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
 
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed) {
-        SEQ_for_each_callback(&scene->ed->seqbase, seq_update_effectdata_cb, nullptr);
+        SEQ_for_each_callback(&scene->ed->seqbase, strip_update_effectdata_cb, nullptr);
       }
     }
 
