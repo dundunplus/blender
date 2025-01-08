@@ -1179,7 +1179,9 @@ static void wm_operator_reports(bContext *C,
   }
 
   /* Refresh Info Editor with reports immediately, even if op returned #OPERATOR_CANCELLED. */
-  if ((retval & OPERATOR_CANCELLED) && !BLI_listbase_is_empty(&op->reports->list)) {
+  if ((retval & (OPERATOR_FINISHED | OPERATOR_CANCELLED)) &&
+      !BLI_listbase_is_empty(&op->reports->list))
+  {
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_INFO_REPORT, nullptr);
   }
   /* If the caller owns them, handle this. */
@@ -3411,7 +3413,7 @@ static eHandlerActionFlag wm_handlers_do_intern(bContext *C,
 
         /* Clear the tool-tip whenever a key binding is handled, without this tool-tips
          * are kept when a modal operators starts (annoying but otherwise harmless). */
-        if (action & WM_HANDLER_BREAK) {
+        if (action & WM_HANDLER_BREAK && !ISTIMER(event->type)) {
           /* Window may be gone after file read. */
           if (CTX_wm_window(C) != nullptr) {
             WM_tooltip_clear(C, CTX_wm_window(C));
