@@ -55,6 +55,7 @@
 #include "BKE_mask.h"
 #include "BKE_modifier.hh"
 #include "BKE_node.hh"
+#include "BKE_node_legacy_types.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "DNA_material_types.h"
@@ -349,7 +350,7 @@ static void do_versions_compositor_render_passes_storage(bNode *node)
 static void do_versions_compositor_render_passes(bNodeTree *ntree)
 {
   LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    if (node->type == CMP_NODE_R_LAYERS) {
+    if (node->type_legacy == CMP_NODE_R_LAYERS) {
       /* First we make sure existing sockets have proper names.
        * This is important because otherwise verification will
        * drop links from sockets which were renamed.
@@ -482,7 +483,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type == NTREE_COMPOSIT) {
         LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-          if (ELEM(node->type, CMP_NODE_COMPOSITE, CMP_NODE_OUTPUT_FILE)) {
+          if (ELEM(node->type_legacy, CMP_NODE_COMPOSITE, CMP_NODE_OUTPUT_FILE)) {
             node->id = nullptr;
           }
         }
@@ -779,7 +780,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
       FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
         if (ntree->type == NTREE_COMPOSIT) {
           LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-            if (ELEM(node->type, CMP_NODE_PLANETRACKDEFORM)) {
+            if (ELEM(node->type_legacy, CMP_NODE_PLANETRACKDEFORM)) {
               NodePlaneTrackDeformData *data = static_cast<NodePlaneTrackDeformData *>(
                   node->storage);
               data->flag = 0;
@@ -1461,7 +1462,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
         if (ntree->type == NTREE_COMPOSIT) {
           blender::bke::node_tree_set_type(nullptr, ntree);
           LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-            if (node->type == CMP_NODE_GLARE) {
+            if (node->type_legacy == CMP_NODE_GLARE) {
               NodeGlare *ndg = static_cast<NodeGlare *>(node->storage);
               switch (ndg->type) {
                 case CMP_NODE_GLARE_STREAKS:
@@ -1613,7 +1614,7 @@ void do_versions_after_linking_270(Main *bmain)
       if (ntree->type == NTREE_COMPOSIT) {
         blender::bke::node_tree_set_type(nullptr, ntree);
         LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-          if (node->type == CMP_NODE_HUE_SAT) {
+          if (node->type_legacy == CMP_NODE_HUE_SAT) {
             do_version_hue_sat_node(ntree, node);
           }
         }

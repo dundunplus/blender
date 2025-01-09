@@ -42,6 +42,7 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_image.hh"
 #include "BKE_node.hh"
+#include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_scene.hh"
@@ -632,6 +633,7 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 
 #  include "BKE_context.hh"
 #  include "BKE_idprop.hh"
+#  include "BKE_node_legacy_types.hh"
 
 #  include "BKE_global.hh"
 
@@ -803,13 +805,13 @@ static const char *get_legacy_node_type(const PointerRNA *ptr)
 {
   const bNode *node = static_cast<const bNode *>(ptr->data);
   const blender::bke::bNodeType *ntype = node->typeinfo;
-  if (ntype->type == NODE_CUSTOM) {
+  if (ntype->type_legacy == NODE_CUSTOM) {
     return "CUSTOM";
   }
-  if (ntype->type == NODE_CUSTOM_GROUP) {
+  if (ntype->type_legacy == NODE_CUSTOM_GROUP) {
     return "CUSTOM GROUP";
   }
-  if (ntype->type == NODE_UNDEFINED) {
+  if (ntype->type_legacy == NODE_UNDEFINED) {
     return "UNDEFINED";
   }
   if (ntype->enum_name_legacy) {
@@ -1152,7 +1154,7 @@ static void rna_NodeTree_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
   WM_main_add_notifier(NC_NODE | NA_EDITED, &ntree->id);
   WM_main_add_notifier(NC_SCENE | ND_NODES, &ntree->id);
 
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
 }
 
 static void rna_NodeTree_update_asset(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -1264,7 +1266,7 @@ static bNode *rna_NodeTree_node_new(bNodeTree *ntree,
   }
 
   Main *bmain = CTX_data_main(C);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 
   return node;
@@ -1290,7 +1292,7 @@ static void rna_NodeTree_node_remove(bNodeTree *ntree,
 
   RNA_POINTER_INVALIDATE(node_ptr);
 
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -1310,7 +1312,7 @@ static void rna_NodeTree_node_clear(bNodeTree *ntree, Main *bmain, ReportList *r
     node = next_node;
   }
 
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -1332,11 +1334,11 @@ static void rna_NodeTree_active_node_set(PointerRNA *ptr,
     blender::bke::node_set_active(ntree, node);
 
     /* Handle NODE_DO_OUTPUT as well. */
-    if (node->typeinfo->nclass == NODE_CLASS_OUTPUT && node->type != CMP_NODE_OUTPUT_FILE) {
+    if (node->typeinfo->nclass == NODE_CLASS_OUTPUT && node->type_legacy != CMP_NODE_OUTPUT_FILE) {
       /* If this node becomes the active output, the others of the same type can't be the active
        * output anymore. */
       LISTBASE_FOREACH (bNode *, other_node, &ntree->nodes) {
-        if (other_node->type == node->type) {
+        if (other_node->type_legacy == node->type_legacy) {
           other_node->flag &= ~NODE_DO_OUTPUT;
         }
       }
@@ -1432,7 +1434,7 @@ static bNodeLink *rna_NodeTree_link_new(bNodeTree *ntree,
     fromsock->flag &= ~SOCK_HIDDEN;
     tosock->flag &= ~SOCK_HIDDEN;
 
-    ED_node_tree_propagate_change(bmain, ntree);
+    ED_node_tree_propagate_change(*bmain, ntree);
     WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
   }
   return ret;
@@ -1457,7 +1459,7 @@ static void rna_NodeTree_link_remove(bNodeTree *ntree,
   blender::bke::node_remove_link(ntree, link);
   RNA_POINTER_INVALIDATE(link_ptr);
 
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -1476,7 +1478,7 @@ static void rna_NodeTree_link_clear(bNodeTree *ntree, Main *bmain, ReportList *r
 
     link = next_link;
   }
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -1629,7 +1631,7 @@ static void rna_NodeTree_interface_update(bNodeTree *ntree, bContext *C)
 {
   Main *bmain = CTX_data_main(C);
   ntree->tree_interface.tag_items_changed();
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
 }
 
 /* ******** NodeLink ******** */
@@ -1652,7 +1654,7 @@ static void rna_NodeLink_swap_multi_input_sort_id(
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_link_changed(ntree);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -1687,7 +1689,7 @@ std::optional<std::string> rna_Node_ImageUser_path(const PointerRNA *ptr)
   }
 
   for (bNode *node = static_cast<bNode *>(ntree->nodes.first); node; node = node->next) {
-    switch (node->type) {
+    switch (node->type_legacy) {
       case SH_NODE_TEX_ENVIRONMENT: {
         NodeTexEnvironment *data = static_cast<NodeTexEnvironment *>(node->storage);
         if (&data->iuser != ptr->data) {
@@ -2394,7 +2396,7 @@ static void rna_Node_parent_set(PointerRNA *ptr, PointerRNA value, ReportList * 
   /* XXX only Frame node allowed for now,
    * in the future should have a poll function or so to test possible attachment.
    */
-  if (parent->type != NODE_FRAME) {
+  if (parent->type_legacy != NODE_FRAME) {
     return;
   }
 
@@ -2421,7 +2423,7 @@ static void rna_Node_internal_links_begin(CollectionPropertyIterator *iter, Poin
  */
 static bool allow_identifier_lookup(const bNode &node)
 {
-  switch (node.type) {
+  switch (node.type_legacy) {
     case FN_NODE_RANDOM_VALUE:
     case SH_NODE_MIX:
     case FN_NODE_COMPARE:
@@ -2484,11 +2486,11 @@ static bool rna_Node_parent_poll(PointerRNA *ptr, PointerRNA value)
   /* XXX only Frame node allowed for now,
    * in the future should have a poll function or so to test possible attachment.
    */
-  if (parent->type != NODE_FRAME) {
+  if (parent->type_legacy != NODE_FRAME) {
     return false;
   }
 
-  if (node->type == NODE_FRAME && blender::bke::node_is_parent_and_child(node, parent)) {
+  if (node->type_legacy == NODE_FRAME && blender::bke::node_is_parent_and_child(node, parent)) {
     return false;
   }
 
@@ -2500,7 +2502,7 @@ void rna_Node_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(ptr->owner_id);
   bNode *node = static_cast<bNode *>(ptr->data);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
 }
 
 static void rna_NodeCrop_min_x_set(PointerRNA *ptr, int value)
@@ -2576,7 +2578,7 @@ void rna_Node_update_relations(Main *bmain, Scene *scene, PointerRNA *ptr)
 static void rna_Node_socket_value_update(ID *id, bNode * /*node*/, bContext *C)
 {
   BKE_ntree_update_tag_all(reinterpret_cast<bNodeTree *>(id));
-  ED_node_tree_propagate_change(CTX_data_main(C), reinterpret_cast<bNodeTree *>(id));
+  ED_node_tree_propagate_change(*CTX_data_main(C), reinterpret_cast<bNodeTree *>(id));
 }
 
 static void rna_Node_select_set(PointerRNA *ptr, bool value)
@@ -2651,7 +2653,7 @@ static int rna_Node_color_tag_get(PointerRNA *ptr)
 
 static bool allow_changing_sockets(bNode *node)
 {
-  return ELEM(node->type, NODE_CUSTOM, SH_NODE_SCRIPT, CMP_NODE_OUTPUT_FILE);
+  return ELEM(node->type_legacy, NODE_CUSTOM, SH_NODE_SCRIPT, CMP_NODE_OUTPUT_FILE);
 }
 
 static bNodeSocket *rna_Node_inputs_new(ID *id,
@@ -2682,7 +2684,7 @@ static bNodeSocket *rna_Node_inputs_new(ID *id,
     if (use_multi_input) {
       sock->flag |= SOCK_MULTI_INPUT;
     }
-    ED_node_tree_propagate_change(bmain, ntree);
+    ED_node_tree_propagate_change(*bmain, ntree);
     WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
   }
 
@@ -2720,7 +2722,7 @@ static bNodeSocket *rna_Node_outputs_new(ID *id,
     BKE_report(reports, RPT_ERROR, "Unable to create socket");
   }
   else {
-    ED_node_tree_propagate_change(bmain, ntree);
+    ED_node_tree_propagate_change(*bmain, ntree);
     WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
   }
 
@@ -2743,7 +2745,7 @@ static void rna_Node_socket_remove(
   else {
     blender::bke::node_remove_socket(ntree, node, sock);
 
-    ED_node_tree_propagate_change(bmain, ntree);
+    ED_node_tree_propagate_change(*bmain, ntree);
     WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
   }
 }
@@ -2763,7 +2765,7 @@ static void rna_Node_inputs_clear(ID *id, bNode *node, Main *bmain, ReportList *
     blender::bke::node_remove_socket(ntree, node, sock);
   }
 
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -2782,7 +2784,7 @@ static void rna_Node_outputs_clear(ID *id, bNode *node, Main *bmain, ReportList 
     blender::bke::node_remove_socket(ntree, node, sock);
   }
 
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -2821,7 +2823,7 @@ static void rna_Node_inputs_move(
   }
 
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -2860,7 +2862,7 @@ static void rna_Node_outputs_move(
   }
 
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -2986,7 +2988,7 @@ static void rna_NodeInternal_update(ID *id, bNode *node, Main *bmain)
 {
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
 }
 
 static void rna_NodeInternal_draw_buttons(ID *id, bNode *node, bContext *C, uiLayout *layout)
@@ -3046,7 +3048,7 @@ static StructRNA *rna_GeometryNodeCustomGroup_register(Main *bmain,
     return nullptr;
   }
 
-  nt->type = NODE_CUSTOM_GROUP;
+  nt->type_legacy = NODE_CUSTOM_GROUP;
 
   register_node_type_geo_custom_group(nt);
 
@@ -3074,7 +3076,7 @@ static StructRNA *rna_ShaderNodeCustomGroup_register(Main *bmain,
     return nullptr;
   }
 
-  nt->type = NODE_CUSTOM_GROUP;
+  nt->type_legacy = NODE_CUSTOM_GROUP;
 
   register_node_type_sh_custom_group(nt);
 
@@ -3099,7 +3101,7 @@ static StructRNA *rna_CompositorNodeCustomGroup_register(Main *bmain,
     return nullptr;
   }
 
-  nt->type = NODE_CUSTOM_GROUP;
+  nt->type_legacy = NODE_CUSTOM_GROUP;
 
   register_node_type_cmp_custom_group(nt);
 
@@ -3121,7 +3123,7 @@ static void rna_Node_tex_image_update(Main *bmain, Scene * /*scene*/, PointerRNA
   bNode *node = static_cast<bNode *>(ptr->data);
 
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_IMAGE, nullptr);
 }
 
@@ -3131,7 +3133,7 @@ static void rna_NodeGroup_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr
   bNode *node = static_cast<bNode *>(ptr->data);
 
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   DEG_relations_tag_update(bmain);
 }
 
@@ -3247,7 +3249,9 @@ static void rna_Node_image_layer_update(Main *bmain, Scene *scene, PointerRNA *p
   Image *ima = reinterpret_cast<Image *>(node->id);
   ImageUser *iuser = static_cast<ImageUser *>(node->storage);
 
-  if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE) {
+  if (node->type_legacy == CMP_NODE_CRYPTOMATTE &&
+      node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE)
+  {
     return;
   }
 
@@ -3318,7 +3322,9 @@ static const EnumPropertyItem *rna_Node_image_layer_itemf(bContext * /*C*/,
   const EnumPropertyItem *item = nullptr;
   RenderLayer *rl;
 
-  if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE) {
+  if (node->type_legacy == CMP_NODE_CRYPTOMATTE &&
+      node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE)
+  {
     return rna_enum_dummy_NULL_items;
   }
 
@@ -3340,7 +3346,9 @@ static bool rna_Node_image_has_layers_get(PointerRNA *ptr)
   bNode *node = static_cast<bNode *>(ptr->data);
   Image *ima = reinterpret_cast<Image *>(node->id);
 
-  if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE) {
+  if (node->type_legacy == CMP_NODE_CRYPTOMATTE &&
+      node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE)
+  {
     return false;
   }
 
@@ -3356,7 +3364,9 @@ static bool rna_Node_image_has_views_get(PointerRNA *ptr)
   bNode *node = static_cast<bNode *>(ptr->data);
   Image *ima = reinterpret_cast<Image *>(node->id);
 
-  if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE) {
+  if (node->type_legacy == CMP_NODE_CRYPTOMATTE &&
+      node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE)
+  {
     return false;
   }
 
@@ -3406,7 +3416,9 @@ static const EnumPropertyItem *rna_Node_image_view_itemf(bContext * /*C*/,
   const EnumPropertyItem *item = nullptr;
   RenderView *rv;
 
-  if (node->type == CMP_NODE_CRYPTOMATTE && node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE) {
+  if (node->type_legacy == CMP_NODE_CRYPTOMATTE &&
+      node->custom1 != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE)
+  {
     return rna_enum_dummy_NULL_items;
   }
 
@@ -3894,7 +3906,8 @@ static PointerRNA rna_Node_paired_output_get(PointerRNA *ptr)
 {
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(ptr->owner_id);
   bNode *node = static_cast<bNode *>(ptr->data);
-  const blender::bke::bNodeZoneType &zone_type = *blender::bke::zone_type_by_node_type(node->type);
+  const blender::bke::bNodeZoneType &zone_type = *blender::bke::zone_type_by_node_type(
+      node->type_legacy);
   bNode *output_node = zone_type.get_corresponding_output(*ntree, *node);
   PointerRNA r_ptr = RNA_pointer_create(&ntree->id, &RNA_Node, output_node);
   return r_ptr;
@@ -3904,8 +3917,9 @@ static bool rna_Node_pair_with_output(
     ID *id, bNode *node, bContext *C, ReportList *reports, bNode *output_node)
 {
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
-  const blender::bke::bNodeZoneType &zone_type = *blender::bke::zone_type_by_node_type(node->type);
-  if (output_node->type != zone_type.output_type) {
+  const blender::bke::bNodeZoneType &zone_type = *blender::bke::zone_type_by_node_type(
+      node->type_legacy);
+  if (output_node->type_legacy != zone_type.output_type) {
     BKE_reportf(
         reports,
         RPT_ERROR,
@@ -3930,7 +3944,7 @@ static bool rna_Node_pair_with_output(
   output_node_id = output_node->identifier;
 
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(CTX_data_main(C), ntree);
+  ED_node_tree_propagate_change(*CTX_data_main(C), ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
   return true;
 }
@@ -3962,7 +3976,7 @@ static void rna_Node_ItemArray_remove(ID *id,
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -3973,7 +3987,7 @@ template<typename Accessor> static void rna_Node_ItemArray_clear(ID *id, bNode *
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -3990,7 +4004,7 @@ static void rna_Node_ItemArray_move(
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 }
 
@@ -4031,7 +4045,7 @@ static void rna_Node_ItemArray_item_update(Main *bmain, Scene * /*scene*/, Point
   BLI_assert(node != nullptr);
 
   BKE_ntree_update_tag_node_property(&ntree, node);
-  ED_node_tree_propagate_change(bmain, &ntree);
+  ED_node_tree_propagate_change(*bmain, &ntree);
 }
 
 template<typename Accessor>
@@ -4082,7 +4096,7 @@ typename Accessor::ItemT *rna_Node_ItemArray_new_with_socket_and_name(
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 
   return new_item;
@@ -4095,7 +4109,7 @@ static IndexSwitchItem *rna_NodeIndexSwitchItems_new(ID *id, bNode *node, Main *
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 
   return new_item;
@@ -4189,7 +4203,7 @@ static bNodeSocket *rna_NodeOutputFile_slots_new(
 
   sock = ntreeCompositOutputFileAddSocket(ntree, node, name, im_format);
 
-  ED_node_tree_propagate_change(CTX_data_main(C), ntree);
+  ED_node_tree_propagate_change(*CTX_data_main(C), ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 
   return sock;
@@ -4305,7 +4319,7 @@ static void rna_ShaderNodeScript_update(Main *bmain, Scene *scene, PointerRNA *p
   }
 
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
 }
 
 static void rna_ShaderNode_socket_update(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -4331,7 +4345,7 @@ static void rna_ShaderNode_is_active_output_set(PointerRNA *ptr, bool value)
     /* If this node becomes the active output, the others of the same type can't be the active
      * output anymore. */
     LISTBASE_FOREACH (bNode *, other_node, &ntree->nodes) {
-      if (other_node->type == node->type) {
+      if (other_node->type_legacy == node->type_legacy) {
         other_node->flag &= ~NODE_DO_OUTPUT;
       }
     }
@@ -4349,7 +4363,7 @@ static void rna_GroupOutput_is_active_output_set(PointerRNA *ptr, bool value)
   if (value) {
     /* Make sure that no other group output is active at the same time. */
     LISTBASE_FOREACH (bNode *, other_node, &ntree->nodes) {
-      if (other_node->type == NODE_GROUP_OUTPUT) {
+      if (other_node->type_legacy == NODE_GROUP_OUTPUT) {
         other_node->flag &= ~NODE_DO_OUTPUT;
       }
     }
@@ -4601,7 +4615,7 @@ static NodeEnumItem *rna_NodeMenuSwitchItems_new(ID *id,
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
   BKE_ntree_update_tag_node_property(ntree, node);
-  ED_node_tree_propagate_change(bmain, ntree);
+  ED_node_tree_propagate_change(*bmain, ntree);
   WM_main_add_notifier(NC_NODE | NA_EDITED, ntree);
 
   return new_item;

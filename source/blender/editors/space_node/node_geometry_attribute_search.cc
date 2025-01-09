@@ -16,6 +16,7 @@
 #include "DNA_space_types.h"
 
 #include "BKE_context.hh"
+#include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
 #include "BKE_node_tree_update.hh"
 #include "BKE_node_tree_zones.hh"
@@ -80,7 +81,7 @@ static Vector<const GeometryAttributeInfo *> get_attribute_info_from_context(
   Set<StringRef> names;
 
   /* For the attribute input node, collect attribute information from all nodes in the group. */
-  if (node->type == GEO_NODE_INPUT_NAMED_ATTRIBUTE) {
+  if (node->type_legacy == GEO_NODE_INPUT_NAMED_ATTRIBUTE) {
     Vector<const GeometryAttributeInfo *> attributes;
     for (GeoTreeLog *tree_log : log_by_zone.values()) {
       tree_log->ensure_socket_values();
@@ -203,7 +204,7 @@ static void attribute_search_exec_fn(bContext *C, void *data_v, void *item_v)
   }
 
   /* For the attribute input node, also adjust the type and links connected to the output. */
-  if (node->type == GEO_NODE_INPUT_NAMED_ATTRIBUTE && item->data_type.has_value()) {
+  if (node->type_legacy == GEO_NODE_INPUT_NAMED_ATTRIBUTE && item->data_type.has_value()) {
     NodeGeometryInputNamedAttribute &storage = *static_cast<NodeGeometryInputNamedAttribute *>(
         node->storage);
     const eCustomDataType new_type = data_type_in_attribute_input_node(*item->data_type);
@@ -212,7 +213,7 @@ static void attribute_search_exec_fn(bContext *C, void *data_v, void *item_v)
       /* Make the output socket with the new type on the attribute input node active. */
       nodes::update_node_declaration_and_sockets(*node_tree, *node);
       BKE_ntree_update_tag_node_property(node_tree, node);
-      ED_node_tree_propagate_change(CTX_data_main(C), node_tree);
+      ED_node_tree_propagate_change(*CTX_data_main(C), node_tree);
     }
   }
 

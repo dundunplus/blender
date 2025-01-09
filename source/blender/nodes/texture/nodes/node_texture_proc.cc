@@ -6,7 +6,7 @@
  * \ingroup texnodes
  */
 
-#include "BKE_material.h"
+#include "BKE_material.hh"
 #include "BKE_texture.h"
 #include "BLI_math_vector.h"
 #include "DNA_material_types.h"
@@ -243,7 +243,7 @@ static void init(bNodeTree * /*ntree*/, bNode *node)
   node->storage = tex;
 
   BKE_texture_default(tex);
-  tex->type = node->type - TEX_NODE_PROC;
+  tex->type = node->type_legacy - TEX_NODE_PROC;
 
   if (tex->type == TEX_WOOD) {
     tex->stype = TEX_BANDNOISE;
