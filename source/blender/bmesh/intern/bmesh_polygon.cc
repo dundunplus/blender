@@ -384,6 +384,7 @@ void BM_face_calc_tangent_edge_pair(const BMFace *f, float r_tangent[3])
     if (len_squared_v3(r_tangent) < len_squared_v3(vec)) {
       copy_v3_v3(r_tangent, vec);
     }
+    normalize_v3(r_tangent);
   }
   else {
     /* For ngons use two longest disconnected edges */
@@ -487,11 +488,11 @@ void BM_face_calc_tangent_auto(const BMFace *f, float r_tangent[3])
   }
   else if (f->len == 4) {
     /* longest edge pair of a quad */
-    BM_face_calc_tangent_edge_pair((BMFace *)f, r_tangent);
+    BM_face_calc_tangent_edge_pair(f, r_tangent);
   }
   else {
     /* longest edge of an ngon */
-    BM_face_calc_tangent_edge((BMFace *)f, r_tangent);
+    BM_face_calc_tangent_edge(f, r_tangent);
   }
 }
 
