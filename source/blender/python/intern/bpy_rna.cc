@@ -8759,6 +8759,12 @@ void BPY_rna_types_finalize_external_types(PyObject *submodule)
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name RNA Struct Access: #StructRNA
+ *
+ * Utilities for accessing & creating #StructRNA on demand.
+ * \{ */
+
 StructRNA *pyrna_struct_as_srna(PyObject *self, const bool parent, const char *error_prefix)
 {
   BPy_StructRNA *py_srna = nullptr;
@@ -8874,6 +8880,12 @@ StructRNA *srna_from_self(PyObject *self, const char *error_prefix)
    * After this any errors will be raised in the script. */
   return pyrna_struct_as_srna(self, false, error_prefix);
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name RNA Class Registration: Deferred
+ * \{ */
 
 static int deferred_register_prop(StructRNA *srna, PyObject *key, PyObject *item)
 {
@@ -9097,8 +9109,6 @@ int pyrna_deferred_register_class(StructRNA *srna, PyTypeObject *py_class)
   return pyrna_deferred_register_class_recursive(srna, py_class);
 }
 
-/*-------------------- Type Registration ------------------------*/
-
 static int rna_function_register_arg_count(FunctionRNA *func, int *min_count)
 {
   const ListBase *lb = RNA_function_defined_parameters(func);
@@ -9127,6 +9137,14 @@ static int rna_function_register_arg_count(FunctionRNA *func, int *min_count)
   }
   return count;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name RNA Class Registration: Utilities
+ *
+ * Mainly helpers for `register_class` & `unregister_class`.
+ * \{ */
 
 static int bpy_class_validate_recursive(PointerRNA *dummy_ptr,
                                         StructRNA *srna,
@@ -9716,6 +9734,75 @@ static void bpy_class_free(void *pyob_ptr)
   PyGILState_Release(gilstate);
 }
 
+/**
+ * \return the first base-class which is already registered or null.
+ */
+static PyTypeObject *bpy_class_check_any_bases_registered(PyTypeObject *cls)
+{
+  if (PyObject *bases = cls->tp_bases) {
+    const int bases_num = PyTuple_GET_SIZE(bases);
+    for (int i = 0; i < bases_num; i++) {
+      PyTypeObject *base_cls = (PyTypeObject *)PyTuple_GET_ITEM(bases, i);
+      BLI_assert(PyType_Check(base_cls));
+      if (base_cls->tp_dict) {
+        if (BPy_StructRNA *py_srna = (BPy_StructRNA *)PyDict_GetItem(base_cls->tp_dict,
+                                                                     bpy_intern_str_bl_rna))
+        {
+          if (const StructRNA *srna = static_cast<const StructRNA *>(py_srna->ptr->data)) {
+            if (srna->flag & STRUCT_RUNTIME) {
+              return base_cls;
+            }
+          }
+        }
+      }
+
+      if (PyTypeObject *base_cls_test = bpy_class_check_any_bases_registered(base_cls)) {
+        return base_cls_test;
+      }
+    }
+  }
+  return nullptr;
+}
+
+/**
+ * \return the first sub-class which is already registered or null.
+ */
+static PyTypeObject *bpy_class_check_any_subclasses_registered(PyTypeObject *cls)
+{
+  PyObject *subclasses = static_cast<PyObject *>(cls->tp_subclasses);
+  if (subclasses) {
+    BLI_assert(PyDict_CheckExact(subclasses));
+    PyObject *key = nullptr;
+    Py_ssize_t pos = 0;
+    PyObject *value = nullptr;
+    while (PyDict_Next(subclasses, &pos, &key, &value)) {
+      BLI_assert(PyWeakref_CheckRef(value));
+      PyObject *value_ref = PyWeakref_GET_OBJECT(value);
+      if (value_ref == Py_None) {
+        continue;
+      }
+
+      PyTypeObject *sub_cls = reinterpret_cast<PyTypeObject *>(value_ref);
+      if (sub_cls->tp_dict) {
+        if (BPy_StructRNA *py_srna = reinterpret_cast<BPy_StructRNA *>(
+                PyDict_GetItem(sub_cls->tp_dict, bpy_intern_str_bl_rna)))
+        {
+          if (const StructRNA *srna = static_cast<const StructRNA *>(py_srna->ptr->data)) {
+            if (srna->flag & STRUCT_RUNTIME) {
+              return sub_cls;
+            }
+          }
+        }
+      }
+
+      if (PyTypeObject *sub_cls_test = bpy_class_check_any_subclasses_registered(sub_cls)) {
+        return sub_cls_test;
+      }
+    }
+  }
+  return nullptr;
+}
+
 void pyrna_alloc_types()
 {
   /* NOTE: This isn't essential to run on startup, since sub-types will lazy initialize.
@@ -9760,6 +9847,10 @@ void BPY_free_srna_pytype(StructRNA *srna)
     RNA_struct_py_type_set(srna, nullptr);
   }
 }
+
+/* -------------------------------------------------------------------- */
+/** \name RNA Class Register Method
+ * \{ */
 
 #define BPY_TYPEDEF_REGISTERABLE_DOC \
   "type[" \
@@ -9820,24 +9911,52 @@ static PyObject *pyrna_register_class(PyObject * /*self*/, PyObject *py_class)
 
   if (!PyType_Check(py_class)) {
     PyErr_Format(PyExc_ValueError,
-                 "register_class(...): "
-                 "expected a class argument, not '%.200s'",
+                 "%s expected a class argument, not '%.200s'",
+                 error_prefix,
                  Py_TYPE(py_class)->tp_name);
     return nullptr;
   }
 
   if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, bpy_intern_str_bl_rna)) {
     PyErr_Format(PyExc_ValueError,
-                 "register_class(...): "
-                 "already registered as a subclass '%.200s'",
+                 "%s already registered as a subclass '%.200s'",
+                 error_prefix,
                  ((PyTypeObject *)py_class)->tp_name);
     return nullptr;
   }
 
+  if (G.debug & G_DEBUG_PYTHON) {
+    /* Warn if a class being registered uses an already registered base-class or sub-class,
+     * both checks are needed otherwise the order of registering could suppress the warning.
+     *
+     * NOTE(@ideasman42) This is mainly to ensure good practice.
+     * Mix-in classes are preferred when sharing functionality is needed,
+     * otherwise changes to an Operator for example could unintentionally
+     * break another operator that sub-classes it. */
+    if (PyTypeObject *base_cls_test = bpy_class_check_any_bases_registered(
+            (PyTypeObject *)py_class))
+    {
+      fprintf(stderr,
+              "%s warning, %.200s: references and already registered base-class %.200s\n",
+              error_prefix,
+              ((PyTypeObject *)py_class)->tp_name,
+              base_cls_test->tp_name);
+    }
+    if (PyTypeObject *sub_cls_test = bpy_class_check_any_subclasses_registered(
+            (PyTypeObject *)py_class))
+    {
+      fprintf(stderr,
+              "%s warning, %.200s: references and already registered sub-class %.200s\n",
+              error_prefix,
+              ((PyTypeObject *)py_class)->tp_name,
+              sub_cls_test->tp_name);
+    }
+  }
+
   if (!pyrna_write_check()) {
     PyErr_Format(PyExc_RuntimeError,
-                 "register_class(...): "
-                 "can't run in readonly state '%.200s'",
+                 "%s can't run in readonly state '%.200s'",
+                 error_prefix,
                  ((PyTypeObject *)py_class)->tp_name);
     return nullptr;
   }
@@ -9852,8 +9971,8 @@ static PyObject *pyrna_register_class(PyObject * /*self*/, PyObject *py_class)
 #if 0
   if (RNA_struct_py_type_get(srna)) {
     PyErr_Format(PyExc_ValueError,
-                 "register_class(...): %.200s's parent class %.200s is already registered, this "
-                 "is not allowed",
+                 "%s %.200s's parent class %.200s is already registered, this is not allowed",
+                 error_prefix,
                  ((PyTypeObject *)py_class)->tp_name,
                  RNA_struct_identifier(srna));
     return nullptr;
@@ -9865,8 +9984,9 @@ static PyObject *pyrna_register_class(PyObject * /*self*/, PyObject *py_class)
 
   if (!reg) {
     PyErr_Format(PyExc_ValueError,
-                 "register_class(...): expected a subclass of a registerable "
+                 "%s expected a subclass of a registerable "
                  "RNA type (%.200s does not support registration)",
+                 error_prefix,
                  RNA_struct_identifier(srna));
     return nullptr;
   }
@@ -9969,6 +10089,12 @@ static int pyrna_srna_contains_pointer_prop_srna(StructRNA *srna_props,
   return 0;
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name RNA Class Unregister Method
+ * \{ */
+
 PyDoc_STRVAR(
     /* Wrap. */
     pyrna_unregister_class_doc,
@@ -9998,33 +10124,41 @@ static PyObject *pyrna_unregister_class(PyObject * /*self*/, PyObject *py_class)
   StructUnregisterFunc unreg;
   StructRNA *srna;
   PyObject *py_cls_meth;
+  const char *error_prefix = "unregister_class(...):";
 
   if (!PyType_Check(py_class)) {
     PyErr_Format(PyExc_ValueError,
-                 "register_class(...): "
-                 "expected a class argument, not '%.200s'",
+                 "%s expected a class argument, not '%.200s'",
+                 error_prefix,
                  Py_TYPE(py_class)->tp_name);
     return nullptr;
   }
 
 #if 0
   if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, bpy_intern_str_bl_rna) == nullptr) {
-    PWM_cursor_wait(false);
-    PyErr_SetString(PyExc_ValueError, "unregister_class(): not a registered as a subclass");
+    PyErr_Format(PyExc_ValueError, "%s not a registered as a subclass", error_prefix);
     return nullptr;
   }
 #endif
 
   if (!pyrna_write_check()) {
     PyErr_Format(PyExc_RuntimeError,
-                 "unregister_class(...): "
-                 "can't run in readonly state '%.200s'",
+                 "%s can't run in readonly state '%.200s'",
+                 error_prefix,
                  ((PyTypeObject *)py_class)->tp_name);
     return nullptr;
   }
 
-  srna = pyrna_struct_as_srna(py_class, false, "unregister_class(...):");
+  srna = pyrna_struct_as_srna(py_class, false, error_prefix);
   if (srna == nullptr) {
+    return nullptr;
+  }
+
+  if ((srna->flag & STRUCT_RUNTIME) == 0) {
+    PyErr_Format(PyExc_RuntimeError,
+                 "%s can't unregister a built-in class '%.200s'",
+                 error_prefix,
+                 ((PyTypeObject *)py_class)->tp_name);
     return nullptr;
   }
 
@@ -10032,10 +10166,11 @@ static PyObject *pyrna_unregister_class(PyObject * /*self*/, PyObject *py_class)
   unreg = RNA_struct_unregister(srna);
 
   if (!unreg) {
-    PyErr_SetString(
-        PyExc_ValueError,
-        "unregister_class(...): "
-        "expected a Type subclassed from a registerable RNA type (no unregister supported)");
+    PyErr_Format(PyExc_ValueError,
+                 "%s expected type '%.200s' subclassed from a registerable RNA type "
+                 "(unregister not supported)",
+                 error_prefix,
+                 ((PyTypeObject *)py_class)->tp_name);
     return nullptr;
   }
 
@@ -10079,8 +10214,8 @@ static PyObject *pyrna_unregister_class(PyObject * /*self*/, PyObject *py_class)
 
     if (prop_identifier) {
       PyErr_Format(PyExc_RuntimeError,
-                   "unregister_class(...): can't unregister %s because %s.%s pointer property is "
-                   "using this",
+                   "%s can't unregister %s because %s.%s pointer property is using this",
+                   error_prefix,
                    RNA_struct_identifier(srna),
                    RNA_struct_identifier(srna_iter),
                    prop_identifier);
@@ -10103,6 +10238,12 @@ static PyObject *pyrna_unregister_class(PyObject * /*self*/, PyObject *py_class)
 
   Py_RETURN_NONE;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name RNA Support for extended via the C-API
+ * \{ */
 
 void pyrna_struct_type_extend_capi(StructRNA *srna, PyMethodDef *method, PyGetSetDef *getset)
 {
@@ -10144,7 +10285,13 @@ void pyrna_struct_type_extend_capi(StructRNA *srna, PyMethodDef *method, PyGetSe
   Py_DECREF(type);
 }
 
-/* Access to 'owner_id' internal global. */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Exported Methods
+ * \{ */
+
+/* Access to the 'owner_id' so work-spaces can filter by add-on. */
 
 static PyObject *pyrna_bl_owner_id_get(PyObject * /*self*/)
 {
@@ -10196,3 +10343,5 @@ PyMethodDef meth_bpy_owner_id_set = {
 #if (defined(__GNUC__) && !defined(__clang__))
 #  pragma GCC diagnostic pop
 #endif
+
+/** \} */
