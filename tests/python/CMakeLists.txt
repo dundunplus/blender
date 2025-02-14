@@ -822,6 +822,14 @@ else()
     )
   endforeach()
 
+  add_blender_test(
+    compositor_cpu_file_output
+    --python ${CMAKE_CURRENT_LIST_DIR}/compositor_file_output_tests.py 
+    --
+    --testdir "${TEST_SRC_DIR}/compositor/file_output/"
+    --outdir "${TEST_OUT_DIR}/compositor_cpu/file_output"
+  )
+
 endif()
 
 if(WITH_GPU_COMPOSITOR_TESTS)
@@ -851,10 +859,17 @@ if(WITH_GPU_COMPOSITOR_TESTS)
           ${CMAKE_CURRENT_LIST_DIR}/compositor_render_tests.py
           --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
           --outdir "${TEST_OUT_DIR}/compositor_opengl"
-          --gpu
           --gpu-backend opengl
         )
       endforeach()
+      add_blender_test(
+        compositor_opengl_file_output
+        --python ${CMAKE_CURRENT_LIST_DIR}/compositor_file_output_tests.py 
+        --
+        --testdir "${TEST_SRC_DIR}/compositor/file_output/"
+        --outdir "${TEST_OUT_DIR}/compositor_opengl/file_output"
+        --gpu-backend opengl
+      )
     endif()
     if(WITH_METAL_BACKEND)
       foreach(comp_test ${compositor_tests})
@@ -863,10 +878,17 @@ if(WITH_GPU_COMPOSITOR_TESTS)
           ${CMAKE_CURRENT_LIST_DIR}/compositor_render_tests.py
           --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
           --outdir "${TEST_OUT_DIR}/compositor_metal"
-          --gpu
           --gpu-backend metal
         )
       endforeach()
+      add_blender_test(
+        compositor_metal_file_output
+        --python ${CMAKE_CURRENT_LIST_DIR}/compositor_file_output_tests.py 
+        --
+        --testdir "${TEST_SRC_DIR}/compositor/file_output/"
+        --outdir "${TEST_OUT_DIR}/compositor_metal/file_output"
+        --gpu-backend metal
+      )
     endif()
     if(WITH_VULKAN_BACKEND)
       foreach(comp_test ${compositor_tests})
@@ -875,10 +897,17 @@ if(WITH_GPU_COMPOSITOR_TESTS)
           ${CMAKE_CURRENT_LIST_DIR}/compositor_render_tests.py
           --testdir "${TEST_SRC_DIR}/compositor/${comp_test}"
           --outdir "${TEST_OUT_DIR}/compositor_vulkan"
-          --gpu
           --gpu-backend vulkan
         )
       endforeach()
+      add_blender_test(
+        compositor_vulkan_file_output
+        --python ${CMAKE_CURRENT_LIST_DIR}/compositor_file_output_tests.py 
+        --
+        --testdir "${TEST_SRC_DIR}/compositor/file_output/"
+        --outdir "${TEST_OUT_DIR}/compositor_vulkan/file_output"
+        --gpu-backend vulkan
+      )
     endif()
   endif()
 endif()
