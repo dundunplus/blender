@@ -234,7 +234,7 @@ struct uiBut {
   uiButHandleHoldFunc hold_func = nullptr;
   void *hold_argN = nullptr;
 
-  const char *tip = nullptr;
+  blender::StringRef tip;
   uiButToolTipFunc tip_func = nullptr;
   void *tip_arg = nullptr;
   uiFreeArgFunc tip_arg_free = nullptr;
@@ -1059,7 +1059,7 @@ uiPopupBlockHandle *ui_popover_panel_create(bContext *C,
  */
 void ui_pie_menu_level_create(uiBlock *block,
                               wmOperatorType *ot,
-                              const blender::StringRefNull propname,
+                              blender::StringRefNull propname,
                               IDProperty *properties,
                               const EnumPropertyItem *items,
                               int totitem,
