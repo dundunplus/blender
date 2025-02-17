@@ -9,23 +9,32 @@
 #pragma once
 
 #include "BLI_index_mask_fwd.hh"
+#include "BLI_math_matrix_types.hh"
+#include "BLI_math_vector_types.hh"
+#include "BLI_vector_set.hh"
 
 #include "DNA_customdata_types.h"
 
+struct ARegion;
 struct bContext;
 struct PointCloud;
+struct rcti;
 struct wmKeyConfig;
+struct wmOperatorType;
 namespace blender::bke {
 struct GSpanAttributeWriter;
 }  // namespace blender::bke
 namespace blender {
 class GMutableSpan;
 }  // namespace blender
+enum eSelectOp : int8_t;
 
 namespace blender::ed::point_cloud {
 
 void operatortypes_point_cloud();
 void keymap_point_cloud(wmKeyConfig *keyconf);
+
+VectorSet<PointCloud *> get_unique_editable_point_clouds(const bContext &C);
 
 /* -------------------------------------------------------------------- */
 /** \name Selection
@@ -62,6 +71,25 @@ void select_all(PointCloud &point_cloud, int action);
 bke::GSpanAttributeWriter ensure_selection_attribute(PointCloud &point_cloud,
                                                      eCustomDataType create_type);
 
+bool select_box(PointCloud &point_cloud,
+                const ARegion &region,
+                const float4x4 &projection,
+                const rcti &rect,
+                const eSelectOp sel_op);
+
+bool select_lasso(PointCloud &point_cloud,
+                  const ARegion &region,
+                  const float4x4 &projection,
+                  const Span<int2> lasso_coords,
+                  const eSelectOp sel_op);
+
+bool select_circle(PointCloud &point_cloud,
+                   const ARegion &region,
+                   const float4x4 &projection,
+                   const int2 coord,
+                   const float radius,
+                   const eSelectOp sel_op);
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -69,6 +97,14 @@ bke::GSpanAttributeWriter ensure_selection_attribute(PointCloud &point_cloud,
  * \{ */
 
 bool editable_point_cloud_in_edit_mode_poll(bContext *C);
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Operators
+ * \{ */
+
+void POINT_CLOUD_OT_attribute_set(wmOperatorType *ot);
 
 /** \} */
 
