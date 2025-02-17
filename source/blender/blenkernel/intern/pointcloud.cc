@@ -85,6 +85,7 @@ static void pointcloud_copy_data(Main * /*bmain*/,
 
   pointcloud_dst->runtime = new blender::bke::PointCloudRuntime();
   pointcloud_dst->runtime->bounds_cache = pointcloud_src->runtime->bounds_cache;
+  pointcloud_dst->runtime->bvh_cache = pointcloud_src->runtime->bvh_cache;
   if (pointcloud_src->runtime->bake_materials) {
     pointcloud_dst->runtime->bake_materials =
         std::make_unique<blender::bke::bake::BakeMaterialsList>(
@@ -99,7 +100,7 @@ static void pointcloud_free_data(ID *id)
   PointCloud *pointcloud = (PointCloud *)id;
   BKE_animdata_free(&pointcloud->id, false);
   BKE_pointcloud_batch_cache_free(pointcloud);
-  CustomData_free(&pointcloud->pdata, pointcloud->totpoint);
+  CustomData_free(&pointcloud->pdata);
   MEM_SAFE_FREE(pointcloud->mat);
   delete pointcloud->runtime;
 }
@@ -305,7 +306,7 @@ void BKE_pointcloud_nomain_to_pointcloud(PointCloud *pointcloud_src, PointCloud 
 {
   BLI_assert(pointcloud_src->id.tag & ID_TAG_NO_MAIN);
 
-  CustomData_free(&pointcloud_dst->pdata, pointcloud_dst->totpoint);
+  CustomData_free(&pointcloud_dst->pdata);
 
   const int totpoint = pointcloud_dst->totpoint = pointcloud_src->totpoint;
   CustomData_init_from(&pointcloud_src->pdata, &pointcloud_dst->pdata, CD_MASK_ALL, totpoint);
@@ -457,6 +458,7 @@ void BKE_pointcloud_data_update(Depsgraph *depsgraph, Scene *scene, Object *obje
 void PointCloud::tag_positions_changed()
 {
   this->runtime->bounds_cache.tag_dirty();
+  this->runtime->bvh_cache.tag_dirty();
 }
 
 void PointCloud::tag_radii_changed()
@@ -489,7 +491,7 @@ PointCloud *pointcloud_new_no_attributes(int totpoint)
 {
   PointCloud *pointcloud = BKE_pointcloud_new_nomain(0);
   pointcloud->totpoint = totpoint;
-  CustomData_free_layer_named(&pointcloud->pdata, "position", 0);
+  CustomData_free_layer_named(&pointcloud->pdata, "position");
   return pointcloud;
 }
 
