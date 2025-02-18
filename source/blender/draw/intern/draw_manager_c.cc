@@ -352,9 +352,9 @@ void DRW_viewport_data_free(DRWData *drw_data)
   for (int i = 0; i < 2; i++) {
     DRW_view_data_free(drw_data->view_data[i]);
   }
-  DRW_volume_ubos_pool_free(drw_data->volume_grids_ubos);
-  DRW_curves_ubos_pool_free(drw_data->curves_ubos);
-  DRW_curves_refine_pass_free(drw_data->curves_refine);
+  DRW_volume_module_free(drw_data->volume_module);
+  DRW_point_cloud_module_free(drw_data->point_cloud_module);
+  DRW_curves_module_free(drw_data->curves_module);
   delete drw_data->default_view;
   MEM_freeN(drw_data);
 }
@@ -1488,11 +1488,8 @@ void DRW_draw_render_loop_ex(Depsgraph *depsgraph,
   drw_engines_enable(view_layer, engine_type, gpencil_engine_needed);
   drw_engines_data_validate();
 
-  /* Update UBO's */
-  DRW_globals_update();
-
   drw_debug_init();
-  DRW_pointcloud_init();
+  DRW_point_cloud_init(DST.vmempool);
   DRW_curves_init(DST.vmempool);
   DRW_volume_init(DST.vmempool);
   DRW_smoke_init(DST.vmempool);
@@ -1853,7 +1850,7 @@ void DRW_render_object_iter(
 {
   using namespace blender::draw;
   const DRWContextState *draw_ctx = DRW_context_state_get();
-  DRW_pointcloud_init();
+  DRW_point_cloud_init(DST.vmempool);
   DRW_curves_init(DST.vmempool);
   DRW_volume_init(DST.vmempool);
   DRW_smoke_init(DST.vmempool);
@@ -1911,7 +1908,7 @@ void DRW_custom_pipeline_begin(DrawEngineType *draw_engine_type, Depsgraph *deps
 
   drw_manager_init(&DST, nullptr, nullptr);
 
-  DRW_pointcloud_init();
+  DRW_point_cloud_init(DST.vmempool);
   DRW_curves_init(DST.vmempool);
   DRW_volume_init(DST.vmempool);
   DRW_smoke_init(DST.vmempool);
@@ -1960,7 +1957,7 @@ void DRW_cache_restart()
 
   drw_manager_init(&DST, DST.viewport, blender::int2{int(DST.size[0]), int(DST.size[1])});
 
-  DRW_pointcloud_init();
+  DRW_point_cloud_init(DST.vmempool);
   DRW_curves_init(DST.vmempool);
   DRW_volume_init(DST.vmempool);
   DRW_smoke_init(DST.vmempool);
@@ -1999,9 +1996,6 @@ void DRW_draw_render_loop_2d_ex(Depsgraph *depsgraph,
   /* Get list of enabled engines */
   drw_engines_enable_editors();
   drw_engines_data_validate();
-
-  /* Update UBO's */
-  DRW_globals_update();
 
   drw_debug_init();
 
@@ -2240,12 +2234,9 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
   }
   drw_engines_data_validate();
 
-  /* Update UBO's */
-  DRW_globals_update();
-
   /* Init engines */
   drw_engines_init();
-  DRW_pointcloud_init();
+  DRW_point_cloud_init(DST.vmempool);
   DRW_curves_init(DST.vmempool);
   DRW_volume_init(DST.vmempool);
   DRW_smoke_init(DST.vmempool);
@@ -2414,12 +2405,9 @@ void DRW_draw_depth_loop(Depsgraph *depsgraph,
   GPU_framebuffer_bind(depth_fb);
   GPU_framebuffer_clear_depth(depth_fb, 1.0f);
 
-  /* Update UBO's */
-  DRW_globals_update();
-
   /* Init engines */
   drw_engines_init();
-  DRW_pointcloud_init();
+  DRW_point_cloud_init(DST.vmempool);
   DRW_curves_init(DST.vmempool);
   DRW_volume_init(DST.vmempool);
   DRW_smoke_init(DST.vmempool);
@@ -2515,9 +2503,8 @@ void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d)
 
   drw_manager_init(&DST, viewport, nullptr);
 
-  /* Update UBO's */
+  /* Make sure select engine gets the correct vertex size. */
   UI_SetTheme(SPACE_VIEW3D, RGN_TYPE_WINDOW);
-  DRW_globals_update();
 
   /* Select Engine */
   use_drw_engine(&draw_engine_select_type);
@@ -2859,17 +2846,9 @@ void DRW_engines_free()
   GPU_FRAMEBUFFER_FREE_SAFE(g_select_buffer.framebuffer_depth_only);
 
   DRW_shaders_free();
-  DRW_pointcloud_free();
-  DRW_curves_free();
-  DRW_volume_free();
-  DRW_globals_free();
 
   drw_debug_module_free(DST.debug);
   DST.debug = nullptr;
-
-  GPU_UBO_FREE_SAFE(G_draw.block_ubo);
-  GPU_TEXTURE_FREE_SAFE(G_draw.ramp);
-  GPU_TEXTURE_FREE_SAFE(G_draw.weight_ramp);
 
   DRW_gpu_context_disable();
 }
@@ -2971,12 +2950,15 @@ void DRW_gpu_context_enable_ex(bool /*restore*/)
     GPU_render_begin();
     WM_system_gpu_context_activate(DST.system_gpu_context);
     GPU_context_active_set(DST.blender_gpu_context);
+    GPU_context_begin_frame(DST.blender_gpu_context);
   }
 }
 
 void DRW_gpu_context_disable_ex(bool restore)
 {
   if (DST.system_gpu_context != nullptr) {
+    GPU_context_end_frame(DST.blender_gpu_context);
+
     if (BLI_thread_is_main() && restore) {
       wm_window_reset_drawable();
     }
