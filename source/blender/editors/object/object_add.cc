@@ -121,6 +121,7 @@
 #include "ED_object.hh"
 #include "ED_outliner.hh"
 #include "ED_physics.hh"
+#include "ED_pointcloud.hh"
 #include "ED_render.hh"
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
@@ -2719,12 +2720,12 @@ static const EnumPropertyItem convert_target_items[] = {
      "MESH",
      ICON_OUTLINER_OB_MESH,
      "Mesh",
-#ifdef WITH_POINT_CLOUD
+#ifdef WITH_POINTCLOUD
      "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"},
 #else
      "Mesh from Curve, Surface, Metaball, or Text objects"},
 #endif
-#ifdef WITH_POINT_CLOUD
+#ifdef WITH_POINTCLOUD
     {OB_POINTCLOUD,
      "POINTCLOUD",
      ICON_OUTLINER_OB_POINTCLOUD,
@@ -3030,9 +3031,9 @@ static Object *convert_mesh_to_curves(Base &base, ObjectConversionInfo &info, Ba
   return convert_grease_pencil_component_to_curves(base, info, r_new_base);
 }
 
-static Object *convert_mesh_to_point_cloud(Base &base,
-                                           ObjectConversionInfo &info,
-                                           Base **r_new_base)
+static Object *convert_mesh_to_pointcloud(Base &base,
+                                          ObjectConversionInfo &info,
+                                          Base **r_new_base)
 {
   Object *ob = base.object;
   ob->flag |= OB_DONE;
@@ -3323,7 +3324,7 @@ static Object *convert_mesh(Base &base,
     case OB_CURVES:
       return convert_mesh_to_curves(base, info, r_new_base);
     case OB_POINTCLOUD:
-      return convert_mesh_to_point_cloud(base, info, r_new_base);
+      return convert_mesh_to_pointcloud(base, info, r_new_base);
     case OB_MESH:
       return convert_mesh_to_mesh(base, info, r_new_base);
     case OB_GREASE_PENCIL:
@@ -3878,9 +3879,9 @@ static Object *convert_mball(Base &base,
   }
 }
 
-static Object *convert_point_cloud_to_mesh(Base &base,
-                                           ObjectConversionInfo &info,
-                                           Base **r_new_base)
+static Object *convert_pointcloud_to_mesh(Base &base,
+                                          ObjectConversionInfo &info,
+                                          Base **r_new_base)
 {
   Object *ob = base.object;
   ob->flag |= OB_DONE;
@@ -3896,14 +3897,14 @@ static Object *convert_point_cloud_to_mesh(Base &base,
   return newob;
 }
 
-static Object *convert_point_cloud(Base &base,
-                                   const ObjectType target,
-                                   ObjectConversionInfo &info,
-                                   Base **r_new_base)
+static Object *convert_pointcloud(Base &base,
+                                  const ObjectType target,
+                                  ObjectConversionInfo &info,
+                                  Base **r_new_base)
 {
   switch (target) {
     case OB_MESH:
-      return convert_point_cloud_to_mesh(base, info, r_new_base);
+      return convert_pointcloud_to_mesh(base, info, r_new_base);
     default:
       return nullptr;
   }
@@ -4047,7 +4048,7 @@ static int object_convert_exec(bContext *C, wmOperator *op)
           newob = convert_mball(*base, target_type, info, mball_converted, &new_base, &act_base);
           break;
         case OB_POINTCLOUD:
-          newob = convert_point_cloud(*base, target_type, info, &new_base);
+          newob = convert_pointcloud(*base, target_type, info, &new_base);
           break;
         default:
           continue;
@@ -4714,7 +4715,15 @@ static bool object_join_poll(bContext *C)
     return false;
   }
 
-  if (ELEM(ob->type, OB_MESH, OB_CURVES_LEGACY, OB_SURF, OB_ARMATURE, OB_GREASE_PENCIL)) {
+  if (ELEM(ob->type,
+           OB_MESH,
+           OB_CURVES_LEGACY,
+           OB_SURF,
+           OB_ARMATURE,
+           OB_CURVES,
+           OB_GREASE_PENCIL,
+           OB_POINTCLOUD))
+  {
     return true;
   }
   return false;
@@ -4750,6 +4759,12 @@ static int object_join_exec(bContext *C, wmOperator *op)
   }
   else if (ob->type == OB_ARMATURE) {
     ret = ED_armature_join_objects_exec(C, op);
+  }
+  else if (ob->type == OB_POINTCLOUD) {
+    ret = pointcloud::join_objects(C, op);
+  }
+  else if (ob->type == OB_CURVES) {
+    ret = curves::join_objects(C, op);
   }
   else if (ob->type == OB_GREASE_PENCIL) {
     ret = ED_grease_pencil_join_objects_exec(C, op);
