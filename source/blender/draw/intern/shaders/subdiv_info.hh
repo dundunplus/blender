@@ -26,6 +26,22 @@ ADDITIONAL_INFO(subdiv_base)
 GPU_SHADER_CREATE_END()
 
 /* -------------------------------------------------------------------- */
+/** \name Loop normals
+ * \{ */
+
+GPU_SHADER_CREATE_INFO(subdiv_loop_normals)
+DO_STATIC_COMPILATION()
+STORAGE_BUF(LOOP_NORMALS_POS_NOR_BUF_SLOT, READ, PosNorLoop, pos_nor[])
+STORAGE_BUF(LOOP_NORMALS_EXTRA_COARSE_FACE_DATA_BUF_SLOT, READ, uint, extra_coarse_face_data[])
+STORAGE_BUF(LOOP_NORMALS_INPUT_VERT_ORIG_INDEX_BUF_SLOT, READ, int, input_vert_origindex[])
+STORAGE_BUF(LOOP_NORMALS_OUTPUT_LNOR_BUF_SLOT, WRITE, LoopNormal, output_lnor[])
+COMPUTE_SOURCE("subdiv_vbo_lnor_comp.glsl")
+ADDITIONAL_INFO(subdiv_polygon_offset_base)
+GPU_SHADER_CREATE_END()
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Triangle indices
  * \{ */
 
@@ -69,6 +85,33 @@ STORAGE_BUF(LINES_OUTPUT_LINES_BUF_SLOT, WRITE, uint, output_lines[])
 STORAGE_BUF(LINES_LINES_LOOSE_FLAGS, READ, uint, lines_loose_flags[])
 COMPUTE_SOURCE("subdiv_ibo_lines_comp.glsl")
 ADDITIONAL_INFO(subdiv_base)
+GPU_SHADER_CREATE_END()
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Edge data for object mode wireframe
+ * \{ */
+
+GPU_SHADER_CREATE_INFO(subdiv_edge_fac_base)
+ADDITIONAL_INFO(subdiv_base)
+STORAGE_BUF(EDGE_FAC_POS_NOR_BUF_SLOT, READ, PosNorLoop, pos_nor[])
+STORAGE_BUF(EDGE_FAC_EDGE_DRAW_FLAG_BUF_SLOT, READ, uint, input_edge_draw_flag[])
+STORAGE_BUF(EDGE_FAC_POLY_OTHER_MAP_BUF_SLOT, READ, int, input_poly_other_map[])
+COMPUTE_SOURCE("subdiv_vbo_edge_fac_comp.glsl")
+GPU_SHADER_CREATE_END()
+
+GPU_SHADER_CREATE_INFO(subdiv_edge_fac)
+DO_STATIC_COMPILATION()
+STORAGE_BUF(EDGE_FAC_EDGE_FAC_BUF_SLOT, WRITE, uint, output_edge_fac[])
+ADDITIONAL_INFO(subdiv_edge_fac_base)
+GPU_SHADER_CREATE_END()
+
+GPU_SHADER_CREATE_INFO(subdiv_edge_fac_amd_legacy)
+DO_STATIC_COMPILATION()
+DEFINE("GPU_AMD_DRIVER_BYTE_BUG")
+STORAGE_BUF(EDGE_FAC_EDGE_FAC_BUF_SLOT, WRITE, float, output_edge_fac[])
+ADDITIONAL_INFO(subdiv_edge_fac_base)
 GPU_SHADER_CREATE_END()
 
 /** \} */
