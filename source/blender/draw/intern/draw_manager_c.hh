@@ -74,6 +74,11 @@ struct DRWData {
   blender::draw::PointCloudModule *pointcloud_module;
   /** Default view that feeds every engine. */
   blender::draw::View *default_view;
+
+  /* Ensure modules are created. */
+  void modules_init();
+  /* Callbacks after one draw to clear transient data. */
+  void modules_exit();
 };
 
 /** \} */
@@ -82,30 +87,12 @@ struct DRWData {
 /** \name Draw Manager
  * \{ */
 
-struct DupliKey {
-  Object *ob;
-  ID *ob_data;
-};
-
 struct DRWContext {
   /* TODO: clean up this struct a bit. */
   /* Cache generation */
   DRWData *data = nullptr;
   /** Active view data structure for one of the 2 stereo view. */
   DRWViewData *view_data_active = nullptr;
-
-  /** Dupli object that corresponds to the current object. */
-  DupliObject *dupli_source = nullptr;
-  /** Object that created the dupli-list the current object is part of. */
-  Object *dupli_parent = nullptr;
-  /** Object referenced by the current dupli object. */
-  Object *dupli_origin = nullptr;
-  /** Object-data referenced by the current dupli object. */
-  ID *dupli_origin_data = nullptr;
-  /** Hash-map: #DupliKey -> void pointer for each enabled engine. */
-  GHash *dupli_ghash = nullptr;
-  /* Dupli data for the current dupli for each enabled engine. */
-  void **dupli_datas = nullptr;
 
   /* Optional associated viewport. Can be nullptr. */
   GPUViewport *viewport = nullptr;
@@ -139,6 +126,7 @@ struct DRWContext {
   /* Contains list of objects that needs to be extracted from other objects. */
   GSet *delayed_extraction = nullptr;
 
+  /* Contains debug drawcall infos. Persistent across usage. */
   DRWDebugModule *debug = nullptr;
 
   /* Reset all members before drawing in order to avoid undefined state. */
