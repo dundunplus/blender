@@ -167,7 +167,6 @@ set(SRC
   intern/draw_common_shader_shared.hh
   intern/draw_curves_private.hh
   intern/draw_debug.hh
-  intern/draw_debug_c.hh
   intern/draw_hair_private.hh
   intern/draw_handle.hh
   intern/draw_manager.hh
@@ -564,6 +563,7 @@ set(GLSL_SRC
   intern/shaders/draw_intersect_lib.glsl
   intern/shaders/draw_math_geom_lib.glsl
   intern/shaders/draw_model_lib.glsl
+  intern/shaders/draw_object_infos_lib.glsl
   intern/shaders/draw_pointcloud_lib.glsl
   intern/shaders/draw_resource_finalize_comp.glsl
   intern/shaders/draw_view_clipping_lib.glsl
