@@ -1542,9 +1542,10 @@ void DRW_draw_render_loop_offscreen(Depsgraph *depsgraph,
   /* TODO(fclem): We might want to differentiate between render preview and offscreen render in the
    * future. The later can do progressive rendering. */
   BLI_assert(is_xr_surface == !is_image_render);
+  UNUSED_VARS_NDEBUG(is_image_render);
   DRWContext::Mode mode = is_xr_surface ? DRWContext::VIEWPORT_XR : DRWContext::VIEWPORT_RENDER;
 
-  DRWContext draw_ctx(mode, depsgraph, viewport, nullptr, region, v3d);
+  DRWContext draw_ctx(mode, depsgraph, render_viewport, nullptr, region, v3d);
   draw_ctx.acquire_data();
   draw_ctx.options.draw_background = draw_background;
 
