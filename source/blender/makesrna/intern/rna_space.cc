@@ -375,9 +375,9 @@ static const EnumPropertyItem display_channels_items[] = {
      ICON_IMAGE_ZDEPTH,
      "Z-Buffer",
      "Display Z-buffer associated with image (mapped from camera clip start to end)"},
-    {SI_SHOW_R, "RED", ICON_COLOR_RED, "Red", ""},
-    {SI_SHOW_G, "GREEN", ICON_COLOR_GREEN, "Green", ""},
-    {SI_SHOW_B, "BLUE", ICON_COLOR_BLUE, "Blue", ""},
+    {SI_SHOW_R, "RED", ICON_RGB_RED, "Red", ""},
+    {SI_SHOW_G, "GREEN", ICON_RGB_GREEN, "Green", ""},
+    {SI_SHOW_B, "BLUE", ICON_RGB_BLUE, "Blue", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2221,7 +2221,7 @@ static void rna_ConsoleLine_current_character_set(PointerRNA *ptr, const int ind
   ci->cursor = BLI_str_utf8_offset_from_index(ci->line, ci->len, index);
 }
 
-/* Space Dopesheet */
+/* Space Dope-sheet */
 
 static void rna_SpaceDopeSheetEditor_action_set(PointerRNA *ptr,
                                                 PointerRNA value,
@@ -6215,7 +6215,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, nullptr, "view");
   RNA_def_property_enum_items(prop, rna_enum_space_sequencer_view_type_items);
   RNA_def_property_ui_text(
-      prop, "View Type", "Type of the Sequencer view (blender::seq::SEQuencer, preview or both)");
+      prop, "View Type", "Type of the Sequencer view (sequencer, preview or both)");
   RNA_def_property_update(prop, 0, "rna_Sequencer_view_type_update");
 
   /* display type, fairly important */
@@ -7855,9 +7855,9 @@ static void rna_def_space_node(BlenderRNA *brna)
        "Display image with RGB colors and alpha transparency"},
       {0, "COLOR", ICON_IMAGE_RGB, "Color", "Display image with RGB colors"},
       {SNODE_SHOW_ALPHA, "ALPHA", ICON_IMAGE_ALPHA, "Alpha", "Display alpha transparency channel"},
-      {SNODE_SHOW_R, "RED", ICON_COLOR_RED, "Red", ""},
-      {SNODE_SHOW_G, "GREEN", ICON_COLOR_GREEN, "Green", ""},
-      {SNODE_SHOW_B, "BLUE", ICON_COLOR_BLUE, "Blue", ""},
+      {SNODE_SHOW_R, "RED", ICON_RGB_RED, "Red", ""},
+      {SNODE_SHOW_G, "GREEN", ICON_RGB_GREEN, "Green", ""},
+      {SNODE_SHOW_B, "BLUE", ICON_RGB_BLUE, "Blue", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
