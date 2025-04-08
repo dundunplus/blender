@@ -4,6 +4,13 @@
 
 /** \file
  * \ingroup pythonintern
+ *
+ * This file contains the `bpy.types.GeometrySet` Python API which is a wrapper for the internal
+ * `GeometrySet` type.
+ *
+ * It's not implemented as RNA type because a `GeometrySet` is standalone (i.e. is not necessarily
+ * owned by anything else in Blender like an ID), is wrapping a DNA type and is itself a
+ * non-trivial owner of other data (like sub-geometries).
  */
 
 #include <sstream>
@@ -59,10 +66,12 @@ static BPy_GeometrySet *python_object_from_geometry_set(GeometrySet geometry = {
   return self;
 }
 
-static PyObject *BPy_GeometrySet_new(PyTypeObject * /*type*/,
-                                     PyObject * /*args*/,
-                                     PyObject * /*kwds*/)
+static PyObject *BPy_GeometrySet_new(PyTypeObject * /*type*/, PyObject *args, PyObject *kwds)
 {
+  static const char *kwlist[] = {nullptr};
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "", const_cast<char **>(kwlist))) {
+    return nullptr;
+  }
   return reinterpret_cast<PyObject *>(python_object_from_geometry_set());
 }
 
@@ -248,7 +257,7 @@ static PyObject *BPy_GeometrySet_get_instance_references(BPy_GeometrySet *self)
 PyDoc_STRVAR(
     /* Wrap. */
     bpy_geometry_set_name_doc,
-    "The name of the geometry set.\n"
+    "The name of the geometry set. It can be used for debugging purposes and is not unique.\n"
     "\n"
     ":type: str\n");
 static PyObject *BPy_GeometrySet_get_name(BPy_GeometrySet *self, void * /*closure*/)
@@ -263,7 +272,7 @@ static int BPy_GeometrySet_set_name(BPy_GeometrySet *self, PyObject *value, void
     return -1;
   }
   const char *name = PyUnicode_AsUTF8(value);
-  self->geometry.name = name ? name : "";
+  self->geometry.name = name;
   return 0;
 }
 
