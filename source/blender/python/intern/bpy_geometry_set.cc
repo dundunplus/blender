@@ -59,11 +59,11 @@ static BPy_GeometrySet *python_object_from_geometry_set(GeometrySet geometry = {
   return self;
 }
 
-static BPy_GeometrySet *BPy_GeometrySet_new(PyTypeObject * /*type*/,
-                                            PyObject * /*args*/,
-                                            PyObject * /*kwds*/)
+static PyObject *BPy_GeometrySet_new(PyTypeObject * /*type*/,
+                                     PyObject * /*args*/,
+                                     PyObject * /*kwds*/)
 {
-  return python_object_from_geometry_set();
+  return reinterpret_cast<PyObject *>(python_object_from_geometry_set());
 }
 
 static void BPy_GeometrySet_dealloc(BPy_GeometrySet *self)
@@ -276,6 +276,9 @@ PyDoc_STRVAR(
 static PyObject *BPy_GeometrySet_get_mesh(BPy_GeometrySet *self, void * /*closure*/)
 {
   Mesh *base_mesh = self->geometry.get_mesh_for_write();
+  if (!base_mesh) {
+    Py_RETURN_NONE;
+  }
   Mesh *mesh = BKE_mesh_wrapper_ensure_subdivision(base_mesh);
   return pyrna_id_CreatePyObject(reinterpret_cast<ID *>(mesh));
 }
@@ -469,7 +472,7 @@ PyTypeObject bpy_geometry_set_Type = {
     /*tp_dictoffset*/ 0,
     /*tp_init*/ nullptr,
     /*tp_alloc*/ nullptr,
-    /*tp_new*/ reinterpret_cast<newfunc>(BPy_GeometrySet_new),
+    /*tp_new*/ BPy_GeometrySet_new,
 };
 
 PyObject *BPyInit_geometry_set_type()
