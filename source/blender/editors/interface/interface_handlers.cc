@@ -9185,6 +9185,16 @@ void UI_context_active_but_prop_handle(bContext *C, const bool handle_undo)
      * currently this is mainly so reset defaults works for the
      * operator redo panel. */
     uiBlock *block = activebut->block;
+
+    /* There are various functions buttons may run on completion.
+     * See #ui_apply_but_funcs_after for reference, we could even call
+     * this function however it may have unforeseen consequences,
+     * see replies to: !134233. */
+
+    /* This may be needed to validate the value, see: #134101. */
+    if (activebut->func) {
+      activebut->func(C, activebut->func_arg1, activebut->func_arg2);
+    }
     if (block->handle_func) {
       block->handle_func(C, block->handle_func_arg, activebut->retval);
     }
@@ -12080,7 +12090,7 @@ static bool ui_can_activate_other_menu(uiBut *but, uiBut *but_other, const wmEve
     right = but->rect.xmax;
     left = but_other->rect.xmax;
     if (ELEM(but_other->type, UI_BTYPE_POPOVER, UI_BTYPE_MENU)) {
-      /* Skip the dropdown arrow on the right of it. */
+      /* Skip the drop-down arrow on the right of it. */
       safety += 8.0f * UI_SCALE_FAC;
     }
     left -= safety;
