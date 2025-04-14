@@ -104,7 +104,7 @@ class LazyFunctionForClosureZone : public LazyFunction {
     const auto &storage = *static_cast<const NodeGeometryClosureOutput *>(output_bnode_.storage);
 
     std::unique_ptr<ResourceScope> closure_scope = std::make_unique<ResourceScope>();
-    LinearAllocator<> &closure_allocator = closure_scope->linear_allocator();
+    LinearAllocator<> &closure_allocator = closure_scope->allocator();
 
     lf::Graph &lf_graph = closure_scope->construct<lf::Graph>("Closure Graph");
     lf::FunctionNode &lf_body_node = lf_graph.add_function(*body_fn_.function);
@@ -127,6 +127,10 @@ class LazyFunctionForClosureZone : public LazyFunction {
       void *default_value = closure_allocator.allocate(cpp_type.size(), cpp_type.alignment());
       construct_socket_default_value(*bsocket.typeinfo, default_value);
       default_input_values.append(default_value);
+      if (!cpp_type.is_trivially_destructible()) {
+        closure_scope->add_destruct_call(
+            [&cpp_type, default_value]() { cpp_type.destruct(default_value); });
+      }
     }
     closure_indices.inputs.main = lf_graph.graph_inputs().index_range().take_back(
         storage.input_items.items_num);
@@ -507,8 +511,8 @@ class LazyFunctionForEvaluateClosureNode : public LazyFunction {
 
     auto get_output_default_value = [&](const bke::bNodeSocketType &type) {
       const CPPType &cpp_type = *type.geometry_nodes_cpp_type;
-      void *fallback_value = eval_storage.scope.linear_allocator().allocate(cpp_type.size(),
-                                                                            cpp_type.alignment());
+      void *fallback_value = eval_storage.scope.allocator().allocate(cpp_type.size(),
+                                                                     cpp_type.alignment());
       construct_socket_default_value(type, fallback_value);
       if (!cpp_type.is_trivially_destructible()) {
         eval_storage.scope.add_destruct_call(
@@ -599,7 +603,7 @@ class LazyFunctionForEvaluateClosureNode : public LazyFunction {
     lf_graph.update_node_indices();
     eval_storage.graph_executor.emplace(lf_graph, nullptr, nullptr, nullptr);
     eval_storage.graph_executor_storage = eval_storage.graph_executor->init_storage(
-        eval_storage.scope.linear_allocator());
+        eval_storage.scope.allocator());
 
     /* Log graph for debugging purposes. */
     bNodeTree &btree_orig = *reinterpret_cast<bNodeTree *>(
@@ -621,7 +625,7 @@ void evaluate_closure_eagerly(const Closure &closure, ClosureEagerEvalParams &pa
   const int fn_outputs_num = fn.outputs().size();
 
   ResourceScope scope;
-  LinearAllocator<> &allocator = scope.linear_allocator();
+  LinearAllocator<> &allocator = scope.allocator();
 
   GeoNodesLFLocalUserData local_user_data(*params.user_data);
   void *storage = fn.init_storage(allocator);
