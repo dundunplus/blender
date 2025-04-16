@@ -377,7 +377,7 @@ set(METAL_SRC
   metal/mtl_shader_interface.hh
   metal/mtl_shader_interface_type.hh
   metal/mtl_shader_log.hh
-  metal/mtl_shader_shared.h
+  metal/mtl_shader_shared.hh
   metal/mtl_state.hh
   metal/mtl_storage_buffer.hh
   metal/mtl_texture.hh
@@ -542,6 +542,7 @@ set(GLSL_SRC
   shaders/common/gpu_shader_common_math_utils.glsl
   shaders/common/gpu_shader_common_mix_rgb.glsl
   shaders/common/gpu_shader_debug_gradients_lib.glsl
+  shaders/common/gpu_shader_fullscreen_vert.glsl
   shaders/common/gpu_shader_index_load_lib.glsl
   shaders/common/gpu_shader_math_base_lib.glsl
   shaders/common/gpu_shader_math_fast_lib.glsl
@@ -691,7 +692,7 @@ set(MTL_BACKEND_GLSL_SRC
 set(MSL_SRC
   shaders/metal/mtl_shader_defines.msl
   shaders/metal/mtl_shader_common.msl
-  metal/mtl_shader_shared.h
+  metal/mtl_shader_shared.hh
 )
 
 if(WITH_GTESTS)
