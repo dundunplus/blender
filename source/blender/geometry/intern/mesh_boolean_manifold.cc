@@ -714,7 +714,7 @@ static Array<Vector<int, face_group_inline>> get_face_groups(const MeshGL &mgl,
  * Return 1 if \a group is just the same as the original face \a face_index
  * in \a mesh.
  * Return 2 if it is the same but with the normal reversed.
- * Return 0 otherwise. 
+ * Return 0 otherwise.
   */
 static uchar check_original_face(const Vector<int, face_group_inline> &group,
                                  const MeshGL &mgl,
@@ -1606,6 +1606,10 @@ static Mesh *meshgl_to_mesh(MeshGL &mgl,
       get_intersecting_edges(r_intersecting_edges, mesh, out_to_in, mesh_offsets);
     }
   }
+
+  mesh->tag_loose_verts_none();
+  mesh->tag_overlapping_none();
+
   return mesh;
 }
 
@@ -1635,7 +1639,6 @@ static bke::GeometrySet join_meshes_with_transforms(const Span<const Mesh *> mes
 
 Mesh *mesh_boolean_manifold(Span<const Mesh *> meshes,
                             const Span<float4x4> transforms,
-                            const float4x4 &target_transform,
                             const Span<Array<short>> /*material_remaps*/,
                             const BooleanOpParameters op_params,
                             Vector<int> *r_intersecting_edges,
@@ -1720,9 +1723,6 @@ Mesh *mesh_boolean_manifold(Span<const Mesh *> meshes,
       timeit::ScopedTimer timer_out("MESHGL RESULT TO MESH");
 #  endif
       mesh_result = meshgl_to_mesh(meshgl_result, joined_mesh, mesh_offsets, r_intersecting_edges);
-    }
-    if (!math::is_identity(target_transform)) {
-      bke::mesh_transform(*mesh_result, target_transform, false);
     }
     return mesh_result;
   }
