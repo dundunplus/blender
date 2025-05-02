@@ -650,7 +650,7 @@ static BHead bhead_from_bhead4(const BHead4 &bhead4)
   BHead bhead;
   bhead.code = bhead4.code;
   bhead.len = bhead4.len;
-  bhead.old = reinterpret_cast<const void *>(bhead4.old);
+  bhead.old = reinterpret_cast<const void *>(uintptr_t(bhead4.old));
   bhead.SDNAnr = bhead4.SDNAnr;
   bhead.nr = bhead4.nr;
   return bhead;
@@ -679,7 +679,7 @@ static const void *old_ptr_from_uint64_ptr(const uint64_t ptr, const bool use_en
     return reinterpret_cast<const void *>(ptr);
   }
   else {
-    return reinterpret_cast<const void *>(uint32_from_uint64_ptr(ptr, use_endian_swap));
+    return reinterpret_cast<const void *>(uintptr_t(uint32_from_uint64_ptr(ptr, use_endian_swap)));
   }
 }
 
@@ -816,14 +816,15 @@ static BHeadN *get_bhead(FileData *fd)
 
           const int64_t readsize = fd->file->read(fd->file, new_bhead + 1, size_t(bhead->len));
 
-          if (readsize != bhead->len) {
+          if (UNLIKELY(readsize != bhead->len)) {
             fd->is_eof = true;
             MEM_freeN(new_bhead);
             new_bhead = nullptr;
           }
-
-          if (fd->flags & FD_FLAGS_IS_MEMFILE) {
-            new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+          else {
+            if (fd->flags & FD_FLAGS_IS_MEMFILE) {
+              new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+            }
           }
         }
         else {
@@ -908,11 +909,15 @@ static bool blo_bhead_read_data(FileData *fd, BHead *thisblock, void *buf)
     success = false;
   }
   else {
-    if (fd->file->read(fd->file, buf, size_t(new_bhead->bhead.len)) != new_bhead->bhead.len) {
+    if (UNLIKELY(fd->file->read(fd->file, buf, size_t(new_bhead->bhead.len)) !=
+                 new_bhead->bhead.len))
+    {
       success = false;
     }
-    if (fd->flags & FD_FLAGS_IS_MEMFILE) {
-      new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+    else {
+      if (fd->flags & FD_FLAGS_IS_MEMFILE) {
+        new_bhead->is_memchunk_identical = ((UndoReader *)fd->file)->memchunk_identical;
+      }
     }
   }
   if (fd->file->seek(fd->file, offset_backup, SEEK_SET) == -1) {
