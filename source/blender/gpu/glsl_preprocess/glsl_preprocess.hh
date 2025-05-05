@@ -13,7 +13,6 @@
 #include <regex>
 #include <sstream>
 #include <string>
-#include <unordered_set>
 #include <vector>
 
 namespace blender::gpu::shader {
@@ -211,6 +210,7 @@ class Preprocessor {
       }
       str = preprocessor_directive_mutation(str);
       if (language == BLENDER_GLSL) {
+        str = loop_unroll(str, report_error);
         str = assert_processing(str, filename);
         static_strings_parsing(str);
         str = static_strings_mutation(str);
@@ -329,6 +329,220 @@ class Preprocessor {
     });
   }
 
+  std::string loop_unroll(const std::string &str, report_callback report_error)
+  {
+    if (str.find("[[gpu::unroll") == std::string::npos) {
+      return str;
+    }
+
+    struct Loop {
+      /* `[[gpu::unroll]] for (int i = 0; i < 10; i++)` */
+      std::string definition;
+      /* `{ some_computation(i); }` */
+      std::string body;
+      /* `int i = 0` */
+      std::string init_statement;
+      /* `i < 10` */
+      std::string test_statement;
+      /* `i++` */
+      std::string iter_statement;
+      /* Spaces and newline between loop start and body. */
+      std::string body_prefix;
+      /* Spaces before the loop definition. */
+      std::string indent;
+      /* `10` */
+      int64_t iter_count;
+      /* Line at which the loop was defined. */
+      int64_t definition_line;
+      /* Line at which the body starts. */
+      int64_t body_line;
+      /* Line at which the body ends. */
+      int64_t end_line;
+    };
+
+    std::vector<Loop> loops;
+
+    auto add_loop = [&](Loop &loop,
+                        const std::smatch &match,
+                        int64_t line,
+                        int64_t lines_in_content) {
+      std::string suffix = match.suffix().str();
+      loop.body = get_content_between_balanced_pair(loop.definition + suffix, '{', '}');
+      loop.body = '{' + loop.body + '}';
+      loop.definition_line = line - lines_in_content;
+      loop.body_line = line;
+      loop.end_line = loop.body_line + line_count(loop.body);
+
+      /* Check that there is no unsupported keywords in the loop body. */
+      if (loop.body.find(" break;") != std::string::npos ||
+          loop.body.find(" continue;") != std::string::npos)
+      {
+        /* Expensive check. Remove other loops and switch scopes inside the unrolled loop scope and
+         * check again to avoid false positive. */
+        std::string modified_body = loop.body;
+
+        std::regex regex_loop(R"( (for|while|do) )");
+        regex_global_search(loop.body, regex_loop, [&](const std::smatch &match) {
+          std::string inner_scope = get_content_between_balanced_pair(match.suffix(), '{', '}');
+          replace_all(modified_body, inner_scope, "");
+        });
+
+        /* Checks if `continue` exists, even in switch statement inside the unrolled loop scope. */
+        if (modified_body.find(" continue;") != std::string::npos) {
+          report_error(match, "Error: Unrolled loop cannot contain \"continue\" statement.");
+        }
+
+        std::regex regex_switch(R"( switch )");
+        regex_global_search(loop.body, regex_switch, [&](const std::smatch &match) {
+          std::string inner_scope = get_content_between_balanced_pair(match.suffix(), '{', '}');
+          replace_all(modified_body, inner_scope, "");
+        });
+
+        /* Checks if `break` exists inside the unrolled loop scope. */
+        if (modified_body.find(" break;") != std::string::npos) {
+          report_error(match, "Error: Unrolled loop cannot contain \"break\" statement.");
+        }
+      }
+      loops.emplace_back(loop);
+    };
+
+    /* Parse the loop syntax. */
+    {
+      /* [[gpu::unroll]]. */
+      std::regex regex(R"(( *))"
+                       R"(\[\[gpu::unroll\]\])"
+                       R"(\s*for\s*\()"
+                       R"(\s*((?:uint|int)\s+(\w+)\s+=\s+(-?\d+));)" /* Init statement. */
+                       R"(\s*((\w+)\s+(>|<)(=?)\s+(-?\d+)))"         /* Conditional statement. */
+                       R"(\s*(?:&&)?\s*([^;)]+)?;)"       /* Extra conditional statement. */
+                       R"(\s*(((\w+)(\+\+|\-\-))[^\)]*))" /* Iteration statement. */
+                       R"(\)(\s*))");
+
+      int64_t line = 0;
+
+      regex_global_search(str, regex, [&](const std::smatch &match) {
+        std::string counter_1 = match[3].str();
+        std::string counter_2 = match[6].str();
+        std::string counter_3 = match[13].str();
+
+        std::string content = match[0].str();
+        int64_t lines_in_content = line_count(content);
+
+        line += line_count(match.prefix().str()) + lines_in_content;
+
+        if ((counter_1 != counter_2) || (counter_1 != counter_3)) {
+          report_error(match, "Error: Non matching loop counter variable.");
+          return;
+        }
+
+        Loop loop;
+
+        int64_t init = std::stol(match[4].str());
+        int64_t end = std::stol(match[9].str());
+        /* TODO(fclem): Support arbitrary strides (aka, arbitrary iter statement). */
+        loop.iter_count = std::abs(end - init);
+
+        std::string condition = match[7].str();
+        if (condition.empty()) {
+          report_error(match, "Error: Unsupported condition in unrolled loop.");
+        }
+
+        std::string equal = match[8].str();
+        if (equal == "=") {
+          loop.iter_count += 1;
+        }
+
+        std::string iter = match[14].str();
+        if (iter == "++") {
+          if (condition == ">") {
+            report_error(match, "Error: Unsupported condition in unrolled loop.");
+          }
+        }
+        else if (iter == "--") {
+          if (condition == "<") {
+            report_error(match, "Error: Unsupported condition in unrolled loop.");
+          }
+        }
+        else {
+          report_error(match, "Error: Unsupported for loop expression. Expecting ++ or --");
+        }
+
+        loop.definition = content;
+        loop.indent = match[1].str();
+        loop.init_statement = match[2].str();
+        if (!match[10].str().empty()) {
+          loop.test_statement = "if (" + match[10].str() + ") ";
+        }
+        loop.iter_statement = match[11].str();
+        loop.body_prefix = match[15].str();
+
+        add_loop(loop, match, line, lines_in_content);
+      });
+    }
+    {
+      /* [[gpu::unroll(n)]]. */
+      std::regex regex(R"(( *))"
+                       R"(\[\[gpu::unroll\((\d+)\)\]\])"
+                       R"(\s*for\s*\()"
+                       R"(\s*([^;]*);)"
+                       R"(\s*([^;]*);)"
+                       R"(\s*([^)]*))"
+                       R"(\)(\s*))");
+
+      int64_t line = 0;
+
+      regex_global_search(str, regex, [&](const std::smatch &match) {
+        std::string content = match[0].str();
+
+        int64_t lines_in_content = line_count(content);
+
+        line += line_count(match.prefix().str()) + lines_in_content;
+
+        Loop loop;
+        loop.iter_count = std::stol(match[2].str());
+        loop.definition = content;
+        loop.indent = match[1].str();
+        loop.init_statement = match[3].str();
+        loop.test_statement = "if (" + match[4].str() + ") ";
+        loop.iter_statement = match[5].str();
+        loop.body_prefix = match[13].str();
+
+        add_loop(loop, match, line, lines_in_content);
+      });
+    }
+
+    std::string out = str;
+
+    /* Copy paste loop iterations. */
+    for (const Loop &loop : loops) {
+      std::string replacement = loop.indent + "{ " + loop.init_statement + ";";
+      for (int64_t i = 0; i < loop.iter_count; i++) {
+        replacement += std::string("\n#line ") + std::to_string(loop.body_line + 1) + "\n";
+        replacement += loop.indent + loop.test_statement + loop.body;
+        replacement += std::string("\n#line ") + std::to_string(loop.definition_line + 1) + "\n";
+        replacement += loop.indent + loop.iter_statement + ";";
+        if (i == loop.iter_count - 1) {
+          replacement += std::string("\n#line ") + std::to_string(loop.end_line + 1) + "\n";
+          replacement += loop.indent + "}";
+        }
+      }
+
+      std::string replaced = loop.definition + loop.body;
+
+      /* Replace all occurrences in case of recursive unrolling. */
+      replace_all(out, replaced, replacement);
+    }
+
+    /* Check for remaining keywords. */
+    if (out.find("[[gpu::unroll") != std::string::npos) {
+      regex_global_search(str, std::regex(R"(\[\[gpu::unroll)"), [&](const std::smatch &match) {
+        report_error(match, "Error: Incompatible format for [[gpu::unroll]].");
+      });
+    }
+
+    return out;
+  }
+
   std::string preprocessor_directive_mutation(const std::string &str)
   {
     /* Remove unsupported directives.` */
@@ -376,33 +590,32 @@ class Preprocessor {
                                     std::string::npos;
     using namespace metadata;
     /* TODO: This can trigger false positive caused by disabled #if blocks. */
-    std::regex regex(
-        "("
-        "gl_FragCoord|"
-        "gl_FrontFacing|"
-        "gl_GlobalInvocationID|"
-        "gl_InstanceID|"
-        "gl_LocalInvocationID|"
-        "gl_LocalInvocationIndex|"
-        "gl_NumWorkGroup|"
-        "gl_PointCoord|"
-        "gl_PointSize|"
-        "gl_PrimitiveID|"
-        "gl_VertexID|"
-        "gl_WorkGroupID|"
-        "gl_WorkGroupSize|"
-        "drw_debug_|"
+    std::string tokens[] = {"gl_FragCoord",
+                            "gl_FrontFacing",
+                            "gl_GlobalInvocationID",
+                            "gl_InstanceID",
+                            "gl_LocalInvocationID",
+                            "gl_LocalInvocationIndex",
+                            "gl_NumWorkGroup",
+                            "gl_PointCoord",
+                            "gl_PointSize",
+                            "gl_PrimitiveID",
+                            "gl_VertexID",
+                            "gl_WorkGroupID",
+                            "gl_WorkGroupSize",
+                            "drw_debug_",
 #ifdef WITH_GPU_SHADER_ASSERT
-        "assert|"
+                            "assert",
 #endif
-        "printf"
-        ")");
-    regex_global_search(str, regex, [&](const std::smatch &match) {
-      if (skip_drw_debug && match[0].str() == "drw_debug_") {
-        return;
+                            "printf"};
+    for (auto &token : tokens) {
+      if (skip_drw_debug && token == "drw_debug_") {
+        continue;
       }
-      metadata.builtins.emplace_back(Builtin(hash(match[0].str())));
-    });
+      if (str.find(token) != std::string::npos) {
+        metadata.builtins.emplace_back(Builtin(hash(token)));
+      }
+    }
   }
 
   template<typename ReportErrorF>
@@ -559,14 +772,30 @@ class Preprocessor {
   }
 
   /* To be run before `argument_decorator_macro_injection()`. */
-  std::string argument_reference_mutation(const std::string &str)
+  std::string argument_reference_mutation(std::string &str)
   {
+    /* Next two regexes are expensive. Check if they are needed at all. */
+    bool valid_match = false;
+    reference_search(str, [&](int parenthesis_depth, int bracket_depth, char &c) {
+      /* Check if inside a function signature.
+       * Check parenthesis_depth == 2 for array references. */
+      if ((parenthesis_depth == 1 || parenthesis_depth == 2) && bracket_depth == 0) {
+        valid_match = true;
+        /* Modify the & into @ to make sure we only match these references in the regex
+         * below. @ being forbidden in the shader language, it is safe to use a temp
+         * character. */
+        c = '@';
+      }
+    });
+    if (!valid_match) {
+      return str;
+    }
     /* Remove parenthesis first. */
     /* Example: `float (&var)[2]` > `float &var[2]` */
-    std::regex regex_parenthesis(R"((\w+ )\(&(\w+)\))");
-    std::string out = std::regex_replace(str, regex_parenthesis, "$1&$2");
+    std::regex regex_parenthesis(R"((\w+ )\(@(\w+)\))");
+    std::string out = std::regex_replace(str, regex_parenthesis, "$1@$2");
     /* Example: `const float &var[2]` > `inout float var[2]` */
-    std::regex regex(R"((?:const)?(\s*)(\w+)\s+\&(\w+)(\[\d*\])?)");
+    std::regex regex(R"((?:const)?(\s*)(\w+)\s+\@(\w+)(\[\d*\])?)");
     return std::regex_replace(out, regex, "$1 inout $2 $3$4");
   }
 
@@ -587,9 +816,20 @@ class Preprocessor {
   /* TODO(fclem): Too many false positive and false negative to be applied to python shaders. */
   void matrix_constructor_linting(const std::string &str, report_callback report_error)
   {
+    /* The following regex is expensive. Do a quick early out scan. */
+    if (str.find("mat") == std::string::npos && str.find("float") == std::string::npos) {
+      return;
+    }
     /* Example: `mat4(other_mat)`. */
-    std::regex regex(R"(\s+(mat(\d|\dx\d)|float\dx\d)\([^,\s\d]+\))");
+    std::regex regex(R"(\s(?:mat(?:\d|\dx\d)|float\dx\d)\()");
     regex_global_search(str, regex, [&](const std::smatch &match) {
+      std::string args = get_content_between_balanced_pair("(" + match.suffix().str(), '(', ')');
+      int arg_count = split_string_not_between_balanced_pair(args, ',', '(', ')').size();
+      bool has_floating_point_arg = args.find('.') != std::string::npos;
+      /* TODO(fclem): Check if arg count matches matrix type.  */
+      if (arg_count != 1 || has_floating_point_arg) {
+        return;
+      }
       /* This only catches some invalid usage. For the rest, the CI will catch them. */
       const char *msg =
           "Matrix constructor is not cross API compatible. "
@@ -759,6 +999,167 @@ class Preprocessor {
 #endif
     suffix << "\n";
     return suffix.str();
+  }
+
+  /* Made public for unit testing purpose. */
+ public:
+  static std::string get_content_between_balanced_pair(const std::string &input,
+                                                       char start_delimiter,
+                                                       char end_delimiter,
+                                                       const bool backwards = false)
+  {
+    int balance = 0;
+    size_t start = std::string::npos;
+    size_t end = std::string::npos;
+
+    if (backwards) {
+      std::swap(start_delimiter, end_delimiter);
+    }
+
+    for (size_t i = 0; i < input.length(); ++i) {
+      size_t idx = backwards ? (input.length() - 1) - i : i;
+      if (input[idx] == start_delimiter) {
+        if (balance == 0) {
+          start = idx;
+        }
+        balance++;
+      }
+      else if (input[idx] == end_delimiter) {
+        balance--;
+        if (balance == 0 && start != std::string::npos) {
+          end = idx;
+          if (backwards) {
+            std::swap(start, end);
+          }
+          return input.substr(start + 1, end - start - 1);
+        }
+      }
+    }
+    return "";
+  }
+
+  /* Replaces all occurrences of `from` by `to` between `start_delimiter`
+   * and `end_delimiter` even inside nested delimiters pair. */
+  static std::string replace_char_between_balanced_pair(const std::string &input,
+                                                        const char start_delimiter,
+                                                        const char end_delimiter,
+                                                        const char from,
+                                                        const char to)
+  {
+    int depth = 0;
+
+    std::string str = input;
+    for (char &string_char : str) {
+      if (string_char == start_delimiter) {
+        depth++;
+      }
+      else if (string_char == end_delimiter) {
+        depth--;
+      }
+      else if (depth > 0 && string_char == from) {
+        string_char = to;
+      }
+    }
+    return str;
+  }
+
+  /* Function to split a string by a delimiter and return a vector of substrings. */
+  static std::vector<std::string> split_string(const std::string &str, const char delimiter)
+  {
+    std::vector<std::string> substrings;
+    std::stringstream ss(str);
+    std::string item;
+
+    while (std::getline(ss, item, delimiter)) {
+      substrings.push_back(item);
+    }
+    return substrings;
+  }
+
+  /* Similar to split_string but only split if the delimiter is not between any pair_start and
+   * pair_end. */
+  static std::vector<std::string> split_string_not_between_balanced_pair(const std::string &str,
+                                                                         const char delimiter,
+                                                                         const char pair_start,
+                                                                         const char pair_end)
+  {
+    const char safe_char = '@';
+    const std::string safe_str = replace_char_between_balanced_pair(
+        str, pair_start, pair_end, delimiter, safe_char);
+    std::vector<std::string> split = split_string(safe_str, delimiter);
+    for (std::string &str : split) {
+      replace_all(str, safe_char, delimiter);
+    }
+    return split;
+  }
+
+  static void replace_all(std::string &str, const std::string &from, const std::string &to)
+  {
+    if (from.empty()) {
+      return;
+    }
+    size_t start_pos = 0;
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+      str.replace(start_pos, from.length(), to);
+      start_pos += to.length();
+    }
+  }
+
+  static void replace_all(std::string &str, const char from, const char to)
+  {
+    for (char &string_char : str) {
+      if (string_char == from) {
+        string_char = to;
+      }
+    }
+  }
+
+  static int64_t char_count(const std::string &str, char c)
+  {
+    return std::count(str.begin(), str.end(), c);
+  }
+
+  static int64_t line_count(const std::string &str)
+  {
+    return char_count(str, '\n');
+  }
+
+  /* Match any reference definition (e.g. `int &a = b`).
+   * Call the callback function for each `&` character that matches a reference definition.
+   * Expects the input `str` to be formatted with balanced parenthesis and curly brackets. */
+  static void reference_search(std::string &str, std::function<void(int, int, char &)> callback)
+  {
+    size_t pos = 0;
+    int parenthesis_depth = 0;
+    int bracket_depth = 0;
+    for (char &c : str) {
+      if (c == '&') {
+        if (pos > 0 && pos <= str.length() - 2) {
+          /* This is made safe by the previous check and by starting at pos = 1. */
+          char prev_char = str[pos - 1];
+          char next_char = str[pos + 1];
+          /* Validate it is not an operator (`&`, `&&`, `&=`). */
+          if (prev_char == ' ' || prev_char == '(') {
+            if (next_char != ' ' && next_char != '&' && next_char != '=') {
+              callback(parenthesis_depth, bracket_depth, c);
+            }
+          }
+        }
+      }
+      else if (c == '(') {
+        parenthesis_depth++;
+      }
+      else if (c == ')') {
+        parenthesis_depth--;
+      }
+      else if (c == '{') {
+        bracket_depth++;
+      }
+      else if (c == '}') {
+        bracket_depth--;
+      }
+      pos++;
+    }
   }
 };
 
