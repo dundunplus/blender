@@ -36,6 +36,8 @@ def draw_node_group_add_menu(context, layout):
         add_node_type(layout, "NodeGroupInput")
         add_node_type(layout, "NodeGroupOutput")
 
+    add_empty_group(layout)
+
     if node_tree:
         from nodeitems_builtins import node_tree_group_type
 
@@ -65,6 +67,17 @@ def draw_root_assets(layout):
     layout.menu_contents("NODE_MT_node_add_root_catalogs")
 
 
+def add_node_type_with_searchable_enum(context, layout, node_idname, property_name):
+    add_node_type(layout, node_idname)
+    if getattr(context, "is_menu_search", False):
+        node_type = getattr(bpy.types, node_idname)
+        for item in node_type.bl_rna.properties[property_name].enum_items_static:
+            props = node_add_menu.add_node_type(layout, node_idname, label=node_type.bl_rna.name + " ▸ " + item.name)
+            prop = props.settings.add()
+            prop.name = property_name
+            prop.value = repr(item.identifier)
+
+
 def add_simulation_zone(layout, label):
     """Add simulation zone to a menu."""
     props = layout.operator("node.add_simulation_zone", text=label, text_ctxt=i18n_contexts.default)
@@ -91,6 +104,12 @@ def add_foreach_geometry_element_zone(layout, label):
 def add_closure_zone(layout, label):
     props = layout.operator(
         "node.add_closure_zone", text=label, text_ctxt=i18n_contexts.default)
+    props.use_transform = True
+    return props
+
+
+def add_empty_group(layout):
+    props = layout.operator("node.add_empty_group", text="New Group", text_ctxt=i18n_contexts.default)
     props.use_transform = True
     return props
 
