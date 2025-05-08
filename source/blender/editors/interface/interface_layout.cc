@@ -106,7 +106,7 @@ enum class ItemType : int8_t {
   LayoutAbsolute,
   LayoutSplit,
   LayoutOverlap,
-  LayoutRadial,
+  LayoutRadial, /* AKA: menu pie. */
 
   LayoutRoot,
 #if 0
@@ -837,7 +837,7 @@ static void ui_item_enum_expand_exec(uiLayout *layout,
   uiLayout *layout_radial = nullptr;
   if (radial) {
     if (layout->root_->layout == layout) {
-      layout_radial = uiLayoutRadial(layout);
+      layout_radial = &layout->menu_pie();
       UI_block_layout_set_current(block, layout_radial);
     }
     else {
@@ -1486,7 +1486,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
   const bool radial = ui_layout_is_radial(layout);
 
   if (radial) {
-    target = uiLayoutRadial(layout);
+    target = &layout->menu_pie();
   }
   else if ((uiLayoutGetLocalDir(layout) == UI_LAYOUT_HORIZONTAL) && (flag & UI_ITEM_R_ICON_ONLY)) {
     target = layout;
@@ -4955,9 +4955,9 @@ uiLayout &uiLayout::row(bool align)
   ui_litem_init_from_parent(litem, this, align);
 
   litem->type_ = uiItemType::LayoutRow;
-  litem->space_ = (align) ? 0 : this->root_->style->buttonspacex;
+  litem->space_ = (align) ? 0 : root_->style->buttonspacex;
 
-  UI_block_layout_set_current(this->root_->block, litem);
+  UI_block_layout_set_current(root_->block, litem);
 
   return *litem;
 }
@@ -5014,7 +5014,7 @@ PanelLayout uiLayout::panel_prop_with_bool_header(const bContext *C,
                                                   const StringRefNull bool_prop_name,
                                                   const std::optional<StringRefNull> label)
 {
-  PanelLayout panel_layout = panel_prop(C, open_prop_owner, open_prop_name);
+  PanelLayout panel_layout = this->panel_prop(C, open_prop_owner, open_prop_name);
 
   uiLayout *panel_header = panel_layout.header;
   panel_header->flag_ &= ~(uiItemInternalFlag::PropSep | uiItemInternalFlag::PropDecorate |
@@ -5029,7 +5029,7 @@ uiLayout *uiLayout::panel_prop(const bContext *C,
                                const StringRefNull open_prop_name,
                                const StringRef label)
 {
-  PanelLayout panel_layout = panel_prop(C, open_prop_owner, open_prop_name);
+  PanelLayout panel_layout = this->panel_prop(C, open_prop_owner, open_prop_name);
   uiItemL(panel_layout.header, label, ICON_NONE);
 
   return panel_layout.body;
@@ -5044,7 +5044,7 @@ PanelLayout uiLayout::panel(const bContext *C, const StringRef idname, const boo
       root_panel, idname, default_closed);
   PointerRNA state_ptr = RNA_pointer_create_discrete(nullptr, &RNA_LayoutPanelState, state);
 
-  return panel_prop(C, &state_ptr, "is_open");
+  return this->panel_prop(C, &state_ptr, "is_open");
 }
 
 uiLayout *uiLayout::panel(const bContext *C,
@@ -5052,7 +5052,7 @@ uiLayout *uiLayout::panel(const bContext *C,
                           const bool default_closed,
                           const StringRef label)
 {
-  PanelLayout panel_layout = panel(C, idname, default_closed);
+  PanelLayout panel_layout = this->panel(C, idname, default_closed);
   uiItemL(panel_layout.header, label, ICON_NONE);
 
   return panel_layout.body;
@@ -5069,7 +5069,7 @@ bool uiLayoutEndsWithPanelHeader(const uiLayout &layout)
 
 uiLayout &uiLayout::row(bool align, const StringRef heading)
 {
-  uiLayout &litem = row(align);
+  uiLayout &litem = this->row(align);
   ui_layout_heading_set(&litem, heading);
   return litem;
 }
@@ -5080,16 +5080,16 @@ uiLayout &uiLayout::column(bool align)
   ui_litem_init_from_parent(litem, this, align);
 
   litem->type_ = uiItemType::LayoutColumn;
-  litem->space_ = (align) ? 0 : this->root_->style->buttonspacey;
+  litem->space_ = (align) ? 0 : root_->style->buttonspacey;
 
-  UI_block_layout_set_current(this->root_->block, litem);
+  UI_block_layout_set_current(root_->block, litem);
 
   return *litem;
 }
 
 uiLayout &uiLayout::column(bool align, const StringRef heading)
 {
-  uiLayout &litem = column(align);
+  uiLayout &litem = this->column(align);
   ui_layout_heading_set(&litem, heading);
   return litem;
 }
@@ -5100,10 +5100,10 @@ uiLayout &uiLayout::column_flow(int number, bool align)
   ui_litem_init_from_parent(flow, this, align);
 
   flow->type_ = uiItemType::LayoutColumnFlow;
-  flow->space_ = (flow->align_) ? 0 : this->root_->style->columnspace;
+  flow->space_ = (flow->align_) ? 0 : root_->style->columnspace;
   flow->number = number;
 
-  UI_block_layout_set_current(this->root_->block, flow);
+  UI_block_layout_set_current(root_->block, flow);
 
   return *flow;
 }
@@ -5115,13 +5115,13 @@ uiLayout &uiLayout::grid_flow(
   flow->type_ = uiItemType::LayoutGridFlow;
   ui_litem_init_from_parent(flow, this, align);
 
-  flow->space_ = (flow->align_) ? 0 : this->root_->style->columnspace;
+  flow->space_ = (flow->align_) ? 0 : root_->style->columnspace;
   flow->row_major = row_major;
   flow->columns_len = columns_len;
   flow->even_columns = even_columns;
   flow->even_rows = even_rows;
 
-  UI_block_layout_set_current(this->root_->block, flow);
+  UI_block_layout_set_current(root_->block, flow);
 
   return *flow;
 }
@@ -5141,30 +5141,30 @@ static uiLayoutItemBx *ui_layout_box(uiLayout *layout, int type)
   return box;
 }
 
-uiLayout *uiLayoutRadial(uiLayout *layout)
+uiLayout &uiLayout::menu_pie()
 {
   /* radial layouts are only valid for radial menus */
-  if (layout->root_->type != UI_LAYOUT_PIEMENU) {
-    return ui_item_local_sublayout(layout, layout, false);
+  if (root_->type != UI_LAYOUT_PIEMENU) {
+    return *ui_item_local_sublayout(this, this, false);
   }
 
   /* only one radial wheel per root layout is allowed, so check and return that, if it exists */
-  for (uiItem *item : layout->root_->layout->items_) {
+  for (uiItem *item : root_->layout->items_) {
     if (item->type_ == uiItemType::LayoutRadial) {
       uiLayout *litem = static_cast<uiLayout *>(item);
-      UI_block_layout_set_current(layout->root_->block, litem);
-      return litem;
+      UI_block_layout_set_current(root_->block, litem);
+      return *litem;
     }
   }
 
   uiLayout *litem = MEM_new<uiLayout>(__func__);
-  ui_litem_init_from_parent(litem, layout, false);
+  ui_litem_init_from_parent(litem, this, false);
 
   litem->type_ = uiItemType::LayoutRadial;
 
-  UI_block_layout_set_current(layout->root_->block, litem);
+  UI_block_layout_set_current(root_->block, litem);
 
-  return litem;
+  return *litem;
 }
 
 uiLayout &uiLayout::box()
