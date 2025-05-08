@@ -309,12 +309,12 @@ static void node_composit_buts_file_output(uiLayout *layout, bContext * /*C*/, P
   const bool multilayer = RNA_enum_get(&imfptr, "file_format") == R_IMF_IMTYPE_MULTILAYER;
 
   if (multilayer) {
-    uiItemL(layout, IFACE_("Path:"), ICON_NONE);
+    layout->label(IFACE_("Path:"), ICON_NONE);
   }
   else {
-    uiItemL(layout, IFACE_("Base Path:"), ICON_NONE);
+    layout->label(IFACE_("Base Path:"), ICON_NONE);
   }
-  uiItemR(layout, ptr, "base_path", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+  layout->prop(ptr, "base_path", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 }
 
 static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
@@ -332,7 +332,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
     uiLayout *column = &layout->column(true);
     uiLayoutSetPropSep(column, true);
     uiLayoutSetPropDecorate(column, false);
-    uiItemR(column, ptr, "save_as_render", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
+    column->prop(ptr, "save_as_render", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
   }
   const bool save_as_render = RNA_boolean_get(ptr, "save_as_render");
   uiTemplateImageSettings(layout, &imfptr, save_as_render);
@@ -343,7 +343,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
     uiLayoutSetPropDecorate(col, false);
 
     PointerRNA linear_settings_ptr = RNA_pointer_get(&imfptr, "linear_colorspace_settings");
-    uiItemR(col, &linear_settings_ptr, "name", UI_ITEM_NONE, IFACE_("Color Space"), ICON_NONE);
+    col->prop(&linear_settings_ptr, "name", UI_ITEM_NONE, IFACE_("Color Space"), ICON_NONE);
   }
 
   /* disable stereo output for multilayer, too much work for something that no one will use */
@@ -413,9 +413,9 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
     if (multilayer) {
       col = &layout->column(true);
 
-      uiItemL(col, IFACE_("Layer:"), ICON_NONE);
+      col->label(IFACE_("Layer:"), ICON_NONE);
       row = &col->row(false);
-      uiItemR(row, &active_input_ptr, "name", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+      row->prop(&active_input_ptr, "name", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
       uiItemFullO(row,
                   "NODE_OT_output_file_remove_active_socket",
                   "",
@@ -428,9 +428,9 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
     else {
       col = &layout->column(true);
 
-      uiItemL(col, IFACE_("File Subpath:"), ICON_NONE);
+      col->label(IFACE_("File Subpath:"), ICON_NONE);
       row = &col->row(false);
-      uiItemR(row, &active_input_ptr, "path", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+      row->prop(&active_input_ptr, "path", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
       uiItemFullO(row,
                   "NODE_OT_output_file_remove_active_socket",
                   "",
@@ -444,13 +444,12 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
       imfptr = RNA_pointer_get(&active_input_ptr, "format");
 
       col = &layout->column(true);
-      uiItemL(col, IFACE_("Format:"), ICON_NONE);
-      uiItemR(col,
-              &active_input_ptr,
-              "use_node_format",
-              UI_ITEM_R_SPLIT_EMPTY_NAME,
-              std::nullopt,
-              ICON_NONE);
+      col->label(IFACE_("Format:"), ICON_NONE);
+      col->prop(&active_input_ptr,
+                "use_node_format",
+                UI_ITEM_R_SPLIT_EMPTY_NAME,
+                std::nullopt,
+                ICON_NONE);
 
       const bool use_node_format = RNA_boolean_get(&active_input_ptr, "use_node_format");
 
@@ -459,12 +458,11 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
           uiLayout *column = &layout->column(true);
           uiLayoutSetPropSep(column, true);
           uiLayoutSetPropDecorate(column, false);
-          uiItemR(column,
-                  &active_input_ptr,
-                  "save_as_render",
-                  UI_ITEM_R_SPLIT_EMPTY_NAME,
-                  std::nullopt,
-                  ICON_NONE);
+          column->prop(&active_input_ptr,
+                       "save_as_render",
+                       UI_ITEM_R_SPLIT_EMPTY_NAME,
+                       std::nullopt,
+                       ICON_NONE);
         }
 
         const bool use_color_management = RNA_boolean_get(&active_input_ptr, "save_as_render");
@@ -478,8 +476,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
           uiLayoutSetPropDecorate(col, false);
 
           PointerRNA linear_settings_ptr = RNA_pointer_get(&imfptr, "linear_colorspace_settings");
-          uiItemR(
-              col, &linear_settings_ptr, "name", UI_ITEM_NONE, IFACE_("Color Space"), ICON_NONE);
+          col->prop(&linear_settings_ptr, "name", UI_ITEM_NONE, IFACE_("Color Space"), ICON_NONE);
         }
 
         if (is_multiview) {

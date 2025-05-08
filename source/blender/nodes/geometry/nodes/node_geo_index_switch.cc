@@ -63,7 +63,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  uiItemR(layout, ptr, "data_type", UI_ITEM_NONE, "", ICON_NONE);
+  layout->prop(ptr, "data_type", UI_ITEM_NONE, "", ICON_NONE);
 }
 
 static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
@@ -75,7 +75,7 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
     uiLayout *col = &panel->column(false);
     for (const int i : IndexRange(storage.items_num)) {
       uiLayout *row = &col->row(false);
-      uiItemL(row, node.input_socket(i + 1).name, ICON_NONE);
+      row->label(node.input_socket(i + 1).name, ICON_NONE);
       uiItemIntO(row, "", ICON_REMOVE, "node.index_switch_item_remove", "index", i);
     }
   }

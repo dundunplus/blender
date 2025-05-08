@@ -391,15 +391,15 @@ static void panel_draw(const bContext *C, Panel *panel)
   UNUSED_VARS(C);
 #endif
 
-  uiItemR(layout, ptr, "subdivision_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "subdivision_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   uiLayoutSetPropSep(layout, true);
 
   uiLayout *col = &layout->column(true);
-  uiItemR(col, ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
-  uiItemR(col, ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
+  col->prop(ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
+  col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
-  uiItemR(layout, ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   SubsurfModifierData *smd = static_cast<SubsurfModifierData *>(ptr->data);
@@ -407,9 +407,8 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (ob->type == OB_MESH && BKE_subsurf_modifier_force_disable_gpu_evaluation_for_mesh(
                                  smd, static_cast<const Mesh *>(ob->data)))
   {
-    uiItemL(layout,
-            RPT_("Sharp edges or custom normals detected, disabling GPU subdivision"),
-            ICON_INFO);
+    layout->label(RPT_("Sharp edges or custom normals detected, disabling GPU subdivision"),
+                  ICON_INFO);
   }
   else if (Object *ob_eval = DEG_get_evaluated(depsgraph, ob)) {
     if (ModifierData *md_eval = BKE_modifiers_findby_name(ob_eval, smd->modifier.name)) {
@@ -418,7 +417,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
         if (runtime_data && runtime_data->used_gpu) {
           if (runtime_data->used_cpu) {
-            uiItemL(layout, RPT_("Using both CPU and GPU subdivision"), ICON_INFO);
+            layout->label(RPT_("Using both CPU and GPU subdivision"), ICON_INFO);
           }
         }
       }
@@ -435,12 +434,8 @@ static void panel_draw(const bContext *C, Panel *panel)
         IFACE_("Adaptive Subdivision"));
     if (adaptive_panel.body) {
       uiLayoutSetActive(adaptive_panel.body, ob_use_adaptive_subdivision);
-      uiItemR(adaptive_panel.body,
-              &ob_cycles_ptr,
-              "dicing_rate",
-              UI_ITEM_NONE,
-              std::nullopt,
-              ICON_NONE);
+      adaptive_panel.body->prop(
+          &ob_cycles_ptr, "dicing_rate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
       float render = std::max(RNA_float_get(&cycles_ptr, "dicing_rate") *
                                   RNA_float_get(&ob_cycles_ptr, "dicing_rate"),
@@ -450,10 +445,10 @@ static void panel_draw(const bContext *C, Panel *panel)
                                0.1f);
 
       uiLayout *split = &adaptive_panel.body->split(0.4f, false);
-      uiItemL(&split->column(true), "", ICON_NONE);
+      split->column(true).label("", ICON_NONE);
       uiLayout *col = &split->column(true);
-      uiItemL(col, fmt::format(RPT_("Viewport {:.2f} px"), preview), ICON_NONE);
-      uiItemL(col, fmt::format(RPT_("Render {:.2f} px"), render), ICON_NONE);
+      col->label(fmt::format(RPT_("Viewport {:.2f} px"), preview), ICON_NONE);
+      col->label(fmt::format(RPT_("Render {:.2f} px"), render), ICON_NONE);
     }
   }
 
@@ -462,17 +457,17 @@ static void panel_draw(const bContext *C, Panel *panel)
   {
     uiLayoutSetPropSep(advanced_layout, true);
 
-    uiItemR(advanced_layout, ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    advanced_layout->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     uiLayout *col = &advanced_layout->column(true);
     uiLayoutSetActive(col,
                       ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface"));
-    uiItemR(col, ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    col->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    uiItemR(advanced_layout, ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemR(advanced_layout, ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemR(advanced_layout, ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiItemR(advanced_layout, ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    advanced_layout->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    advanced_layout->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    advanced_layout->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    advanced_layout->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   modifier_panel_end(layout, ptr);

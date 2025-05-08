@@ -3334,7 +3334,7 @@ static void wm_open_mainfile_ui(bContext * /*C*/, wmOperator *op)
   uiLayout *layout = op->layout;
   const char *autoexec_text;
 
-  uiItemR(layout, op->ptr, "load_ui", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->prop(op->ptr, "load_ui", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   uiLayout *col = &layout->column(false);
   if (file_info->is_untrusted) {
@@ -3346,7 +3346,7 @@ static void wm_open_mainfile_ui(bContext * /*C*/, wmOperator *op)
     autoexec_text = IFACE_("Trusted Source");
   }
 
-  uiItemR(col, op->ptr, "use_scripts", UI_ITEM_NONE, autoexec_text, ICON_NONE);
+  col->prop(op->ptr, "use_scripts", UI_ITEM_NONE, autoexec_text, ICON_NONE);
 }
 
 static void wm_open_mainfile_def_property_use_scripts(wmOperatorType *ot)
@@ -4022,7 +4022,7 @@ static void wm_clear_recent_files_ui(bContext * /*C*/, wmOperator *op)
   uiLayoutSetPropDecorate(layout, false);
 
   uiItemS(layout);
-  uiItemR(layout, op->ptr, "remove", UI_ITEM_R_TOGGLE, std::nullopt, ICON_NONE);
+  layout->prop(op->ptr, "remove", UI_ITEM_R_TOGGLE, std::nullopt, ICON_NONE);
   uiItemS(layout);
 }
 
@@ -4133,12 +4133,12 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
   uiLayout *col = &layout->column(true);
   uiItemL_ex(col, title, ICON_NONE, true, false);
   uiItemL_ex(col, G.autoexec_fail, ICON_NONE, false, true);
-  uiItemL(col, message, ICON_NONE);
+  col->label(message, ICON_NONE);
 
   uiItemS(layout);
 
   PointerRNA pref_ptr = RNA_pointer_create_discrete(nullptr, &RNA_PreferencesFilePaths, &U);
-  uiItemR(layout, &pref_ptr, "use_scripts_auto_execute", UI_ITEM_NONE, checkbox_text, ICON_NONE);
+  layout->prop(&pref_ptr, "use_scripts_auto_execute", UI_ITEM_NONE, checkbox_text, ICON_NONE);
 
   uiItemS_ex(layout, 2.0f);
 
@@ -4340,8 +4340,8 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
     SNPRINTF(message_line2,
              RPT_("Saving it with this Blender (%s) may cause loss of data."),
              current_ver_str);
-    uiItemL(layout, message_line1, ICON_NONE);
-    uiItemL(layout, message_line2, ICON_NONE);
+    layout->label(message_line1, ICON_NONE);
+    layout->label(message_line2, ICON_NONE);
   }
 
   if (bmain->is_asset_edit_file) {
@@ -4349,10 +4349,9 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
       uiItemS_ex(layout, 1.4f);
     }
 
-    uiItemL(layout,
-            RPT_("This file is managed by the Blender asset system. It can only be"),
-            ICON_NONE);
-    uiItemL(layout, RPT_("saved as a new, regular file."), ICON_NONE);
+    layout->label(RPT_("This file is managed by the Blender asset system. It can only be"),
+                  ICON_NONE);
+    layout->label(RPT_("saved as a new, regular file."), ICON_NONE);
   }
 }
 
@@ -4492,7 +4491,7 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
      * should never be empty. */
     BLI_assert_unreachable();
   }
-  uiItemL(layout, filename, ICON_NONE);
+  layout->label(filename, ICON_NONE);
 
   /* Detailed message info. */
   file_overwrite_detailed_info_show(layout, bmain);
@@ -4709,7 +4708,7 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
   else {
     SNPRINTF(filename, "%s.blend", DATA_("Untitled"));
   }
-  uiItemL(layout, filename, ICON_NONE);
+  layout->label(filename, ICON_NONE);
 
   /* Potential forward compatibility issues message. */
   if (needs_overwrite_confirm) {
