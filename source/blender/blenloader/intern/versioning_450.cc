@@ -3286,6 +3286,93 @@ static void do_version_alpha_over_node_options_to_inputs_animation(bNodeTree *no
   });
 }
 
+/* The options were converted into inputs. */
+static void do_version_bokeh_blur_node_options_to_inputs(bNodeTree *node_tree, bNode *node)
+{
+  if (!blender::bke::node_find_socket(*node, SOCK_IN, "Extend Bounds")) {
+    bNodeSocket *input = blender::bke::node_add_static_socket(
+        *node_tree, *node, SOCK_IN, SOCK_BOOLEAN, PROP_NONE, "Extend Bounds", "Extend Bounds");
+    input->default_value_typed<bNodeSocketValueBoolean>()->value = bool(node->custom1);
+  }
+}
+
+/* The options were converted into inputs. */
+static void do_version_bokeh_blur_node_options_to_inputs_animation(bNodeTree *node_tree,
+                                                                   bNode *node)
+{
+  /* Compute the RNA path of the node. */
+  char escaped_node_name[sizeof(node->name) * 2 + 1];
+  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
+
+  BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
+    /* The FCurve does not belong to the node since its RNA path doesn't start with the node's RNA
+     * path. */
+    if (!blender::StringRef(fcurve->rna_path).startswith(node_rna_path)) {
+      return;
+    }
+
+    /* Change the RNA path of the FCurve from the old properties to the new inputs, adjusting the
+     * values of the FCurves frames when needed. */
+    char *old_rna_path = fcurve->rna_path;
+    if (BLI_str_endswith(fcurve->rna_path, "use_extended_bounds")) {
+      fcurve->rna_path = BLI_sprintfN("%s.%s", node_rna_path.c_str(), "inputs[4].default_value");
+    }
+
+    /* The RNA path was changed, free the old path. */
+    if (fcurve->rna_path != old_rna_path) {
+      MEM_freeN(old_rna_path);
+    }
+  });
+}
+
+/* The XY Offset option was removed. If enabled, the image is translated in relative space using X
+ * and Y, so add a Translate node to achieve the same function. */
+static void do_version_scale_node_remove_translate(bNodeTree *node_tree)
+{
+  LISTBASE_FOREACH_BACKWARD_MUTABLE (bNodeLink *, link, &node_tree->links) {
+    if (link->fromnode->type_legacy != CMP_NODE_SCALE) {
+      continue;
+    }
+
+    if (link->fromnode->custom1 != CMP_NODE_SCALE_RENDER_SIZE) {
+      continue;
+    }
+
+    const float x = link->fromnode->custom3;
+    const float y = link->fromnode->custom4;
+    if (x == 0.0f && y == 0.0f) {
+      continue;
+    }
+
+    bNode *translate_node = blender::bke::node_add_static_node(
+        nullptr, *node_tree, CMP_NODE_TRANSLATE);
+    translate_node->parent = link->fromnode->parent;
+    translate_node->location[0] = link->fromnode->location[0] + link->fromnode->width + 20.0f;
+    translate_node->location[1] = link->fromnode->location[1];
+    static_cast<NodeTranslateData *>(translate_node->storage)->interpolation =
+        static_cast<NodeScaleData *>(link->fromnode->storage)->interpolation;
+    static_cast<NodeTranslateData *>(translate_node->storage)->relative = true;
+
+    bNodeSocket *translate_image_input = blender::bke::node_find_socket(
+        *translate_node, SOCK_IN, "Image");
+    bNodeSocket *translate_x_input = blender::bke::node_find_socket(*translate_node, SOCK_IN, "X");
+    bNodeSocket *translate_y_input = blender::bke::node_find_socket(*translate_node, SOCK_IN, "Y");
+    bNodeSocket *translate_image_output = blender::bke::node_find_socket(
+        *translate_node, SOCK_OUT, "Image");
+
+    translate_x_input->default_value_typed<bNodeSocketValueFloat>()->value = x;
+    translate_y_input->default_value_typed<bNodeSocketValueFloat>()->value = y;
+
+    version_node_add_link(
+        *node_tree, *link->fromnode, *link->fromsock, *translate_node, *translate_image_input);
+    version_node_add_link(
+        *node_tree, *translate_node, *translate_image_output, *link->tonode, *link->tosock);
+
+    blender::bke::node_remove_link(node_tree, *link);
+  }
+}
+
 /* Turns all instances of "{" and "}" in a string into "{{" and "}}", escaping
  * them for strings that are processed with templates so that they don't
  * erroneously get interepreted as template expressions. */
@@ -3882,6 +3969,19 @@ void do_versions_after_linking_450(FileData * /*fd*/, Main *bmain)
         LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
           if (node->type_legacy == CMP_NODE_ALPHAOVER) {
             do_version_alpha_over_node_options_to_inputs_animation(node_tree, node);
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 69)) {
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      if (node_tree->type == NTREE_COMPOSIT) {
+        LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
+          if (node->type_legacy == CMP_NODE_BOKEHBLUR) {
+            do_version_bokeh_blur_node_options_to_inputs_animation(node_tree, node);
           }
         }
       }
@@ -4934,6 +5034,28 @@ void blo_do_versions_450(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
         brush->tip_scale_x = 1.0f;
       }
     }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 69)) {
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      if (node_tree->type == NTREE_COMPOSIT) {
+        LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
+          if (node->type_legacy == CMP_NODE_BOKEHBLUR) {
+            do_version_bokeh_blur_node_options_to_inputs(node_tree, node);
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 405, 70)) {
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      if (node_tree->type == NTREE_COMPOSIT) {
+        do_version_scale_node_remove_translate(node_tree);
+      }
+    }
+    FOREACH_NODETREE_END;
   }
 
   /* Always run this versioning (keep at the bottom of the function). Meshes are written with the
