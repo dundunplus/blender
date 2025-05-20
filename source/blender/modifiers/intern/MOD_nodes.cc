@@ -102,10 +102,9 @@ static void init_data(ModifierData *md)
 {
   NodesModifierData *nmd = (NodesModifierData *)md;
 
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(nmd, modifier));
   nmd->modifier.layout_panel_open_flag |= 1 << NODES_MODIFIER_PANEL_WARNINGS;
 
-  MEMCPY_STRUCT_AFTER(nmd, DNA_struct_default_get(NodesModifierData), modifier);
+  MEMCPY_STRUCT_AFTER_CHECKED(nmd, DNA_struct_default_get(NodesModifierData), modifier);
   nmd->runtime = MEM_new<NodesModifierRuntime>(__func__);
   nmd->runtime->cache = std::make_shared<bake::ModifierCache>();
 }
@@ -2177,15 +2176,11 @@ static void add_attribute_search_or_value_buttons(DrawGroupInputsContext &ctx,
     uiItemDecoratorR(layout, ctx.md_ptr, rna_path.c_str(), -1);
   }
 
-  PointerRNA props;
-  uiItemFullO(prop_row,
-              "object.geometry_nodes_input_attribute_toggle",
-              "",
-              ICON_SPREADSHEET,
-              nullptr,
-              WM_OP_INVOKE_DEFAULT,
-              UI_ITEM_NONE,
-              &props);
+  PointerRNA props = prop_row->op("object.geometry_nodes_input_attribute_toggle",
+                                  "",
+                                  ICON_SPREADSHEET,
+                                  WM_OP_INVOKE_DEFAULT,
+                                  UI_ITEM_NONE);
   RNA_string_set(&props, "modifier_name", ctx.nmd.modifier.name);
   RNA_string_set(&props, "input_name", socket.identifier);
 }

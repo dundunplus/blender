@@ -23,6 +23,7 @@
 #include "DNA_camera_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
+#include "DNA_curve_types.h"
 #include "DNA_defaults.h"
 #include "DNA_dynamicpaint_types.h"
 #include "DNA_effect_types.h"
@@ -170,9 +171,8 @@ static void copy_object_pose(Object *obn, const Object *ob, const int flag);
 static void object_init_data(ID *id)
 {
   Object *ob = (Object *)id;
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(ob, id));
 
-  MEMCPY_STRUCT_AFTER(ob, DNA_struct_default_get(Object), id);
+  MEMCPY_STRUCT_AFTER_CHECKED(ob, DNA_struct_default_get(Object), id);
 
   ob->type = OB_EMPTY;
 
@@ -938,6 +938,20 @@ static void object_blend_read_after_liblink(BlendLibReader *reader, ID *id)
       BLO_reportf_wrap(reports, RPT_INFO, RPT_("Object %s lost data"), ob->id.name + 2);
     }
     reports->count.missing_obdata++;
+  }
+
+  if (ob->data && ELEM(ob->type, OB_FONT, OB_CURVES_LEGACY, OB_SURF)) {
+    /* NOTE: This case may happen when linked curve data changes it's type,
+     * since a #Curve may be used for Text/Surface/Curve.
+     * Since the same ID type is used for all of these.
+     * Within a file (no library linking) this should never happen.
+     * see: #139133. */
+
+    const ID *ob_data_id = static_cast<ID *>(ob->data);
+    BLI_assert(GS(ob_data_id->name) == ID_CU_LEGACY);
+    /* Don't recalculate any internal curve data is this is low level logic
+     * intended to avoid errors when switching between font/curve types. */
+    BKE_curve_type_test(ob, false);
   }
 
   /* When the object is local and the data is library its possible
@@ -1778,7 +1792,7 @@ char *BKE_object_data_editmode_flush_ptr_get(ID *id)
       break;
     }
     case ID_CU_LEGACY: {
-      if (((Curve *)id)->vfont != nullptr) {
+      if (((Curve *)id)->ob_type == OB_FONT) {
         EditFont *ef = ((Curve *)id)->editfont;
         if (ef != nullptr) {
           return &ef->needs_flush_to_id;
@@ -2038,7 +2052,7 @@ int BKE_object_obdata_to_type(const ID *id)
     case ID_ME:
       return OB_MESH;
     case ID_CU_LEGACY:
-      return BKE_curve_type_get((const Curve *)id);
+      return reinterpret_cast<const Curve *>(id)->ob_type;
     case ID_MB:
       return OB_MBALL;
     case ID_LA:
