@@ -7,6 +7,7 @@
  */
 
 #ifdef _WIN32
+#  include "BLI_winstuff.h"
 #  include <exception>
 #  include <io.h>
 #  include <stddef.h>
