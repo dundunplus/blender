@@ -597,8 +597,20 @@ struct SocketUsageInferencer {
         this->value_task__output__generic_switch(socket, menu_switch__is_socket_selected);
         return;
       }
+      case SH_NODE_MIX: {
+        this->value_task__output__generic_switch(socket, mix_node__is_socket_selected);
+        return;
+      }
+      case SH_NODE_MIX_SHADER: {
+        this->value_task__output__generic_switch(socket, shader_mix_node__is_socket_selected);
+        return;
+      }
       case SH_NODE_MATH: {
         this->value_task__output__float_math(socket);
+        return;
+      }
+      case SH_NODE_VECTOR_MATH: {
+        this->value_task__output__vector_math(socket);
         return;
       }
       case FN_NODE_INTEGER_MATH: {
@@ -701,6 +713,60 @@ struct SocketUsageInferencer {
               }
               if (a.has_value() && b.has_value()) {
                 return &scope_.construct<float>(*a * *b);
+              }
+              return std::nullopt;
+            });
+        break;
+      }
+      default: {
+        this->value_task__output__multi_function_node(socket);
+        break;
+      }
+    }
+  }
+
+  void value_task__output__vector_math(const SocketInContext &socket)
+  {
+    const NodeInContext node = socket.owner_node();
+    const NodeVectorMathOperation operation = NodeVectorMathOperation(node->custom1);
+    switch (operation) {
+      case NODE_VECTOR_MATH_MULTIPLY: {
+        this->value_task__output__generic_eval(
+            socket, [&](const Span<const void *> inputs) -> std::optional<const void *> {
+              const std::optional<float3> a = inputs[0] ?
+                                                  std::optional(
+                                                      *static_cast<const float3 *>(inputs[0])) :
+                                                  std::nullopt;
+              const std::optional<float3> b = inputs[1] ?
+                                                  std::optional(
+                                                      *static_cast<const float3 *>(inputs[1])) :
+                                                  std::nullopt;
+              if (a == float3(0.0f) || b == float3(0.0f)) {
+                return &scope_.construct<float3>(0.0f);
+              }
+              if (a.has_value() && b.has_value()) {
+                return &scope_.construct<float3>(*a * *b);
+              }
+              return std::nullopt;
+            });
+        break;
+      }
+      case NODE_VECTOR_MATH_SCALE: {
+        this->value_task__output__generic_eval(
+            socket, [&](const Span<const void *> inputs) -> std::optional<const void *> {
+              const std::optional<float3> a = inputs[0] ?
+                                                  std::optional(
+                                                      *static_cast<const float3 *>(inputs[0])) :
+                                                  std::nullopt;
+              const std::optional<float> scale = inputs[3] ?
+                                                     std::optional(
+                                                         *static_cast<const float *>(inputs[3])) :
+                                                     std::nullopt;
+              if (a == float3(0.0f) || scale == 0.0f) {
+                return &scope_.construct<float3>(0.0f);
+              }
+              if (a.has_value() && scale.has_value()) {
+                return &scope_.construct<float3>(*a * *scale);
               }
               return std::nullopt;
             });
@@ -853,8 +919,8 @@ struct SocketUsageInferencer {
   }
 
   /**
-   * Assumes that the first input is a condition that selects one of the remaining inputs which is
-   * then output. If necessary, this can trigger a value task for the condition socket.
+   * Assumes that the first available input is a condition that selects one of the remaining inputs
+   * which is then output.
    */
   void value_task__output__generic_switch(
       const SocketInContext &socket,
@@ -863,9 +929,10 @@ struct SocketUsageInferencer {
   {
     const NodeInContext node = socket.owner_node();
     BLI_assert(node->input_sockets().size() >= 1);
-    BLI_assert(node->output_sockets().size() == 1);
+    BLI_assert(node->output_sockets().size() >= 1);
 
-    const SocketInContext condition_socket = node.input_socket(0);
+    const SocketInContext condition_socket{
+        socket.context, this->get_first_available_bsocket(node->input_sockets())};
     const std::optional<const void *> condition_value = all_socket_values_.lookup_try(
         condition_socket);
     if (!condition_value.has_value()) {
@@ -877,24 +944,46 @@ struct SocketUsageInferencer {
       all_socket_values_.add_new(socket, nullptr);
       return;
     }
-    for (const int input_i : node->input_sockets().index_range().drop_front(1)) {
+    Vector<const bNodeSocket *> selected_inputs;
+    for (const int input_i :
+         node->input_sockets().index_range().drop_front(condition_socket->index() + 1))
+    {
       const SocketInContext input_socket = node.input_socket(input_i);
+      if (!input_socket->is_available()) {
+        continue;
+      }
       if (input_socket->type == SOCK_CUSTOM && STREQ(input_socket->idname, "NodeSocketVirtual")) {
         continue;
       }
       const bool is_selected = is_selected_socket(input_socket, *condition_value);
-      if (!is_selected) {
-        continue;
+      if (is_selected) {
+        selected_inputs.append(input_socket.socket);
       }
-      const std::optional<const void *> input_value = all_socket_values_.lookup_try(input_socket);
+    }
+    if (selected_inputs.is_empty()) {
+      all_socket_values_.add_new(socket, nullptr);
+      return;
+    }
+    if (selected_inputs.size() == 1) {
+      /* A single input is selected, so just pass through this value without regarding others. */
+      const SocketInContext selected_input{socket.context, selected_inputs[0]};
+      const std::optional<const void *> input_value = all_socket_values_.lookup_try(
+          selected_input);
       if (!input_value.has_value()) {
-        this->push_value_task(input_socket);
+        this->push_value_task(selected_input);
         return;
       }
       all_socket_values_.add_new(socket, *input_value);
       return;
     }
-    /* The condition did not match any of the inputs, so the output is unknown. */
+
+    /* Multiple inputs are selected. */
+    if (node->typeinfo->build_multi_function) {
+      /* Try to compute the output value from the multiple selected inputs. */
+      this->value_task__output__multi_function_node(socket);
+      return;
+    }
+    /* Can't compute the output value, so set it to be unknown. */
     all_socket_values_.add_new(socket, nullptr);
   }
 
@@ -909,6 +998,9 @@ struct SocketUsageInferencer {
     std::optional<int> next_unknown_input_index;
     for (const int input_i : IndexRange(inputs_num)) {
       const SocketInContext input_socket = node.input_socket(input_i);
+      if (!input_socket->is_available()) {
+        continue;
+      }
       const std::optional<const void *> input_value = all_socket_values_.lookup_try(input_socket);
       if (!input_value.has_value()) {
         next_unknown_input_index = input_i;
@@ -926,6 +1018,7 @@ struct SocketUsageInferencer {
       /* The output is still unknown even though we know as much about the inputs as possible
        * already. */
       all_socket_values_.add_new(socket, nullptr);
+      return;
     }
     /* Request the next input socket. */
     const SocketInContext next_input = node.input_socket(*next_unknown_input_index);
