@@ -14,13 +14,9 @@
 
 /* clang-format off */
 
-#ifdef __LITTLE_ENDIAN__
-#  define RGBA(c) {((c) >> 24) & 0xff, ((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
-#  define RGB(c)  {((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
-#else
-#  define RGBA(c) {(c) & 0xff, ((c) >> 8) & 0xff, ((c) >> 16) & 0xff, ((c) >> 24) & 0xff}
-#  define RGB(c)  {(c) & 0xff, ((c) >> 8) & 0xff, ((c) >> 16) & 0xff}
-#endif
+/* NOTE: this is endianness-sensitive. */
+#define RGBA(c) {((c) >> 24) & 0xff, ((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
+#define RGB(c)  {((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
 
 const bTheme U_theme_default = {
   .name = "Default",
@@ -206,7 +202,7 @@ const bTheme U_theme_default = {
       .roundness = 0.2f,
     },
     .wcol_list_item = {
-      .outline = RGBA(0x2d2d2dff),
+      .outline = RGBA(0x2d2d2d00),
       .outline_sel = RGBA(0x2d2d2dff),
       .inner = RGBA(0xffffff00),
       .inner_sel = RGBA(0x4772b3ff),
