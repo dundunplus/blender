@@ -66,8 +66,6 @@
 #include "BLF_api.hh"
 #include "GHOST_C-api.h"
 
-#include "DEG_depsgraph.hh"
-
 #include "wm_window_private.hh"
 
 #include "WM_api.hh" /* Only for #WM_main_playanim. */
@@ -2169,8 +2167,6 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
   /* We still miss freeing a lot!
    * But many areas could skip initialization too for anim play. */
 
-  DEG_free_node_types();
-
   BLF_exit();
 
   /* NOTE: Must happen before GPU Context destruction as GPU resources are released via
@@ -2189,6 +2185,8 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
 
   GHOST_DisposeWindow(ps.ghost_data.system, ps.ghost_data.window);
 
+  GHOST_DisposeSystem(ps.ghost_data.system);
+
   /* Early exit, IMB and BKE should be exited only in end. */
   if (ps.argv_next) {
     args_next->argc = ps.argc_next;
@@ -2196,8 +2194,6 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
     /* No exit code, keep running. */
     return std::nullopt;
   }
-
-  GHOST_DisposeSystem(ps.ghost_data.system);
 
   return EXIT_SUCCESS;
 }
