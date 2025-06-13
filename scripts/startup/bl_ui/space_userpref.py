@@ -908,17 +908,6 @@ class USERPREF_PT_viewport_textures(ViewportPanel, CenterAlignMixIn, Panel):
         col.prop(system, "image_draw_method", text="Image Display Method")
 
 
-class USERPREF_PT_viewport_selection(ViewportPanel, CenterAlignMixIn, Panel):
-    bl_label = "Selection"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw_centered(self, context, layout):
-        prefs = context.preferences
-        system = prefs.system
-
-        layout.prop(system, "use_select_pick_depth")
-
-
 class USERPREF_PT_viewport_subdivision(ViewportPanel, CenterAlignMixIn, Panel):
     bl_label = "Subdivision"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1060,7 +1049,7 @@ class PreferenceThemeWidgetColorPanel:
 
         layout.use_property_split = True
 
-        flow = layout.grid_flow(row_major=True, columns=3, even_columns=True, even_rows=False, align=False)
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column(align=True)
         col.prop(widget_style, "text")
@@ -2962,7 +2951,6 @@ classes = (
     USERPREF_PT_viewport_display,
     USERPREF_PT_viewport_quality,
     USERPREF_PT_viewport_textures,
-    USERPREF_PT_viewport_selection,
     USERPREF_PT_viewport_subdivision,
 
     USERPREF_PT_edit_objects,
