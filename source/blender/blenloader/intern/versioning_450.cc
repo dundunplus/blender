@@ -191,7 +191,7 @@ static void do_version_convert_to_generic_nodes(bNodeTree *node_tree)
 {
   LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
     switch (node->type_legacy) {
-      case CMP_NODE_VALUE:
+      case CMP_NODE_VALUE_DEPRECATED:
         node->type_legacy = SH_NODE_VALUE;
         STRNCPY(node->idname, "ShaderNodeValue");
         break;
@@ -211,7 +211,7 @@ static void do_version_convert_to_generic_nodes(bNodeTree *node_tree)
         node->type_legacy = SH_NODE_CURVE_VEC;
         STRNCPY(node->idname, "ShaderNodeVectorCurve");
         break;
-      case CMP_NODE_VALTORGB: {
+      case CMP_NODE_VALTORGB_DEPRECATED: {
         node->type_legacy = SH_NODE_VALTORGB;
         STRNCPY(node->idname, "ShaderNodeValToRGB");
 
@@ -242,7 +242,7 @@ static void do_version_convert_to_generic_nodes(bNodeTree *node_tree)
 
         break;
       }
-      case CMP_NODE_MIX_RGB: {
+      case CMP_NODE_MIX_RGB_DEPRECATED: {
         node->type_legacy = SH_NODE_MIX;
         STRNCPY(node->idname, "ShaderNodeMix");
 

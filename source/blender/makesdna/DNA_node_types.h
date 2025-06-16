@@ -1336,6 +1336,13 @@ typedef struct NodeGlare {
   char _pad1[4];
 } NodeGlare;
 
+/* Glare Node. Stored in NodeGlare.quality. */
+typedef enum CMPNodeGlareQuality {
+  CMP_NODE_GLARE_QUALITY_HIGH = 0,
+  CMP_NODE_GLARE_QUALITY_MEDIUM = 1,
+  CMP_NODE_GLARE_QUALITY_LOW = 2,
+} CMPNodeGlareQuality;
+
 /** Tone-map node. */
 typedef struct NodeTonemap {
   float key DNA_DEPRECATED;
@@ -1412,9 +1419,6 @@ typedef struct NodeTexBase {
 typedef struct NodeTexSky {
   NodeTexBase base;
   int sky_model;
-  float sun_direction[3];
-  float turbidity;
-  float ground_albedo;
   float sun_size;
   float sun_intensity;
   float sun_elevation;
@@ -1424,7 +1428,7 @@ typedef struct NodeTexSky {
   float dust_density;
   float ozone_density;
   char sun_disc;
-  char _pad[7];
+  char _pad[11];
 } NodeTexSky;
 
 typedef struct NodeTexImage {
@@ -1519,24 +1523,6 @@ typedef struct NodeShaderVectTransform {
   int convert_from, convert_to;
   char _pad[4];
 } NodeShaderVectTransform;
-
-typedef struct NodeShaderTexPointDensity {
-  NodeTexBase base;
-  short point_source;
-  char _pad[2];
-  int particle_system;
-  float radius;
-  int resolution;
-  short space;
-  short interpolation;
-  short color_source;
-  short ob_color_source;
-  /** Used at runtime only by sampling RNA API. */
-  PointDensity pd;
-  int cached_resolution;
-  /** Vertex attribute layer for color source. */
-  char vertex_attribute_name[/*MAX_CUSTOMDATA_LAYER_NAME*/ 68];
-} NodeShaderTexPointDensity;
 
 typedef struct NodeShaderPrincipled {
   char use_subsurface_auto_radius;
@@ -2622,11 +2608,7 @@ enum {
 };
 
 /* sky texture */
-enum {
-  SHD_SKY_PREETHAM = 0,
-  SHD_SKY_HOSEK = 1,
-  SHD_SKY_NISHITA = 2,
-};
+enum { SHD_SKY_NISHITA = 0 };
 
 /* environment texture */
 enum {
@@ -3105,30 +3087,6 @@ typedef enum CMPNodeRelativeToPixelReferenceDimension {
   CMP_NODE_RELATIVE_TO_PIXEL_REFERENCE_DIMENSION_SMALLER = 4,
   CMP_NODE_RELATIVE_TO_PIXEL_REFERENCE_DIMENSION_DIAGONAL = 5,
 } CMPNodeRelativeToPixelReferenceDimension;
-
-/* Point Density shader node */
-
-enum {
-  SHD_POINTDENSITY_SOURCE_PSYS = 0,
-  SHD_POINTDENSITY_SOURCE_OBJECT = 1,
-};
-
-enum {
-  SHD_POINTDENSITY_SPACE_OBJECT = 0,
-  SHD_POINTDENSITY_SPACE_WORLD = 1,
-};
-
-enum {
-  SHD_POINTDENSITY_COLOR_PARTAGE = 1,
-  SHD_POINTDENSITY_COLOR_PARTSPEED = 2,
-  SHD_POINTDENSITY_COLOR_PARTVEL = 3,
-};
-
-enum {
-  SHD_POINTDENSITY_COLOR_VERTCOL = 0,
-  SHD_POINTDENSITY_COLOR_VERTWEIGHT = 1,
-  SHD_POINTDENSITY_COLOR_VERTNOR = 2,
-};
 
 /* Scattering phase functions */
 enum {
