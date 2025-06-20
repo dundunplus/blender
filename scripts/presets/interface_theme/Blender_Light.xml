@@ -13,6 +13,8 @@
         widget_text_cursor="#3399e6"
         panel_roundness="0.4"
         panel_header="#ccccccff"
+        panel_title="#1a1a1a"
+        panel_text="#1a1a1a"
         panel_back="#ccccccff"
         panel_sub_back="#0000001f"
         panel_outline="#ffffff22"
@@ -475,9 +477,6 @@
             header="#99999900"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
             <gradients>
               <ThemeGradientColors
@@ -535,9 +534,6 @@
             header="#adadadff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -573,9 +569,6 @@
             header="#adadadff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -624,9 +617,6 @@
             header="#adadadff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -694,9 +684,6 @@
             header="#adadadff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -773,9 +760,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -837,9 +821,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -875,12 +856,16 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
+        <space_region>
+          <ThemeSpaceRegionGeneric
+            button="#303030ff"
+            tab_back="#a6a6a6ff"
+            >
+          </ThemeSpaceRegionGeneric>
+        </space_region>
       </ThemeProperties>
     </properties>
     <text_editor>
@@ -907,9 +892,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -967,11 +949,6 @@
             header="#b3b3b3ff"
             header_text="#eeeeee"
             header_text_hi="#ffffff"
-            button="#99999900"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
-            tab_back="#656565ff"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1003,9 +980,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1034,9 +1008,6 @@
             header="#b3b3b3ff"
             header_text="#1a1a1a"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1053,9 +1024,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1086,9 +1054,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#ffffff"
-            button_text="#cccccc"
-            button_text_hi="#ffffff"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1137,9 +1102,6 @@
             header="#b3b3b3ff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#000000"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1172,9 +1134,6 @@
             header="#999999ff"
             header_text="#eeeeee"
             header_text_hi="#ffffff"
-            button_title="#ffffff"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1191,9 +1150,6 @@
             header="#999999ff"
             header_text="#1a1a1a"
             header_text_hi="#ffffff"
-            button_title="#ffffff"
-            button_text="#ffffff"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
@@ -1212,9 +1168,6 @@
             header="#adadadff"
             header_text="#000000"
             header_text_hi="#ffffff"
-            button_title="#1a1a1a"
-            button_text="#000000"
-            button_text_hi="#000000"
             >
           </ThemeSpaceGeneric>
         </space>
