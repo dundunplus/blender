@@ -8652,10 +8652,8 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_shape_check(const GHOST_TStandardCurs
 
 GHOST_TSuccess GHOST_SystemWayland::cursor_shape_custom_set(const uint8_t *bitmap,
                                                             const uint8_t *mask,
-                                                            const int sizex,
-                                                            const int sizey,
-                                                            const int hotX,
-                                                            const int hotY,
+                                                            const int size[2],
+                                                            const int hot_spot[2],
                                                             const bool /*canInvertColor*/)
 {
   /* Caller needs to lock `server_mutex`. */
@@ -8671,9 +8669,8 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_shape_custom_set(const uint8_t *bitma
     cursor->custom_data_size = 0; /* Not needed, but the value is no longer meaningful. */
   }
 
-  const int32_t size_xy[2] = {sizex, sizey};
   wl_buffer *buffer = ghost_wl_buffer_create_for_image(display_->wl.shm,
-                                                       size_xy,
+                                                       size,
                                                        WL_SHM_FORMAT_ARGB8888,
                                                        &cursor->custom_data,
                                                        &cursor->custom_data_size);
@@ -8683,32 +8680,45 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_shape_custom_set(const uint8_t *bitma
 
   wl_buffer_add_listener(buffer, &cursor_buffer_listener, cursor);
 
-  static constexpr uint32_t black = 0xFF000000;
-  static constexpr uint32_t white = 0xFFFFFFFF;
-  static constexpr uint32_t transparent = 0x00000000;
+  if (mask) {
+    /* Monochrome & mask (expand to RGBA). */
+    static constexpr uint32_t black = 0xFF000000;
+    static constexpr uint32_t white = 0xFFFFFFFF;
+    static constexpr uint32_t transparent = 0x00000000;
 
-  uint8_t datab = 0, maskb = 0;
+    uint8_t datab = 0, maskb = 0;
+    uint32_t *px_dst = static_cast<uint32_t *>(cursor->custom_data);
 
-  for (int y = 0; y < sizey; ++y) {
-    uint32_t *pixel = &static_cast<uint32_t *>(cursor->custom_data)[y * sizex];
-    for (int x = 0; x < sizex; ++x) {
-      if ((x % 8) == 0) {
-        datab = *bitmap++;
-        maskb = *mask++;
+    for (int y = 0; y < size[1]; y++) {
+      for (int x = 0; x < size[0]; x++) {
+        if ((x % 8) == 0) {
+          datab = *bitmap++;
+          maskb = *mask++;
 
-        /* Reverse bit order. */
-        datab = uint8_t((datab * 0x0202020202ULL & 0x010884422010ULL) % 1023);
-        maskb = uint8_t((maskb * 0x0202020202ULL & 0x010884422010ULL) % 1023);
+          /* Reverse bit order. */
+          datab = uint8_t((datab * 0x0202020202ULL & 0x010884422010ULL) % 1023);
+          maskb = uint8_t((maskb * 0x0202020202ULL & 0x010884422010ULL) % 1023);
+        }
+
+        if (maskb & 0x80) {
+          *px_dst++ = (datab & 0x80) ? white : black;
+        }
+        else {
+          *px_dst++ = (datab & 0x80) ? white : transparent;
+        }
+        datab <<= 1;
+        maskb <<= 1;
       }
-
-      if (maskb & 0x80) {
-        *pixel++ = (datab & 0x80) ? white : black;
+    }
+  }
+  else {
+    /* RGBA color (direct copy). */
+    const uint32_t *px_src = reinterpret_cast<const uint32_t *>(bitmap);
+    uint32_t *px_dst = static_cast<uint32_t *>(cursor->custom_data);
+    for (int y = 0; y < size[1]; y++) {
+      for (int x = 0; x < size[0]; x++) {
+        *px_dst++ = *px_src++;
       }
-      else {
-        *pixel++ = (datab & 0x80) ? white : transparent;
-      }
-      datab <<= 1;
-      maskb <<= 1;
     }
   }
 
@@ -8741,7 +8751,7 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_shape_custom_set(const uint8_t *bitma
       output_scale = 1;
     }
 
-    const int custom_size = std::max(sizex, sizey);
+    const int custom_size = std::max(size[0], size[1]);
     const int target_size = seat->cursor.theme_size * output_scale;
 
     cursor->custom_scale = std::max(1, (output_scale * custom_size) / target_size);
@@ -8750,17 +8760,17 @@ GHOST_TSuccess GHOST_SystemWayland::cursor_shape_custom_set(const uint8_t *bitma
      * problems with odd-scaling (HI-DPI scale of 300% or 500% for example).
      * In these cases the custom cursor will be a little too large. */
     while ((cursor->custom_scale > 1) &&
-           !((sizex % cursor->custom_scale) == 0 && (sizey % cursor->custom_scale) == 0))
+           !((size[0] % cursor->custom_scale) == 0 && (size[1] % cursor->custom_scale) == 0))
     {
       cursor->custom_scale -= 1;
     }
   }
 
   cursor->wl.buffer = buffer;
-  cursor->wl.image.width = uint32_t(sizex);
-  cursor->wl.image.height = uint32_t(sizey);
-  cursor->wl.image.hotspot_x = uint32_t(hotX);
-  cursor->wl.image.hotspot_y = uint32_t(hotY);
+  cursor->wl.image.width = uint32_t(size[0]);
+  cursor->wl.image.height = uint32_t(size[1]);
+  cursor->wl.image.hotspot_x = uint32_t(hot_spot[0]);
+  cursor->wl.image.hotspot_y = uint32_t(hot_spot[1]);
   cursor->wl.theme_cursor = nullptr;
   cursor->wl.theme_cursor_name = nullptr;
 
