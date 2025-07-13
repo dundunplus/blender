@@ -160,6 +160,14 @@ static int wm_cursor_size(const wmWindow *win)
   return std::lround(WM_cursor_preferred_logical_size() * system_scale);
 }
 
+/**
+ * \param svg: The contents of an SVG file.
+ * \param cursor_size: The maximum dimension in pixels for the resulting cursors width or height.
+ * \param alloc_fn: A caller defined allocation functions.
+ * \param r_bitmap_size: The width & height of the cursor data (never exceeding `cursor_size`).
+ * \return the pixel data as a `sizeof(uint8_t[4]) * r_bitmap_size[0] * r_bitmap_size[1]` array
+ * or null on failure.
+ */
 static uint8_t *cursor_bitmap_from_svg(const char *svg,
                                        const int cursor_size,
                                        uint8_t *(*alloc_fn)(size_t size),
@@ -615,35 +623,49 @@ static void wm_cursor_time_small(wmWindow *win, int nr)
                              false);
 }
 
+/**
+ * \param text: The text display in the cursor.
+ * \param cursor_size: The maximum dimension in pixels for the resulting cursors width or height.
+ * \param alloc_fn: A caller defined allocation functions.
+ * \param r_bitmap_size: The width & height of the cursor data (never exceeding `cursor_size`).
+ * \return the pixel data as a `sizeof(uint8_t[4]) * r_bitmap_size[0] * r_bitmap_size[1]` array
+ * or null on failure.
+ */
 static uint8_t *cursor_bitmap_from_text(const std::string &text,
                                         const int cursor_size,
                                         int font_id,
                                         uint8_t *(*alloc_fn)(size_t size),
                                         int r_bitmap_size[2])
 {
-  /* A bit smaller than full cursor size since this is wider. */
-  float size = cursor_size * 0.8f;
-  BLF_size(font_id, size);
+  /* Smaller than a full cursor size since this is typically wider.
+   * Also, use a small scale to avoid scaling single numbers up
+   * which are then shrunk when more digits are added since this seems strange. */
+  float size = floorf(cursor_size * 0.5f);
+  float blf_size[2];
+  float padding;
 
-  float blf_size[2] = {0.0f, 0.0f};
-  BLF_width_and_height(font_id, text.c_str(), text.size(), &blf_size[0], &blf_size[1]);
-  float padding = size * 0.15f;
-  blf_size[0] += padding * 2.0f;
-  blf_size[1] += padding * 2.0f;
-
-  if (blf_size[0] > 255.0f || blf_size[1] > 255.0f) {
-    const float blf_size_max = std::max(blf_size[0], blf_size[1]);
-    size *= 253.0f / blf_size_max;
+  for (int pass = 0; pass < 2; pass++) {
     BLF_size(font_id, size);
     BLF_width_and_height(font_id, text.c_str(), text.size(), &blf_size[0], &blf_size[1]);
     padding = size * 0.15f;
     blf_size[0] += padding * 2.0f;
     blf_size[1] += padding * 2.0f;
+
+    if (pass == 0) {
+      const float blf_size_max = std::max(blf_size[0], blf_size[1]);
+      if (blf_size_max <= cursor_size) {
+        break;
+      }
+      /* +1 to scale down more than a small fraction. */
+      size = floorf(size * (cursor_size / (blf_size_max + 1.0f)));
+    }
   }
 
-  const int dest_size[2] = {
-      int(std::ceil(blf_size[0])),
-      int(std::ceil(blf_size[1])),
+  /* Camping by `cursor_size` is a safeguard to ensure the size *never* exceeds the bounds.
+   * In practice this should happen rarely - if at all. */
+  const size_t dest_size[2] = {
+      std::min(size_t(std::ceil(blf_size[0])), size_t(cursor_size)),
+      std::min(size_t(std::ceil(blf_size[1])), size_t(cursor_size)),
   };
 
   uint8_t *bitmap_rgba = alloc_fn(sizeof(uint8_t[4]) * dest_size[0] * dest_size[1]);
