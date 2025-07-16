@@ -335,7 +335,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
                                           blender::StringRefNull open_prop_name,
                                           PointerRNA *bool_prop_owner,
                                           blender::StringRefNull bool_prop_name,
-                                          std::optional<blender::StringRefNull> label);
+                                          std::optional<blender::StringRef> label);
   /**
    * Variant of #panel_prop that automatically stores the open-close-state in the root
    * panel. When a dynamic number of panels is required, it's recommended to use #panel_prop
@@ -659,8 +659,7 @@ struct uiLayout : uiItem, blender::NonCopyable, blender::NonMovable {
                       const char *menu_type);
 
   /** Simple button executing \a func on click. */
-  uiBut *button(uiLayout *layout,
-                blender::StringRef name,
+  uiBut *button(blender::StringRef name,
                 int icon,
                 std::function<void(bContext &)> func,
                 std::optional<blender::StringRef> tooltip = std::nullopt);
