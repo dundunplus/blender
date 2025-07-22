@@ -2561,7 +2561,7 @@ struct RadialControl {
   int slow_mouse[2] = {};
   bool slow_mode = false;
   Dial *dial = nullptr;
-  GPUTexture *texture = nullptr;
+  blender::gpu::Texture *texture = nullptr;
   ListBase orig_paintcursors = {};
   bool use_secondary_tex = false;
   void *cursor = nullptr;
@@ -2601,7 +2601,7 @@ static void radial_control_update_header(wmOperator *op, bContext *C)
         SNPRINTF(msg, "%s: %3.2f", ui_name, RAD2DEGF(rc->current_value));
         break;
       default:
-        SNPRINTF(msg, "%s", ui_name); /* XXX: No value? */
+        STRNCPY(msg, ui_name); /* XXX: No value? */
         break;
     }
   }
