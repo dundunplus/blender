@@ -1051,6 +1051,7 @@ if(TEST_SRC_DIR_EXISTS)
     grease_pencil
     import
     instance
+    list
     repeat_zone
     mesh_primitives
     mesh
@@ -1356,6 +1357,7 @@ if(WITH_UI_TESTS)
     test_workspace.sanity_check_sculpting
     test_workspace.sanity_check_vfx
     test_workspace.sanity_check_video_editing
+    test_undo.compositor_make_group
     test_undo.text_editor_edit_mode_mix
     test_undo.text_editor_simple
     test_undo.view3d_edit_mode_multi_window
