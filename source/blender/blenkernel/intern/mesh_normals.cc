@@ -1337,7 +1337,8 @@ void normals_calc_corners(const Span<float3> vert_positions,
 
   Vector<int> space_groups_count;
   Vector<Vector<CornerSpaceGroup, 0>> all_space_groups;
-  for (auto &groups : space_groups) {
+  /* WARNING: can't use `auto` here, causes build failure on GCC 15.2, WITH_TBB=OFF. */
+  for (Vector<CornerSpaceGroup, 0> &groups : space_groups) {
     space_groups_count.append(groups.size());
     all_space_groups.append(std::move(groups));
   }
@@ -1352,7 +1353,8 @@ void normals_calc_corners(const Span<float3> vert_positions,
   }
 
   const int64_t mean_size = space_offsets.total_size() / space_offsets.size();
-  const int64_t grain_size = math::clamp<int64_t>((1024 * 512) / mean_size, 256, 1024 * 16);
+  const int64_t grain_size = math::clamp<int64_t>(
+      math::safe_divide<int64_t>(1024 * 512, mean_size), 256, 1024 * 16);
   threading::parallel_for(all_space_groups.index_range(), grain_size, [&](const IndexRange range) {
     for (const int thread_i : range) {
       Vector<CornerSpaceGroup, 0> &local_space_groups = all_space_groups[thread_i];
