@@ -1375,9 +1375,13 @@ void screen_change_prepare(
   if (screen_old != screen_new) {
     wmTimer *wt = screen_old->animtimer;
 
+    /* Remove popup handlers (menus), while unlikely, it's possible an "error"
+     * popup is displayed when switching screens, see: #144958. */
+    UI_popup_handlers_remove_all(C, &win->modalhandlers);
+
     /* remove handlers referencing areas in old screen */
     LISTBASE_FOREACH (ScrArea *, area, &screen_old->areabase) {
-      WM_event_remove_area_handler(&win->modalhandlers, area);
+      WM_event_remove_handlers_by_area(&win->modalhandlers, area);
     }
 
     /* we put timer to sleep, so screen_exit has to think there's no timer */
