@@ -775,6 +775,7 @@ static const EnumPropertyItem eevee_resolution_scale_items[] = {
 #  include "ED_node.hh"
 #  include "ED_render.hh"
 #  include "ED_scene.hh"
+#  include "ED_sequencer.hh"
 #  include "ED_uvedit.hh"
 #  include "ED_view3d.hh"
 
@@ -1147,6 +1148,14 @@ static void rna_Scene_show_subframe_update(Main * /*bmain*/,
 {
   Scene *scene = (Scene *)ptr->owner_id;
   scene->r.subframe = 0.0f;
+}
+
+static void rna_Scene_frame_update_context(bContext *C, PointerRNA *ptr)
+{
+  Scene *scene = (Scene *)ptr->owner_id;
+  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+  DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
+  WM_main_add_notifier(NC_SCENE | ND_FRAME, scene);
 }
 
 static void rna_Scene_frame_update(Main * /*bmain*/, Scene * /*current_scene*/, PointerRNA *ptr)
@@ -3599,7 +3608,6 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
   RNA_def_property_ui_text(prop, "Use Snapping", "Snap strips during transform");
   RNA_def_property_ui_icon(prop, ICON_SNAP_OFF, 1);
-  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr); /* Publish message-bus. */
 
   prop = RNA_def_property(srna, "use_snap_uv", PROP_BOOLEAN, PROP_NONE);
@@ -5836,15 +5844,17 @@ static void rna_def_bake_data(BlenderRNA *brna)
       //{R_BAKE_AO, "AO", 0, "Ambient Occlusion", "Bake ambient occlusion"},
       {R_BAKE_NORMALS, "NORMALS", 0, "Normals", "Bake normals"},
       {R_BAKE_DISPLACEMENT, "DISPLACEMENT", 0, "Displacement", "Bake displacement"},
+      {R_BAKE_VECTOR_DISPLACEMENT,
+       "VECTOR_DISPLACEMENT",
+       0,
+       "Vector Displacement",
+       "Bake vector displacement"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
 
-      /* TODO(sergey): Uncomment once tangent space displacement is supported. */
-      /* Use C++ style comment because #if 0 breaks indentation. */
-      // {RE_BAKE_VECTOR_DISPLACEMENT,
-      //  "VECTOR_DISPLACEMENT",
-      //  0,
-      //  "Vector Displacement",
-      //  "Bake vector displacement"},
-
+  static const EnumPropertyItem displacement_space_items[] = {
+      {R_BAKE_SPACE_OBJECT, "OBJECT", 0, "Object", "Bake the displacement in object space"},
+      {R_BAKE_SPACE_TANGENT, "TANGENT", 0, "Tangent", "Bake the displacement in tangent space"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -6045,6 +6055,12 @@ static void rna_def_bake_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", R_BAKE_LORES_MESH);
   RNA_def_property_ui_text(
       prop, "Low Resolution Mesh", "Calculate heights against unsubdivided low resolution mesh");
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
+  prop = RNA_def_property(srna, "displacement_space", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "displacement_space");
+  RNA_def_property_enum_items(prop, displacement_space_items);
+  RNA_def_property_ui_text(prop, "Displacement Space", "Choose displacement space for baking");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 }
 
@@ -8657,7 +8673,8 @@ void RNA_def_scene(BlenderRNA *brna)
       prop,
       "Current Frame",
       "Current frame, to update animation data from Python frame_set() instead");
-  RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_frame_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_frame_update_context");
 
   prop = RNA_def_property(srna, "frame_subframe", PROP_FLOAT, PROP_TIME);
   RNA_def_property_float_sdna(prop, nullptr, "r.subframe");

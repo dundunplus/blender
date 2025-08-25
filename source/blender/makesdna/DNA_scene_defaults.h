@@ -38,6 +38,7 @@
     .margin_type = R_BAKE_ADJACENT_FACES, \
     .normal_space = R_BAKE_SPACE_TANGENT, \
     .normal_swizzle = {R_BAKE_POSX, R_BAKE_POSY, R_BAKE_POSZ}, \
+    .displacement_space = R_BAKE_SPACE_OBJECT, \
   }
 
 #define _DNA_DEFAULT_FFMpegCodecData \
@@ -388,6 +389,7 @@
     .snap_angle_increment_3d_precision = DEG2RADF(1.0f), \
     .snap_angle_increment_2d_precision = DEG2RADF(1.0f), \
  \
+    .snap_flag_seq = SCE_SNAP, \
     /* Weight Paint */ \
     .weightuser = OB_DRAW_GROUPUSER_ACTIVE, \
  \
