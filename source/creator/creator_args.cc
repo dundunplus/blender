@@ -813,12 +813,14 @@ static void print_help(bArgs *ba, bool all)
   BLI_args_print_arg_doc(ba, "--help");
   BLI_args_print_arg_doc(ba, "/?");
 
-  /* WIN32 only (ignored for non-WIN32). */
+  /* File type registration (Windows & Linux only). */
   BLI_args_print_arg_doc(ba, "--register");
   BLI_args_print_arg_doc(ba, "--register-allusers");
   BLI_args_print_arg_doc(ba, "--unregister");
   BLI_args_print_arg_doc(ba, "--unregister-allusers");
-  BLI_args_print_arg_doc(ba, "--qos");
+  if (defs.win32 || all) {
+    BLI_args_print_arg_doc(ba, "--qos");
+  }
 
   BLI_args_print_arg_doc(ba, "--version");
 
@@ -1917,7 +1919,7 @@ static int arg_handle_register_extension(int argc, const char **argv, void *data
   CLG_quiet_set(true);
   background_mode_set();
 
-#  if !(defined(WIN32) && defined(__APPLE__))
+#  if !(defined(WIN32) || defined(__APPLE__))
   if (!main_arg_deferred_is_set()) {
     main_arg_deferred_setup(arg_handle_register_extension, argc, argv, data);
     return argc - 1;
@@ -1935,7 +1937,7 @@ static int arg_handle_register_extension_all(int argc, const char **argv, void *
   CLG_quiet_set(true);
   background_mode_set();
 
-#  if !(defined(WIN32) && defined(__APPLE__))
+#  if !(defined(WIN32) || defined(__APPLE__))
   if (!main_arg_deferred_is_set()) {
     main_arg_deferred_setup(arg_handle_register_extension_all, argc, argv, data);
     return argc - 1;
@@ -1953,7 +1955,7 @@ static int arg_handle_unregister_extension(int argc, const char **argv, void *da
   CLG_quiet_set(true);
   background_mode_set();
 
-#  if !(defined(WIN32) && defined(__APPLE__))
+#  if !(defined(WIN32) || defined(__APPLE__))
   if (!main_arg_deferred_is_set()) {
     main_arg_deferred_setup(arg_handle_unregister_extension, argc, argv, data);
     return argc - 1;
@@ -1971,7 +1973,7 @@ static int arg_handle_unregister_extension_all(int argc, const char **argv, void
   CLG_quiet_set(true);
   background_mode_set();
 
-#  if !(defined(WIN32) && defined(__APPLE__))
+#  if !(defined(WIN32) || defined(__APPLE__))
   if (!main_arg_deferred_is_set()) {
     main_arg_deferred_setup(arg_handle_unregister_extension_all, argc, argv, data);
     return argc - 1;
