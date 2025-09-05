@@ -455,8 +455,8 @@ struct GHOST_InstanceVK {
   }
 
   bool create_device(const bool use_vk_ext_swapchain_maintenance1,
-                     vector<const char *> required_device_extensions,
-                     vector<const char *> optional_device_extensions)
+                     vector<const char *> &required_device_extensions,
+                     vector<const char *> &optional_device_extensions)
   {
     device.emplace(vk_physical_device, use_vk_ext_swapchain_maintenance1);
     GHOST_DeviceVK &device = *this->device;
@@ -1334,7 +1334,7 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
       instance_vk.extensions.enable(native_surface_extension_name);
       /* X11 doesn't use the correct swapchain offset, flipping can squash the first frames. */
       const bool use_vk_ext_swapchain_maintenance1 =
-#if WITH_GHOST_X11
+#ifdef WITH_GHOST_X11
           platform_ != GHOST_kVulkanPlatformX11 &&
 #endif
           instance_vk.extensions.is_supported(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME) &&
