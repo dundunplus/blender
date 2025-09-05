@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "libocio_colorspace.hh"
+#include "OCIO_cpu_processor.hh"
+#include "intern/cpu_processor_cache.hh"
 
 #if defined(WITH_OPENCOLORIO)
 
@@ -228,6 +230,13 @@ void LibOCIOColorSpace::ensure_srgb_scene_linear_info() const
   }
   color_space_is_builtin(ocio_config_, ocio_color_space_, is_scene_linear_, is_srgb_);
   is_info_cached_ = true;
+}
+
+void LibOCIOColorSpace::clear_caches()
+{
+  from_scene_linear_cpu_processor_ = CPUProcessorCache();
+  to_scene_linear_cpu_processor_ = CPUProcessorCache();
+  is_info_cached_ = false;
 }
 
 }  // namespace blender::ocio
