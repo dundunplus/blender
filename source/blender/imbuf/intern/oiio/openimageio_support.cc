@@ -23,6 +23,7 @@
 #include "CLG_log.h"
 
 static CLG_LogRef LOG_READ = {"image.read"};
+static CLG_LogRef LOG_WRITE = {"image.write"};
 
 OIIO_NAMESPACE_USING
 
@@ -132,7 +133,7 @@ static ImBuf *load_pixels(
   bool ok = in->read_image(
       0, 0, 0, channels, format, ibuf_data, ibuf_xstride, -ibuf_ystride, AutoStride);
   if (!ok) {
-    CLOG_ERROR(&LOG_READ, "OpenImageIO read failed: failed: %s", in->geterror().c_str());
+    CLOG_ERROR(&LOG_READ, "OpenImageIO read failed: %s", in->geterror().c_str());
 
     IMB_freeImBuf(ibuf);
     return nullptr;
@@ -364,7 +365,13 @@ bool imb_oiio_write(const WriteContext &ctx, const char *filepath, const ImageSp
     }
   }
 
-  return write_ok && close_ok;
+  const bool all_ok = write_ok && close_ok;
+  if (!all_ok) {
+    CLOG_ERROR(&LOG_WRITE, "OpenImageIO write failed: %s", out->geterror().c_str());
+    errno = 0; /* Prevent higher level layers from calling `perror` unnecessarily. */
+  }
+
+  return all_ok;
 }
 
 WriteContext imb_create_write_context(const char *file_format,
@@ -457,7 +464,7 @@ ImageSpec imb_create_write_spec(const WriteContext &ctx, int file_channels, Type
                                      ctx.ibuf->float_buffer.colorspace :
                                      ctx.ibuf->byte_buffer.colorspace;
   if (colorspace) {
-    Vector<char> icc_profile = IMB_colormanagement_space_icc_profile(colorspace);
+    Vector<char> icc_profile = IMB_colormanagement_space_to_icc_profile(colorspace);
     if (!icc_profile.is_empty()) {
       file_spec.attribute("ICCProfile",
                           OIIO::TypeDesc(OIIO::TypeDesc::UINT8, icc_profile.size()),
