@@ -42,8 +42,8 @@ switch_nodes = {
 }
 
 
-# A context manager for temporarily unparenting nodes from their frames
-# This gets rid of issues with framed nodes using relative coordinates
+# A context manager for temporarily un-parenting nodes from their frames.
+# This gets rid of issues with framed nodes using relative coordinates.
 class temporary_unframe:
     def __init__(self, nodes):
         self.parent_dict = {}
@@ -66,11 +66,20 @@ def cast_value(source, target):
 
     value = source.default_value
 
-    def to_bool(value): return value > 0
-    def single_value_to_color(value): return Vector((value, value, value, 1.0))
-    def single_value_to_vector(value): return Vector([value,] * len(target.default_value))
-    def color_to_float(color): return (0.2126 * color[0]) + (0.7152 * color[1]) + (0.0722 * color[2])
-    def vector_to_float(vector): return sum(vector) / len(vector)
+    def to_bool(value):
+        return value > 0
+
+    def single_value_to_color(value):
+        return Vector((value, value, value, 1.0))
+
+    def single_value_to_vector(value):
+        return Vector([value,] * len(target.default_value))
+
+    def color_to_float(color):
+        return (0.2126 * color[0]) + (0.7152 * color[1]) + (0.0722 * color[2])
+
+    def vector_to_float(vector):
+        return sum(vector) / len(vector)
 
     func_map = {
         ('VALUE', 'INT'): int,
@@ -91,7 +100,7 @@ def cast_value(source, target):
         ('RGBA', 'VECTOR'): lambda color: color[:len(target.default_value)],
         ('VECTOR', 'VALUE'): vector_to_float,
         ('VECTOR', 'INT'): lambda vector: int(vector_to_float(vector)),
-        # Even negative vectors get implicitly converted to True, hence to_bool is not used
+        # Even negative vectors get implicitly converted to True, hence `to_bool` is not used.
         ('VECTOR', 'BOOLEAN'): lambda vector: bool(vector_to_float(vector)),
         ('VECTOR', 'RGBA'): lambda vector: list(vector).extend([0.0] * (len(target.default_value) - len(vector)))
     }
@@ -184,7 +193,7 @@ class NodeOperator:
                     {'ERROR_INVALID_INPUT'},
                     rpt_("Node has no attribute {:s}").format(setting.name))
                 print(str(ex))
-                # Continue despite invalid attribute
+                # Continue despite invalid attribute.
         return node
 
 
@@ -201,7 +210,7 @@ class NodeAddOperator(NodeOperator):
         space = context.space_data
         tree = space.edit_tree
 
-        # convert mouse position to the View2D for later node placement
+        # Convert mouse position to the View2D for later node placement.
         if context.region.type == 'WINDOW':
             area = context.area
             horizontal_pad = int(area.width / 10)
@@ -209,7 +218,7 @@ class NodeAddOperator(NodeOperator):
 
             inspace_x = min(max(horizontal_pad, event.mouse_region_x), area.width - horizontal_pad)
             inspace_y = min(max(vertical_pad, event.mouse_region_y), area.height - vertical_pad)
-            # convert mouse position to the View2D for later node placement
+            # Convert mouse position to the View2D for later node placement.
             space.cursor_location_from_region(inspace_x, inspace_y)
         else:
             space.cursor_location = tree.view_center
@@ -217,18 +226,18 @@ class NodeAddOperator(NodeOperator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        # needs active node editor and a tree to add nodes to
+        # Needs active node editor and a tree to add nodes to.
         return (space and (space.type == 'NODE_EDITOR') and
                 space.edit_tree and space.edit_tree.is_editable)
 
     # Default invoke stores the mouse position to place the node correctly
-    # and optionally invokes the transform operator
+    # and optionally invokes the transform operator.
     def invoke(self, context, event):
         self.store_mouse_cursor(context, event)
         result = self.execute(context)
 
         if self.use_transform and ('FINISHED' in result):
-            # removes the node again if transform is canceled
+            # Removes the node again if transform is canceled.
             bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
 
         return result
@@ -289,7 +298,7 @@ class NodeSwapOperator(NodeOperator):
                     new_socket = new_node.inputs[input.name]
                     new_value = cast_value(source=input, target=new_socket)
 
-                    settings_name = f'inputs["{input.name}"].default_value'
+                    settings_name = "inputs[\"{:s}\"].default_value".format(bpy.utils.escape_identifier(input.name))
                     already_defined = (settings_name in self.settings)
 
                     if (new_value is not None) and not already_defined:
@@ -370,8 +379,9 @@ class NodeSwapOperator(NodeOperator):
 
         if switch_type == "GeometryNodeMenuSwitch":
             return node.enum_definition.enum_items
-        elif switch_type == "GeometryNodeIndexSwitch":
+        if switch_type == "GeometryNodeIndexSwitch":
             return node.index_switch_items
+        return None
 
     def transfer_switch_data(self, old_node, new_node):
         old_switch_items = self.get_switch_items(old_node)
@@ -381,8 +391,8 @@ class NodeSwapOperator(NodeOperator):
 
         if new_node.bl_idname == "GeometryNodeMenuSwitch":
             for i, old_item in enumerate(old_switch_items[:]):
-                # Change the menu item names to numerical indices
-                # This makes it so that later functions that match by socket name work on the switches
+                # Change the menu item names to numerical indices.
+                # This makes it so that later functions that match by socket name work on the switches.
                 if hasattr(old_item, "name"):
                     old_item.name = str(i)
 
@@ -393,8 +403,8 @@ class NodeSwapOperator(NodeOperator):
 
         elif new_node.bl_idname == "GeometryNodeIndexSwitch":
             for i, old_item in enumerate(old_switch_items[:]):
-                # Change the menu item names to numerical indices
-                # This makes it so that later functions that match by socket name work on the switches
+                # Change the menu item names to numerical indices.
+                # This makes it so that later functions that match by socket name work on the switches.
                 if hasattr(old_item, "name"):
                     old_item.name = str(i)
 
@@ -456,11 +466,11 @@ class NODE_OT_swap_node(NodeSwapOperator, Operator):
 
     @staticmethod
     def get_zone_pair(tree, node):
-        # Get paired output node
+        # Get paired output node.
         if hasattr(node, "paired_output"):
             return node, node.paired_output
 
-        # Get paired input node
+        # Get paired input node.
         for input_node in tree.nodes:
             if hasattr(input_node, "paired_output"):
                 if input_node.paired_output == node:
@@ -529,8 +539,8 @@ class NODE_OT_add_empty_group(NodeAddOperator, bpy.types.Operator):
     bl_description = "Add a group node with an empty group"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # Override inherited method from NodeOperator
-    # Return None so that bl_description is used
+    # Override inherited method from NodeOperator.
+    # Return None so that bl_description is used.
     @classmethod
     def description(cls, _context, properties):
         ...
@@ -565,8 +575,8 @@ class NODE_OT_swap_empty_group(NodeSwapOperator, bpy.types.Operator):
     bl_description = "Replace active node with an empty group"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # Override inherited method from NodeOperator
-    # Return None so that bl_description is used
+    # Override inherited method from NodeOperator.
+    # Return None so that bl_description is used.
     @classmethod
     def description(cls, _context, properties):
         ...
@@ -605,22 +615,30 @@ class ZoneOperator:
         default=(150, 0),
     )
 
-    zone_tooltips = {
-        "GeometryNodeSimulationInput": "Simulate the execution of nodes across a time span",
-        "GeometryNodeRepeatInput": "Execute nodes with a dynamic number of repetitions",
-        "GeometryNodeForeachGeometryElementInput": "Perform operations separately for each geometry element (e.g. vertices, edges, etc.)",
-        "NodeClosureInput": "Wrap nodes inside a closure that can be executed at a different part of the nodetree",
+    _zone_tooltips = {
+        "GeometryNodeSimulationInput": (
+            "Simulate the execution of nodes across a time span"
+        ),
+        "GeometryNodeRepeatInput": (
+            "Execute nodes with a dynamic number of repetitions"
+        ),
+        "GeometryNodeForeachGeometryElementInput": (
+            "Perform operations separately for each geometry element (e.g. vertices, edges, etc.)"
+        ),
+        "NodeClosureInput": (
+            "Wrap nodes inside a closure that can be executed at a different part of the nodetree"
+        ),
     }
 
     @classmethod
     def description(cls, _context, properties):
         input_node_type = getattr(properties, "input_node_type", None)
 
-        # For Add Zone operators, use class variable instead of operator property
+        # For Add Zone operators, use class variable instead of operator property.
         if input_node_type is None:
             input_node_type = cls.input_node_type
 
-        return cls.zone_tooltips.get(input_node_type, None)
+        return cls._zone_tooltips.get(input_node_type, None)
 
 
 class NodeAddZoneOperator(ZoneOperator, NodeAddOperator):
@@ -701,11 +719,11 @@ class NODE_OT_swap_zone(ZoneOperator, NodeSwapOperator, Operator):
 
     @staticmethod
     def get_zone_pair(tree, node):
-        # Get paired output node
+        # Get paired output node.
         if hasattr(node, "paired_output"):
             return node, node.paired_output
 
-        # Get paired input node
+        # Get paired input node.
         for input_node in tree.nodes:
             if hasattr(input_node, "paired_output"):
                 if input_node.paired_output == node:
@@ -846,7 +864,7 @@ class NODE_OT_collapse_hide_unused_toggle(Operator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        # needs active node editor and a tree
+        # Needs active node editor and a tree.
         return (space and (space.type == 'NODE_EDITOR') and
                 (space.edit_tree and space.edit_tree.is_editable))
 
@@ -859,7 +877,7 @@ class NODE_OT_collapse_hide_unused_toggle(Operator):
                 hide = (not node.hide)
 
                 node.hide = hide
-                # Note: connected sockets are ignored internally
+                # NOTE: connected sockets are ignored internally.
                 for socket in node.inputs:
                     socket.hide = hide
                 for socket in node.outputs:
@@ -883,7 +901,7 @@ class NODE_OT_tree_path_parent(Operator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        # needs active node editor and a tree
+        # Needs active node editor and a tree.
         return (space and (space.type == 'NODE_EDITOR') and len(space.path) > 1)
 
     def execute(self, context):
@@ -946,19 +964,17 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
     def find_valid_socket_type(tree):
         socket_type = 'NodeSocketFloat'
         # Socket type validation function is only available for custom
-        # node trees. Assume that 'NodeSocketFloat' is valid for
-        # built-in node tree types.
+        # node trees. Assume that 'NodeSocketFloat' is valid for built-in node tree types.
         if not hasattr(tree, "valid_socket_type") or tree.valid_socket_type(socket_type):
             return socket_type
-        # Custom nodes may not support float sockets, search all
-        # registered socket subclasses.
+        # Custom nodes may not support float sockets, search all registered socket sub-classes.
         types_to_check = [bpy.types.NodeSocket]
         while types_to_check:
             t = types_to_check.pop()
             idname = getattr(t, "bl_idname", "")
             if tree.valid_socket_type(idname):
                 return idname
-            # Test all subclasses
+            # Test all sub-classes
             types_to_check.extend(t.__subclasses__())
 
     def execute(self, context):
@@ -1206,7 +1222,7 @@ class NODE_OT_viewer_shortcut_set(Operator):
         fav_node = selected_nodes[0]
 
         # Only viewer nodes can be set to favorites. However, the user can
-        # create a new favorite viewer by selecting any node and pressing ctrl+1.
+        # create a new favorite viewer by selecting any node and pressing Control+1.
         if fav_node.type == 'VIEWER':
             viewer_node = fav_node
         else:
