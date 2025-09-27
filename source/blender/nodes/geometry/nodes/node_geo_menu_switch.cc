@@ -103,7 +103,14 @@ static void node_declare(blender::nodes::NodeDeclarationBuilder &b)
     }
   }
 
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
+  b.add_input<decl::Extend>("", "__extend__")
+      .structure_type(StructureType::Dynamic)
+      .custom_draw([](CustomSocketDrawParams &params) {
+        uiLayout &layout = params.layout;
+        layout.emboss_set(ui::EmbossType::None);
+        PointerRNA op_ptr = layout.op("node.enum_definition_item_add", "", ICON_ADD);
+        RNA_int_set(&op_ptr, "node_identifier", params.node.identifier);
+      });
 }
 
 static void node_layout(uiLayout *layout, bContext * /*C*/, PointerRNA *ptr)
@@ -499,14 +506,17 @@ static void node_blend_read(bNodeTree & /*ntree*/, bNode &node, BlendDataReader 
 
 static const bNodeSocket *node_internally_linked_input(const bNodeTree & /*tree*/,
                                                        const bNode &node,
-                                                       const bNodeSocket & /*output_socket*/)
+                                                       const bNodeSocket &output_socket)
 {
   const NodeMenuSwitch &storage = node_storage(node);
   if (storage.enum_definition.items_num == 0) {
     return nullptr;
   }
-  /* Default to the first enum item input. */
-  return &node.input_socket(1);
+  if (&output_socket == node.outputs.first) {
+    /* Default to the first enum item input. */
+    return &node.input_socket(1);
+  }
+  return nullptr;
 }
 
 static const EnumPropertyItem *data_type_items_callback(bContext * /*C*/,
