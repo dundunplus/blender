@@ -101,7 +101,9 @@ set(SRC
   nodes/node_geo_grid_gradient.cc
   nodes/node_geo_grid_info.cc
   nodes/node_geo_grid_laplacian.cc
+  nodes/node_geo_grid_prune.cc
   nodes/node_geo_grid_to_mesh.cc
+  nodes/node_geo_grid_voxelize.cc
   nodes/node_geo_image.cc
   nodes/node_geo_image_info.cc
   nodes/node_geo_image_texture.cc
@@ -219,6 +221,8 @@ set(SRC
   nodes/node_geo_set_grease_pencil_color.cc
   nodes/node_geo_set_grease_pencil_depth_mode.cc
   nodes/node_geo_set_grease_pencil_softness.cc
+  nodes/node_geo_set_grid_background.cc
+  nodes/node_geo_set_grid_transform.cc
   nodes/node_geo_set_id.cc
   nodes/node_geo_set_instance_transform.cc
   nodes/node_geo_set_material.cc
