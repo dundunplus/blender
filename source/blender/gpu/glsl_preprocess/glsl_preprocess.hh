@@ -496,6 +496,7 @@ class Preprocessor {
         enum_macro_injection(parser, language == CPP, report_error);
 
         if (language == BLENDER_GLSL) {
+          srt_template_linter_and_mutation(parser, report_error);
           srt_member_access_mutation(parser, report_error);
           using_mutation(parser, report_error);
 
@@ -507,7 +508,7 @@ class Preprocessor {
           empty_struct_mutation(parser, report_error);
           method_call_mutation(parser, report_error);
           template_call_mutation(parser, report_error);
-          entry_point_mutation(parser, report_error);
+          entry_point_parsing_and_mutation(parser, report_error);
           stage_function_mutation(parser, report_error);
           pipeline_parse_and_remove(parser, report_error);
           resource_table_parsing(parser, report_error);
@@ -2714,46 +2715,67 @@ class Preprocessor {
     using namespace shader::parser;
     using namespace metadata;
 
-    auto process_graphic_pipeline =
-        [&](Token pipeline_type, Token pipeline_name, Token vertex_fn, Token fragment_fn) {
-          if (pipeline_type.str() != "PipelineGraphic") {
-            return;
-          }
-          /* For now, just emit good old create info macros. */
-          string create_info_decl;
-          create_info_decl += "GPU_SHADER_CREATE_INFO(" + pipeline_name.str() + ")\n";
-          create_info_decl += "VERTEX_FUNCTION(" + vertex_fn.str() + ")\n";
-          create_info_decl += "FRAGMENT_FUNCTION(" + fragment_fn.str() + ")\n";
-          create_info_decl += "ADDITIONAL_INFO(" + vertex_fn.str() + "_infos_)\n";
-          create_info_decl += "ADDITIONAL_INFO(" + fragment_fn.str() + "_infos_)\n";
-          create_info_decl += "GPU_SHADER_CREATE_END()\n";
+    auto process_compilation_constants = [&](Token tok) {
+      string create_info_decl;
 
-          metadata.create_infos_declarations.emplace_back(create_info_decl);
+      while (tok == ',') {
+        Scope scope = tok.next().next().scope();
+        auto process_constant = [&](const vector<Token> &toks) {
+          create_info_decl += "COMPILATION_CONSTANT(";
+          create_info_decl += (toks[3] == Number) ?
+                                  ((toks[3].str().back() == 'u') ? "uint" : "int") :
+                                  "bool";
+          create_info_decl += ", " + toks[1].str();
+          create_info_decl += ", " + toks[3].str();
+          create_info_decl += ")\n";
         };
+        scope.foreach_match(".w=w", process_constant);
+        scope.foreach_match(".w=0", process_constant);
+        tok = scope.end().next();
+      }
 
-    auto process_compute_pipeline =
-        [&](Token pipeline_type, Token pipeline_name, Token compute_fn) {
-          if (pipeline_type.str() != "PipelineCompute") {
-            return;
-          }
-          /* For now, just emit good old create info macros. */
-          string create_info_decl;
-          create_info_decl += "GPU_SHADER_CREATE_INFO(" + pipeline_name.str() + ")\n";
-          create_info_decl += "VERTEX_FUNCTION(" + compute_fn.str() + ")\n";
-          create_info_decl += "ADDITIONAL_INFO(" + compute_fn.str() + "_infos_)\n";
-          create_info_decl += "GPU_SHADER_CREATE_END()\n";
+      return create_info_decl;
+    };
 
-          metadata.create_infos_declarations.emplace_back(create_info_decl);
-        };
+    auto process_graphic_pipeline = [&](Token pipeline_name, Scope params) {
+      Token vertex_fn = params[1];
+      Token fragment_fn = params[3];
+      /* For now, just emit good old create info macros. */
+      string create_info_decl;
+      create_info_decl += "GPU_SHADER_CREATE_INFO(" + pipeline_name.str() + ")\n";
+      create_info_decl += "VERTEX_FUNCTION(" + vertex_fn.str() + ")\n";
+      create_info_decl += "FRAGMENT_FUNCTION(" + fragment_fn.str() + ")\n";
+      create_info_decl += "ADDITIONAL_INFO(" + vertex_fn.str() + "_infos_)\n";
+      create_info_decl += "ADDITIONAL_INFO(" + fragment_fn.str() + "_infos_)\n";
+      create_info_decl += process_compilation_constants(params[4]);
+      create_info_decl += "GPU_SHADER_CREATE_END()\n";
 
-    parser.foreach_match("ww(w,w);", [&](const std::vector<Token> &tokens) {
-      process_graphic_pipeline(tokens[0], tokens[1], tokens[3], tokens[5]);
-      parser.erase(tokens.front(), tokens.back());
-    });
+      metadata.create_infos_declarations.emplace_back(create_info_decl);
+    };
 
-    parser.foreach_match("ww(w);", [&](const std::vector<Token> &tokens) {
-      process_compute_pipeline(tokens[0], tokens[1], tokens[3]);
-      parser.erase(tokens.front(), tokens.back());
+    auto process_compute_pipeline = [&](Token pipeline_name, Scope params) {
+      Token compute_fn = params[1];
+      /* For now, just emit good old create info macros. */
+      string create_info_decl;
+      create_info_decl += "GPU_SHADER_CREATE_INFO(" + pipeline_name.str() + ")\n";
+      create_info_decl += "VERTEX_FUNCTION(" + compute_fn.str() + ")\n";
+      create_info_decl += "ADDITIONAL_INFO(" + compute_fn.str() + "_infos_)\n";
+      create_info_decl += process_compilation_constants(params[2]);
+      create_info_decl += "GPU_SHADER_CREATE_END()\n";
+
+      metadata.create_infos_declarations.emplace_back(create_info_decl);
+    };
+
+    parser.foreach_match("ww(w", [&](const std::vector<Token> &tokens) {
+      Scope parameters = tokens[2].scope();
+      if (tokens[0].str() == "PipelineGraphic") {
+        process_graphic_pipeline(tokens[1], parameters);
+        parser.erase(tokens.front(), parameters.end().next());
+      }
+      else if (tokens[0].str() == "PipelineCompute") {
+        process_compute_pipeline(tokens[1], parameters);
+        parser.erase(tokens.front(), parameters.end().next());
+      }
     });
   }
 
@@ -3177,6 +3199,57 @@ class Preprocessor {
     parser.apply_mutations();
   }
 
+  /**
+   * For safety reason, nested resource tables need to be declared with the srt_t template.
+   * This avoid chained member access which isn't well defined with the preprocessing we are doing.
+   *
+   * This linting phase make sure that [[resource_table]] members uses it and that no incorrect
+   * usage is made. We also remove this template because it has no real meaning.
+   *
+   * Need to run before resource_table_parsing.
+   */
+  void srt_template_linter_and_mutation(Parser &parser, report_callback report_error)
+  {
+    using namespace std;
+    using namespace shader::parser;
+
+    parser.foreach_struct([&](Token, Token, Scope body) {
+      body.foreach_declaration([&](Scope attributes,
+                                   Token,
+                                   Token type,
+                                   Scope template_scope,
+                                   Token name,
+                                   Scope array,
+                                   Token) {
+        if (attributes[1].str() != "resource_table") {
+          if (type.str() == "srt_t") {
+            report_error(ERROR_TOK(name),
+                         "The srt_t<T> template is only to be used with members declared with the "
+                         "[[resource_table]] attribute.");
+          }
+          return;
+        }
+
+        if (type.str() != "srt_t") {
+          report_error(
+              ERROR_TOK(type),
+              "Members declared with the [[resource_table]] attribute must wrap their type "
+              "with the srt_t<T> template.");
+        }
+
+        if (array.is_valid()) {
+          report_error(ERROR_TOK(name), "[[resource_table]] members cannot be arrays.");
+        }
+
+        /* Remove the template but not the wrapped type. */
+        parser.erase(type);
+        parser.erase(template_scope.start());
+        parser.erase(template_scope.end());
+      });
+    });
+    parser.apply_mutations();
+  }
+
   /* Need to run before local reference mutations. */
   void srt_member_access_mutation(Parser &parser, report_callback report_error)
   {
@@ -3237,13 +3310,13 @@ class Preprocessor {
     parser.apply_mutations();
   }
 
-  void entry_point_mutation(Parser &parser, report_callback report_error)
+  void entry_point_parsing_and_mutation(Parser &parser, report_callback report_error)
   {
     using namespace std;
     using namespace shader::parser;
     using namespace metadata;
 
-    parser.foreach_function([&](bool, Token type, Token, Scope args, bool, Scope fn_body) {
+    parser.foreach_function([&](bool, Token type, Token fn_name, Scope args, bool, Scope fn_body) {
       bool is_entry_point = false;
       bool is_compute_func = false;
       bool is_vertex_func = false;
@@ -3295,15 +3368,19 @@ class Preprocessor {
         });
       };
 
-      auto process_argument = [&](Token type, Token var, Token attribute) {
+      /* For now, just emit good old create info macros. */
+      string create_info_decl;
+      create_info_decl += "GPU_SHADER_CREATE_INFO(" + fn_name.str() + "_infos_)\n";
+
+      auto process_argument = [&](Token type, Token var, Scope attributes) {
         const bool is_const = type.prev() == Const;
         string srt_type = type.str();
         string srt_var = var.str();
-        string srt_attr = attribute.str();
+        string srt_attr = attributes[1].str();
 
         if (srt_attr == "vertex_id" && is_entry_point) {
           if (!is_vertex_func) {
-            report_error(ERROR_TOK(attribute),
+            report_error(ERROR_TOK(attributes[1]),
                          "[[vertex_id]] is only supported in vertex functions.");
           }
           else if (!is_const || srt_type != "int") {
@@ -3314,7 +3391,7 @@ class Preprocessor {
         }
         else if (srt_attr == "instance_id" && is_entry_point) {
           if (!is_vertex_func) {
-            report_error(ERROR_TOK(attribute),
+            report_error(ERROR_TOK(attributes[1]),
                          "[[instance_id]] is only supported in vertex functions.");
           }
           else if (!is_const || srt_type != "int") {
@@ -3325,7 +3402,7 @@ class Preprocessor {
         }
         else if (srt_attr == "position" && is_entry_point) {
           if (is_compute_func) {
-            report_error(ERROR_TOK(attribute),
+            report_error(ERROR_TOK(attributes[1]),
                          "[[position]] is only supported in vertex or fragment functions.");
           }
           else if (is_vertex_func && (is_const || srt_type != "float4")) {
@@ -3339,7 +3416,7 @@ class Preprocessor {
         }
         else if (srt_attr == "stage_in") {
           if (is_compute_func) {
-            report_error(ERROR_TOK(attribute),
+            report_error(ERROR_TOK(attributes[1]),
                          "[[stage_in]] is only supported in vertex and fragment functions.");
           }
           else if (!is_const) {
@@ -3347,14 +3424,16 @@ class Preprocessor {
           }
           else if (is_vertex_func) {
             replace_word_and_accessor(srt_var, "");
+            create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
           }
           else if (is_fragment_func) {
             replace_word_and_accessor(srt_var, srt_type + "_");
+            // create_info_decl += "VERTEX_OUT(" + srt_type + ")\n";
           }
         }
         else if (srt_attr == "stage_out") {
           if (is_compute_func) {
-            report_error(ERROR_TOK(attribute),
+            report_error(ERROR_TOK(attributes[1]),
                          "[[stage_out]] is only supported in vertex and fragment functions.");
           }
           else if (is_const) {
@@ -3363,29 +3442,36 @@ class Preprocessor {
           }
           else if (is_vertex_func) {
             replace_word_and_accessor(srt_var, srt_type + "_");
+            create_info_decl += "VERTEX_OUT(" + srt_type + ")\n";
           }
           else if (is_fragment_func) {
             replace_word_and_accessor(srt_var, srt_type + "_");
+            create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
           }
         }
         else if (srt_attr == "resource_table") {
           if (is_entry_point) {
             /* Add dummy var at start of function body. */
             parser.insert_after(fn_body.start().str_index_start(),
-                                " " + srt_type + " " + srt_var + " [[resource_table]];");
+                                " " + srt_type + " " + srt_var + ";");
+            create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
           }
         }
         else {
-          report_error(ERROR_TOK(attribute), "Invalid attribute.");
+          report_error(ERROR_TOK(attributes[1]), "Invalid attribute.");
         }
       };
 
-      args.foreach_match("[[w]]c?ww", [&](const vector<Token> toks) {
-        process_argument(toks[7], toks[8], toks[2]);
+      args.foreach_match("[[..]]c?ww", [&](const vector<Token> toks) {
+        process_argument(toks[8], toks[9], toks[1].scope());
       });
-      args.foreach_match("[[w]]c?w&w", [&](const vector<Token> toks) {
-        process_argument(toks[7], toks[9], toks[2]);
+      args.foreach_match("[[..]]c?w&w", [&](const vector<Token> toks) {
+        process_argument(toks[8], toks[10], toks[1].scope());
       });
+
+      create_info_decl += "GPU_SHADER_CREATE_END()\n";
+
+      metadata.create_infos_declarations.emplace_back(create_info_decl);
     });
 
     parser.apply_mutations();

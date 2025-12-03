@@ -25,9 +25,9 @@
 #include "BLT_translation.hh"
 
 #include "BKE_context.hh"
-#include "BKE_movieclip.h"
+#include "BKE_movieclip.hh"
 #include "BKE_screen.hh"
-#include "BKE_tracking.h"
+#include "BKE_tracking.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -754,7 +754,7 @@ void uiTemplateMovieclipInformation(blender::ui::Layout *layout,
    * skipping the cache could lead to a performance impact depending on the order in which panels
    * and the main area is drawn. Basically, if it is this template drawn first and then the main
    * area it will lead to frame read and processing happening twice. */
-  ImBuf *ibuf = BKE_movieclip_get_ibuf_flag(clip, user, clip->flag, 0);
+  ImBuf *ibuf = BKE_movieclip_get_ibuf(clip, user);
 
   int width, height;
   /* Display frame dimensions, channels number and buffer type. */
