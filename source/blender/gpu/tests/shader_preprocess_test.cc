@@ -620,17 +620,18 @@ struct SRT {
     string expect = R"(
 struct SRT {
                            T  a;
-
-static SRT new_()
+#line 12
+};
+#line 5
+       SRT SRT_new_()
 {
   SRT result;
   result.a = T_new_();
   return result;
 #line 3
 }
-};
-#define access_SRT_a() T_new_()
 #line 5
+#define access_SRT_a() T_new_()
 )";
     string error;
     string output = process_test_string(input, error);
@@ -673,6 +674,54 @@ struct SRT {
   }
 }
 GPU_TEST(preprocess_srt_template_wrapper);
+
+static void test_preprocess_srt_method()
+{
+  using namespace shader;
+  using namespace std;
+
+  {
+    string input = R"(
+struct SRT {
+  [[resource_table]] srt_t<T> a;
+
+  void method(int t) {
+    this->a;
+  }
+};
+)";
+    string expect = R"(
+struct SRT {
+                           T  a;
+#line 16
+};
+#line 5
+
+#if defined(CREATE_INFO_SRT)
+#line 5
+  void method(                   inout SRT _inout_sta this_ _inout_end, int t) {
+    srt_access(SRT, a);
+  }
+
+#endif
+#line 9
+       SRT SRT_new_()
+{
+  SRT result;
+  result.a = T_new_();
+  return result;
+#line 7
+}
+#line 9
+#define access_SRT_a() T_new_()
+)";
+    string error;
+    string output = process_test_string(input, error);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+}
+GPU_TEST(preprocess_srt_method);
 
 static void test_preprocess_static_branch()
 {
@@ -1077,6 +1126,7 @@ struct S {
     return S(0);
   }
   S other_method(int s) {
+    this->some_method();
     return S(0);
   }
 };
@@ -1086,16 +1136,17 @@ struct S {
     string expect = R"(
 
 struct NS_S {
-#line 10
+#line 11
 int _pad;};
 #line 4
          NS_S NS_S_static_method(NS_S s) {
     return NS_S(0);
   }
   NS_S other_method(inout NS_S _inout_sta this_ _inout_end, int s) {
+    some_method(this_);
     return NS_S(0);
   }
-#line 11
+#line 12
 
 )";
     string error;
@@ -1697,8 +1748,9 @@ PipelineCompute compute_pipe(compute_func, Type{.a = true, .b = 8, .c = 7u});
 
 
 GPU_SHADER_CREATE_INFO(ns_graphic_pipe)
-VERTEX_FUNCTION(vertex_func)
-FRAGMENT_FUNCTION(fragment_func)
+GRAPHIC_SOURCE("test.glsl")
+VERTEX_FUNCTION("vertex_func")
+FRAGMENT_FUNCTION("fragment_func")
 ADDITIONAL_INFO(vertex_func_infos_)
 ADDITIONAL_INFO(fragment_func_infos_)
 COMPILATION_CONSTANT(bool, a, true)
@@ -1707,7 +1759,8 @@ COMPILATION_CONSTANT(uint, c, 3u)
 GPU_SHADER_CREATE_END()
 
 GPU_SHADER_CREATE_INFO(ns_compute_pipe)
-VERTEX_FUNCTION(compute_func)
+COMPUTE_SOURCE("test.glsl")
+COMPUTE_FUNCTION("compute_func")
 ADDITIONAL_INFO(compute_func_infos_)
 COMPILATION_CONSTANT(bool, a, true)
 COMPILATION_CONSTANT(int, b, 8)
