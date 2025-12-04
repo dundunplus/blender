@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
- * \ingroup glsl_preprocess
+ * \ingroup shader_tool
  */
 
 #pragma once
 
+#include <algorithm>
 #include <cctype>
 #include <cstdint>
 #include <functional>
@@ -18,7 +19,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "shader_parser.hh"
+#include "intermediate.hh"
 
 namespace blender::gpu::shader {
 
@@ -429,7 +430,7 @@ class Preprocessor {
 
   metadata::Source metadata;
 
-  using Parser = shader::parser::Parser;
+  using Parser = shader::parser::IntermediateForm;
 
  public:
   enum SourceLanguage {
@@ -529,9 +530,9 @@ class Preprocessor {
         srt_guard_mutation(parser, report_error);
         argument_reference_mutation(parser, report_error);
         remove_whitespace(parser, report_error);
+        variable_reference_mutation(parser, report_error);
         str = parser.result_get();
       }
-      str = variable_reference_mutation(str, report_error);
       if (language == BLENDER_GLSL) {
         str = namespace_separator_mutation(str);
       }
@@ -618,9 +619,9 @@ class Preprocessor {
       }
 
       if (end == std::string::npos) {
-        report_error(line_number(out_str, start),
-                     char_number(out_str, start),
-                     line_str(out_str, start),
+        report_error(parser::line_number(out_str, start),
+                     parser::char_number(out_str, start),
+                     parser::line_str(out_str, start),
                      "Malformed multi-line comment.");
         return out_str;
       }
@@ -639,9 +640,9 @@ class Preprocessor {
       }
 
       if (end == std::string::npos) {
-        report_error(line_number(out_str, start),
-                     char_number(out_str, start),
-                     line_str(out_str, start),
+        report_error(parser::line_number(out_str, start),
+                     parser::char_number(out_str, start),
+                     parser::line_str(out_str, start),
                      "Malformed single line comment, missing newline.");
         return out_str;
       }
@@ -655,7 +656,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    const string &str = parser.data_get().str;
+    const string &str = parser.str();
 
     size_t last_whitespace = -1;
     while ((last_whitespace = str.find(" \n", last_whitespace + 1)) != string::npos) {
@@ -692,7 +693,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
     {
-      parser.foreach_match("w<..>(..)", [&](const vector<Token> &tokens) {
+      parser().foreach_match("w<..>(..)", [&](const vector<Token> &tokens) {
         const Scope template_args = tokens[1].scope();
         template_args.foreach_match("w<..>", [&parser](const vector<Token> &tokens) {
           parser.replace(tokens[1].scope(), template_arguments_mangle(tokens[1].scope()), true);
@@ -701,14 +702,14 @@ class Preprocessor {
       parser.apply_mutations();
 
       /* Replace full specialization by simple struct. */
-      parser.foreach_match("t<>sw<..>", [&](const std::vector<Token> &tokens) {
+      parser().foreach_match("t<>sw<..>", [&](const std::vector<Token> &tokens) {
         parser.erase(tokens[0], tokens[2]);
         parser.replace(tokens[5].scope(), template_arguments_mangle(tokens[5].scope()), true);
       });
       parser.apply_mutations();
     }
     {
-      parser.foreach_scope(ScopeType::Template, [&](Scope temp) {
+      parser().foreach_scope(ScopeType::Template, [&](Scope temp) {
         /* Parse template declaration. */
         Token struct_start = temp.end().next();
         if (struct_start != Struct) {
@@ -773,7 +774,7 @@ class Preprocessor {
           }
           /* Specialize template content. */
           Parser instance_parser(fn_decl, report_error, true);
-          instance_parser.foreach_match("w", [&](const std::vector<Token> &tokens) {
+          instance_parser().foreach_match("w", [&](const std::vector<Token> &tokens) {
             string token_str = tokens[0].str();
             for (const auto &arg_name_value : arg_name_value_pairs) {
               if (token_str == arg_name_value.first) {
@@ -803,7 +804,7 @@ class Preprocessor {
     {
       /* This rely on our codestyle that do not put spaces between template name and the opening
        * angle bracket. */
-      parser.foreach_match("sw<..>", [&](const std::vector<Token> &tokens) {
+      parser().foreach_match("sw<..>", [&](const std::vector<Token> &tokens) {
         parser.replace(tokens[2].scope(), template_arguments_mangle(tokens[2].scope()), true);
       });
       parser.apply_mutations();
@@ -812,7 +813,7 @@ class Preprocessor {
 
   void template_definition_mutation(Parser &parser, report_callback &report_error)
   {
-    if (parser.data_get().str.find("template") == std::string::npos) {
+    if (parser.str().find("template") == std::string::npos) {
       return;
     }
 
@@ -825,14 +826,12 @@ class Preprocessor {
       parser.replace(template_args, template_arguments_mangle(template_args), true);
     };
 
-    parser.foreach_scope(ScopeType::Global, [&](Scope scope) {
-      /* Replace full specialization by simple functions. */
-      scope.foreach_match("t<>ww<", [&](const std::vector<Token> &tokens) {
-        process_specialization(tokens[0], tokens[5].scope());
-      });
-      scope.foreach_match("t<>ww::w<", [&](const std::vector<Token> &tokens) {
-        process_specialization(tokens[0], tokens[8].scope());
-      });
+    /* Replace full specialization by simple functions. */
+    parser().foreach_match("t<>ww<", [&](const std::vector<Token> &tokens) {
+      process_specialization(tokens[0], tokens[5].scope());
+    });
+    parser().foreach_match("t<>ww::w<", [&](const std::vector<Token> &tokens) {
+      process_specialization(tokens[0], tokens[8].scope());
     });
 
     parser.apply_mutations();
@@ -913,7 +912,7 @@ class Preprocessor {
         }
         /* Specialize template content. */
         Parser instance_parser(fn_decl, report_error, true);
-        instance_parser.foreach_token(Word, [&](const Token &word) {
+        instance_parser().foreach_token(Word, [&](const Token &word) {
           string token_str = word.str();
           for (const auto &arg_name_value : arg_name_value_pairs) {
             if (token_str == arg_name_value.first) {
@@ -953,12 +952,12 @@ class Preprocessor {
       }
     };
 
-    parser.foreach_match("t<..>ww(..)c?{..}", [&](const vector<Token> &tokens) {
+    parser().foreach_match("t<..>ww(..)c?{..}", [&](const vector<Token> &tokens) {
       process_template(
           tokens[5], tokens[6].str(), tokens[7].scope(), tokens[1].scope(), tokens[16]);
     });
 
-    parser.foreach_match("t<..>ww::w(..)c?{..}", [&](const vector<Token> &tokens) {
+    parser().foreach_match("t<..>ww::w(..)c?{..}", [&](const vector<Token> &tokens) {
       const string fn_name = parser.substr_range_inclusive(tokens[6], tokens[9]);
       process_template(tokens[5], fn_name, tokens[10].scope(), tokens[1].scope(), tokens[19]);
     });
@@ -966,19 +965,18 @@ class Preprocessor {
     parser.apply_mutations();
 
     {
-      const string &out_str = parser.data_get().str;
       /* Check if there is no remaining declaration and instantiation that were not processed. */
       size_t error_pos;
-      if ((error_pos = out_str.find("template<")) != std::string::npos) {
-        report_error(line_number(out_str, error_pos),
-                     char_number(out_str, error_pos),
-                     line_str(out_str, error_pos),
+      if ((error_pos = parser.str().find("template<")) != std::string::npos) {
+        report_error(line_number(parser.str(), error_pos),
+                     char_number(parser.str(), error_pos),
+                     line_str(parser.str(), error_pos),
                      "Template declaration unsupported syntax");
       }
-      if ((error_pos = out_str.find("template ")) != std::string::npos) {
-        report_error(line_number(out_str, error_pos),
-                     char_number(out_str, error_pos),
-                     line_str(out_str, error_pos),
+      if ((error_pos = parser.str().find("template ")) != std::string::npos) {
+        report_error(line_number(parser.str(), error_pos),
+                     char_number(parser.str(), error_pos),
+                     line_str(parser.str(), error_pos),
                      "Template instantiation unsupported syntax");
       }
     }
@@ -989,7 +987,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("w<..>", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("w<..>", [&](const std::vector<Token> &tokens) {
       parser.replace(tokens[1].scope(), template_arguments_mangle(tokens[1].scope()), true);
     });
     parser.apply_mutations();
@@ -1001,7 +999,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_token(TokenType::String, [&](const Token token) { parser.erase(token); });
+    parser().foreach_token(TokenType::String, [&](const Token token) { parser.erase(token); });
     parser.apply_mutations();
   }
 
@@ -1009,7 +1007,7 @@ class Preprocessor {
   {
     using namespace std;
     using namespace shader::parser;
-    parser.foreach_match("#w", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("#w", [&](const std::vector<Token> &tokens) {
       if (tokens[1].str() == "define") {
         metadata.create_infos_defines.emplace_back(tokens[1].next().scope().str_with_whitespace());
       }
@@ -1041,7 +1039,7 @@ class Preprocessor {
       return placeholder;
     };
 
-    parser.foreach_scope(ScopeType::Attributes, [&](const Scope attrs) {
+    parser().foreach_scope(ScopeType::Attributes, [&](const Scope attrs) {
       if (attrs.str_with_whitespace() != "[resource_table]") {
         return;
       }
@@ -1055,7 +1053,7 @@ class Preprocessor {
                                 struct_keyword.line_number());
     });
 
-    parser.foreach_match("w(..)", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("w(..)", [&](const std::vector<Token> &tokens) {
       if (tokens[0].str() == "CREATE_INFO_VARIANT") {
         const string variant_name = tokens[1].scope().start().next().str();
         metadata.create_infos.emplace_back(variant_name);
@@ -1072,7 +1070,7 @@ class Preprocessor {
 
         const size_t start_end = tokens.back().str_index_last();
         const string end_tok = "GPU_SHADER_CREATE_END()";
-        const size_t end_pos = parser.data_get().str.find(end_tok, start_end);
+        const size_t end_pos = parser.str().find(end_tok, start_end);
         if (end_pos == string::npos) {
           report_error(ERROR_TOK(tokens[0]), "Missing create info end.");
           return;
@@ -1090,13 +1088,13 @@ class Preprocessor {
       if (tokens[0].str() == "GPU_SHADER_NAMED_INTERFACE_INFO") {
         const size_t start_end = tokens.back().str_index_last();
         const string end_str = "GPU_SHADER_NAMED_INTERFACE_END(";
-        size_t end_pos = parser.data_get().str.find(end_str, start_end);
+        size_t end_pos = parser.str().find(end_str, start_end);
         if (end_pos == string::npos) {
           report_error(ERROR_TOK(tokens[0]), "Missing create info end.");
           return;
         }
 
-        end_pos = parser.data_get().str.find(')', end_pos);
+        end_pos = parser.str().find(')', end_pos);
         if (end_pos == string::npos) {
           report_error(ERROR_TOK(tokens[0]), "Missing parenthesis at info end.");
           return;
@@ -1112,7 +1110,7 @@ class Preprocessor {
       if (tokens[0].str() == "GPU_SHADER_INTERFACE_INFO") {
         const size_t start_end = tokens.back().str_index_last();
         const string end_str = "GPU_SHADER_INTERFACE_END()";
-        size_t end_pos = parser.data_get().str.find(end_str, start_end);
+        size_t end_pos = parser.str().find(end_str, start_end);
         if (end_pos == string::npos) {
           report_error(ERROR_TOK(tokens[0]), "Missing create info end.");
           return;
@@ -1134,7 +1132,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("#w_", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("#w_", [&](const std::vector<Token> &tokens) {
       if (tokens[1].str() != "include") {
         return;
       }
@@ -1175,7 +1173,7 @@ class Preprocessor {
 
   void pragma_runtime_generated_parsing(Parser &parser)
   {
-    if (parser.data_get().str.find("\n#pragma runtime_generated") != std::string::npos) {
+    if (parser.str().find("\n#pragma runtime_generated") != std::string::npos) {
       metadata.builtins.emplace_back(metadata::Builtin::runtime_generated);
     }
   }
@@ -1187,7 +1185,7 @@ class Preprocessor {
     if (filename.find("_lib.") == std::string::npos && filename.find(".hh") == std::string::npos) {
       return;
     }
-    if (parser.data_get().str.find("\n#pragma once") == std::string::npos) {
+    if (parser.str().find("\n#pragma once") == std::string::npos) {
       report_error(0, 0, "", "Header files must contain #pragma once directive.");
     }
   }
@@ -1232,15 +1230,15 @@ class Preprocessor {
       bool error = false;
       /* Checks if `continue` exists, even in switch statement inside the unrolled loop. */
       body.foreach_token(Continue, [&](const Token token) {
-        if (token.first_containing_scope_of_type(ScopeType::LoopBody) == body) {
+        if (token.scope().first_scope_of_type(ScopeType::LoopBody) == body) {
           report_error(ERROR_TOK(token), "Unrolled loop cannot contain \"continue\" statement.");
           error = true;
         }
       });
       /* Checks if `break` exists directly the unrolled loop scope. Switch statements are ok. */
       body.foreach_token(Break, [&](const Token token) {
-        if (token.first_containing_scope_of_type(ScopeType::LoopBody) == body) {
-          const Scope switch_scope = token.first_containing_scope_of_type(ScopeType::SwitchBody);
+        if (token.scope().first_scope_of_type(ScopeType::LoopBody) == body) {
+          const Scope switch_scope = token.scope().first_scope_of_type(ScopeType::SwitchBody);
           if (switch_scope.is_invalid() || !body.contains(switch_scope)) {
             report_error(ERROR_TOK(token), "Unrolled loop cannot contain \"break\" statement.");
             error = true;
@@ -1275,7 +1273,7 @@ class Preprocessor {
           return str;
         }
         Parser str_parser(str, report_error);
-        str_parser.foreach_token(Word, [&](const Token tok) {
+        str_parser().foreach_token(Word, [&](const Token tok) {
           if (tok.str() == iter[0].str()) {
             str_parser.replace(tok, std::to_string(loop_index), true);
           }
@@ -1313,7 +1311,7 @@ class Preprocessor {
 
     do {
       /* [[gpu::unroll]]. */
-      parser.foreach_match("[[w::w]]f(..){..}", [&](const std::vector<Token> tokens) {
+      parser().foreach_match("[[w::w]]f(..){..}", [&](const std::vector<Token> tokens) {
         if (tokens[1].scope().str_with_whitespace() != "[gpu::unroll]") {
           return;
         }
@@ -1409,7 +1407,7 @@ class Preprocessor {
       });
 
       /* [[gpu::unroll(n)]]. */
-      parser.foreach_match("[[w::w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
+      parser().foreach_match("[[w::w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
         if (tokens[5].str() != "unroll") {
           return;
         }
@@ -1425,7 +1423,7 @@ class Preprocessor {
       });
 
       /* [[gpu::unroll_define(max_n)]]. */
-      parser.foreach_match("[[w::w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
+      parser().foreach_match("[[w::w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
         if (tokens[5].str() != "unroll_define") {
           return;
         }
@@ -1473,7 +1471,7 @@ class Preprocessor {
     } while (parser.apply_mutations());
 
     /* Check for remaining keywords. */
-    parser.foreach_match("[[w::w", [&](const std::vector<Token> tokens) {
+    parser().foreach_match("[[w::w", [&](const std::vector<Token> tokens) {
       if (tokens[2].str() == "gpu" && tokens[5].str() == "unroll") {
         report_error(ERROR_TOK(tokens[0]), "Incompatible loop format for [[gpu::unroll]].");
       }
@@ -1541,7 +1539,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("i(..)[[w]]{..}", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("i(..)[[w]]{..}", [&](const std::vector<Token> &tokens) {
       process_static_branch(
           parser, tokens[0], tokens[1].scope(), tokens[7], tokens[10].scope(), report_error);
     });
@@ -1554,7 +1552,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     /* Parse each namespace declaration. */
-    parser.foreach_scope(ScopeType::Namespace, [&](const Scope &scope) {
+    parser().foreach_scope(ScopeType::Namespace, [&](const Scope &scope) {
       /* TODO(fclem): This could be supported using multiple passes. */
       scope.foreach_match("n", [&](const std::vector<Token> &tokens) {
         report_error(ERROR_TOK(tokens[0]), "Nested namespaces are unsupported.");
@@ -1629,7 +1627,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("un", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("un", [&](const std::vector<Token> &tokens) {
       report_error(ERROR_TOK(tokens[0]),
                    "Unsupported `using namespace`. "
                    "Add individual `using` directives for each needed symbol.");
@@ -1695,12 +1693,12 @@ class Preprocessor {
       parser.erase(using_tok, end_tok);
     };
 
-    parser.foreach_match("uw::w", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("uw::w", [&](const std::vector<Token> &tokens) {
       Token end = tokens.back().find_next(SemiColon);
       process_using(tokens[0], end.prev(), tokens[1], end.prev(), end);
     });
 
-    parser.foreach_match("uw=w::w", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("uw=w::w", [&](const std::vector<Token> &tokens) {
       Token end = tokens.back().find_next(SemiColon);
       process_using(tokens[0], tokens[1], tokens[3], end.prev(), end);
     });
@@ -1708,7 +1706,7 @@ class Preprocessor {
     parser.apply_mutations();
 
     /* Verify all using were processed. */
-    parser.foreach_token(Using, [&](const Token &token) {
+    parser().foreach_token(Using, [&](const Token &token) {
       report_error(ERROR_TOK(token), "Unsupported `using` keyword usage.");
     });
   }
@@ -1735,14 +1733,14 @@ class Preprocessor {
     auto process_disabled_scope = [&](Token start_tok) {
       /* Search for endif with the same indentation. Assume formatted input. */
       string end_str = start_tok.str_with_whitespace() + "endif";
-      size_t scope_end = parser.data_get().str.find(end_str, start_tok.str_index_start());
+      size_t scope_end = parser.str().find(end_str, start_tok.str_index_start());
       if (scope_end == string::npos) {
         report_error(ERROR_TOK(start_tok), "Couldn't find end of disabled scope.");
         return;
       }
       /* Search for else/elif with the same indentation. Assume formatted input. */
       string else_str = start_tok.str_with_whitespace() + "el";
-      size_t scope_else = parser.data_get().str.find(else_str, start_tok.str_index_start());
+      size_t scope_else = parser.str().find(else_str, start_tok.str_index_start());
       if (scope_else != string::npos && scope_else < scope_end) {
         /* Only erase the content and keep the preprocessor directives. */
         parser.erase(start_tok.line_end() + 1, scope_else - 1);
@@ -1753,19 +1751,19 @@ class Preprocessor {
       }
     };
 
-    parser.foreach_match("#ww", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("#ww", [&](const std::vector<Token> &tokens) {
       if (tokens[1].str() == "ifndef" && tokens[2].str() == "GPU_SHADER") {
         process_disabled_scope(tokens[0]);
       }
     });
-    parser.foreach_match("#i!w(w)", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("#i!w(w)", [&](const std::vector<Token> &tokens) {
       if (tokens[1].str() == "if" && tokens[3].str() == "defined" &&
           tokens[5].str() == "GPU_SHADER")
       {
         process_disabled_scope(tokens[0]);
       }
     });
-    parser.foreach_match("#i0", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("#i0", [&](const std::vector<Token> &tokens) {
       if (tokens[1].str() == "if" && tokens[2].str() == "0") {
         process_disabled_scope(tokens[0]);
       }
@@ -1779,7 +1777,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("#ww", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("#ww", [&](const std::vector<Token> &tokens) {
       if (tokens[1].str() == "pragma") {
         if (tokens[2].str() == "once") {
           parser.erase(tokens.front(), tokens.back());
@@ -1797,20 +1795,18 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_scope(ScopeType::Global, [&](Scope scope) {
-      /* Change C++ swizzle functions into plain swizzle. */
-      /** IMPORTANT: This prevent the usage of any method with a swizzle name. */
-      scope.foreach_match(".w()", [&](const std::vector<Token> &tokens) {
-        string method_name = tokens[1].str();
-        if (method_name.length() > 1 && method_name.length() <= 4 &&
-            (method_name.find_first_not_of("xyzw") == string::npos ||
-             method_name.find_first_not_of("rgba") == string::npos))
-        {
-          /* `.xyz()` -> `.xyz` */
-          /* Keep character count the same. Replace parenthesis by spaces. */
-          parser.replace(tokens[2], tokens[3], "  ");
-        }
-      });
+    /* Change C++ swizzle functions into plain swizzle. */
+    /** IMPORTANT: This prevent the usage of any method with a swizzle name. */
+    parser().foreach_match(".w()", [&](const std::vector<Token> &tokens) {
+      string method_name = tokens[1].str();
+      if (method_name.length() > 1 && method_name.length() <= 4 &&
+          (method_name.find_first_not_of("xyzw") == string::npos ||
+           method_name.find_first_not_of("rgba") == string::npos))
+      {
+        /* `.xyz()` -> `.xyz` */
+        /* Keep character count the same. Replace parenthesis by spaces. */
+        parser.replace(tokens[2], tokens[3], "  ");
+      }
     });
     parser.apply_mutations();
   }
@@ -1831,16 +1827,16 @@ class Preprocessor {
         parser.erase(shared_tok, decl_end);
       }
     };
-    parser.foreach_match("www;", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("www;", [&](const std::vector<Token> &tokens) {
       process_shared_var(tokens[0], tokens[1], tokens[2], tokens.back());
     });
-    parser.foreach_match("www[..];", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("www[..];", [&](const std::vector<Token> &tokens) {
       process_shared_var(tokens[0], tokens[1], tokens[2], tokens.back());
     });
-    parser.foreach_match("www[..][..];", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("www[..][..];", [&](const std::vector<Token> &tokens) {
       process_shared_var(tokens[0], tokens[1], tokens[2], tokens.back());
     });
-    parser.foreach_match("www[..][..][..];", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("www[..][..][..];", [&](const std::vector<Token> &tokens) {
       process_shared_var(tokens[0], tokens[1], tokens[2], tokens.back());
     });
     /* If more array depth is needed, find a less dumb solution. */
@@ -1917,7 +1913,7 @@ class Preprocessor {
   {
     using namespace std;
     using namespace shader::parser;
-    parser.foreach_match("w(..)", [&](const vector<Token> &tokens) {
+    parser().foreach_match("w(..)", [&](const vector<Token> &tokens) {
       if (tokens[0].str() != "printf") {
         return;
       }
@@ -1948,7 +1944,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     /* Example: `assert(i < 0)` > `if (!(i < 0)) { printf(...); }` */
-    parser.foreach_match("w(..)", [&](const vector<Token> &tokens) {
+    parser().foreach_match("w(..)", [&](const vector<Token> &tokens) {
       if (tokens[0].str() != "assert") {
         return;
       }
@@ -2173,7 +2169,7 @@ class Preprocessor {
       return (type == "color" || type == "depth" || type == "stencil");
     };
 
-    parser.foreach_struct([&](Token struct_tok, Token struct_name, Scope body) {
+    parser().foreach_struct([&](Token struct_tok, Token struct_name, Scope body) {
       SrtType srt_type = SrtType::undefined;
       bool has_srt_members = false;
 
@@ -2393,8 +2389,8 @@ class Preprocessor {
       }
     };
 
-    parser.foreach_match("s[[..]]w{..};",
-                         [&](const std::vector<Token> &tokens) { parse_interface(tokens); });
+    parser().foreach_match("s[[..]]w{..};",
+                           [&](const std::vector<Token> &tokens) { parse_interface(tokens); });
     parser.apply_mutations();
   }
 
@@ -2403,7 +2399,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("s[[..]]w{..};", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("s[[..]]w{..};", [&](const std::vector<Token> &tokens) {
       if (tokens[2].scope().str_exclusive() == "vertex_in") {
         Token srt_name = tokens[7];
         Scope body = tokens[8].scope();
@@ -2446,7 +2442,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("s[[..]]w{..};", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("s[[..]]w{..};", [&](const std::vector<Token> &tokens) {
       if (tokens[2].scope().str_exclusive() == "fragment_out") {
         Token srt_name = tokens[7];
         Scope body = tokens[8].scope();
@@ -2500,7 +2496,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     do {
-      parser.foreach_match("__", [&](const std::vector<Token> &tokens) {
+      parser().foreach_match("__", [&](const std::vector<Token> &tokens) {
         string first = tokens[0].str();
         string second = tokens[1].str();
         string between = parser.substr_range_inclusive(
@@ -2519,7 +2515,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_token(String, [&](const Token &token) {
+    parser().foreach_token(String, [&](const Token &token) {
       uint32_t hash = hash_string(token.str());
       metadata::PrintfFormat format = {hash, token.str()};
       metadata.printf_formats.emplace_back(format);
@@ -2537,27 +2533,27 @@ class Preprocessor {
     using Tokens = vector<Token>;
 
     /* `class` -> `struct` */
-    parser.foreach_token(Class, [&](const Token &token) { parser.replace(token, "struct "); });
+    parser().foreach_token(Class, [&](const Token &token) { parser.replace(token, "struct "); });
 
     /* Erase `public:` and `private:` keywords. */
-    parser.foreach_match("v:", [&](const Tokens &t) { parser.erase(t.front(), t.back()); });
-    parser.foreach_match("V:", [&](const Tokens &t) { parser.erase(t.front(), t.back()); });
+    parser().foreach_match("v:", [&](const Tokens &t) { parser.erase(t.front(), t.back()); });
+    parser().foreach_match("V:", [&](const Tokens &t) { parser.erase(t.front(), t.back()); });
 
     /* `*this` -> `this_` */
-    parser.foreach_match("*T", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_"); });
+    parser().foreach_match("*T", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_"); });
     /* `this->` -> `this_.` */
-    parser.foreach_match("TD", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_."); });
+    parser().foreach_match("TD", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_."); });
 
     parser.apply_mutations();
 
-    parser.foreach_match("sw:", [&](const Tokens &toks) {
+    parser().foreach_match("sw:", [&](const Tokens &toks) {
       if (toks[2] == ':') {
         report_error(ERROR_TOK(toks[2]), "class inheritance is not supported");
         return;
       }
     });
 
-    parser.foreach_match("cww(..)c?{..}", [&](const Tokens &toks) {
+    parser().foreach_match("cww(..)c?{..}", [&](const Tokens &toks) {
       if (toks[0].prev() == Const) {
         report_error(ERROR_TOK(toks[0]),
                      "function return type is marked `const` but it makes no sense for values "
@@ -2567,9 +2563,9 @@ class Preprocessor {
     });
 
     /* Add `this` parameter and fold static keywords into function name. */
-    parser.foreach_struct([&](Token struct_tok,
-                              const Token struct_name,
-                              const Scope struct_scope) {
+    parser().foreach_struct([&](Token struct_tok,
+                                const Token struct_name,
+                                const Scope struct_scope) {
       const Scope attributes = struct_tok.prev().scope();
       const bool is_resource_table = (attributes.type() == ScopeType::Subscript) &&
                                      (attributes.str() == "[[resource_table]]");
@@ -2611,7 +2607,7 @@ class Preprocessor {
     parser.apply_mutations();
 
     /* Copy method functions outside of struct scope. */
-    parser.foreach_struct([&](Token, const Token, const Scope struct_scope) {
+    parser().foreach_struct([&](Token, const Token, const Scope struct_scope) {
       const Token struct_end = struct_scope.end().next();
       struct_scope.foreach_function(
           [&](bool is_static, Token fn_type, Token, Scope, bool, Scope fn_body) {
@@ -2638,10 +2634,8 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_scope(ScopeType::Global, [&](Scope scope) {
-      scope.foreach_match("sw{};", [&](const std::vector<Token> &tokens) {
-        parser.insert_after(tokens[2], "int _pad;");
-      });
+    parser().foreach_match("sw{};", [&](const std::vector<Token> &tokens) {
+      parser.insert_after(tokens[2], "int _pad;");
     });
     parser.apply_mutations();
   }
@@ -2653,7 +2647,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     do {
-      parser.foreach_scope(ScopeType::Function, [&](Scope scope) {
+      parser().foreach_scope(ScopeType::Function, [&](Scope scope) {
         scope.foreach_match(".w(", [&](const std::vector<Token> &tokens) {
           const Token dot = tokens[0];
           const Token func = tokens[1];
@@ -2761,7 +2755,7 @@ class Preprocessor {
       metadata.create_infos_declarations.emplace_back(create_info_decl);
     };
 
-    parser.foreach_match("ww(w", [&](const std::vector<Token> &tokens) {
+    parser().foreach_match("ww(w", [&](const std::vector<Token> &tokens) {
       Scope parameters = tokens[2].scope();
       if (tokens[0].str() == "PipelineGraphic") {
         process_graphic_pipeline(tokens[1], parameters);
@@ -2779,36 +2773,37 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_function([&](bool is_static, Token fn_type, Token, Scope, bool, Scope fn_body) {
-      Token attr_tok = (is_static) ? fn_type.prev().prev() : fn_type.prev();
-      if (attr_tok.is_invalid() || attr_tok != ']' || attr_tok.prev() != ']') {
-        return;
-      }
-      Scope attribute = attr_tok.prev().scope();
-      if (attribute.type() != ScopeType::Attributes) {
-        return;
-      }
+    parser().foreach_function(
+        [&](bool is_static, Token fn_type, Token, Scope, bool, Scope fn_body) {
+          Token attr_tok = (is_static) ? fn_type.prev().prev() : fn_type.prev();
+          if (attr_tok.is_invalid() || attr_tok != ']' || attr_tok.prev() != ']') {
+            return;
+          }
+          Scope attribute = attr_tok.prev().scope();
+          if (attribute.type() != ScopeType::Attributes) {
+            return;
+          }
 
-      const string attr = attribute.str_exclusive();
-      parser.erase(attribute.scope());
+          const string attr = attribute.str_exclusive();
+          parser.erase(attribute.scope());
 
-      string condition = "defined(";
-      if (attr == "gpu::vertex_function") {
-        condition += "GPU_VERTEX_SHADER";
-      }
-      else if (attr == "gpu::fragment_function") {
-        condition += "GPU_FRAGMENT_SHADER";
-      }
-      else if (attr == "gpu::compute_function") {
-        condition += "GPU_COMPUTE_SHADER";
-      }
-      else {
-        return;
-      }
-      condition += ")";
+          string condition = "defined(";
+          if (attr == "gpu::vertex_function" || attr == "vertex") {
+            condition += "GPU_VERTEX_SHADER";
+          }
+          else if (attr == "gpu::fragment_function" || attr == "fragment") {
+            condition += "GPU_FRAGMENT_SHADER";
+          }
+          else if (attr == "gpu::compute_function" || attr == "compute") {
+            condition += "GPU_COMPUTE_SHADER";
+          }
+          else {
+            return;
+          }
+          condition += ")";
 
-      guarded_scope_mutation(parser, fn_body, condition);
-    });
+          guarded_scope_mutation(parser, fn_body, condition);
+        });
     parser.apply_mutations();
   }
 
@@ -2818,7 +2813,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     /* SRT arguments. */
-    parser.foreach_function([&](bool, Token fn_type, Token, Scope fn_args, bool, Scope fn_body) {
+    parser().foreach_function([&](bool, Token fn_type, Token, Scope fn_args, bool, Scope fn_body) {
       string condition;
       fn_args.foreach_match("[[w]]c?w", [&](const std::vector<Token> &tokens) {
         if (tokens[2].str() != "resource_table") {
@@ -2843,7 +2838,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     /* Legacy access macros. */
-    parser.foreach_function([&](bool, Token fn_type, Token, Scope, bool, Scope fn_body) {
+    parser().foreach_function([&](bool, Token fn_type, Token, Scope, bool, Scope fn_body) {
       fn_body.foreach_match("w(w,", [&](const std::vector<Token> &tokens) {
         string func_name = tokens[0].str();
         if (func_name != "specialization_constant_get" && func_name != "shared_variable_get" &&
@@ -2874,7 +2869,7 @@ class Preprocessor {
     parser.apply_mutations();
   }
 
-  void guarded_scope_mutation(parser::Parser &parser,
+  void guarded_scope_mutation(Parser &parser,
                               parser::Scope scope,
                               const std::string &condition,
                               parser::Token fn_type = parser::Token::invalid())
@@ -2967,8 +2962,8 @@ class Preprocessor {
                    "enum declaration must explicitly use an underlying type");
     };
 
-    parser.foreach_match("Mw{", missing_underlying_type);
-    parser.foreach_match("MSw{", missing_underlying_type);
+    parser().foreach_match("Mw{", missing_underlying_type);
+    parser().foreach_match("MSw{", missing_underlying_type);
 
     auto process_enum =
         [&](Token enum_tok, Token class_tok, Token enum_name, Token enum_type, Scope enum_scope) {
@@ -3006,16 +3001,16 @@ class Preprocessor {
           parser.insert_line_number(insert_at + 1, enum_scope.end().line_number() + 1);
         };
 
-    parser.foreach_match("MSw:w{", [&](vector<Token> tokens) {
+    parser().foreach_match("MSw:w{", [&](vector<Token> tokens) {
       process_enum(tokens[0], tokens[1], tokens[2], tokens[4], tokens[5].scope());
     });
-    parser.foreach_match("Mw:w{", [&](vector<Token> tokens) {
+    parser().foreach_match("Mw:w{", [&](vector<Token> tokens) {
       process_enum(tokens[0], Token::invalid(), tokens[1], tokens[3], tokens[4].scope());
     });
 
     parser.apply_mutations();
 
-    parser.foreach_match("M", [&](vector<Token> tokens) {
+    parser().foreach_match("M", [&](vector<Token> tokens) {
       report_error(tokens[0].line_number(),
                    tokens[0].char_number(),
                    tokens[0].line_str(),
@@ -3037,7 +3032,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_function(
+    parser().foreach_function(
         [&](bool, Token fn_type, Token fn_name, Scope fn_args, bool, Scope fn_body) {
           if (!fn_args.contains_token('=')) {
             return;
@@ -3098,17 +3093,17 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_match("#w0\n#w0\n", [&](vector<Token> toks) {
+    parser().foreach_match("#w0\n#w0\n", [&](vector<Token> toks) {
       parser.replace(toks[0].line_start(), toks[0].line_end() + 1, "");
     });
     parser.apply_mutations();
 
-    parser.foreach_match("#w0\n#w\n#w0\n", [&](vector<Token> toks) {
+    parser().foreach_match("#w0\n#w\n#w0\n", [&](vector<Token> toks) {
       parser.replace(toks[0].line_start(), toks[0].line_end() + 1, "");
     });
     parser.apply_mutations();
 
-    parser.foreach_match("#w0\n", [&](vector<Token> toks) {
+    parser().foreach_match("#w0\n", [&](vector<Token> toks) {
       /* True if directive is noop. */
       if (toks[0].line_number() == stol(toks[2].str())) {
         parser.replace(toks[0].line_start(), toks[0].line_end() + 1, "");
@@ -3123,7 +3118,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    const string &str = parser.data_get().str;
+    const string &str = parser.str();
 
     {
       size_t sequence_start = 0;
@@ -3133,7 +3128,7 @@ class Preprocessor {
         if (sequence_end == string::npos) {
           break;
         }
-        size_t line = parser::line_number(str.substr(0, sequence_end));
+        size_t line = parser::line_number(str, sequence_end);
         parser.replace(sequence_start + 2, sequence_end - 1, "#line " + to_string(line) + "\n");
       }
       parser.apply_mutations();
@@ -3183,7 +3178,7 @@ class Preprocessor {
       }
     };
 
-    parser.foreach_scope(ScopeType::FunctionArgs, [&](const Scope scope) {
+    parser().foreach_scope(ScopeType::FunctionArgs, [&](const Scope scope) {
       scope.foreach_match(
           "w(&w)", [&](const vector<Token> toks) { add_mutation(toks[0], toks[3], toks[4]); });
       scope.foreach_match(
@@ -3208,7 +3203,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_struct([&](Token, Token, Scope body) {
+    parser().foreach_struct([&](Token, Token, Scope body) {
       body.foreach_declaration([&](Scope attributes,
                                    Token,
                                    Token type,
@@ -3277,7 +3272,7 @@ class Preprocessor {
       });
     };
 
-    parser.foreach_scope(ScopeType::FunctionArgs, [&](const Scope fn_args) {
+    parser().foreach_scope(ScopeType::FunctionArgs, [&](const Scope fn_args) {
       Scope fn_body = fn_args.next();
       if (fn_body.is_invalid()) {
         return;
@@ -3293,7 +3288,7 @@ class Preprocessor {
       });
     });
 
-    parser.foreach_scope(ScopeType::Function, [&](const Scope fn_body) {
+    parser().foreach_scope(ScopeType::Function, [&](const Scope fn_body) {
       fn_body.foreach_match("[[w]]c?w&w", [&](const vector<Token> toks) {
         memher_access_mutation(toks[0].scope(), toks[7], toks[9], toks[9].scope());
       });
@@ -3311,302 +3306,274 @@ class Preprocessor {
     using namespace shader::parser;
     using namespace metadata;
 
-    parser.foreach_function([&](bool, Token type, Token fn_name, Scope args, bool, Scope fn_body) {
-      bool is_entry_point = false;
-      bool is_compute_func = false;
-      bool is_vertex_func = false;
-      bool is_fragment_func = false;
+    parser().foreach_function(
+        [&](bool, Token type, Token fn_name, Scope args, bool, Scope fn_body) {
+          bool is_entry_point = false;
+          bool is_compute_func = false;
+          bool is_vertex_func = false;
+          bool is_fragment_func = false;
 
-      if (type.prev() == ']') {
-        Scope attributes = type.prev().prev().scope();
-        if (attributes.type() == ScopeType::Attributes) {
-          string attribute = attributes.str_with_whitespace();
+          if (type.prev() == ']') {
+            Scope attributes = type.prev().prev().scope();
+            if (attributes.type() == ScopeType::Attributes) {
+              string attribute = attributes.str_with_whitespace();
 
-          if (attribute == "[vertex]") {
-            is_vertex_func = true;
-            parser.replace(attributes, "[gpu::vertex_function]");
+              if (attribute == "[vertex]") {
+                is_vertex_func = true;
+              }
+              else if (attribute == "[fragment]") {
+                is_fragment_func = true;
+              }
+              else if (attribute == "[compute]") {
+                is_compute_func = true;
+              }
+              is_entry_point = true;
+            }
           }
-          else if (attribute == "[fragment]") {
-            is_fragment_func = true;
-            parser.replace(attributes, "[gpu::fragment_function]");
-          }
-          else if (attribute == "[compute]") {
-            is_compute_func = true;
-            parser.replace(attributes, "[gpu::compute_function]");
-          }
-          is_entry_point = true;
-        }
-      }
 
-      if (is_entry_point && type.str() != "void") {
-        report_error(ERROR_TOK(type), "Entry point function must return void.");
-        return;
-      }
-
-      if (is_entry_point && args.str() != "()") {
-        parser.erase(args.start().next(), args.end().prev());
-      }
-
-      auto replace_word = [&](const string &replaced, const string &replacement) {
-        fn_body.foreach_token(Word, [&](const Token tok) {
-          if (tok.str() == replaced) {
-            parser.replace(tok, replacement, true);
+          if (is_entry_point && type.str() != "void") {
+            report_error(ERROR_TOK(type), "Entry point function must return void.");
+            return;
           }
+
+          if (is_entry_point && args.str() != "()") {
+            parser.erase(args.start().next(), args.end().prev());
+          }
+
+          auto replace_word = [&](const string &replaced, const string &replacement) {
+            fn_body.foreach_token(Word, [&](const Token tok) {
+              if (tok.str() == replaced) {
+                parser.replace(tok, replacement, true);
+              }
+            });
+          };
+
+          auto replace_word_and_accessor = [&](const string &replaced, const string &replacement) {
+            fn_body.foreach_token(Word, [&](const Token tok) {
+              if (tok.next().type() == Dot && tok.str() == replaced) {
+                parser.replace(tok, tok.next(), replacement);
+              }
+            });
+          };
+
+          /* For now, just emit good old create info macros. */
+          string create_info_decl;
+          create_info_decl += "GPU_SHADER_CREATE_INFO(" + fn_name.str() + "_infos_)\n";
+
+          auto process_argument = [&](Token type, Token var, Scope attributes) {
+            const bool is_const = type.prev() == Const;
+            string srt_type = type.str();
+            string srt_var = var.str();
+            string srt_attr = attributes[1].str();
+
+            if (srt_attr == "vertex_id" && is_entry_point) {
+              if (!is_vertex_func) {
+                report_error(ERROR_TOK(attributes[1]),
+                             "[[vertex_id]] is only supported in vertex functions.");
+              }
+              else if (!is_const || srt_type != "int") {
+                report_error(ERROR_TOK(type), "[[vertex_id]] must be declared as `const int`.");
+              }
+              replace_word(srt_var, "gl_VertexID");
+              metadata.builtins.emplace_back(Builtin(hash("gl_VertexID")));
+            }
+            else if (srt_attr == "instance_id" && is_entry_point) {
+              if (!is_vertex_func) {
+                report_error(ERROR_TOK(attributes[1]),
+                             "[[instance_id]] is only supported in vertex functions.");
+              }
+              else if (!is_const || srt_type != "int") {
+                report_error(ERROR_TOK(type), "[[instance_id]] must be declared as `const int`.");
+              }
+              replace_word(srt_var, "gl_InstanceID");
+              metadata.builtins.emplace_back(Builtin(hash("gl_InstanceID")));
+            }
+            else if (srt_attr == "position" && is_entry_point) {
+              if (is_compute_func) {
+                report_error(ERROR_TOK(attributes[1]),
+                             "[[position]] is only supported in vertex or fragment functions.");
+              }
+              else if (is_vertex_func && (is_const || srt_type != "float4")) {
+                report_error(
+                    ERROR_TOK(type),
+                    "[[position]] must be declared as non-const reference (aka `float4 &`).");
+              }
+              else if (is_fragment_func && (!is_const || srt_type != "float4")) {
+                report_error(ERROR_TOK(type), "[[position]] must be declared as `const float4`.");
+              }
+              replace_word(srt_var, "gl_Position");
+            }
+            else if (srt_attr == "stage_in") {
+              if (is_compute_func) {
+                report_error(ERROR_TOK(attributes[1]),
+                             "[[stage_in]] is only supported in vertex and fragment functions.");
+              }
+              else if (!is_const) {
+                report_error(ERROR_TOK(type), "[[stage_in]] must be declared as const reference.");
+              }
+              else if (is_vertex_func) {
+                replace_word_and_accessor(srt_var, "");
+                create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
+              }
+              else if (is_fragment_func) {
+                replace_word_and_accessor(srt_var, srt_type + "_");
+                // create_info_decl += "VERTEX_OUT(" + srt_type + ")\n";
+              }
+            }
+            else if (srt_attr == "stage_out") {
+              if (is_compute_func) {
+                report_error(ERROR_TOK(attributes[1]),
+                             "[[stage_out]] is only supported in vertex and fragment functions.");
+              }
+              else if (is_const) {
+                report_error(ERROR_TOK(type),
+                             "[[stage_out]] must be declared as non-const reference.");
+              }
+              else if (is_vertex_func) {
+                replace_word_and_accessor(srt_var, srt_type + "_");
+                create_info_decl += "VERTEX_OUT(" + srt_type + ")\n";
+              }
+              else if (is_fragment_func) {
+                replace_word_and_accessor(srt_var, srt_type + "_");
+                create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
+              }
+            }
+            else if (srt_attr == "resource_table") {
+              if (is_entry_point) {
+                /* Add dummy var at start of function body. */
+                parser.insert_after(fn_body.start().str_index_start(),
+                                    " " + srt_type + " " + srt_var + ";");
+                create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
+              }
+            }
+            else {
+              report_error(ERROR_TOK(attributes[1]), "Invalid attribute.");
+            }
+          };
+
+          args.foreach_match("[[..]]c?ww", [&](const vector<Token> toks) {
+            process_argument(toks[8], toks[9], toks[1].scope());
+          });
+          args.foreach_match("[[..]]c?w&w", [&](const vector<Token> toks) {
+            process_argument(toks[8], toks[10], toks[1].scope());
+          });
+
+          create_info_decl += "GPU_SHADER_CREATE_END()\n";
+
+          metadata.create_infos_declarations.emplace_back(create_info_decl);
         });
-      };
-
-      auto replace_word_and_accessor = [&](const string &replaced, const string &replacement) {
-        fn_body.foreach_token(Word, [&](const Token tok) {
-          if (tok.next().type() == Dot && tok.str() == replaced) {
-            parser.replace(tok, tok.next(), replacement);
-          }
-        });
-      };
-
-      /* For now, just emit good old create info macros. */
-      string create_info_decl;
-      create_info_decl += "GPU_SHADER_CREATE_INFO(" + fn_name.str() + "_infos_)\n";
-
-      auto process_argument = [&](Token type, Token var, Scope attributes) {
-        const bool is_const = type.prev() == Const;
-        string srt_type = type.str();
-        string srt_var = var.str();
-        string srt_attr = attributes[1].str();
-
-        if (srt_attr == "vertex_id" && is_entry_point) {
-          if (!is_vertex_func) {
-            report_error(ERROR_TOK(attributes[1]),
-                         "[[vertex_id]] is only supported in vertex functions.");
-          }
-          else if (!is_const || srt_type != "int") {
-            report_error(ERROR_TOK(type), "[[vertex_id]] must be declared as `const int`.");
-          }
-          replace_word(srt_var, "gl_VertexID");
-          metadata.builtins.emplace_back(Builtin(hash("gl_VertexID")));
-        }
-        else if (srt_attr == "instance_id" && is_entry_point) {
-          if (!is_vertex_func) {
-            report_error(ERROR_TOK(attributes[1]),
-                         "[[instance_id]] is only supported in vertex functions.");
-          }
-          else if (!is_const || srt_type != "int") {
-            report_error(ERROR_TOK(type), "[[instance_id]] must be declared as `const int`.");
-          }
-          replace_word(srt_var, "gl_InstanceID");
-          metadata.builtins.emplace_back(Builtin(hash("gl_InstanceID")));
-        }
-        else if (srt_attr == "position" && is_entry_point) {
-          if (is_compute_func) {
-            report_error(ERROR_TOK(attributes[1]),
-                         "[[position]] is only supported in vertex or fragment functions.");
-          }
-          else if (is_vertex_func && (is_const || srt_type != "float4")) {
-            report_error(ERROR_TOK(type),
-                         "[[position]] must be declared as non-const reference (aka `float4 &`).");
-          }
-          else if (is_fragment_func && (!is_const || srt_type != "float4")) {
-            report_error(ERROR_TOK(type), "[[position]] must be declared as `const float4`.");
-          }
-          replace_word(srt_var, "gl_Position");
-        }
-        else if (srt_attr == "stage_in") {
-          if (is_compute_func) {
-            report_error(ERROR_TOK(attributes[1]),
-                         "[[stage_in]] is only supported in vertex and fragment functions.");
-          }
-          else if (!is_const) {
-            report_error(ERROR_TOK(type), "[[stage_in]] must be declared as const reference.");
-          }
-          else if (is_vertex_func) {
-            replace_word_and_accessor(srt_var, "");
-            create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
-          }
-          else if (is_fragment_func) {
-            replace_word_and_accessor(srt_var, srt_type + "_");
-            // create_info_decl += "VERTEX_OUT(" + srt_type + ")\n";
-          }
-        }
-        else if (srt_attr == "stage_out") {
-          if (is_compute_func) {
-            report_error(ERROR_TOK(attributes[1]),
-                         "[[stage_out]] is only supported in vertex and fragment functions.");
-          }
-          else if (is_const) {
-            report_error(ERROR_TOK(type),
-                         "[[stage_out]] must be declared as non-const reference.");
-          }
-          else if (is_vertex_func) {
-            replace_word_and_accessor(srt_var, srt_type + "_");
-            create_info_decl += "VERTEX_OUT(" + srt_type + ")\n";
-          }
-          else if (is_fragment_func) {
-            replace_word_and_accessor(srt_var, srt_type + "_");
-            create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
-          }
-        }
-        else if (srt_attr == "resource_table") {
-          if (is_entry_point) {
-            /* Add dummy var at start of function body. */
-            parser.insert_after(fn_body.start().str_index_start(),
-                                " " + srt_type + " " + srt_var + ";");
-            create_info_decl += "ADDITIONAL_INFO(" + srt_type + ")\n";
-          }
-        }
-        else {
-          report_error(ERROR_TOK(attributes[1]), "Invalid attribute.");
-        }
-      };
-
-      args.foreach_match("[[..]]c?ww", [&](const vector<Token> toks) {
-        process_argument(toks[8], toks[9], toks[1].scope());
-      });
-      args.foreach_match("[[..]]c?w&w", [&](const vector<Token> toks) {
-        process_argument(toks[8], toks[10], toks[1].scope());
-      });
-
-      create_info_decl += "GPU_SHADER_CREATE_END()\n";
-
-      metadata.create_infos_declarations.emplace_back(create_info_decl);
-    });
 
     parser.apply_mutations();
   }
 
   /* To be run after `argument_reference_mutation()`. */
-  std::string variable_reference_mutation(const std::string &str, report_callback report_error)
+  void variable_reference_mutation(Parser &parser, report_callback report_error)
   {
     using namespace std;
-    /* Processing regex and logic is expensive. Check if they are needed at all. */
-    bool valid_match = false;
-    string next_str = str;
-    reference_search(next_str, [&](int parenthesis_depth, int /*bracket_depth*/, char &c) {
-      /* Check if inside a function body. */
-      if (parenthesis_depth == 0) {
-        valid_match = true;
-        /* Modify the & into @ to make sure we only match these references in the regex
-         * below. @ being forbidden in the shader language, it is safe to use a temp
-         * character. */
-        c = '@';
-      }
-    });
-    if (!valid_match) {
-      return str;
-    }
-    string out_str;
-    /* Example: `const float &var = value;` */
-    regex regex_ref(R"(\ ?(?:const)?\s*\w+\s+\@(\w+) =\s*([^;]+);)");
+    using namespace shader::parser;
 
-    smatch match;
-    while (regex_search(next_str, match, regex_ref)) {
-      const string definition = match[0].str();
-      const string name = match[1].str();
-      const string value = match[2].str();
-      const string prefix = match.prefix().str();
-      const string suffix = match.suffix().str();
+    parser().foreach_function([&](bool, Token, Token, Scope fn_args, bool, Scope fn_scope) {
+      fn_scope.foreach_match("c?w&w=", [&](const vector<Token> &tokens) {
+        const Token name = tokens[4];
+        const Scope assignment = tokens[5].scope();
 
-      out_str += prefix;
+        Token decl_start = tokens[0].is_valid() ? tokens[0] : tokens[2];
+        /* Take attribute into account. */
+        decl_start = (decl_start.prev() == ']') ? decl_start.prev().scope().start() : decl_start;
+        /* Take ending ; into account. */
+        const Token decl_end = assignment.end().next();
 
-      /* Assert definition doesn't contain any side effect. */
-      if (value.find("++") != string::npos || value.find("--") != string::npos) {
-        report_error(line_number(match),
-                     char_number(match),
-                     line_str(match),
-                     "Reference definitions cannot have side effects.");
-        return str;
-      }
-      if (value.find("(") != string::npos) {
-        if (value.find("specialization_constant_get(") == string::npos &&
-            value.find("push_constant_get(") == string::npos &&
-            value.find("interface_get(") == string::npos &&
-            value.find("attribute_get(") == string::npos &&
-            value.find("buffer_get(") == string::npos &&
-            value.find("srt_access(") == string::npos &&
-            value.find("sampler_get(") == string::npos && value.find("image_get(") == string::npos)
-        {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Reference definitions cannot contain function calls.");
-          return str;
-        }
-      }
-      if (value.find("[") != string::npos) {
-        const string index_var = get_content_between_balanced_pair(value, '[', ']');
-
-        if (index_var.find(' ') != string::npos) {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Array subscript inside reference declaration must be a single variable or "
-                       "a constant, not an expression.");
-          return str;
-        }
-
-        /* Add a space to avoid empty scope breaking the loop. */
-        string scope_depth = " }";
-        bool found_var = false;
-        while (!found_var) {
-          string scope = get_content_between_balanced_pair(out_str + scope_depth, '{', '}', true);
-          scope_depth += '}';
-
-          if (scope.empty()) {
-            break;
+        /* Assert definition doesn't contain any side effect. */
+        assignment.foreach_token(Increment, [&](const Token token) {
+          report_error(ERROR_TOK(token), "Reference definitions cannot have side effects.");
+        });
+        assignment.foreach_token(Decrement, [&](const Token token) {
+          report_error(ERROR_TOK(token), "Reference definitions cannot have side effects.");
+        });
+        assignment.foreach_token(ParOpen, [&](const Token token) {
+          string fn_name = token.prev().str();
+          if ((fn_name != "specialization_constant_get") && (fn_name != "push_constant_get") &&
+              (fn_name != "interface_get") && (fn_name != "attribute_get") &&
+              (fn_name != "buffer_get") && (fn_name != "srt_access") &&
+              (fn_name != "sampler_get") && (fn_name != "image_get"))
+          {
+            report_error(ERROR_TOK(token), "Reference definitions cannot contain function calls.");
           }
-          /* Remove nested scopes. Avoid variable shadowing to mess with the detection. */
-          scope = regex_replace(scope, regex(R"(\{[^\}]*\})"), "{}");
+        });
+        assignment.foreach_scope(ScopeType::Subscript, [&](const Scope subscript) {
+          if (subscript.token_count() != 3) {
+            report_error(
+                ERROR_TOK(subscript.start()),
+                "Array subscript inside reference declaration must be a single variable or "
+                "a constant, not an expression.");
+            return;
+          }
+
+          const Token index_var = subscript[1];
+
+          if (index_var == Number) {
+            /* Literals are fine. */
+            return;
+          }
+
           /* Search if index variable definition qualifies it as `const`. */
-          regex regex_definition(R"((const)? \w+ )" + index_var + " =");
-          smatch match_definition;
-          if (regex_search(scope, match_definition, regex_definition)) {
-            found_var = true;
-            if (match_definition[1].matched == false) {
-              report_error(line_number(match),
-                           char_number(match),
-                           line_str(match),
-                           "Array subscript variable must be declared as const qualified.");
-              return str;
+          bool is_const = false;
+          bool is_ref = false;
+          bool is_found = false;
+
+          auto process_decl = [&](const vector<Token> &tokens) {
+            if (tokens[5].str_index_start() < index_var.str_index_start() &&
+                tokens[5].str() == index_var.str())
+            {
+              is_const = tokens[0].is_valid();
+              is_ref = tokens[3].is_valid();
+              is_found = true;
             }
+          };
+          fn_args.foreach_match("c?w&?w", [&](const vector<Token> &toks) { process_decl(toks); });
+          fn_scope.foreach_match("c?w&?w", [&](const vector<Token> &toks) { process_decl(toks); });
+
+          if (!is_found) {
+            report_error(ERROR_TOK(index_var),
+                         "Cannot locate array subscript variable declaration. "
+                         "If it is a global variable, assign it to a temporary const variable for "
+                         "indexing inside the reference.");
+            return;
           }
-        }
-        if (!found_var) {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Cannot locate array subscript variable declaration. "
-                       "If it is a global variable, assign it to a temporary const variable for "
-                       "indexing inside the reference.");
-          return str;
-        }
-      }
+          if (!is_const) {
+            report_error(ERROR_TOK(index_var),
+                         "Array subscript variable must be declared as const qualified.");
+            return;
+          }
+          if (is_ref) {
+            report_error(ERROR_TOK(index_var),
+                         "Array subscript variable must not be declared as reference.");
+            return;
+          }
+        });
 
-      /* Find scope this definition is active in. */
-      const string scope = get_content_between_balanced_pair('{' + suffix, '{', '}');
-      if (scope.empty()) {
-        report_error(line_number(match),
-                     char_number(match),
-                     line_str(match),
-                     "Reference is defined inside a global or unterminated scope.");
-        return str;
-      }
-      string original = definition + scope;
-      string modified = original;
+        string definition = parser.substr_range_inclusive(assignment[1], assignment.end());
 
-      /* Replace definition by nothing. Keep number of lines. */
-      string newlines(line_count(definition), '\n');
-      replace_all(modified, definition, newlines);
-      /* Replace every occurrence of the reference. Avoid matching other symbols like class members
-       * and functions with the same name. */
-      modified = regex_replace(
-          modified, regex(R"(([^\.])\b)" + name + R"(\b([^(]))"), "$1" + value + "$2");
+        /* Replace declaration. */
+        parser.erase(decl_start, decl_end);
+        /* Replace all occurrences with definition. */
+        name.scope().foreach_token(Word, [&](const Token token) {
+          /* Do not match member access or function calls. */
+          if (token.prev() == '.' || token.next() == '(') {
+            return;
+          }
+          if (token.str_index_start() > decl_end.str_index_last() && token.str() == name.str()) {
+            parser.replace(token, definition);
+          }
+        });
+      });
+    });
+    parser.apply_mutations();
 
-      /** IMPORTANT: `match` is invalid after the assignment. */
-      next_str = definition + suffix;
-
-      /* Replace whole modified scope in output string. */
-      replace_all(next_str, original, modified);
-    }
-    out_str += next_str;
-    return out_str;
+    parser().foreach_match("c?w&w=", [&](const vector<Token> &tokens) {
+      report_error(ERROR_TOK(tokens[4]),
+                   "Reference is defined inside a global or unterminated scope.");
+    });
   }
 
   std::string argument_decorator_macro_injection(const std::string &str)
@@ -3630,7 +3597,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     /* Example: `const uint global_var = 1u;`. */
-    parser.foreach_match("cww=", [&](const vector<Token> &tokens) {
+    parser().foreach_match("cww=", [&](const vector<Token> &tokens) {
       if (tokens[0].scope().type() == ScopeType::Global) {
         report_error(
             ERROR_TOK(tokens[2]),
@@ -3646,7 +3613,7 @@ class Preprocessor {
     using namespace shader::parser;
 
     /* This only catches some invalid usage. For the rest, the CI will catch them. */
-    parser.foreach_token(TokenType::String, [&](const Token token) {
+    parser().foreach_token(TokenType::String, [&](const Token token) {
       report_error(ERROR_TOK(token),
                    "Unprocessed string literal. "
                    "Strings are forbidden in GLSL.");
@@ -3658,7 +3625,7 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    parser.foreach_scope(ScopeType::Struct, [&](const Scope scope) {
+    parser().foreach_scope(ScopeType::Struct, [&](const Scope scope) {
       scope.foreach_match("ww;", [&](const vector<Token> tokens) {
         string type = tokens[0].str();
         if (type.find("char") != string::npos || type.find("short") != string::npos ||
@@ -3683,96 +3650,6 @@ class Preprocessor {
 
   /* Made public for unit testing purpose. */
  public:
-  static std::string get_content_between_balanced_pair(const std::string &input,
-                                                       char start_delimiter,
-                                                       char end_delimiter,
-                                                       const bool backwards = false)
-  {
-    int balance = 0;
-    size_t start = std::string::npos;
-    size_t end = std::string::npos;
-
-    if (backwards) {
-      std::swap(start_delimiter, end_delimiter);
-    }
-
-    for (size_t i = 0; i < input.length(); ++i) {
-      size_t idx = backwards ? (input.length() - 1) - i : i;
-      if (input[idx] == start_delimiter) {
-        if (balance == 0) {
-          start = idx;
-        }
-        balance++;
-      }
-      else if (input[idx] == end_delimiter) {
-        balance--;
-        if (balance == 0 && start != std::string::npos) {
-          end = idx;
-          if (backwards) {
-            std::swap(start, end);
-          }
-          return input.substr(start + 1, end - start - 1);
-        }
-      }
-    }
-    return "";
-  }
-
-  /* Replaces all occurrences of `from` by `to` between `start_delimiter`
-   * and `end_delimiter` even inside nested delimiters pair. */
-  static std::string replace_char_between_balanced_pair(const std::string &input,
-                                                        const char start_delimiter,
-                                                        const char end_delimiter,
-                                                        const char from,
-                                                        const char to)
-  {
-    int depth = 0;
-
-    std::string str = input;
-    for (char &string_char : str) {
-      if (string_char == start_delimiter) {
-        depth++;
-      }
-      else if (string_char == end_delimiter) {
-        depth--;
-      }
-      else if (depth > 0 && string_char == from) {
-        string_char = to;
-      }
-    }
-    return str;
-  }
-
-  /* Function to split a string by a delimiter and return a vector of substrings. */
-  static std::vector<std::string> split_string(const std::string &str, const char delimiter)
-  {
-    std::vector<std::string> substrings;
-    std::stringstream ss(str);
-    std::string item;
-
-    while (std::getline(ss, item, delimiter)) {
-      substrings.push_back(item);
-    }
-    return substrings;
-  }
-
-  /* Similar to split_string but only split if the delimiter is not between any pair_start and
-   * pair_end. */
-  static std::vector<std::string> split_string_not_between_balanced_pair(const std::string &str,
-                                                                         const char delimiter,
-                                                                         const char pair_start,
-                                                                         const char pair_end)
-  {
-    const char safe_char = '@';
-    const std::string safe_str = replace_char_between_balanced_pair(
-        str, pair_start, pair_end, delimiter, safe_char);
-    std::vector<std::string> split = split_string(safe_str, delimiter);
-    for (std::string &str : split) {
-      replace_all(str, safe_char, delimiter);
-    }
-    return split;
-  }
-
   static void replace_all(std::string &str, const std::string &from, const std::string &to)
   {
     if (from.empty()) {
@@ -3802,128 +3679,6 @@ class Preprocessor {
   static int64_t line_count(const std::string &str)
   {
     return char_count(str, '\n');
-  }
-
-  /* Match any reference definition (e.g. `int &a = b`).
-   * Call the callback function for each `&` character that matches a reference definition.
-   * Expects the input `str` to be formatted with balanced parenthesis and curly brackets. */
-  static void reference_search(std::string &str, std::function<void(int, int, char &)> callback)
-  {
-    scopes_scan_for_char(
-        str, '&', [&](size_t pos, int parenthesis_depth, int bracket_depth, char &c) {
-          if (pos > 0 && pos <= str.length() - 2) {
-            /* This is made safe by the previous check. */
-            char prev_char = str[pos - 1];
-            char next_char = str[pos + 1];
-            /* Validate it is not an operator (`&`, `&&`, `&=`). */
-            if (prev_char == ' ' || prev_char == '(') {
-              if (next_char != ' ' && next_char != '\n' && next_char != '&' && next_char != '=') {
-                callback(parenthesis_depth, bracket_depth, c);
-              }
-            }
-          }
-        });
-  }
-
-  /* Match any default argument definition (e.g. `void func(int a = 0)`).
-   * Call the callback function for each `=` character inside a function argument list.
-   * Expects the input `str` to be formatted with balanced parenthesis and curly brackets. */
-  static void default_argument_search(std::string &str,
-                                      std::function<void(int, int, char &)> callback)
-  {
-    scopes_scan_for_char(
-        str, '=', [&](size_t pos, int parenthesis_depth, int bracket_depth, char &c) {
-          if (pos > 0 && pos <= str.length() - 2) {
-            /* This is made safe by the previous check. */
-            char prev_char = str[pos - 1];
-            char next_char = str[pos + 1];
-            /* Validate it is not an operator (`==`, `<=`, `>=`). Expects formatted input. */
-            if (prev_char == ' ' && next_char == ' ') {
-              if (parenthesis_depth == 1 && bracket_depth == 0) {
-                callback(parenthesis_depth, bracket_depth, c);
-              }
-            }
-          }
-        });
-  }
-
-  /* Scan through a string matching for every occurrence of a character.
-   * Calls the callback with the context in which the match occurs. */
-  static void scopes_scan_for_char(std::string &str,
-                                   char search_char,
-                                   std::function<void(size_t, int, int, char &)> callback)
-  {
-    size_t pos = 0;
-    int parenthesis_depth = 0;
-    int bracket_depth = 0;
-    for (char &c : str) {
-      if (c == search_char) {
-        callback(pos, parenthesis_depth, bracket_depth, c);
-      }
-      else if (c == '(') {
-        parenthesis_depth++;
-      }
-      else if (c == ')') {
-        parenthesis_depth--;
-      }
-      else if (c == '{') {
-        bracket_depth++;
-      }
-      else if (c == '}') {
-        bracket_depth--;
-      }
-      pos++;
-    }
-  }
-
-  /* Return the line number this token is found at. Take into account the #line directives. */
-  static size_t line_number(const std::string &file_str, size_t pos)
-  {
-    std::string sub_str = file_str.substr(0, pos);
-    std::string directive = "#line ";
-    size_t nearest_line_directive = sub_str.rfind(directive);
-    size_t line_count = 1;
-    if (nearest_line_directive != std::string::npos) {
-      sub_str = sub_str.substr(nearest_line_directive + directive.size());
-      line_count = std::stoll(sub_str) - 1;
-    }
-    return line_count + std::count(sub_str.begin(), sub_str.end(), '\n');
-  }
-  static size_t line_number(const std::smatch &smatch)
-  {
-    std::string whole_file = smatch.prefix().str() + smatch[0].str() + smatch.suffix().str();
-    return line_number(whole_file, smatch.prefix().str().size());
-  }
-
-  /* Return the offset to the start of the line. */
-  static size_t char_number(const std::string &file_str, size_t pos)
-  {
-    std::string sub_str = file_str.substr(0, pos);
-    size_t nearest_line_directive = sub_str.find_last_of("\n");
-    return (nearest_line_directive == std::string::npos) ?
-               (sub_str.size() - 1) :
-               (sub_str.size() - nearest_line_directive);
-  }
-  static size_t char_number(const std::smatch &smatch)
-  {
-    std::string whole_file = smatch.prefix().str() + smatch[0].str() + smatch.suffix().str();
-    return char_number(whole_file, smatch.prefix().str().size());
-  }
-
-  /* Return the line the token is at. */
-  static std::string line_str(const std::string &file_str, size_t pos)
-  {
-    size_t start = file_str.rfind('\n', pos);
-    size_t end = file_str.find('\n', pos);
-    if (start == std::string::npos) {
-      start = 0;
-    }
-    return file_str.substr(start, end - start);
-  }
-  static std::string line_str(const std::smatch &smatch)
-  {
-    std::string whole_file = smatch.prefix().str() + smatch[0].str() + smatch.suffix().str();
-    return line_str(whole_file, smatch.prefix().str().size());
   }
 };
 
