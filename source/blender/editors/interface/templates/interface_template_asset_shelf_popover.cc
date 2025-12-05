@@ -36,7 +36,7 @@ void template_asset_shelf_popover(Layout &layout,
   }
 
   const ARegion *region = CTX_wm_region(&C);
-  uiBlock *block = layout.block();
+  Block *block = layout.block();
 
   Layout &row = layout.row(true);
   const bool use_big_size = !RGN_TYPE_IS_HEADER_ANY(region->regiontype);
@@ -54,12 +54,12 @@ void template_asset_shelf_popover(Layout &layout,
   ed::asset::shelf::ensure_asset_library_fetched(C, *shelf_type);
 
   row.popover(&C, "ASSETSHELF_PT_popover_panel", name, icon);
-  uiBut *but = block->buttons.last().get();
+  Button *but = block->buttons.last().get();
   if (use_preview_icon) {
-    ui_def_but_icon(but, icon, UI_HAS_ICON | UI_BUT_ICON_PREVIEW);
+    ui_def_but_icon(but, icon, UI_HAS_ICON | BUT_ICON_PREVIEW);
     /* Avoid small annoyance where asset shelf popover gets spawned unintentionally on mouse hover,
      * see #132293. */
-    UI_but_menu_disable_hover_open(but);
+    button_menu_disable_hover_open(but);
   }
 }
 
@@ -94,11 +94,9 @@ bool asset_shelf_popover_invoke(bContext &C, StringRef asset_shelf_idname, Repor
   return true;
 }
 
-}  // namespace blender::ui
-
-using namespace blender;
-
-std::optional<StringRefNull> UI_asset_shelf_idname_from_button_context(const uiBut *but)
+std::optional<StringRefNull> UI_asset_shelf_idname_from_button_context(const Button *but)
 {
-  return UI_but_context_string_get(but, "asset_shelf_idname");
+  return button_context_string_get(but, "asset_shelf_idname");
 }
+
+}  // namespace blender::ui

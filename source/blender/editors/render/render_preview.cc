@@ -1977,6 +1977,8 @@ bool ED_preview_id_is_supported(const ID *id, const char **r_disabled_hint)
       case ID_SCE:
         return {scene_preview_is_supported((const Scene *)id),
                 RPT_("Scenes without a camera do not support previews")};
+      case ID_BR:
+        return {false, RPT_("Brushes do not support automatic previews")};
       default:
         return {BKE_previewimg_id_get_p(id) != nullptr,
                 RPT_("Data-block type does not support automatic previews")};
@@ -2244,7 +2246,7 @@ void ED_preview_restart_queue_work(const bContext *C)
     }
 
     BKE_previewimg_clear_single(preview, queue_entry->size);
-    UI_icon_render_id(C, nullptr, queue_entry->id, queue_entry->size, true);
+    blender::ui::icon_render_id(C, nullptr, queue_entry->id, queue_entry->size, true);
 
     BLI_freelinkN(&G_restart_previews_queue, queue_entry);
   }

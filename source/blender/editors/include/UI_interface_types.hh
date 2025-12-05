@@ -9,11 +9,12 @@
 #include "BLI_string_ref.hh"
 
 struct bContext;
-struct uiBut;
-struct uiTooltipData;
 
 namespace blender::ui {
+struct Block;
+struct Button;
 struct Layout;
+struct TooltipData;
 }  // namespace blender::ui
 
 /* names */
@@ -29,7 +30,7 @@ using uiMenuHandleFunc = void (*)(bContext *C, void *arg, int event);
 /**
  * Used for cycling menu values without opening the menu (Ctrl-Wheel).
  * \param direction: forward or backwards [1 / -1].
- * \param arg1: `uiBut.poin` (as with #uiMenuCreateFunc).
+ * \param arg1: `blender::ui::Button.poin` (as with #uiMenuCreateFunc).
  * \return true when the button was changed.
  */
 using uiMenuStepFunc = bool (*)(bContext *C, int direction, void *arg1);
@@ -46,7 +47,10 @@ using uiButToolTipFunc = std::string (*)(bContext *C, void *argN, blender::Strin
  *   is shared across multiple buttons but there still needs to be some customization per button.
  *   Mostly useful when using #uiLayoutSetTooltipCustomFunc.
  */
-using uiButToolTipCustomFunc = void (*)(bContext &C, uiTooltipData &data, uiBut *but, void *argN);
+using uiButToolTipCustomFunc = void (*)(bContext &C,
+                                        blender::ui::TooltipData &data,
+                                        blender::ui::Button *but,
+                                        void *argN);
 
 namespace blender::ocio {
 class Display;

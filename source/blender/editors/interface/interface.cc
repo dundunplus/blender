@@ -75,19 +75,17 @@
 
 #include "interface_intern.hh"
 
-using blender::StringRef;
-using blender::StringRefNull;
-using blender::Vector;
-
 static CLG_LogRef LOG = {"ui"};
 
+namespace blender::ui {
+
 /* prototypes. */
-static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void *but_p);
-static void ui_def_but_rna__panel_type(bContext * /*C*/, blender::ui::Layout *layout, void *arg);
-static void ui_def_but_rna__menu_type(bContext * /*C*/, blender::ui::Layout *layout, void *but_p);
+static void ui_def_but_rna__menu(bContext *C, Layout *layout, void *but_p);
+static void ui_def_but_rna__panel_type(bContext * /*C*/, Layout *layout, void *arg);
+static void ui_def_but_rna__menu_type(bContext * /*C*/, Layout *layout, void *but_p);
 
 /* avoid unneeded calls to ui_but_value_get */
-#define UI_BUT_VALUE_UNSET DBL_MAX
+#define BUT_VALUE_UNSET DBL_MAX
 #define UI_GET_BUT_VALUE_INIT(_but, _value) \
   if (_value == DBL_MAX) { \
     (_value) = ui_but_value_get(_but); \
@@ -103,24 +101,24 @@ static void ui_def_but_rna__menu_type(bContext * /*C*/, blender::ui::Layout *lay
  * `ui_blah_blah()` internal function.
  */
 
-static void ui_but_free(const bContext *C, uiBut *but);
+static void ui_but_free(const bContext *C, Button *but);
 
 static bool ui_but_is_unit_radians_ex(const UnitSettings *unit, const int unit_type)
 {
   return (unit->system_rotation == USER_UNIT_ROT_RADIANS && unit_type == PROP_UNIT_ROTATION);
 }
 
-static bool ui_but_is_unit_radians(const uiBut *but)
+static bool ui_but_is_unit_radians(const Button *but)
 {
   const UnitSettings *unit = but->block->unit;
-  const int unit_type = UI_but_unit_type_get(but);
+  const int unit_type = button_unit_type_get(but);
 
   return ui_but_is_unit_radians_ex(unit, unit_type);
 }
 
 /* ************* window matrix ************** */
 
-void ui_block_to_region_fl(const ARegion *region, const uiBlock *block, float *x, float *y)
+void ui_block_to_region_fl(const ARegion *region, const Block *block, float *x, float *y)
 {
   const int getsizex = BLI_rcti_size_x(&region->winrct) + 1;
   const int getsizey = BLI_rcti_size_y(&region->winrct) + 1;
@@ -139,14 +137,14 @@ void ui_block_to_region_fl(const ARegion *region, const uiBlock *block, float *x
        (0.5f + 0.5f * (gx * block->winmat[0][1] + gy * block->winmat[1][1] + block->winmat[3][1]));
 }
 
-void ui_block_to_window_fl(const ARegion *region, const uiBlock *block, float *x, float *y)
+void ui_block_to_window_fl(const ARegion *region, const Block *block, float *x, float *y)
 {
   ui_block_to_region_fl(region, block, x, y);
   *x += region->winrct.xmin;
   *y += region->winrct.ymin;
 }
 
-void ui_block_to_window(const ARegion *region, const uiBlock *block, int *x, int *y)
+void ui_block_to_window(const ARegion *region, const Block *block, int *x, int *y)
 {
   float fx = *x;
   float fy = *y;
@@ -158,7 +156,7 @@ void ui_block_to_window(const ARegion *region, const uiBlock *block, int *x, int
 }
 
 void ui_block_to_region_rctf(const ARegion *region,
-                             const uiBlock *block,
+                             const Block *block,
                              rctf *rct_dst,
                              const rctf *rct_src)
 {
@@ -168,7 +166,7 @@ void ui_block_to_region_rctf(const ARegion *region,
 }
 
 void ui_block_to_window_rctf(const ARegion *region,
-                             const uiBlock *block,
+                             const Block *block,
                              rctf *rct_dst,
                              const rctf *rct_src)
 {
@@ -177,7 +175,7 @@ void ui_block_to_window_rctf(const ARegion *region,
   ui_block_to_window_fl(region, block, &rct_dst->xmax, &rct_dst->ymax);
 }
 
-float ui_block_to_window_scale(const ARegion *region, const uiBlock *block)
+float ui_block_to_window_scale(const ARegion *region, const Block *block)
 {
   /* We could have function for this to avoid dummy arg. */
   float min_y = 0, max_y = 1;
@@ -188,7 +186,7 @@ float ui_block_to_window_scale(const ARegion *region, const uiBlock *block)
   return max_y - min_y;
 }
 
-void ui_window_to_block_fl(const ARegion *region, const uiBlock *block, float *x, float *y)
+void ui_window_to_block_fl(const ARegion *region, const Block *block, float *x, float *y)
 {
   const int getsizex = BLI_rcti_size_x(&region->winrct) + 1;
   const int getsizey = BLI_rcti_size_y(&region->winrct) + 1;
@@ -216,7 +214,7 @@ void ui_window_to_block_fl(const ARegion *region, const uiBlock *block, float *x
 }
 
 void ui_window_to_block_rctf(const ARegion *region,
-                             const uiBlock *block,
+                             const Block *block,
                              rctf *rct_dst,
                              const rctf *rct_src)
 {
@@ -225,7 +223,7 @@ void ui_window_to_block_rctf(const ARegion *region,
   ui_window_to_block_fl(region, block, &rct_dst->xmax, &rct_dst->ymax);
 }
 
-void ui_window_to_block(const ARegion *region, const uiBlock *block, int *x, int *y)
+void ui_window_to_block(const ARegion *region, const Block *block, int *x, int *y)
 {
   float fx = *x;
   float fy = *y;
@@ -271,50 +269,50 @@ void ui_region_to_window(
   *r_window_y = region_y + region->winrct.ymin;
 }
 
-int uiBlock::but_index(const uiBut *but) const
+int Block::but_index(const Button *but) const
 {
   BLI_assert(!buttons.is_empty() && but);
   auto index = std::distance(
       buttons.begin(),
-      std::find_if(buttons.begin(), buttons.end(), [but](const std::unique_ptr<uiBut> &test) {
+      std::find_if(buttons.begin(), buttons.end(), [but](const std::unique_ptr<Button> &test) {
         return test.get() == but;
       }));
   BLI_assert(index != std::distance(buttons.begin(), buttons.end()));
   return index;
 }
 
-uiBut *uiBlock::next_but(const uiBut *but) const
+Button *Block::next_but(const Button *but) const
 {
   const int idx = this->but_index(but) + 1;
   return idx < this->buttons.size() ? this->buttons[idx].get() : nullptr;
 }
 
-uiBut *uiBlock::prev_but(const uiBut *but) const
+Button *Block::prev_but(const Button *but) const
 {
   const int idx = this->but_index(but) - 1;
   return idx >= 0 ? this->buttons[idx].get() : nullptr;
 }
 
-void uiBlock::remove_but(const uiBut *but)
+void Block::remove_but(const Button *but)
 {
   int64_t target_index = this->but_index(but);
   this->buttons.remove(target_index);
 }
 
-uiBut *uiBlock::first_but() const
+Button *Block::first_but() const
 {
   return !this->buttons.is_empty() ? this->buttons.first().get() : nullptr;
 }
 
-uiBut *uiBlock::last_but() const
+Button *Block::last_but() const
 {
   return !this->buttons.is_empty() ? this->buttons.last().get() : nullptr;
 }
 
-static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
+static void ui_update_flexible_spacing(const ARegion *region, Block *block)
 {
   int sepr_flex_len = 0;
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     if (but->type == ButType::SeprSpacer) {
       sepr_flex_len++;
     }
@@ -335,18 +333,18 @@ static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
 
   /* We could get rid of this loop if we agree on a max number of spacer */
   Vector<int, 8> spacers_pos;
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     if (but->type == ButType::SeprSpacer) {
       ui_but_to_pixelrect(&rect, region, block, but.get());
       spacers_pos.append(rect.xmax + int(8.0f * UI_SCALE_FAC));
     }
   }
 
-  const float view_scale_x = UI_view2d_scale_get_x(&region->v2d);
+  const float view_scale_x = view2d_scale_get_x(&region->v2d);
   const float segment_width = region_width / float(sepr_flex_len);
   float offset = 0, remaining_space = region_width - buttons_width;
   int i = 0;
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     BLI_rctf_translate(&but->rect, std::floor(offset / view_scale_x), 0.0f);
     if (but->type == ButType::SeprSpacer) {
       /* How much the next block overlap with the current segment */
@@ -366,7 +364,7 @@ static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
   ui_block_bounds_calc(block);
 }
 
-static void ui_update_window_matrix(const wmWindow *window, const ARegion *region, uiBlock *block)
+static void ui_update_window_matrix(const wmWindow *window, const ARegion *region, Block *block)
 {
   /* window matrix and aspect */
   if (region && region->runtime->visible) {
@@ -377,7 +375,7 @@ static void ui_update_window_matrix(const wmWindow *window, const ARegion *regio
   else {
     /* No sub-window created yet, for menus for example, so we use the main
      * window instead, since buttons are created there anyway. */
-    const blender::int2 win_size = WM_window_native_pixel_size(window);
+    const int2 win_size = WM_window_native_pixel_size(window);
     const rcti winrct = {0, win_size[0] - 1, 0, win_size[1] - 1};
 
     wmGetProjectionMatrix(block->winmat, &winrct);
@@ -387,8 +385,8 @@ static void ui_update_window_matrix(const wmWindow *window, const ARegion *regio
 
 void ui_region_winrct_get_no_margin(const ARegion *region, rcti *r_rect)
 {
-  uiBlock *block = static_cast<uiBlock *>(region->runtime->uiblocks.first);
-  if (block && (block->flag & UI_BLOCK_LOOP) && (block->flag & UI_BLOCK_PIE_MENU) == 0) {
+  Block *block = static_cast<Block *>(region->runtime->uiblocks.first);
+  if (block && (block->flag & BLOCK_LOOP) && (block->flag & BLOCK_PIE_MENU) == 0) {
     BLI_rcti_rctf_copy_floor(r_rect, &block->rect);
     BLI_rcti_translate(r_rect, region->winrct.xmin, region->winrct.ymin);
   }
@@ -399,35 +397,35 @@ void ui_region_winrct_get_no_margin(const ARegion *region, rcti *r_rect)
 
 /* ******************* block calc ************************* */
 
-void UI_block_translate(uiBlock *block, float x, float y)
+void block_translate(Block *block, float x, float y)
 {
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     BLI_rctf_translate(&but->rect, x, y);
   }
 
   BLI_rctf_translate(&block->rect, x, y);
 }
 
-static bool ui_but_is_row_alignment_group(const uiBut *left, const uiBut *right)
+static bool ui_but_is_row_alignment_group(const Button *left, const Button *right)
 {
   const bool is_same_align_group = (left->alignnr && (left->alignnr == right->alignnr));
   return is_same_align_group && (left->rect.xmin < right->rect.xmin);
 }
 
-static void ui_block_bounds_calc_text(uiBlock *block, float offset)
+static void ui_block_bounds_calc_text(Block *block, float offset)
 {
   if (block->buttons.is_empty()) {
     return;
   }
-  const uiStyle *style = UI_style_get();
-  std::unique_ptr<uiBut> *col_bt;
+  const uiStyle *style = style_get();
+  std::unique_ptr<Button> *col_bt;
   int i = 0, j, x1addval = offset;
 
-  UI_fontstyle_set(&style->widget);
-  std::unique_ptr<uiBut> *end = block->buttons.end();
+  fontstyle_set(&style->widget);
+  std::unique_ptr<Button> *end = block->buttons.end();
 
-  std::unique_ptr<uiBut> *init_col_bt = block->buttons.begin();
-  for (std::unique_ptr<uiBut> *bt = init_col_bt; bt < end; bt++) {
+  std::unique_ptr<Button> *init_col_bt = block->buttons.begin();
+  for (std::unique_ptr<Button> *bt = init_col_bt; bt < end; bt++) {
     if (!ELEM((*bt)->type, ButType::Sepr, ButType::SeprLine, ButType::SeprSpacer)) {
       j = BLF_width(style->widget.uifont_id, (*bt)->drawstr.c_str(), (*bt)->drawstr.size());
 
@@ -487,7 +485,7 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
   }
 }
 
-void ui_block_bounds_calc(uiBlock *block)
+void ui_block_bounds_calc(Block *block)
 {
   if (block->buttons.is_empty()) {
     if (block->panel) {
@@ -501,7 +499,7 @@ void ui_block_bounds_calc(uiBlock *block)
 
     BLI_rctf_init_minmax(&block->rect);
 
-    for (const std::unique_ptr<uiBut> &bt : block->buttons) {
+    for (const std::unique_ptr<Button> &bt : block->buttons) {
       BLI_rctf_union(&block->rect, &bt->rect);
     }
 
@@ -514,7 +512,7 @@ void ui_block_bounds_calc(uiBlock *block)
   block->rect.xmax = block->rect.xmin + max_ff(BLI_rctf_size_x(&block->rect), block->minbounds);
 
   /* hardcoded exception... but that one is annoying with larger safety */
-  uiBut *bt = block->first_but();
+  Button *bt = block->first_but();
   const int xof = ((bt && STRPREFIX(bt->str.c_str(), "ERROR")) ? 10 : 40) * UI_SCALE_FAC;
 
   block->safety.xmin = block->rect.xmin - xof;
@@ -523,13 +521,13 @@ void ui_block_bounds_calc(uiBlock *block)
   block->safety.ymax = block->rect.ymax + xof;
 }
 
-static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
+static void ui_block_bounds_calc_centered(wmWindow *window, Block *block)
 {
   /* NOTE: this is used for the splash where window bounds event has not been
    * updated by ghost, get the window bounds from ghost directly */
 
   /* Clamp to the window size. */
-  const blender::int2 win_size = WM_window_native_pixel_size(window);
+  const int2 win_size = WM_window_native_pixel_size(window);
 
   ui_block_bounds_calc(block);
 
@@ -539,36 +537,36 @@ static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
   const int startx = (win_size[0] * 0.5f) - (width * 0.5f);
   const int starty = (win_size[1] * 0.5f) - (height * 0.5f);
 
-  UI_block_translate(block, startx - block->rect.xmin, starty - block->rect.ymin);
+  block_translate(block, startx - block->rect.xmin, starty - block->rect.ymin);
 
   /* now recompute bounds and safety */
   ui_block_bounds_calc(block);
 }
 
-static void ui_block_bounds_calc_post_centered(uiBlock *block)
+static void ui_block_bounds_calc_post_centered(Block *block)
 {
-  const blender::int2 xy(block->handle->region->winrct.xmin, block->handle->region->winrct.ymin);
+  const int2 xy(block->handle->region->winrct.xmin, block->handle->region->winrct.ymin);
   const int margin = int(12.0f * UI_SCALE_FAC);
   ui_block_bounds_calc(block);
-  UI_block_translate(block, xy[0] - block->rect.xmin + margin, xy[1] - block->rect.ymin + margin);
+  block_translate(block, xy[0] - block->rect.xmin + margin, xy[1] - block->rect.ymin + margin);
   ui_block_bounds_calc(block);
 }
 
-static void ui_block_bounds_calc_centered_pie(uiBlock *block)
+static void ui_block_bounds_calc_centered_pie(Block *block)
 {
   const int xy[2] = {
       int(block->pie_data.pie_center_spawned[0]),
       int(block->pie_data.pie_center_spawned[1]),
   };
 
-  UI_block_translate(block, xy[0], xy[1]);
+  block_translate(block, xy[0], xy[1]);
 
   /* now recompute bounds and safety */
   ui_block_bounds_calc(block);
 }
 
 static void ui_block_bounds_calc_popup(
-    wmWindow *window, uiBlock *block, eBlockBoundsCalc bounds_calc, const int xy[2], int r_xy[2])
+    wmWindow *window, Block *block, eBlockBoundsCalc bounds_calc, const int xy[2], int r_xy[2])
 {
   const int oldbounds = block->bounds;
 
@@ -576,14 +574,14 @@ static void ui_block_bounds_calc_popup(
   ui_block_bounds_calc(block);
 
   /* Clamp to the window size. */
-  const blender::int2 win_size = WM_window_native_pixel_size(window);
+  const int2 win_size = WM_window_native_pixel_size(window);
 
   int oldwidth = BLI_rctf_size_x(&block->rect);
   int oldheight = BLI_rctf_size_y(&block->rect);
 
   /* first we ensure wide enough text bounds */
-  if (bounds_calc == UI_BLOCK_BOUNDS_POPUP_MENU) {
-    if (block->flag & UI_BLOCK_LOOP) {
+  if (bounds_calc == BLOCK_BOUNDS_POPUP_MENU) {
+    if (block->flag & BLOCK_LOOP) {
       block->bounds = 2.5f * UI_UNIT_X;
       ui_block_bounds_calc_text(block, block->rect.xmin);
     }
@@ -620,7 +618,7 @@ static void ui_block_bounds_calc_popup(
 
   int ofs_dummy[2];
   BLI_rcti_clamp(&rect, &rect_bounds, ofs_dummy);
-  UI_block_translate(block, rect.xmin - block->rect.xmin, rect.ymin - block->rect.ymin);
+  block_translate(block, rect.xmin - block->rect.xmin, rect.ymin - block->rect.ymin);
 
   /* now recompute bounds and safety */
   ui_block_bounds_calc(block);
@@ -634,26 +632,26 @@ static void ui_block_bounds_calc_popup(
   }
 }
 
-void UI_block_bounds_set_normal(uiBlock *block, int addval)
+void block_bounds_set_normal(Block *block, int addval)
 {
   if (block == nullptr) {
     return;
   }
 
   block->bounds = addval;
-  block->bounds_type = UI_BLOCK_BOUNDS;
+  block->bounds_type = BLOCK_BOUNDS;
 }
 
-void UI_block_bounds_set_text(uiBlock *block, int addval)
+void block_bounds_set_text(Block *block, int addval)
 {
   block->bounds = addval;
-  block->bounds_type = UI_BLOCK_BOUNDS_TEXT;
+  block->bounds_type = BLOCK_BOUNDS_TEXT;
 }
 
-void UI_block_bounds_set_popup(uiBlock *block, int addval, const int bounds_offset[2])
+void block_bounds_set_popup(Block *block, int addval, const int bounds_offset[2])
 {
   block->bounds = addval;
-  block->bounds_type = UI_BLOCK_BOUNDS_POPUP_MOUSE;
+  block->bounds_type = BLOCK_BOUNDS_POPUP_MOUSE;
   if (bounds_offset != nullptr) {
     block->bounds_offset[0] = bounds_offset[0];
     block->bounds_offset[1] = bounds_offset[1];
@@ -664,10 +662,10 @@ void UI_block_bounds_set_popup(uiBlock *block, int addval, const int bounds_offs
   }
 }
 
-void UI_block_bounds_set_menu(uiBlock *block, int addval, const int bounds_offset[2])
+void block_bounds_set_menu(Block *block, int addval, const int bounds_offset[2])
 {
   block->bounds = addval;
-  block->bounds_type = UI_BLOCK_BOUNDS_POPUP_MENU;
+  block->bounds_type = BLOCK_BOUNDS_POPUP_MENU;
   if (bounds_offset != nullptr) {
     copy_v2_v2_int(block->bounds_offset, bounds_offset);
   }
@@ -676,46 +674,46 @@ void UI_block_bounds_set_menu(uiBlock *block, int addval, const int bounds_offse
   }
 }
 
-void UI_block_bounds_set_centered(uiBlock *block, int addval)
+void block_bounds_set_centered(Block *block, int addval)
 {
   block->bounds = addval;
-  block->bounds_type = UI_BLOCK_BOUNDS_POPUP_CENTER;
+  block->bounds_type = BLOCK_BOUNDS_POPUP_CENTER;
 }
 
-void UI_block_bounds_set_explicit(uiBlock *block, int minx, int miny, int maxx, int maxy)
+void block_bounds_set_explicit(Block *block, int minx, int miny, int maxx, int maxy)
 {
   block->rect.xmin = minx;
   block->rect.ymin = miny;
   block->rect.xmax = maxx;
   block->rect.ymax = maxy;
-  block->bounds_type = UI_BLOCK_BOUNDS_NONE;
+  block->bounds_type = BLOCK_BOUNDS_NONE;
 }
 
-static float ui_but_get_float_precision(uiBut *but)
+static float ui_but_get_float_precision(Button *but)
 {
   if (but->type == ButType::Num) {
-    return ((uiButNumber *)but)->precision;
+    return ((ButtonNumber *)but)->precision;
   }
   if (but->type == ButType::NumSlider) {
-    return ((uiButNumberSlider *)but)->precision;
+    return ((ButtonNumberSlider *)but)->precision;
   }
   BLI_assert_unreachable();
   return 1.0f;
 }
 
-static float ui_but_get_float_step_size(uiBut *but)
+static float ui_but_get_float_step_size(Button *but)
 {
   if (but->type == ButType::Num) {
-    return ((uiButNumber *)but)->step_size;
+    return ((ButtonNumber *)but)->step_size;
   }
   if (but->type == ButType::NumSlider) {
-    return ((uiButNumberSlider *)but)->step_size;
+    return ((ButtonNumberSlider *)but)->step_size;
   }
   BLI_assert_unreachable();
   return 1.0f;
 }
 
-static bool ui_but_hide_fraction(uiBut *but, double value)
+static bool ui_but_hide_fraction(Button *but, double value)
 {
   /* Hide the fraction if both the value and the step are exact integers. */
   if (floor(value) == value) {
@@ -723,7 +721,7 @@ static bool ui_but_hide_fraction(uiBut *but, double value)
 
     if (floorf(step) == step) {
       /* Don't hide if it has any unit except frame count. */
-      switch (UI_but_unit_type_get(but)) {
+      switch (button_unit_type_get(but)) {
         case PROP_UNIT_NONE:
         case PROP_UNIT_TIME:
           return true;
@@ -737,7 +735,7 @@ static bool ui_but_hide_fraction(uiBut *but, double value)
   return false;
 }
 
-static int ui_but_calc_float_precision(uiBut *but, double value)
+static int ui_but_calc_float_precision(Button *but, double value)
 {
   if (ui_but_hide_fraction(but, value)) {
     return 0;
@@ -758,17 +756,17 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
     CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
   }
 
-  return UI_calc_float_precision(prec, value);
+  return calc_float_precision(prec, value);
 }
 
 /* ************** BLOCK ENDING FUNCTION ************* */
 
-bool ui_but_rna_equals(const uiBut *a, const uiBut *b)
+bool ui_but_rna_equals(const Button *a, const Button *b)
 {
   return ui_but_rna_equals_ex(a, &b->rnapoin, b->rnaprop, b->rnaindex);
 }
 
-bool ui_but_rna_equals_ex(const uiBut *but,
+bool ui_but_rna_equals_ex(const Button *but,
                           const PointerRNA *ptr,
                           const PropertyRNA *prop,
                           int index)
@@ -784,7 +782,7 @@ bool ui_but_rna_equals_ex(const uiBut *but,
 }
 
 /* NOTE: if `but->poin` is allocated memory for every `uiDefBut*`, things fail. */
-static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
+static bool ui_but_equals_old(const Button *but, const Button *oldbut)
 {
   if (but->type != oldbut->type) {
     return false;
@@ -833,7 +831,7 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
   if (but->block_create_func != oldbut->block_create_func) {
     return false;
   }
-  if (!but->funcN && ((but->poin != oldbut->poin && (uiBut *)oldbut->poin != oldbut) ||
+  if (!but->funcN && ((but->poin != oldbut->poin && (Button *)oldbut->poin != oldbut) ||
                       (but->pointype != oldbut->pointype)))
   {
     return false;
@@ -846,10 +844,10 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
   }
 
   if (but->type == ButType::ViewItem) {
-    uiButViewItem *but_item = (uiButViewItem *)but;
-    uiButViewItem *oldbut_item = (uiButViewItem *)oldbut;
+    ButtonViewItem *but_item = (ButtonViewItem *)but;
+    ButtonViewItem *oldbut_item = (ButtonViewItem *)oldbut;
     if (!but_item->view_item || !oldbut_item->view_item ||
-        !UI_view_item_matches(*but_item->view_item, *oldbut_item->view_item))
+        !view_item_matches(*but_item->view_item, *oldbut_item->view_item))
     {
       return false;
     }
@@ -858,11 +856,11 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
   return true;
 }
 
-static uiBut *ui_but_find_old(uiBlock *block_old,
-                              const uiBut *but_new,
-                              const blender::Set<const uiBut *> &ignore_old_buttons)
+static Button *ui_but_find_old(Block *block_old,
+                               const Button *but_new,
+                               const Set<const Button *> &ignore_old_buttons)
 {
-  for (const std::unique_ptr<uiBut> &but : block_old->buttons) {
+  for (const std::unique_ptr<Button> &but : block_old->buttons) {
     if (!ignore_old_buttons.contains(but.get()) && ui_but_equals_old(but_new, but.get())) {
       return but.get();
     }
@@ -870,18 +868,16 @@ static uiBut *ui_but_find_old(uiBlock *block_old,
   return nullptr;
 }
 
-uiBut *ui_but_find_old(uiBlock *block_old, const uiBut *but_new)
+Button *ui_but_find_old(Block *block_old, const Button *but_new)
 {
   return ui_but_find_old(block_old, but_new, {});
 }
 
 static std::optional<int64_t> ui_but_find_old_idx(
-    uiBlock *block_old,
-    const uiBut *but_new,
-    const blender::Set<const uiBut *> &ignore_old_buttons = {})
+    Block *block_old, const Button *but_new, const Set<const Button *> &ignore_old_buttons = {})
 {
   int64_t i = 0;
-  for (const std::unique_ptr<uiBut> &but : block_old->buttons) {
+  for (const std::unique_ptr<Button> &but : block_old->buttons) {
     if (!ignore_old_buttons.contains(but.get()) && ui_but_equals_old(but_new, but.get())) {
       return i;
     }
@@ -890,9 +886,9 @@ static std::optional<int64_t> ui_but_find_old_idx(
   return std::nullopt;
 }
 
-uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old)
+Button *ui_but_find_new(Block *block_new, const Button *but_old)
 {
-  for (const std::unique_ptr<uiBut> &but : block_new->buttons) {
+  for (const std::unique_ptr<Button> &but : block_new->buttons) {
     if (ui_but_equals_old(but.get(), but_old)) {
       return but.get();
     }
@@ -900,17 +896,17 @@ uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old)
   return nullptr;
 }
 
-static bool ui_but_extra_icons_equals_old(const uiButExtraOpIcon *new_extra_icon,
-                                          const uiButExtraOpIcon *old_extra_icon)
+static bool ui_but_extra_icons_equals_old(const ButtonExtraOpIcon *new_extra_icon,
+                                          const ButtonExtraOpIcon *old_extra_icon)
 {
   return (new_extra_icon->optype_params->optype == old_extra_icon->optype_params->optype) &&
          (new_extra_icon->icon == old_extra_icon->icon);
 }
 
-static uiButExtraOpIcon *ui_but_extra_icon_find_old(const uiButExtraOpIcon *new_extra_icon,
-                                                    const uiBut *old_but)
+static ButtonExtraOpIcon *ui_but_extra_icon_find_old(const ButtonExtraOpIcon *new_extra_icon,
+                                                     const Button *old_but)
 {
-  LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &old_but->extra_op_icons) {
+  LISTBASE_FOREACH (ButtonExtraOpIcon *, op_icon, &old_but->extra_op_icons) {
     if (ui_but_extra_icons_equals_old(new_extra_icon, op_icon)) {
       return op_icon;
     }
@@ -918,13 +914,13 @@ static uiButExtraOpIcon *ui_but_extra_icon_find_old(const uiButExtraOpIcon *new_
   return nullptr;
 }
 
-static void ui_but_extra_icons_update_from_old_but(const uiBut *new_but, const uiBut *old_but)
+static void ui_but_extra_icons_update_from_old_but(const Button *new_but, const Button *old_but)
 {
   /* Specifically for keeping some state info for the active button. */
   BLI_assert(old_but->active || old_but->semi_modal_state);
 
-  LISTBASE_FOREACH (uiButExtraOpIcon *, new_extra_icon, &new_but->extra_op_icons) {
-    uiButExtraOpIcon *old_extra_icon = ui_but_extra_icon_find_old(new_extra_icon, old_but);
+  LISTBASE_FOREACH (ButtonExtraOpIcon *, new_extra_icon, &new_but->extra_op_icons) {
+    ButtonExtraOpIcon *old_extra_icon = ui_but_extra_icon_find_old(new_extra_icon, old_but);
     /* Keep the highlighting state, and let handling update it later. */
     if (old_extra_icon) {
       new_extra_icon->highlighted = old_extra_icon->highlighted;
@@ -939,16 +935,16 @@ static void ui_but_extra_icons_update_from_old_but(const uiBut *new_but, const u
  * \param oldbut: The button from the last layout pass that will be moved to the new block.
  * \param but: The newly added button with much of the up to date information, to be feed later.
  *
- * \note #uiBut has ownership of many of its pointers. When the button is freed all these
+ * \note #Button has ownership of many of its pointers. When the button is freed all these
  * pointers are freed as well, so ownership has to be moved out of \a but in order to free it.
  */
-static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
+static void ui_but_update_old_active_from_new(Button *oldbut, Button *but)
 {
   BLI_assert(oldbut->active || oldbut->semi_modal_state);
 
   /* flags from the buttons we want to refresh, may want to add more here... */
-  const int flag_copy = UI_BUT_REDALERT | UI_HAS_ICON | UI_SELECT_DRAW;
-  const int drawflag_copy = UI_BUT_HAS_QUICK_TOOLTIP;
+  const int flag_copy = BUT_REDALERT | UI_HAS_ICON | UI_SELECT_DRAW;
+  const int drawflag_copy = BUT_HAS_QUICK_TOOLTIP;
 
   /* still stuff needs to be copied */
   oldbut->rect = but->rect;
@@ -983,7 +979,7 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
   std::swap(but->extra_op_icons, oldbut->extra_op_icons);
 
   if (oldbut->type == ButType::SearchMenu) {
-    uiButSearch *search_oldbut = (uiButSearch *)oldbut, *search_but = (uiButSearch *)but;
+    ButtonSearch *search_oldbut = (ButtonSearch *)oldbut, *search_but = (ButtonSearch *)but;
 
     std::swap(search_oldbut->arg_free_fn, search_but->arg_free_fn);
     std::swap(search_oldbut->arg, search_but->arg);
@@ -997,32 +993,32 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
 
   switch (oldbut->type) {
     case ButType::Progress: {
-      uiButProgress *progress_oldbut = (uiButProgress *)oldbut;
-      uiButProgress *progress_but = (uiButProgress *)but;
+      ButtonProgress *progress_oldbut = (ButtonProgress *)oldbut;
+      ButtonProgress *progress_but = (ButtonProgress *)but;
       progress_oldbut->progress_factor = progress_but->progress_factor;
       break;
     }
     case ButType::SeprLine: {
-      uiButSeparatorLine *line_oldbut = (uiButSeparatorLine *)oldbut;
-      uiButSeparatorLine *line_but = (uiButSeparatorLine *)but;
+      ButtonSeparatorLine *line_oldbut = (ButtonSeparatorLine *)oldbut;
+      ButtonSeparatorLine *line_but = (ButtonSeparatorLine *)but;
       line_oldbut->is_vertical = line_but->is_vertical;
       break;
     }
     case ButType::Label: {
-      uiButLabel *label_oldbut = (uiButLabel *)oldbut;
-      uiButLabel *label_but = (uiButLabel *)but;
+      ButtonLabel *label_oldbut = (ButtonLabel *)oldbut;
+      ButtonLabel *label_but = (ButtonLabel *)but;
       label_oldbut->alpha_factor = label_but->alpha_factor;
       break;
     }
     case ButType::Scroll: {
-      uiButScrollBar *scroll_oldbut = (uiButScrollBar *)oldbut;
-      uiButScrollBar *scroll_but = (uiButScrollBar *)but;
+      ButtonScrollBar *scroll_oldbut = (ButtonScrollBar *)oldbut;
+      ButtonScrollBar *scroll_but = (ButtonScrollBar *)but;
       scroll_oldbut->visual_height = scroll_but->visual_height;
       break;
     }
     case ButType::ViewItem: {
-      uiButViewItem *view_item_oldbut = (uiButViewItem *)oldbut;
-      uiButViewItem *view_item_newbut = (uiButViewItem *)but;
+      ButtonViewItem *view_item_oldbut = (ButtonViewItem *)oldbut;
+      ButtonViewItem *view_item_newbut = (ButtonViewItem *)but;
       ui_view_item_swap_button_pointers(*view_item_newbut->view_item,
                                         *view_item_oldbut->view_item);
       std::swap(view_item_newbut->view_item, view_item_oldbut->view_item);
@@ -1069,23 +1065,23 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
  * \return true when the button pointed to by \a but_uptr is replaced (only done for active
  * buttons).
  */
-static bool ui_but_update_from_old_block(uiBlock *block,
-                                         blender::Set<const uiBut *> &matched_old_buttons,
-                                         std::unique_ptr<uiBut> *but_uptr,
+static bool ui_but_update_from_old_block(Block *block,
+                                         Set<const Button *> &matched_old_buttons,
+                                         std::unique_ptr<Button> *but_uptr,
                                          std::optional<int64_t> *but_old_idx)
 {
-  uiBlock *oldblock = block->oldblock;
-  uiBut *but = but_uptr->get();
+  Block *oldblock = block->oldblock;
+  Button *but = but_uptr->get();
 
 #if 0
   /* Simple method - search every time. Keep this for easy testing of the "fast path." */
-  uiBut *oldbut = ui_but_find_old(oldblock, but, matched_old_buttons);
+  Button *oldbut = ui_but_find_old(oldblock, but, matched_old_buttons);
   UNUSED_VARS(but_old_p);
 #else
   BLI_assert(!but_old_idx->has_value() || oldblock->buttons.index_range().contains(**but_old_idx));
 
   /* As long as old and new buttons are aligned, avoid loop-in-loop (calling #ui_but_find_old). */
-  std::unique_ptr<uiBut> *oldbut_uptr;
+  std::unique_ptr<Button> *oldbut_uptr;
   if (LIKELY(but_old_idx->has_value() &&
              /* Ignore previously matched buttons. */
              !matched_old_buttons.contains(oldblock->buttons[**but_old_idx].get()) &&
@@ -1110,7 +1106,7 @@ static bool ui_but_update_from_old_block(uiBlock *block,
   if (!oldbut_uptr) {
     return false;
   }
-  uiBut *oldbut = oldbut_uptr->get();
+  Button *oldbut = oldbut_uptr->get();
 
   BLI_assert(!matched_old_buttons.contains(oldbut));
 
@@ -1129,14 +1125,14 @@ static bool ui_but_update_from_old_block(uiBlock *block,
     ui_but_update_old_active_from_new(oldbut, but);
 
     if (!BLI_listbase_is_empty(&block->butstore)) {
-      UI_butstore_register_update(block, oldbut, but);
+      butstore_register_update(block, oldbut, but);
     }
 
     found_active = true;
   }
   else {
     matched_old_buttons.add(oldbut);
-    int flag_copy = UI_BUT_DRAG_MULTI;
+    int flag_copy = BUT_DRAG_MULTI;
 
     /* Stupid special case: The active button may be inside (as in, overlapped on top) a row
      * button which we also want to keep highlighted then. */
@@ -1150,17 +1146,17 @@ static bool ui_but_update_from_old_block(uiBlock *block,
   return found_active;
 }
 
-bool UI_but_active_only_ex(
-    const bContext *C, ARegion *region, uiBlock *block, uiBut *but, const bool remove_on_failure)
+bool button_active_only_ex(
+    const bContext *C, ARegion *region, Block *block, Button *but, const bool remove_on_failure)
 {
   bool activate = false, found = false, isactive = false;
 
-  uiBlock *oldblock = block->oldblock;
+  Block *oldblock = block->oldblock;
   if (!oldblock) {
     activate = true;
   }
   else {
-    uiBut *oldbut = ui_but_find_old(oldblock, but);
+    Button *oldbut = ui_but_find_old(oldblock, but);
     if (oldbut) {
       found = true;
 
@@ -1171,7 +1167,7 @@ bool UI_but_active_only_ex(
   }
   if ((activate == true) || (found == false)) {
     /* There might still be another active button. */
-    uiBut *old_active = ui_region_find_active_but(region);
+    Button *old_active = ui_region_find_active_but(region);
     if (old_active) {
       ui_but_active_free(C, old_active);
     }
@@ -1192,23 +1188,23 @@ bool UI_but_active_only_ex(
   return true;
 }
 
-bool UI_but_active_only(const bContext *C, ARegion *region, uiBlock *block, uiBut *but)
+bool button_active_only(const bContext *C, ARegion *region, Block *block, Button *but)
 {
-  return UI_but_active_only_ex(C, region, block, but, true);
+  return button_active_only_ex(C, region, block, but, true);
 }
 
-bool UI_block_active_only_flagged_buttons(const bContext *C, ARegion *region, uiBlock *block)
+bool block_active_only_flagged_buttons(const bContext *C, ARegion *region, Block *block)
 {
   /* Running this command before end-block has run, means buttons that open menus
    * won't have those menus correctly positioned, see #83539. */
   BLI_assert(block->endblock);
 
   bool done = false;
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
-    if (but->flag & UI_BUT_ACTIVATE_ON_INIT) {
-      but->flag &= ~UI_BUT_ACTIVATE_ON_INIT;
+  for (const std::unique_ptr<Button> &but : block->buttons) {
+    if (but->flag & BUT_ACTIVATE_ON_INIT) {
+      but->flag &= ~BUT_ACTIVATE_ON_INIT;
       if (ui_but_is_editable(but.get())) {
-        if (UI_but_active_only_ex(C, region, block, but.get(), false)) {
+        if (button_active_only_ex(C, region, block, but.get(), false)) {
           done = true;
           break;
         }
@@ -1219,15 +1215,15 @@ bool UI_block_active_only_flagged_buttons(const bContext *C, ARegion *region, ui
   if (done) {
     /* Run this in a second pass since it's possible activating the button
      * removes the buttons being looped over. */
-    for (const std::unique_ptr<uiBut> &but : block->buttons) {
-      but->flag &= ~UI_BUT_ACTIVATE_ON_INIT;
+    for (const std::unique_ptr<Button> &but : block->buttons) {
+      but->flag &= ~BUT_ACTIVATE_ON_INIT;
     }
   }
 
   return done;
 }
 
-void UI_but_execute(const bContext *C, ARegion *region, uiBut *but)
+void button_execute(const bContext *C, ARegion *region, Button *but)
 {
   void *active_back;
   ui_but_execute_begin((bContext *)C, region, but, &active_back);
@@ -1237,7 +1233,7 @@ void UI_but_execute(const bContext *C, ARegion *region, uiBut *but)
 
 /* use to check if we need to disable undo, but don't make any changes
  * returns false if undo needs to be disabled. */
-static bool ui_but_is_rna_undo(const uiBut *but)
+static bool ui_but_is_rna_undo(const Button *but)
 {
   if (but->rnaprop == nullptr) {
     return true;
@@ -1254,7 +1250,7 @@ static bool ui_but_is_rna_undo(const uiBut *but)
 
 /* assigns automatic keybindings to menu items for fast access
  * (underline key in menu) */
-static void ui_menu_block_set_keyaccels(uiBlock *block)
+static void ui_menu_block_set_keyaccels(Block *block)
 {
   uint menu_key_mask = 0;
   int tot_missing = 0;
@@ -1268,7 +1264,7 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
     /* 2 Passes: One for first letter only, second for any letter if the first pass fails.
      * Run first pass on all buttons so first word chars always get first priority. */
 
-    for (const std::unique_ptr<uiBut> &but : block->buttons) {
+    for (const std::unique_ptr<Button> &but : block->buttons) {
       if (!ELEM(but->type,
                 ButType::But,
                 ButType::ButMenu,
@@ -1346,14 +1342,14 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
   }
 }
 
-void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_strip)
+void ui_but_add_shortcut(Button *but, const char *shortcut_str, const bool do_strip)
 {
-  if (do_strip && (but->flag & UI_BUT_HAS_SEP_CHAR)) {
+  if (do_strip && (but->flag & BUT_HAS_SEP_CHAR)) {
     const size_t sep_index = but->str.find_first_of(UI_SEP_CHAR);
     if (sep_index != std::string::npos) {
       but->str = but->str.substr(0, sep_index);
     }
-    but->flag &= ~UI_BUT_HAS_SEP_CHAR;
+    but->flag &= ~BUT_HAS_SEP_CHAR;
   }
 
   /* without this, just allow stripping of the shortcut */
@@ -1362,7 +1358,7 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_str
   }
 
   but->str = fmt::format("{}" UI_SEP_CHAR_S "{}", but->str, shortcut_str);
-  but->flag |= UI_BUT_HAS_SEP_CHAR;
+  but->flag |= BUT_HAS_SEP_CHAR;
   ui_but_update(but);
 }
 
@@ -1386,28 +1382,27 @@ static std::optional<std::string> ui_but_event_operator_string_from_operator(
 }
 
 static std::optional<std::string> ui_but_event_operator_string_from_menu(const bContext *C,
-                                                                         uiBut *but)
+                                                                         Button *but)
 {
-  MenuType *mt = UI_but_menutype_get(but);
+  MenuType *mt = button_menutype_get(but);
   BLI_assert(mt != nullptr);
 
   /* Dummy, name is unimportant. */
-  IDProperty *prop_menu = blender::bke::idprop::create_group(__func__).release();
+  IDProperty *prop_menu = bke::idprop::create_group(__func__).release();
   IDP_AddToGroup(prop_menu, IDP_NewStringMaxSize(mt->idname, sizeof(mt->idname), "name"));
 
   const std::optional<std::string> result = WM_key_event_operator_string(
-      C, "WM_OT_call_menu", blender::wm::OpCallContext::InvokeRegionWin, prop_menu, true);
+      C, "WM_OT_call_menu", wm::OpCallContext::InvokeRegionWin, prop_menu, true);
 
   IDP_FreeProperty(prop_menu);
   return result;
 }
 
 static std::optional<std::string> ui_but_event_operator_string_from_panel(const bContext *C,
-                                                                          uiBut *but)
+                                                                          Button *but)
 {
-  using namespace blender;
   /** Nearly exact copy of #ui_but_event_operator_string_from_menu */
-  PanelType *pt = UI_but_paneltype_get(but);
+  PanelType *pt = button_paneltype_get(but);
   BLI_assert(pt != nullptr);
 
   /* Dummy, name is unimportant. */
@@ -1421,7 +1416,7 @@ static std::optional<std::string> ui_but_event_operator_string_from_panel(const 
     /* FIXME(@ideasman42): We can't reasonably search all configurations - long term. */
     IDP_ReplaceInGroup(prop_panel, bke::idprop::create("keep_open", i).release());
     std::optional<std::string> result = WM_key_event_operator_string(
-        C, "WM_OT_call_panel", blender::wm::OpCallContext::InvokeRegionWin, prop_panel, true);
+        C, "WM_OT_call_panel", wm::OpCallContext::InvokeRegionWin, prop_panel, true);
     if (result) {
       return result;
     }
@@ -1430,7 +1425,7 @@ static std::optional<std::string> ui_but_event_operator_string_from_panel(const 
   return std::nullopt;
 }
 
-static std::optional<std::string> ui_but_event_operator_string(const bContext *C, uiBut *but)
+static std::optional<std::string> ui_but_event_operator_string(const bContext *C, Button *but)
 {
   if (but->optype != nullptr) {
     wmOperatorCallParams params = {};
@@ -1439,10 +1434,10 @@ static std::optional<std::string> ui_but_event_operator_string(const bContext *C
     params.opcontext = but->opcontext;
     return ui_but_event_operator_string_from_operator(C, &params);
   }
-  if (UI_but_menutype_get(but) != nullptr) {
+  if (button_menutype_get(but) != nullptr) {
     return ui_but_event_operator_string_from_menu(C, but);
   }
-  if (UI_but_paneltype_get(but) != nullptr) {
+  if (button_paneltype_get(but) != nullptr) {
     return ui_but_event_operator_string_from_panel(C, but);
   }
 
@@ -1450,9 +1445,9 @@ static std::optional<std::string> ui_but_event_operator_string(const bContext *C
 }
 
 static std::optional<std::string> ui_but_extra_icon_event_operator_string(
-    const bContext *C, const uiButExtraOpIcon *extra_icon)
+    const bContext *C, const ButtonExtraOpIcon *extra_icon)
 {
-  wmOperatorType *extra_icon_optype = UI_but_extra_operator_icon_optype_get(extra_icon);
+  wmOperatorType *extra_icon_optype = button_extra_operator_icon_optype_get(extra_icon);
 
   if (extra_icon_optype) {
     return ui_but_event_operator_string_from_operator(C, extra_icon->optype_params);
@@ -1462,9 +1457,8 @@ static std::optional<std::string> ui_but_extra_icon_event_operator_string(
 }
 
 static std::optional<std::string> ui_but_event_property_operator_string(const bContext *C,
-                                                                        uiBut *but)
+                                                                        Button *but)
 {
-  using namespace blender;
   /* Context toggle operator names to check. */
 
   /* NOTE(@ideasman42): This function could use a refactor to generalize button type to operator
@@ -1500,7 +1494,7 @@ static std::optional<std::string> ui_but_event_property_operator_string(const bC
   PropertyRNA *prop = but->rnaprop;
   int prop_index = but->rnaindex;
   if ((but->type == ButType::ButMenu) && (but->block->handle != nullptr)) {
-    uiBut *but_parent = but->block->handle->popup_create_vars.but;
+    Button *but_parent = but->block->handle->popup_create_vars.but;
     if ((but_parent && but_parent->rnaprop) &&
         (RNA_property_type(but_parent->rnaprop) == PROP_ENUM) &&
         ELEM(but_parent->menu_create_func,
@@ -1582,7 +1576,7 @@ static std::optional<std::string> ui_but_event_property_operator_string(const bC
     const StringRefNull data_path = data_path_variations[data_path_index];
     if (!data_path.is_empty() || (prop_enum_value_ok && prop_enum_value_id)) {
       /* Create a property to host the "data_path" property we're sending to the operators. */
-      IDProperty *prop_path = blender::bke::idprop::create_group(__func__).release();
+      IDProperty *prop_path = bke::idprop::create_group(__func__).release();
       BLI_SCOPED_DEFER([&]() { IDP_FreeProperty(prop_path); });
       if (!data_path.is_empty()) {
         IDP_AddToGroup(prop_path, bke::idprop::create("data_path", data_path).release());
@@ -1615,7 +1609,7 @@ static std::optional<std::string> ui_but_event_property_operator_string(const bC
 
       for (int i = 0; (i < opnames_len) && (opnames[i]); i++) {
         const std::optional<std::string> str = WM_key_event_operator_string(
-            C, opnames[i], blender::wm::OpCallContext::InvokeRegionWin, prop_path, false);
+            C, opnames[i], wm::OpCallContext::InvokeRegionWin, prop_path, false);
         if (str) {
           return str;
         }
@@ -1670,7 +1664,7 @@ const char ui_radial_dir_order[8] = {
 const char ui_radial_dir_to_numpad[8] = {8, 9, 6, 3, 2, 1, 4, 7};
 const short ui_radial_dir_to_angle[8] = {90, 45, 0, 315, 270, 225, 180, 135};
 
-static std::string ui_but_pie_direction_string(const uiBut *but)
+static std::string ui_but_pie_direction_string(const Button *but)
 {
   BLI_assert(but->pie_dir < ARRAY_SIZE(ui_radial_dir_to_numpad));
   return fmt::to_string(int(ui_radial_dir_to_numpad[but->pie_dir]));
@@ -1678,9 +1672,9 @@ static std::string ui_but_pie_direction_string(const uiBut *but)
 
 /** \} */
 
-static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
+static void ui_menu_block_set_keymaps(const bContext *C, Block *block)
 {
-  BLI_assert(block->flag & (UI_BLOCK_LOOP | UI_BLOCK_SHOW_SHORTCUT_ALWAYS));
+  BLI_assert(block->flag & (BLOCK_LOOP | BLOCK_SHOW_SHORTCUT_ALWAYS));
 
   /* only do it before bounding */
   if (block->rect.xmin != block->rect.xmax) {
@@ -1690,8 +1684,8 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
     return;
   }
 
-  if (block->flag & UI_BLOCK_PIE_MENU) {
-    for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  if (block->flag & BLOCK_PIE_MENU) {
+    for (const std::unique_ptr<Button> &but : block->buttons) {
       if (but->pie_dir != UI_RADIAL_NONE) {
         const std::string str = ui_but_pie_direction_string(but.get());
         ui_but_add_shortcut(but.get(), str.c_str(), false);
@@ -1699,19 +1693,19 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
     }
   }
   else {
-    for (const std::unique_ptr<uiBut> &but : block->buttons) {
-      if (block->flag & UI_BLOCK_SHOW_SHORTCUT_ALWAYS) {
+    for (const std::unique_ptr<Button> &but : block->buttons) {
+      if (block->flag & BLOCK_SHOW_SHORTCUT_ALWAYS) {
         /* Skip icon-only buttons (as used in the toolbar). */
         if (but->drawstr[0] == '\0') {
           continue;
         }
-        if (((block->flag & UI_BLOCK_POPOVER) == 0) && UI_but_is_tool(but.get())) {
+        if (((block->flag & BLOCK_POPOVER) == 0) && but_is_tool(but.get())) {
           /* For non-popovers, shown in shortcut only
            * (has special shortcut handling code). */
           continue;
         }
       }
-      else if (but->emboss != blender::ui::EmbossType::Pulldown) {
+      else if (but->emboss != EmbossType::Pulldown) {
         continue;
       }
 
@@ -1727,16 +1721,16 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
   }
 }
 
-void ui_but_override_flag(Main *bmain, uiBut *but)
+void ui_but_override_flag(Main *bmain, Button *but)
 {
   const uint override_status = RNA_property_override_library_status(
       bmain, &but->rnapoin, but->rnaprop, but->rnaindex);
 
   if (override_status & RNA_OVERRIDE_STATUS_OVERRIDDEN) {
-    but->flag |= UI_BUT_OVERRIDDEN;
+    but->flag |= BUT_OVERRIDDEN;
   }
   else {
-    but->flag &= ~UI_BUT_OVERRIDDEN;
+    but->flag &= ~BUT_OVERRIDDEN;
   }
 }
 
@@ -1750,7 +1744,7 @@ void ui_but_override_flag(Main *bmain, uiBut *but)
  * \{ */
 
 /**
- * Predefined types for generic extra operator icons (uiButExtraOpIcon).
+ * Predefined types for generic extra operator icons (ButtonExtraOpIcon).
  */
 enum PredefinedExtraOpIconType {
   PREDEFINED_EXTRA_OP_ICON_NONE = 1,
@@ -1759,12 +1753,12 @@ enum PredefinedExtraOpIconType {
   PREDEFINED_EXTRA_OP_ICON_BONE_EYEDROPPER
 };
 
-static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
+static PointerRNA *ui_but_extra_operator_icon_add_ptr(Button *but,
                                                       wmOperatorType *optype,
-                                                      blender::wm::OpCallContext opcontext,
+                                                      wm::OpCallContext opcontext,
                                                       int icon)
 {
-  uiButExtraOpIcon *extra_op_icon = MEM_callocN<uiButExtraOpIcon>(__func__);
+  auto *extra_op_icon = MEM_callocN<ButtonExtraOpIcon>(__func__);
 
   extra_op_icon->icon = icon;
   extra_op_icon->optype_params = MEM_callocN<wmOperatorCallParams>(__func__);
@@ -1781,7 +1775,7 @@ static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
   return extra_op_icon->optype_params->opptr;
 }
 
-static void ui_but_extra_operator_icon_free(uiButExtraOpIcon *extra_icon)
+static void ui_but_extra_operator_icon_free(ButtonExtraOpIcon *extra_icon)
 {
   WM_operator_properties_free(extra_icon->optype_params->opptr);
   MEM_delete(extra_icon->optype_params->opptr);
@@ -1789,17 +1783,17 @@ static void ui_but_extra_operator_icon_free(uiButExtraOpIcon *extra_icon)
   MEM_freeN(extra_icon);
 }
 
-void ui_but_extra_operator_icons_free(uiBut *but)
+void ui_but_extra_operator_icons_free(Button *but)
 {
-  LISTBASE_FOREACH_MUTABLE (uiButExtraOpIcon *, op_icon, &but->extra_op_icons) {
+  LISTBASE_FOREACH_MUTABLE (ButtonExtraOpIcon *, op_icon, &but->extra_op_icons) {
     ui_but_extra_operator_icon_free(op_icon);
   }
   BLI_listbase_clear(&but->extra_op_icons);
 }
 
-PointerRNA *UI_but_extra_operator_icon_add(uiBut *but,
+PointerRNA *button_extra_operator_icon_add(Button *but,
                                            const StringRefNull opname,
-                                           blender::wm::OpCallContext opcontext,
+                                           wm::OpCallContext opcontext,
                                            int icon)
 {
   wmOperatorType *optype = WM_operatortype_find(opname.c_str(), false);
@@ -1811,32 +1805,31 @@ PointerRNA *UI_but_extra_operator_icon_add(uiBut *but,
   return nullptr;
 }
 
-wmOperatorType *UI_but_extra_operator_icon_optype_get(const uiButExtraOpIcon *extra_icon)
+wmOperatorType *button_extra_operator_icon_optype_get(const ButtonExtraOpIcon *extra_icon)
 {
   return extra_icon ? extra_icon->optype_params->optype : nullptr;
 }
 
-PointerRNA *UI_but_extra_operator_icon_opptr_get(const uiButExtraOpIcon *extra_icon)
+PointerRNA *button_extra_operator_icon_opptr_get(const ButtonExtraOpIcon *extra_icon)
 {
   return extra_icon->optype_params->opptr;
 }
 
-static bool ui_but_icon_extra_is_visible_text_clear(const uiBut *but)
+static bool ui_but_icon_extra_is_visible_text_clear(const Button *but)
 {
   BLI_assert(but->type == ButType::Text);
-  return ((but->flag & UI_BUT_VALUE_CLEAR) && but->drawstr[0]);
+  return ((but->flag & BUT_VALUE_CLEAR) && but->drawstr[0]);
 }
 
-static bool ui_but_icon_extra_is_visible_search_unlink(const uiBut *but)
+static bool ui_but_icon_extra_is_visible_search_unlink(const Button *but)
 {
   BLI_assert(ELEM(but->type, ButType::SearchMenu));
-  return ((but->editstr == nullptr) && (but->drawstr[0] != '\0') &&
-          (but->flag & UI_BUT_VALUE_CLEAR));
+  return ((but->editstr == nullptr) && (but->drawstr[0] != '\0') && (but->flag & BUT_VALUE_CLEAR));
 }
 
-static bool ui_but_icon_extra_is_visible_search_eyedropper(uiBut *but)
+static bool ui_but_icon_extra_is_visible_search_eyedropper(Button *but)
 {
-  BLI_assert(but->type == ButType::SearchMenu && (but->flag & UI_BUT_VALUE_CLEAR));
+  BLI_assert(but->type == ButType::SearchMenu && (but->flag & BUT_VALUE_CLEAR));
 
   if (but->rnaprop == nullptr) {
     return false;
@@ -1848,9 +1841,9 @@ static bool ui_but_icon_extra_is_visible_search_eyedropper(uiBut *but)
   return ((but->editstr == nullptr) && (idcode == ID_OB || OB_DATA_SUPPORT_ID(idcode)));
 }
 
-static bool ui_but_icon_extra_is_visible_bone_eyedropper(uiBut *but)
+static bool ui_but_icon_extra_is_visible_bone_eyedropper(Button *but)
 {
-  if (but->type != ButType::SearchMenu || !(but->flag & UI_BUT_VALUE_CLEAR)) {
+  if (but->type != ButType::SearchMenu || !(but->flag & BUT_VALUE_CLEAR)) {
     return false;
   }
   if (but->editstr != nullptr) {
@@ -1859,7 +1852,7 @@ static bool ui_but_icon_extra_is_visible_bone_eyedropper(uiBut *but)
   if (!ELEM(RNA_property_type(but->rnaprop), PROP_STRING, PROP_POINTER)) {
     return false;
   }
-  uiButSearch *search_but = (uiButSearch *)but;
+  ButtonSearch *search_but = (ButtonSearch *)but;
   if (!search_but->rnasearchprop) {
     return false;
   }
@@ -1868,7 +1861,7 @@ static bool ui_but_icon_extra_is_visible_bone_eyedropper(uiBut *but)
   return type == &RNA_Bone || type == &RNA_EditBone || type == &RNA_PoseBone;
 }
 
-static PredefinedExtraOpIconType ui_but_icon_extra_get(uiBut *but)
+static PredefinedExtraOpIconType ui_but_icon_extra_get(Button *but)
 {
   switch (but->type) {
     case ButType::Text:
@@ -1877,7 +1870,7 @@ static PredefinedExtraOpIconType ui_but_icon_extra_get(uiBut *but)
       }
       break;
     case ButType::SearchMenu:
-      if ((but->flag & UI_BUT_VALUE_CLEAR) == 0) {
+      if ((but->flag & BUT_VALUE_CLEAR) == 0) {
         /* pass */
       }
       else if (ui_but_icon_extra_is_visible_search_unlink(but)) {
@@ -1902,7 +1895,7 @@ static PredefinedExtraOpIconType ui_but_icon_extra_get(uiBut *but)
  * some generic ones based on button data. Currently these are mutually exclusive, so there's only
  * ever one predefined extra icon.
  */
-static void ui_but_predefined_extra_operator_icons_add(uiBut *but)
+static void ui_but_predefined_extra_operator_icons_add(Button *but)
 {
   const PredefinedExtraOpIconType extra_icon = ui_but_icon_extra_get(but);
   wmOperatorType *optype = nullptr;
@@ -1949,45 +1942,44 @@ static void ui_but_predefined_extra_operator_icons_add(uiBut *but)
   }
 
   if (optype) {
-    LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &but->extra_op_icons) {
+    LISTBASE_FOREACH (ButtonExtraOpIcon *, op_icon, &but->extra_op_icons) {
       if ((op_icon->optype_params->optype == optype) && (op_icon->icon == icon)) {
         /* Don't add the same operator icon twice (happens if button is kept alive while active).
          */
         return;
       }
     }
-    ui_but_extra_operator_icon_add_ptr(
-        but, optype, blender::wm::OpCallContext::InvokeDefault, icon);
+    ui_but_extra_operator_icon_add_ptr(but, optype, wm::OpCallContext::InvokeDefault, icon);
   }
 }
 
 /** \} */
 
-void UI_block_update_from_old(const bContext *C, uiBlock *block)
+void block_update_from_old(const bContext *C, Block *block)
 {
   if (!block->oldblock) {
     return;
   }
 
   if (BLI_listbase_is_empty(&block->oldblock->butstore) == false) {
-    UI_butstore_update(block);
+    butstore_update(block);
   }
 
   std::optional<int64_t> but_old_idx = block->oldblock->buttons.is_empty() ? std::nullopt :
                                                                              std::optional{0};
-  blender::Set<const uiBut *> matched_old_buttons;
+  Set<const Button *> matched_old_buttons;
   matched_old_buttons.reserve(block->oldblock->buttons.size());
-  for (std::unique_ptr<uiBut> &but : block->buttons) {
+  for (std::unique_ptr<Button> &but : block->buttons) {
     if (ui_but_update_from_old_block(block, matched_old_buttons, &but, &but_old_idx)) {
       ui_but_update(but.get());
 
       /* redraw dynamic tooltip if we have one open */
       if (but->tip_func) {
-        UI_but_tooltip_refresh((bContext *)C, but.get());
+        button_tooltip_refresh((bContext *)C, but.get());
       }
     }
   }
-  for (const std::unique_ptr<uiBut> &but : block->oldblock->buttons) {
+  for (const std::unique_ptr<Button> &but : block->oldblock->buttons) {
     ui_but_free(C, but.get());
   }
   block->oldblock->buttons.clear_and_shrink();
@@ -2004,12 +1996,12 @@ void UI_block_update_from_old(const bContext *C, uiBlock *block)
 /**
  * Extra sanity checks for invariants (debug builds only).
  */
-static void ui_but_validate(const uiBut *but)
+static void ui_but_validate(const Button *but)
 {
   /* Number buttons must have a click-step,
    * assert instead of correcting the value to ensure the caller knows what they're doing. */
   if (but->type == ButType::Num) {
-    uiButNumber *number_but = (uiButNumber *)but;
+    ButtonNumber *number_but = (ButtonNumber *)but;
 
     if (ELEM(but->pointype, ButPointerType::Char, ButPointerType::Short, ButPointerType::Int)) {
       BLI_assert(int(number_but->step_size) > 0);
@@ -2019,7 +2011,7 @@ static void ui_but_validate(const uiBut *but)
 #endif
 
 bool ui_but_context_poll_operator_ex(bContext *C,
-                                     const uiBut *but,
+                                     const Button *but,
                                      const wmOperatorCallParams *optype_params)
 {
   bool result;
@@ -2031,7 +2023,7 @@ bool ui_but_context_poll_operator_ex(bContext *C,
 
     /* Temporarily make this button override the active one, in case the poll acts on the active
      * button. */
-    const_cast<uiBut *>(but)->flag |= UI_BUT_ACTIVE_OVERRIDE;
+    const_cast<Button *>(but)->flag |= BUT_ACTIVE_OVERRIDE;
 
     if (but->context) {
       CTX_store_set(C, but->context);
@@ -2041,11 +2033,10 @@ bool ui_but_context_poll_operator_ex(bContext *C,
   result = WM_operator_poll_context(C, optype_params->optype, optype_params->opcontext);
 
   if (but) {
-    BLI_assert_msg((but->flag & ~UI_BUT_ACTIVE_OVERRIDE) ==
-                       (old_but_flag & ~UI_BUT_ACTIVE_OVERRIDE),
+    BLI_assert_msg((but->flag & ~BUT_ACTIVE_OVERRIDE) == (old_but_flag & ~BUT_ACTIVE_OVERRIDE),
                    "Operator polls shouldn't change button flags");
 
-    const_cast<uiBut *>(but)->flag = old_but_flag;
+    const_cast<Button *>(but)->flag = old_but_flag;
 
     if (but->context) {
       CTX_store_set(C, previous_ctx);
@@ -2055,50 +2046,49 @@ bool ui_but_context_poll_operator_ex(bContext *C,
   return result;
 }
 
-bool ui_but_context_poll_operator(bContext *C, wmOperatorType *ot, const uiBut *but)
+bool ui_but_context_poll_operator(bContext *C, wmOperatorType *ot, const Button *but)
 {
-  const blender::wm::OpCallContext opcontext = but ? but->opcontext :
-                                                     blender::wm::OpCallContext::InvokeDefault;
+  const wm::OpCallContext opcontext = but ? but->opcontext : wm::OpCallContext::InvokeDefault;
   wmOperatorCallParams params = {};
   params.optype = ot;
   params.opcontext = opcontext;
   return ui_but_context_poll_operator_ex(C, but, &params);
 }
 
-void UI_block_end_ex(const bContext *C,
-                     Main *bmain,
-                     wmWindow *window,
-                     Scene *scene,
-                     ARegion *region,
-                     Depsgraph *depsgraph,
-                     uiBlock *block,
-                     const int xy[2],
-                     int r_xy[2])
+void block_end_ex(const bContext *C,
+                  Main *bmain,
+                  wmWindow *window,
+                  Scene *scene,
+                  ARegion *region,
+                  Depsgraph *depsgraph,
+                  Block *block,
+                  const int xy[2],
+                  int r_xy[2])
 {
   BLI_assert(block->active);
 
   /* Extend button data. This needs to be done before the block updating. */
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     ui_but_predefined_extra_operator_icons_add(but.get());
   }
 
-  UI_block_update_from_old(C, block);
+  block_update_from_old(C, block);
 
   /* inherit flags from 'old' buttons that was drawn here previous, based
    * on matching buttons, we need this to make button event handling non
    * blocking, while still allowing buttons to be remade each redraw as it
    * is expected by blender code */
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     /* temp? Proper check for graying out */
     if (but->optype) {
       wmOperatorType *ot = but->optype;
 
       if (ot == nullptr || !ui_but_context_poll_operator((bContext *)C, ot, but.get())) {
-        but->flag |= UI_BUT_DISABLED;
+        but->flag |= BUT_DISABLED;
       }
     }
 
-    LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &but->extra_op_icons) {
+    LISTBASE_FOREACH (ButtonExtraOpIcon *, op_icon, &but->extra_op_icons) {
       if (!ui_but_context_poll_operator_ex((bContext *)C, but.get(), op_icon->optype_params)) {
         op_icon->disabled = true;
       }
@@ -2108,8 +2098,8 @@ void UI_block_end_ex(const bContext *C,
         depsgraph, (scene) ? BKE_scene_frame_get(scene) : 0.0f);
     ui_but_anim_flag(but.get(), &anim_eval_context);
     ui_but_override_flag(bmain, but.get());
-    if (UI_but_is_decorator(but)) {
-      ui_but_anim_decorate_update_from_flag((uiButDecorator *)but.get());
+    if (button_is_decorator(but)) {
+      ui_but_anim_decorate_update_from_flag((ButtonDecorator *)but.get());
     }
 
 #ifndef NDEBUG
@@ -2119,30 +2109,30 @@ void UI_block_end_ex(const bContext *C,
 
   /* handle pending stuff */
   if (block->layouts.first) {
-    blender::ui::block_layout_resolve(block);
+    block_layout_resolve(block);
   }
   ui_block_align_calc(block, region);
-  if ((block->flag & UI_BLOCK_LOOP) && (block->flag & UI_BLOCK_NUMSELECT) &&
-      (block->flag & UI_BLOCK_NO_ACCELERATOR_KEYS) == 0)
+  if ((block->flag & BLOCK_LOOP) && (block->flag & BLOCK_NUMSELECT) &&
+      (block->flag & BLOCK_NO_ACCELERATOR_KEYS) == 0)
   {
     ui_menu_block_set_keyaccels(block); /* could use a different flag to check */
   }
 
-  if (block->flag & (UI_BLOCK_LOOP | UI_BLOCK_SHOW_SHORTCUT_ALWAYS)) {
+  if (block->flag & (BLOCK_LOOP | BLOCK_SHOW_SHORTCUT_ALWAYS)) {
     ui_menu_block_set_keymaps(C, block);
   }
 
   /* after keymaps! */
   switch (block->bounds_type) {
-    case UI_BLOCK_BOUNDS_NONE:
+    case BLOCK_BOUNDS_NONE:
       break;
-    case UI_BLOCK_BOUNDS:
+    case BLOCK_BOUNDS:
       ui_block_bounds_calc(block);
       break;
-    case UI_BLOCK_BOUNDS_TEXT:
+    case BLOCK_BOUNDS_TEXT:
       ui_block_bounds_calc_text(block, 0.0f);
       break;
-    case UI_BLOCK_BOUNDS_POPUP_CENTER:
+    case BLOCK_BOUNDS_POPUP_CENTER:
       if (block->handle->grab_xy_prev[0] == 0 && block->handle->grab_xy_prev[1] == 0) {
         ui_block_bounds_calc_centered(window, block);
       }
@@ -2150,28 +2140,28 @@ void UI_block_end_ex(const bContext *C,
         ui_block_bounds_calc_post_centered(block);
       }
       break;
-    case UI_BLOCK_BOUNDS_PIE_CENTER:
+    case BLOCK_BOUNDS_PIE_CENTER:
       ui_block_bounds_calc_centered_pie(block);
       break;
 
       /* fallback */
-    case UI_BLOCK_BOUNDS_POPUP_MOUSE:
-    case UI_BLOCK_BOUNDS_POPUP_MENU:
+    case BLOCK_BOUNDS_POPUP_MOUSE:
+    case BLOCK_BOUNDS_POPUP_MENU:
       ui_block_bounds_calc_popup(window, block, block->bounds_type, xy, r_xy);
       break;
   }
 
   /* Update bounds of all views in this block. If this block is a panel, this will be done later in
-   * #UI_panels_end(), because buttons are offset there. */
+   * #panels_end(), because buttons are offset there. */
   if (!block->panel) {
     ui_block_views_end(region, block);
   }
 
   if (block->rect.xmin == 0.0f && block->rect.xmax == 0.0f) {
-    UI_block_bounds_set_normal(block, 0);
+    block_bounds_set_normal(block, 0);
   }
-  if (block->flag & UI_BUT_ALIGN) {
-    UI_block_align_end(block);
+  if (block->flag & BUT_ALIGN) {
+    block_align_end(block);
   }
 
   ui_update_flexible_spacing(region, block);
@@ -2179,19 +2169,19 @@ void UI_block_end_ex(const bContext *C,
   block->endblock = true;
 }
 
-void UI_block_end(const bContext *C, uiBlock *block)
+void block_end(const bContext *C, Block *block)
 {
   wmWindow *window = CTX_wm_window(C);
 
-  UI_block_end_ex(C,
-                  CTX_data_main(C),
-                  window,
-                  CTX_data_scene(C),
-                  CTX_wm_region(C),
-                  CTX_data_depsgraph_pointer(C),
-                  block,
-                  window->eventstate->xy,
-                  nullptr);
+  block_end_ex(C,
+               CTX_data_main(C),
+               window,
+               CTX_data_scene(C),
+               CTX_wm_region(C),
+               CTX_data_depsgraph_pointer(C),
+               block,
+               window->eventstate->xy,
+               nullptr);
 }
 
 /* ************** BLOCK DRAWING FUNCTION ************* */
@@ -2201,12 +2191,12 @@ void ui_fontscale(float *points, float aspect)
   *points /= aspect;
 }
 
-void ui_but_to_pixelrect(rcti *rect, const ARegion *region, const uiBlock *block, const uiBut *but)
+void ui_but_to_pixelrect(rcti *rect, const ARegion *region, const Block *block, const Button *but)
 {
   *rect = ui_to_pixelrect(region, block, (but) ? &but->rect : &block->rect);
 }
 
-rcti ui_to_pixelrect(const ARegion *region, const uiBlock *block, const rctf *src_rect)
+rcti ui_to_pixelrect(const ARegion *region, const Block *block, const rctf *src_rect)
 {
   rctf rectf;
   ui_block_to_window_rctf(region, block, &rectf, src_rect);
@@ -2223,9 +2213,9 @@ static bool ui_but_pixelrect_in_view(const ARegion *region, const rcti *rect)
   return BLI_rcti_isect(&region->winrct, &rect_winspace, nullptr);
 }
 
-void UI_block_draw(const bContext *C, uiBlock *block)
+void block_draw(const bContext *C, Block *block)
 {
-  uiStyle style = *UI_style_get_dpi(); /* XXX pass on as arg */
+  uiStyle style = *style_get_dpi(); /* XXX pass on as arg */
 
   /* get menu region or area region */
   ARegion *region = CTX_wm_region_popup(C);
@@ -2234,7 +2224,7 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   }
 
   if (!block->endblock) {
-    UI_block_end(C, block);
+    block_end(C, block);
   }
 
   /* we set this only once */
@@ -2258,13 +2248,13 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   wmOrtho2_region_pixelspace(region);
 
   /* back */
-  if (block->flag & UI_BLOCK_PIE_MENU) {
+  if (block->flag & BLOCK_PIE_MENU) {
     ui_draw_pie_center(block);
   }
-  else if (block->flag & UI_BLOCK_POPOVER) {
+  else if (block->flag & BLOCK_POPOVER) {
     ui_draw_popover_back(region, &style, block, &rect);
   }
-  else if (block->flag & UI_BLOCK_LOOP) {
+  else if (block->flag & BLOCK_LOOP) {
     ui_draw_menu_back(&style, block, &rect);
   }
   else if (block->panel) {
@@ -2272,25 +2262,25 @@ void UI_block_draw(const bContext *C, uiBlock *block)
                           &style,
                           block,
                           &rect,
-                          UI_panel_category_is_visible(region),
-                          UI_panel_should_show_background(region, block->panel->type),
+                          panel_category_is_visible(region),
+                          panel_should_show_background(region, block->panel->type),
                           region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE);
   }
   /* Shared layout panel backdrop style between redo region and popups. */
   if (block->panel && ELEM(region->regiontype, RGN_TYPE_HUD, RGN_TYPE_TEMPORARY)) {
     /* TODO: Add as theme color. */
     float subpanel_backcolor[4]{0.2f, 0.3f, 0.33f, 0.05f};
-    const bTheme *btheme = UI_GetTheme();
+    const bTheme *btheme = GetTheme();
     const float aspect = block->panel->runtime->block->aspect;
     const float radius = btheme->tui.panel_roundness * U.widget_unit * 0.5f / aspect;
     ui_draw_layout_panels_backdrop(region, block->panel, radius, subpanel_backcolor);
   }
 
   BLF_batch_draw_begin();
-  UI_widgetbase_draw_cache_begin();
+  widgetbase_draw_cache_begin();
 
   /* widgets */
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     if (but->flag & (UI_HIDDEN | UI_SCROLLED)) {
       continue;
     }
@@ -2308,7 +2298,7 @@ void UI_block_draw(const bContext *C, uiBlock *block)
     }
   }
 
-  UI_widgetbase_draw_cache_end();
+  widgetbase_draw_cache_end();
   BLF_batch_draw_end();
 
   ui_block_views_draw_overlays(region, block);
@@ -2318,11 +2308,11 @@ void UI_block_draw(const bContext *C, uiBlock *block)
   GPU_matrix_pop();
 }
 
-static void ui_block_message_subscribe(ARegion *region, wmMsgBus *mbus, uiBlock *block)
+static void ui_block_message_subscribe(ARegion *region, wmMsgBus *mbus, Block *block)
 {
-  uiBut *but_prev = nullptr;
+  Button *but_prev = nullptr;
   /* possibly we should keep the region this block is contained in? */
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     if (but->rnapoin.type && but->rnaprop) {
       /* quick check to avoid adding buttons representing a vector, multiple times. */
       if ((but_prev && (but_prev->rnaprop == but->rnaprop) &&
@@ -2342,16 +2332,16 @@ static void ui_block_message_subscribe(ARegion *region, wmMsgBus *mbus, uiBlock 
   }
 }
 
-void UI_region_message_subscribe(ARegion *region, wmMsgBus *mbus)
+void region_message_subscribe(ARegion *region, wmMsgBus *mbus)
 {
-  LISTBASE_FOREACH (uiBlock *, block, &region->runtime->uiblocks) {
+  LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
     ui_block_message_subscribe(region, mbus, block);
   }
 }
 
 /* ************* EVENTS ************* */
 
-int ui_but_is_pushed_ex(uiBut *but, double *value)
+int ui_but_is_pushed_ex(Button *but, double *value)
 {
   int is_push = 0;
   if (but->pushed_state_func) {
@@ -2401,8 +2391,8 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
       case ButType::ListRow:
       case ButType::Tab:
         if ((but->type == ButType::Tab) && but->rnaprop && but->custom_data) {
-          /* uiBut.custom_data points to data this tab represents (e.g. workspace).
-           * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
+          /* Button.custom_data points to data this tab represents (e.g. workspace).
+           * Button.rnapoin/prop store an active value (e.g. active workspace). */
           if (RNA_property_type(but->rnaprop) == PROP_POINTER) {
             const PointerRNA active_ptr = RNA_property_pointer_get(&but->rnapoin, but->rnaprop);
             if (active_ptr.data == but->custom_data) {
@@ -2429,7 +2419,7 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
         }
         break;
       case ButType::ViewItem: {
-        const uiButViewItem *view_item_but = (const uiButViewItem *)but;
+        const auto *view_item_but = (const ButtonViewItem *)but;
 
         is_push = -1;
         if (view_item_but->view_item) {
@@ -2443,18 +2433,18 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
     }
   }
 
-  if ((but->drawflag & UI_BUT_CHECKBOX_INVERT) && (is_push != -1)) {
+  if ((but->drawflag & BUT_CHECKBOX_INVERT) && (is_push != -1)) {
     is_push = !bool(is_push);
   }
   return is_push;
 }
-int ui_but_is_pushed(uiBut *but)
+int ui_but_is_pushed(Button *but)
 {
-  double value = UI_BUT_VALUE_UNSET;
+  double value = BUT_VALUE_UNSET;
   return ui_but_is_pushed_ex(but, &value);
 }
 
-static void ui_but_update_select_flag(uiBut *but, double *value)
+static void ui_but_update_select_flag(Button *but, double *value)
 {
   switch (ui_but_is_pushed_ex(but, value)) {
     case true:
@@ -2468,7 +2458,7 @@ static void ui_but_update_select_flag(uiBut *but, double *value)
 
 /* ************************************************ */
 
-void UI_block_lock_set(uiBlock *block, bool val, const char *lockstr)
+void block_lock_set(Block *block, bool val, const char *lockstr)
 {
   if (val) {
     block->lock = val;
@@ -2476,7 +2466,7 @@ void UI_block_lock_set(uiBlock *block, bool val, const char *lockstr)
   }
 }
 
-void UI_block_lock_clear(uiBlock *block)
+void block_lock_clear(Block *block)
 {
   block->lock = false;
   block->lockstr = nullptr;
@@ -2486,7 +2476,7 @@ void UI_block_lock_clear(uiBlock *block)
  * this either works with the pointed to data, or can work with
  * an edit override pointer while dragging for example */
 
-void ui_but_v3_get(uiBut *but, float vec[3])
+void ui_but_v3_get(Button *but, float vec[3])
 {
   if (but->editvec) {
     copy_v3_v3(vec, but->editvec);
@@ -2524,7 +2514,7 @@ void ui_but_v3_get(uiBut *but, float vec[3])
   }
 }
 
-void ui_but_v3_set(uiBut *but, const float vec[3])
+void ui_but_v3_set(Button *but, const float vec[3])
 {
   if (but->editvec) {
     copy_v3_v3(but->editvec, vec);
@@ -2550,7 +2540,7 @@ void ui_but_v3_set(uiBut *but, const float vec[3])
   }
 }
 
-void ui_but_v4_get(uiBut *but, float vec[4])
+void ui_but_v4_get(Button *but, float vec[4])
 {
   if (but->editvec) {
     copy_v4_v4(vec, but->editvec);
@@ -2585,7 +2575,7 @@ void ui_but_v4_get(uiBut *but, float vec[4])
   }
 }
 
-void ui_but_v4_set(uiBut *but, const float vec[4])
+void ui_but_v4_set(Button *but, const float vec[4])
 {
   if (but->editvec) {
     copy_v4_v4(but->editvec, vec);
@@ -2612,7 +2602,7 @@ void ui_but_v4_set(uiBut *but, const float vec[4])
   }
 }
 
-bool ui_but_is_float(const uiBut *but)
+bool ui_but_is_float(const Button *but)
 {
   if (but->pointype == ButPointerType::Float && but->poin) {
     return true;
@@ -2625,7 +2615,7 @@ bool ui_but_is_float(const uiBut *but)
   return false;
 }
 
-PropertyScaleType ui_but_scale_type(const uiBut *but)
+PropertyScaleType ui_but_scale_type(const Button *but)
 {
   if (but->rnaprop) {
     return RNA_property_ui_scale(but->rnaprop);
@@ -2633,7 +2623,7 @@ PropertyScaleType ui_but_scale_type(const uiBut *but)
   return PROP_SCALE_LINEAR;
 }
 
-bool ui_but_is_bool(const uiBut *but)
+bool ui_but_is_bool(const Button *but)
 {
   if (ELEM(but->type,
            ButType::Toggle,
@@ -2661,10 +2651,10 @@ bool ui_but_is_bool(const uiBut *but)
   return false;
 }
 
-bool ui_but_is_unit(const uiBut *but)
+bool ui_but_is_unit(const Button *but)
 {
   const UnitSettings *unit = but->block->unit;
-  const int unit_type = UI_but_unit_type_get(but);
+  const int unit_type = button_unit_type_get(but);
 
   if (unit_type == PROP_UNIT_NONE) {
     return false;
@@ -2691,7 +2681,7 @@ bool ui_but_is_unit(const uiBut *but)
   return true;
 }
 
-bool ui_but_is_compatible(const uiBut *but_a, const uiBut *but_b)
+bool ui_but_is_compatible(const Button *but_a, const Button *but_b)
 {
   if (but_a->type != but_b->type) {
     return false;
@@ -2717,7 +2707,7 @@ bool ui_but_is_compatible(const uiBut *but_a, const uiBut *but_b)
   return true;
 }
 
-bool ui_but_is_rna_valid(uiBut *but)
+bool ui_but_is_rna_valid(Button *but)
 {
   if (but->rnaprop == nullptr || RNA_struct_contains_property(&but->rnapoin, but->rnaprop)) {
     return true;
@@ -2726,15 +2716,15 @@ bool ui_but_is_rna_valid(uiBut *but)
   return false;
 }
 
-bool ui_but_supports_cycling(const uiBut *but)
+bool ui_but_supports_cycling(const Button *but)
 {
   return (ELEM(but->type, ButType::Row, ButType::Num, ButType::NumSlider, ButType::ListBox) ||
           (but->type == ButType::Menu && ui_but_menu_step_poll(but)) ||
-          (but->type == ButType::Color && ((uiButColor *)but)->is_pallete_color) ||
+          (but->type == ButType::Color && ((ButtonColor *)but)->is_pallete_color) ||
           (but->menu_step_func != nullptr));
 }
 
-double ui_but_value_get(uiBut *but)
+double ui_but_value_get(Button *but)
 {
   double value = 0.0;
 
@@ -2799,7 +2789,7 @@ double ui_but_value_get(uiBut *but)
   return value;
 }
 
-void ui_but_value_set(uiBut *but, double value)
+void ui_but_value_set(Button *but, double value)
 {
   /* Value is a HSV value: convert to RGB. */
   if (but->rnaprop) {
@@ -2849,7 +2839,7 @@ void ui_but_value_set(uiBut *but, double value)
 
     /* we can't be sure what RNA set functions actually do,
      * so leave this unset */
-    value = UI_BUT_VALUE_UNSET;
+    value = BUT_VALUE_UNSET;
   }
   else if (!bool(but->pointype)) {
     /* pass */
@@ -2895,7 +2885,7 @@ void ui_but_value_set(uiBut *but, double value)
   ui_but_update_select_flag(but, &value);
 }
 
-int ui_but_string_get_maxncpy(uiBut *but)
+int ui_but_string_get_maxncpy(Button *but)
 {
   if (ELEM(but->type, ButType::Text, ButType::SearchMenu)) {
     return but->hardmax;
@@ -2903,13 +2893,13 @@ int ui_but_string_get_maxncpy(uiBut *but)
   return UI_MAX_DRAW_STR;
 }
 
-uiBut *ui_but_drag_multi_edit_get(uiBut *but)
+Button *ui_but_drag_multi_edit_get(Button *but)
 {
-  uiBut *return_but = nullptr;
+  Button *return_but = nullptr;
 
-  BLI_assert(but->flag & UI_BUT_DRAG_MULTI);
+  BLI_assert(but->flag & BUT_DRAG_MULTI);
 
-  for (const std::unique_ptr<uiBut> &but_iter : but->block->buttons) {
+  for (const std::unique_ptr<Button> &but_iter : but->block->buttons) {
     if (but_iter->editstr) {
       return_but = but_iter.get();
       break;
@@ -2919,10 +2909,10 @@ uiBut *ui_but_drag_multi_edit_get(uiBut *but)
   return return_but;
 }
 
-static double ui_get_but_scale_unit(uiBut *but, double value)
+static double ui_get_but_scale_unit(Button *but, double value)
 {
   const UnitSettings *unit = but->block->unit;
-  const int unit_type = UI_but_unit_type_get(but);
+  const int unit_type = button_unit_type_get(but);
 
   /* Time unit is a bit special, not handled by #BKE_unit_value_scale() for now. */
   if (unit_type == PROP_UNIT_TIME) { /* WARNING: using evil_C :| */
@@ -2932,14 +2922,14 @@ static double ui_get_but_scale_unit(uiBut *but, double value)
   return BKE_unit_value_scale(*unit, RNA_SUBTYPE_UNIT_VALUE(unit_type), value);
 }
 
-void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t str_maxncpy)
+void ui_but_convert_to_unit_alt_name(Button *but, char *str, size_t str_maxncpy)
 {
   if (!ui_but_is_unit(but)) {
     return;
   }
 
   const UnitSettings *unit = but->block->unit;
-  const int unit_type = UI_but_unit_type_get(but);
+  const int unit_type = button_unit_type_get(but);
   char *orig_str;
 
   orig_str = BLI_strdup(str);
@@ -2954,10 +2944,10 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t str_maxncpy)
  * \param float_precision: Override the button precision.
  */
 static void ui_get_but_string_unit(
-    uiBut *but, char *str, int str_maxncpy, double value, bool pad, int float_precision)
+    Button *but, char *str, int str_maxncpy, double value, bool pad, int float_precision)
 {
   const UnitSettings *unit = but->block->unit;
-  const int unit_type = UI_but_unit_type_get(but);
+  const int unit_type = button_unit_type_get(but);
   int precision;
 
   BLI_assert(unit->scale_length > 0.0f);
@@ -2986,9 +2976,9 @@ static void ui_get_but_string_unit(
                            pad);
 }
 
-static float ui_get_but_step_unit(uiBut *but, float step_default)
+static float ui_get_but_step_unit(Button *but, float step_default)
 {
-  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
+  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(button_unit_type_get(but));
   const double step_orig = double(step_default) * double(UI_PRECISION_FLOAT_SCALE);
   /* Scaling up 'step_orig ' here is a bit arbitrary,
    * its just giving better scales from user POV */
@@ -3022,7 +3012,7 @@ static float ui_get_but_step_unit(uiBut *but, float step_default)
   return float(step_final);
 }
 
-void ui_but_string_get_ex(uiBut *but,
+void ui_but_string_get_ex(Button *but,
                           char *str,
                           const size_t str_maxncpy,
                           const int float_precision,
@@ -3041,8 +3031,8 @@ void ui_but_string_get_ex(uiBut *but,
     if ((but->type == ButType::Tab) && (but->custom_data)) {
       StructRNA *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
 
-      /* uiBut.custom_data points to data this tab represents (e.g. workspace).
-       * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
+      /* Button.custom_data points to data this tab represents (e.g. workspace).
+       * Button.rnapoin/prop store an active value (e.g. active workspace). */
       PointerRNA ptr = RNA_pointer_create_discrete(
           but->rnapoin.owner_id, ptr_type, but->custom_data);
       buf = RNA_struct_name_get_alloc(&ptr, str, str_maxncpy, &buf_len);
@@ -3079,7 +3069,7 @@ void ui_but_string_get_ex(uiBut *but,
     else if (buf != str) {
       BLI_assert(str_maxncpy <= buf_len + 1);
       /* string was too long, we have to truncate */
-      if (UI_but_is_utf8(but)) {
+      if (but_is_utf8(but)) {
         BLI_strncpy_utf8(str, buf, str_maxncpy);
       }
       else {
@@ -3090,7 +3080,7 @@ void ui_but_string_get_ex(uiBut *but,
   }
   else if (ELEM(but->type, ButType::Text, ButType::SearchMenu)) {
     /* string */
-    if (UI_but_is_utf8(but)) {
+    if (but_is_utf8(but)) {
       BLI_strncpy_utf8(str, but->poin, str_maxncpy);
     }
     else {
@@ -3158,12 +3148,12 @@ void ui_but_string_get_ex(uiBut *but,
     }
   }
 }
-void ui_but_string_get(uiBut *but, char *str, const size_t str_maxncpy)
+void ui_but_string_get(Button *but, char *str, const size_t str_maxncpy)
 {
   ui_but_string_get_ex(but, str, str_maxncpy, -1, false, nullptr);
 }
 
-char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
+char *ui_but_string_get_dynamic(Button *but, int *r_str_size)
 {
   char *str = nullptr;
   *r_str_size = 1;
@@ -3237,10 +3227,10 @@ static bool ui_number_from_string_units(
 
 static bool ui_number_from_string_units_with_but(bContext *C,
                                                  const char *str,
-                                                 const uiBut *but,
+                                                 const Button *but,
                                                  double *r_value)
 {
-  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
+  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(button_unit_type_get(but));
   const UnitSettings *unit = but->block->unit;
   return ui_number_from_string_units(C, str, unit_type, unit, r_value);
 }
@@ -3292,7 +3282,7 @@ static bool ui_number_from_string_percentage(bContext *C, const char *str, doubl
   return ui_number_from_string(C, str, r_value);
 }
 
-bool ui_but_string_eval_number(bContext *C, const uiBut *but, const char *str, double *r_value)
+bool ui_but_string_eval_number(bContext *C, const Button *but, const char *str, double *r_value)
 {
   if (str[0] == '\0') {
     *r_value = 0.0;
@@ -3319,7 +3309,7 @@ bool ui_but_string_eval_number(bContext *C, const uiBut *but, const char *str, d
   return ui_number_from_string(C, str, r_value);
 }
 
-bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
+bool ui_but_string_set(bContext *C, Button *but, const char *str)
 {
   if (but->rnaprop && but->rnapoin.data && ELEM(but->type, ButType::Text, ButType::SearchMenu)) {
     if (RNA_property_editable(&but->rnapoin, but->rnaprop)) {
@@ -3343,8 +3333,8 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
           return true;
         }
 
-        uiButSearch *search_but = (but->type == ButType::SearchMenu) ? (uiButSearch *)but :
-                                                                       nullptr;
+        ButtonSearch *search_but = (but->type == ButType::SearchMenu) ? (ButtonSearch *)but :
+                                                                        nullptr;
         /* RNA pointer */
         PointerRNA rptr;
 
@@ -3392,8 +3382,8 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
       StructRNA *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
       PropertyRNA *prop;
 
-      /* uiBut.custom_data points to data this tab represents (e.g. workspace).
-       * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
+      /* Button.custom_data points to data this tab represents (e.g. workspace).
+       * Button.rnapoin/prop store an active value (e.g. active workspace). */
       PointerRNA ptr = RNA_pointer_create_discrete(
           but->rnapoin.owner_id, ptr_type, but->custom_data);
       prop = RNA_struct_name_property(ptr_type);
@@ -3407,7 +3397,7 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
     if (!but->poin) {
       str = "";
     }
-    else if (UI_but_is_utf8(but)) {
+    else if (but_is_utf8(but)) {
       BLI_strncpy_utf8(but->poin, str, but->hardmax);
     }
     else {
@@ -3418,7 +3408,7 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
   }
   else if (but->type == ButType::SearchMenu) {
     /* string */
-    if (UI_but_is_utf8(but)) {
+    if (but_is_utf8(but)) {
       BLI_strncpy_utf8(but->poin, str, but->hardmax);
     }
     else {
@@ -3492,7 +3482,7 @@ static double soft_range_round_down(double value, double max)
   return newmax;
 }
 
-void ui_but_range_set_hard(uiBut *but)
+void ui_but_range_set_hard(Button *but)
 {
   if (but->rnaprop == nullptr) {
     return;
@@ -3514,7 +3504,7 @@ void ui_but_range_set_hard(uiBut *but)
   }
 }
 
-void ui_but_range_set_soft(uiBut *but)
+void ui_but_range_set_soft(Button *but)
 {
   /* This could be split up into functions which handle arrays and not. */
 
@@ -3604,7 +3594,7 @@ void ui_but_range_set_soft(uiBut *but)
     but->softmin = softmin;
     but->softmax = softmax;
   }
-  else if (but->poin && bool(but->pointype & UI_BUT_POIN_TYPES)) {
+  else if (but->poin && bool(but->pointype & BUT_POIN_TYPES)) {
     float value = ui_but_value_get(but);
     if (isfinite(value)) {
       CLAMP(value, but->hardmin, but->hardmax);
@@ -3618,14 +3608,14 @@ void ui_but_range_set_soft(uiBut *but)
 
 /**
  * Free data specific to a certain button type.
- * For now just do in a switch-case, we could instead have a callback stored in #uiBut and set that
- * in #ui_but_alloc_info().
+ * For now just do in a switch-case, we could instead have a callback stored in #Button and set
+ * that in #ui_but_alloc_info().
  */
-static void ui_but_free_type_specific(uiBut *but)
+static void ui_but_free_type_specific(Button *but)
 {
   switch (but->type) {
     case ButType::SearchMenu: {
-      uiButSearch *search_but = (uiButSearch *)but;
+      ButtonSearch *search_but = (ButtonSearch *)but;
       MEM_SAFE_FREE(search_but->item_active_str);
 
       if (search_but->arg_free_fn) {
@@ -3644,7 +3634,7 @@ static void ui_but_free_type_specific(uiBut *but)
  * #but is managed with a #std::unique_ptr, this must be called before the #std::unique_ptr owner
  * is destroyed.
  */
-static void ui_but_free(const bContext *C, uiBut *but)
+static void ui_but_free(const bContext *C, Button *but)
 {
   if (but->opptr) {
     WM_operator_properties_free(but->opptr);
@@ -3698,10 +3688,10 @@ static void ui_but_free(const bContext *C, uiBut *but)
   ui_but_drag_free(but);
   ui_but_extra_operator_icons_free(but);
 
-  BLI_assert(UI_butstore_is_registered(but->block, but) == false);
+  BLI_assert(butstore_is_registered(but->block, but) == false);
 }
 
-static void ui_block_free_active_operator(uiBlock *block)
+static void ui_block_free_active_operator(Block *block)
 {
   if (block->ui_operator_free) {
     /* This assumes the operator instance owns the pointer. This is not
@@ -3714,7 +3704,7 @@ static void ui_block_free_active_operator(uiBlock *block)
   block->ui_operator = nullptr;
 }
 
-void UI_block_set_active_operator(uiBlock *block, wmOperator *op, const bool free)
+void block_set_active_operator(Block *block, wmOperator *op, const bool free)
 {
   if (op != block->ui_operator) {
     ui_block_free_active_operator(block);
@@ -3724,11 +3714,11 @@ void UI_block_set_active_operator(uiBlock *block, wmOperator *op, const bool fre
   }
 }
 
-void UI_block_free(const bContext *C, uiBlock *block)
+void block_free(const bContext *C, Block *block)
 {
-  UI_butstore_clear(block);
+  butstore_clear(block);
 
-  for (const std::unique_ptr<uiBut> &but : block->buttons) {
+  for (const std::unique_ptr<Button> &but : block->buttons) {
     ui_but_free(C, but.get());
   }
   block->buttons.clear();
@@ -3752,62 +3742,62 @@ void UI_block_free(const bContext *C, uiBlock *block)
   MEM_delete(block);
 }
 
-void UI_block_listen(const uiBlock *block, const wmRegionListenerParams *listener_params)
+void block_listen(const Block *block, const wmRegionListenerParams *listener_params)
 {
-  /* Note that #uiBlock.active shouldn't be checked here, since notifier listening happens before
+  /* Note that #Block.active shouldn't be checked here, since notifier listening happens before
    * drawing, so there are no active blocks at this point. */
 
-  LISTBASE_FOREACH (uiBlockDynamicListener *, listener, &block->dynamic_listeners) {
+  LISTBASE_FOREACH (BlockDynamicListener *, listener, &block->dynamic_listeners) {
     listener->listener_func(listener_params);
   }
 
   ui_block_views_listen(block, listener_params);
 }
 
-void UI_blocklist_update_window_matrix(const bContext *C, const ListBase *lb)
+void blocklist_update_window_matrix(const bContext *C, const ListBase *lb)
 {
   ARegion *region = CTX_wm_region(C);
   wmWindow *window = CTX_wm_window(C);
 
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH (Block *, block, lb) {
     if (block->active) {
       ui_update_window_matrix(window, region, block);
     }
   }
 }
 
-void UI_blocklist_update_view_for_buttons(const bContext *C, const ListBase *lb)
+void blocklist_update_view_for_buttons(const bContext *C, const ListBase *lb)
 {
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH (Block *, block, lb) {
     if (block->active) {
       ui_but_update_view_for_active(C, block);
     }
   }
 }
 
-void UI_blocklist_draw(const bContext *C, const ListBase *lb)
+void blocklist_draw(const bContext *C, const ListBase *lb)
 {
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH (Block *, block, lb) {
     if (block->active) {
-      UI_block_draw(C, block);
+      block_draw(C, block);
     }
   }
 }
 
-void UI_blocklist_free(const bContext *C, ARegion *region)
+void blocklist_free(const bContext *C, ARegion *region)
 {
   ListBase *lb = &region->runtime->uiblocks;
-  while (uiBlock *block = static_cast<uiBlock *>(BLI_pophead(lb))) {
-    UI_block_free(C, block);
+  while (Block *block = static_cast<Block *>(BLI_pophead(lb))) {
+    block_free(C, block);
   }
   region->runtime->block_name_map.clear();
 }
 
-void UI_blocklist_free_inactive(const bContext *C, ARegion *region)
+void blocklist_free_inactive(const bContext *C, ARegion *region)
 {
   ListBase *lb = &region->runtime->uiblocks;
 
-  LISTBASE_FOREACH_MUTABLE (uiBlock *, block, lb) {
+  LISTBASE_FOREACH_MUTABLE (Block *, block, lb) {
     if (!block->handle) {
       if (block->active) {
         block->active = false;
@@ -3817,16 +3807,16 @@ void UI_blocklist_free_inactive(const bContext *C, ARegion *region)
           region->runtime->block_name_map.remove_as(block->name);
         }
         BLI_remlink(lb, block);
-        UI_block_free(C, block);
+        block_free(C, block);
       }
     }
   }
 }
 
-void UI_block_region_set(uiBlock *block, ARegion *region)
+void block_region_set(Block *block, ARegion *region)
 {
   ListBase *lb = &region->runtime->uiblocks;
-  uiBlock *oldblock = nullptr;
+  Block *oldblock = nullptr;
 
   /* each listbase only has one block with this name, free block
    * if is already there so it can be rebuilt from scratch */
@@ -3847,14 +3837,14 @@ void UI_block_region_set(uiBlock *block, ARegion *region)
   block->oldblock = oldblock;
 }
 
-uiBlock *UI_block_begin(const bContext *C,
-                        Scene *scene,
-                        wmWindow *window,
-                        ARegion *region,
-                        std::string name,
-                        blender::ui::EmbossType emboss)
+Block *block_begin(const bContext *C,
+                   Scene *scene,
+                   wmWindow *window,
+                   ARegion *region,
+                   std::string name,
+                   EmbossType emboss)
 {
-  uiBlock *block = MEM_new<uiBlock>(__func__);
+  Block *block = MEM_new<Block>(__func__);
   block->active = true;
   block->emboss = emboss;
   block->evil_C = (void *)C; /* XXX */
@@ -3879,7 +3869,7 @@ uiBlock *UI_block_begin(const bContext *C,
   block->name = std::move(name);
 
   if (region) {
-    UI_block_region_set(block, region);
+    block_region_set(block, region);
   }
 
   /* Prevent reallocations on redraw, most of the time blocks layout will be the same. */
@@ -3893,55 +3883,52 @@ uiBlock *UI_block_begin(const bContext *C,
   /* Tag as popup menu if not created within a region. */
   if (!(region && region->runtime->visible)) {
     block->auto_open = true;
-    block->flag |= UI_BLOCK_LOOP;
+    block->flag |= BLOCK_LOOP;
   }
 
   return block;
 }
 
-uiBlock *UI_block_begin(const bContext *C,
-                        ARegion *region,
-                        std::string name,
-                        blender::ui::EmbossType emboss)
+Block *block_begin(const bContext *C, ARegion *region, std::string name, EmbossType emboss)
 {
-  return UI_block_begin(C, CTX_data_scene(C), CTX_wm_window(C), region, std::move(name), emboss);
+  return block_begin(C, CTX_data_scene(C), CTX_wm_window(C), region, std::move(name), emboss);
 }
 
-void ui_block_add_dynamic_listener(uiBlock *block,
+void ui_block_add_dynamic_listener(Block *block,
                                    void (*listener_func)(const wmRegionListenerParams *params))
 {
-  uiBlockDynamicListener *listener = static_cast<uiBlockDynamicListener *>(
+  BlockDynamicListener *listener = static_cast<BlockDynamicListener *>(
       MEM_mallocN(sizeof(*listener), __func__));
   listener->listener_func = listener_func;
   BLI_addtail(&block->dynamic_listeners, listener);
 }
 
-blender::ui::EmbossType UI_block_emboss_get(uiBlock *block)
+EmbossType block_emboss_get(Block *block)
 {
   return block->emboss;
 }
 
-void UI_block_emboss_set(uiBlock *block, blender::ui::EmbossType emboss)
+void block_emboss_set(Block *block, EmbossType emboss)
 {
   block->emboss = emboss;
 }
 
-void UI_block_theme_style_set(uiBlock *block, char theme_style)
+void block_theme_style_set(Block *block, char theme_style)
 {
   block->theme_style = theme_style;
 }
 
-bool UI_block_is_search_only(const uiBlock *block)
+bool block_is_search_only(const Block *block)
 {
-  return block->flag & UI_BLOCK_SEARCH_ONLY;
+  return block->flag & BLOCK_SEARCH_ONLY;
 }
 
-void UI_block_set_search_only(uiBlock *block, bool search_only)
+void block_set_search_only(Block *block, bool search_only)
 {
-  SET_FLAG_FROM_TEST(block->flag, search_only, UI_BLOCK_SEARCH_ONLY);
+  SET_FLAG_FROM_TEST(block->flag, search_only, BLOCK_SEARCH_ONLY);
 }
 
-static void ui_but_build_drawstr_float(uiBut *but, double value)
+static void ui_but_build_drawstr_float(Button *but, double value)
 {
   PropertySubType subtype = PROP_NONE;
   if (but->rnaprop) {
@@ -3986,7 +3973,7 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
   }
 }
 
-static void ui_but_build_drawstr_int(uiBut *but, int value)
+static void ui_but_build_drawstr_int(Button *but, int value)
 {
   PropertySubType subtype = PROP_NONE;
   if (but->rnaprop) {
@@ -4008,16 +3995,16 @@ static void ui_but_build_drawstr_int(uiBut *but, int value)
  * \param validate: When set, this function may change the button value.
  * Otherwise treat the button value as read-only.
  */
-static void ui_but_update_ex(uiBut *but, const bool validate)
+static void ui_but_update_ex(Button *but, const bool validate)
 {
   /* if something changed in the button */
-  double value = UI_BUT_VALUE_UNSET;
+  double value = BUT_VALUE_UNSET;
 
   ui_but_update_select_flag(but, &value);
 
   /* only update soft range while not editing */
   if (!ui_but_is_editing(but)) {
-    if ((but->rnaprop != nullptr) || (but->poin && bool(but->pointype & UI_BUT_POIN_TYPES))) {
+    if ((but->rnaprop != nullptr) || (but->poin && bool(but->pointype & BUT_POIN_TYPES))) {
       ui_but_range_set_soft(but);
     }
   }
@@ -4046,7 +4033,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
       if ((but->rnaprop == nullptr) || (RNA_property_flag(but->rnaprop) & PROP_ICONS_CONSECUTIVE))
       {
         if (but->rnaprop && RNA_property_flag(but->rnaprop) & PROP_ICONS_REVERSE) {
-          but->drawflag |= UI_BUT_ICON_REVERSE;
+          but->drawflag |= BUT_ICON_REVERSE;
         }
 
         but->iconadd = (but->flag & UI_SELECT) ? 1 : 0;
@@ -4062,7 +4049,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
     case ButType::Menu:
       if (BLI_rctf_size_x(&but->rect) >= (UI_UNIT_X * 2)) {
         /* only needed for menus in popup blocks that don't recreate buttons on redraw */
-        if (but->block->flag & UI_BLOCK_LOOP) {
+        if (but->block->flag & BLOCK_LOOP) {
           if (but->rnaprop && (RNA_property_type(but->rnaprop) == PROP_ENUM)) {
             const int value_enum = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
 
@@ -4132,7 +4119,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
     }
     case ButType::HotkeyEvent:
       if (but->flag & UI_SELECT) {
-        const uiButHotkeyEvent *hotkey_but = (uiButHotkeyEvent *)but;
+        const ButtonHotkeyEvent *hotkey_but = (ButtonHotkeyEvent *)but;
 
         if (hotkey_but->modifier_key) {
           /* Rely on #KM_NOTHING being zero for `type`, `val` ... etc. */
@@ -4171,40 +4158,40 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
   /* text clipping moved to widget drawing code itself */
 }
 
-void ui_but_update(uiBut *but)
+void ui_but_update(Button *but)
 {
   ui_but_update_ex(but, false);
 }
 
-void ui_but_update_edited(uiBut *but)
+void ui_but_update_edited(Button *but)
 {
   ui_but_update_ex(but, true);
 }
 
-void UI_block_align_begin(uiBlock *block)
+void block_align_begin(Block *block)
 {
   /* if other align was active, end it */
-  if (block->flag & UI_BUT_ALIGN) {
-    UI_block_align_end(block);
+  if (block->flag & BUT_ALIGN) {
+    block_align_end(block);
   }
 
-  block->flag |= UI_BUT_ALIGN_DOWN;
+  block->flag |= BUT_ALIGN_DOWN;
   block->alignnr++;
 
   /* Buttons declared after this call will get this `alignnr`. */ /* XXX flag? */
 }
 
-void UI_block_align_end(uiBlock *block)
+void block_align_end(Block *block)
 {
-  block->flag &= ~UI_BUT_ALIGN; /* all 4 flags */
+  block->flag &= ~BUT_ALIGN; /* all 4 flags */
 }
 
-const ColorManagedDisplay *ui_block_cm_display_get(uiBlock *block)
+const ColorManagedDisplay *ui_block_cm_display_get(Block *block)
 {
   return IMB_colormanagement_display_get_named(block->display_device);
 }
 
-void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3])
+void ui_block_cm_to_display_space_v3(Block *block, float pixel[3])
 {
   const ColorManagedDisplay *display = ui_block_cm_display_get(block);
 
@@ -4212,63 +4199,63 @@ void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3])
 }
 
 /**
- * Factory function: Allocate button and set #uiBut.type.
+ * Factory function: Allocate button and set #Button.type.
  */
-static std::unique_ptr<uiBut> ui_but_new(const ButType type)
+static std::unique_ptr<Button> ui_but_new(const ButType type)
 {
-  std::unique_ptr<uiBut> but{};
+  std::unique_ptr<Button> but{};
 
   switch (type) {
     case ButType::Num:
-      but = std::make_unique<uiButNumber>();
+      but = std::make_unique<ButtonNumber>();
       break;
     case ButType::NumSlider:
-      but = std::make_unique<uiButNumberSlider>();
+      but = std::make_unique<ButtonNumberSlider>();
       break;
     case ButType::Color:
-      but = std::make_unique<uiButColor>();
+      but = std::make_unique<ButtonColor>();
       break;
     case ButType::Decorator:
-      but = std::make_unique<uiButDecorator>();
+      but = std::make_unique<ButtonDecorator>();
       break;
     case ButType::Tab:
-      but = std::make_unique<uiButTab>();
+      but = std::make_unique<ButtonTab>();
       break;
     case ButType::SearchMenu:
-      but = std::make_unique<uiButSearch>();
+      but = std::make_unique<ButtonSearch>();
       break;
     case ButType::Progress:
-      but = std::make_unique<uiButProgress>();
+      but = std::make_unique<ButtonProgress>();
       break;
     case ButType::SeprLine:
-      but = std::make_unique<uiButSeparatorLine>();
+      but = std::make_unique<ButtonSeparatorLine>();
       break;
     case ButType::HsvCube:
-      but = std::make_unique<uiButHSVCube>();
+      but = std::make_unique<ButtonHSVCube>();
       break;
     case ButType::ColorBand:
-      but = std::make_unique<uiButColorBand>();
+      but = std::make_unique<ButtonColorBand>();
       break;
     case ButType::Curve:
-      but = std::make_unique<uiButCurveMapping>();
+      but = std::make_unique<ButtonCurveMapping>();
       break;
     case ButType::CurveProfile:
-      but = std::make_unique<uiButCurveProfile>();
+      but = std::make_unique<ButtonCurveProfile>();
       break;
     case ButType::HotkeyEvent:
-      but = std::make_unique<uiButHotkeyEvent>();
+      but = std::make_unique<ButtonHotkeyEvent>();
       break;
     case ButType::ViewItem:
-      but = std::make_unique<uiButViewItem>();
+      but = std::make_unique<ButtonViewItem>();
       break;
     case ButType::Label:
-      but = std::make_unique<uiButLabel>();
+      but = std::make_unique<ButtonLabel>();
       break;
     case ButType::Scroll:
-      but = std::make_unique<uiButScrollBar>();
+      but = std::make_unique<ButtonScrollBar>();
       break;
     default:
-      but = std::make_unique<uiBut>();
+      but = std::make_unique<Button>();
       break;
   }
 
@@ -4276,7 +4263,7 @@ static std::unique_ptr<uiBut> ui_but_new(const ButType type)
   return but;
 }
 
-uiBut *ui_but_change_type(uiBut *but, ButType new_type)
+Button *ui_but_change_type(Button *but, ButType new_type)
 {
   if (but->type == new_type) {
     /* Nothing to do. */
@@ -4286,7 +4273,7 @@ uiBut *ui_but_change_type(uiBut *but, ButType new_type)
   const int64_t but_index = but->block->but_index(but);
 
   /* Remove old button address */
-  std::unique_ptr<uiBut> old_but_ptr = std::move(but->block->buttons[but_index]);
+  std::unique_ptr<Button> old_but_ptr = std::move(but->block->buttons[but_index]);
 
   /* Button may have pointer to a member within itself, this will have to be updated. */
   const bool has_poin_ptr_to_self = but->poin == (char *)but;
@@ -4308,8 +4295,8 @@ uiBut *ui_but_change_type(uiBut *but, ButType new_type)
     ui_button_group_replace_but_ptr(but->layout->block(), old_but_ptr.get(), but);
   }
 #ifdef WITH_PYTHON
-  if (UI_editsource_enable_check()) {
-    UI_editsource_but_replace(old_but_ptr.get(), but);
+  if (editsource_enable_check()) {
+    editsource_but_replace(old_but_ptr.get(), but);
   }
 #endif
 
@@ -4320,22 +4307,22 @@ uiBut *ui_but_change_type(uiBut *but, ButType new_type)
  * \param x, y: The lower left hand corner of the button (X axis)
  * \param width, height: The size of the button.
  */
-static uiBut *ui_def_but(uiBlock *block,
-                         uiButTypeWithPointerType but_and_ptr_type,
-                         const StringRef str,
-                         int x,
-                         int y,
-                         short width,
-                         short height,
-                         void *poin,
-                         float min,
-                         float max,
-                         const std::optional<StringRef> tip)
+static Button *ui_def_but(Block *block,
+                          uiButTypeWithPointerType but_and_ptr_type,
+                          const StringRef str,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          void *poin,
+                          float min,
+                          float max,
+                          const std::optional<StringRef> tip)
 {
   /* Allow negative separators. */
   BLI_assert((width >= 0 && height >= 0) || (but_and_ptr_type.but_type == ButType::Sepr));
 
-  if (bool(but_and_ptr_type.pointer_type & UI_BUT_POIN_TYPES)) {
+  if (bool(but_and_ptr_type.pointer_type & BUT_POIN_TYPES)) {
     /* A pointer is required. */
     if (poin == nullptr) {
       BLI_assert(0);
@@ -4344,9 +4331,9 @@ static uiBut *ui_def_but(uiBlock *block,
   }
 
   block->buttons.append(ui_but_new(but_and_ptr_type.but_type));
-  uiBut *but = block->buttons.last().get();
+  Button *but = block->buttons.last().get();
 
-  but->pointype = but_and_ptr_type.pointer_type & UI_BUT_POIN_TYPES;
+  but->pointype = but_and_ptr_type.pointer_type & BUT_POIN_TYPES;
   but->bit = flag_is_set(but_and_ptr_type.pointer_type, ButPointerType::Bit);
   but->bitnr = but_and_ptr_type.bit_index;
 
@@ -4369,7 +4356,7 @@ static uiBut *ui_def_but(uiBlock *block,
 
   but->block = block; /* pointer back, used for front-buffer status, and picker. */
 
-  if ((block->flag & UI_BUT_ALIGN) && ui_but_can_align(but)) {
+  if ((block->flag & BUT_ALIGN) && ui_but_can_align(but)) {
     but->alignnr = block->alignnr;
   }
 
@@ -4394,14 +4381,14 @@ static uiBut *ui_def_but(uiBlock *block,
     }
   }
 
-  if (block->flag & UI_BLOCK_PIE_MENU) {
-    but->drawflag |= UI_BUT_TEXT_LEFT;
+  if (block->flag & BLOCK_PIE_MENU) {
+    but->drawflag |= BUT_TEXT_LEFT;
     if (!but->str.empty()) {
-      but->drawflag |= UI_BUT_ICON_LEFT;
+      but->drawflag |= BUT_ICON_LEFT;
     }
   }
-  else if (((block->flag & UI_BLOCK_LOOP) && !ui_block_is_popover(block) &&
-            !(block->flag & UI_BLOCK_QUICK_SETUP)) ||
+  else if (((block->flag & BLOCK_LOOP) && !ui_block_is_popover(block) &&
+            !(block->flag & BLOCK_QUICK_SETUP)) ||
            ELEM(but->type,
                 ButType::Menu,
                 ButType::Text,
@@ -4411,20 +4398,20 @@ static uiBut *ui_def_but(uiBlock *block,
                 ButType::SearchMenu,
                 ButType::Popover))
   {
-    but->drawflag |= (UI_BUT_TEXT_LEFT | UI_BUT_ICON_LEFT);
+    but->drawflag |= (BUT_TEXT_LEFT | BUT_ICON_LEFT);
   }
 #ifdef USE_NUMBUTS_LR_ALIGN
   else if (ELEM(but->type, ButType::Num, ButType::NumSlider)) {
     if (!but->str.empty()) {
-      but->drawflag |= UI_BUT_TEXT_LEFT;
+      but->drawflag |= BUT_TEXT_LEFT;
     }
   }
 #endif
 
-  but->drawflag |= (block->flag & UI_BUT_ALIGN);
+  but->drawflag |= (block->flag & BUT_ALIGN);
 
   if (block->lock == true) {
-    but->flag |= UI_BUT_DISABLED;
+    but->flag |= BUT_DISABLED;
   }
 
   /* Keep track of `UI_interface_c.hh`. */
@@ -4447,11 +4434,11 @@ static uiBut *ui_def_but(uiBlock *block,
     /* pass */
   }
   else {
-    but->flag |= UI_BUT_UNDO;
+    but->flag |= BUT_UNDO;
   }
 
   if (ELEM(but->type, ButType::Color)) {
-    but->dragflag |= UI_BUT_DRAG_FULL_BUT;
+    but->dragflag |= BUT_DRAG_FULL_BUT;
   }
 
   if (block->curlayout) {
@@ -4460,47 +4447,46 @@ static uiBut *ui_def_but(uiBlock *block,
 
 #ifdef WITH_PYTHON
   /* If the `UI_OT_editsource` is running, extract the source info from the button. */
-  if (UI_editsource_enable_check()) {
-    UI_editsource_active_but_test(but);
+  if (editsource_enable_check()) {
+    editsource_active_but_test(but);
   }
 #endif
 
   return but;
 }
 
-void ui_def_but_icon(uiBut *but, const int icon, const int flag)
+void ui_def_but_icon(Button *but, const int icon, const int flag)
 {
   if (icon) {
-    ui_icon_ensure_deferred(static_cast<const bContext *>(but->block->evil_C),
-                            icon,
-                            (flag & UI_BUT_ICON_PREVIEW) != 0);
+    ui_icon_ensure_deferred(
+        static_cast<const bContext *>(but->block->evil_C), icon, (flag & BUT_ICON_PREVIEW) != 0);
   }
   but->icon = icon;
   but->flag |= flag;
 
   if (!but->str.empty()) {
-    but->drawflag |= UI_BUT_ICON_LEFT;
+    but->drawflag |= BUT_ICON_LEFT;
   }
 }
 
-void ui_def_but_icon_clear(uiBut *but)
+void ui_def_but_icon_clear(Button *but)
 {
   but->icon = ICON_NONE;
   but->flag &= ~UI_HAS_ICON;
-  but->drawflag &= ~UI_BUT_ICON_LEFT;
+  but->drawflag &= ~BUT_ICON_LEFT;
 }
 
-static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void *but_p)
+static void ui_def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
 {
-  uiBlock *block = layout->block();
-  uiPopupBlockHandle *handle = block->handle;
-  uiBut *but = (uiBut *)but_p;
+  Block *block = layout->block();
+  PopupBlockHandle *handle = block->handle;
+  Button *but = (Button *)but_p;
   const int current_value = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
 
   /* see comment in ui_item_enum_expand, re: `uiname`. */
   const EnumPropertyItem *item_array;
 
-  UI_block_flag_enable(block, UI_BLOCK_MOVEMOUSE_QUIT);
+  block_flag_enable(block, BLOCK_MOVEMOUSE_QUIT);
 
   bool free;
   RNA_property_enum_items_gettexted(static_cast<bContext *>(block->evil_C),
@@ -4511,7 +4497,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
                                     &free);
 
   /* We don't want nested rows, cols in menus. */
-  blender::ui::block_layout_set_current(block, layout);
+  block_layout_set_current(block, layout);
 
   int totitems = 0;
   int categories = 0;
@@ -4527,7 +4513,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
   const int max_rows = std::max(int(vertical_space / row_height) - 1, 1);
 
   float text_width = 0.0f;
-  BLF_size(BLF_default(), UI_style_get()->widget.points * UI_SCALE_FAC);
+  BLF_size(BLF_default(), style_get()->widget.points * UI_SCALE_FAC);
   int col_rows = 0;
   float col_width = 0.0f;
 
@@ -4586,7 +4572,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
       but->rnaprop, RNA_pointer_is_null(&but->rnapoin) ? nullptr : &but->rnapoin);
 
   /* Is there a non-blank label before this button on the same row? */
-  uiBut *but_prev = but->block->prev_but(but);
+  Button *but_prev = but->block->prev_but(but);
   const bool prior_label = but_prev && but_prev->type == ButType::Label && but_prev->str[0] &&
                            but_prev->alignnr == but->alignnr;
 
@@ -4614,12 +4600,12 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
   /* NOTE: `item_array[...]` is reversed on access. */
 
   /* create items */
-  blender::ui::Layout &split = layout->split(0.0f, false);
+  Layout &split = layout->split(0.0f, false);
 
   bool new_column;
 
   int column_end = 0;
-  blender::ui::Layout *column = nullptr;
+  Layout *column = nullptr;
   for (int a = 0; a < totitems; a++) {
     new_column = (a == column_end);
     if (new_column) {
@@ -4653,7 +4639,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
           column->label(item->name, item->icon);
         }
         else if (item->name) {
-          /* Do not use blender::ui::Layout::label here, as our root layout is a menu one,
+          /* Do not use Layout::label here, as our root layout is a menu one,
            * it will add a fake blank icon! */
           uiDefBut(block,
                    ButType::Label,
@@ -4683,7 +4669,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
         icon = ICON_BLANK1;
       }
 
-      uiBut *item_but;
+      Button *item_but;
       if (icon) {
         item_but = uiDefIconTextButI(block,
                                      ButType::ButMenu,
@@ -4695,7 +4681,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
                                      UI_UNIT_Y,
                                      &handle->retvalue,
                                      description_static);
-        UI_but_retval_set(item_but, B_NOP);
+        button_retval_set(item_but, B_NOP);
       }
       else {
         item_but = uiDefButI(block,
@@ -4709,7 +4695,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
                              item->value,
                              0.0,
                              description_static);
-        UI_but_retval_set(item_but, B_NOP);
+        button_retval_set(item_but, B_NOP);
       }
       if (item->value == current_value) {
         item_but->flag |= UI_SELECT_DRAW;
@@ -4721,7 +4707,7 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
       if (use_enum_copy_description) {
         if (item->description && item->description[0]) {
           char *description_copy = BLI_strdup(item->description);
-          UI_but_func_tooltip_set(
+          button_func_tooltip_set(
               item_but,
               [](bContext * /*C*/, void *argN, const StringRef /*tip*/) -> std::string {
                 return static_cast<const char *>(argN);
@@ -4733,14 +4719,14 @@ static void ui_def_but_rna__menu(bContext *C, blender::ui::Layout *layout, void 
     }
   }
 
-  blender::ui::block_layout_set_current(block, layout);
+  block_layout_set_current(block, layout);
 
   if (free) {
     MEM_freeN(item_array);
   }
 }
 
-static void ui_def_but_rna__panel_type(bContext *C, blender::ui::Layout *layout, void *arg)
+static void ui_def_but_rna__panel_type(bContext *C, Layout *layout, void *arg)
 {
   PanelType *panel_type = static_cast<PanelType *>(arg);
   if (panel_type) {
@@ -4751,7 +4737,7 @@ static void ui_def_but_rna__panel_type(bContext *C, blender::ui::Layout *layout,
   }
 }
 
-void ui_but_rna_menu_convert_to_panel_type(uiBut *but, const char *panel_type)
+void ui_but_rna_menu_convert_to_panel_type(Button *but, const char *panel_type)
 {
   BLI_assert(ELEM(but->type, ButType::Menu, ButType::Color));
   //  BLI_assert(but->menu_create_func == ui_def_but_rna__menu);
@@ -4762,14 +4748,14 @@ void ui_but_rna_menu_convert_to_panel_type(uiBut *but, const char *panel_type)
   but->func_argN_copy_fn = MEM_dupallocN;
 }
 
-bool ui_but_menu_draw_as_popover(const uiBut *but)
+bool ui_but_menu_draw_as_popover(const Button *but)
 {
   return (but->menu_create_func == ui_def_but_rna__panel_type);
 }
 
-static void ui_def_but_rna__menu_type(bContext *C, blender::ui::Layout *layout, void *but_p)
+static void ui_def_but_rna__menu_type(bContext *C, Layout *layout, void *but_p)
 {
-  uiBut *but = static_cast<uiBut *>(but_p);
+  Button *but = static_cast<Button *>(but_p);
   const char *menu_type = static_cast<const char *>(but->func_argN);
   MenuType *mt = WM_menutype_find(menu_type, true);
   if (mt) {
@@ -4782,7 +4768,7 @@ static void ui_def_but_rna__menu_type(bContext *C, blender::ui::Layout *layout, 
   }
 }
 
-void ui_but_rna_menu_convert_to_menu_type(uiBut *but, const char *menu_type)
+void ui_but_rna_menu_convert_to_menu_type(Button *but, const char *menu_type)
 {
   BLI_assert(but->type == ButType::Menu);
   BLI_assert(but->menu_create_func == ui_def_but_rna__menu);
@@ -4797,10 +4783,10 @@ void ui_but_rna_menu_convert_to_menu_type(uiBut *but, const char *menu_type)
   but->func_argN = BLI_strdup(menu_type);
 }
 
-static void ui_but_submenu_enable(uiBlock *block, uiBut *but)
+static void ui_but_submenu_enable(Block *block, Button *but)
 {
-  but->flag |= UI_BUT_ICON_SUBMENU;
-  block->content_hints |= UI_BLOCK_CONTAINS_SUBMENU_BUT;
+  but->flag |= BUT_ICON_SUBMENU;
+  block->content_hints |= BLOCK_CONTAINS_SUBMENU_BUT;
 }
 
 /**
@@ -4811,19 +4797,19 @@ static void ui_but_submenu_enable(uiBlock *block, uiBut *but)
  * When this kind of change won't disrupt branches, best look into making more
  * of our UI functions take prop rather than propname.
  */
-static uiBut *ui_def_but_rna(uiBlock *block,
-                             ButType type,
-                             std::optional<StringRef> str,
-                             int x,
-                             int y,
-                             short width,
-                             short height,
-                             PointerRNA *ptr,
-                             PropertyRNA *prop,
-                             int index,
-                             float min,
-                             float max,
-                             std::optional<StringRef> tip)
+static Button *ui_def_but_rna(Block *block,
+                              ButType type,
+                              std::optional<StringRef> str,
+                              int x,
+                              int y,
+                              short width,
+                              short height,
+                              PointerRNA *ptr,
+                              PropertyRNA *prop,
+                              int index,
+                              float min,
+                              float max,
+                              std::optional<StringRef> tip)
 {
   const PropertyType proptype = RNA_property_type(prop);
   int icon = 0;
@@ -4924,17 +4910,17 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   }
 
   /* now create button */
-  uiBut *but = ui_def_but(block, type, *str, x, y, width, height, nullptr, min, max, tip);
+  Button *but = ui_def_but(block, type, *str, x, y, width, height, nullptr, min, max, tip);
 
   if (but->type == ButType::Num) {
     /* Set default values, can be overridden later. */
-    UI_but_number_step_size_set(but, step);
-    UI_but_number_precision_set(but, precision);
+    button_number_step_size_set(but, step);
+    button_number_precision_set(but, precision);
   }
   else if (but->type == ButType::NumSlider) {
     /* Set default values, can be overridden later. */
-    UI_but_number_slider_step_size_set(but, step);
-    UI_but_number_slider_precision_set(but, precision);
+    button_number_slider_step_size_set(but, step);
+    button_number_slider_precision_set(but, precision);
   }
 
   but->rnapoin = *ptr;
@@ -4952,20 +4938,20 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   }
 
   if (type == ButType::Menu) {
-    if (but->emboss == blender::ui::EmbossType::Pulldown) {
+    if (but->emboss == EmbossType::Pulldown) {
       ui_but_submenu_enable(block, but);
     }
   }
   else if (type == ButType::SearchMenu) {
     if (proptype == PROP_POINTER) {
       /* Search buttons normally don't get undo, see: #54580. */
-      but->flag |= UI_BUT_UNDO;
+      but->flag |= BUT_UNDO;
     }
   }
 
   const char *info;
   if (but->rnapoin.data && !RNA_property_editable_info(&but->rnapoin, prop, &info)) {
-    UI_but_disable(but, info);
+    button_disable(but, info);
   }
 
   if (proptype == PROP_POINTER) {
@@ -4977,18 +4963,18 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     }
   }
 
-  if (but->flag & UI_BUT_UNDO && (ui_but_is_rna_undo(but) == false)) {
-    but->flag &= ~UI_BUT_UNDO;
+  if (but->flag & BUT_UNDO && (ui_but_is_rna_undo(but) == false)) {
+    but->flag &= ~BUT_UNDO;
   }
 
   /* If this button uses units, calculate the step from this */
   if ((proptype == PROP_FLOAT) && ui_but_is_unit(but)) {
     if (type == ButType::Num) {
-      uiButNumber *number_but = (uiButNumber *)but;
+      ButtonNumber *number_but = (ButtonNumber *)but;
       number_but->step_size = ui_get_but_step_unit(but, number_but->step_size);
     }
     if (type == ButType::NumSlider) {
-      uiButNumberSlider *number_but = (uiButNumberSlider *)but;
+      ButtonNumberSlider *number_but = (ButtonNumberSlider *)but;
       number_but->step_size = ui_get_but_step_unit(but, number_but->step_size);
     }
   }
@@ -5001,89 +4987,89 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   return but;
 }
 
-static uiBut *ui_def_but_rna_propname(uiBlock *block,
-                                      ButType type,
-                                      std::optional<StringRef> str,
-                                      int x,
-                                      int y,
-                                      short width,
-                                      short height,
-                                      PointerRNA *ptr,
-                                      const StringRefNull propname,
-                                      int index,
-                                      float min,
-                                      float max,
-                                      const std::optional<StringRef> tip)
+static Button *ui_def_but_rna_propname(Block *block,
+                                       ButType type,
+                                       std::optional<StringRef> str,
+                                       int x,
+                                       int y,
+                                       short width,
+                                       short height,
+                                       PointerRNA *ptr,
+                                       const StringRefNull propname,
+                                       int index,
+                                       float min,
+                                       float max,
+                                       const std::optional<StringRef> tip)
 {
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
-  uiBut *but;
+  Button *but;
   if (prop) {
     but = ui_def_but_rna(block, type, str, x, y, width, height, ptr, prop, index, min, max, tip);
   }
   else {
     but = ui_def_but(block, type, propname, x, y, width, height, nullptr, min, max, tip);
 
-    UI_but_disable(but, N_("Unknown Property"));
+    button_disable(but, N_("Unknown Property"));
   }
 
   return but;
 }
 
-static uiBut *ui_def_but_operator_ptr(uiBlock *block,
-                                      ButType type,
-                                      wmOperatorType *ot,
-                                      blender::wm::OpCallContext opcontext,
-                                      const StringRef str,
-                                      int x,
-                                      int y,
-                                      short width,
-                                      short height,
-                                      std::optional<StringRef> tip)
+static Button *ui_def_but_operator_ptr(Block *block,
+                                       ButType type,
+                                       wmOperatorType *ot,
+                                       wm::OpCallContext opcontext,
+                                       const StringRef str,
+                                       int x,
+                                       int y,
+                                       short width,
+                                       short height,
+                                       std::optional<StringRef> tip)
 {
   if ((!tip || tip->is_empty()) && ot && ot->srna && !ot->get_description) {
     tip = RNA_struct_ui_description(ot->srna);
   }
 
-  uiBut *but = ui_def_but(block, type, str, x, y, width, height, nullptr, 0, 0, tip);
-  UI_but_retval_set(but, -1);
-  UI_but_operator_set(but, ot, opcontext);
+  Button *but = ui_def_but(block, type, str, x, y, width, height, nullptr, 0, 0, tip);
+  button_retval_set(but, -1);
+  button_operator_set(but, ot, opcontext);
 
   /* Enable quick tooltip label if this is a tool button without a label. */
-  if (str.is_empty() && !ui_block_is_popover(block) && UI_but_is_tool(but)) {
-    UI_but_drawflag_enable(but, UI_BUT_HAS_QUICK_TOOLTIP);
+  if (str.is_empty() && !ui_block_is_popover(block) && but_is_tool(but)) {
+    button_drawflag_enable(but, BUT_HAS_QUICK_TOOLTIP);
   }
 
   if (!ot) {
-    UI_but_disable(but, "");
+    button_disable(but, "");
   }
 
   return but;
 }
 
-uiBut *uiDefBut(uiBlock *block,
-                uiButTypeWithPointerType but_and_ptr_type,
-                const StringRef str,
-                int x,
-                int y,
-                short width,
-                short height,
-                void *poin,
-                float min,
-                float max,
-                const std::optional<StringRef> tip)
+Button *uiDefBut(Block *block,
+                 uiButTypeWithPointerType but_and_ptr_type,
+                 const StringRef str,
+                 int x,
+                 int y,
+                 short width,
+                 short height,
+                 void *poin,
+                 float min,
+                 float max,
+                 const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, but_and_ptr_type, str, x, y, width, height, poin, min, max, tip);
+  Button *but = ui_def_but(block, but_and_ptr_type, str, x, y, width, height, poin, min, max, tip);
 
   ui_but_update(but);
 
   return but;
 }
 
-uiBut *uiDefButImage(
-    uiBlock *block, void *imbuf, int x, int y, short width, short height, const uchar color[4])
+Button *uiDefButImage(
+    Block *block, void *imbuf, int x, int y, short width, short height, const uchar color[4])
 {
-  uiBut *but = ui_def_but(block, ButType::Image, "", x, y, width, height, imbuf, 0, 0, "");
+  Button *but = ui_def_but(block, ButType::Image, "", x, y, width, height, imbuf, 0, 0, "");
   if (color) {
     copy_v4_v4_uchar(but->col, color);
   }
@@ -5097,23 +5083,22 @@ uiBut *uiDefButImage(
   return but;
 }
 
-uiBut *uiDefButAlert(
-    uiBlock *block, blender::ui::AlertIcon icon, int x, int y, short width, short /*height*/)
+Button *uiDefButAlert(Block *block, AlertIcon icon, int x, int y, short width, short /*height*/)
 {
-  ImBuf *ibuf = UI_icon_alert_imbuf_get(icon, float(width));
+  ImBuf *ibuf = icon_alert_imbuf_get(icon, float(width));
   if (ibuf) {
-    if (icon == blender::ui::AlertIcon::Error) {
+    if (icon == AlertIcon::Error) {
       uchar color[4];
-      UI_GetThemeColor4ubv(TH_ERROR, color);
+      GetThemeColor4ubv(TH_ERROR, color);
       return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, color);
     }
-    bTheme *btheme = UI_GetTheme();
+    bTheme *btheme = GetTheme();
     return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, btheme->tui.wcol_menu_back.text);
   }
   return nullptr;
 }
 
-void UI_but_retval_set(uiBut *but, int retval)
+void button_retval_set(Button *but, int retval)
 {
   but->retval = retval;
 }
@@ -5165,7 +5150,7 @@ struct AutoComplete {
   const char *startname;
 };
 
-AutoComplete *UI_autocomplete_begin(const char *startname, size_t maxncpy)
+AutoComplete *autocomplete_begin(const char *startname, size_t maxncpy)
 {
   AutoComplete *autocpl;
 
@@ -5178,7 +5163,7 @@ AutoComplete *UI_autocomplete_begin(const char *startname, size_t maxncpy)
   return autocpl;
 }
 
-void UI_autocomplete_update_name(AutoComplete *autocpl, const StringRef name)
+void autocomplete_update_name(AutoComplete *autocpl, const StringRef name)
 {
   char *truncate = autocpl->truncate;
   const char *startname = autocpl->startname;
@@ -5212,7 +5197,7 @@ void UI_autocomplete_update_name(AutoComplete *autocpl, const StringRef name)
   }
 }
 
-int UI_autocomplete_end(AutoComplete *autocpl, char *autoname)
+int autocomplete_end(AutoComplete *autocpl, char *autoname)
 {
   int match = AUTOCOMPLETE_NO_MATCH;
   if (autocpl->truncate[0]) {
@@ -5237,22 +5222,22 @@ int UI_autocomplete_end(AutoComplete *autocpl, char *autoname)
 
 #define PREVIEW_TILE_PAD (0.225f * UI_UNIT_X)
 
-int UI_preview_tile_size_x(const int size_px)
+int preview_tile_size_x(const int size_px)
 {
   const float pad = PREVIEW_TILE_PAD;
   return round_fl_to_int((size_px / 20.0f) * UI_UNIT_X + 2.0f * pad);
 }
 
-int UI_preview_tile_size_y(const int size_px)
+int preview_tile_size_y(const int size_px)
 {
   const float font_height = UI_UNIT_Y;
   /* Add some extra padding to make things less tight vertically. */
   const float pad = PREVIEW_TILE_PAD;
 
-  return round_fl_to_int(UI_preview_tile_size_y_no_label(size_px) + font_height + pad);
+  return round_fl_to_int(preview_tile_size_y_no_label(size_px) + font_height + pad);
 }
 
-int UI_preview_tile_size_y_no_label(const int size_px)
+int preview_tile_size_y_no_label(const int size_px)
 {
   const float pad = PREVIEW_TILE_PAD;
   return round_fl_to_int((size_px / 20.0f) * UI_UNIT_Y + 2.0f * pad);
@@ -5260,7 +5245,7 @@ int UI_preview_tile_size_y_no_label(const int size_px)
 
 #undef PREVIEW_TILE_PAD
 
-static void ui_but_update_and_icon_set(uiBut *but, int icon)
+static void ui_but_update_and_icon_set(Button *but, int icon)
 {
   if (icon) {
     ui_def_but_icon(but, icon, UI_HAS_ICON);
@@ -5269,18 +5254,18 @@ static void ui_but_update_and_icon_set(uiBut *but, int icon)
   ui_but_update(but);
 }
 
-static uiBut *uiDefButBit(uiBlock *block,
-                          uiButTypeWithPointerType but_and_ptr_type,
-                          int bit,
-                          const StringRef str,
-                          int x,
-                          int y,
-                          short width,
-                          short height,
-                          void *poin,
-                          float min,
-                          float max,
-                          const std::optional<StringRef> tip)
+static Button *uiDefButBit(Block *block,
+                           uiButTypeWithPointerType but_and_ptr_type,
+                           int bit,
+                           const StringRef str,
+                           int x,
+                           int y,
+                           short width,
+                           short height,
+                           void *poin,
+                           float min,
+                           float max,
+                           const std::optional<StringRef> tip)
 {
   const int bitIdx = findBitIndex(bit);
   if (bitIdx == -1) {
@@ -5299,48 +5284,48 @@ static uiBut *uiDefButBit(uiBlock *block,
       max,
       tip);
 }
-uiBut *uiDefButF(uiBlock *block,
-                 ButType type,
-                 const StringRef str,
-                 int x,
-                 int y,
-                 short width,
-                 short height,
-                 float *poin,
-                 float min,
-                 float max,
-                 const std::optional<StringRef> tip)
+Button *uiDefButF(Block *block,
+                  ButType type,
+                  const StringRef str,
+                  int x,
+                  int y,
+                  short width,
+                  short height,
+                  float *poin,
+                  float min,
+                  float max,
+                  const std::optional<StringRef> tip)
 {
   return uiDefBut(
       block, {type, ButPointerType::Float}, str, x, y, width, height, (void *)poin, min, max, tip);
 }
-uiBut *uiDefButI(uiBlock *block,
-                 ButType type,
-                 const StringRef str,
-                 int x,
-                 int y,
-                 short width,
-                 short height,
-                 int *poin,
-                 float min,
-                 float max,
-                 const std::optional<StringRef> tip)
+Button *uiDefButI(Block *block,
+                  ButType type,
+                  const StringRef str,
+                  int x,
+                  int y,
+                  short width,
+                  short height,
+                  int *poin,
+                  float min,
+                  float max,
+                  const std::optional<StringRef> tip)
 {
   return uiDefBut(
       block, {type, ButPointerType::Int}, str, x, y, width, height, (void *)poin, min, max, tip);
 }
-uiBut *uiDefButBitI(uiBlock *block,
-                    ButType type,
-                    int bit,
-                    const StringRef str,
-                    int x,
-                    int y,
-                    short width,
-                    short height,
-                    int *poin,
-                    float min,
-                    float max,
-                    const std::optional<StringRef> tip)
+Button *uiDefButBitI(Block *block,
+                     ButType type,
+                     int bit,
+                     const StringRef str,
+                     int x,
+                     int y,
+                     short width,
+                     short height,
+                     int *poin,
+                     float min,
+                     float max,
+                     const std::optional<StringRef> tip)
 {
   return uiDefButBit(block,
                      {type, ButPointerType::Int},
@@ -5355,33 +5340,33 @@ uiBut *uiDefButBitI(uiBlock *block,
                      max,
                      tip);
 }
-uiBut *uiDefButS(uiBlock *block,
-                 ButType type,
-                 const StringRef str,
-                 int x,
-                 int y,
-                 short width,
-                 short height,
-                 short *poin,
-                 float min,
-                 float max,
-                 const std::optional<StringRef> tip)
+Button *uiDefButS(Block *block,
+                  ButType type,
+                  const StringRef str,
+                  int x,
+                  int y,
+                  short width,
+                  short height,
+                  short *poin,
+                  float min,
+                  float max,
+                  const std::optional<StringRef> tip)
 {
   return uiDefBut(
       block, {type, ButPointerType::Short}, str, x, y, width, height, (void *)poin, min, max, tip);
 }
-uiBut *uiDefButBitS(uiBlock *block,
-                    ButType type,
-                    int bit,
-                    const StringRef str,
-                    int x,
-                    int y,
-                    short width,
-                    short height,
-                    short *poin,
-                    float min,
-                    float max,
-                    const std::optional<StringRef> tip)
+Button *uiDefButBitS(Block *block,
+                     ButType type,
+                     int bit,
+                     const StringRef str,
+                     int x,
+                     int y,
+                     short width,
+                     short height,
+                     short *poin,
+                     float min,
+                     float max,
+                     const std::optional<StringRef> tip)
 {
   return uiDefButBit(block,
                      {type, ButPointerType::Short},
@@ -5396,33 +5381,33 @@ uiBut *uiDefButBitS(uiBlock *block,
                      max,
                      tip);
 }
-uiBut *uiDefButC(uiBlock *block,
-                 ButType type,
-                 const StringRef str,
-                 int x,
-                 int y,
-                 short width,
-                 short height,
-                 char *poin,
-                 float min,
-                 float max,
-                 const std::optional<StringRef> tip)
+Button *uiDefButC(Block *block,
+                  ButType type,
+                  const StringRef str,
+                  int x,
+                  int y,
+                  short width,
+                  short height,
+                  char *poin,
+                  float min,
+                  float max,
+                  const std::optional<StringRef> tip)
 {
   return uiDefBut(
       block, {type, ButPointerType::Char}, str, x, y, width, height, (void *)poin, min, max, tip);
 }
-uiBut *uiDefButBitC(uiBlock *block,
-                    ButType type,
-                    int bit,
-                    const StringRef str,
-                    int x,
-                    int y,
-                    short width,
-                    short height,
-                    char *poin,
-                    float min,
-                    float max,
-                    const std::optional<StringRef> tip)
+Button *uiDefButBitC(Block *block,
+                     ButType type,
+                     int bit,
+                     const StringRef str,
+                     int x,
+                     int y,
+                     short width,
+                     short height,
+                     char *poin,
+                     float min,
+                     float max,
+                     const std::optional<StringRef> tip)
 {
   return uiDefButBit(block,
                      {type, ButPointerType::Char},
@@ -5437,70 +5422,70 @@ uiBut *uiDefButBitC(uiBlock *block,
                      max,
                      tip);
 }
-uiBut *uiDefButR(uiBlock *block,
-                 ButType type,
-                 const std::optional<StringRef> str,
-                 int x,
-                 int y,
-                 short width,
-                 short height,
-                 PointerRNA *ptr,
-                 const StringRefNull propname,
-                 int index,
-                 float min,
-                 float max,
-                 const std::optional<StringRef> tip)
+Button *uiDefButR(Block *block,
+                  ButType type,
+                  const std::optional<StringRef> str,
+                  int x,
+                  int y,
+                  short width,
+                  short height,
+                  PointerRNA *ptr,
+                  const StringRefNull propname,
+                  int index,
+                  float min,
+                  float max,
+                  const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_rna_propname(
+  Button *but = ui_def_but_rna_propname(
       block, type, str, x, y, width, height, ptr, propname, index, min, max, tip);
   ui_but_update(but);
   return but;
 }
-uiBut *uiDefButR_prop(uiBlock *block,
-                      ButType type,
-                      const std::optional<StringRef> str,
-                      int x,
-                      int y,
-                      short width,
-                      short height,
-                      PointerRNA *ptr,
-                      PropertyRNA *prop,
-                      int index,
-                      float min,
-                      float max,
-                      const std::optional<StringRef> tip)
+Button *uiDefButR_prop(Block *block,
+                       ButType type,
+                       const std::optional<StringRef> str,
+                       int x,
+                       int y,
+                       short width,
+                       short height,
+                       PointerRNA *ptr,
+                       PropertyRNA *prop,
+                       int index,
+                       float min,
+                       float max,
+                       const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_rna(
+  Button *but = ui_def_but_rna(
       block, type, str, x, y, width, height, ptr, prop, index, min, max, tip);
   ui_but_update(but);
   return but;
 }
 
-uiBut *uiDefButO_ptr(uiBlock *block,
-                     ButType type,
-                     wmOperatorType *ot,
-                     blender::wm::OpCallContext opcontext,
-                     const StringRef str,
-                     int x,
-                     int y,
-                     short width,
-                     short height,
-                     const std::optional<StringRef> tip)
+Button *uiDefButO_ptr(Block *block,
+                      ButType type,
+                      wmOperatorType *ot,
+                      wm::OpCallContext opcontext,
+                      const StringRef str,
+                      int x,
+                      int y,
+                      short width,
+                      short height,
+                      const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_operator_ptr(block, type, ot, opcontext, str, x, y, width, height, tip);
+  Button *but = ui_def_but_operator_ptr(block, type, ot, opcontext, str, x, y, width, height, tip);
   ui_but_update(but);
   return but;
 }
-uiBut *uiDefButO(uiBlock *block,
-                 ButType type,
-                 const StringRefNull opname,
-                 blender::wm::OpCallContext opcontext,
-                 std::optional<StringRef> str,
-                 int x,
-                 int y,
-                 short width,
-                 short height,
-                 const std::optional<StringRef> tip)
+Button *uiDefButO(Block *block,
+                  ButType type,
+                  const StringRefNull opname,
+                  wm::OpCallContext opcontext,
+                  std::optional<StringRef> str,
+                  int x,
+                  int y,
+                  short width,
+                  short height,
+                  const std::optional<StringRef> tip)
 {
   wmOperatorType *ot = WM_operatortype_find(opname.c_str(), false);
   if (!str && ot == nullptr) {
@@ -5509,58 +5494,58 @@ uiBut *uiDefButO(uiBlock *block,
   return uiDefButO_ptr(block, type, ot, opcontext, *str, x, y, width, height, tip);
 }
 
-uiBut *uiDefIconBut(uiBlock *block,
-                    uiButTypeWithPointerType but_and_ptr_type,
-                    int icon,
-                    int x,
-                    int y,
-                    short width,
-                    short height,
-                    void *poin,
-                    float min,
-                    float max,
-                    const std::optional<StringRef> tip)
+Button *uiDefIconBut(Block *block,
+                     uiButTypeWithPointerType but_and_ptr_type,
+                     int icon,
+                     int x,
+                     int y,
+                     short width,
+                     short height,
+                     void *poin,
+                     float min,
+                     float max,
+                     const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, but_and_ptr_type, "", x, y, width, height, poin, min, max, tip);
+  Button *but = ui_def_but(block, but_and_ptr_type, "", x, y, width, height, poin, min, max, tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
-uiBut *uiDefIconPreviewBut(uiBlock *block,
-                           ButType type,
-                           int icon,
-                           int x,
-                           int y,
-                           short width,
-                           short height,
-                           void *poin,
-                           float min,
-                           float max,
-                           const std::optional<StringRef> tip)
+Button *uiDefIconPreviewBut(Block *block,
+                            ButType type,
+                            int icon,
+                            int x,
+                            int y,
+                            short width,
+                            short height,
+                            void *poin,
+                            float min,
+                            float max,
+                            const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, type, "", x, y, width, height, poin, min, max, tip);
+  Button *but = ui_def_but(block, type, "", x, y, width, height, poin, min, max, tip);
   if (icon) {
-    ui_def_but_icon(but, icon, UI_HAS_ICON | UI_BUT_ICON_PREVIEW);
+    ui_def_but_icon(but, icon, UI_HAS_ICON | BUT_ICON_PREVIEW);
 
     /* Use the exact button size for the preview. Or do we need to let the caller control this? */
-    but->drawflag |= UI_BUT_NO_PREVIEW_PADDING;
-    but->drawflag &= ~UI_BUT_ICON_LEFT;
+    but->drawflag |= BUT_NO_PREVIEW_PADDING;
+    but->drawflag &= ~BUT_ICON_LEFT;
   }
 
   ui_but_update(but);
   return but;
 }
-static uiBut *uiDefIconButBit(uiBlock *block,
-                              uiButTypeWithPointerType but_and_ptr_type,
-                              int bit,
-                              int icon,
-                              int x,
-                              int y,
-                              short width,
-                              short height,
-                              void *poin,
-                              float min,
-                              float max,
-                              const std::optional<StringRef> tip)
+static Button *uiDefIconButBit(Block *block,
+                               uiButTypeWithPointerType but_and_ptr_type,
+                               int bit,
+                               int icon,
+                               int x,
+                               int y,
+                               short width,
+                               short height,
+                               void *poin,
+                               float min,
+                               float max,
+                               const std::optional<StringRef> tip)
 {
   const int bitIdx = findBitIndex(bit);
   if (bitIdx == -1) {
@@ -5580,33 +5565,33 @@ static uiBut *uiDefIconButBit(uiBlock *block,
       tip);
 }
 
-uiBut *uiDefIconButI(uiBlock *block,
-                     ButType type,
-                     int icon,
-                     int x,
-                     int y,
-                     short width,
-                     short height,
-                     int *poin,
-                     float min,
-                     float max,
-                     const std::optional<StringRef> tip)
+Button *uiDefIconButI(Block *block,
+                      ButType type,
+                      int icon,
+                      int x,
+                      int y,
+                      short width,
+                      short height,
+                      int *poin,
+                      float min,
+                      float max,
+                      const std::optional<StringRef> tip)
 {
   return uiDefIconBut(
       block, {type, ButPointerType::Int}, icon, x, y, width, height, (void *)poin, min, max, tip);
 }
-uiBut *uiDefIconButBitI(uiBlock *block,
-                        ButType type,
-                        int bit,
-                        int icon,
-                        int x,
-                        int y,
-                        short width,
-                        short height,
-                        int *poin,
-                        float min,
-                        float max,
-                        const std::optional<StringRef> tip)
+Button *uiDefIconButBitI(Block *block,
+                         ButType type,
+                         int bit,
+                         int icon,
+                         int x,
+                         int y,
+                         short width,
+                         short height,
+                         int *poin,
+                         float min,
+                         float max,
+                         const std::optional<StringRef> tip)
 {
   return uiDefIconButBit(block,
                          {type, ButPointerType::Int},
@@ -5621,17 +5606,17 @@ uiBut *uiDefIconButBitI(uiBlock *block,
                          max,
                          tip);
 }
-uiBut *uiDefIconButS(uiBlock *block,
-                     ButType type,
-                     int icon,
-                     int x,
-                     int y,
-                     short width,
-                     short height,
-                     short *poin,
-                     float min,
-                     float max,
-                     const std::optional<StringRef> tip)
+Button *uiDefIconButS(Block *block,
+                      ButType type,
+                      int icon,
+                      int x,
+                      int y,
+                      short width,
+                      short height,
+                      short *poin,
+                      float min,
+                      float max,
+                      const std::optional<StringRef> tip)
 {
   return uiDefIconBut(block,
                       {type, ButPointerType::Short},
@@ -5645,18 +5630,18 @@ uiBut *uiDefIconButS(uiBlock *block,
                       max,
                       tip);
 }
-uiBut *uiDefIconButBitS(uiBlock *block,
-                        ButType type,
-                        int bit,
-                        int icon,
-                        int x,
-                        int y,
-                        short width,
-                        short height,
-                        short *poin,
-                        float min,
-                        float max,
-                        const std::optional<StringRef> tip)
+Button *uiDefIconButBitS(Block *block,
+                         ButType type,
+                         int bit,
+                         int icon,
+                         int x,
+                         int y,
+                         short width,
+                         short height,
+                         short *poin,
+                         float min,
+                         float max,
+                         const std::optional<StringRef> tip)
 {
   return uiDefIconButBit(block,
                          {type, ButPointerType::Short},
@@ -5671,18 +5656,18 @@ uiBut *uiDefIconButBitS(uiBlock *block,
                          max,
                          tip);
 }
-uiBut *uiDefIconButBitC(uiBlock *block,
-                        ButType type,
-                        int bit,
-                        int icon,
-                        int x,
-                        int y,
-                        short width,
-                        short height,
-                        char *poin,
-                        float min,
-                        float max,
-                        const std::optional<StringRef> tip)
+Button *uiDefIconButBitC(Block *block,
+                         ButType type,
+                         int bit,
+                         int icon,
+                         int x,
+                         int y,
+                         short width,
+                         short height,
+                         char *poin,
+                         float min,
+                         float max,
+                         const std::optional<StringRef> tip)
 {
   return uiDefIconButBit(block,
                          {type, ButPointerType::Char},
@@ -5697,189 +5682,189 @@ uiBut *uiDefIconButBitC(uiBlock *block,
                          max,
                          tip);
 }
-uiBut *uiDefIconButR(uiBlock *block,
-                     ButType type,
-                     int icon,
-                     int x,
-                     int y,
-                     short width,
-                     short height,
-                     PointerRNA *ptr,
-                     const StringRefNull propname,
-                     int index,
-                     float min,
-                     float max,
-                     const std::optional<StringRef> tip)
+Button *uiDefIconButR(Block *block,
+                      ButType type,
+                      int icon,
+                      int x,
+                      int y,
+                      short width,
+                      short height,
+                      PointerRNA *ptr,
+                      const StringRefNull propname,
+                      int index,
+                      float min,
+                      float max,
+                      const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_rna_propname(
+  Button *but = ui_def_but_rna_propname(
       block, type, "", x, y, width, height, ptr, propname, index, min, max, tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
-uiBut *uiDefIconButR_prop(uiBlock *block,
-                          ButType type,
-                          int icon,
-                          int x,
-                          int y,
-                          short width,
-                          short height,
-                          PointerRNA *ptr,
-                          PropertyRNA *prop,
-                          int index,
-                          float min,
-                          float max,
-                          const std::optional<StringRef> tip)
+Button *uiDefIconButR_prop(Block *block,
+                           ButType type,
+                           int icon,
+                           int x,
+                           int y,
+                           short width,
+                           short height,
+                           PointerRNA *ptr,
+                           PropertyRNA *prop,
+                           int index,
+                           float min,
+                           float max,
+                           const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_rna(
+  Button *but = ui_def_but_rna(
       block, type, "", x, y, width, height, ptr, prop, index, min, max, tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
 
-uiBut *uiDefIconButO_ptr(uiBlock *block,
-                         ButType type,
-                         wmOperatorType *ot,
-                         blender::wm::OpCallContext opcontext,
-                         int icon,
-                         int x,
-                         int y,
-                         short width,
-                         short height,
-                         const std::optional<StringRef> tip)
+Button *uiDefIconButO_ptr(Block *block,
+                          ButType type,
+                          wmOperatorType *ot,
+                          wm::OpCallContext opcontext,
+                          int icon,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_operator_ptr(block, type, ot, opcontext, "", x, y, width, height, tip);
+  Button *but = ui_def_but_operator_ptr(block, type, ot, opcontext, "", x, y, width, height, tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
-uiBut *uiDefIconButO(uiBlock *block,
-                     ButType type,
-                     const StringRefNull opname,
-                     blender::wm::OpCallContext opcontext,
-                     int icon,
-                     int x,
-                     int y,
-                     short width,
-                     short height,
-                     const std::optional<StringRef> tip)
+Button *uiDefIconButO(Block *block,
+                      ButType type,
+                      const StringRefNull opname,
+                      wm::OpCallContext opcontext,
+                      int icon,
+                      int x,
+                      int y,
+                      short width,
+                      short height,
+                      const std::optional<StringRef> tip)
 {
   wmOperatorType *ot = WM_operatortype_find(opname.c_str(), false);
   return uiDefIconButO_ptr(block, type, ot, opcontext, icon, x, y, width, height, tip);
 }
 
-uiBut *uiDefIconTextBut(uiBlock *block,
-                        uiButTypeWithPointerType but_and_ptr_type,
-                        int icon,
-                        const StringRef str,
-                        int x,
-                        int y,
-                        short width,
-                        short height,
-                        void *poin,
-                        const std::optional<StringRef> tip)
-{
-  uiBut *but = ui_def_but(
-      block, but_and_ptr_type, str, x, y, width, height, poin, 0.0f, 0.0f, tip);
-  ui_but_update_and_icon_set(but, icon);
-  but->drawflag |= UI_BUT_ICON_LEFT;
-  return but;
-}
-uiBut *uiDefIconTextButI(uiBlock *block,
-                         ButType type,
+Button *uiDefIconTextBut(Block *block,
+                         uiButTypeWithPointerType but_and_ptr_type,
                          int icon,
                          const StringRef str,
                          int x,
                          int y,
                          short width,
                          short height,
-                         int *poin,
+                         void *poin,
                          const std::optional<StringRef> tip)
+{
+  Button *but = ui_def_but(
+      block, but_and_ptr_type, str, x, y, width, height, poin, 0.0f, 0.0f, tip);
+  ui_but_update_and_icon_set(but, icon);
+  but->drawflag |= BUT_ICON_LEFT;
+  return but;
+}
+Button *uiDefIconTextButI(Block *block,
+                          ButType type,
+                          int icon,
+                          const StringRef str,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          int *poin,
+                          const std::optional<StringRef> tip)
 {
   return uiDefIconTextBut(
       block, {type, ButPointerType::Int}, icon, str, x, y, width, height, (void *)poin, tip);
 }
-uiBut *uiDefIconTextButS(uiBlock *block,
-                         ButType type,
-                         int icon,
-                         const StringRef str,
-                         int x,
-                         int y,
-                         short width,
-                         short height,
-                         short *poin,
-                         const std::optional<StringRef> tip)
+Button *uiDefIconTextButS(Block *block,
+                          ButType type,
+                          int icon,
+                          const StringRef str,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          short *poin,
+                          const std::optional<StringRef> tip)
 {
   return uiDefIconTextBut(
       block, {type, ButPointerType::Short}, icon, str, x, y, width, height, (void *)poin, tip);
 }
 
-uiBut *uiDefIconTextButR(uiBlock *block,
-                         ButType type,
-                         int icon,
-                         const std::optional<StringRefNull> str,
-                         int x,
-                         int y,
-                         short width,
-                         short height,
-                         PointerRNA *ptr,
-                         blender::StringRefNull propname,
-                         int index,
-                         const std::optional<StringRef> tip)
+Button *uiDefIconTextButR(Block *block,
+                          ButType type,
+                          int icon,
+                          const std::optional<StringRefNull> str,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          PointerRNA *ptr,
+                          StringRefNull propname,
+                          int index,
+                          const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_rna_propname(
+  Button *but = ui_def_but_rna_propname(
       block, type, str, x, y, width, height, ptr, propname, index, 0.0f, 0.0f, tip);
   ui_but_update_and_icon_set(but, icon);
-  but->drawflag |= UI_BUT_ICON_LEFT;
+  but->drawflag |= BUT_ICON_LEFT;
   return but;
 }
-uiBut *uiDefIconTextButR_prop(uiBlock *block,
+Button *uiDefIconTextButR_prop(Block *block,
+                               ButType type,
+                               int icon,
+                               const std::optional<StringRef> str,
+                               int x,
+                               int y,
+                               short width,
+                               short height,
+                               PointerRNA *ptr,
+                               PropertyRNA *prop,
+                               int index,
+                               float min,
+                               float max,
+                               const std::optional<StringRef> tip)
+{
+  Button *but = ui_def_but_rna(
+      block, type, str, x, y, width, height, ptr, prop, index, min, max, tip);
+  ui_but_update_and_icon_set(but, icon);
+  but->drawflag |= BUT_ICON_LEFT;
+  return but;
+}
+Button *uiDefIconTextButO_ptr(Block *block,
                               ButType type,
+                              wmOperatorType *ot,
+                              wm::OpCallContext opcontext,
                               int icon,
-                              const std::optional<blender::StringRef> str,
+                              const StringRef str,
                               int x,
                               int y,
                               short width,
                               short height,
-                              PointerRNA *ptr,
-                              PropertyRNA *prop,
-                              int index,
-                              float min,
-                              float max,
                               const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but_rna(
-      block, type, str, x, y, width, height, ptr, prop, index, min, max, tip);
+  Button *but = ui_def_but_operator_ptr(block, type, ot, opcontext, str, x, y, width, height, tip);
   ui_but_update_and_icon_set(but, icon);
-  but->drawflag |= UI_BUT_ICON_LEFT;
+  but->drawflag |= BUT_ICON_LEFT;
   return but;
 }
-uiBut *uiDefIconTextButO_ptr(uiBlock *block,
-                             ButType type,
-                             wmOperatorType *ot,
-                             blender::wm::OpCallContext opcontext,
-                             int icon,
-                             const StringRef str,
-                             int x,
-                             int y,
-                             short width,
-                             short height,
-                             const std::optional<StringRef> tip)
-{
-  uiBut *but = ui_def_but_operator_ptr(block, type, ot, opcontext, str, x, y, width, height, tip);
-  ui_but_update_and_icon_set(but, icon);
-  but->drawflag |= UI_BUT_ICON_LEFT;
-  return but;
-}
-uiBut *uiDefIconTextButO(uiBlock *block,
-                         ButType type,
-                         const StringRefNull opname,
-                         blender::wm::OpCallContext opcontext,
-                         int icon,
-                         const StringRef str,
-                         int x,
-                         int y,
-                         short width,
-                         short height,
-                         const std::optional<StringRef> tip)
+Button *uiDefIconTextButO(Block *block,
+                          ButType type,
+                          const StringRefNull opname,
+                          wm::OpCallContext opcontext,
+                          int icon,
+                          const StringRef str,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          const std::optional<StringRef> tip)
 {
   wmOperatorType *ot = WM_operatortype_find(opname.c_str(), false);
   if (str.is_empty()) {
@@ -5888,14 +5873,14 @@ uiBut *uiDefIconTextButO(uiBlock *block,
   return uiDefIconTextButO_ptr(block, type, ot, opcontext, icon, str, x, y, width, height, tip);
 }
 
-void UI_but_operator_set(uiBut *but,
+void button_operator_set(Button *but,
                          wmOperatorType *optype,
-                         blender::wm::OpCallContext opcontext,
+                         wm::OpCallContext opcontext,
                          const PointerRNA *opptr)
 {
   but->optype = optype;
   but->opcontext = opcontext;
-  but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
+  but->flag &= ~BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
 
   if (but->opptr) {
     MEM_delete(but->opptr);
@@ -5906,20 +5891,20 @@ void UI_but_operator_set(uiBut *but,
   }
 }
 
-void UI_but_operator_set_never_call(uiBut *but)
+void button_operator_set_never_call(Button *but)
 {
   but->operator_never_call = true;
 }
 
 /* END Button containing both string label and icon */
 
-/* cruft to make uiBlock and uiBut private */
+/* cruft to make Block and Button private */
 
-int UI_blocklist_min_y_get(ListBase *lb)
+int blocklist_min_y_get(ListBase *lb)
 {
   int min = 0;
 
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH (Block *, block, lb) {
     if (block == lb->first || block->rect.ymin < min) {
       min = block->rect.ymin;
     }
@@ -5928,64 +5913,64 @@ int UI_blocklist_min_y_get(ListBase *lb)
   return min;
 }
 
-void UI_block_direction_set(uiBlock *block, char direction)
+void block_direction_set(Block *block, char direction)
 {
   block->direction = direction;
 }
 
-void UI_block_flag_enable(uiBlock *block, int flag)
+void block_flag_enable(Block *block, int flag)
 {
   block->flag |= flag;
 }
 
-void UI_block_flag_disable(uiBlock *block, int flag)
+void block_flag_disable(Block *block, int flag)
 {
   block->flag &= ~flag;
 }
 
-void UI_but_flag_enable(uiBut *but, int flag)
+void button_flag_enable(Button *but, int flag)
 {
   but->flag |= flag;
 }
 
-void UI_but_flag2_enable(uiBut *but, int flag)
+void button_flag2_enable(Button *but, int flag)
 {
   but->flag2 |= flag;
 }
 
-void UI_but_flag_disable(uiBut *but, int flag)
+void button_flag_disable(Button *but, int flag)
 {
   but->flag &= ~flag;
 }
 
-bool UI_but_flag_is_set(uiBut *but, int flag)
+bool button_flag_is_set(Button *but, int flag)
 {
   return (but->flag & flag) != 0;
 }
 
-void UI_but_drawflag_enable(uiBut *but, int flag)
+void button_drawflag_enable(Button *but, int flag)
 {
   but->drawflag |= flag;
 }
 
-void UI_but_drawflag_disable(uiBut *but, int flag)
+void button_drawflag_disable(Button *but, int flag)
 {
   but->drawflag &= ~flag;
 }
 
-void UI_but_dragflag_enable(uiBut *but, int flag)
+void button_dragflag_enable(Button *but, int flag)
 {
   but->dragflag |= flag;
 }
 
-void UI_but_dragflag_disable(uiBut *but, int flag)
+void button_dragflag_disable(Button *but, int flag)
 {
   but->dragflag &= ~flag;
 }
 
-void UI_but_disable(uiBut *but, const char *disabled_hint)
+void button_disable(Button *but, const char *disabled_hint)
 {
-  UI_but_flag_enable(but, UI_BUT_DISABLED);
+  button_flag_enable(but, BUT_DISABLED);
 
   /* Only one disabled hint at a time currently. Don't override the previous one here. */
   if (but->disabled_info && but->disabled_info[0]) {
@@ -5995,22 +5980,22 @@ void UI_but_disable(uiBut *but, const char *disabled_hint)
   but->disabled_info = disabled_hint;
 }
 
-void UI_but_color_set(uiBut *but, const uchar color[4])
+void button_color_set(Button *but, const uchar color[4])
 {
   copy_v4_v4_uchar(but->col, color);
 }
 
-const ColorManagedDisplay *UI_but_cm_display_get(uiBut &but)
+const ColorManagedDisplay *button_cm_display_get(Button &but)
 {
   return ui_block_cm_display_get(but.block);
 }
 
-bool UI_but_is_color_gamma(uiBut &but)
+bool button_is_color_gamma(Button &but)
 {
   return ui_but_is_color_gamma(&but);
 }
 
-void UI_but_placeholder_set(uiBut *but, const StringRef placeholder_text)
+void button_placeholder_set(Button *but, const StringRef placeholder_text)
 {
   MEM_SAFE_FREE(but->placeholder);
   if (placeholder_text.is_empty()) {
@@ -6021,7 +6006,7 @@ void UI_but_placeholder_set(uiBut *but, const StringRef placeholder_text)
   }
 }
 
-const char *ui_but_placeholder_get(uiBut *but)
+const char *ui_but_placeholder_get(Button *but)
 {
   const char *placeholder = (but->placeholder) ? but->placeholder : nullptr;
 
@@ -6045,20 +6030,20 @@ const char *ui_but_placeholder_get(uiBut *but)
   return placeholder;
 }
 
-void UI_but_type_set_menu_from_pulldown(uiBut *but)
+void button_type_set_menu_from_pulldown(Button *but)
 {
   BLI_assert(but->type == ButType::Pulldown);
   but->type = ButType::Menu;
-  UI_but_drawflag_disable(but, UI_BUT_TEXT_RIGHT);
-  UI_but_drawflag_enable(but, UI_BUT_TEXT_LEFT);
+  button_drawflag_disable(but, BUT_TEXT_RIGHT);
+  button_drawflag_enable(but, BUT_TEXT_LEFT);
 }
 
-int UI_but_return_value_get(uiBut *but)
+int button_return_value_get(Button *but)
 {
   return but->retval;
 }
 
-PointerRNA *UI_but_operator_ptr_ensure(uiBut *but)
+PointerRNA *button_operator_ptr_ensure(Button *but)
 {
   if (but->optype && !but->opptr) {
     but->opptr = MEM_new<PointerRNA>(__func__);
@@ -6068,32 +6053,28 @@ PointerRNA *UI_but_operator_ptr_ensure(uiBut *but)
   return but->opptr;
 }
 
-void UI_but_context_ptr_set(uiBlock *block,
-                            uiBut *but,
-                            const StringRef name,
-                            const PointerRNA *ptr)
+void button_context_ptr_set(Block *block, Button *but, const StringRef name, const PointerRNA *ptr)
 {
   bContextStore *ctx = CTX_store_add(block->contexts, name, ptr);
   ctx->used = true;
   but->context = ctx;
 }
 
-void UI_but_context_int_set(uiBlock *block, uiBut *but, const StringRef name, const int64_t value)
+void button_context_int_set(Block *block, Button *but, const StringRef name, const int64_t value)
 {
   bContextStore *ctx = CTX_store_add(block->contexts, name, value);
   ctx->used = true;
   but->context = ctx;
 }
 
-const PointerRNA *UI_but_context_ptr_get(const uiBut *but,
+const PointerRNA *button_context_ptr_get(const Button *but,
                                          const StringRef name,
                                          const StructRNA *type)
 {
   return CTX_store_ptr_lookup(but->context, name, type);
 }
 
-std::optional<blender::StringRefNull> UI_but_context_string_get(const uiBut *but,
-                                                                const StringRef name)
+std::optional<StringRefNull> button_context_string_get(const Button *but, const StringRef name)
 {
   if (!but->context) {
     return {};
@@ -6101,7 +6082,7 @@ std::optional<blender::StringRefNull> UI_but_context_string_get(const uiBut *but
   return CTX_store_string_lookup(but->context, name);
 }
 
-std::optional<int64_t> UI_but_context_int_get(const uiBut *but, const StringRef name)
+std::optional<int64_t> button_context_int_get(const Button *but, const StringRef name)
 {
   if (!but->context) {
     return {};
@@ -6109,17 +6090,17 @@ std::optional<int64_t> UI_but_context_int_get(const uiBut *but, const StringRef 
   return CTX_store_int_lookup(but->context, name);
 }
 
-const bContextStore *UI_but_context_get(const uiBut *but)
+const bContextStore *button_context_get(const Button *but)
 {
   return but->context;
 }
 
-void UI_but_unit_type_set(uiBut *but, const int unit_type)
+void button_unit_type_set(Button *but, const int unit_type)
 {
   but->unit_type = uchar(RNA_SUBTYPE_UNIT_VALUE(unit_type));
 }
 
-int UI_but_unit_type_get(const uiBut *but)
+int button_unit_type_get(const Button *but)
 {
   const int ownUnit = int(but->unit_type);
 
@@ -6133,25 +6114,25 @@ int UI_but_unit_type_get(const uiBut *but)
   return RNA_SUBTYPE_UNIT(RNA_property_subtype(but->rnaprop));
 }
 
-void UI_block_func_handle_set(uiBlock *block, uiBlockHandleFunc func, void *arg)
+void block_func_handle_set(Block *block, uiBlockHandleFunc func, void *arg)
 {
   block->handle_func = func;
   block->handle_func_arg = arg;
 }
 
-void UI_block_func_set(uiBlock *block, uiButHandleFunc func, void *arg1, void *arg2)
+void block_func_set(Block *block, uiButHandleFunc func, void *arg1, void *arg2)
 {
   block->func = func;
   block->func_arg1 = arg1;
   block->func_arg2 = arg2;
 }
 
-void UI_block_funcN_set(uiBlock *block,
-                        uiButHandleNFunc funcN,
-                        void *argN,
-                        void *arg2,
-                        uiButArgNFree func_argN_free_fn,
-                        uiButArgNCopy func_argN_copy_fn)
+void block_funcN_set(Block *block,
+                     uiButHandleNFunc funcN,
+                     void *argN,
+                     void *arg2,
+                     uiButArgNFree func_argN_free_fn,
+                     uiButArgNCopy func_argN_copy_fn)
 {
   if (block->func_argN) {
     block->func_argN_free_fn(block->func_argN);
@@ -6164,37 +6145,37 @@ void UI_block_funcN_set(uiBlock *block,
   block->func_arg2 = arg2;
 }
 
-void UI_but_func_rename_set(uiBut *but, uiButHandleRenameFunc func, void *arg1)
+void button_func_rename_set(Button *but, uiButHandleRenameFunc func, void *arg1)
 {
   but->rename_func = func;
   but->rename_arg1 = arg1;
 }
 
-void UI_but_func_rename_full_set(uiBut *but,
+void button_func_rename_full_set(Button *but,
                                  std::function<void(std::string &new_name)> rename_full_func)
 {
   but->rename_full_func = rename_full_func;
 }
 
-void UI_but_func_drawextra_set(uiBlock *block,
+void button_func_drawextra_set(Block *block,
                                std::function<void(const bContext *C, rcti *rect)> func)
 {
   block->drawextra = func;
 }
 
-void UI_but_func_set(uiBut *but, uiButHandleFunc func, void *arg1, void *arg2)
+void button_func_set(Button *but, uiButHandleFunc func, void *arg1, void *arg2)
 {
   but->func = func;
   but->func_arg1 = arg1;
   but->func_arg2 = arg2;
 }
 
-void UI_but_func_set(uiBut *but, std::function<void(bContext &)> func)
+void button_func_set(Button *but, std::function<void(bContext &)> func)
 {
   but->apply_func = std::move(func);
 }
 
-void UI_but_funcN_set(uiBut *but,
+void button_funcN_set(Button *but,
                       uiButHandleNFunc funcN,
                       void *argN,
                       void *arg2,
@@ -6212,29 +6193,29 @@ void UI_but_funcN_set(uiBut *but,
   but->func_arg2 = arg2;
 }
 
-void UI_but_func_complete_set(uiBut *but, uiButCompleteFunc func, void *arg)
+void button_func_complete_set(Button *but, uiButCompleteFunc func, void *arg)
 {
   but->autocomplete_func = func;
   but->autofunc_arg = arg;
 }
 
-void UI_but_func_menu_step_set(uiBut *but, uiMenuStepFunc func)
+void button_func_menu_step_set(Button *but, uiMenuStepFunc func)
 {
   but->menu_step_func = func;
 }
 
-void UI_but_menu_disable_hover_open(uiBut *but)
+void button_menu_disable_hover_open(Button *but)
 {
   but->menu_no_hover_open = true;
 }
 
-void UI_but_func_quick_tooltip_set(uiBut *but, std::function<std::string(const uiBut *but)> func)
+void button_func_quick_tooltip_set(Button *but, std::function<std::string(const Button *but)> func)
 {
   but->tip_quick_func = std::move(func);
-  UI_but_drawflag_enable(but, UI_BUT_HAS_QUICK_TOOLTIP);
+  button_drawflag_enable(but, BUT_HAS_QUICK_TOOLTIP);
 }
 
-void UI_but_func_tooltip_set(uiBut *but, uiButToolTipFunc func, void *arg, uiFreeArgFunc free_arg)
+void button_func_tooltip_set(Button *but, uiButToolTipFunc func, void *arg, uiFreeArgFunc free_arg)
 {
   but->tip_func = func;
   if (but->tip_arg_free) {
@@ -6244,7 +6225,7 @@ void UI_but_func_tooltip_set(uiBut *but, uiButToolTipFunc func, void *arg, uiFre
   but->tip_arg_free = free_arg;
 }
 
-void UI_but_func_tooltip_custom_set(uiBut *but,
+void button_func_tooltip_custom_set(Button *but,
                                     uiButToolTipCustomFunc func,
                                     void *arg,
                                     uiFreeArgFunc free_arg)
@@ -6257,41 +6238,42 @@ void UI_but_func_tooltip_custom_set(uiBut *but,
   but->tip_arg_free = free_arg;
 }
 
-void UI_but_func_pushed_state_set(uiBut *but, std::function<bool(const uiBut &)> func)
+void button_func_pushed_state_set(Button *but, std::function<bool(const Button &)> func)
 {
   but->pushed_state_func = func;
   ui_but_update(but);
 }
 
-uiBut *uiDefBlockBut(uiBlock *block,
-                     uiBlockCreateFunc func,
-                     void *arg,
-                     const StringRef str,
-                     int x,
-                     int y,
-                     short width,
-                     short height,
-                     const std::optional<StringRef> tip)
-{
-  uiBut *but = ui_def_but(block, ButType::Block, str, x, y, width, height, arg, 0.0, 0.0, tip);
-  but->block_create_func = func;
-  ui_but_update(but);
-  return but;
-}
-
-uiBut *uiDefBlockButN(uiBlock *block,
+Button *uiDefBlockBut(Block *block,
                       uiBlockCreateFunc func,
-                      void *argN,
+                      void *arg,
                       const StringRef str,
                       int x,
                       int y,
                       short width,
                       short height,
-                      const std::optional<StringRef> tip,
-                      uiButArgNFree func_argN_free_fn,
-                      uiButArgNCopy func_argN_copy_fn)
+                      const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, ButType::Block, str, x, y, width, height, nullptr, 0.0, 0.0, tip);
+  Button *but = ui_def_but(block, ButType::Block, str, x, y, width, height, arg, 0.0, 0.0, tip);
+  but->block_create_func = func;
+  ui_but_update(but);
+  return but;
+}
+
+Button *uiDefBlockButN(Block *block,
+                       uiBlockCreateFunc func,
+                       void *argN,
+                       const StringRef str,
+                       int x,
+                       int y,
+                       short width,
+                       short height,
+                       const std::optional<StringRef> tip,
+                       uiButArgNFree func_argN_free_fn,
+                       uiButArgNCopy func_argN_copy_fn)
+{
+  Button *but = ui_def_but(
+      block, ButType::Block, str, x, y, width, height, nullptr, 0.0, 0.0, tip);
   but->block_create_func = func;
   if (but->func_argN) {
     but->func_argN_free_fn(but->func_argN);
@@ -6303,38 +6285,38 @@ uiBut *uiDefBlockButN(uiBlock *block,
   return but;
 }
 
-uiBut *uiDefMenuBut(uiBlock *block,
-                    uiMenuCreateFunc func,
-                    void *arg,
-                    const StringRef str,
-                    int x,
-                    int y,
-                    short width,
-                    short height,
-                    const std::optional<StringRef> tip)
+Button *uiDefMenuBut(Block *block,
+                     uiMenuCreateFunc func,
+                     void *arg,
+                     const StringRef str,
+                     int x,
+                     int y,
+                     short width,
+                     short height,
+                     const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, ButType::Pulldown, str, x, y, width, height, arg, 0.0, 0.0, tip);
+  Button *but = ui_def_but(block, ButType::Pulldown, str, x, y, width, height, arg, 0.0, 0.0, tip);
   but->menu_create_func = func;
   ui_but_update(but);
   return but;
 }
 
-uiBut *uiDefIconTextMenuBut(uiBlock *block,
-                            uiMenuCreateFunc func,
-                            void *arg,
-                            int icon,
-                            const StringRef str,
-                            int x,
-                            int y,
-                            short width,
-                            short height,
-                            const std::optional<StringRef> tip)
+Button *uiDefIconTextMenuBut(Block *block,
+                             uiMenuCreateFunc func,
+                             void *arg,
+                             int icon,
+                             const StringRef str,
+                             int x,
+                             int y,
+                             short width,
+                             short height,
+                             const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, ButType::Pulldown, str, x, y, width, height, arg, 0.0, 0.0, tip);
+  Button *but = ui_def_but(block, ButType::Pulldown, str, x, y, width, height, arg, 0.0, 0.0, tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
 
-  but->drawflag |= UI_BUT_ICON_LEFT;
+  but->drawflag |= BUT_ICON_LEFT;
   ui_but_submenu_enable(block, but);
 
   but->menu_create_func = func;
@@ -6343,29 +6325,8 @@ uiBut *uiDefIconTextMenuBut(uiBlock *block,
   return but;
 }
 
-uiBut *uiDefIconMenuBut(uiBlock *block,
-                        uiMenuCreateFunc func,
-                        void *arg,
-                        int icon,
-                        int x,
-                        int y,
-                        short width,
-                        short height,
-                        const std::optional<StringRef> tip)
-{
-  uiBut *but = ui_def_but(block, ButType::Pulldown, "", x, y, width, height, arg, 0.0, 0.0, tip);
-
-  ui_def_but_icon(but, icon, UI_HAS_ICON);
-  but->drawflag &= ~UI_BUT_ICON_LEFT;
-
-  but->menu_create_func = func;
-  ui_but_update(but);
-
-  return but;
-}
-
-uiBut *uiDefIconBlockBut(uiBlock *block,
-                         uiBlockCreateFunc func,
+Button *uiDefIconMenuBut(Block *block,
+                         uiMenuCreateFunc func,
                          void *arg,
                          int icon,
                          int x,
@@ -6374,11 +6335,32 @@ uiBut *uiDefIconBlockBut(uiBlock *block,
                          short height,
                          const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(block, ButType::Block, "", x, y, width, height, arg, 0.0, 0.0, tip);
+  Button *but = ui_def_but(block, ButType::Pulldown, "", x, y, width, height, arg, 0.0, 0.0, tip);
+
+  ui_def_but_icon(but, icon, UI_HAS_ICON);
+  but->drawflag &= ~BUT_ICON_LEFT;
+
+  but->menu_create_func = func;
+  ui_but_update(but);
+
+  return but;
+}
+
+Button *uiDefIconBlockBut(Block *block,
+                          uiBlockCreateFunc func,
+                          void *arg,
+                          int icon,
+                          int x,
+                          int y,
+                          short width,
+                          short height,
+                          const std::optional<StringRef> tip)
+{
+  Button *but = ui_def_but(block, ButType::Block, "", x, y, width, height, arg, 0.0, 0.0, tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
 
-  but->drawflag |= UI_BUT_ICON_LEFT;
+  but->drawflag |= BUT_ICON_LEFT;
 
   but->block_create_func = func;
   ui_but_update(but);
@@ -6386,29 +6368,29 @@ uiBut *uiDefIconBlockBut(uiBlock *block,
   return but;
 }
 
-uiBut *uiDefSearchBut(uiBlock *block,
-                      void *arg,
-                      int icon,
-                      int maxncpy,
-                      int x,
-                      int y,
-                      short width,
-                      short height,
-                      const std::optional<StringRef> tip)
+Button *uiDefSearchBut(Block *block,
+                       void *arg,
+                       int icon,
+                       int maxncpy,
+                       int x,
+                       int y,
+                       short width,
+                       short height,
+                       const std::optional<StringRef> tip)
 {
-  uiBut *but = ui_def_but(
+  Button *but = ui_def_but(
       block, ButType::SearchMenu, "", x, y, width, height, arg, 0.0, maxncpy, tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
 
-  but->drawflag |= UI_BUT_ICON_LEFT | UI_BUT_TEXT_LEFT;
+  but->drawflag |= BUT_ICON_LEFT | BUT_TEXT_LEFT;
 
   ui_but_update(but);
 
   return but;
 }
 
-void UI_but_func_search_set(uiBut *but,
+void button_func_search_set(Button *but,
                             uiButSearchCreateFn search_create_fn,
                             uiButSearchUpdateFn search_update_fn,
                             void *arg,
@@ -6417,7 +6399,7 @@ void UI_but_func_search_set(uiBut *but,
                             uiButHandleFunc search_exec_fn,
                             void *active)
 {
-  uiButSearch *search_but = (uiButSearch *)but;
+  ButtonSearch *search_but = (ButtonSearch *)but;
 
   BLI_assert(but->type == ButType::SearchMenu);
 
@@ -6449,16 +6431,16 @@ void UI_but_func_search_set(uiBut *but,
 #endif
     /* Handling will pass the active item as arg2 later, so keep it nullptr here. */
     if (free_arg) {
-      UI_but_funcN_set(but, search_exec_fn, search_but->arg, nullptr);
+      button_funcN_set(but, search_exec_fn, search_but->arg, nullptr);
     }
     else {
-      UI_but_func_set(but, search_exec_fn, search_but->arg, nullptr);
+      button_func_set(but, search_exec_fn, search_but->arg, nullptr);
     }
   }
 
   /* search buttons show red-alert if item doesn't exist, not for menus. Don't do this for
    * buttons where any result is valid anyway, since any string will be valid anyway. */
-  if (0 == (but->block->flag & UI_BLOCK_LOOP) && !search_but->results_are_suggestions) {
+  if (0 == (but->block->flag & BLOCK_LOOP) && !search_but->results_are_suggestions) {
     /* skip empty buttons, not all buttons need input, we only show invalid */
     if (!but->drawstr.empty()) {
       ui_but_search_refresh(search_but);
@@ -6466,40 +6448,40 @@ void UI_but_func_search_set(uiBut *but,
   }
 }
 
-void UI_but_func_search_set_context_menu(uiBut *but, uiButSearchContextMenuFn context_menu_fn)
+void button_func_search_set_context_menu(Button *but, uiButSearchContextMenuFn context_menu_fn)
 {
-  uiButSearch *but_search = (uiButSearch *)but;
+  ButtonSearch *but_search = (ButtonSearch *)but;
   BLI_assert(but->type == ButType::SearchMenu);
 
   but_search->item_context_menu_fn = context_menu_fn;
 }
 
-void UI_but_func_search_set_sep_string(uiBut *but, const char *search_sep_string)
+void button_func_search_set_sep_string(Button *but, const char *search_sep_string)
 {
-  uiButSearch *but_search = (uiButSearch *)but;
+  ButtonSearch *but_search = (ButtonSearch *)but;
   BLI_assert(but->type == ButType::SearchMenu);
 
   but_search->item_sep_string = search_sep_string;
 }
 
-void UI_but_func_search_set_tooltip(uiBut *but, uiButSearchTooltipFn tooltip_fn)
+void button_func_search_set_tooltip(Button *but, uiButSearchTooltipFn tooltip_fn)
 {
-  uiButSearch *but_search = (uiButSearch *)but;
+  ButtonSearch *but_search = (ButtonSearch *)but;
   BLI_assert(but->type == ButType::SearchMenu);
 
   but_search->item_tooltip_fn = tooltip_fn;
 }
 
-void UI_but_func_search_set_listen(uiBut *but, uiButSearchListenFn listen_fn)
+void button_func_search_set_listen(Button *but, uiButSearchListenFn listen_fn)
 {
-  uiButSearch *but_search = (uiButSearch *)but;
+  ButtonSearch *but_search = (ButtonSearch *)but;
   BLI_assert(but->type == ButType::SearchMenu);
   but_search->listen_fn = listen_fn;
 }
 
-void UI_but_func_search_set_results_are_suggestions(uiBut *but, const bool value)
+void button_func_search_set_results_are_suggestions(Button *but, const bool value)
 {
-  uiButSearch *but_search = (uiButSearch *)but;
+  ButtonSearch *but_search = (ButtonSearch *)but;
   BLI_assert(but->type == ButType::SearchMenu);
 
   but_search->results_are_suggestions = value;
@@ -6507,9 +6489,9 @@ void UI_but_func_search_set_results_are_suggestions(uiBut *but, const bool value
 
 /* Callbacks for operator search button. */
 static void operator_enum_search_update_fn(
-    const bContext *C, void *but, const char *str, uiSearchItems *items, const bool /*is_first*/)
+    const bContext *C, void *but, const char *str, SearchItems *items, const bool /*is_first*/)
 {
-  wmOperatorType *ot = ((uiBut *)but)->optype;
+  wmOperatorType *ot = ((Button *)but)->optype;
   PropertyRNA *prop = ot->prop;
 
   if (prop == nullptr) {
@@ -6523,24 +6505,23 @@ static void operator_enum_search_update_fn(
   }
   else {
     /* Will create it if needed! */
-    PointerRNA *ptr = UI_but_operator_ptr_ensure(static_cast<uiBut *>(but));
+    PointerRNA *ptr = button_operator_ptr_ensure(static_cast<Button *>(but));
 
     bool do_free;
     const EnumPropertyItem *all_items;
     RNA_property_enum_items_gettexted((bContext *)C, ptr, prop, &all_items, nullptr, &do_free);
 
-    blender::ui::string_search::StringSearch<const EnumPropertyItem> search;
+    string_search::StringSearch<const EnumPropertyItem> search;
 
     for (const EnumPropertyItem *item = all_items; item->identifier; item++) {
       search.add(item->name, item);
     }
 
-    const blender::Vector<const EnumPropertyItem *> filtered_items = search.query(str);
+    const Vector<const EnumPropertyItem *> filtered_items = search.query(str);
     for (const EnumPropertyItem *item : filtered_items) {
       /* NOTE: need to give the index rather than the
        * identifier because the enum can be freed */
-      if (!UI_search_item_add(items, item->name, POINTER_FROM_INT(item->value), item->icon, 0, 0))
-      {
+      if (!search_item_add(items, item->name, POINTER_FROM_INT(item->value), item->icon, 0, 0)) {
         break;
       }
     }
@@ -6553,9 +6534,9 @@ static void operator_enum_search_update_fn(
 
 static void operator_enum_search_exec_fn(bContext * /*C*/, void *but, void *arg2)
 {
-  wmOperatorType *ot = ((uiBut *)but)->optype;
+  wmOperatorType *ot = ((Button *)but)->optype;
   /* Will create it if needed! */
-  PointerRNA *opptr = UI_but_operator_ptr_ensure(static_cast<uiBut *>(but));
+  PointerRNA *opptr = button_operator_ptr_ensure(static_cast<Button *>(but));
 
   if (ot) {
     if (ot->prop) {
@@ -6571,20 +6552,20 @@ static void operator_enum_search_exec_fn(bContext * /*C*/, void *but, void *arg2
   }
 }
 
-uiBut *uiDefSearchButO_ptr(uiBlock *block,
-                           wmOperatorType *ot,
-                           IDProperty *properties,
-                           void *arg,
-                           int icon,
-                           int maxncpy,
-                           int x,
-                           int y,
-                           short width,
-                           short height,
-                           const std::optional<StringRef> tip)
+Button *uiDefSearchButO_ptr(Block *block,
+                            wmOperatorType *ot,
+                            IDProperty *properties,
+                            void *arg,
+                            int icon,
+                            int maxncpy,
+                            int x,
+                            int y,
+                            short width,
+                            short height,
+                            const std::optional<StringRef> tip)
 {
-  uiBut *but = uiDefSearchBut(block, arg, icon, maxncpy, x, y, width, height, tip);
-  UI_but_func_search_set(but,
+  Button *but = uiDefSearchBut(block, arg, icon, maxncpy, x, y, width, height, tip);
+  button_func_search_set(but,
                          ui_searchbox_create_generic,
                          operator_enum_search_update_fn,
                          but,
@@ -6594,10 +6575,10 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
                          nullptr);
 
   but->optype = ot;
-  but->opcontext = blender::wm::OpCallContext::ExecDefault;
+  but->opcontext = wm::OpCallContext::ExecDefault;
 
   if (properties) {
-    PointerRNA *ptr = UI_but_operator_ptr_ensure(but);
+    PointerRNA *ptr = button_operator_ptr_ensure(but);
     /* Copy id-properties. */
     ptr->data = IDP_CopyProperty(properties);
   }
@@ -6605,45 +6586,45 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
   return but;
 }
 
-void UI_but_hint_drawstr_set(uiBut *but, const char *string)
+void button_hint_drawstr_set(Button *but, const char *string)
 {
   ui_but_add_shortcut(but, string, false);
 }
 
-void UI_but_icon_indicator_number_set(uiBut *but, const int indicator_number)
+void button_icon_indicator_number_set(Button *but, const int indicator_number)
 {
-  UI_icon_text_overlay_init_from_count(&but->icon_overlay_text, indicator_number);
+  icon_text_overlay_init_from_count(&but->icon_overlay_text, indicator_number);
 }
 
-void UI_but_icon_indicator_set(uiBut *but, const char *string)
+void button_icon_indicator_set(Button *but, const char *string)
 {
   STRNCPY_UTF8(but->icon_overlay_text.text, string);
 }
 
-void UI_but_icon_indicator_color_set(uiBut *but, const uchar color[4])
+void button_icon_indicator_color_set(Button *but, const uchar color[4])
 {
   copy_v4_v4_uchar(but->icon_overlay_text.color, color);
 }
 
-void UI_but_node_link_set(uiBut *but, bNodeSocket *socket, const float draw_color[4])
+void button_node_link_set(Button *but, bNodeSocket *socket, const float draw_color[4])
 {
-  but->flag |= UI_BUT_NODE_LINK;
+  but->flag |= BUT_NODE_LINK;
   but->custom_data = socket;
   rgba_float_to_uchar(but->col, draw_color);
 }
 
-void UI_but_number_step_size_set(uiBut *but, float step_size)
+void button_number_step_size_set(Button *but, float step_size)
 {
-  uiButNumber *but_number = (uiButNumber *)but;
+  ButtonNumber *but_number = (ButtonNumber *)but;
   BLI_assert(but->type == ButType::Num);
 
   but_number->step_size = step_size;
   BLI_assert(step_size > 0);
 }
 
-void UI_but_number_precision_set(uiBut *but, float precision)
+void button_number_precision_set(Button *but, float precision)
 {
-  uiButNumber *but_number = (uiButNumber *)but;
+  ButtonNumber *but_number = (ButtonNumber *)but;
   BLI_assert(but->type == ButType::Num);
 
   but_number->precision = precision;
@@ -6651,18 +6632,18 @@ void UI_but_number_precision_set(uiBut *but, float precision)
   BLI_assert(precision > -2);
 }
 
-void UI_but_number_slider_step_size_set(uiBut *but, float step_size)
+void button_number_slider_step_size_set(Button *but, float step_size)
 {
-  uiButNumberSlider *but_number = (uiButNumberSlider *)but;
+  ButtonNumberSlider *but_number = (ButtonNumberSlider *)but;
   BLI_assert(but->type == ButType::NumSlider);
 
   but_number->step_size = step_size;
   BLI_assert(step_size > 0);
 }
 
-void UI_but_number_slider_precision_set(uiBut *but, float precision)
+void button_number_slider_precision_set(Button *but, float precision)
 {
-  uiButNumberSlider *but_number = (uiButNumberSlider *)but;
+  ButtonNumberSlider *but_number = (ButtonNumberSlider *)but;
   BLI_assert(but->type == ButType::NumSlider);
 
   but_number->precision = precision;
@@ -6670,32 +6651,32 @@ void UI_but_number_slider_precision_set(uiBut *but, float precision)
   BLI_assert(precision > -2);
 }
 
-void UI_but_label_alpha_factor_set(uiBut *but, const float alpha_factor)
+void button_label_alpha_factor_set(Button *but, const float alpha_factor)
 {
-  uiButLabel *but_label = reinterpret_cast<uiButLabel *>(but);
+  ButtonLabel *but_label = reinterpret_cast<ButtonLabel *>(but);
   BLI_assert(but->type == ButType::Label);
   but_label->alpha_factor = alpha_factor;
 }
 
-void UI_but_search_preview_grid_size_set(uiBut *but, int rows, int cols)
+void button_search_preview_grid_size_set(Button *but, int rows, int cols)
 {
   BLI_assert(but->type == ButType::SearchMenu);
-  uiButSearch *but_search = reinterpret_cast<uiButSearch *>(but);
+  ButtonSearch *but_search = reinterpret_cast<ButtonSearch *>(but);
   but_search->preview_rows = rows;
   but_search->preview_cols = cols;
 }
 
-void UI_but_view_item_draw_size_set(uiBut *but,
+void button_view_item_draw_size_set(Button *but,
                                     const std::optional<int> draw_width,
                                     const std::optional<int> draw_height)
 {
   BLI_assert(but->type == ButType::ViewItem);
-  uiButViewItem *but_view_item = reinterpret_cast<uiButViewItem *>(but);
+  ButtonViewItem *but_view_item = reinterpret_cast<ButtonViewItem *>(but);
   but_view_item->draw_width = draw_width.value_or(0);
   but_view_item->draw_height = draw_height.value_or(0);
 }
 
-void UI_but_focus_on_enter_event(wmWindow *win, uiBut *but)
+void button_focus_on_enter_event(wmWindow *win, Button *but)
 {
   wmEvent event;
   wm_event_init_from_window(win, &event);
@@ -6709,13 +6690,13 @@ void UI_but_focus_on_enter_event(wmWindow *win, uiBut *but)
   WM_event_add(win, &event);
 }
 
-void UI_but_func_hold_set(uiBut *but, uiButHandleHoldFunc func, void *argN)
+void button_func_hold_set(Button *but, uiButHandleHoldFunc func, void *argN)
 {
   but->hold_func = func;
   but->hold_argN = argN;
 }
 
-std::optional<EnumPropertyItem> UI_but_rna_enum_item_get(bContext &C, uiBut &but)
+std::optional<EnumPropertyItem> button_rna_enum_item_get(bContext &C, Button &but)
 {
   PointerRNA *ptr = nullptr;
   PropertyRNA *prop = nullptr;
@@ -6730,7 +6711,7 @@ std::optional<EnumPropertyItem> UI_but_rna_enum_item_get(bContext &C, uiBut &but
     wmOperatorType *ot = but.optype;
 
     /* So the context is passed to `itemf` functions. */
-    PointerRNA *opptr = UI_but_operator_ptr_ensure(&but);
+    PointerRNA *opptr = button_operator_ptr_ensure(&but);
     WM_operator_properties_sanitize(opptr, false);
 
     /* If the default property of the operator is an enum and is set, fetch the tooltip of the
@@ -6757,7 +6738,7 @@ std::optional<EnumPropertyItem> UI_but_rna_enum_item_get(bContext &C, uiBut &but
   return item;
 }
 
-std::string UI_but_string_get_rna_property_identifier(const uiBut &but)
+std::string button_string_get_rna_property_identifier(const Button &but)
 {
   if (!but.rnaprop) {
     return {};
@@ -6765,7 +6746,7 @@ std::string UI_but_string_get_rna_property_identifier(const uiBut &but)
   return RNA_property_identifier(but.rnaprop);
 }
 
-std::string UI_but_string_get_rna_struct_identifier(const uiBut &but)
+std::string button_string_get_rna_struct_identifier(const Button &but)
 {
   if (but.rnaprop && but.rnapoin.data) {
     return RNA_struct_identifier(but.rnapoin.type);
@@ -6774,23 +6755,23 @@ std::string UI_but_string_get_rna_struct_identifier(const uiBut &but)
     return but.optype->idname;
   }
   if (ELEM(but.type, ButType::Menu, ButType::Pulldown)) {
-    if (MenuType *mt = UI_but_menutype_get(&but)) {
+    if (MenuType *mt = button_menutype_get(&but)) {
       return mt->idname;
     }
   }
   if (but.type == ButType::Popover) {
-    if (PanelType *pt = UI_but_paneltype_get(&but)) {
+    if (PanelType *pt = button_paneltype_get(&but)) {
       return pt->idname;
     }
   }
   return {};
 }
 
-std::string UI_but_string_get_label(uiBut &but)
+std::string button_string_get_label(Button &but)
 {
   if (!but.str.empty()) {
     size_t str_len = but.str.size();
-    if (but.flag & UI_BUT_HAS_SEP_CHAR) {
+    if (but.flag & BUT_HAS_SEP_CHAR) {
       const size_t sep_index = but.str.find_first_of(UI_SEP_CHAR);
       if (sep_index != std::string::npos) {
         str_len = sep_index;
@@ -6799,23 +6780,23 @@ std::string UI_but_string_get_label(uiBut &but)
     return but.str.substr(0, str_len);
   }
 
-  return UI_but_string_get_rna_label(but);
+  return button_string_get_rna_label(but);
 }
 
-std::string UI_but_context_menu_title_from_button(uiBut &but)
+std::string button_context_menu_title_from_button(Button &but)
 {
   if (but.type == ButType::ViewItem) {
-    const uiButViewItem &view_item_but = static_cast<const uiButViewItem &>(but);
+    const auto &view_item_but = static_cast<const ButtonViewItem &>(but);
     if (view_item_but.view_item == nullptr) {
       return "";
     }
-    const blender::ui::AbstractView &tree_view = view_item_but.view_item->get_view();
+    const AbstractView &tree_view = view_item_but.view_item->get_view();
     return IFACE_(tree_view.get_context_menu_title());
   }
-  return UI_but_string_get_label(but);
+  return button_string_get_label(but);
 }
 
-std::string UI_but_string_get_tooltip_label(const uiBut &but)
+std::string button_string_get_tooltip_label(const Button &but)
 {
   if (!but.tip_quick_func) {
     return {};
@@ -6823,32 +6804,32 @@ std::string UI_but_string_get_tooltip_label(const uiBut &but)
   return but.tip_quick_func(&but);
 }
 
-std::string UI_but_string_get_rna_label(uiBut &but)
+std::string button_string_get_rna_label(Button &but)
 {
   if (but.rnaprop) {
     return RNA_property_ui_name(but.rnaprop, &but.rnapoin);
   }
   if (but.optype) {
-    PointerRNA *opptr = UI_but_operator_ptr_ensure(&but);
+    PointerRNA *opptr = button_operator_ptr_ensure(&but);
     return WM_operatortype_name(but.optype, opptr);
   }
   if (ELEM(but.type, ButType::Menu, ButType::Pulldown, ButType::Popover)) {
-    if (MenuType *mt = UI_but_menutype_get(&but)) {
+    if (MenuType *mt = button_menutype_get(&but)) {
       return CTX_TIP_(mt->translation_context, mt->label);
     }
 
-    if (wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(&but, nullptr)) {
+    if (wmOperatorType *ot = button_operatortype_get_from_enum_menu(&but, nullptr)) {
       return WM_operatortype_name(ot, nullptr);
     }
 
-    if (PanelType *pt = UI_but_paneltype_get(&but)) {
+    if (PanelType *pt = button_paneltype_get(&but)) {
       return CTX_TIP_(pt->translation_context, pt->label);
     }
   }
   return {};
 }
 
-std::string UI_but_string_get_rna_label_context(const uiBut &but)
+std::string button_string_get_rna_label_context(const Button &but)
 {
   if (but.rnaprop) {
     return RNA_property_translation_context(but.rnaprop);
@@ -6857,14 +6838,14 @@ std::string UI_but_string_get_rna_label_context(const uiBut &but)
     return RNA_struct_translation_context(but.optype->srna);
   }
   if (ELEM(but.type, ButType::Menu, ButType::Pulldown)) {
-    if (MenuType *mt = UI_but_menutype_get(&but)) {
+    if (MenuType *mt = button_menutype_get(&but)) {
       return RNA_struct_translation_context(mt->rna_ext.srna);
     }
   }
   return BLT_I18NCONTEXT_DEFAULT_BPYRNA;
 }
 
-std::string UI_but_string_get_tooltip(bContext &C, uiBut &but)
+std::string button_string_get_tooltip(bContext &C, Button &but)
 {
   if (but.tip_func) {
     return but.tip_func(&C, but.tip_arg, but.tip);
@@ -6872,10 +6853,10 @@ std::string UI_but_string_get_tooltip(bContext &C, uiBut &but)
   if (!but.tip.is_empty()) {
     return but.tip;
   }
-  return UI_but_string_get_rna_tooltip(C, but);
+  return button_string_get_rna_tooltip(C, but);
 }
 
-std::string UI_but_string_get_rna_tooltip(bContext &C, uiBut &but)
+std::string button_string_get_rna_tooltip(bContext &C, Button &but)
 {
   if (but.rnaprop) {
     const char *t = RNA_property_ui_description(but.rnaprop, &but.rnapoin);
@@ -6884,7 +6865,7 @@ std::string UI_but_string_get_rna_tooltip(bContext &C, uiBut &but)
     }
   }
   else if (but.optype) {
-    PointerRNA *opptr = UI_but_operator_ptr_ensure(&but);
+    PointerRNA *opptr = button_operator_ptr_ensure(&but);
     const bContextStore *previous_ctx = CTX_store_get(&C);
     CTX_store_set(&C, but.context);
     std::string tmp = WM_operatortype_description(&C, but.optype, opptr);
@@ -6892,7 +6873,7 @@ std::string UI_but_string_get_rna_tooltip(bContext &C, uiBut &but)
     return tmp;
   }
   if (ELEM(but.type, ButType::Menu, ButType::Pulldown, ButType::Popover)) {
-    if (MenuType *mt = UI_but_menutype_get(&but)) {
+    if (MenuType *mt = button_menutype_get(&but)) {
       /* Not all menus are from Python. */
       if (mt->rna_ext.srna) {
         const char *t = RNA_struct_ui_description(mt->rna_ext.srna);
@@ -6902,7 +6883,7 @@ std::string UI_but_string_get_rna_tooltip(bContext &C, uiBut &but)
       }
     }
 
-    if (wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(&but, nullptr)) {
+    if (wmOperatorType *ot = button_operatortype_get_from_enum_menu(&but, nullptr)) {
       return WM_operatortype_description(&C, ot, nullptr);
     }
   }
@@ -6910,55 +6891,55 @@ std::string UI_but_string_get_rna_tooltip(bContext &C, uiBut &but)
   return {};
 }
 
-std::string UI_but_string_get_operator_keymap(bContext &C, uiBut &but)
+std::string button_string_get_operator_keymap(bContext &C, Button &but)
 {
   return ui_but_event_operator_string(&C, &but).value_or("");
 }
 
-std::string UI_but_string_get_property_keymap(bContext &C, uiBut &but)
+std::string button_string_get_property_keymap(bContext &C, Button &but)
 {
   return ui_but_event_property_operator_string(&C, &but).value_or("");
 }
 
-std::string UI_but_extra_icon_string_get_label(const uiButExtraOpIcon &extra_icon)
+std::string button_extra_icon_string_get_label(const ButtonExtraOpIcon &extra_icon)
 {
-  wmOperatorType *optype = UI_but_extra_operator_icon_optype_get(&extra_icon);
-  PointerRNA *opptr = UI_but_extra_operator_icon_opptr_get(&extra_icon);
+  wmOperatorType *optype = button_extra_operator_icon_optype_get(&extra_icon);
+  PointerRNA *opptr = button_extra_operator_icon_opptr_get(&extra_icon);
   return WM_operatortype_name(optype, opptr);
 }
 
-std::string UI_but_extra_icon_string_get_tooltip(bContext &C, const uiButExtraOpIcon &extra_icon)
+std::string button_extra_icon_string_get_tooltip(bContext &C, const ButtonExtraOpIcon &extra_icon)
 {
-  wmOperatorType *optype = UI_but_extra_operator_icon_optype_get(&extra_icon);
-  PointerRNA *opptr = UI_but_extra_operator_icon_opptr_get(&extra_icon);
+  wmOperatorType *optype = button_extra_operator_icon_optype_get(&extra_icon);
+  PointerRNA *opptr = button_extra_operator_icon_opptr_get(&extra_icon);
   return WM_operatortype_description(&C, optype, opptr);
 }
 
-std::string UI_but_extra_icon_string_get_operator_keymap(const bContext &C,
-                                                         const uiButExtraOpIcon &extra_icon)
+std::string button_extra_icon_string_get_operator_keymap(const bContext &C,
+                                                         const ButtonExtraOpIcon &extra_icon)
 {
   return ui_but_extra_icon_event_operator_string(&C, &extra_icon).value_or("");
 }
 
 /* Program Init/Exit */
 
-void UI_init()
+void init()
 {
   ui_resources_init();
 }
 
-void UI_init_userdef()
+void init_userdef()
 {
   /* Initialize UI variables from values set in the preferences. */
   uiStyleInit();
 }
 
-void UI_reinit_font()
+void reinit_font()
 {
   uiStyleInit();
 }
 
-void UI_update_text_styles()
+void update_text_styles()
 {
   if (BLF_has_variable_weight(0)) {
     return;
@@ -6972,13 +6953,15 @@ void UI_update_text_styles()
   style->tooltip.character_weight = weight;
 }
 
-void UI_exit()
+void ui_exit()
 {
   ui_resources_free();
   ui_but_clipboard_free();
 }
 
-void UI_interface_tag_script_reload()
+void interface_tag_script_reload()
 {
   ui_interface_tag_script_reload_queries();
 }
+
+}  // namespace blender::ui
