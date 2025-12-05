@@ -288,8 +288,11 @@ static void seq_transform_cancel(TransInfo *t, Span<Strip *> transformed_strips)
       seq::edit_flag_for_removal(scene, seqbase, strip);
     }
     seq::edit_remove_flagged_strips(scene, seqbase);
+    vse::sync_active_scene_and_time_with_scene_strip(*t->context);
     return;
   }
+
+  vse::sync_active_scene_and_time_with_scene_strip(*t->context);
 
   for (Strip *strip : transformed_strips) {
     /* Handle pre-existing overlapping strips even when operator is canceled.
@@ -862,6 +865,12 @@ static void special_aftertrans_update__sequencer(bContext *C, TransInfo *t)
 
 bool transform_convert_sequencer_clamp(const TransInfo *t, float r_val[2])
 {
+  if (t->data_container_len == 0) {
+    /* During drag and drop, there is no custom data. We don't need to clamp here anyways,
+     * since we're not adjusting handles, and channels are already clamped in drag/drop code. */
+    return false;
+  }
+
   const TransSeq *ts = (TransSeq *)TRANS_DATA_CONTAINER_FIRST_SINGLE(t)->custom.type.data;
   int val[2] = {round_fl_to_int(r_val[0]), round_fl_to_int(r_val[1])};
   bool clamped = false;
