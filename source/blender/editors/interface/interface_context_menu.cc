@@ -152,11 +152,11 @@ static void but_shortcut_name_func(bContext *C, void *arg1, int /*event*/)
   if (std::optional<std::string> shortcut_str = WM_key_event_operator_string(
           C, idname, but->opcontext, prop, true))
   {
-    ui_but_add_shortcut(but, shortcut_str->c_str(), true);
+    button_add_shortcut(but, shortcut_str->c_str(), true);
   }
   else {
     /* simply strip the shortcut */
-    ui_but_add_shortcut(but, nullptr, true);
+    button_add_shortcut(but, nullptr, true);
   }
 
   shortcut_free_operator_property(prop);
@@ -384,7 +384,7 @@ static void ui_but_user_menu_add(bContext *C, Button *but, bUserMenu *um)
 {
   BLI_assert(ui_but_is_user_menu_compatible(C, but));
 
-  std::string drawstr = ui_but_drawstr_without_sep_char(but);
+  std::string drawstr = button_drawstr_without_sep_char(but);
 
   /* Used for USER_MENU_TYPE_MENU. */
   MenuType *mt = nullptr;
@@ -518,11 +518,11 @@ static void set_layout_context_from_button(bContext *C, Layout &layout, Button *
   CTX_store_set(C, layout.context_store());
 }
 
-bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *event)
+bool popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *event)
 {
   /* ui_but_is_interactive() may let some buttons through that should not get a context menu - it
    * doesn't make sense for them. */
-  if (ELEM(but->type, ButType::Label, ButType::Image)) {
+  if (ELEM(but->type, ButtonType::Label, ButtonType::Image)) {
     return false;
   }
 
@@ -539,7 +539,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
   if (is_disabled) {
     /* Suppress editing commands. */
   }
-  else if (but->type == ButType::Tab) {
+  else if (but->type == ButtonType::Tab) {
     ButtonTab *tab = (ButtonTab *)but;
     if (tab->menu) {
       menutype_draw(C, tab->menu, &layout);
@@ -968,12 +968,12 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
 
   {
     const ARegion *region = CTX_wm_region_popup(C) ? CTX_wm_region_popup(C) : CTX_wm_region(C);
-    ButtonViewItem *view_item_but = (but->type == ButType::ViewItem) ?
+    ButtonViewItem *view_item_but = (but->type == ButtonType::ViewItem) ?
                                         static_cast<ButtonViewItem *>(but) :
                                         static_cast<ButtonViewItem *>(
-                                            ui_view_item_find_mouse_over(region, event->xy));
+                                            view_item_find_mouse_over(region, event->xy));
     if (view_item_but) {
-      BLI_assert(view_item_but->type == ButType::ViewItem);
+      BLI_assert(view_item_but->type == ButtonType::ViewItem);
 
       const bContextStore *prev_ctx = CTX_store_get(C);
       /* Sub-layout for context override. */
@@ -1026,9 +1026,9 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
   if (but->rnapoin.data && but->rnaprop) {
     const PropertyType prop_type = RNA_property_type(but->rnaprop);
     if (((prop_type == PROP_POINTER) ||
-         (prop_type == PROP_STRING && but->type == ButType::SearchMenu &&
-          ((ButtonSearch *)but)->items_update_fn == ui_rna_collection_search_update_fn)) &&
-        ui_jump_to_target_button_poll(C))
+         (prop_type == PROP_STRING && but->type == ButtonType::SearchMenu &&
+          ((ButtonSearch *)but)->items_update_fn == rna_collection_search_update_fn)) &&
+        jump_to_target_button_poll(C))
     {
       layout.op("UI_OT_jump_to_target_button",
                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Jump to Target"),
@@ -1054,7 +1054,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
       if (umi != nullptr) {
         Button *but2 = uiDefIconTextBut(
             block,
-            ButType::But,
+            ButtonType::But,
             ICON_MENU_PANEL,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove from Quick Favorites"),
             0,
@@ -1077,7 +1077,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
     if (!item_found) {
       Button *but2 = uiDefIconTextBut(
           block,
-          ButType::But,
+          ButtonType::But,
           ICON_MENU_PANEL,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Add to Quick Favorites"),
           0,
@@ -1125,7 +1125,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
 
         Button *but2 = uiDefIconTextBut(
             block,
-            ButType::But,
+            ButtonType::But,
             ICON_HAND,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Change Shortcut..."),
             0,
@@ -1140,7 +1140,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
       }
       else {
         Button *but2 = uiDefIconTextBut(block,
-                                        ButType::But,
+                                        ButtonType::But,
                                         ICON_HAND,
                                         IFACE_("Non-Keyboard Shortcut"),
                                         0,
@@ -1155,7 +1155,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
 
       Button *but2 = uiDefIconTextBut(
           block,
-          ButType::But,
+          ButtonType::But,
           ICON_BLANK1,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove Shortcut"),
           0,
@@ -1170,7 +1170,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
     else if (WM_keymap_guess_opname(C, idname)) {
       Button *but2 = uiDefIconTextBut(
           block,
-          ButType::But,
+          ButtonType::But,
           ICON_HAND,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Assign Shortcut..."),
           0,
@@ -1217,7 +1217,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
 
   /* perhaps we should move this into (G.debug & G_DEBUG) - campbell */
   if (U.flag & USER_DEVELOPER_UI) {
-    if (ui_block_is_menu(but->block) == false) {
+    if (block_is_menu(but->block) == false) {
       layout.op("UI_OT_editsource",
                 std::nullopt,
                 ICON_NONE,
@@ -1227,7 +1227,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
   }
 
   /* Show header tools for header buttons. */
-  if (ui_block_is_popup_any(but->block) == false) {
+  if (block_is_popup_any(but->block) == false) {
     const ARegion *region = CTX_wm_region(C);
 
     if (!region) {
@@ -1252,7 +1252,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
   const ARegion *region = CTX_wm_region_popup(C) ? CTX_wm_region_popup(C) : CTX_wm_region(C);
   const bool is_inside_listbox = ui_list_find_mouse_over(region, event) != nullptr;
   const bool is_inside_listrow = is_inside_listbox ?
-                                     ui_list_row_find_mouse_over(region, event->xy) != nullptr :
+                                     list_row_find_mouse_over(region, event->xy) != nullptr :
                                      false;
   if (is_inside_listrow) {
     MenuType *mt = WM_menutype_find("UI_MT_list_item_context_menu", true);
@@ -1279,7 +1279,7 @@ bool ui_popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *e
 /** \name Panel Context Menu
  * \{ */
 
-void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
+void popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 {
   bScreen *screen = CTX_wm_screen(C);
   const bool has_panel_category = panel_category_is_visible(region);

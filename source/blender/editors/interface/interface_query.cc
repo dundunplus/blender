@@ -36,42 +36,43 @@ namespace blender::ui {
 /** \name Button (#Button) State
  * \{ */
 
-bool ui_but_is_editable(const Button *but)
+bool button_is_editable(const Button *but)
 {
   return !ELEM(but->type,
-               ButType::Label,
-               ButType::Sepr,
-               ButType::SeprLine,
-               ButType::Roundbox,
-               ButType::ListBox,
-               ButType::Progress);
+               ButtonType::Label,
+               ButtonType::Sepr,
+               ButtonType::SeprLine,
+               ButtonType::Roundbox,
+               ButtonType::ListBox,
+               ButtonType::Progress);
 }
 
-bool ui_but_is_editable_as_text(const Button *but)
+bool button_is_editable_as_text(const Button *but)
 {
-  return ELEM(but->type, ButType::Text, ButType::Num, ButType::NumSlider, ButType::SearchMenu);
+  return ELEM(
+      but->type, ButtonType::Text, ButtonType::Num, ButtonType::NumSlider, ButtonType::SearchMenu);
 }
 
-bool ui_but_is_toggle(const Button *but)
+bool button_is_toggle(const Button *but)
 {
   return ELEM(but->type,
-              ButType::ButToggle,
-              ButType::Toggle,
-              ButType::IconToggle,
-              ButType::IconToggleN,
-              ButType::ToggleN,
-              ButType::Checkbox,
-              ButType::CheckboxN,
-              ButType::Row);
+              ButtonType::ButToggle,
+              ButtonType::Toggle,
+              ButtonType::IconToggle,
+              ButtonType::IconToggleN,
+              ButtonType::ToggleN,
+              ButtonType::Checkbox,
+              ButtonType::CheckboxN,
+              ButtonType::Row);
 }
 
-bool ui_but_is_interactive_ex(const Button *but, const bool labeledit, const bool for_tooltip)
+bool button_is_interactive_ex(const Button *but, const bool labeledit, const bool for_tooltip)
 {
-  /* NOTE: #ButType::Label is included for highlights, this allows drags. */
-  if (ELEM(but->type, ButType::Label, ButType::PreviewTile)) {
+  /* NOTE: #ButtonType::Label is included for highlights, this allows drags. */
+  if (ELEM(but->type, ButtonType::Label, ButtonType::PreviewTile)) {
     if (for_tooltip) {
       /* It's important labels are considered interactive for the purpose of showing tooltip. */
-      if (!ui_but_drag_is_draggable(but) && but->tip_func == nullptr &&
+      if (!button_drag_is_draggable(but) && but->tip_func == nullptr &&
           but->tip_custom_func == nullptr && but->tip_quick_func == nullptr &&
           (but->tip == nullptr || but->tip[0] == '\0'))
       {
@@ -79,13 +80,18 @@ bool ui_but_is_interactive_ex(const Button *but, const bool labeledit, const boo
       }
     }
     else {
-      if (!ui_but_drag_is_draggable(but)) {
+      if (!button_drag_is_draggable(but)) {
         return false;
       }
     }
   }
 
-  if (ELEM(but->type, ButType::Roundbox, ButType::Sepr, ButType::SeprLine, ButType::ListBox)) {
+  if (ELEM(but->type,
+           ButtonType::Roundbox,
+           ButtonType::Sepr,
+           ButtonType::SeprLine,
+           ButtonType::ListBox))
+  {
     return false;
   }
   if (but->flag & UI_HIDDEN) {
@@ -94,15 +100,15 @@ bool ui_but_is_interactive_ex(const Button *but, const bool labeledit, const boo
   if (but->flag & UI_SCROLLED) {
     return false;
   }
-  if ((but->type == ButType::Text) &&
+  if ((but->type == ButtonType::Text) &&
       ELEM(but->emboss, EmbossType::None, EmbossType::NoneOrStatus) && !labeledit)
   {
     return false;
   }
-  if ((but->type == ButType::ListRow) && labeledit) {
+  if ((but->type == ButtonType::ListRow) && labeledit) {
     return false;
   }
-  if (but->type == ButType::ViewItem) {
+  if (but->type == ButtonType::ViewItem) {
     const auto *but_item = static_cast<const ButtonViewItem *>(but);
     return but_item->view_item->is_interactive();
   }
@@ -110,9 +116,9 @@ bool ui_but_is_interactive_ex(const Button *but, const bool labeledit, const boo
   return true;
 }
 
-bool ui_but_is_interactive(const Button *but, const bool labeledit)
+bool button_is_interactive(const Button *but, const bool labeledit)
 {
-  return ui_but_is_interactive_ex(but, labeledit, false);
+  return button_is_interactive_ex(but, labeledit, false);
 }
 
 bool but_is_utf8(const Button *but)
@@ -124,13 +130,13 @@ bool but_is_utf8(const Button *but)
 }
 
 #ifdef USE_UI_POPOVER_ONCE
-bool ui_but_is_popover_once_compat(const Button *but)
+bool button_is_popover_once_compat(const Button *but)
 {
-  return (ELEM(but->type, ButType::But, ButType::Decorator) || ui_but_is_toggle(but));
+  return (ELEM(but->type, ButtonType::But, ButtonType::Decorator) || button_is_toggle(but));
 }
 #endif
 
-bool ui_but_has_array_value(const Button *but)
+bool button_has_array_value(const Button *but)
 {
   return (but->rnapoin.data && but->rnaprop && RNA_property_array_check(but->rnaprop));
 }
@@ -155,7 +161,7 @@ bool but_has_quick_tooltip(const Button *but)
   return (but->drawflag & BUT_HAS_QUICK_TOOLTIP) != 0;
 }
 
-int ui_but_icon(const Button *but)
+int button_icon(const Button *but)
 {
   if (!(but->flag & UI_HAS_ICON)) {
     return ICON_NONE;
@@ -164,7 +170,7 @@ int ui_but_icon(const Button *but)
   const bool is_preview = (but->flag & BUT_ICON_PREVIEW) != 0;
 
   /* While icon is loading, show loading icon at the normal icon size. */
-  if (ui_icon_is_preview_deferred_loading(but->icon, is_preview)) {
+  if (icon_is_preview_deferred_loading(but->icon, is_preview)) {
     return ICON_PREVIEW_LOADING;
   }
 
@@ -181,7 +187,7 @@ int ui_but_icon(const Button *but)
 /** \name Button (#Button) Spatial
  * \{ */
 
-void ui_but_pie_dir(RadialDirection dir, float vec[2])
+void button_pie_dir(RadialDirection dir, float vec[2])
 {
   float angle;
 
@@ -194,7 +200,7 @@ void ui_but_pie_dir(RadialDirection dir, float vec[2])
 
 static bool ui_but_isect_pie_seg(const Block *block, const Button *but)
 {
-  if (block->pie_data.flags & UI_PIE_INVALID_DIR) {
+  if (block->pie_data.flags & PIE_INVALID_DIR) {
     return false;
   }
 
@@ -207,7 +213,7 @@ static bool ui_but_isect_pie_seg(const Block *block, const Button *but)
   const float eps_bias = 1e-4;
 
   float but_dir[2];
-  ui_but_pie_dir(but->pie_dir, but_dir);
+  button_pie_dir(but->pie_dir, but_dir);
 
   const float angle_but_cos = dot_v2v2(but_dir, block->pie_data.pie_dir);
   /* Outside range (with bias). */
@@ -235,7 +241,7 @@ static bool ui_but_isect_pie_seg(const Block *block, const Button *but)
   /* Compare with the adjacent direction (even if there is no button). */
   const RadialDirection dir_adjacent = has_8th_adjacent ? dir_adjacent_8th : dir_adjacent_4th;
   float but_dir_adjacent[2];
-  ui_but_pie_dir(dir_adjacent, but_dir_adjacent);
+  button_pie_dir(dir_adjacent, but_dir_adjacent);
 
   const float angle_adjacent_cos = dot_v2v2(but_dir_adjacent, block->pie_data.pie_dir);
 
@@ -246,32 +252,32 @@ static bool ui_but_isect_pie_seg(const Block *block, const Button *but)
   return angle_but_cos > angle_adjacent_cos;
 }
 
-bool ui_but_contains_pt(const Button *but, float mx, float my)
+bool button_contains_pt(const Button *but, float mx, float my)
 {
   return BLI_rctf_isect_pt(&but->rect, mx, my);
 }
 
-bool ui_but_contains_rect(const Button *but, const rctf *rect)
+bool button_contains_rect(const Button *but, const rctf *rect)
 {
   return BLI_rctf_isect(&but->rect, rect, nullptr);
 }
 
-bool ui_but_contains_point_px(const Button *but, const ARegion *region, const int xy[2])
+bool button_contains_point_px(const Button *but, const ARegion *region, const int xy[2])
 {
   Block *block = but->block;
-  if (!ui_region_contains_point_px(region, xy)) {
+  if (!region_contains_point_px(region, xy)) {
     return false;
   }
 
   float mx = xy[0], my = xy[1];
-  ui_window_to_block_fl(region, block, &mx, &my);
+  window_to_block_fl(region, block, &mx, &my);
 
   if (but->pie_dir != UI_RADIAL_NONE) {
     if (!ui_but_isect_pie_seg(block, but)) {
       return false;
     }
   }
-  else if (!ui_but_contains_pt(but, mx, my)) {
+  else if (!button_contains_pt(but, mx, my)) {
     return false;
   }
 
@@ -283,7 +289,7 @@ bool ui_but_contains_point_px_icon(const Button *but, ARegion *region, const wmE
   rcti rect;
   int x = event->xy[0], y = event->xy[1];
 
-  ui_window_to_block(region, but->block, &x, &y);
+  window_to_block(region, but->block, &x, &y);
 
   BLI_rcti_rctf_copy(&rect, &but->rect);
 
@@ -303,7 +309,7 @@ bool ui_but_contains_point_px_icon(const Button *but, ARegion *region, const wmE
 }
 
 static Button *ui_but_find(const ARegion *region,
-                           const uiButFindPollFn find_poll,
+                           const ButtonFindPollFn find_poll,
                            const void *find_custom_data)
 {
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
@@ -319,35 +325,35 @@ static Button *ui_but_find(const ARegion *region,
   return nullptr;
 }
 
-Button *ui_but_find_mouse_over_ex(const ARegion *region,
+Button *button_find_mouse_over_ex(const ARegion *region,
                                   const int xy[2],
                                   const bool labeledit,
                                   const bool for_tooltip,
-                                  const uiButFindPollFn find_poll,
+                                  const ButtonFindPollFn find_poll,
                                   const void *find_custom_data)
 {
   Button *butover = nullptr;
 
-  if (!ui_region_contains_point_px(region, xy)) {
+  if (!region_contains_point_px(region, xy)) {
     return nullptr;
   }
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
     float mx = xy[0], my = xy[1];
-    ui_window_to_block_fl(region, block, &mx, &my);
+    window_to_block_fl(region, block, &mx, &my);
 
     for (int i = block->buttons.size() - 1; i >= 0; i--) {
       Button *but = block->buttons[i].get();
       if (find_poll && find_poll(but, find_custom_data) == false) {
         continue;
       }
-      if (ui_but_is_interactive_ex(but, labeledit, for_tooltip)) {
+      if (button_is_interactive_ex(but, labeledit, for_tooltip)) {
         if (but->pie_dir != UI_RADIAL_NONE) {
           if (ui_but_isect_pie_seg(block, but)) {
             butover = but;
             break;
           }
         }
-        else if (ui_but_contains_pt(but, mx, my)) {
+        else if (button_contains_pt(but, mx, my)) {
           butover = but;
           break;
         }
@@ -368,13 +374,13 @@ Button *ui_but_find_mouse_over_ex(const ARegion *region,
 
 Button *but_find_mouse_over(const ARegion *region, const wmEvent *event)
 {
-  return ui_but_find_mouse_over_ex(
+  return button_find_mouse_over_ex(
       region, event->xy, event->modifier & KM_CTRL, false, nullptr, nullptr);
 }
 
-Button *ui_but_find_rect_over(const ARegion *region, const rcti *rect_px)
+Button *button_find_rect_over(const ARegion *region, const rcti *rect_px)
 {
-  if (!ui_region_contains_rect_px(region, rect_px)) {
+  if (!region_contains_rect_px(region, rect_px)) {
     return nullptr;
   }
 
@@ -386,14 +392,14 @@ Button *ui_but_find_rect_over(const ARegion *region, const rcti *rect_px)
 
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
     rctf rect_block;
-    ui_window_to_block_rctf(region, block, &rect_block, &rect_px_fl);
+    window_to_block_rctf(region, block, &rect_block, &rect_px_fl);
 
     for (int i = block->buttons.size() - 1; i >= 0; i--) {
       Button *but = block->buttons[i].get();
-      if (ui_but_is_interactive(but, labeledit)) {
+      if (button_is_interactive(but, labeledit)) {
         /* No pie menu support. */
         BLI_assert(but->pie_dir == UI_RADIAL_NONE);
-        if (ui_but_contains_rect(but, &rect_block)) {
+        if (button_contains_rect(but, &rect_block)) {
           butover = but;
           break;
         }
@@ -411,17 +417,17 @@ Button *ui_but_find_rect_over(const ARegion *region, const rcti *rect_px)
   return butover;
 }
 
-Button *ui_list_find_mouse_over_ex(const ARegion *region, const int xy[2])
+Button *list_find_mouse_over_ex(const ARegion *region, const int xy[2])
 {
-  if (!ui_region_contains_point_px(region, xy)) {
+  if (!region_contains_point_px(region, xy)) {
     return nullptr;
   }
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
     float mx = xy[0], my = xy[1];
-    ui_window_to_block_fl(region, block, &mx, &my);
+    window_to_block_fl(region, block, &mx, &my);
     for (int i = block->buttons.size() - 1; i >= 0; i--) {
       Button *but = block->buttons[i].get();
-      if (but->type == ButType::ListBox && ui_but_contains_pt(but, mx, my)) {
+      if (but->type == ButtonType::ListBox && button_contains_pt(but, mx, my)) {
         return but;
       }
     }
@@ -436,7 +442,7 @@ Button *ui_list_find_mouse_over(const ARegion *region, const wmEvent *event)
     /* If there is no info about the mouse, just act as if there is nothing underneath it. */
     return nullptr;
   }
-  return ui_list_find_mouse_over_ex(region, event->xy);
+  return list_find_mouse_over_ex(region, event->xy);
 }
 
 uiList *list_find_mouse_over(const ARegion *region, const wmEvent *event)
@@ -451,20 +457,20 @@ uiList *list_find_mouse_over(const ARegion *region, const wmEvent *event)
 
 static bool ui_list_contains_row(const Button *listbox_but, const Button *listrow_but)
 {
-  BLI_assert(listbox_but->type == ButType::ListBox);
-  BLI_assert(listrow_but->type == ButType::ListRow);
+  BLI_assert(listbox_but->type == ButtonType::ListBox);
+  BLI_assert(listrow_but->type == ButtonType::ListRow);
   /* The list box and its rows have the same RNA data (active data pointer/prop). */
-  return ui_but_rna_equals(listbox_but, listrow_but);
+  return button_rna_equals(listbox_but, listrow_but);
 }
 
 static bool ui_but_is_listrow(const Button *but, const void * /*customdata*/)
 {
-  return but->type == ButType::ListRow;
+  return but->type == ButtonType::ListRow;
 }
 
-Button *ui_list_row_find_mouse_over(const ARegion *region, const int xy[2])
+Button *list_row_find_mouse_over(const ARegion *region, const int xy[2])
 {
-  return ui_but_find_mouse_over_ex(region, xy, false, false, ui_but_is_listrow, nullptr);
+  return button_find_mouse_over_ex(region, xy, false, false, ui_but_is_listrow, nullptr);
 }
 
 struct ListRowFindIndexData {
@@ -480,9 +486,9 @@ static bool ui_but_is_listrow_at_index(const Button *but, const void *customdata
          (but->hardmax == find_data->index);
 }
 
-Button *ui_list_row_find_index(const ARegion *region, const int index, Button *listbox)
+Button *list_row_find_index(const ARegion *region, const int index, Button *listbox)
 {
-  BLI_assert(listbox->type == ButType::ListBox);
+  BLI_assert(listbox->type == ButtonType::ListBox);
   ListRowFindIndexData data = {};
   data.index = index;
   data.listbox = listbox;
@@ -491,17 +497,17 @@ Button *ui_list_row_find_index(const ARegion *region, const int index, Button *l
 
 static bool ui_but_is_view_item_fn(const Button *but, const void * /*customdata*/)
 {
-  return but->type == ButType::ViewItem;
+  return but->type == ButtonType::ViewItem;
 }
 
-Button *ui_view_item_find_mouse_over(const ARegion *region, const int xy[2])
+Button *view_item_find_mouse_over(const ARegion *region, const int xy[2])
 {
-  return ui_but_find_mouse_over_ex(region, xy, false, false, ui_but_is_view_item_fn, nullptr);
+  return button_find_mouse_over_ex(region, xy, false, false, ui_but_is_view_item_fn, nullptr);
 }
 
 static bool ui_but_is_active_view_item(const Button *but, const void * /*customdata*/)
 {
-  if (but->type != ButType::ViewItem) {
+  if (but->type != ButtonType::ViewItem) {
     return false;
   }
 
@@ -509,17 +515,17 @@ static bool ui_but_is_active_view_item(const Button *but, const void * /*customd
   return view_item_but->view_item->is_active();
 }
 
-Button *ui_view_item_find_active(const ARegion *region)
+Button *view_item_find_active(const ARegion *region)
 {
   return ui_but_find(region, ui_but_is_active_view_item, nullptr);
 }
 
-Button *ui_view_item_find_search_highlight(const ARegion *region)
+Button *view_item_find_search_highlight(const ARegion *region)
 {
   return ui_but_find(
       region,
       [](const Button *but, const void * /*find_custom_data*/) {
-        if (but->type != ButType::ViewItem) {
+        if (but->type != ButtonType::ViewItem) {
           return false;
         }
 
@@ -535,60 +541,60 @@ Button *ui_view_item_find_search_highlight(const ARegion *region)
 /** \name Button (#Button) Relations
  * \{ */
 
-Button *ui_but_prev(Button *but)
+Button *button_prev(Button *but)
 {
   for (int idx = but->block->but_index(but) - 1; idx >= 0; idx--) {
     but = but->block->buttons[idx].get();
-    if (ui_but_is_editable(but)) {
+    if (button_is_editable(but)) {
       return but;
     }
   }
   return nullptr;
 }
 
-Button *ui_but_next(Button *but)
+Button *button_next(Button *but)
 {
   for (int i = but->block->but_index(but) + 1; i < but->block->buttons.size(); i++) {
     but = but->block->buttons[i].get();
-    if (ui_but_is_editable(but)) {
+    if (button_is_editable(but)) {
       return but;
     }
   }
   return nullptr;
 }
 
-Button *ui_but_first(Block *block)
+Button *button_first(Block *block)
 {
   for (const std::unique_ptr<Button> &but : block->buttons) {
-    if (ui_but_is_editable(but.get())) {
+    if (button_is_editable(but.get())) {
       return but.get();
     }
   }
   return nullptr;
 }
 
-Button *ui_but_last(Block *block)
+Button *button_last(Block *block)
 {
   for (int i = block->buttons.size() - 1; i >= 0; i--) {
     Button *but = block->buttons[i].get();
-    if (ui_but_is_editable(but)) {
+    if (button_is_editable(but)) {
       return but;
     }
   }
   return nullptr;
 }
 
-bool ui_but_is_cursor_warp(const Button *but)
+bool button_is_cursor_warp(const Button *but)
 {
   if (U.uiflag & USER_CONTINUOUS_MOUSE) {
     if (ELEM(but->type,
-             ButType::Num,
-             ButType::NumSlider,
-             ButType::TrackPreview,
-             ButType::HsvCube,
-             ButType::HsvCircle,
-             ButType::Curve,
-             ButType::CurveProfile))
+             ButtonType::Num,
+             ButtonType::NumSlider,
+             ButtonType::TrackPreview,
+             ButtonType::HsvCube,
+             ButtonType::HsvCircle,
+             ButtonType::Curve,
+             ButtonType::CurveProfile))
     {
       return true;
     }
@@ -597,7 +603,7 @@ bool ui_but_is_cursor_warp(const Button *but)
   return false;
 }
 
-bool ui_but_contains_password(const Button *but)
+bool but_contains_password(const Button *but)
 {
   return but->rnaprop && (RNA_property_subtype(but->rnaprop) == PROP_PASSWORD);
 }
@@ -608,7 +614,7 @@ bool ui_but_contains_password(const Button *but)
 /** \name Button (#Button) Text
  * \{ */
 
-size_t ui_but_drawstr_len_without_sep_char(const Button *but)
+size_t button_drawstr_len_without_sep_char(const Button *but)
 {
   if (but->flag & BUT_HAS_SEP_CHAR) {
     const size_t sep_index = but->drawstr.find(UI_SEP_CHAR);
@@ -619,13 +625,13 @@ size_t ui_but_drawstr_len_without_sep_char(const Button *but)
   return but->drawstr.size();
 }
 
-StringRef ui_but_drawstr_without_sep_char(const Button *but)
+StringRef button_drawstr_without_sep_char(const Button *but)
 {
-  size_t str_len_clip = ui_but_drawstr_len_without_sep_char(but);
+  size_t str_len_clip = button_drawstr_len_without_sep_char(but);
   return StringRef(but->drawstr).substr(0, str_len_clip);
 }
 
-size_t ui_but_tip_len_only_first_line(const Button *but)
+size_t button_tip_len_only_first_line(const Button *but)
 {
   if (but->tip == nullptr) {
     return 0;
@@ -643,7 +649,7 @@ size_t ui_but_tip_len_only_first_line(const Button *but)
 /** \name Block (#Block) State
  * \{ */
 
-Button *ui_block_active_but_get(const Block *block)
+Button *block_active_but_get(const Block *block)
 {
   for (const std::unique_ptr<Button> &but : block->buttons) {
     if (but->active) {
@@ -654,26 +660,26 @@ Button *ui_block_active_but_get(const Block *block)
   return nullptr;
 }
 
-bool ui_block_is_menu(const Block *block)
+bool block_is_menu(const Block *block)
 {
   return (((block->flag & BLOCK_LOOP) != 0) &&
           /* non-menu popups use keep-open, so check this is off */
           ((block->flag & BLOCK_KEEP_OPEN) == 0));
 }
 
-bool ui_block_is_popover(const Block *block)
+bool block_is_popover(const Block *block)
 {
   return (block->flag & BLOCK_POPOVER) != 0;
 }
 
-bool ui_block_is_pie_menu(const Block *block)
+bool block_is_pie_menu(const Block *block)
 {
   return ((block->flag & BLOCK_PIE_MENU) != 0);
 }
 
-bool ui_block_is_popup_any(const Block *block)
+bool block_is_popup_any(const Block *block)
 {
-  return (ui_block_is_menu(block) || ui_block_is_popover(block) || ui_block_is_pie_menu(block));
+  return (block_is_menu(block) || block_is_popover(block) || block_is_pie_menu(block));
 }
 
 static const Button *ui_but_next_non_separator(const Button *but)
@@ -683,7 +689,7 @@ static const Button *ui_but_next_non_separator(const Button *but)
   }
   for (int i = but->block->but_index(but); i < but->block->buttons.size(); i++) {
     but = but->block->buttons[i].get();
-    if (!ELEM(but->type, ButType::Sepr, ButType::SeprLine)) {
+    if (!ELEM(but->type, ButtonType::Sepr, ButtonType::SeprLine)) {
       return but;
     }
   }
@@ -697,7 +703,7 @@ bool block_is_empty_ex(const Block *block, const bool skip_title)
     /* Skip the first label, since popups often have a title,
      * we may want to consider the block empty in this case. */
     but = ui_but_next_non_separator(but);
-    if (but && but->type == ButType::Label) {
+    if (but && but->type == ButtonType::Label) {
       but = block->next_but(but);
     }
   }
@@ -711,9 +717,9 @@ bool block_is_empty(const Block *block)
 
 bool block_can_add_separator(const Block *block)
 {
-  if (ui_block_is_menu(block) && !ui_block_is_pie_menu(block)) {
+  if (block_is_menu(block) && !block_is_pie_menu(block)) {
     const Button *but = block->last_but();
-    return (but && !ELEM(but->type, ButType::SeprLine, ButType::Sepr));
+    return (but && !ELEM(but->type, ButtonType::SeprLine, ButtonType::Sepr));
   }
   return true;
 }
@@ -734,9 +740,9 @@ bool block_has_active_default_button(const Block *block)
 /** \name Block (#Block) Spatial
  * \{ */
 
-Block *ui_block_find_mouse_over_ex(const ARegion *region, const int xy[2], bool only_clip)
+Block *block_find_mouse_over_ex(const ARegion *region, const int xy[2], bool only_clip)
 {
-  if (!ui_region_contains_point_px(region, xy)) {
+  if (!region_contains_point_px(region, xy)) {
     return nullptr;
   }
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
@@ -746,7 +752,7 @@ Block *ui_block_find_mouse_over_ex(const ARegion *region, const int xy[2], bool 
       }
     }
     float mx = xy[0], my = xy[1];
-    ui_window_to_block_fl(region, block, &mx, &my);
+    window_to_block_fl(region, block, &mx, &my);
     if (BLI_rctf_isect_pt(&block->rect, mx, my)) {
       return block;
     }
@@ -754,9 +760,9 @@ Block *ui_block_find_mouse_over_ex(const ARegion *region, const int xy[2], bool 
   return nullptr;
 }
 
-Block *ui_block_find_mouse_over(const ARegion *region, const wmEvent *event, bool only_clip)
+Block *block_find_mouse_over(const ARegion *region, const wmEvent *event, bool only_clip)
 {
-  return ui_block_find_mouse_over_ex(region, event->xy, only_clip);
+  return block_find_mouse_over_ex(region, event->xy, only_clip);
 }
 
 /** \} */
@@ -765,10 +771,10 @@ Block *ui_block_find_mouse_over(const ARegion *region, const wmEvent *event, boo
 /** \name Region (#ARegion) State
  * \{ */
 
-Button *ui_region_find_active_but(ARegion *region)
+Button *region_find_active_but(ARegion *region)
 {
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
-    Button *but = ui_block_active_but_get(block);
+    Button *but = block_active_but_get(block);
     if (but) {
       return but;
     }
@@ -777,7 +783,7 @@ Button *ui_region_find_active_but(ARegion *region)
   return nullptr;
 }
 
-Button *ui_region_find_first_but_test_flag(ARegion *region, int flag_include, int flag_exclude)
+Button *region_find_first_but_test_flag(ARegion *region, int flag_include, int flag_exclude)
 {
   LISTBASE_FOREACH (Block *, block, &region->runtime->uiblocks) {
     for (const std::unique_ptr<Button> &but : block->buttons) {
@@ -796,10 +802,10 @@ Button *ui_region_find_first_but_test_flag(ARegion *region, int flag_include, in
 /** \name Region (#ARegion) Spatial
  * \{ */
 
-bool ui_region_contains_point_px(const ARegion *region, const int xy[2])
+bool region_contains_point_px(const ARegion *region, const int xy[2])
 {
   rcti winrct;
-  ui_region_winrct_get_no_margin(region, &winrct);
+  region_winrct_get_no_margin(region, &winrct);
   if (!BLI_rcti_isect_pt_v(&winrct, xy)) {
     return false;
   }
@@ -813,7 +819,7 @@ bool ui_region_contains_point_px(const ARegion *region, const int xy[2])
     const View2D *v2d = &region->v2d;
     int mx = xy[0], my = xy[1];
 
-    ui_window_to_region(region, &mx, &my);
+    window_to_region(region, &mx, &my);
     if (!BLI_rcti_isect_pt(&v2d->mask, mx, my) ||
         view2d_mouse_in_scrollers(region, &region->v2d, xy))
     {
@@ -824,19 +830,19 @@ bool ui_region_contains_point_px(const ARegion *region, const int xy[2])
   return true;
 }
 
-bool ui_region_contains_rect_px(const ARegion *region, const rcti *rect_px)
+bool region_contains_rect_px(const ARegion *region, const rcti *rect_px)
 {
   rcti winrct;
-  ui_region_winrct_get_no_margin(region, &winrct);
+  region_winrct_get_no_margin(region, &winrct);
   if (!BLI_rcti_isect(&winrct, rect_px, nullptr)) {
     return false;
   }
 
-  /* See comment in 'ui_region_contains_point_px' */
+  /* See comment in 'region_contains_point_px' */
   if (region->v2d.mask.xmin != region->v2d.mask.xmax) {
     const View2D *v2d = &region->v2d;
     rcti rect_region;
-    ui_window_to_region_rcti(region, &rect_region, rect_px);
+    window_to_region_rcti(region, &rect_region, rect_px);
     if (!BLI_rcti_isect(&v2d->mask, &rect_region, nullptr) ||
         view2d_rect_in_scrollers(region, &region->v2d, rect_px))
     {
@@ -853,12 +859,12 @@ bool ui_region_contains_rect_px(const ARegion *region, const rcti *rect_px)
 /** \name Screen (#bScreen) Spatial
  * \{ */
 
-ARegion *ui_screen_region_find_mouse_over_ex(bScreen *screen, const int xy[2])
+ARegion *screen_region_find_mouse_over_ex(bScreen *screen, const int xy[2])
 {
   LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
     rcti winrct;
 
-    ui_region_winrct_get_no_margin(region, &winrct);
+    region_winrct_get_no_margin(region, &winrct);
 
     if (BLI_rcti_isect_pt_v(&winrct, xy)) {
       return region;
@@ -867,9 +873,9 @@ ARegion *ui_screen_region_find_mouse_over_ex(bScreen *screen, const int xy[2])
   return nullptr;
 }
 
-ARegion *ui_screen_region_find_mouse_over(bScreen *screen, const wmEvent *event)
+ARegion *screen_region_find_mouse_over(bScreen *screen, const wmEvent *event)
 {
-  return ui_screen_region_find_mouse_over_ex(screen, event->xy);
+  return screen_region_find_mouse_over_ex(screen, event->xy);
 }
 
 /** \} */
@@ -878,7 +884,7 @@ ARegion *ui_screen_region_find_mouse_over(bScreen *screen, const wmEvent *event)
 /** \name Manage Internal State
  * \{ */
 
-void ui_interface_tag_script_reload_queries()
+void interface_tag_script_reload_queries()
 {
   g_ot_tool_set_by_id = nullptr;
 }

@@ -138,8 +138,17 @@ bool AbstractGridViewItem::matches(const AbstractViewItem &other) const
 void AbstractGridViewItem::add_grid_tile_button(Block &block)
 {
   const GridViewStyle &style = this->get_view().get_style();
-  view_item_but_ = (ButtonViewItem *)uiDefBut(
-      &block, ButType::ViewItem, "", 0, 0, style.tile_width, style.tile_height, nullptr, 0, 0, "");
+  view_item_but_ = (ButtonViewItem *)uiDefBut(&block,
+                                              ButtonType::ViewItem,
+                                              "",
+                                              0,
+                                              0,
+                                              style.tile_width,
+                                              style.tile_height,
+                                              nullptr,
+                                              0,
+                                              0,
+                                              "");
 
   view_item_but_->view_item = this;
 }
@@ -322,7 +331,7 @@ void BuildOnlyVisibleButtonsHelper::add_spacer_button(Block &block, const int ro
         std::numeric_limits<short>::max() / style_.tile_height, remaining_rows);
 
     uiDefBut(&block,
-             ButType::Label,
+             ButtonType::Label,
              "",
              0,
              0,
@@ -434,7 +443,7 @@ void GridViewBuilder::build_grid_view(const bContext &C,
   Block &block = *layout.block();
 
   const ARegion *region = CTX_wm_region_popup(&C) ? CTX_wm_region_popup(&C) : CTX_wm_region(&C);
-  ui_block_view_persistent_state_restore(*region, block, grid_view);
+  block_view_persistent_state_restore(*region, block, grid_view);
 
   grid_view.build_items();
   grid_view.update_from_old(block);
@@ -465,7 +474,7 @@ void PreviewGridItem::build_grid_tile_button(Layout &layout,
                                 [this](const Button * /*but*/) { return label; });
 
   Button *but = uiDefBut(block,
-                         ButType::PreviewTile,
+                         ButtonType::PreviewTile,
                          hide_label_ ? "" : label,
                          0,
                          0,
@@ -478,10 +487,10 @@ void PreviewGridItem::build_grid_tile_button(Layout &layout,
 
   const BIFIconID icon_id = override_preview_icon_id ? override_preview_icon_id : preview_icon_id;
 
-  ui_def_but_icon(but,
-                  icon_id,
-                  /* NOLINTNEXTLINE: bugprone-suspicious-enum-usage */
-                  UI_HAS_ICON | BUT_ICON_PREVIEW);
+  def_but_icon(but,
+               icon_id,
+               /* NOLINTNEXTLINE: bugprone-suspicious-enum-usage */
+               UI_HAS_ICON | BUT_ICON_PREVIEW);
   but->emboss = EmbossType::None;
 }
 

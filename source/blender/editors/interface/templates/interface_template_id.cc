@@ -106,7 +106,7 @@ static bool id_search_add(const bContext *C, TemplateID *template_ui, SearchItem
    * followed by ID_NAME-2 characters from id->name
    */
   char name_ui[MAX_ID_FULL_NAME_UI];
-  int iconid = ui_id_icon_get(C, id, template_ui->preview);
+  int iconid = id_icon_get(C, id, template_ui->preview);
   const bool use_lib_prefix = template_ui->preview || iconid;
   const bool has_sep_char = ID_IS_LINKED(id);
 
@@ -352,7 +352,7 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
   }
 }
 
-ID *ui_template_id_liboverride_hierarchy_make(
+ID *template_id_liboverride_hierarchy_make(
     bContext *C, Main *bmain, ID *owner_id, ID *id, const char **r_undo_push_label)
 {
   const char *undo_push_label;
@@ -641,7 +641,7 @@ static void template_id_liboverride_hierarchy_make(bContext *C,
   ID *id = static_cast<ID *>(idptr->data);
   ID *owner_id = template_ui->ptr.owner_id;
 
-  ID *id_override = ui_template_id_liboverride_hierarchy_make(
+  ID *id_override = template_id_liboverride_hierarchy_make(
       C, bmain, owner_id, id, r_undo_push_label);
 
   if (id_override != nullptr) {
@@ -923,7 +923,7 @@ static Button *template_id_def_new_but(Block *block,
 {
   ID *idfrom = template_ui.ptr.owner_id;
   Button *but;
-  const ButType but_type = use_tab_but ? ButType::Tab : ButType::But;
+  const ButtonType but_type = use_tab_but ? ButtonType::Tab : ButtonType::But;
 
   /* i18n markup, does nothing! */
   BLT_I18N_MSGID_MULTI_CTXT("New",
@@ -1083,7 +1083,7 @@ static void template_ID(const bContext *C,
     // text_idbutton(id, name);
     name[0] = '\0';
     but = uiDefButR(block,
-                    ButType::Text,
+                    ButtonType::Text,
                     name,
                     0,
                     0,
@@ -1119,7 +1119,7 @@ static void template_ID(const bContext *C,
         const bool disabled = !BKE_idtype_idcode_is_localizable(GS(id->name));
         if (ID_IS_PACKED(id)) {
           but = uiDefIconBut(block,
-                             ButType::But,
+                             ButtonType::But,
                              ICON_PACKAGE,
                              0,
                              0,
@@ -1132,7 +1132,7 @@ static void template_ID(const bContext *C,
         }
         else if (id->tag & ID_TAG_INDIRECT) {
           but = uiDefIconBut(block,
-                             ButType::But,
+                             ButtonType::But,
                              ICON_LIBRARY_DATA_INDIRECT,
                              0,
                              0,
@@ -1146,7 +1146,7 @@ static void template_ID(const bContext *C,
         }
         else {
           but = uiDefIconBut(block,
-                             ButType::But,
+                             ButtonType::But,
                              ICON_LIBRARY_DATA_DIRECT,
                              0,
                              0,
@@ -1190,7 +1190,7 @@ static void template_ID(const bContext *C,
       else if (ID_IS_OVERRIDE_LIBRARY(id)) {
         but = uiDefIconBut(
             block,
-            ButType::But,
+            ButtonType::But,
             ICON_LIBRARY_DATA_OVERRIDE,
             0,
             0,
@@ -1218,7 +1218,7 @@ static void template_ID(const bContext *C,
 
       but = uiDefBut(
           block,
-          ButType::But,
+          ButtonType::But,
           numstr,
           0,
           0,
@@ -1252,7 +1252,7 @@ static void template_ID(const bContext *C,
       if (ID_IS_ASSET(id)) {
         uiDefIconButO(block,
                       /* Using `_N` version allows us to get the 'active' state by default. */
-                      ButType::IconToggleN,
+                      ButtonType::IconToggleN,
                       "ASSET_OT_clear_single",
                       wm::OpCallContext::InvokeDefault,
                       /* 'active' state of a toggle button uses icon + 1, so to get proper asset
@@ -1267,7 +1267,7 @@ static void template_ID(const bContext *C,
       else if (!ELEM(GS(id->name), ID_GR, ID_SCE, ID_SCR, ID_OB, ID_WS) && (hide_buttons == false))
       {
         uiDefIconButR(block,
-                      ButType::IconToggle,
+                      ButtonType::IconToggle,
                       ICON_FAKE_USER_OFF,
                       0,
                       0,
@@ -1292,7 +1292,7 @@ static void template_ID(const bContext *C,
    * Only for images, sound and fonts */
   if (id && BKE_packedfile_id_check(id)) {
     but = uiDefIconButO(block,
-                        ButType::But,
+                        ButtonType::But,
                         "FILE_OT_unpack_item",
                         wm::OpCallContext::InvokeRegionWin,
                         ICON_PACKAGE,
@@ -1321,7 +1321,7 @@ static void template_ID(const bContext *C,
 
     if (openop) {
       but = uiDefIconTextButO(block,
-                              ButType::But,
+                              ButtonType::But,
                               openop,
                               wm::OpCallContext::InvokeDefault,
                               ICON_FILEBROWSER,
@@ -1340,7 +1340,7 @@ static void template_ID(const bContext *C,
     }
     else {
       but = uiDefIconTextBut(block,
-                             ButType::But,
+                             ButtonType::But,
                              ICON_FILEBROWSER,
                              (id) ? "" : IFACE_("Open"),
                              0,
@@ -1370,7 +1370,7 @@ static void template_ID(const bContext *C,
 
     if (unlinkop) {
       but = uiDefIconButO(block,
-                          ButType::But,
+                          ButtonType::But,
                           unlinkop,
                           wm::OpCallContext::InvokeDefault,
                           ICON_X,
@@ -1391,7 +1391,7 @@ static void template_ID(const bContext *C,
       if ((RNA_property_flag(template_ui.prop) & PROP_NEVER_UNLINK) == 0) {
         but = uiDefIconBut(
             block,
-            ButType::But,
+            ButtonType::But,
             ICON_X,
             0,
             0,
@@ -1432,7 +1432,7 @@ ID *context_active_but_get_tab_ID(bContext *C)
 {
   Button *but = context_active_but_get(C);
 
-  if (but && but->type == ButType::Tab) {
+  if (but && but->type == ButtonType::Tab) {
     return static_cast<ID *>(but->custom_data);
   }
   return nullptr;
@@ -1454,7 +1454,7 @@ static void template_ID_tabs(const bContext *C,
   const bool horizontal =
       (region->regiontype == RGN_TYPE_HEADER &&
        ELEM(RGN_ALIGN_ENUM_FROM_MASK(region->alignment), RGN_ALIGN_TOP, RGN_ALIGN_BOTTOM));
-  const int but_align = horizontal ? 0 : ui_but_align_opposite_to_area_align_get(region);
+  const int but_align = horizontal ? 0 : button_align_opposite_to_area_align_get(region);
 
   const int but_height = UI_UNIT_Y * 1.1;
 
@@ -1466,7 +1466,7 @@ static void template_ID_tabs(const bContext *C,
     const int but_width = name_width + UI_UNIT_X;
 
     ButtonTab *tab = (ButtonTab *)uiDefButR_prop(block,
-                                                 ButType::Tab,
+                                                 ButtonType::Tab,
                                                  id->name + 2,
                                                  0,
                                                  0,
