@@ -3422,7 +3422,7 @@ static void gwl_window_csd_active_elem_button(GWL_Seat *seat,
         break;
       }
       case GHOST_kCSDTypeBorderBottomRight: {
-        if (is_press && (active_type == press_type)) {
+        if (is_press) {
           xdg_toplevel_resize(win->xdg_toplevel_get(),
                               seat->wl.seat,
                               serial,
@@ -8106,7 +8106,17 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
   use_window_frame_csd = true;
 #  endif
 
+  if (use_window_frame_csd) {
+    GHOST_CSD_Layout csd_layout = {0};
+    if (!GHOST_WindowCSD_LayoutFromSystem(csd_layout)) {
+      GHOST_WindowCSD_LayoutDefault(csd_layout);
+    }
+
+    this->setWindowCSD_Layout(csd_layout);
+  }
+
   display_->use_window_frame_csd = use_window_frame_csd;
+
 #endif /* WITH_GHOST_CSD */
 
   {
