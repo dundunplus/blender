@@ -162,11 +162,11 @@ class BlenderSync {
   void sync_hair_motion(BObjectInfo &b_ob_info, Hair *hair, int motion_step);
   void sync_hair(Hair *hair, BObjectInfo &b_ob_info, bool motion, const int motion_step = 0);
   void sync_particle_hair(Hair *hair,
-                          BL::Mesh &b_mesh,
+                          const ::Mesh &b_mesh,
                           BObjectInfo &b_ob_info,
                           bool motion,
                           const int motion_step = 0);
-  bool object_has_particle_hair(BL::Object b_ob);
+  bool object_has_particle_hair(::Object *b_ob);
 
   /* Point Cloud */
   void sync_pointcloud(PointCloud *pointcloud, BObjectInfo &b_ob_info);
@@ -195,7 +195,7 @@ class BlenderSync {
 
   /* Light */
   void sync_light(BObjectInfo &b_ob_info, Light *light);
-  void sync_background_light(BL::SpaceView3D &b_v3d);
+  void sync_background_light(::View3D *b_v3d);
 
   /* Particles */
   bool sync_dupli_particle(BL::Object &b_ob,
@@ -224,7 +224,7 @@ class BlenderSync {
 
   enum ShaderFlags { SHADER_WITH_LAYER_ATTRS };
 
-  id_map<void *, Shader, ShaderFlags> shader_map;
+  id_map<const void *, Shader, ShaderFlags> shader_map;
   id_map<ObjectKey, Object> object_map;
   id_map<void *, Procedural> procedural_map;
   id_map<GeometryKey, Geometry> geometry_map;
