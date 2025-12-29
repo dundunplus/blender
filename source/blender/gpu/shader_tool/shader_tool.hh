@@ -457,6 +457,7 @@ class Preprocessor {
   /* Add a prefix to all member functions so that they are not clashing with local variables. */
   static constexpr const char *method_call_prefix = "_";
   static constexpr const char *linted_struct_suffix = "_host_shared_";
+  static constexpr const char *uniform_struct_suffix = "uniform_";
 
   static SourceLanguage language_from_filename(const std::string &filename)
   {
@@ -679,10 +680,9 @@ class Preprocessor {
       }
 
       if (end == std::string::npos) {
-        report_error(parser::line_number(out_str, start),
-                     parser::char_number(out_str, start),
-                     parser::line_str(out_str, start),
-                     "Malformed single line comment, missing newline.");
+        for (size_t i = start; i < end; ++i) {
+          out_str[i] = ' ';
+        }
         return out_str;
       }
     }
@@ -1544,6 +1544,76 @@ class Preprocessor {
     parser.apply_mutations();
   }
 
+  void lower_namespace(const shader::parser::Scope &scope,
+                       Parser &parser,
+                       report_callback report_error)
+  {
+    using namespace std;
+    using namespace shader::parser;
+
+    scope.foreach_scope(ScopeType::Namespace,
+                        [&](const Scope &scope) { lower_namespace(scope, parser, report_error); });
+
+    string prefix = scope.front().prev().full_symbol_name();
+
+    auto process_symbol = [&](const Token &symbol) {
+      if (symbol.next() == '<') {
+        /* Template instantiation or specialization. */
+        return;
+      }
+      /* Replace all occurrences of the non-namespace specified symbol. */
+      scope.foreach_token(Word, [&](const Token &token) {
+        if (token.str() != symbol.str()) {
+          return;
+        }
+        /* Reject symbols that already have namespace specified. */
+        if (token.namespace_start() != token) {
+          return;
+        }
+        /* Reject method calls. */
+        if (token.prev() == '.') {
+          return;
+        }
+        parser.insert_before(token, prefix + namespace_separator, true);
+      });
+    };
+
+    unordered_set<string> processed_functions;
+
+    scope.foreach_function([&](bool, Token, Token fn_name, Scope, bool, Scope) {
+      if (fn_name.scope().type() == ScopeType::Struct) {
+        /* Don't process functions inside a struct scope as the namespace must not be apply
+         * to them, but to the type. Otherwise, method calls will not work. */
+        return;
+      }
+      if (processed_functions.count(fn_name.str())) {
+        /* Don't process function names twice. Can happen with overloads. */
+        return;
+      }
+      processed_functions.emplace(fn_name.str());
+      process_symbol(fn_name);
+    });
+    scope.foreach_struct(
+        [&](Token, Scope, Token struct_name, Scope) { process_symbol(struct_name); });
+
+    /* Pipeline declarations. */
+    scope.foreach_match("ww(w", [&](vector<Token> toks) {
+      if (toks[0].scope().type() != ScopeType::Namespace || toks[0].str().find("Pipeline") != 0) {
+        return;
+      }
+      process_symbol(toks[1]);
+    });
+
+    Token namespace_tok = scope.front().prev().namespace_start().prev();
+    if (namespace_tok == Namespace) {
+      parser.erase(namespace_tok, scope.front());
+      parser.erase(scope.back());
+    }
+    else {
+      report_error(ERROR_TOK(namespace_tok), "Expected namespace token.");
+    }
+  }
+
   /* Lower namespaces by adding namespace prefix to all the contained structs and functions. */
   void lower_namespaces(Parser &parser, report_callback report_error)
   {
@@ -1552,70 +1622,7 @@ class Preprocessor {
 
     /* Parse each namespace declaration. */
     parser().foreach_scope(ScopeType::Namespace, [&](const Scope &scope) {
-      /* TODO(fclem): This could be supported using multiple passes. */
-      scope.foreach_match("n", [&](const std::vector<Token> &tokens) {
-        report_error(ERROR_TOK(tokens[0]), "Nested namespaces are unsupported.");
-      });
-
-      string prefix = scope.front().prev().full_symbol_name();
-
-      auto process_symbol = [&](const Token &symbol) {
-        if (symbol.next() == '<') {
-          /* Template instantiation or specialization. */
-          return;
-        }
-        /* Replace all occurrences of the non-namespace specified symbol. */
-        scope.foreach_token(Word, [&](const Token &token) {
-          if (token.str() != symbol.str()) {
-            return;
-          }
-          /* Reject symbols that already have namespace specified. */
-          if (token.namespace_start() != token) {
-            return;
-          }
-          /* Reject method calls. */
-          if (token.prev() == '.') {
-            return;
-          }
-          parser.replace(token, prefix + namespace_separator + token.str(), true);
-        });
-      };
-
-      unordered_set<string> processed_functions;
-
-      scope.foreach_function([&](bool, Token, Token fn_name, Scope, bool, Scope) {
-        if (fn_name.scope().type() == ScopeType::Struct) {
-          /* Don't process functions inside a struct scope as the namespace must not be apply
-           * to them, but to the type. Otherwise, method calls will not work. */
-          return;
-        }
-        if (processed_functions.count(fn_name.str())) {
-          /* Don't process function names twice. Can happen with overloads. */
-          return;
-        }
-        processed_functions.emplace(fn_name.str());
-        process_symbol(fn_name);
-      });
-      scope.foreach_struct(
-          [&](Token, Scope, Token struct_name, Scope) { process_symbol(struct_name); });
-
-      /* Pipeline declarations. */
-      scope.foreach_match("ww(w", [&](vector<Token> toks) {
-        if (toks[0].scope().type() != ScopeType::Namespace || toks[0].str().find("Pipeline") != 0)
-        {
-          return;
-        }
-        process_symbol(toks[1]);
-      });
-
-      Token namespace_tok = scope.front().prev().namespace_start().prev();
-      if (namespace_tok == Namespace) {
-        parser.erase(namespace_tok, scope.front());
-        parser.erase(scope.back());
-      }
-      else {
-        report_error(ERROR_TOK(namespace_tok), "Expected namespace token.");
-      }
+      lower_namespace(scope, parser, report_error);
     });
 
     parser.apply_mutations();
@@ -2413,7 +2420,7 @@ class Preprocessor {
       uint32_t hash = hash_string(token.str());
       metadata::PrintfFormat format = {hash, token.str()};
       metadata.printf_formats.emplace_back(format);
-      parser.replace(token, "string(" + std::to_string(hash) + "u)", true);
+      parser.replace(token, "string_t(" + std::to_string(hash) + "u)", true);
     });
     parser.apply_mutations();
   }
@@ -3097,6 +3104,9 @@ class Preprocessor {
         return;
       }
 
+      bool is_std140_compatible = true;
+      bool has_vec3 = false;
+
       struct Type {
         size_t size;
         size_t alignment;
@@ -3188,6 +3198,10 @@ class Preprocessor {
           return;
         }
 
+        if (type_info.size == 12) {
+          has_vec3 = true;
+        }
+
         size_t align = type_info.alignment - (offset % type_info.alignment);
         if (align != type_info.alignment) {
           string err = "Misaligned member, missing " + to_string(align) + " padding bytes";
@@ -3196,6 +3210,11 @@ class Preprocessor {
 
         size_t array_size = 1;
         if (array.is_valid()) {
+          if (array_size > 1 && type_info.size < 16) {
+            /* Arrays of non-vec4 are padded and should not be used inside std140. */
+            is_std140_compatible = false;
+          }
+
           if (array.token_count() == 3 && array[1] == Number) {
             try {
               array_size = std::stol(array[1].str());
@@ -3209,20 +3228,30 @@ class Preprocessor {
             /* Can be macro or expression. Assume value is multiple of 4. */
             array_size = 4;
           }
-        };
+        }
 
         offset += type_info.size * array_size;
       });
-      if (offset % 16 != 0) {
+
+      /* Only check for std140 padding for bigger structs. Otherwise consider the struct to be for
+       * storage buffers. Eventually we could add an attribute for that usage. */
+      if (offset < 32) {
+        is_std140_compatible = ((offset % 16) == 0);
+      }
+      else if (offset % 16 != 0) {
         string err = "Alignment issue, missing " + to_string(16 - (offset % 16)) +
                      " padding bytes";
         report_error(ERROR_TOK(struct_name), err.c_str());
       }
       /* Insert an alias to the type that will get referenced for shaders that enforce usage of
        * linted types. */
-      parser.insert_directive(struct_keyword.prev(),
-                              "#define " + struct_name.str() + linted_struct_suffix + " " +
-                                  struct_name.str() + "\n");
+      string directive = "#define " + struct_name.str() + linted_struct_suffix + " " +
+                         struct_name.str() + "\n";
+      if (is_std140_compatible) {
+        directive += "#define " + struct_name.str() + linted_struct_suffix +
+                     uniform_struct_suffix + " " + struct_name.str() + "\n";
+      }
+      parser.insert_directive(struct_keyword.prev(), directive);
     });
     parser.apply_mutations();
   }
