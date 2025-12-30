@@ -395,6 +395,16 @@ void Parser::parse_scopes(report_callback &report_error)
             pos += 3;
           } while (keyword != Invalid && keyword == Colon);
 
+          /* Skip host_shared attribute for structures if any. */
+          if (keyword == ']') {
+            keyword = (tok_id >= pos) ? TokenType(token_types[tok_id - pos]) : TokenType::Invalid;
+            if (keyword == '[') {
+              pos += 2;
+              keyword = (tok_id >= pos) ? TokenType(token_types[tok_id - pos]) :
+                                          TokenType::Invalid;
+            }
+          }
+
           if (keyword == Struct || keyword == Class) {
             enter_scope(ScopeType::Struct, tok_id);
           }
@@ -403,12 +413,6 @@ void Parser::parse_scopes(report_callback &report_error)
           }
           else if (keyword == Namespace) {
             enter_scope(ScopeType::Namespace, tok_id);
-          }
-          else if (ScopeType(scope_types.back()) == ScopeType::LoopArg) {
-            enter_scope(ScopeType::LoopBody, tok_id);
-          }
-          else if (ScopeType(scope_types.back()) == ScopeType::SwitchArg) {
-            enter_scope(ScopeType::SwitchBody, tok_id);
           }
           else if (scopes.top().type == ScopeType::Global) {
             enter_scope(ScopeType::Function, tok_id);

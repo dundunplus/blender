@@ -189,7 +189,13 @@ struct ParsedResource {
       ss << res_condition_lambda << ")";
     }
     else if (res_type == "push_constant") {
-      ss << "PUSH_CONSTANT(" << var_type << ", " << var_name << ")";
+      if (!var_array.empty()) {
+        ss << "PUSH_CONSTANT_ARRAY(" << var_type << ", " << var_name << ", "
+           << var_array.substr(1, var_array.size() - 2) << ")";
+      }
+      else {
+        ss << "PUSH_CONSTANT(" << var_type << ", " << var_name << ")";
+      }
     }
     else if (res_type == "compilation_constant") {
       /* Needs to be defined on the shader declaration. */
@@ -225,7 +231,7 @@ struct ParsedAttribute {
     else if (interpolation_mode == "smooth") {
       ss << "SMOOTH(" << var_type << ", " << var_name << ")";
     }
-    else if (interpolation_mode == "smooth") {
+    else if (interpolation_mode == "no_perspective") {
       ss << "NO_PERSPECTIVE(" << var_type << ", " << var_name << ")";
     }
     return ss.str();
@@ -393,6 +399,10 @@ struct Source {
       ss << "#include \"" << dependency << "\"\n";
     }
     ss << "\n";
+    for (auto define : create_infos_defines) {
+      ss << define;
+    }
+    ss << "\n";
     for (auto vert_inputs : vertex_inputs) {
       ss << vert_inputs.serialize() << "\n";
     }
@@ -411,10 +421,6 @@ struct Source {
         ss << res.serialize() << "\n";
       }
       ss << "GPU_SHADER_CREATE_END()\n";
-    }
-    ss << "\n";
-    for (auto define : create_infos_defines) {
-      ss << define;
     }
     ss << "\n";
     for (auto declaration : create_infos_declarations) {
@@ -1305,13 +1311,26 @@ class Preprocessor {
     };
 
     do {
+      /* WORKAROUND: We need to differentiate for and switch statements apart for proper break and
+       * continue statement usage linting. For this, we modify the body scope types to be able to
+       * detect which loop or switch body the break and continue statements are part of. */
+      parser().foreach_match("f(..)[[..]]{..}", [&](const std::vector<Token> tokens) {
+        tokens[11].scope().set_type(ScopeType::LoopBody);
+      });
+      parser().foreach_match("f(..){..}", [&](const std::vector<Token> tokens) {
+        tokens[5].scope().set_type(ScopeType::LoopBody);
+      });
+      parser().foreach_match("h(..){..}", [&](const std::vector<Token> tokens) {
+        tokens[5].scope().set_type(ScopeType::SwitchBody);
+      });
+
       /* [[unroll]]. */
-      parser().foreach_match("[[w]]f(..){..}", [&](const std::vector<Token> tokens) {
-        if (tokens[1].scope().str_with_whitespace() != "[unroll]") {
+      parser().foreach_match("f(..)[[w]]{..}", [&](const std::vector<Token> tokens) {
+        if (tokens[6].scope().str_with_whitespace() != "[unroll]") {
           return;
         }
-        const Token for_tok = tokens[5];
-        const Scope loop_args = tokens[6].scope();
+        const Token for_tok = tokens[0];
+        const Scope loop_args = tokens[1].scope();
         const Scope loop_body = tokens[10].scope();
 
         Scope init, cond, iter;
@@ -1402,66 +1421,19 @@ class Preprocessor {
       });
 
       /* [[unroll_n(n)]]. */
-      parser().foreach_match("[[w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
-        if (tokens[2].str() != "unroll_n") {
+      parser().foreach_match("f(..)[[w(0)]]{..}", [&](const std::vector<Token> tokens) {
+        if (tokens[7].str() != "unroll_n") {
           return;
         }
-        const Scope loop_args = tokens[9].scope();
+        const Scope loop_args = tokens[1].scope();
         const Scope loop_body = tokens[13].scope();
 
         Scope init, cond, iter;
         parse_for_args(loop_args, init, cond, iter);
 
-        int iter_count = std::stol(tokens[4].str());
+        int iter_count = std::stol(tokens[9].str());
 
         process_loop(tokens[0], iter_count, 0, 0, false, false, init, cond, iter, loop_body);
-      });
-
-      /* [[unroll_define(max_n)]]. */
-      parser().foreach_match("[[w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
-        if (tokens[2].str() != "unroll_define") {
-          return;
-        }
-        const Scope loop_args = tokens[9].scope();
-        const Scope loop_body = tokens[13].scope();
-
-        /* Validate format. */
-        Token define_name = Token::invalid();
-        Token iter_var = Token::invalid();
-        loop_args.foreach_match("ww=0;w<w;wP", [&](const std::vector<Token> tokens) {
-          if (tokens[1].str() != tokens[5].str() || tokens[5].str() != tokens[9].str()) {
-            return;
-          }
-          iter_var = tokens[1];
-          define_name = tokens[7];
-        });
-
-        if (define_name.is_invalid()) {
-          report_error(ERROR_TOK(loop_args.front()),
-                       "Incompatible loop format for [[unroll_define(max_n)]], expected "
-                       "'(int i = 0; i < DEFINE; i++)'");
-          return;
-        }
-
-        Scope init, cond, iter;
-        parse_for_args(loop_args, init, cond, iter);
-
-        int iter_count = std::stol(tokens[4].str());
-
-        string body_prefix = "#if " + define_name.str() + " > " + iter_var.str() + "\n";
-
-        process_loop(tokens[0],
-                     iter_count,
-                     0,
-                     1,
-                     true,
-                     true,
-                     init,
-                     cond,
-                     iter,
-                     loop_body,
-                     body_prefix,
-                     "#endif\n");
       });
     } while (parser.apply_mutations());
 
@@ -1499,7 +1471,7 @@ class Preprocessor {
 
     Token before_body = body.front().prev();
 
-    string test = "SRT_CONSTANT_" + condition[5].str();
+    string test = "SRT_CONSTANT_" + condition[5].str() + " ";
     if (condition[7] != condition.back().prev()) {
       test += parser.substr_range_inclusive(condition[7], condition.back().prev());
     }
@@ -2485,7 +2457,10 @@ class Preprocessor {
           return;
         }
         fn_body.foreach_token(Word, [&](Token tok) {
-          if (tok.prev() != Deref && tok.prev() != Dot && tok.prev() != Colon) {
+          if (tok.prev() != Deref && tok.prev() != Dot &&
+              /* Reject namespace qualified symbols. */
+              (tok.prev() != Colon || tok.prev().prev() != Colon))
+          {
             if (tok.next() == '(') {
               if (!is_class_token(methods_tokens, tok.str())) {
                 return;
@@ -2511,8 +2486,12 @@ class Preprocessor {
     using namespace std;
     using namespace shader::parser;
 
-    /* `*this` -> `this_` */
-    parser().foreach_match("*T", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_"); });
+    /* NOTE: We need to avoid the case of `a * this->b` being replaced as 2 dereferences. */
+
+    /* `(*this)` -> `(this_)` */
+    parser().foreach_match("*T)", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_"); });
+    /* `return *this;` -> `return this_;` */
+    parser().foreach_match("*T;", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_"); });
     /* `this->` -> `this_.` */
     parser().foreach_match("TD", [&](const Tokens &t) { parser.replace(t[0], t[1], "this_."); });
 
@@ -2607,7 +2586,7 @@ class Preprocessor {
       }
 
       /* First output prototypes. Not needed on metal because of wrapper class. */
-      parser.insert_after(struct_end, "#ifndef GPU_METAL\n");
+      parser.insert_after(struct_end, "\n#ifndef GPU_METAL\n");
       struct_scope.foreach_function(
           [&](bool is_static, Token fn_type, Token, Scope fn_args, bool, Scope) {
             const Token fn_start = is_static ? fn_type.prev() : fn_type;
@@ -3097,7 +3076,7 @@ class Preprocessor {
       }
 
       Token comma = body.find_token(',');
-      if (comma.is_valid()) {
+      if (comma.is_valid() && comma.scope() == body) {
         report_error(
             ERROR_TOK(comma),
             "comma declaration is not supported in shared struct, expand to multiple definition");
@@ -3370,10 +3349,10 @@ class Preprocessor {
           /* Placement already checked. */
           return;
         }
-        else if (attr_str == "unroll" || attr_str == "unroll_n" || attr_str == "unroll_define") {
-          if (attributes.back().next().next() != For) {
+        else if (attr_str == "unroll" || attr_str == "unroll_n") {
+          if (attributes.front().prev().prev().scope().front().prev() != For) {
             report_error(ERROR_TOK(attr),
-                         "unroll attributes must be declared before a 'for' loop keyword");
+                         "[[unroll]] attribute must be declared after a 'for' statement");
             invalid = true;
           }
           /* Placement already checked. */
@@ -3879,7 +3858,7 @@ class Preprocessor {
     unordered_map<string, vector<Member>> union_members;
 
     /* First, lower anonymous unions into separate struct. */
-    parser().foreach_struct([&](Token struct_tok, Scope, Token struct_name, Scope body) {
+    parser().foreach_struct([&](Token struct_tok, Scope attrs, Token struct_name, Scope body) {
       int union_index = 0;
       body.foreach_match("o{..};", [&](const Tokens &t) {
         Scope union_body = t[1].scope();
@@ -3903,7 +3882,10 @@ class Preprocessor {
         }
         union_members.emplace(union_type, members);
 
-        string union_member = "struct " + union_type + " " + union_name + ";";
+        string union_member = union_type + " " + union_name + ";";
+        if (attrs.contains("host_shared")) {
+          union_member = "struct " + union_member;
+        }
         parser.insert_before(t.front(), union_member);
         parser.erase(t.front(), t.back());
 
@@ -3969,19 +3951,46 @@ class Preprocessor {
       }
       vector<Member> members;
       size_t offset = 0;
-      body.foreach_declaration([&](Scope, Token, Token type, Scope, Token name, Scope, Token) {
-        size_t size = 4;
-        if (type.prev() != Enum) {
-          size = type_size_get(type);
-          if (size != 0) {
-            members.emplace_back(Member{type.str(), "." + name.str(), offset, size});
-          }
-        }
-        else {
-          members.emplace_back(Member{type.str(), "." + name.str(), offset, size, true});
-        }
-        offset += size;
-      });
+      body.foreach_declaration(
+          [&](Scope, Token, Token type, Scope, Token name, Scope array, Token) {
+            size_t size = 4;
+
+            size_t array_size = 0;
+            if (array.is_valid()) {
+              if (array.token_count() == 3 && array[1] == Number) {
+                try {
+                  array_size = std::stol(array[1].str());
+                }
+                catch (std::invalid_argument const & /*ex*/) {
+                  report_error(ERROR_TOK(array.front()),
+                               "Invalid array size, expecting integer literal");
+                }
+              }
+              else {
+                /* Assume size to be zero. It will create invalid size error later on. */
+              }
+            }
+            else {
+              array_size = 1;
+            }
+
+            for (int i = 0; i < array_size; i++) {
+              string name_str = name.str();
+              if (array.is_valid()) {
+                name_str += "[" + to_string(i) + "]";
+              }
+              if (type.prev() != Enum) {
+                size = type_size_get(type);
+                if (size != 0) {
+                  members.emplace_back(Member{type.str(), "." + name_str, offset, size});
+                }
+              }
+              else {
+                members.emplace_back(Member{type.str(), "." + name_str, offset, size, true});
+              }
+              offset += size;
+            }
+          });
 
       struct_members.emplace(struct_name.str(), members);
     });
@@ -4354,7 +4363,8 @@ class Preprocessor {
         if (toks[0].str() != srt_var) {
           return;
         }
-        parser.replace(toks[0], toks[2], "srt_access(" + srt_type + ", " + toks[2].str() + ")");
+        parser.replace(
+            toks[0], toks[2], "srt_access(" + srt_type + ", " + toks[2].str() + ")", true);
       });
     };
 

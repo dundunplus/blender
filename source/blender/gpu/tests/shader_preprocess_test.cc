@@ -160,6 +160,7 @@ struct                 T {
          T_union0_host_shared_ union0;
 #line 38
 };
+
 #ifndef GPU_METAL
 uint4 _a(const T this_);
 void _a_set_(_ref(T ,this_), uint4 value);
@@ -251,6 +252,7 @@ struct                 T {
          T_union1_host_shared_ union1;
 #line 31
 };
+
 #ifndef GPU_METAL
 uint4 _a(const T this_);
 void _a_set_(_ref(T ,this_), uint4 value);
@@ -335,6 +337,7 @@ struct                 T {
          T_union0_host_shared_ union0;
 #line 27
 };
+
 #ifndef GPU_METAL
 A _a(const T this_);
 void _a_set_(_ref(T ,this_), A value);
@@ -388,6 +391,7 @@ struct                 T {
          T_union0_host_shared_ union0;
 #line 22
 };
+
 #ifndef GPU_METAL
 float4x4 _a(const T this_);
 void _a_set_(_ref(T ,this_), float4x4 value);
@@ -438,7 +442,7 @@ static void test_preprocess_unroll()
 
   {
     string input = R"(
-[[unroll]] for (int i = 2; i < 4; i++) { content += i; })";
+for (int i = 2; i < 4; i++) [[unroll]] { content += i; })";
     string expect = R"(
 
 {
@@ -455,17 +459,17 @@ static void test_preprocess_unroll()
   }
   {
     string input = R"(
-[[unroll]] for (int i = 2; i < 4; i++, y++) { content += i; })";
+for (int i = 2; i < 4; i++, y++) [[unroll]] { content += i; })";
     string expect = R"(
-               {int i = 2;
+    {int i = 2;
 #line 2
                                             { content += i; }
 #line 2
-                                  i++, y++;
+                       i++, y++;
 #line 2
                                             { content += i; }
 #line 2
-                                  i++, y++;
+                       i++, y++;
 #line 2
                                                             })";
     string error;
@@ -475,21 +479,21 @@ static void test_preprocess_unroll()
   }
   {
     string input = R"(
-[[unroll]] for (int i = 2; i < 4 && i < y; i++, y++) { cont += i; })";
+for (int i = 2; i < 4 && i < y; i++, y++) [[unroll]] { cont += i; })";
     string expect = R"(
-               {int i = 2;
+    {int i = 2;
 #line 2
-                        if(i < 4 && i < y)
-#line 2
-                                                     { cont += i; }
-#line 2
-                                           i++, y++;
-#line 2
-                        if(i < 4 && i < y)
+             if(i < 4 && i < y)
 #line 2
                                                      { cont += i; }
 #line 2
-                                           i++, y++;
+                                i++, y++;
+#line 2
+             if(i < 4 && i < y)
+#line 2
+                                                     { cont += i; }
+#line 2
+                                i++, y++;
 #line 2
                                                                   })";
     string error;
@@ -499,16 +503,16 @@ static void test_preprocess_unroll()
   }
   {
     string input = R"(
-[[unroll_n(2)]] for (; i < j;) { content += i; })";
+for (; i < j;) [[unroll_n(2)]] { content += i; })";
     string expect = R"(
 
 {
 #line 2
-                    if(i < j)
+    if(i < j)
 #line 2
                                { content += i; }
 #line 2
-                    if(i < j)
+    if(i < j)
 #line 2
                                { content += i; }
 #line 2
@@ -520,36 +524,36 @@ static void test_preprocess_unroll()
   }
   {
     string input = R"(
-[[unroll_n(2)]] for (; i < j;) { [[unroll_n(2)]] for (; j < k;) {} })";
+for (; i < j;) [[unroll_n(2)]] { for (; j < k;) [[unroll_n(2)]] {} })";
     string expect = R"(
 
 {
 #line 2
-                    if(i < j)
+    if(i < j)
 #line 2
                                {
 {
 #line 2
-                                                     if(j < k)
+                                     if(j < k)
 #line 2
                                                                 {}
 #line 2
-                                                     if(j < k)
+                                     if(j < k)
 #line 2
                                                                 {}
 #line 2
                                                                  } }
 #line 2
-                    if(i < j)
+    if(i < j)
 #line 2
                                {
 {
 #line 2
-                                                     if(j < k)
+                                     if(j < k)
 #line 2
                                                                 {}
 #line 2
-                                                     if(j < k)
+                                     if(j < k)
 #line 2
                                                                 {}
 #line 2
@@ -562,29 +566,29 @@ static void test_preprocess_unroll()
     EXPECT_EQ(error, "");
   }
   {
-    string input = R"([[unroll_n(2)]] for (; i < j;) { break; })";
+    string input = R"(for (; i < j;) [[unroll_n(2)]] { break; })";
     string error;
     string output = process_test_string(input, error);
     EXPECT_EQ(error, "Unrolled loop cannot contain \"break\" statement.");
   }
   {
-    string input = R"([[unroll_n(2)]] for (; i < j;) { continue; })";
+    string input = R"(for (; i < j;) [[unroll_n(2)]] { continue; })";
     string error;
     string output = process_test_string(input, error);
     EXPECT_EQ(error, "Unrolled loop cannot contain \"continue\" statement.");
   }
   {
     string input = R"(
-[[unroll_n(2)]] for (; i < j;) { for (; j < k;) {break;continue;} })";
+for (; i < j;) [[unroll_n(2)]] { for (; j < k;) {break;continue;} })";
     string expect = R"(
 
 {
 #line 2
-                    if(i < j)
+    if(i < j)
 #line 2
                                { for (; j < k;) {break;continue;} }
 #line 2
-                    if(i < j)
+    if(i < j)
 #line 2
                                { for (; j < k;) {break;continue;} }
 #line 2
@@ -595,31 +599,10 @@ static void test_preprocess_unroll()
     EXPECT_EQ(error, "");
   }
   {
-    string input = R"([[unroll]] for (int i = 3; i > 2; i++) {})";
+    string input = R"(for (int i = 3; i > 2; i++) [[unroll]] {})";
     string error;
     string output = process_test_string(input, error);
     EXPECT_EQ(error, "Unsupported condition in unrolled loop.");
-  }
-  {
-    string input = R"(
-[[unroll_define(2)]] for (int i = 0; i < DEFINE; i++) { a = i; })";
-    string expect = R"(
-
-{
-#if DEFINE > 0
-#line 2
-                                                      { a = 0; }
-#endif
-#if DEFINE > 1
-#line 2
-                                                      { a = 1; }
-#endif
-#line 2
-                                                               })";
-    string error;
-    string output = process_test_string(input, error);
-    EXPECT_EQ(output, expect);
-    EXPECT_EQ(error, "");
   }
 }
 GPU_TEST(preprocess_unroll);
@@ -1021,6 +1004,7 @@ struct SRT {
                            T  a;
 #line 12
 };
+
 #ifndef GPU_METAL
 SRT SRT_new_();
 #endif
@@ -1110,6 +1094,7 @@ struct SRT {
                            T  a;
 #line 16
 };
+
 #ifndef GPU_METAL
 void _method(_ref(SRT ,this_), int t);
 SRT SRT_new_();
@@ -1187,9 +1172,9 @@ void func(_ref(Resources ,srt))
   }
 #endif
 
-#if SRT_CONSTANT_use_color_band== 1
+#if SRT_CONSTANT_use_color_band == 1
 #line 8
-                                                                   {
+                                                                    {
     test;
   }
 #else
@@ -1563,7 +1548,7 @@ struct S {
 struct NS_S {
 #line 11
 int _pad;};
-
+#line 14
 #ifndef GPU_METAL
 NS_S NS_S_static_method(NS_S s);
 NS_S _other_method(_ref(NS_S ,this_), int s);
@@ -1876,6 +1861,7 @@ struct T {int _pad;};
 struct U {
 
 int _pad;};
+
 #ifndef GPU_METAL
 void U_fn();
 #endif
@@ -1950,7 +1936,7 @@ struct S {
   int another_member;
 #line 29
 };
-
+#line 32
 #ifndef GPU_METAL
 S S_construct();
 S _function(_ref(S ,this_), int i);
@@ -2013,6 +1999,7 @@ struct A {
   uint b;
 #line 8
 };
+
 #ifndef GPU_METAL
 float _fn1(_ref(A ,this_));
 float _fn2(_ref(A ,this_));
@@ -2289,6 +2276,7 @@ struct ns_VertInTfloat {
     string expect_infos = R"(#pragma once
 
 
+
 GPU_SHADER_CREATE_INFO(ns_VertInTfloat)
 VERTEX_IN(0, float, pos)
 GPU_SHADER_CREATE_END()
@@ -2303,7 +2291,6 @@ GPU_SHADER_CREATE_END()
 GPU_SHADER_INTERFACE_INFO(ns_VertOut_t)
 SMOOTH(float3, ns_VertOut_local_pos)
 GPU_SHADER_INTERFACE_END()
-
 
 
 
