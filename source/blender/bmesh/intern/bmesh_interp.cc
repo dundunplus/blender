@@ -30,7 +30,7 @@
 #include "bmesh.hh"
 #include "intern/bmesh_private.hh"
 
-using blender::StringRef;
+namespace blender {
 
 /* edge and vertex share, currently there's no need to have different logic */
 static void bm_data_interp_from_elem(CustomData *data_layer,
@@ -73,15 +73,21 @@ static void bm_data_interp_from_elem(CustomData *data_layer,
 void BM_data_interp_from_verts(
     BMesh *bm, const BMVert *v_src_1, const BMVert *v_src_2, BMVert *v_dst, const float fac)
 {
-  bm_data_interp_from_elem(
-      &bm->vdata, (const BMElem *)v_src_1, (const BMElem *)v_src_2, (BMElem *)v_dst, fac);
+  bm_data_interp_from_elem(&bm->vdata,
+                           reinterpret_cast<const BMElem *>(v_src_1),
+                           reinterpret_cast<const BMElem *>(v_src_2),
+                           reinterpret_cast<BMElem *>(v_dst),
+                           fac);
 }
 
 void BM_data_interp_from_edges(
     BMesh *bm, const BMEdge *e_src_1, const BMEdge *e_src_2, BMEdge *e_dst, const float fac)
 {
-  bm_data_interp_from_elem(
-      &bm->edata, (const BMElem *)e_src_1, (const BMElem *)e_src_2, (BMElem *)e_dst, fac);
+  bm_data_interp_from_elem(&bm->edata,
+                           reinterpret_cast<const BMElem *>(e_src_1),
+                           reinterpret_cast<const BMElem *>(e_src_2),
+                           reinterpret_cast<BMElem *>(e_dst),
+                           fac);
 }
 
 /**
@@ -150,7 +156,7 @@ void BM_face_interp_from_face_ex(BMesh *bm,
   BMLoop *l_iter;
   BMLoop *l_first;
 
-  blender::Array<float, BM_DEFAULT_NGON_STACK_SIZE> w(f_src->len);
+  Array<float, BM_DEFAULT_NGON_STACK_SIZE> w(f_src->len);
   float co[2];
 
   /* interpolate */
@@ -170,10 +176,9 @@ void BM_face_interp_from_face(BMesh *bm, BMFace *f_dst, const BMFace *f_src, con
   BMLoop *l_iter;
   BMLoop *l_first;
 
-  blender::Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_l_buf(f_src->len);
-  blender::Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_v_buf(do_vertex ? f_src->len :
-                                                                                    0);
-  blender::Array<blender::float2, BM_DEFAULT_NGON_STACK_SIZE> cos_2d_buf(f_src->len);
+  Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_l_buf(f_src->len);
+  Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_v_buf(do_vertex ? f_src->len : 0);
+  Array<float2, BM_DEFAULT_NGON_STACK_SIZE> cos_2d_buf(f_src->len);
   const void **blocks_l = blocks_l_buf.data();
   const void **blocks_v = do_vertex ? blocks_v_buf.data() : nullptr;
   float (*cos_2d)[2] = reinterpret_cast<float (*)[2]>(cos_2d_buf.data());
@@ -689,10 +694,10 @@ void BM_loop_interp_from_face(
 {
   BMLoop *l_iter;
   BMLoop *l_first;
-  blender::Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> vblocks_buf(do_vertex ? f_src->len : 0);
-  blender::Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_buf(f_src->len);
-  blender::Array<blender::float2, BM_DEFAULT_NGON_STACK_SIZE> cos_2d_buf(f_src->len);
-  blender::Array<float, BM_DEFAULT_NGON_STACK_SIZE> w(f_src->len);
+  Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> vblocks_buf(do_vertex ? f_src->len : 0);
+  Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_buf(f_src->len);
+  Array<float2, BM_DEFAULT_NGON_STACK_SIZE> cos_2d_buf(f_src->len);
+  Array<float, BM_DEFAULT_NGON_STACK_SIZE> w(f_src->len);
   const void **vblocks = do_vertex ? vblocks_buf.data() : nullptr;
   const void **blocks = blocks_buf.data();
   float (*cos_2d)[2] = reinterpret_cast<float (*)[2]>(cos_2d_buf.data());
@@ -744,9 +749,9 @@ void BM_vert_interp_from_face(BMesh *bm, BMVert *v_dst, const BMFace *f_src)
 {
   BMLoop *l_iter;
   BMLoop *l_first;
-  blender::Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_buf(f_src->len);
-  blender::Array<blender::float2, BM_DEFAULT_NGON_STACK_SIZE> cos_2d_buf(f_src->len);
-  blender::Array<float, BM_DEFAULT_NGON_STACK_SIZE> w(f_src->len);
+  Array<const void *, BM_DEFAULT_NGON_STACK_SIZE> blocks_buf(f_src->len);
+  Array<float2, BM_DEFAULT_NGON_STACK_SIZE> cos_2d_buf(f_src->len);
+  Array<float, BM_DEFAULT_NGON_STACK_SIZE> w(f_src->len);
   const void **blocks = blocks_buf.data();
   float (*cos_2d)[2] = reinterpret_cast<float (*)[2]>(cos_2d_buf.data());
   float axis_mat[3][3]; /* use normal to transform into 2d xy coords */
@@ -1028,22 +1033,21 @@ void BM_data_layer_copy(BMesh *bm, CustomData *data, int type, int src_n, int ds
 float BM_elem_float_data_get(CustomData *cd, void *element, int type)
 {
   const float *f = static_cast<const float *>(
-      CustomData_bmesh_get(cd, ((BMHeader *)element)->data, eCustomDataType(type)));
+      CustomData_bmesh_get(cd, (static_cast<BMHeader *>(element))->data, eCustomDataType(type)));
   return f ? *f : 0.0f;
 }
 
 void BM_elem_float_data_set(CustomData *cd, void *element, int type, const float val)
 {
   float *f = static_cast<float *>(
-      CustomData_bmesh_get(cd, ((BMHeader *)element)->data, eCustomDataType(type)));
+      CustomData_bmesh_get(cd, (static_cast<BMHeader *>(element))->data, eCustomDataType(type)));
   if (f) {
     *f = val;
   }
 }
 
-BMDataLayerLookup BM_data_layer_lookup(const BMesh &bm, const blender::StringRef name)
+BMDataLayerLookup BM_data_layer_lookup(const BMesh &bm, const StringRef name)
 {
-  using namespace blender;
   for (const CustomDataLayer &layer : Span(bm.vdata.layers, bm.vdata.totlayer)) {
     if (const std::optional<bke::AttrType> type = bke::custom_data_type_to_attr_type(
             eCustomDataType(layer.type)))
@@ -1276,7 +1280,7 @@ static void bm_vert_loop_groups_data_layer_merge_weights__single(
   const float *data_weights;
 
   /* re-weight */
-  blender::Array<float, BM_DEFAULT_TOPOLOGY_STACK_SIZE> temp_weights_buf(lf->data_len);
+  Array<float, BM_DEFAULT_TOPOLOGY_STACK_SIZE> temp_weights_buf(lf->data_len);
   float *temp_weights = temp_weights_buf.data();
   float weight_accum = 0.0f;
 
@@ -1329,3 +1333,5 @@ void BM_vert_loop_groups_data_layer_merge_weights(BMesh *bm,
 }
 
 /** \} */
+
+}  // namespace blender

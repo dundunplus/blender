@@ -26,6 +26,8 @@
 
 #include "intern/bmesh_operators_private.hh" /* own include */
 
+namespace blender {
+
 #define ELE_NEW 1
 
 void bmo_create_vert_exec(BMesh *bm, BMOperator *op)
@@ -548,7 +550,7 @@ static void bm_face_reverse_uvs(BMFace *f, const int cd_loop_uv_offset)
   BMLoop *l;
   int i;
 
-  blender::Array<blender::float2, BM_DEFAULT_NGON_STACK_SIZE> uvs(f->len);
+  Array<float2, BM_DEFAULT_NGON_STACK_SIZE> uvs(f->len);
 
   BM_ITER_ELEM_INDEX (l, &iter, f, BM_LOOPS_OF_FACE, i) {
     float *luv = BM_ELEM_CD_GET_FLOAT_P(l, cd_loop_uv_offset);
@@ -585,7 +587,7 @@ static void bmo_get_loop_color_ref(BMesh *bm,
                                    std::optional<eCustomDataType> *r_cd_color_type)
 {
   int color_index = 0;
-  for (const CustomDataLayer &layer : blender::Span(bm->ldata.layers, bm->ldata.totlayer)) {
+  for (const CustomDataLayer &layer : Span(bm->ldata.layers, bm->ldata.totlayer)) {
     if (CD_TYPE_AS_MASK(eCustomDataType(layer.type)) & CD_MASK_COLOR_ALL) {
       if (color_index == index) {
         *r_cd_color_offset = layer.offset;
@@ -687,7 +689,7 @@ static void bm_face_reverse_colors(BMFace *f,
   char *col = cols;
   BM_ITER_ELEM_INDEX (l, &iter, f, BM_LOOPS_OF_FACE, i) {
     void *lcol = BM_ELEM_CD_GET_VOID_P(l, cd_loop_color_offset);
-    memcpy((void *)col, lcol, size);
+    memcpy(static_cast<void *>(col), lcol, size);
     col += size;
   }
 
@@ -697,7 +699,7 @@ static void bm_face_reverse_colors(BMFace *f,
     void *lcol = BM_ELEM_CD_GET_VOID_P(l, cd_loop_color_offset);
 
     col = cols + (f->len - i - 1) * size;
-    memcpy(lcol, (void *)col, size);
+    memcpy(lcol, static_cast<void *>(col), size);
   }
 }
 
@@ -721,3 +723,5 @@ void bmo_reverse_colors_exec(BMesh *bm, BMOperator *op)
     bm_face_reverse_colors(f, cd_loop_color_offset, *cd_loop_color_type);
   }
 }
+
+}  // namespace blender

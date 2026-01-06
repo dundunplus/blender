@@ -23,8 +23,11 @@
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
+#include "DNA_camera_types.h"
 #include "DNA_curve_types.h"
+#include "DNA_grease_pencil_types.h"
 #include "DNA_lattice_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
@@ -87,7 +90,7 @@
 
 #include "screen_intern.hh" /* own module include */
 
-using blender::Vector;
+namespace blender {
 
 #define KM_MODAL_CANCEL 1
 #define KM_MODAL_APPLY 2
@@ -276,7 +279,7 @@ bool ED_operator_objectmode_with_view3d_poll_msg(bContext *C)
 static bool ed_spacetype_test(bContext *C, int type)
 {
   if (ED_operator_areaactive(C)) {
-    SpaceLink *sl = (SpaceLink *)CTX_wm_space_data(C);
+    SpaceLink *sl = static_cast<SpaceLink *>(CTX_wm_space_data(C));
     return sl && (sl->spacetype == type);
   }
   return false;
@@ -313,7 +316,7 @@ bool ED_operator_region_gizmo_active(bContext *C)
 bool ED_operator_animview_active(bContext *C)
 {
   if (ED_operator_areaactive(C)) {
-    SpaceLink *sl = (SpaceLink *)CTX_wm_space_data(C);
+    SpaceLink *sl = static_cast<SpaceLink *>(CTX_wm_space_data(C));
     if (sl && ELEM(sl->spacetype, SPACE_SEQ, SPACE_ACTION, SPACE_NLA, SPACE_GRAPH)) {
       return true;
     }
@@ -345,7 +348,7 @@ bool ED_operator_region_outliner_active(bContext *C)
 bool ED_operator_outliner_active_no_editobject(bContext *C)
 {
   if (ed_spacetype_test(C, SPACE_OUTLINER)) {
-    Object *ob = blender::ed::object::context_active_object(C);
+    Object *ob = ed::object::context_active_object(C);
     Object *obedit = CTX_data_edit_object(C);
     if (ob && ob == obedit) {
       return false;
@@ -456,13 +459,13 @@ static bool ed_object_hidden(const Object *ob)
 
 bool ED_operator_object_active_only(bContext *C)
 {
-  Object *ob = blender::ed::object::context_active_object(C);
+  Object *ob = ed::object::context_active_object(C);
   return (ob != nullptr);
 }
 
 bool ED_operator_object_active(bContext *C)
 {
-  Object *ob = blender::ed::object::context_active_object(C);
+  Object *ob = ed::object::context_active_object(C);
   return ((ob != nullptr) && !ed_object_hidden(ob));
 }
 
@@ -473,7 +476,7 @@ bool ED_operator_object_active_editable_ex(bContext *C, const Object *ob)
     return false;
   }
 
-  if (!BKE_id_is_editable(CTX_data_main(C), (ID *)ob)) {
+  if (!BKE_id_is_editable(CTX_data_main(C), id_cast<ID *>(const_cast<Object *>(ob)))) {
     CTX_wm_operator_poll_msg_set(C, "Cannot edit library linked or non-editable override object");
     return false;
   }
@@ -488,7 +491,7 @@ bool ED_operator_object_active_editable_ex(bContext *C, const Object *ob)
 
 bool ED_operator_object_active_editable(bContext *C)
 {
-  Object *ob = blender::ed::object::context_active_object(C);
+  Object *ob = ed::object::context_active_object(C);
   return ED_operator_object_active_editable_ex(C, ob);
 }
 
@@ -499,20 +502,20 @@ bool ED_operator_object_active_local_editable_ex(bContext *C, const Object *ob)
 
 bool ED_operator_object_active_local_editable(bContext *C)
 {
-  Object *ob = blender::ed::object::context_active_object(C);
+  Object *ob = ed::object::context_active_object(C);
   return ED_operator_object_active_editable_ex(C, ob) && !ID_IS_OVERRIDE_LIBRARY(ob);
 }
 
 bool ED_operator_object_active_editable_mesh(bContext *C)
 {
-  Object *ob = blender::ed::object::context_active_object(C);
+  Object *ob = ed::object::context_active_object(C);
   return ((ob != nullptr) && ID_IS_EDITABLE(ob) && !ed_object_hidden(ob) &&
           (ob->type == OB_MESH) && ID_IS_EDITABLE(ob->data) && !ID_IS_OVERRIDE_LIBRARY(ob->data));
 }
 
 bool ED_operator_object_active_editable_font(bContext *C)
 {
-  Object *ob = blender::ed::object::context_active_object(C);
+  Object *ob = ed::object::context_active_object(C);
   return ((ob != nullptr) && ID_IS_EDITABLE(ob) && !ed_object_hidden(ob) &&
           (ob->type == OB_FONT) && ID_IS_EDITABLE(ob->data) && !ID_IS_OVERRIDE_LIBRARY(ob->data));
 }
@@ -551,7 +554,7 @@ bool ED_operator_editarmature(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_ARMATURE) {
-    return nullptr != ((bArmature *)obedit->data)->edbo;
+    return nullptr != (id_cast<bArmature *>(obedit->data))->edbo;
   }
   return false;
 }
@@ -577,14 +580,14 @@ static bool ed_operator_posemode_exclusive_ex(bContext *C, Object *obact)
 
 bool ED_operator_posemode_exclusive(bContext *C)
 {
-  Object *obact = blender::ed::object::context_active_object(C);
+  Object *obact = ed::object::context_active_object(C);
 
   return ed_operator_posemode_exclusive_ex(C, obact);
 }
 
 bool ED_operator_object_active_local_editable_posemode_exclusive(bContext *C)
 {
-  Object *obact = blender::ed::object::context_active_object(C);
+  Object *obact = ed::object::context_active_object(C);
 
   if (!ed_operator_posemode_exclusive_ex(C, obact)) {
     return false;
@@ -632,7 +635,7 @@ bool ED_operator_posemode_local(bContext *C)
   if (ED_operator_posemode(C)) {
     Main *bmain = CTX_data_main(C);
     Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
-    bArmature *arm = static_cast<bArmature *>(ob->data);
+    bArmature *arm = id_cast<bArmature *>(ob->data);
     return (BKE_id_is_editable(bmain, &ob->id) && BKE_id_is_editable(bmain, &arm->id));
   }
   return false;
@@ -672,7 +675,7 @@ bool ED_operator_editsurfcurve(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && ELEM(obedit->type, OB_CURVES_LEGACY, OB_SURF)) {
-    return nullptr != ((Curve *)obedit->data)->editnurb;
+    return nullptr != (id_cast<Curve *>(obedit->data))->editnurb;
   }
   return false;
 }
@@ -691,7 +694,7 @@ bool ED_operator_editcurve(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_CURVES_LEGACY) {
-    return nullptr != ((Curve *)obedit->data)->editnurb;
+    return nullptr != (id_cast<Curve *>(obedit->data))->editnurb;
   }
   return false;
 }
@@ -700,7 +703,7 @@ bool ED_operator_editcurve_3d(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_CURVES_LEGACY) {
-    Curve *cu = (Curve *)obedit->data;
+    Curve *cu = id_cast<Curve *>(obedit->data);
 
     return (cu->flag & CU_3D) && (nullptr != cu->editnurb);
   }
@@ -711,7 +714,7 @@ bool ED_operator_editsurf(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_SURF) {
-    return nullptr != ((Curve *)obedit->data)->editnurb;
+    return nullptr != (id_cast<Curve *>(obedit->data))->editnurb;
   }
   return false;
 }
@@ -720,7 +723,7 @@ bool ED_operator_editfont(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_FONT) {
-    if (((Curve *)obedit->data)->editfont) {
+    if ((id_cast<Curve *>(obedit->data))->editfont) {
       return true;
     }
   }
@@ -732,7 +735,7 @@ bool ED_operator_editlattice(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_LATTICE) {
-    return nullptr != ((Lattice *)obedit->data)->editlatt;
+    return nullptr != (id_cast<Lattice *>(obedit->data))->editlatt;
   }
   return false;
 }
@@ -741,7 +744,7 @@ bool ED_operator_editmball(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_MBALL) {
-    return nullptr != ((MetaBall *)obedit->data)->editelems;
+    return nullptr != (id_cast<MetaBall *>(obedit->data))->editelems;
   }
   return false;
 }
@@ -869,12 +872,12 @@ static bool azone_clipped_rect_calc(const AZone *az, rcti *r_rect_clip)
           r_rect_clip->xmin = max_ii(
               r_rect_clip->xmin,
               (region->winrct.xmin +
-               blender::ui::view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmin)) -
+               ui::view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmin)) -
                   UI_REGION_OVERLAP_MARGIN);
           r_rect_clip->xmax = min_ii(
               r_rect_clip->xmax,
               (region->winrct.xmin +
-               blender::ui::view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmax)) +
+               ui::view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmax)) +
                   UI_REGION_OVERLAP_MARGIN);
           return true;
         }
@@ -883,12 +886,12 @@ static bool azone_clipped_rect_calc(const AZone *az, rcti *r_rect_clip)
           r_rect_clip->ymin = max_ii(
               r_rect_clip->ymin,
               (region->winrct.ymin +
-               blender::ui::view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymin)) -
+               ui::view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymin)) -
                   UI_REGION_OVERLAP_MARGIN);
           r_rect_clip->ymax = min_ii(
               r_rect_clip->ymax,
               (region->winrct.ymin +
-               blender::ui::view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymax)) +
+               ui::view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymax)) +
                   UI_REGION_OVERLAP_MARGIN);
           return true;
         }
@@ -948,7 +951,7 @@ static AZone *area_actionzone_refresh_xy(ScrArea *area, const int xy[2], const b
          * Overlap" is enabled). Only allow dragging visible edges, so at the button sections. */
         if (region->runtime->visible && region->overlap &&
             (region->flag & RGN_FLAG_RESIZE_RESPECT_BUTTON_SECTIONS) &&
-            !blender::ui::region_button_sections_is_inside_x(az->region, local_xy[0]))
+            !ui::region_button_sections_is_inside_x(az->region, local_xy[0]))
         {
           az = nullptr;
           break;
@@ -1003,8 +1006,7 @@ static AZone *area_actionzone_refresh_xy(ScrArea *area, const int xy[2], const b
         ARegion *region = az->region;
         View2D *v2d = &region->v2d;
         int scroll_flag = 0;
-        const int isect_value = blender::ui::view2d_mouse_in_scrollers_ex(
-            region, v2d, xy, &scroll_flag);
+        const int isect_value = ui::view2d_mouse_in_scrollers_ex(region, v2d, xy, &scroll_flag);
 
         /* Check if we even have scroll bars. */
         if (((az->direction == AZ_SCROLL_HOR) && !(scroll_flag & V2D_SCROLL_HORIZONTAL)) ||
@@ -1384,15 +1386,15 @@ static ScrEdge *screen_area_edge_from_cursor(const bContext *C,
   ScrArea *sa1, *sa2;
   if (screen_geom_edge_is_horizontal(actedge)) {
     sa1 = BKE_screen_find_area_xy(
-        screen, SPACE_TYPE_ANY, blender::int2{cursor[0], cursor[1] + borderwidth});
+        screen, SPACE_TYPE_ANY, int2{cursor[0], cursor[1] + borderwidth});
     sa2 = BKE_screen_find_area_xy(
-        screen, SPACE_TYPE_ANY, blender::int2{cursor[0], cursor[1] - borderwidth});
+        screen, SPACE_TYPE_ANY, int2{cursor[0], cursor[1] - borderwidth});
   }
   else {
     sa1 = BKE_screen_find_area_xy(
-        screen, SPACE_TYPE_ANY, blender::int2{cursor[0] + borderwidth, cursor[1]});
+        screen, SPACE_TYPE_ANY, int2{cursor[0] + borderwidth, cursor[1]});
     sa2 = BKE_screen_find_area_xy(
-        screen, SPACE_TYPE_ANY, blender::int2{cursor[0] - borderwidth, cursor[1]});
+        screen, SPACE_TYPE_ANY, int2{cursor[0] - borderwidth, cursor[1]});
   }
   bool isGlobal = ((sa1 && ED_area_is_global(sa1)) || (sa2 && ED_area_is_global(sa2)));
   if (!isGlobal) {
@@ -1570,7 +1572,7 @@ static void area_dupli_fn(bScreen * /*screen*/, ScrArea *area, void *user_data)
 }
 
 /* operator callback */
-static bool area_dupli_open(bContext *C, ScrArea *area, const blender::int2 position)
+static bool area_dupli_open(bContext *C, ScrArea *area, const int2 position)
 {
   const wmWindow *win = CTX_wm_window(C);
   const rcti window_rect = {win->posx + position.x,
@@ -1589,7 +1591,7 @@ static bool area_dupli_open(bContext *C, ScrArea *area, const blender::int2 posi
                                     WIN_ALIGN_ABSOLUTE,
                                     /* Initialize area from callback. */
                                     area_dupli_fn,
-                                    (void *)area);
+                                    static_cast<void *>(area));
   return (newwin != nullptr);
 }
 
@@ -1604,7 +1606,7 @@ static wmOperatorStatus area_dupli_invoke(bContext *C, wmOperator *op, const wmE
     area = sad->sa1;
   }
 
-  bool newwin = area_dupli_open(C, area, blender::int2(area->totrct.xmin, area->totrct.ymin));
+  bool newwin = area_dupli_open(C, area, int2(area->totrct.xmin, area->totrct.ymin));
 
   if (newwin) {
     /* screen, areas init */
@@ -2010,7 +2012,7 @@ static int area_snap_calc_location(sAreaMoveData *md, const int delta)
       /* Slight snap to vertical minimum and maximum. */
       const int snap_threshold = int(float(ED_area_headersize()) * 0.6f);
 
-      blender::Vector<int> snaps;
+      Vector<int> snaps;
       /* Minimum. */
       snaps.append(m_min);
 
@@ -2083,7 +2085,7 @@ static int area_snap_calc_location(sAreaMoveData *md, const int delta)
         /* Minimum snap helps to cull any that are too close to the endpoint snaps. */
         const int min_snap = int(float(screen_size) / float(interior_snap_divisor) / 4.0f);
 
-        blender::Vector<int> snaps(interior_snap_divisor + 1);
+        Vector<int> snaps(interior_snap_divisor + 1);
         snaps[0] = m_min;
         for (int i = 1; i < interior_snap_divisor; i++) {
           snaps[i] = (screen_min + round_fl_to_int(screen_size * i / interior_snap_divisor));
@@ -2540,7 +2542,7 @@ static bool area_split_apply(bContext *C, wmOperator *op)
 {
   const wmWindow *win = CTX_wm_window(C);
   bScreen *screen = CTX_wm_screen(C);
-  sAreaSplitData *sd = (sAreaSplitData *)op->customdata;
+  sAreaSplitData *sd = static_cast<sAreaSplitData *>(op->customdata);
 
   float fac = RNA_float_get(op->ptr, "factor");
   const eScreenAxis dir_axis = eScreenAxis(RNA_enum_get(op->ptr, "direction"));
@@ -2589,7 +2591,7 @@ static bool area_split_apply(bContext *C, wmOperator *op)
 static void area_split_exit(bContext *C, wmOperator *op)
 {
   if (op->customdata) {
-    sAreaSplitData *sd = (sAreaSplitData *)op->customdata;
+    sAreaSplitData *sd = static_cast<sAreaSplitData *>(op->customdata);
     if (sd->sarea) {
       ED_area_tag_redraw(sd->sarea);
     }
@@ -2618,7 +2620,7 @@ static void area_split_exit(bContext *C, wmOperator *op)
 
 static void area_split_preview_update_cursor(bContext *C, wmOperator *op)
 {
-  sAreaSplitData *sd = (sAreaSplitData *)op->customdata;
+  sAreaSplitData *sd = static_cast<sAreaSplitData *>(op->customdata);
   const eScreenAxis dir_axis = eScreenAxis(RNA_enum_get(op->ptr, "direction"));
   if (area_split_allowed(sd->sarea, dir_axis)) {
     WM_cursor_set(CTX_wm_window(C),
@@ -2741,7 +2743,7 @@ static wmOperatorStatus area_split_invoke(bContext *C, wmOperator *op, const wmE
     }
   }
 
-  sAreaSplitData *sd = (sAreaSplitData *)op->customdata;
+  sAreaSplitData *sd = static_cast<sAreaSplitData *>(op->customdata);
   sd->draw_callback = WM_draw_cb_activate(win, area_split_draw_cb, op);
   /* add temp handler for edge move or cancel */
   WM_event_add_modal_handler(C, op);
@@ -2839,7 +2841,7 @@ static int area_split_snap_calc_location(const bScreen *screen,
 
 static wmOperatorStatus area_split_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  sAreaSplitData *sd = (sAreaSplitData *)op->customdata;
+  sAreaSplitData *sd = static_cast<sAreaSplitData *>(op->customdata);
   PropertyRNA *prop_dir = RNA_struct_find_property(op->ptr, "direction");
   bool update_factor = false;
 
@@ -3122,7 +3124,7 @@ static void region_scale_toggle_hidden(bContext *C, RegionMoveData *rmd)
   /* hidden areas may have bad 'View2D.cur' value,
    * correct before displaying. see #45156 */
   if (rmd->region->flag & RGN_FLAG_HIDDEN) {
-    blender::ui::view2d_curRect_validate(&rmd->region->v2d);
+    ui::view2d_curRect_validate(&rmd->region->v2d);
   }
 
   region_toggle_hidden(C, rmd->region, false);
@@ -3280,6 +3282,15 @@ static wmOperatorStatus region_scale_modal(bContext *C, wmOperator *op, const wm
 
           ED_area_tag_redraw(rmd->area);
           WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+        }
+
+        const float aspect = (rmd->region->v2d.flag & V2D_IS_INIT) ?
+                                 (BLI_rctf_size_x(&rmd->region->v2d.cur) /
+                                  (BLI_rcti_size_x(&rmd->region->v2d.mask) + 1)) :
+                                 1.0f;
+        if (float(rmd->region->sizex) * aspect > UI_PANEL_CATEGORY_MIN_WIDTH) {
+          /* Save this as new runtime preferred size. */
+          rmd->region->runtime->type->prefsizex = int(float(rmd->region->sizex) * aspect);
         }
 
         region_scale_exit(op);
@@ -3540,7 +3551,7 @@ static wmOperatorStatus frame_offset_exec(bContext *C, wmOperator *op)
 
   ED_areas_do_frame_follow(C, false);
 
-  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+  ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3607,7 +3618,7 @@ static wmOperatorStatus frame_jump_exec(bContext *C, wmOperator *op)
 
     ED_areas_do_frame_follow(C, true);
 
-    blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+    ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
     DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3683,7 +3694,7 @@ static wmOperatorStatus frame_jump_delta_exec(bContext *C, wmOperator *op)
   FRAMENUMBER_MIN_CLAMP(scene->r.cfra);
 
   ED_areas_do_frame_follow(C, true);
-  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+  ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3733,7 +3744,7 @@ static void keylist_from_graph_editor(bContext &C, AnimKeylist &keylist)
     return;
   }
 
-  ListBaseT<bAnimListElem> anim_data = blender::ed::graph::get_editable_fcurves(ac);
+  ListBaseT<bAnimListElem> anim_data = ed::graph::get_editable_fcurves(ac);
 
   for (bAnimListElem &ale : anim_data) {
     FCurve *fcu = static_cast<FCurve *>(ale.key_data);
@@ -3775,7 +3786,7 @@ static void keylist_fallback_for_keyframe_jump(bContext &C, Scene *scene, AnimKe
     if (ob->type == OB_GREASE_PENCIL) {
       const bool active_layer_only = !(scene->flag & SCE_KEYS_NO_SELONLY);
       grease_pencil_data_block_to_keylist(
-          nullptr, static_cast<const GreasePencil *>(ob->data), &keylist, 0, active_layer_only);
+          nullptr, id_cast<const GreasePencil *>(ob->data), &keylist, 0, active_layer_only);
     }
   }
 
@@ -3862,7 +3873,7 @@ static wmOperatorStatus keyframe_jump_exec(bContext *C, wmOperator *op)
   }
 
   ED_areas_do_frame_follow(C, true);
-  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+  ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -3937,7 +3948,7 @@ static wmOperatorStatus marker_jump_exec(bContext *C, wmOperator *op)
 
   ED_areas_do_frame_follow(C, true);
 
-  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+  ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
@@ -4232,7 +4243,7 @@ static bool area_join_init(bContext *C, wmOperator *op, ScrArea *sa1, ScrArea *s
 /* apply the join of the areas (space types) */
 static bool area_join_apply(bContext *C, wmOperator *op)
 {
-  sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+  sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
   if (!jd || (jd->dir == SCREEN_DIR_NONE)) {
     return false;
   }
@@ -4274,7 +4285,7 @@ static bool area_join_apply(bContext *C, wmOperator *op)
 /* finish operation */
 static void area_join_exit(bContext *C, wmOperator *op)
 {
-  sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+  sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
 
   if (jd) {
     if (jd->draw_callback) {
@@ -4304,7 +4315,7 @@ static wmOperatorStatus area_join_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+  sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
 
   if (jd->sa2 == nullptr || area_getorientation(jd->sa1, jd->sa2) == SCREEN_DIR_NONE) {
     return OPERATOR_CANCELLED;
@@ -4336,7 +4347,7 @@ static wmOperatorStatus area_join_invoke(bContext *C, wmOperator *op, const wmEv
       return OPERATOR_CANCELLED;
     }
 
-    sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+    sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
     jd->start_x = sad->x;
     jd->start_y = sad->y;
     jd->draw_callback = WM_draw_cb_activate(CTX_wm_window(C), area_join_draw_cb, op);
@@ -4352,7 +4363,7 @@ static wmOperatorStatus area_join_invoke(bContext *C, wmOperator *op, const wmEv
       return OPERATOR_CANCELLED;
     }
   }
-  sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+  sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
   jd->sa2 = jd->sa1;
   jd->start_x = jd->sa1->totrct.xmin;
   jd->start_y = jd->sa1->totrct.ymax;
@@ -4370,7 +4381,7 @@ static wmOperatorStatus area_join_invoke(bContext *C, wmOperator *op, const wmEv
 /* Apply the docking of the area. */
 void static area_docking_apply(bContext *C, wmOperator *op)
 {
-  sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+  sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
 
   int offset1;
   int offset2;
@@ -4785,24 +4796,24 @@ static void area_join_cancel(bContext *C, wmOperator *op)
 
 static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
 {
-  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(C, "Area Options", ICON_NONE);
-  blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
-  layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+  ui::PopupMenu *pup = ui::popup_menu_begin(C, "Area Options", ICON_NONE);
+  ui::Layout &layout = *ui::popup_menu_layout(pup);
+  layout.operator_context_set(wm::OpCallContext::InvokeDefault);
 
   PointerRNA ptr = layout.op("SCREEN_OT_area_split",
                              IFACE_("Horizontal Split"),
                              ICON_SPLIT_HORIZONTAL,
-                             blender::wm::OpCallContext::ExecDefault,
+                             wm::OpCallContext::ExecDefault,
                              UI_ITEM_NONE);
   RNA_enum_set(&ptr, "direction", SCREEN_AXIS_H);
   RNA_float_set(&ptr, "factor", 0.49999f);
-  blender::int2 pos = {area->totrct.xmin + area->winx / 2, area->totrct.ymin + area->winy / 2};
+  int2 pos = {area->totrct.xmin + area->winx / 2, area->totrct.ymin + area->winy / 2};
   RNA_int_set_array(&ptr, "cursor", pos);
 
   ptr = layout.op("SCREEN_OT_area_split",
                   IFACE_("Vertical Split"),
                   ICON_SPLIT_VERTICAL,
-                  blender::wm::OpCallContext::ExecDefault,
+                  wm::OpCallContext::ExecDefault,
                   UI_ITEM_NONE);
   RNA_enum_set(&ptr, "direction", SCREEN_AXIS_V);
   RNA_float_set(&ptr, "factor", 0.49999f);
@@ -4864,7 +4875,7 @@ static wmOperatorStatus area_join_modal(bContext *C, wmOperator *op, const wmEve
       return OPERATOR_CANCELLED;
     }
   }
-  sAreaJoinData *jd = (sAreaJoinData *)op->customdata;
+  sAreaJoinData *jd = static_cast<sAreaJoinData *>(op->customdata);
   if (jd == nullptr) {
     return OPERATOR_CANCELLED;
   }
@@ -4926,7 +4937,7 @@ static wmOperatorStatus area_join_modal(bContext *C, wmOperator *op, const wmEve
           {
             /* We have to clear handlers or we get an error in wm_gizmomap_modal_get. */
             WM_event_modal_handler_region_replace(jd->win1, CTX_wm_region(C), nullptr);
-            area_dupli_open(C, jd->sa1, blender::int2(event->xy[0], event->xy[1] - jd->sa1->winy));
+            area_dupli_open(C, jd->sa1, int2(event->xy[0], event->xy[1] - jd->sa1->winy));
             if (!screen_area_close(C, op->reports, WM_window_get_active_screen(jd->win1), jd->sa1))
             {
               if (BLI_listbase_is_single(&WM_window_get_active_screen(jd->win1)->areabase) &&
@@ -5079,15 +5090,15 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     return OPERATOR_CANCELLED;
   }
 
-  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
+  ui::PopupMenu *pup = ui::popup_menu_begin(
       C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
-  blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
+  ui::Layout &layout = *ui::popup_menu_layout(pup);
 
   /* Vertical Split */
   PointerRNA ptr = layout.op("SCREEN_OT_area_split",
                              IFACE_("Vertical Split"),
                              ICON_SPLIT_VERTICAL,
-                             blender::wm::OpCallContext::InvokeDefault,
+                             wm::OpCallContext::InvokeDefault,
                              UI_ITEM_NONE);
   /* store initial mouse cursor position. */
   RNA_int_set_array(&ptr, "cursor", event->xy);
@@ -5097,7 +5108,7 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
   ptr = layout.op("SCREEN_OT_area_split",
                   IFACE_("Horizontal Split"),
                   ICON_SPLIT_HORIZONTAL,
-                  blender::wm::OpCallContext::InvokeDefault,
+                  wm::OpCallContext::InvokeDefault,
                   UI_ITEM_NONE);
   /* store initial mouse cursor position. */
   RNA_int_set_array(&ptr, "cursor", event->xy);
@@ -5115,19 +5126,19 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") :
                                                               IFACE_("Join Right"),
                       ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_UP : ICON_AREA_JOIN,
-                      blender::wm::OpCallContext::ExecDefault,
+                      wm::OpCallContext::ExecDefault,
                       UI_ITEM_NONE);
-      RNA_int_set_array(&ptr, "source_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});
-      RNA_int_set_array(&ptr, "target_xy", blender::int2{sa1->totrct.xmin, sa1->totrct.ymin});
+      RNA_int_set_array(&ptr, "source_xy", int2{sa2->totrct.xmin, sa2->totrct.ymin});
+      RNA_int_set_array(&ptr, "target_xy", int2{sa1->totrct.xmin, sa1->totrct.ymin});
 
       ptr = layout.op(
           "SCREEN_OT_area_join",
           ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Down") : IFACE_("Join Left"),
           ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_DOWN : ICON_AREA_JOIN_LEFT,
-          blender::wm::OpCallContext::ExecDefault,
+          wm::OpCallContext::ExecDefault,
           UI_ITEM_NONE);
-      RNA_int_set_array(&ptr, "source_xy", blender::int2{sa1->totrct.xmin, sa1->totrct.ymin});
-      RNA_int_set_array(&ptr, "target_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});
+      RNA_int_set_array(&ptr, "source_xy", int2{sa1->totrct.xmin, sa1->totrct.ymin});
+      RNA_int_set_array(&ptr, "target_xy", int2{sa2->totrct.xmin, sa2->totrct.ymin});
 
       layout.separator();
     }
@@ -5138,7 +5149,7 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     ptr = layout.op("SCREEN_OT_area_swap",
                     IFACE_("Swap Areas"),
                     ICON_AREA_SWAP,
-                    blender::wm::OpCallContext::ExecDefault,
+                    wm::OpCallContext::ExecDefault,
                     UI_ITEM_NONE);
     RNA_int_set_array(&ptr, "cursor", event->xy);
   }
@@ -5270,9 +5281,9 @@ static wmOperatorStatus repeat_history_invoke(bContext *C,
     return OPERATOR_CANCELLED;
   }
 
-  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
+  ui::PopupMenu *pup = ui::popup_menu_begin(
       C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
-  blender::ui::Layout &layout = *popup_menu_layout(pup);
+  ui::Layout &layout = *popup_menu_layout(pup);
 
   wmOperator *lastop;
   int i;
@@ -5685,7 +5696,7 @@ static void SCREEN_OT_header_toggle_menus(wmOperatorType *ot)
 /** \name Region Context Menu Operator (Header/Footer/Navigation-Bar)
  * \{ */
 
-static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
+static void screen_area_menu_items(ScrArea *area, ui::Layout &layout)
 {
   if (ED_area_is_global(area)) {
     return;
@@ -5694,7 +5705,7 @@ static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
   PointerRNA ptr = layout.op("SCREEN_OT_area_join",
                              IFACE_("Move/Split Area"),
                              ICON_AREA_DOCK,
-                             blender::wm::OpCallContext::InvokeDefault,
+                             wm::OpCallContext::InvokeDefault,
                              UI_ITEM_NONE);
 
   layout.separator();
@@ -5707,7 +5718,7 @@ static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
     ptr = layout.op("SCREEN_OT_screen_full_area",
                     IFACE_("Focus Mode"),
                     ICON_NONE,
-                    blender::wm::OpCallContext::InvokeDefault,
+                    wm::OpCallContext::InvokeDefault,
                     UI_ITEM_NONE);
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
@@ -5717,18 +5728,18 @@ static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
   layout.op("SCREEN_OT_area_close", std::nullopt, ICON_X);
 }
 
-void ED_screens_header_tools_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
+void ED_screens_header_tools_menu_create(bContext *C, ui::Layout *layout, void * /*arg*/)
 {
   ScrArea *area = CTX_wm_area(C);
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
-        (ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first);
+        id_cast<ID *>(CTX_wm_screen(C)), &RNA_Space, area->spacedata.first);
     if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
       layout->prop(&ptr, "show_region_header", UI_ITEM_NONE, IFACE_("Show Header"), ICON_NONE);
     }
 
     ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
-    blender::ui::Layout &col = layout->column(false);
+    ui::Layout &col = layout->column(false);
     col.active_set((region_header->flag & RGN_FLAG_HIDDEN) == 0);
 
     if (BKE_area_find_region_type(area, RGN_TYPE_TOOL_HEADER)) {
@@ -5749,13 +5760,13 @@ void ED_screens_header_tools_menu_create(bContext *C, blender::ui::Layout *layou
   }
 }
 
-void ED_screens_footer_tools_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
+void ED_screens_footer_tools_menu_create(bContext *C, ui::Layout *layout, void * /*arg*/)
 {
   ScrArea *area = CTX_wm_area(C);
 
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
-        (ID *)CTX_wm_screen(C), &RNA_Space, area->spacedata.first);
+        id_cast<ID *>(CTX_wm_screen(C)), &RNA_Space, area->spacedata.first);
     layout->prop(&ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE);
   }
 
@@ -5764,7 +5775,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, blender::ui::Layout *layou
   screen_area_menu_items(area, *layout);
 }
 
-void ED_screens_region_flip_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
+void ED_screens_region_flip_menu_create(bContext *C, ui::Layout *layout, void * /*arg*/)
 {
   const ARegion *region = CTX_wm_region(C);
   const short region_alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
@@ -5773,13 +5784,13 @@ void ED_screens_region_flip_menu_create(bContext *C, blender::ui::Layout *layout
                              region_alignment == RGN_ALIGN_BOTTOM ? IFACE_("Flip to Top") :
                                                                     IFACE_("Flip to Bottom");
 
-  /* default is blender::wm::OpCallContext::InvokeRegionWin, which we don't want here. */
-  layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+  /* default is wm::OpCallContext::InvokeRegionWin, which we don't want here. */
+  layout->operator_context_set(wm::OpCallContext::InvokeDefault);
 
   layout->op("SCREEN_OT_region_flip", but_flip_str, ICON_NONE);
 }
 
-static void ed_screens_statusbar_menu_create(blender::ui::Layout &layout, void * /*arg*/)
+static void ed_screens_statusbar_menu_create(ui::Layout &layout, void * /*arg*/)
 {
   PointerRNA ptr = RNA_pointer_create_discrete(nullptr, &RNA_PreferencesView, &U);
   layout.prop(&ptr, "show_statusbar_stats", UI_ITEM_NONE, IFACE_("Scene Statistics"), ICON_NONE);
@@ -5802,33 +5813,31 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
   const ARegion *region = CTX_wm_region(C);
 
   if (area && area->spacetype == SPACE_STATUSBAR) {
-    blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
-        C, IFACE_("Status Bar"), ICON_NONE);
-    blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
+    ui::PopupMenu *pup = ui::popup_menu_begin(C, IFACE_("Status Bar"), ICON_NONE);
+    ui::Layout &layout = *ui::popup_menu_layout(pup);
     ed_screens_statusbar_menu_create(layout, nullptr);
     popup_menu_end(C, pup);
   }
   else if (region) {
     if (ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER)) {
-      blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(C, IFACE_("Header"), ICON_NONE);
-      blender::ui::Layout *layout = blender::ui::popup_menu_layout(pup);
+      ui::PopupMenu *pup = ui::popup_menu_begin(C, IFACE_("Header"), ICON_NONE);
+      ui::Layout *layout = ui::popup_menu_layout(pup);
       ED_screens_header_tools_menu_create(C, layout, nullptr);
       popup_menu_end(C, pup);
     }
     else if (region->regiontype == RGN_TYPE_FOOTER) {
-      blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(C, IFACE_("Footer"), ICON_NONE);
-      blender::ui::Layout *layout = blender::ui::popup_menu_layout(pup);
+      ui::PopupMenu *pup = ui::popup_menu_begin(C, IFACE_("Footer"), ICON_NONE);
+      ui::Layout *layout = ui::popup_menu_layout(pup);
       ED_screens_footer_tools_menu_create(C, layout, nullptr);
       popup_menu_end(C, pup);
     }
     else if (region->regiontype == RGN_TYPE_NAV_BAR) {
-      blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
-          C, IFACE_("Navigation Bar"), ICON_NONE);
-      blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
+      ui::PopupMenu *pup = ui::popup_menu_begin(C, IFACE_("Navigation Bar"), ICON_NONE);
+      ui::Layout &layout = *ui::popup_menu_layout(pup);
 
-      /* We need blender::wm::OpCallContext::InvokeDefault in case menu item is over another area.
+      /* We need wm::OpCallContext::InvokeDefault in case menu item is over another area.
        */
-      layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+      layout.operator_context_set(wm::OpCallContext::InvokeDefault);
       layout.op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_NONE);
 
       ED_screens_region_flip_menu_create(C, &layout, nullptr);
@@ -5940,7 +5949,7 @@ static bool match_region_with_redraws(const ScrArea *area,
   else if (regiontype == RGN_TYPE_HEADER) {
     /* The Timeline mode of the Dope Sheet shows playback controls in the header. */
     if (spacetype == SPACE_ACTION) {
-      SpaceAction *saction = (SpaceAction *)area->spacedata.first;
+      SpaceAction *saction = static_cast<SpaceAction *>(area->spacedata.first);
       return saction->mode == SACTCONT_TIMELINE;
     }
   }
@@ -6029,7 +6038,7 @@ static void screen_animation_region_tag_redraw(
     }
 
     if (area->spacetype == SPACE_SEQ) {
-      if (!blender::ed::vse::has_playback_animation(scene)) {
+      if (!ed::vse::has_playback_animation(scene)) {
         return;
       }
     }
@@ -6193,7 +6202,7 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
 #endif
   }
 
-  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
+  ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
   /* Since we follow draw-flags, we can't send notifier but tag regions ourselves. */
   if (depsgraph != nullptr) {
@@ -6690,7 +6699,7 @@ static wmOperatorStatus drivers_editor_show_exec(bContext *C, wmOperator *op)
   int index;
   PointerRNA ptr;
   PropertyRNA *prop;
-  blender::ui::Button *but = blender::ui::context_active_but_prop_get(C, &ptr, &prop, &index);
+  ui::Button *but = ui::context_active_but_prop_get(C, &ptr, &prop, &index);
 
   /* changes context! */
   if (WM_window_open_temp(C, IFACE_("Blender Drivers Editor"), SPACE_GRAPH, false)) {
@@ -6999,7 +7008,7 @@ static wmOperatorStatus space_type_set_or_cycle_exec(bContext *C, wmOperator *op
   const int space_type = RNA_enum_get(op->ptr, "space_type");
 
   ScrArea *area = CTX_wm_area(C);
-  PointerRNA ptr = RNA_pointer_create_discrete((ID *)CTX_wm_screen(C), &RNA_Area, area);
+  PointerRNA ptr = RNA_pointer_create_discrete(id_cast<ID *>(CTX_wm_screen(C)), &RNA_Area, area);
   PropertyRNA *prop_type = RNA_struct_find_property(&ptr, "type");
   PropertyRNA *prop_ui_type = RNA_struct_find_property(&ptr, "ui_type");
 
@@ -7357,12 +7366,8 @@ void ED_keymap_screen(wmKeyConfig *keyconf)
   ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_dropbox_add(
       lb, "WM_OT_drop_blend_file", blend_file_drop_poll, blend_file_drop_copy, nullptr, nullptr);
-  WM_dropbox_add(lb,
-                 "UI_OT_drop_color",
-                 blender::ui::drop_color_poll,
-                 blender::ui::drop_color_copy,
-                 nullptr,
-                 nullptr);
+  WM_dropbox_add(
+      lb, "UI_OT_drop_color", ui::drop_color_poll, ui::drop_color_copy, nullptr, nullptr);
   WM_dropbox_add(lb,
                  "SCENE_OT_drop_scene_asset",
                  screen_drop_scene_poll,
@@ -7374,3 +7379,5 @@ void ED_keymap_screen(wmKeyConfig *keyconf)
 }
 
 /** \} */
+
+}  // namespace blender

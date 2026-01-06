@@ -18,6 +18,8 @@
 
 #include "BLI_strict_flags.h" /* IWYU pragma: keep. Keep last. */
 
+namespace blender {
+
 void hsv_to_rgb(float h, float s, float v, float *r_r, float *r_g, float *r_b)
 {
   float nr, ng, nb;
@@ -614,7 +616,7 @@ MALWAYS_INLINE __m128 linearrgb_to_srgb_v4_simd(const __m128 c)
 void srgb_to_linearrgb_v3_v3(float linear[3], const float srgb[3])
 {
   float r[4] = {srgb[0], srgb[1], srgb[2], 1.0f};
-  __m128 *rv = (__m128 *)&r;
+  __m128 *rv = reinterpret_cast<__m128 *>(&r);
   *rv = srgb_to_linearrgb_v4_simd(*rv);
   linear[0] = r[0];
   linear[1] = r[1];
@@ -624,7 +626,7 @@ void srgb_to_linearrgb_v3_v3(float linear[3], const float srgb[3])
 void linearrgb_to_srgb_v3_v3(float srgb[3], const float linear[3])
 {
   float r[4] = {linear[0], linear[1], linear[2], 1.0f};
-  __m128 *rv = (__m128 *)&r;
+  __m128 *rv = reinterpret_cast<__m128 *>(&r);
   *rv = linearrgb_to_srgb_v4_simd(*rv);
   srgb[0] = r[0];
   srgb[1] = r[1];
@@ -840,7 +842,7 @@ void BLI_init_srgb_conversion()
   }
 }
 
-namespace blender::math {
+namespace math {
 
 struct locus_entry_t {
   float mired; /* Inverse temperature */
@@ -958,4 +960,5 @@ float3x3 chromatic_adaption_matrix(const float3 &from_XYZ, const float3 &to_XYZ)
   return invert(bradford) * from_scale<float3x3>(to_LMS / from_LMS) * bradford;
 }
 
-}  // namespace blender::math
+}  // namespace math
+}  // namespace blender

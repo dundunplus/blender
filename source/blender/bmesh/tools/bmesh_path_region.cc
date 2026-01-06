@@ -19,6 +19,8 @@
 #include "bmesh.hh"
 #include "bmesh_path_region.hh" /* own include */
 
+namespace blender {
+
 /**
  * Special handling of vertices with 2 edges
  * (act as if the edge-chain is a single edge).
@@ -117,7 +119,7 @@ static LinkNode *mesh_calc_path_region_elem(BMesh *bm,
                                             const char path_htype)
 {
   int ele_verts_len[2];
-  blender::Vector<BMVert *, BM_DEFAULT_NGON_STACK_SIZE> ele_verts_buf[2];
+  Vector<BMVert *, BM_DEFAULT_NGON_STACK_SIZE> ele_verts_buf[2];
   BMVert **ele_verts[2];
 
   /* Get vertices from any `ele_src/ele_dst` elements. */
@@ -126,7 +128,7 @@ static LinkNode *mesh_calc_path_region_elem(BMesh *bm,
     int j = 0;
 
     if (ele->head.htype == BM_FACE) {
-      BMFace *f = (BMFace *)ele;
+      BMFace *f = reinterpret_cast<BMFace *>(ele);
       ele_verts_buf[side].resize(f->len);
       ele_verts[side] = ele_verts_buf[side].data();
 
@@ -137,7 +139,7 @@ static LinkNode *mesh_calc_path_region_elem(BMesh *bm,
       } while ((l_iter = l_iter->next) != l_first);
     }
     else if (ele->head.htype == BM_EDGE) {
-      BMEdge *e = (BMEdge *)ele;
+      BMEdge *e = reinterpret_cast<BMEdge *>(ele);
       ele_verts_buf[side].resize(2);
       ele_verts[side] = ele_verts_buf[side].data();
 
@@ -145,7 +147,7 @@ static LinkNode *mesh_calc_path_region_elem(BMesh *bm,
       ele_verts[side][j++] = e->v2;
     }
     else if (ele->head.htype == BM_VERT) {
-      BMVert *v = (BMVert *)ele;
+      BMVert *v = reinterpret_cast<BMVert *>(ele);
       ele_verts_buf[side].resize(1);
       ele_verts[side] = ele_verts_buf[side].data();
 
@@ -474,3 +476,5 @@ LinkNode *BM_mesh_calc_path_region_face(BMesh *bm,
 }
 
 /** \} */
+
+}  // namespace blender
