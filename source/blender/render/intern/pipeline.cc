@@ -61,8 +61,6 @@
 
 #include "NOD_composite.hh"
 
-#include "COM_compositor.hh"
-#include "COM_context.hh"
 #include "COM_node_group_operation.hh"
 #include "COM_render_context.hh"
 
@@ -78,6 +76,7 @@
 
 #include "MOV_write.hh"
 
+#include "RE_compositor.hh"
 #include "RE_engine.h"
 #include "RE_pipeline.h"
 
@@ -1257,9 +1256,6 @@ static void do_render_compositor(Render *re)
       }
 
       if (!re->display->test_break()) {
-        ntree->runtime->test_break = re->display->test_break_cb;
-        ntree->runtime->tbh = re->display->tbh;
-
         if (update_newframe) {
           /* If we have consistent depsgraph now would be a time to update them. */
         }
@@ -1281,19 +1277,16 @@ static void do_render_compositor(Render *re)
         compositor::RenderContext compositor_render_context;
         compositor_render_context.is_animation_render = re->flag & R_ANIMATION;
         for (RenderView &rv : re->result->views) {
-          COM_execute(re,
-                      &re->r,
-                      re->pipeline_scene_eval,
-                      ntree,
-                      rv.name,
-                      &compositor_render_context,
-                      nullptr,
-                      needed_outputs);
+          RE_compositor_execute(*re,
+                                *re->pipeline_scene_eval,
+                                re->r,
+                                *ntree,
+                                rv.name,
+                                &compositor_render_context,
+                                nullptr,
+                                needed_outputs);
         }
         compositor_render_context.save_file_outputs(re->pipeline_scene_eval);
-
-        ntree->runtime->test_break = nullptr;
-        ntree->runtime->tbh = nullptr;
       }
     }
   }
