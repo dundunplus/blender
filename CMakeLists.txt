@@ -493,6 +493,13 @@ option(WITH_MATERIALX "Enable MaterialX Support" ON)
 # Hydra render engine
 option(WITH_HYDRA "Enable Hydra render engine" ON)
 
+# Storm tests (via USD or Hydra)
+option(WITH_STORM_TESTS_VULKAN "\
+Enable Storm tests using the Vulkan backend. Requires WITH_HYDRA."
+  OFF
+)
+mark_as_advanced(WITH_STORM_TESTS_VULKAN)
+
 # RTL Languages, Complex Shaping, OpenType Features
 option(WITH_FRIBIDI "Enable features relying on fribidi" OFF)
 option(WITH_HARFBUZZ "Enable features relying on harfbuzz" OFF)
@@ -800,7 +807,6 @@ Use Clang Tidy to analyze the source code \
   mark_as_advanced(WITH_CLANG_TIDY)
 endif()
 
-option(WITH_BOOST "Enable features depending on boost" ON)
 option(WITH_TBB "\
 Enable multi-threading. TBB is also required for features such as Cycles, OpenVDB and USD"
   ON
@@ -884,6 +890,13 @@ else()
   # TODO: We should probably add more sanity checks for Windows and Mac as well
   set(WITH_LINUX_OFFICIAL_RELEASE_TESTS OFF)
 endif()
+
+option(WITH_UI_TESTS_VULKAN "\
+Enable UI tests using the Vulkan backend. \
+Requires WITH_UI_TESTS and WITH_GPU_RENDER_TESTS_VULKAN."
+  OFF
+)
+mark_as_advanced(WITH_UI_TESTS_VULKAN)
 
 option(WITH_TESTS_EXPERIMENTAL "\
 Run tests marked as experimental. \
@@ -1350,13 +1363,7 @@ set_and_warn_dependency(WITH_PYTHON WITH_CYCLES        OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_DRACO         OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_MOD_FLUID     OFF)
 
-# enable boost for cycles, audaspace or i18n
-# otherwise if the user disabled
-
-set_and_warn_dependency(WITH_BOOST WITH_OPENVDB        OFF)
-set_and_warn_dependency(WITH_BOOST WITH_USD            OFF)
 if(WITH_CYCLES)
-  set_and_warn_dependency(WITH_BOOST   WITH_CYCLES_OSL          OFF)
   set_and_warn_dependency(WITH_PUGIXML WITH_CYCLES_OSL          OFF)
   set_and_warn_dependency(WITH_PUGIXML WITH_CYCLES_STANDALONE   OFF)
   set_and_warn_dependency(WITH_CYCLES_OSL WITH_CYCLES_TEST_OSL  OFF)
@@ -2936,6 +2943,7 @@ if(FIRST_RUN)
   info_cfg_option(WITH_GPU_MESH_PAINT_TESTS)
   info_cfg_option(WITH_UI_TESTS)
   info_cfg_option(WITH_UI_TESTS_HEADLESS)
+  info_cfg_option(WITH_UI_TESTS_VULKAN)
   info_cfg_option(WITH_GPU_RENDER_TESTS_VULKAN)
   info_cfg_option(WITH_LINUX_OFFICIAL_RELEASE_TESTS)
 
