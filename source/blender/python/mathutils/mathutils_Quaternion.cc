@@ -206,8 +206,8 @@ PyDoc_STRVAR(
     "   :type order: Literal['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX']\n"
     "   :param euler_compat: Optional euler argument the new euler will be made\n"
     "      compatible with (no axis flipping between them).\n"
-    "      Useful for converting a series of matrices to animation curves.\n"
-    "   :type euler_compat: :class:`Euler`\n"
+    "      Useful for converting a series of quaternions to animation curves.\n"
+    "   :type euler_compat: :class:`Euler` | None\n"
     "   :return: Euler representation of the quaternion.\n"
     "   :rtype: :class:`Euler`\n");
 static PyObject *Quaternion_to_euler(QuaternionObject *self, PyObject *args)
@@ -217,8 +217,20 @@ static PyObject *Quaternion_to_euler(QuaternionObject *self, PyObject *args)
   const char *order_str = nullptr;
   short order = EULER_ORDER_XYZ;
   EulerObject *eul_compat = nullptr;
+  PyC_TypeOrNone eul_compat_or_none = PyC_TYPE_OR_NONE_INIT(&euler_Type, &eul_compat);
 
-  if (!PyArg_ParseTuple(args, "|sO!:to_euler", &order_str, &euler_Type, &eul_compat)) {
+  static const char *_keywords[] = {"", "", nullptr};
+  static _PyArg_Parser _parser = {
+      "|"  /* Optional arguments. */
+      "s"  /* `order` */
+      "O&" /* `euler_compat` */
+      ":to_euler",
+      _keywords,
+      nullptr,
+  };
+  if (!_PyArg_ParseTupleAndKeywordsFast(
+          args, nullptr, &_parser, &order_str, PyC_ParseTypeOrNone, &eul_compat_or_none))
+  {
     return nullptr;
   }
 
@@ -1545,7 +1557,7 @@ static PyNumberMethods Quaternion_NumMethods = {
 PyDoc_STRVAR(
     /* Wrap. */
     Quaternion_axis_doc,
-    "Quaternion axis value.\n"
+    "Quaternion component value.\n"
     "\n"
     ":type: float\n");
 static PyObject *Quaternion_axis_get(QuaternionObject *self, void *type)

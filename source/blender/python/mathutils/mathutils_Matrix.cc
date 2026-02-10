@@ -1322,12 +1322,12 @@ PyDoc_STRVAR(
     "   Return an Euler representation of the rotation matrix\n"
     "   (3x3 or 4x4 matrix only).\n"
     "\n"
-    "   :param order: A rotation order string."
+    "   :param order: A rotation order string.\n"
     "   :type order: Literal['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX']\n"
     "   :param euler_compat: Optional euler argument the new euler will be made\n"
     "      compatible with (no axis flipping between them).\n"
     "      Useful for converting a series of matrices to animation curves.\n"
-    "   :type euler_compat: :class:`Euler`\n"
+    "   :type euler_compat: :class:`Euler` | None\n"
     "   :return: Euler representation of the matrix.\n"
     "   :rtype: :class:`Euler`\n");
 static PyObject *Matrix_to_euler(MatrixObject *self, PyObject *args)
@@ -1336,6 +1336,7 @@ static PyObject *Matrix_to_euler(MatrixObject *self, PyObject *args)
   short order = EULER_ORDER_XYZ;
   float eul[3], eul_compatf[3];
   EulerObject *eul_compat = nullptr;
+  PyC_TypeOrNone eul_compat_or_none = PyC_TYPE_OR_NONE_INIT(&euler_Type, &eul_compat);
 
   float mat[3][3];
 
@@ -1343,7 +1344,18 @@ static PyObject *Matrix_to_euler(MatrixObject *self, PyObject *args)
     return nullptr;
   }
 
-  if (!PyArg_ParseTuple(args, "|sO!:to_euler", &order_str, &euler_Type, &eul_compat)) {
+  static const char *_keywords[] = {"", "", nullptr};
+  static _PyArg_Parser _parser = {
+      "|"  /* Optional arguments. */
+      "s"  /* `order` */
+      "O&" /* `euler_compat` */
+      ":to_euler",
+      _keywords,
+      nullptr,
+  };
+  if (!_PyArg_ParseTupleAndKeywordsFast(
+          args, nullptr, &_parser, &order_str, PyC_ParseTypeOrNone, &eul_compat_or_none))
+  {
     return nullptr;
   }
 
@@ -1620,9 +1632,12 @@ static bool matrix_invert_args_check(const MatrixObject *self, PyObject *args, b
       return true;
     }
     case 1: {
+      PyObject *arg = PyTuple_GET_ITEM(args, 0);
+      if (arg == Py_None) {
+        return true;
+      }
       if (check_type) {
-        const MatrixObject *fallback = reinterpret_cast<const MatrixObject *> PyTuple_GET_ITEM(
-            args, 0);
+        const MatrixObject *fallback = reinterpret_cast<const MatrixObject *>(arg);
         if (!MatrixObject_Check(fallback)) {
           PyErr_SetString(PyExc_TypeError,
                           "Matrix.invert: "
@@ -1683,12 +1698,10 @@ static PyObject *Matrix_invert(MatrixObject *self, PyObject *args)
     return nullptr;
   }
 
-  if (matrix_invert_internal(self, self->matrix)) {
-    /* pass */
-  }
-  else {
-    if (PyTuple_GET_SIZE(args) == 1) {
-      MatrixObject *fallback = reinterpret_cast<MatrixObject *> PyTuple_GET_ITEM(args, 0);
+  if (!matrix_invert_internal(self, self->matrix)) {
+    PyObject *arg;
+    if (PyTuple_GET_SIZE(args) == 1 && ((arg = PyTuple_GET_ITEM(args, 0)) != Py_None)) {
+      MatrixObject *fallback = reinterpret_cast<MatrixObject *>(arg);
 
       if (BaseMath_ReadCallback(fallback) == -1) {
         return nullptr;
@@ -1740,10 +1753,10 @@ static PyObject *Matrix_inverted(MatrixObject *self, PyObject *args)
     /* pass */
   }
   else {
-    if (PyTuple_GET_SIZE(args) == 1) {
-      PyObject *fallback = PyTuple_GET_ITEM(args, 0);
-      Py_INCREF(fallback);
-      return fallback;
+    PyObject *arg;
+    if (PyTuple_GET_SIZE(args) == 1 && ((arg = PyTuple_GET_ITEM(args, 0)) != Py_None)) {
+      Py_INCREF(arg);
+      return arg;
     }
 
     matrix_invert_raise_degenerate();
@@ -1986,8 +1999,8 @@ PyDoc_STRVAR(
     Matrix_lerp_doc,
     ".. method:: lerp(other, factor, /)\n"
     "\n"
-    "   Returns the interpolation of two matrices. Uses polar decomposition, see"
-    "   \"Matrix Animation and Polar Decomposition\", Shoemake and Duff, 1992.\n"
+    "   Returns the interpolation of two matrices. Uses polar decomposition, see "
+    "\"Matrix Animation and Polar Decomposition\", Shoemake and Duff, 1992.\n"
     "\n"
     "   :param other: value to interpolate with.\n"
     "   :type other: :class:`Matrix`\n"
@@ -3385,7 +3398,7 @@ static PyObject *Matrix_is_orthogonal_get(MatrixObject *self, void * /*closure*/
 PyDoc_STRVAR(
     /* Wrap. */
     Matrix_is_orthogonal_axis_vectors_doc,
-    "True if this matrix has got orthogonal axis vectors, 3x3 and 4x4 only, "
+    "True if this matrix has orthogonal axis vectors, 3x3 and 4x4 only, "
     "(read-only).\n"
     "\n"
     ":type: bool\n");
