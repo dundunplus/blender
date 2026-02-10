@@ -428,11 +428,11 @@ PyDoc_STRVAR(
     "   Common values: color=(0.0, 0.0, 0.0, 1.0), depth=1.0, stencil=0.\n"
     "\n"
     "   :param color: Sequence of 3 or 4 floats representing ``(r, g, b, a)``.\n"
-    "   :type color: Sequence[float]\n"
+    "   :type color: Sequence[float] | None\n"
     "   :param depth: depth value.\n"
-    "   :type depth: float\n"
+    "   :type depth: float | None\n"
     "   :param stencil: stencil value.\n"
-    "   :type stencil: int\n");
+    "   :type stencil: int | None\n");
 static PyObject *pygpu_framebuffer_clear(BPyGPUFrameBuffer *self, PyObject *args, PyObject *kwds)
 {
   PYGPU_FRAMEBUFFER_CHECK_OBJ(self);
@@ -563,10 +563,9 @@ PyDoc_STRVAR(
     "   :param slot: The framebuffer slot to read data from.\n"
     "   :type slot: int\n"
     "   :param format: The format that describes the content of a single channel.\n"
-    "      Possible values are ``FLOAT``, ``INT``, ``UINT``, ``UBYTE``, ``UINT_24_8`` & "
-    "``10_11_11_REV``.\n"
     "      ``UINT_24_8`` is deprecated, use ``FLOAT`` instead.\n"
-    "   :type format: str\n"
+    "   :type format: " PYDOC_DATAFORMAT_LITERAL
+    "\n"
     "   :param data: Optional Buffer object to fill with the pixels values.\n"
     "   :type data: :class:`gpu.types.Buffer` | None\n"
     "   :return: The Buffer with the read pixels.\n"
@@ -848,7 +847,8 @@ PyDoc_STRVAR(
     "\n"
     "   :param depth_slot: GPUTexture to attach or a ``dict`` containing keywords: "
     "'texture', 'layer' and 'mip'.\n"
-    "   :type depth_slot: :class:`gpu.types.GPUTexture` | dict[] | None\n"
+    "   :type depth_slot: :class:`gpu.types.GPUTexture` | dict[str, int | "
+    ":class:`gpu.types.GPUTexture`] | None\n"
     "   :param color_slots: Tuple where each item can be a GPUTexture or a ``dict`` "
     "containing keywords: 'texture', 'layer' and 'mip'.\n"
     "   :type color_slots: :class:`gpu.types.GPUTexture` | "
