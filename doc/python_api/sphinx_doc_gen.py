@@ -392,7 +392,7 @@ EXTRA_SOURCE_FILES = (
 
 # Examples.
 EXAMPLES_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "examples"))
-EXAMPLE_SET = set(f.removesuffix(".0.py") for f in os.listdir(EXAMPLES_DIR) if f.endswith(".0.py"))
+EXAMPLE_SET = set(os.path.splitext(f)[0] for f in os.listdir(EXAMPLES_DIR) if f.endswith(".py"))
 EXAMPLE_SET_USED = set()
 
 # RST files directory.
@@ -643,6 +643,7 @@ USE_PYCAPI_TYPES = True
 
 _BPY_STRUCT_PYCAPI = "bpy_struct"
 _BPY_PROP_PYCAPI = "bpy_prop"
+_BPY_PROP_ARRAY_PYCAPI = "bpy_prop_array"
 _BPY_PROP_COLLECTION_PYCAPI = "bpy_prop_collection"
 _BPY_PROP_COLLECTION_IDPROP_PYCAPI = "bpy_prop_collection_idprop"
 
@@ -650,6 +651,7 @@ _BPY_PROP_COLLECTION_ID = ":class:`{:s}`".format(_BPY_PROP_COLLECTION_PYCAPI) if
 
 bpy_struct = bpy.types.bpy_struct if USE_PYCAPI_TYPES else None
 bpy_prop = bpy.types.bpy_prop if USE_PYCAPI_TYPES else None
+bpy_prop_array = bpy.types.bpy_prop_array if USE_PYCAPI_TYPES else None
 bpy_prop_collection = bpy.types.bpy_prop_collection if USE_PYCAPI_TYPES else None
 bpy_prop_collection_idprop = bpy.types.bpy_prop_collection_idprop if USE_PYCAPI_TYPES else None
 
@@ -739,43 +741,43 @@ def title_string(text, heading_char, double=False):
     return "{:s}\n{:s}\n\n".format(text, filler)
 
 
-def write_example_ref(ident, fw, example_id, ext="py"):
-    if example_id in EXAMPLE_SET:
+def write_example_ref_impl(ident, fw, example_id, ext):
+    # Extract the comment.
+    filepath = os.path.join("..", "examples", "{:s}.{:s}".format(example_id, ext))
+    filepath_full = os.path.join(os.path.dirname(fw.__self__.name), filepath)
 
-        # Extract the comment.
-        filepath = os.path.join("..", "examples", "{:s}.0.{:s}".format(example_id, ext))
-        filepath_full = os.path.join(os.path.dirname(fw.__self__.name), filepath)
-
-        text, line_no, line_no_has_content = example_extract_docstring(filepath_full)
-        if text:
-            # Ensure a blank line, needed since in some cases the indentation doesn't match the previous line.
-            # which causes Sphinx not to warn about bad indentation.
-            fw("\n")
-            for line in text.split("\n"):
-                fw("{:s}\n".format((ident + line).rstrip()))
-
+    text, line_no, line_no_has_content = example_extract_docstring(filepath_full)
+    if text:
+        # Ensure a blank line, needed since in some cases the indentation doesn't match the previous line.
+        # which causes Sphinx not to warn about bad indentation.
         fw("\n")
+        for line in text.split("\n"):
+            fw("{:s}\n".format((ident + line).rstrip()))
 
-        # Some files only contain a doc-string.
-        if line_no_has_content:
-            fw("{:s}.. literalinclude:: {:s}\n".format(ident, filepath))
-            if line_no > 0:
-                fw("{:s}   :lines: {:d}-\n".format(ident, line_no))
-            fw("\n")
-        EXAMPLE_SET_USED.add(example_id)
-    else:
-        if bpy.app.debug:
-            BPY_LOGGER.debug("\tskipping example: %s", example_id)
+    fw("\n")
 
-    # Support for numbered files `bpy.types.Operator` -> `bpy.types.Operator.1.py`.
-    i = 1
+    # Some files only contain a doc-string.
+    if line_no_has_content:
+        fw("{:s}.. literalinclude:: {:s}\n".format(ident, filepath))
+        if line_no > 0:
+            fw("{:s}   :lines: {:d}-\n".format(ident, line_no))
+        fw("\n")
+    EXAMPLE_SET_USED.add(example_id)
+
+
+def write_example_ref(ident, fw, example_id, ext="py"):
+    # Support for numbered files `bpy.types.Operator` -> `bpy.types.Operator.0.py`.
+    i = 0
     while True:
         example_id_num = "{:s}.{:d}".format(example_id, i)
         if example_id_num in EXAMPLE_SET:
-            write_example_ref(ident, fw, example_id_num, ext)
-            i += 1
+            write_example_ref_impl(ident, fw, example_id_num, ext)
         else:
-            break
+            # Allow numbers to start at 0 or 1,
+            # historically they started at 1, but now 0 is supported too.
+            if i > 0:
+                break
+        i += 1
 
 
 def write_indented_lines(ident, fn, text, strip=True):
@@ -1342,21 +1344,28 @@ if bpy.app.build_options.experimental_features:
         context_type_map[key] = value
 
 
-def write_type_info(ident, fw, type_info):
-    """Write descriptive info (array dims, range, default, qualifiers) on a line after the description."""
+def format_operator_as_module(op_id):
+    # `FOO_OT_bar` -> `foo.bar`.
+    mod, _, fn = op_id.partition("_OT_")
+    assert fn, "Expected to have an `_OT_` separator."
+    return "{:s}.{:s}".format(mod.lower(), fn)
+
+
+def format_description_and_type_info(description, type_info):
     if type_info:
-        # Qualifier tokens (starting at "(") are stored individually so they
-        # can be tested with ``"readonly" in type_info`` etc.
-        # Items before the opening paren are comma-joined, qualifier tokens
-        # are raw-joined (they carry their own separators).
-        try:
-            qual_start = type_info.index("(")
-        except ValueError:
-            qual_start = len(type_info)
-        info_str = ", ".join(type_info[:qual_start])
-        qual_str = "".join(type_info[qual_start:])
-        sep = ", " if info_str and qual_str else ""
-        fw("{:s}{:s}{:s}{:s}\n\n".format(ident, info_str, sep, qual_str))
+        # Add some information at the end of the description,
+        # this doesn't really fit all that well anywhere, but it's often short and not worth
+        # the vertical space used by having its own line.
+        # However, if the description is already multi-line, then we do need to add a separate line,
+        # otherwise this would get mixed up in dot-points or notes.
+        if "\n" in description:
+            sep = "\n\n"
+        elif description:
+            sep = " "
+        else:
+            sep = ""
+        description = "{:s}{:s}({:s})".format(description, sep, ", ".join(type_info))
+    return description
 
 
 def pycontext2sphinx(basepath):
@@ -1567,15 +1576,31 @@ def pyrna2sphinx(basepath):
             enum_descr_override = pyrna_enum2sphinx_shared_link(prop)
             kwargs["enum_descr_override"] = enum_descr_override
 
-        type_descr, _type_info = prop.get_type_description(**kwargs)
+        type_descr, type_info = prop.get_type_description(**kwargs)
+
+        # Only for `bpy.ops.*` parameters.
+        if prop.fixed_type is not None and prop.fixed_type.is_operator_properties():
+            # Support operator macros where properties from another operator are passed in.
+            # These *would* be an `OperatorProperties` type, however, there isn't a convenient
+            # way to construct this data type, so - coercing them from a `dict` is supported.
+            # Since this is a special case in the RNA API, we need to override the type.
+            # Link to the operator to find the supported arguments.
+            type_info.append(":mod:`bpy.ops.{:s}` keyword arguments".format(format_operator_as_module(prop.identifier)))
+            type_descr = "dict[str, Any]"
+
+        prop_name = prop.name
+        prop_description = format_description_and_type_info(prop.description, type_info)
 
         # If the link has been written, no need to inline the enum items.
         enum_text = "" if enum_descr_override else pyrna_enum2sphinx(prop)
-        if prop.name or prop.description or enum_text:
+        # Don't accidentally use this again (some value have been manipulated).
+        del prop
+
+        if prop_name or prop_description or enum_text:
             fw(ident + ":{:s}{:s}: ".format(id_name, identifier))
 
-            if prop.name or prop.description:
-                fw(", ".join(val for val in (prop.name, prop.description.replace("\n", "")) if val) + "\n")
+            if prop_name or prop_description:
+                fw(", ".join(val for val in (prop_name, prop_description.replace("\n", "")) if val) + "\n")
 
             # Special exception, can't use generic code here for enums.
             if enum_text:
@@ -1708,8 +1733,9 @@ def pyrna2sphinx(basepath):
                 fw("      :noindex:\n")
             fw("\n")
 
-            if prop.description:
-                write_indented_lines("      ", fw, prop.description, False)
+            prop_description = format_description_and_type_info(prop.description, type_info)
+            if prop_description:
+                write_indented_lines("      ", fw, prop_description, False)
                 fw("\n")
             if (deprecated := prop.deprecated) is not None:
                 fw(pyrna_deprecated_directive("      ", deprecated))
@@ -1724,8 +1750,6 @@ def pyrna2sphinx(basepath):
                     fw("\n")
                 del enum_text
             # End enum exception.
-
-            write_type_info("      ", fw, type_info)
 
             fw("      :type: {:s}\n\n".format(type_descr))
 
@@ -1916,7 +1940,7 @@ def pyrna2sphinx(basepath):
     if "bpy.types" not in EXCLUDE_MODULES:
         for struct in structs.values():
             # TODO: rna_info should filter these out!
-            if "_OT_" in struct.identifier:
+            if struct.is_operator_properties():
                 continue
             write_struct(struct)
 
@@ -1955,9 +1979,6 @@ def pyrna2sphinx(basepath):
             else:
                 fw(".. class:: {:s}\n\n".format(class_name))
             fw("   {:s}\n\n".format(descr_str))
-            fw("   .. note::\n\n")
-            fw("      Note that :class:`{:s}.{:s}` is not actually available from within Blender,\n"
-               "      it only exists for the purpose of documentation.\n\n".format(class_module_name, class_name))
 
             descr_items = [
                 (key, descr) for key, descr in sorted(class_value.__dict__.items())
@@ -1988,6 +2009,13 @@ def pyrna2sphinx(basepath):
                 "built-in base class for all property classes.",
                 use_subclasses=False,
                 base_class=None,
+            )
+
+            bpy_pycapi_type(
+                "bpy.types", bpy_prop_array, _BPY_PROP_ARRAY_PYCAPI,
+                "built-in class used for array properties.",
+                use_subclasses=False,
+                base_class=_BPY_PROP_PYCAPI,
             )
 
             bpy_pycapi_type(
@@ -2028,7 +2056,15 @@ def pyrna2sphinx(basepath):
             ops_mod.sort(key=lambda op: op.func_name)
 
             for op in ops_mod:
-                args_str = ", ".join(prop.get_arg_default(force=True) for prop in op.args)
+                args = []
+                for prop in op.args:
+                    arg_default = prop.get_arg_default(force=True)
+                    # NOTE: prop.fixed_type.bl_rna.base.identifier == "OperatorProperties"
+                    if prop.fixed_type and prop.fixed_type.is_operator_properties():
+                        if arg_default.endswith("=None"):
+                            arg_default = arg_default.removesuffix("None") + "{}"
+                    args.append(arg_default)
+                args_str = ", ".join(args)
                 # All operator arguments are keyword only (denoted by the leading `*`).
                 fw(".. function:: {:s}({:s}{:s})\n\n".format(op.func_name, "*, " if args_str else "", args_str))
 

@@ -18,6 +18,8 @@ import bpy
 # use to strip python paths
 script_paths = bpy.utils.script_paths()
 
+_OperatorProperties = bpy.types.OperatorProperties
+
 _FAKE_STRUCT_SUBCLASS = True
 
 # Map RNA type names to Python type names.
@@ -242,6 +244,9 @@ class InfoStructRNA:
                 properties_getset.append((identifier, descr))
         return properties_getset
 
+    def is_operator_properties(self):
+        return isinstance(self.bl_rna, _OperatorProperties)
+
     def __str__(self):
 
         txt = ""
@@ -438,6 +443,7 @@ class InfoPropertyRNA:
                     type_info.append("array of {:d} items".format(self.array_length))
 
                 # Describe mathutils types; logic mirrors pyrna_math_object_from_array
+                base_type_str = type_str
                 if self.type == "float":
                     if self.subtype == "MATRIX":
                         if self.array_length in {9, 16}:
@@ -456,6 +462,15 @@ class InfoPropertyRNA:
                     }:
                         if 2 <= self.array_length <= 4:
                             type_str = mathutils_fmt.format("Vector")
+
+                # Array properties that didn't match a mathutils type above
+                # should not be typed as a bare scalar (e.g. ``float``).
+                if type_str == base_type_str:
+                    if as_arg:
+                        type_str = "Sequence[{:s}]".format(base_type_str)
+                    else:
+                        # Escape the space as: :class:`Class`[X] isn't valid RST.
+                        type_str = class_fmt.format("bpy_prop_array") + "\\ [{:s}]".format(base_type_str)
 
             if self.type in {"float", "int"}:
                 type_info.append("in [{:s}, {:s}]".format(range_str(self.min), range_str(self.max)))
@@ -550,12 +565,7 @@ class InfoPropertyRNA:
             )
 
         if qualifiers:
-            type_info.append("(")
-            for i, q in enumerate(qualifiers):
-                if i > 0:
-                    type_info.append(", ")
-                type_info.append(q)
-            type_info.append(")")
+            type_info.extend(qualifiers)
 
         return type_str, type_info
 
