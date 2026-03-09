@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Beta (b'fd269015ba63')\n"
+"Project-Id-Version: Blender 5.1.0 Beta (b'21cc928ee21e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 13:27+0000\n"
-"PO-Revision-Date: 2026-03-02 12:07+0000\n"
+"POT-Creation-Date: 2026-03-09 08:57+0000\n"
+"PO-Revision-Date: 2026-03-07 21:12+0000\n"
 "Last-Translator: Alexandr Fatih <radix83@rambler.ru>\n"
 "Language-Team: Russian <https://translate.blender.org/projects/blender-ui/ui/ru/>\n"
 "Language: ru\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 
 msgid "Shader AOV"
-msgstr "AOV шейдера"
+msgstr "Replace with New ActionAOV шейдера"
 
 
 msgid "Valid"
@@ -1982,7 +1982,7 @@ msgstr "Основные"
 
 
 msgid "Show the basic building blocks and utilities coming with Blender"
-msgstr "Показать базовые блоки и средства, входящие в состав Blender"
+msgstr "Показать базовые блоки и средства, входящие в состав Blender'а"
 
 
 msgid "Custom"
@@ -2582,7 +2582,7 @@ msgstr "Является внутренним"
 
 
 msgid "The attribute is meant for internal use by Blender"
-msgstr "Атрибут предназначен для внутреннего использования в Blender"
+msgstr "Атрибут предназначен для внутреннего использования в Blender'е"
 
 
 msgid "Is Required"
@@ -8209,7 +8209,7 @@ msgstr "Лин. ошибка"
 
 
 msgid "Amount of residual error in Blender space unit for constraints that work on position"
-msgstr "Величина остаточной погрешности в единицах Blender для ограничителей, действующих на перемещение"
+msgstr "Величина остаточной погрешности в единицах Blender'а для ограничителей, действующих на перемещение"
 
 
 msgid "Rotation error"
@@ -12189,7 +12189,7 @@ msgstr "Макс. скорость"
 
 
 msgid "Velocity considered as maximum influence (Blender units per frame)"
-msgstr "Скорость, при которой воздействие будет максимальным (в единицах Blender на кадр)"
+msgstr "Скорость, при которой воздействие будет максимальным (в единицах Blender'а на кадр)"
 
 
 msgid "Velocity Color Ramp"
@@ -12567,7 +12567,7 @@ msgstr "Предумножение прозрачности"
 
 
 msgid "Multiply color by alpha (recommended for Blender input)"
-msgstr "Умножить цвет на прозрачность (рекомендуется для входных файлов для Blender)"
+msgstr "Умножить цвет на прозрачность (рекомендуется для входных файлов для Blender'а)"
 
 
 msgid "Use Shrink"
@@ -13938,7 +13938,7 @@ msgstr "Лакунарность"
 
 
 msgid "Gap between successive frequencies. Depth needs to be greater than 0 for this to have an effect"
-msgstr "Разрыв между последовательными частотами. Глубина должна быть больше 0, чтобы это имело эффект"
+msgstr "Разрыв между последовательными частотами. Глубина должна быть больше \"0\", чтобы это имело эффект"
 
 
 msgid "Time offset for the noise effect"
@@ -14975,7 +14975,7 @@ msgstr "Скрыть фрагменты .blend-файла, не являющие
 
 
 msgid "Filter Blender Backup Files"
-msgstr "Фильтровать файлы резервных копий Blender"
+msgstr "Фильтровать файлы резервных копий Blender'а"
 
 
 msgid "Show .blend1, .blend2, etc. files"
@@ -14983,7 +14983,7 @@ msgstr "Отображать файлы .blend1, .blend2 и последующи
 
 
 msgid "Filter Blender"
-msgstr "Фильтровать файлы Blender"
+msgstr "Фильтровать файлы Blender'а"
 
 
 msgid "Show .blend files"
@@ -14991,7 +14991,7 @@ msgstr "Отображать файлы .blend"
 
 
 msgid "Filter Blender IDs"
-msgstr "Фильтровать идентификаторы Blender"
+msgstr "Фильтровать идентификаторы Blender'а"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -15479,7 +15479,7 @@ msgstr "Экспортировать скрипт Mantaflow"
 
 
 msgid "Generate and export Mantaflow script from current domain settings during bake. This is only needed if you plan to analyze the cache (e.g. view grids, velocity vectors, particles) in Mantaflow directly (outside of Blender) after baking the simulation."
-msgstr "Сгенерировать и экспортировать скрипт Mantaflow с настройками выбранного домена во время запекания. Это необходимо только если вы собираетесь анализировать кэш (например, просматривать сетки, вектора скоростей, частицы) напрямую в Mantaflow (вне Blender) после запекания симуляции."
+msgstr "Сгенерировать и экспортировать скрипт Mantaflow с настройками выбранного домена во время запекания. Это необходимо только если вы собираетесь анализировать кэш (например, просматривать сетки, вектора скоростей, частицы) напрямую в Mantaflow (вне Blender'а) после запекания симуляции."
 
 
 msgid "Flame Grid"
@@ -17680,7 +17680,15 @@ msgstr "Использовать подсказки"
 
 
 msgid "Use tooltips when hovering over this gizmo"
-msgstr "Использовать подсказки при наведении курсора на этот гизмо"
+msgstr "Использовать подсказки при наведении курсора на данный гизмо"
+
+
+msgid "Use Undo"
+msgstr "Возможность отмены действий"
+
+
+msgid "Push an undo step after each use of the gizmo"
+msgstr "Фиксировать шаги для возможной отмены действий после каждого использования данного гизмо"
 
 
 msgctxt "Operator"
@@ -25348,7 +25356,7 @@ msgstr "Адаптивность"
 
 
 msgid "Reduces the final face count by simplifying geometry where detail is not needed, generating triangles. A value greater than 0 disables Fix Poles."
-msgstr "Уменьшить окончательное количество граней, упростив геометрию там, где детали не нужны, создав треугольники. Значение больше 0 отключает исправление полюсов."
+msgstr "Уменьшить окончательное количество граней, упростив геометрию там, где детали не нужны, создав треугольники. Значение больше \"0\" отключает исправление полюсов."
 
 
 msgid "Voxel Size"
@@ -29193,11 +29201,11 @@ msgstr "Формула шума, используемая для турбуле�
 
 
 msgid "Blender Original"
-msgstr "Собственный метод Blender"
+msgstr "Собственный метод Blender'а"
 
 
 msgid "Noise algorithm - Blender original: Smooth interpolated noise"
-msgstr "Алгоритм шума — собственный метод Blender: сглаженный интерполированный шум"
+msgstr "Алгоритм шума — собственный метод Blender'а: сглаженный интерполированный шум"
 
 
 msgid "Original Perlin"
@@ -30671,7 +30679,7 @@ msgstr "Особая величина, ниже которой демпфиро�
 
 
 msgid "Maximum damping coefficient when singular value is nearly 0 (higher values produce results with more stability, less reactivity)"
-msgstr "Максимальный коэффициент затухания, когда сингулярное значение близко к 0 (более высокие значения дают результаты с бо́льшей стабильностью и меньшей реактивностью)"
+msgstr "Максимальный коэффициент затухания, когда сингулярное значение близко к \"0\" (более высокие значения дают результаты с бо́льшей стабильностью и меньшей реактивностью)"
 
 
 msgid "Feedback"
@@ -35194,12 +35202,12 @@ msgid "Metaball"
 msgstr "Метасфера"
 
 
-msgid "Read"
-msgstr "Прочитать"
-
-
 msgid "Show/Hide"
 msgstr "Показать/скрыть"
+
+
+msgid "Read"
+msgstr "Прочитать"
 
 
 msgid "Write"
@@ -35210,12 +35218,12 @@ msgid "Sample"
 msgstr "Сэмплировать"
 
 
-msgid "Primitives"
-msgstr "Примитивы"
-
-
 msgid "Names"
 msgstr "Названия"
+
+
+msgid "Primitives"
+msgstr "Примитивы"
 
 
 msgid "Bone Roll"
@@ -35306,12 +35314,12 @@ msgid "Select Linked"
 msgstr "Выделить связанные"
 
 
-msgid "Render Preview"
-msgstr "Превью рендера"
-
-
 msgid "Select Loops"
 msgstr "Выделить петли"
+
+
+msgid "Render Preview"
+msgstr "Превью рендера"
 
 
 msgid "Adjust"
@@ -35442,12 +35450,12 @@ msgid "Mesh Select Mode"
 msgstr "Режим выделения меша"
 
 
-msgid "Gizmo"
-msgstr "Гизмо"
-
-
 msgid "Face Data"
 msgstr "Данные граней"
+
+
+msgid "Gizmo"
+msgstr "Гизмо"
 
 
 msgid "Instances"
@@ -35478,12 +35486,12 @@ msgid "Special Characters"
 msgstr "Специальные символы"
 
 
-msgid "List"
-msgstr "Список"
-
-
 msgid "Kerning"
 msgstr "Кернинг"
+
+
+msgid "List"
+msgstr "Список"
 
 
 msgid "Keyframe Insert Pie"
@@ -41644,7 +41652,7 @@ msgstr "Пространственный размер"
 
 
 msgid "Size of the simulation domain (in meters), and of the generated geometry (in BU)"
-msgstr "Размер домена симуляции (в метрах) и генерируемой геометрии (в ед. Blender)"
+msgstr "Размер домена симуляции (в метрах) и генерируемой геометрии (в ед. Blender'а)"
 
 
 msgid "Spectrum"
@@ -50800,6 +50808,26 @@ msgid "Base"
 msgstr "Основа"
 
 
+msgid "Base surface that the normal map is applied relative to, when displacement is used"
+msgstr "Поверхность, относительно которой будет применяться карта нормалей при использовании смещения"
+
+
+msgid "Original Base"
+msgstr "Исходная основа"
+
+
+msgid "Apply normal map relative to the smooth undisplaced surface, for normal maps that match the displacement map"
+msgstr "Применить карту нормалей относительно сглаженной, несмещённой поверхности. Для карт нормалей, совпадающих с картой смещения"
+
+
+msgid "Displaced Base"
+msgstr "Смещённая основа"
+
+
+msgid "Apply normal map relative to the displaced surface, for normal maps that are to be applied in addition to the displacement map"
+msgstr "Применить карту нормалей относительно смещённой поверхности. Для карт нормалей, применяемых поверх карты смещения"
+
+
 msgid "OpenGL or DirectX"
 msgstr "OpenGL или DirectX"
 
@@ -50837,19 +50865,19 @@ msgstr "Отображение нормалей в пространстве ми
 
 
 msgid "Blender Object Space"
-msgstr "Пространство объекта Blender"
+msgstr "Пространство объекта Blender'а"
 
 
 msgid "Object space normal mapping, compatible with Blender render baking"
-msgstr "Отображать нормали в пространстве объекта, совместимо с текстурами, запечёнными в Blender"
+msgstr "Отображать нормали в пространстве объекта, совместимо с текстурами, запечёнными в Blender'е"
 
 
 msgid "Blender World Space"
-msgstr "Пространство мира Blender"
+msgstr "Пространство мира Blender'а"
 
 
 msgid "World space normal mapping, compatible with Blender render baking"
-msgstr "Отображать нормали в пространстве мира, совместимо с текстурами, запечёнными в Blender"
+msgstr "Отображать нормали в пространстве мира, совместимо с текстурами, запечёнными в Blender'е"
 
 
 msgid "UV Map for tangent space maps"
@@ -59328,7 +59356,7 @@ msgstr "Минимальное расстояние, допускаемое ме
 
 
 msgid "Placement"
-msgstr "Расположение"
+msgstr "Размещение"
 
 
 msgid "Placement for detected features"
@@ -61940,7 +61968,7 @@ msgstr "Применить единицы"
 
 
 msgid "Take into account current Blender units settings (if unset, raw Blender Units values are used as-is)"
-msgstr "Учесть текущие настройки единиц в Blender (если не установлено, будут использоваться значения в единицах Blender как есть)"
+msgstr "Учесть текущие настройки единиц в Blender'е (если не установлено, будут использоваться значения в единицах Blender'а как есть)"
 
 
 msgid "Armature FBXNode Type"
@@ -61948,7 +61976,7 @@ msgstr "Тип ноды FBX арматуры"
 
 
 msgid "FBX type of node (object) used to represent Blender's armatures (use the Null type unless you experience issues with the other app, as other choices may not import back perfectly into Blender...)"
-msgstr "Тип ноды (объекта) FBX, используемый для представления арматуры Blender'а (используйте тип 'Null', если у вас не возникнут проблемы с другими приложениями, поскольку другие параметры могут привести к тому, что файл не будет должным образом импортирован обратно в Blender...)"
+msgstr "FBX-Тип узла (объекта), используемый для представления арматуры Blender'а (используйте тип 'Null', если у вас не возникнут проблемы с другими приложениями, поскольку другие параметры могут привести к тому, что файл не будет должным образом импортирован обратно в Blender...)"
 
 
 msgid "Null"
@@ -61956,7 +61984,7 @@ msgstr "Null"
 
 
 msgid "'Null' FBX node, similar to Blender's Empty (default)"
-msgstr "Узел FBX «Null», схоже с пустышками в Blender (по умолчанию)"
+msgstr "Узел FBX \"Null\", схоже с пустышками в Blender'е (по умолчанию)"
 
 
 msgid "'Root' FBX node, supposed to be the root of chains of bones..."
@@ -63071,7 +63099,7 @@ msgstr "Экспорт оригинального PBR отражения"
 
 
 msgid "Export original glTF PBR Specular, instead of Blender Principled Shader Specular"
-msgstr "Экспорт исходного glTF PBR отражения вместо шейдера отражения Blender Principled"
+msgstr "Экспорт исходного glTF PBR отражения вместо шейдера отражения Blender'а Principled"
 
 
 msgid "Export Animation Pointer (Experimental)"
@@ -63299,7 +63327,7 @@ msgstr "Запомнить настройки экспорта"
 
 
 msgid "Store glTF export settings in the Blender project"
-msgstr "Сохранить настройки экспорта glTF в файле Blender"
+msgstr "Сохранить настройки экспорта glTF в файле Blender'а"
 
 
 msgid "Do Legacy Replace"
@@ -67947,7 +67975,7 @@ msgstr "Сохранить изображение с другим именем �
 
 
 msgid "Create a new image file without modifying the current image in Blender"
-msgstr "Создать новый файл изображения без изменения текущего изображения в Blender"
+msgstr "Создать новый файл изображения без изменения текущего изображения в Blender'е"
 
 
 msgid "Save As Render"
@@ -68471,7 +68499,7 @@ msgstr "Обновить экран отчётов"
 
 
 msgid "Update the display of reports in Blender UI (internal use)"
-msgstr "Обновить экран отчётов в интерфейсе пользователя Blender (для внутреннего использования)"
+msgstr "Обновить экран отчётов в интерфейсе пользователя Blender'а (для внутреннего использования)"
 
 
 msgid "Change selection of all visible reports"
@@ -69622,11 +69650,11 @@ msgstr "Дублировать меш и переместить"
 
 msgctxt "Operator"
 msgid "Collapse Edges & Faces"
-msgstr "Свернуть рёбра & грани"
+msgstr "Схлопнуть рёбра & грани"
 
 
 msgid "Collapse isolated edge and face regions, merging data such as UVs and color attributes. This can collapse edge-rings as well as regions of connected faces into vertices"
-msgstr "Свернуть изолированные области рёбер и граней, объединяя данные, такие как UV и атрибуты цвета. Это может свернуть кольца рёбер, а также области соединённых граней в вершины"
+msgstr "Схлопнуть изолированные области рёбер и граней, объединяя данные, такие как UV и атрибуты цвета. Возможно схлопывание колец рёбер, а также областей соединённых граней в вершины"
 
 
 msgctxt "Operator"
@@ -72446,7 +72474,7 @@ msgstr "Активировать ноду предпросмотра"
 
 
 msgid "Activate selected viewer node in compositor and geometry nodes"
-msgstr "Активировать выбранную ноду Viewer в узлах композитора и геометрии"
+msgstr "Активировать выделенную ноду \"Предпросмотр (viewer)\" в геометрических нодах и нодах компо́зитора"
 
 
 msgid "Offset of nodes from the cursor when added"
@@ -79132,7 +79160,7 @@ msgstr "Угол подсветки"
 
 
 msgid "Less than 90 limits the angle used in the tonal range"
-msgstr "Значения меньше 90 ограничивают угол, используемый в тональном диапазоне"
+msgstr "Значения меньше \"90\" ограничивают угол, используемый в тональном диапазоне"
 
 
 msgid "Dirt Angle"
@@ -80653,7 +80681,7 @@ msgstr "Проверять наличие обновлений при запус
 
 
 msgid "Allow Blender to check for updates upon launch"
-msgstr "Разрешить Blender проверять наличие обновлений при запуске"
+msgstr "Разрешить Blender'у проверять наличие обновлений при запуске"
 
 
 msgctxt "Operator"
@@ -81966,7 +81994,7 @@ msgstr "Сохранить снимок экрана"
 
 
 msgid "Capture a picture of the whole Blender window"
-msgstr "Сделать снимок всего окна Blender"
+msgstr "Сделать снимок всего окна Blender'а"
 
 
 msgctxt "Operator"
@@ -84810,6 +84838,11 @@ msgstr "Выделять текст, перемещая курсор"
 
 msgid "Set cursor position in text"
 msgstr "Установить положение курсора в тексте"
+
+
+msgctxt "Operator"
+msgid "Delete Text"
+msgstr "Удалить текст"
 
 
 msgid "Delete text at cursor position"
@@ -88856,7 +88889,7 @@ msgstr "Запустить как фоновую задачу"
 
 
 msgid "Enable this to run the import in the background, disable to block Blender while importing. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
-msgstr "Включите это, чтобы запустить импорт в фоновом режиме (отключить блокировку Blender во время импорта). Эта опция устарела; используйте тип EXECUTE у оператора для запуска на переднем плане и INVOKE для выполнения в качестве фонового задания"
+msgstr "Включите, чтобы запустить импорт в фоновом режиме (отключите, чтобы заблокировать Blender во время импорта). Данная опция устарела; используйте тип EXECUTE у оператора для запуска на переднем плане и INVOKE для выполнения в качестве фонового задания"
 
 
 msgid "Curves as Mesh"
@@ -89021,7 +89054,7 @@ msgstr "Добавить модификаторы кэша и ограничит
 
 
 msgid "Enable this to run the export in the background, disable to block Blender while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
-msgstr "Включите это, чтобы запустить экспорт в фоновом режиме (отключить блокировку Blender во время экспорта). Эта опция устарела; используйте тип EXECUTE у оператора для запуска на переднем плане и INVOKE для выполнения в качестве фонового задания"
+msgstr "Включите, чтобы запустить экспорт в фоновом режиме (отключите для блокировки Blender'а во время экспорта). Данная опция устарела; используйте тип EXECUTE у оператора для запуска на переднем плане и INVOKE для выполнения в качестве фонового задания"
 
 
 msgid "Is Sequence"
@@ -89422,7 +89455,7 @@ msgstr "Цвета вершин в файле находятся в линейн
 
 
 msgid "Import custom normals, if available (otherwise Blender will compute them)"
-msgstr "Импортировать пользовательские нормали, если они доступны (в противном случае Blender расчитает их сам)"
+msgstr "Импортировать пользовательские нормали, если они доступны (в противном случае Blender рассчитает их сам)"
 
 
 msgid "Enums As Strings"
@@ -89990,7 +90023,7 @@ msgstr "Коллекция путей к файлам с общей корнев
 
 
 msgid "Show Blender files in the File Browser"
-msgstr "Показать файлы Blender в браузере файлов"
+msgstr "Показать файлы Blender'а в браузере файлов"
 
 
 msgid "Show folders in the File Browser"
@@ -90165,11 +90198,11 @@ msgstr "Значение для настраиваемых типов свойс
 
 msgctxt "Operator"
 msgid "Quit Blender"
-msgstr "Выйти из Blender"
+msgstr "Выйти из Blender'а"
 
 
 msgid "Quit Blender"
-msgstr "Выйти из Blender"
+msgstr "Выйти из Blender'а"
 
 
 msgctxt "Operator"
@@ -90501,7 +90534,7 @@ msgstr "Закрыть Blender после сохранения"
 
 
 msgid "Save the current Blender file with a numerically incremented name that does not overwrite any existing files"
-msgstr "Сохранить текущий файл Blender с численно увеличенным именем, которое не перезаписывает существующие файлы"
+msgstr "Сохранить текущий файл Blender'а с численно увеличенным именем, которое не перезаписывает существующие файлы"
 
 
 msgctxt "Operator"
@@ -93531,7 +93564,7 @@ msgstr "Отображение дорожки сцены"
 
 
 msgid "Preview Overlays"
-msgstr "Предварительный просмотр наложений"
+msgstr "Наложения предварительного просмотра"
 
 
 msgid "Preview Snapping"
@@ -95588,7 +95621,7 @@ msgstr "Параметры редактирования"
 
 
 msgid "Settings for interacting with Blender data"
-msgstr "Параметры для взаимодействия с данными Blender"
+msgstr "Параметры для взаимодействия с данными Blender'а"
 
 
 msgid "Settings for features that are still early in their development stage"
@@ -96827,7 +96860,7 @@ msgstr "Максимальный порог"
 
 
 msgid "Raw input pressure value that is interpreted as 100% by Blender"
-msgstr "Сила давления, которая интерпретируется Blender как 100%"
+msgstr "Сила давления, которая интерпретируется Blender'ом как 100%"
 
 
 msgid "Show Tablet Debug Values"
@@ -97291,7 +97324,7 @@ msgstr "Бэкэнд GPU"
 
 
 msgid "GPU backend to use (requires restarting Blender for changes to take effect)"
-msgstr "Используемый бэкэнд GPU (для вступления изменений в силу требуется перезапуск Blender)"
+msgstr "Используемый бэкэнд GPU (для вступления изменений в силу требуется перезапуск Blender'а)"
 
 
 msgid "Use OpenGL backend"
@@ -97367,7 +97400,7 @@ msgstr "Устанавливается через Microsoft Store"
 
 
 msgid "Whether this blender installation is a sandboxed Microsoft Store version"
-msgstr "Является ли данная установка блендера изолированной версией Microsoft Store (песочница)"
+msgstr "Является ли данная установка Blender'а изолированной версией Microsoft Store (песочница)"
 
 
 msgid "Legacy Compute Device Type"
@@ -97495,7 +97528,7 @@ msgstr "Толщина линий интерфейса"
 
 
 msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Blender UI scale"
-msgstr "Рекомендуемая толщина линии и размер точки в пикселях для аддонов, отображающих пользовательские элементы интерфейса, на основе настроек операционной системы и масштаба пользовательского интерфейса Blender"
+msgstr "Рекомендуемая толщина линии и размер точки в пикселях для аддонов, отображающих пользовательские элементы интерфейса, на основе настроек операционной системы и масштаба пользовательского интерфейса Blender'а"
 
 
 msgid "UI Scale"
@@ -97503,7 +97536,7 @@ msgstr "Масштаб интерфейса"
 
 
 msgid "Size multiplier to use when displaying custom user interface elements, so that they are scaled correctly on screens with different DPI. This value is based on operating system DPI settings and Blender display scale."
-msgstr "Множитель размера, используемый при отображении элементов пользовательского интерфейса, чтобы они правильно масштабировались на экранах с разным разрешением. Это значение основано на настройках DPI операционной системы и масштабе отображения Blender."
+msgstr "Множитель размера, используемый при отображении элементов пользовательского интерфейса, чтобы они правильно масштабировались на экранах с разным разрешением. Это значение основано на настройках DPI операционной системы и масштабе отображения Blender'а."
 
 
 msgid "Edit Mode Smooth Wires"
@@ -97527,7 +97560,7 @@ msgstr "Разрешить онлайн-доступ"
 
 
 msgid "Allow Blender to access the internet. Add-ons that follow this setting will only connect to the internet if enabled. However, Blender cannot prevent third-party add-ons from violating this rule."
-msgstr "Разрешить Blender доступ к интернету. Аддоны, следующие этой настройке, будут подключаться к интернету только в том случае, если эта опция включена. Однако Blender не может помешать сторонним аддонам обходить это правило."
+msgstr "Разрешить Blender'у доступ к интернету. Аддоны, следующие этой настройке, будут подключаться к интернету только в том случае, если эта опция включена. Однако Blender не может помешать сторонним аддонам обходить это правило."
 
 
 msgid "Overlay Smooth Wires"
@@ -97894,6 +97927,10 @@ msgid "English (UK)"
 msgstr "Английский (Великобритания) - English (UK)"
 
 
+msgid "Locale code: en_GB. Translation progress: 99%"
+msgstr "Код локали: en_GB. Прогресс перевода: 99%"
+
+
 msgid "English (US)"
 msgstr "Английский (США) - English (US)"
 
@@ -98000,6 +98037,10 @@ msgstr "Код локали: ja_JP. Прогресс перевода: 99%"
 
 msgid "Korean - 한국어"
 msgstr "Корейский - 한국어"
+
+
+msgid "Locale code: ko_KR. Translation progress: 98%"
+msgstr "Код локали: ko_KR. Прогресс перевода: 98%"
 
 
 msgid "Kyrgyz - Кыргыз тили"
@@ -98136,10 +98177,6 @@ msgstr "Код локали: sv_SE. Прогресс перевода: 21%"
 
 msgid "Tamil - தமிழ்"
 msgstr "Тамильский - தமிழ்"
-
-
-msgid "Locale code: ta. Translation progress: 93%"
-msgstr "Код локали: ta. Прогресс перевода: 93%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -100006,7 +100043,7 @@ msgstr "GPU-Вычисления"
 
 
 msgid "Use GPU compute device for rendering, configured in the system tab in the user preferences"
-msgstr "Использовать графический процессор для рендера, настраивается на вкладке «Система» в настройках Blender"
+msgstr "Использовать графический процессор для рендера, настраивается на вкладке «Система» в настройках Blender'а"
 
 
 msgid "Dicing Camera"
@@ -100198,7 +100235,7 @@ msgstr "Сэмплы для обучения"
 
 
 msgid "The maximum number of samples used for training path guiding. Higher samples lead to more accurate guiding, however may also unnecessarily slow down rendering once guiding is accurate enough. A value of 0 will continue training until the last sample"
-msgstr "Максимальное количество сэмплов, используемых для обучения наведению путей. Больше сэмплов приводит к более точному наведению, однако могут также излишне замедлить рендеринг, если наведение будет достаточно точным. Значение 0 продолжит обучение до последнего сэмпла"
+msgstr "Максимальное количество сэмплов, используемых для обучения наведению путей. Больше сэмплов приводит к более точному наведению, однако могут также излишне замедлить рендеринг, если наведение будет достаточно точным. Значение \"0\" продолжит обучение до последнего сэмпла"
 
 
 msgid "Light Sampling Threshold"
@@ -107020,7 +107057,7 @@ msgstr "Поддерживает предварительный просмотр
 
 
 msgid "Whether the node editor's type supports displaying node previews"
-msgstr "Поддерживает ли тип нодового редактора отображение предпросмотров узлов"
+msgstr "Поддерживает ли тип нодового редактора отображение предпросмотров для нод"
 
 
 msgctxt "ID"
@@ -107113,7 +107150,7 @@ msgstr "API данных"
 
 
 msgid "Display low level Blender data and its properties"
-msgstr "Показать низкоуровневые данные Blender и их свойства"
+msgstr "Показать низкоуровневые данные Blender'а и их свойства"
 
 
 msgid "Library Overrides"
@@ -107346,7 +107383,7 @@ msgstr "Свойства области"
 
 
 msgid "Blender preferences space data"
-msgstr "Данные пространства настроек Blender"
+msgstr "Данные пространства настроек Blender'а"
 
 
 msgid "Search term for filtering in the UI"
@@ -108468,7 +108505,7 @@ msgstr "Показывать превью нод"
 
 
 msgid "Display each node's preview if node is toggled"
-msgstr "Отображать превью каждого узла, если узел переключён"
+msgstr "Отображать превью каждой ноды, если нода переключена"
 
 
 msgid "Show Reroute Auto Labels"
@@ -108484,7 +108521,7 @@ msgstr "Отображать тайминг"
 
 
 msgid "Display each node's last execution time"
-msgstr "Отображать информацию о последнем времени выполнения для каждого узла"
+msgstr "Отображать информацию о последнем времени выполнения для каждой ноды"
 
 
 msgid "Show Wire Colors"
@@ -112921,10 +112958,6 @@ msgid "Auto-Keying Mode"
 msgstr "Режим автосоздания ключей"
 
 
-msgid "Mode of automatic keyframe insertion for objects, bones and masks"
-msgstr "Режим автоматической вставки ключевых кадров для объектов, костей и масок"
-
-
 msgid "Add & Replace"
 msgstr "Добавить и заменить"
 
@@ -113389,10 +113422,6 @@ msgstr "Для каналов с циклической экстраполяци
 
 msgid "Auto Keying"
 msgstr "Автосоздание ключей"
-
-
-msgid "Automatic keyframe insertion for objects, bones and masks"
-msgstr "Автоматическая вставка ключевых кадров для объектов, костей и масок"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -120163,7 +120192,7 @@ msgstr "Сообщить об ошибке"
 
 
 msgid "Blender's extension repository must be enabled to install extensions!"
-msgstr "Для установки расширений необходимо указать папку для расширений Blender!"
+msgstr "Для установки расширений необходимо указать папку для расширений Blender'а!"
 
 
 msgctxt "Operator"
@@ -120742,7 +120771,7 @@ msgstr "Неверный контекст"
 
 
 msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
-msgstr "Файл BVH не содержит длительности в кадрах в разделе MOTION, при условии, что сцены BVH и Blender имеют одинаковую частоту кадров"
+msgstr "Файл BVH не содержит длительности в кадрах в разделе MOTION, при условии, что сцены BVH и Blender'а имеют одинаковую частоту кадров"
 
 
 msgid "Unable to update scene frame rate, as the BVH file contains a zero frame duration in its MOTION section"
@@ -128719,7 +128748,7 @@ msgstr "Сохранить как студийный свет"
 
 msgctxt "Operator"
 msgid "Load Factory Blender Preferences"
-msgstr "Загрузить базовые настройки Blender"
+msgstr "Загрузить базовые настройки Blender'а"
 
 
 msgid "Cycles is disabled in this build"
@@ -131511,7 +131540,7 @@ msgstr "Добавленные данные"
 
 
 msgid "Linking or appending from a very old .blend file format (%d.%d), no animation conversion will be done! You may want to re-save your lib file with current Blender"
-msgstr "Связывание или присоединение от .blend-файла в очень старом формате (%d.%d), анимация не будет преобразована! Пересохраните библиотечный файл в текущей версии Blender"
+msgstr "Связывание или присоединение от .blend-файла в очень старом формате (%d.%d), анимация не будет преобразована! Пересохраните библиотечный файл в текущей версии Blender'а"
 
 
 msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
@@ -134058,7 +134087,7 @@ msgstr "Каталоги ассетов не могут быть отредак�
 
 
 msgid "Cannot save asset catalogs before the Blender file is saved"
-msgstr "Невозможно сохранить каталоги ассетов до сохранения файла Blender"
+msgstr "Невозможно сохранить каталоги ассетов до сохранения файла Blender'а"
 
 
 msgid "No changes to be saved"
@@ -136116,7 +136145,7 @@ msgid ""
 "File saved by newer Blender\n"
 "({}), expect loss of data"
 msgstr ""
-"Файл сохранен в более новой версии Blender\n"
+"Файл сохранен в более новой версии Blender'а\n"
 "({}), возможна потеря данных"
 
 
@@ -138865,7 +138894,7 @@ msgstr "Отображать панель снизу"
 
 
 msgid "Blender Drivers Editor"
-msgstr "Редактор драйверов Blender"
+msgstr "Редактор драйверов Blender'а"
 
 
 msgid "Blender Info Log"
@@ -142424,7 +142453,7 @@ msgstr "Перейти к номеру строки"
 
 
 msgid "File Modified Outside and Inside Blender"
-msgstr "Файл изменён снаружи в внутри Blender"
+msgstr "Файл изменён снаружи в внутри Blender'а"
 
 
 msgid "Reload from disk (ignore local changes)"
@@ -142440,7 +142469,7 @@ msgstr "Сделать текст внутренним (создать отде�
 
 
 msgid "File Modified Outside Blender"
-msgstr "Файл изменён вне Blender"
+msgstr "Файл изменён вне Blender'а"
 
 
 msgid "Reload from disk"
@@ -142448,7 +142477,7 @@ msgstr "Перезагрузить с диска"
 
 
 msgid "File Deleted Outside Blender"
-msgstr "Файл удалён вне Blender"
+msgstr "Файл удалён вне Blender'а"
 
 
 msgid "Make text internal"
@@ -148517,7 +148546,7 @@ msgstr "Время между открытием и закрытием затв�
 
 
 msgid "Not a geometry node tree"
-msgstr "Не является деревом узлов геометрии"
+msgstr "Не является деревом геометрических нод"
 
 
 msgid "Not a geometry or compositor node tree"
@@ -151991,7 +152020,7 @@ msgstr "Использует ли вьюпорт ортогональную пр
 
 
 msgid "Resolution must be greater than 1"
-msgstr "Разрешение должно быть больше 1"
+msgstr "Разрешение должно быть больше \"1\""
 
 
 msgid "Volume density per voxel"
@@ -153599,7 +153628,7 @@ msgstr "Ожидается ввод {}"
 
 
 msgid "Blender File View"
-msgstr "Просмотр файлов Blender"
+msgstr "Просмотр файлов Blender'а"
 
 
 msgid "Invalid context: \"%s\", %s"
@@ -153647,7 +153676,7 @@ msgstr "Загрузить базовые настройки \"{}\"."
 
 
 msgid "Load Factory Blender Preferences"
-msgstr "Загрузить базовые настройки Blender"
+msgstr "Загрузить базовые настройки Blender'а"
 
 
 msgid "To make changes to Preferences permanent, use \"Save Preferences\""
@@ -154160,7 +154189,7 @@ msgstr "Ваша видеокарта или драйвер не поддерж�
 
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Blender support"
-msgstr "Обновление до последней версии macOS может улучшить поддержку Blender"
+msgstr "Обновление до последней версии macOS может улучшить поддержку Blender'а"
 
 
 msgctxt "WindowManager"

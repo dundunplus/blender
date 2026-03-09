@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Beta (b'fd269015ba63')\n"
+"Project-Id-Version: Blender 5.1.0 Beta (b'21cc928ee21e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 13:27+0000\n"
+"POT-Creation-Date: 2026-03-09 08:57+0000\n"
 "PO-Revision-Date: 2025-07-23 15:12+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Urdu <https://translate.blender.org/projects/blender-ui/ui/ur/>\n"
@@ -32621,12 +32621,12 @@ msgid "Metaball"
 msgstr "ﻝﺎﺑ ﺎﭩﯿﻣ"
 
 
-msgid "Read"
-msgstr "ﮟﯿﮬﮍﭘ"
-
-
 msgid "Show/Hide"
 msgstr "ﮟﯿﺋﺎﭙﮭﭼ/ﮟﯿﺋﺎﮭﮐﺩ"
+
+
+msgid "Read"
+msgstr "ﮟﯿﮬﮍﭘ"
 
 
 msgid "Write"
@@ -32637,12 +32637,12 @@ msgid "Sample"
 msgstr "ﮧﻧﻮﻤﻧ"
 
 
-msgid "Primitives"
-msgstr "ﻢﯾﺪﻗ"
-
-
 msgid "Names"
 msgstr "ﻡﺎﻧ"
+
+
+msgid "Primitives"
+msgstr "ﻢﯾﺪﻗ"
 
 
 msgid "Bone Roll"
@@ -32861,12 +32861,12 @@ msgid "Mesh Select Mode"
 msgstr "ﮈﻮﻣ ﭧﮑﯿﻠﺳ ﺶﯿﻣ"
 
 
-msgid "Gizmo"
-msgstr "ﻮﻣﺰﯿﮔ"
-
-
 msgid "Face Data"
 msgstr "ﺎﭩﯾﮈ ﺎﮐ ﮮﺮﮩﭼ"
+
+
+msgid "Gizmo"
+msgstr "ﻮﻣﺰﯿﮔ"
 
 
 msgid "Instances"
@@ -101577,10 +101577,6 @@ msgid "Auto-Keying Mode"
 msgstr "ﮈﻮﻣ ﮓﻨﯿﮐ ﻮﭨﺁ"
 
 
-msgid "Mode of automatic keyframe insertion for objects, bones and masks"
-msgstr "ﺝﺍﺭﺪﻧﺍ ﻢﯾﺮﻓ ﯽﮐ ﺭﺎﮐﺩﻮﺧ ﮯﯿﻟ ﮯﮐ ﮏﺳﺎﻣ ﺭﻭﺍ ﮞﻮﯾﮉﮨ ،ﭧﮑﯿﺠﺑﺁ of ﮈﻮﻣ"
-
-
 msgid "Add & Replace"
 msgstr "ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﺭﻭﺍ ﮟﯾﺮﮐ ﻞﻣﺎﺷ"
 
@@ -101978,10 +101974,6 @@ msgstr "ﮟﯿﮨ ﮯﺗﺎﺟ ﻮﮨ ﮏﻠﮑﯿﺋﺎﺳ ﺩﻮﺨﺑ ﺩﻮ�
 
 msgid "Auto Keying"
 msgstr "ﮓﻨﯿﮐ ﻮﭨﺁ"
-
-
-msgid "Automatic keyframe insertion for objects, bones and masks"
-msgstr "ﺝﺍﺭﺪﻧﺍ ﻢﯾﺮﻓ ﯽﮐ ﺭﺎﮐﺩﻮﺧ ﮯﯿﻟ ﮯﮐ ﮏﺳﺎﻣ ﺭﻭﺍ ﮞﻮﯾﮉﮨ ،ءﺎﯿﺷﺍ"
 
 
 msgid "Auto Keyframe Insert Keying Set"

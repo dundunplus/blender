@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Beta (b'fd269015ba63')\n"
+"Project-Id-Version: Blender 5.1.0 Beta (b'21cc928ee21e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 13:27+0000\n"
-"PO-Revision-Date: 2026-02-28 17:12+0000\n"
+"POT-Creation-Date: 2026-03-09 08:57+0000\n"
+"PO-Revision-Date: 2026-03-05 07:12+0000\n"
 "Last-Translator: Tamar <TamMebonia@gmail.com>\n"
 "Language-Team: Georgian <https://translate.blender.org/projects/blender-ui/ui/ka/>\n"
 "Language: ka\n"
@@ -5120,7 +5120,7 @@ msgstr "ეს კოლექცია ლოკალურ არმატუ
 
 
 msgid "This bone collection is expanded in the bone collections tree view"
-msgstr "ძვალთა ეს კოლექცია გაფართოებულია ძვალთა კოლექციების ხის ხედში"
+msgstr "ძვალთა ეს კოლექცია გაფართოებულია ძვალთა კოლექციების იერარქიულ ხედში"
 
 
 msgid "Is Local Override"
@@ -9596,7 +9596,7 @@ msgstr "ორიენტაციის წონა"
 
 
 msgid "For Tree-IK: Weight of orientation control for this target"
-msgstr "შ.კ.-ხისთვის: ორიენტაციის კონტროლის წონა ამ სამიზნისთვის"
+msgstr "შ.კ.-იერარქიისთვის: ორიენტაციის კონტროლის წონა ამ სამიზნისთვის"
 
 
 msgid "Pole Angle"
@@ -9652,7 +9652,7 @@ msgstr "მოიცავი ძვლის კუდი ჯაჭვის �
 
 
 msgid "For Tree-IK: Weight of position control for this target"
-msgstr "შ.კ.-ხისთვის: პოზიციის კონტროლის წონა ამ სამიზნისთვის"
+msgstr "შ.კ.-იერარქიისთვის: პოზიციის კონტროლის წონა ამ სამიზნისთვის"
 
 
 msgid "Limit Distance Constraint"
@@ -14855,7 +14855,7 @@ msgstr "რეკურსია"
 
 
 msgid "Numbers of dirtree levels to show simultaneously"
-msgstr "ერთდროულად საჩვენებელი დირექტორიათა ხის დონეების რიცხვები"
+msgstr "ერთდროულად საჩვენებელი დირექტორიათა იერარქიის დონეების რიცხვები"
 
 
 msgid "Only list current directory's content, with no recursion"
@@ -17681,6 +17681,14 @@ msgstr "მინიშნების გამოყენება"
 
 msgid "Use tooltips when hovering over this gizmo"
 msgstr "ამ გიზმოზე გადატარებისას გამოიყენე მინიშნებები"
+
+
+msgid "Use Undo"
+msgstr "ქმედების გაუქმების გამოყენება"
+
+
+msgid "Push an undo step after each use of the gizmo"
+msgstr "გიზმოს ყოველი გამოყენების შემდეგ გაგზავნე გაუქმების ერთი ნაბიჯი"
 
 
 msgctxt "Operator"
@@ -25784,7 +25792,7 @@ msgstr "ხედის ამჟამინდელი მდებარე�
 
 
 msgid "Compositor Node Tree"
-msgstr "კომპოზიტორის კვანძთა ხე"
+msgstr "კომპოზიტორის კვანძოვანი ხე"
 
 
 msgid "Node tree consisting of linked nodes used for compositing"
@@ -35194,12 +35202,12 @@ msgid "Metaball"
 msgstr "მეტაბურთი"
 
 
-msgid "Read"
-msgstr "წაკითხვა"
-
-
 msgid "Show/Hide"
 msgstr "ჩვენება/დამალვა"
+
+
+msgid "Read"
+msgstr "წაკითხვა"
 
 
 msgid "Write"
@@ -35210,12 +35218,12 @@ msgid "Sample"
 msgstr "ნიმუშის აღება"
 
 
-msgid "Primitives"
-msgstr "პრიმიტივები"
-
-
 msgid "Names"
 msgstr "სახელები"
+
+
+msgid "Primitives"
+msgstr "პრიმიტივები"
 
 
 msgid "Bone Roll"
@@ -35306,12 +35314,12 @@ msgid "Select Linked"
 msgstr "დაკავშირებულის მონიშვნა"
 
 
-msgid "Render Preview"
-msgstr "რენდერის გადახედვა"
-
-
 msgid "Select Loops"
 msgstr "მარყუჟების მონიშვნა"
+
+
+msgid "Render Preview"
+msgstr "რენდერის გადახედვა"
 
 
 msgid "Adjust"
@@ -35442,12 +35450,12 @@ msgid "Mesh Select Mode"
 msgstr "მეშის მონიშვნის რეჟიმი"
 
 
-msgid "Gizmo"
-msgstr "გიზმო"
-
-
 msgid "Face Data"
 msgstr "წახნაგების მონაცემები"
+
+
+msgid "Gizmo"
+msgstr "გიზმო"
 
 
 msgid "Instances"
@@ -35478,12 +35486,12 @@ msgid "Special Characters"
 msgstr "სპეციალური ასონიშნები"
 
 
-msgid "List"
-msgstr "სია"
-
-
 msgid "Kerning"
 msgstr "ასოთშორისი ინტერვალი"
+
+
+msgid "List"
+msgstr "სია"
 
 
 msgid "Keyframe Insert Pie"
@@ -50798,6 +50806,26 @@ msgstr "წარმოქმენი არეული ნორმალი 
 
 msgid "Base"
 msgstr "ფუძე"
+
+
+msgid "Base surface that the normal map is applied relative to, when displacement is used"
+msgstr "საბაზისო ზედაპირი, რომელთან მიმართებაშიც დაედება ნორმალების რუკა, როცა გადანაცვლებაა გამოყენებული"
+
+
+msgid "Original Base"
+msgstr "ორიგინალი ფუძე"
+
+
+msgid "Apply normal map relative to the smooth undisplaced surface, for normal maps that match the displacement map"
+msgstr "დაადე ნორმალების რუკა გლუვი, გადაუნაცვლებელი ზედაპირის მიმართ, იმ ნორმალების რუკებისთვის, რომლებიც გადანაცვლების რუკას ემთხვევა"
+
+
+msgid "Displaced Base"
+msgstr "გადანაცვლებული ფუძე"
+
+
+msgid "Apply normal map relative to the displaced surface, for normal maps that are to be applied in addition to the displacement map"
+msgstr "დადე ნორმალების რუკა გადანაცვლებულ ზედაპირთან მიმართებაში, ნორმალების რუკებისთვის, რომლებიც გადანაცვლების რუკაზე დამატებით გამოიყენება"
 
 
 msgid "OpenGL or DirectX"
@@ -73181,7 +73209,7 @@ msgstr "დაუკავშირე მაჩვენებლის კვ�
 
 msgctxt "Operator"
 msgid "Cut Links"
-msgstr "ბმულების მოკვეთა"
+msgstr "ბმულების კვეთა"
 
 
 msgid "Use the mouse to cut (remove) some links"
@@ -78342,7 +78370,7 @@ msgstr "შიგთავსი"
 
 
 msgid "Apply the operation over content of the selected items only (the data-blocks in their sub-tree)"
-msgstr "გამოიყენე ოპერაცია მხოლოდ მონიშნული საგნების შიგთავსზე (მონაცემთა ბლოკები მათ ქვე-ხეში)"
+msgstr "გამოიყენე ოპერაცია მხოლოდ მონიშნული საგნების შიგთავსზე (მონაცემთა ბლოკები მათ ქვე-იერარქიაში)"
 
 
 msgid "Selected & Content"
@@ -78554,7 +78582,7 @@ msgstr "გადართე საგნების მონახაზშ�
 
 
 msgid "Use box selection to select tree elements"
-msgstr "გამოიყენე ოთხკუთხა მონიშვნა ხის ელემენტების მოსანიშნად"
+msgstr "გამოიყენე ოთხკუთხა მონიშვნა იერარქიის ელემენტების მოსანიშნად"
 
 
 msgid "Tweak gesture from empty space for box selection"
@@ -78567,7 +78595,7 @@ msgstr "სიარულით მონიშვნა"
 
 
 msgid "Use walk navigation to select tree elements"
-msgstr "გამოიყენე სიარულით ნავიგაცია ხის ელემენტების მოსანიშნად"
+msgstr "გამოიყენე სიარულით ნავიგაცია იერარქიის ელემენტების მოსანიშნად"
 
 
 msgid "Extend selection on walk"
@@ -78588,7 +78616,7 @@ msgstr "აქტიურის ჩვენება"
 
 
 msgid "Open up the tree and adjust the view so that the active object is shown centered"
-msgstr "გახსენი ხე და დაარეგულირე ხედი ისე, რომ აქტიური ობიექტი ცენტრში იყოს ნაჩვენები"
+msgstr "გახსენი იერარქია და დაარეგულირე ხედი ისე, რომ აქტიური ობიექტი ცენტრში იყოს ნაჩვენები"
 
 
 msgctxt "Operator"
@@ -84810,6 +84838,11 @@ msgstr "მონიშნე ტექსტი კურსორის მო
 
 msgid "Set cursor position in text"
 msgstr "დააყენე კურსორის პოზიცია ტექსტში"
+
+
+msgctxt "Operator"
+msgid "Delete Text"
+msgstr "ტექსტის წაშლა"
 
 
 msgid "Delete text at cursor position"
@@ -97894,6 +97927,10 @@ msgid "English (UK)"
 msgstr "ინგლისური (გაერთიანებული სამეფო)"
 
 
+msgid "Locale code: en_GB. Translation progress: 99%"
+msgstr "ლოკალური კოდი: en_GB. თარგმანის პროგრესი: 99%"
+
+
 msgid "English (US)"
 msgstr "ინგლისური (აშშ)"
 
@@ -98000,6 +98037,10 @@ msgstr "ლოკალური კოდი: ja_JP. თარგმანი�
 
 msgid "Korean - 한국어"
 msgstr "კორეული - 한국어"
+
+
+msgid "Locale code: ko_KR. Translation progress: 98%"
+msgstr "ლოკალური კოდი: ko_KR. თარგმანის პროგრესი: 98%"
 
 
 msgid "Kyrgyz - Кыргыз тили"
@@ -98136,10 +98177,6 @@ msgstr "ლოკალური კოდი: sv_SE. თარგმანი�
 
 msgid "Tamil - தமிழ்"
 msgstr "ტამილური - தமிழ்"
-
-
-msgid "Locale code: ta. Translation progress: 93%"
-msgstr "ლოკალური კოდი: ta. თარგმანის პროგრესი: 93%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -112921,10 +112958,6 @@ msgid "Auto-Keying Mode"
 msgstr "ავტო-ჩასოლვის რეჟიმი"
 
 
-msgid "Mode of automatic keyframe insertion for objects, bones and masks"
-msgstr "საკვანძო ფაზების ავტომატურად ჩასმის რეჟიმი ობიექტების, ძვლებისა და ნიღბებისთვის"
-
-
 msgid "Add & Replace"
 msgstr "დამატება და ჩანაცვლება"
 
@@ -113389,10 +113422,6 @@ msgstr "არხებისთვის ციკლური ექსტრ�
 
 msgid "Auto Keying"
 msgstr "ავტო ჩასოლვა"
-
-
-msgid "Automatic keyframe insertion for objects, bones and masks"
-msgstr "საკვანძო ფაზების ავტომატური ჩასმა ობიექტების, ძვლებისა და ნიღბებისთვის"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -139842,7 +139871,7 @@ msgstr "გადაიტანე აქტივი კატალოგშ�
 
 
 msgid "Move catalog {} to the top level of the tree"
-msgstr "გადაიტანე კატალოგი {} ხის ზედა დონეზე"
+msgstr "გადაიტანე კატალოგი {} იერარქიის ზედა დონეზე"
 
 
 msgid "Move assets out of any catalog"
@@ -141773,11 +141802,11 @@ msgstr "ჯერ იმპლემენტირებული არაა"
 
 
 msgid "Cannot unlink action '%s'. It's not clear which object or object-data it should be unlinked from, there's no object or object-data as parent in the Outliner tree"
-msgstr "ქმედებას '%s' კავშირი ვერ გაუწყდება. გაურკვეველია, რომელ ობიექტთან, ან ობიექტის მონაცემებთან უნდა გაუწყდეს კავშირი, მონაცემთა ხეში მშობლად მითითებული ობიექტი, ან ობიექტის მონაცემები არაა"
+msgstr "ქმედებას '%s' კავშირი ვერ გაუწყდება. გაურკვეველია, რომელ ობიექტთან, ან ობიექტის მონაცემებთან უნდა გაუწყდეს კავშირი, მონახაზის იერარქიაში მშობლად მითითებული ობიექტი, ან ობიექტის მონაცემები არაა"
 
 
 msgid "Cannot unlink material '%s'. It's not clear which object or object-data it should be unlinked from, there's no object or object-data as parent in the Outliner tree"
-msgstr "მასალას '%s' კავშირი ვერ გაუწყდება. გაურკვეველია, რომელ ობიექტთან, ან ობიექტის მონაცემებთან უნდა გაუწყდეს კავშირი, მონაცემთა ხეში მშობლად მითითებული ობიექტი, ან ობიექტის მონაცემები არაა"
+msgstr "მასალას '%s' კავშირი ვერ გაუწყდება. გაურკვეველია, რომელ ობიექტთან, ან ობიექტის მონაცემებთან უნდა გაუწყდეს კავშირი, მონახაზის იერარქიაში მშობლად მითითებული ობიექტი, ან ობიექტის მონაცემები არაა"
 
 
 msgid "Cannot unlink the material '%s' from linked object data"
@@ -141785,11 +141814,11 @@ msgstr "მასალას '%s' დაკავშირებული ო�
 
 
 msgid "Cannot unlink texture '%s'. It's not clear which Freestyle line style it should be unlinked from, there's no Freestyle line style as parent in the Outliner tree"
-msgstr "ტექსტურის '%s' კავშირი ვერ გაწყდება. გაურკვეველია, Freestyle-ის რომელ ხაზის სტილთან უნდა გაუწყდეს კავშირი, მონახაზის ხეში მშობლად მითითებული Freestyle-ის ხაზის სტილი არაა"
+msgstr "ტექსტურის '%s' კავშირი ვერ გაწყდება. გაურკვეველია, Freestyle-ის რომელ ხაზის სტილთან უნდა გაუწყდეს კავშირი, მონახაზის იერარქიაში მშობლად მითითებული Freestyle-ის ხაზის სტილი არაა"
 
 
 msgid "Cannot unlink collection '%s'. It's not clear which scene, collection or instance empties it should be unlinked from, there's no scene, collection or instance empties as parent in the Outliner tree"
-msgstr "კოლექციის '%s' კავშირი ვერ გაწყდება. გაურკვეველია, რომელ სცენასთან, კოლექციასთან, ან ინსტანცირებულ ცარიელასთან უნდა გაუწყდეს კავშირი, მონახაზის ხეში მშობლად მითითებული სცენა, კოლექცია, ან ინსტანცირებული ცარიელა არაა"
+msgstr "კოლექციის '%s' კავშირი ვერ გაწყდება. გაურკვეველია, რომელ სცენასთან, კოლექციასთან, ან ინსტანცირებულ ცარიელასთან უნდა გაუწყდეს კავშირი, მონახაზის იერარქიაში მშობლად მითითებული სცენა, კოლექცია, ან ინსტანცირებული ცარიელა არაა"
 
 
 msgid "Cannot unlink collection '%s' parented to another linked collection '%s'"
@@ -141805,7 +141834,7 @@ msgstr "ობიექტის '%s' კავშირის გაწყვ�
 
 
 msgid "Cannot unlink world '%s'. It's not clear which scene it should be unlinked from, there's no scene as parent in the Outliner tree"
-msgstr "სამყაროს '%s' კავშირის გაწყვეტა შეუძლებელია. გაურკვეველია, რომელ სცენასთან უნდა გაუწყდეს კავშირი, მონახაზის ხეში მშობლად მითითებული სცენა არაა"
+msgstr "სამყაროს '%s' კავშირის გაწყვეტა შეუძლებელია. გაურკვეველია, რომელ სცენასთან უნდა გაუწყდეს კავშირი, მონახაზის იერარქიაში მშობლად მითითებული სცენა არაა"
 
 
 msgid "Could not create library override from data-block '%s', as it is not overridable"
