@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Beta (b'21cc928ee21e')\n"
+"Project-Id-Version: Blender 5.1.0 Beta (b'5a04f1d246f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 08:57+0000\n"
-"PO-Revision-Date: 2026-03-05 07:12+0000\n"
+"POT-Creation-Date: 2026-03-11 11:01+0000\n"
+"PO-Revision-Date: 2026-03-10 17:12+0000\n"
 "Last-Translator: Tamar <TamMebonia@gmail.com>\n"
 "Language-Team: Georgian <https://translate.blender.org/projects/blender-ui/ui/ka/>\n"
 "Language: ka\n"
@@ -97959,10 +97959,6 @@ msgid "French - Français"
 msgstr "ფრანგული - Français"
 
 
-msgid "Locale code: fr_FR. Translation progress: 99%"
-msgstr "ლოკალური კოდი: fr_FR. თარგმანის პროგრესი: 99%"
-
-
 msgid "Georgian - ქართული"
 msgstr "ქართული - ქართული"
 
@@ -98029,10 +98025,6 @@ msgstr "ლოკალური კოდი: it_IT. თარგმანი�
 
 msgid "Japanese - 日本語"
 msgstr "იაპონური - 日本語"
-
-
-msgid "Locale code: ja_JP. Translation progress: 99%"
-msgstr "ლოკალური კოდი: ja_JP. თარგმანის პროგრესი: 99%"
 
 
 msgid "Korean - 한국어"
@@ -98103,6 +98095,10 @@ msgid "Portuguese (Portugal) - Português europeu"
 msgstr "პორტუგალიური (პორტუგალიური) - Português europeu"
 
 
+msgid "Locale code: pt_PT. Translation progress: 78%"
+msgstr "ლოკალური კოდი: pt_PT. თარგმანის პროგრესი: 78%"
+
+
 msgid "Romanian - Român"
 msgstr "რუმინული - Român"
 
@@ -98171,12 +98167,12 @@ msgid "Swedish - Svenska"
 msgstr "შვედური - Svenska"
 
 
-msgid "Locale code: sv_SE. Translation progress: 21%"
-msgstr "ლოკალური კოდი: sv_SE. თარგმანის პროგრესი: 21%"
-
-
 msgid "Tamil - தமிழ்"
 msgstr "ტამილური - தமிழ்"
+
+
+msgid "Locale code: ta. Translation progress: 100%"
+msgstr "ლოკალური კოდი: ta. თარგმანის პროგრესი: 100%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -112958,6 +112954,10 @@ msgid "Auto-Keying Mode"
 msgstr "ავტო-ჩასოლვის რეჟიმი"
 
 
+msgid "Can add additional constraints on when auto keying can insert keyframes"
+msgstr "როცა ავტომატურ ჩასოლვას საკვანძო ფაზების ჩასმა შეუძლია, ამას შეუძლია დამატებითი ბორკილების დადება"
+
+
 msgid "Add & Replace"
 msgstr "დამატება და ჩანაცვლება"
 
@@ -113422,6 +113422,10 @@ msgstr "არხებისთვის ციკლური ექსტრ�
 
 msgid "Auto Keying"
 msgstr "ავტო ჩასოლვა"
+
+
+msgid "Automatically insert keyframes on modified properties"
+msgstr "ავტომატურად ჩასვი საკვანძო ფაზები მოდიფიცირებულ თვისებებზე"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -123696,6 +123700,10 @@ msgid "Calculation Range"
 msgstr "გამოთვლის დიაპაზონი"
 
 
+msgid "Frame Range Start"
+msgstr "კადრთა დიაპაზონის დასაწყისი"
+
+
 msgid "Bake to Active Camera"
 msgstr "ცხობა აქტიურ კამერაში"
 
@@ -123745,10 +123753,6 @@ msgstr "+ დაუჯგუფებელი საკვანძო ფა�
 
 msgid "Before"
 msgstr "წინ"
-
-
-msgid "Frame Range Start"
-msgstr "კადრთა დიაპაზონის დასაწყისი"
 
 
 msgid "Collection Mask"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Beta (b'21cc928ee21e')\n"
+"Project-Id-Version: Blender 5.1.0 Beta (b'5a04f1d246f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 08:57+0000\n"
+"POT-Creation-Date: 2026-03-11 11:01+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -97922,10 +97922,6 @@ msgid "French - Français"
 msgstr "பிரஞ்சு - பிரஞ்சு"
 
 
-msgid "Locale code: fr_FR. Translation progress: 99%"
-msgstr "மொழி குறியீடு: fr_FR. மொழிபெயர்ப்பு முன்னேற்றம்: 99%"
-
-
 msgid "Georgian - ქართული"
 msgstr "சார்சியன் - சார்சியன்"
 
@@ -97992,10 +97988,6 @@ msgstr "மொழி குறியீடு: it_IT. மொழிபெயர�
 
 msgid "Japanese - 日本語"
 msgstr "சப்பானிய - சப்பானிய"
-
-
-msgid "Locale code: ja_JP. Translation progress: 99%"
-msgstr "மொழி குறியீடு: ja_JP. மொழிபெயர்ப்பு முன்னேற்றம்: 99%"
 
 
 msgid "Korean - 한국어"
@@ -98128,10 +98120,6 @@ msgstr "மொழி குறியீடு: sw. மொழிபெயர்�
 
 msgid "Swedish - Svenska"
 msgstr "ச்வீடிச் - ச்வீடிச்"
-
-
-msgid "Locale code: sv_SE. Translation progress: 21%"
-msgstr "மொழி குறியீடு: sv_SE. மொழிபெயர்ப்பு முன்னேற்றம்: 21%"
 
 
 msgid "Tamil - தமிழ்"
@@ -123651,6 +123639,10 @@ msgid "Calculation Range"
 msgstr "கணக்கீடு வரம்பு"
 
 
+msgid "Frame Range Start"
+msgstr "பிரேம் ரேஞ்ச் ச்டார்ட்"
+
+
 msgid "Bake to Active Camera"
 msgstr "செயலில் உள்ள கேமராவுக்கு சுட்டுக்கொள்ளுங்கள்"
 
@@ -123700,10 +123692,6 @@ msgstr "+ குழுவற்ற கீஃப்ரேம்கள்"
 
 msgid "Before"
 msgstr "முன்"
-
-
-msgid "Frame Range Start"
-msgstr "பிரேம் ரேஞ்ச் ச்டார்ட்"
 
 
 msgid "Collection Mask"
