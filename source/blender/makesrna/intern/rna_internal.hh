@@ -26,6 +26,8 @@ enum class AttributeOwnerType;
 enum AttrDomainMask : uint8_t;
 using eCustomDataMask = uint64_t;
 
+struct ColorManagedColorspaceSettings;
+struct Editing;
 struct FreestyleSettings;
 struct ID;
 struct IDProperty;
@@ -38,6 +40,7 @@ struct Object;
 struct PropertyDefRNA;
 struct ReportList;
 struct SDNA;
+struct Strip;
 struct ViewLayer;
 
 /* Data structures used during define */
@@ -420,8 +423,7 @@ bool rna_GPencil_datablocks_annotations_poll(PointerRNA *ptr, const PointerRNA v
 bool rna_GPencil_datablocks_obdata_poll(PointerRNA *ptr, const PointerRNA value);
 
 /* Only the Image Editor and Camera Background images support "Render Result" or Viewer Node"
- * images. Note: UI template #id_search_allows_id() also handles this more generally for cases
- * where this poll is not defined. */
+ * images. */
 bool rna_Image_no_renderresult_or_viewer_poll(PointerRNA *ptr, const PointerRNA value);
 
 std::optional<std::string> rna_TextureSlot_path(const PointerRNA *ptr);
@@ -429,6 +431,8 @@ std::optional<std::string> rna_Node_ImageUser_path(const PointerRNA *ptr);
 std::optional<std::string> rna_CameraBackgroundImage_image_or_movieclip_user_path(
     const PointerRNA *ptr);
 
+Strip *rna_strip_find_by_colorspace_settings(
+    Editing *ed, const ColorManagedColorspaceSettings *colorspace_settings);
 std::optional<std::string> rna_ColorManagedDisplaySettings_path(const PointerRNA *ptr);
 std::optional<std::string> rna_ColorManagedViewSettings_path(const PointerRNA *ptr);
 std::optional<std::string> rna_ColorManagedInputColorspaceSettings_path(const PointerRNA *ptr);
