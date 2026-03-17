@@ -986,9 +986,18 @@ class WM_OT_context_modal_mouse(Operator):
     def modal(self, context, event):
         event_type = event.type
 
+        # Factor for precision tweaking (match GIZMO_PRECISION_FAC in `gizmo_library_utils.cc`).
+        context_modal_mouse_precision_fac = 0.05
+
         if event_type == 'MOUSEMOVE':
-            delta = event.mouse_x - self.initial_x
-            self._values_delta(delta)
+            total_offset = event.mouse_x - self.initial_x
+            step_delta = event.mouse_x - self._prev_x
+            if event.shift:
+                self._precision_offset += step_delta
+            effective_offset = total_offset - self._precision_offset * (1.0 - context_modal_mouse_precision_fac)
+            self._prev_x = event.mouse_x
+            self._values_delta(effective_offset)
+            delta = effective_offset
             header_text = self.header_text
             if header_text:
                 if len(self._values) == 1:
@@ -1024,6 +1033,8 @@ class WM_OT_context_modal_mouse(Operator):
             return {'CANCELLED'}
         else:
             self.initial_x = event.mouse_x
+            self._prev_x = event.mouse_x
+            self._precision_offset = 0.0
 
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
