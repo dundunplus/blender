@@ -160,12 +160,16 @@ void SourceProcessor::lower_template_dependent_names(Parser &parser)
 void SourceProcessor::lower_templates(Parser &parser)
 {
   /* Process templated function calls first to avoid matching them later. */
-
   parser().foreach_match("A<..>(..)", [&](const vector<Token> &tokens) {
     const Scope template_args = tokens[1].scope();
     template_args.foreach_match("A<..>", [&parser](const vector<Token> &tokens) {
       parser.replace(tokens[1].scope(), template_arguments_mangle(tokens[1].scope()), true);
     });
+  });
+  parser.apply_mutations();
+  /* Likewise, process templated struct method definitions. */
+  parser().foreach_match("A<..>A<", [&](const vector<Token> &tokens) {
+    parser.replace(tokens[1].scope(), template_arguments_mangle(tokens[1].scope()), true);
   });
   parser.apply_mutations();
 
@@ -298,6 +302,12 @@ void SourceProcessor::lower_templates(Parser &parser)
                               tokens[9].scope(),
                               tokens[1].scope(),
                               tokens[18]);
+  });
+
+  /* Entry point functions. */
+  parser().foreach_match("t<..>[[..]]AA(..){..}", [&](const vector<Token> &tokens) {
+    process_template_function(
+        tokens[5], tokens[12], tokens[13].scope(), tokens[1].scope(), tokens.back());
   });
 
   parser.apply_mutations();
