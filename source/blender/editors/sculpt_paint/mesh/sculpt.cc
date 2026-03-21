@@ -4073,8 +4073,6 @@ static void init_scene_project_brush_targets(const Depsgraph &depsgraph,
   }
 }
 
-/* Initialize the stroke cache invariants from operator properties. */
-
 static float brush_dynamic_size_get(const Brush &brush,
                                     const StrokeCache &cache,
                                     float initial_size)
@@ -6035,7 +6033,16 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   {
     return OPERATOR_CANCELLED;
   }
-  if (brush_type_is_mask(brush.sculpt_brush_type)) {
+  /* Currently, we only switch the brush as part of StrokeCache initialization, which does not
+   * happen until the brush goes over the mesh. Instead, check the #BrushSwitchMode which will
+   * tell if the brush will toggled at that point.
+   *
+   * Temporary mitigation to avoid backporting larger refactor for 5.1 backport.
+   *
+   * TODO: Remove this workaround, create `StrokeCache` here with "immutable" toggle values.
+   */
+  const BrushSwitchMode mode = BrushSwitchMode(RNA_enum_get(op->ptr, "brush_toggle"));
+  if (brush_type_is_mask(brush.sculpt_brush_type) || mode == BrushSwitchMode::Mask) {
     MultiresModifierData *mmd = BKE_sculpt_multires_active(&scene, &ob);
     BKE_sculpt_mask_layers_ensure(CTX_data_depsgraph_pointer(C), CTX_data_main(C), &ob, mmd);
 
