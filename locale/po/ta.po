@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
+"POT-Creation-Date: 2026-03-23 09:55+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -35198,6 +35198,146 @@ msgid "Editor menu containing buttons"
 msgstr "பொத்தான்களைக் கொண்ட திருத்தி பட்டியல்"
 
 
+msgid "Mirror"
+msgstr "கண்ணாடி"
+
+
+msgid "Snap"
+msgstr "ச்னாப்"
+
+
+msgid "UV Mapping"
+msgstr "புறஊதா மேப்பிங்"
+
+
+msgid "Local View"
+msgstr "உள்ளக பார்வை"
+
+
+msgid "Read"
+msgstr "படி"
+
+
+msgid "Viewpoint"
+msgstr "பார்வை"
+
+
+msgid "Sample"
+msgstr "மாதிரி"
+
+
+msgid "Navigation"
+msgstr "வழிசெலுத்தல்"
+
+
+msgid "Write"
+msgstr "எழுதுங்கள்"
+
+
+msgid "Align View"
+msgstr "பார்வையை சீரமைக்கவும்"
+
+
+msgid "Align View to Active"
+msgstr "செயலில் பார்வையை சீரமைக்கவும்"
+
+
+msgid "Primitives"
+msgstr "ப்ரைமிடிவ்ச்"
+
+
+msgid "View Regions"
+msgstr "மண்டலங்களைக் காண்க"
+
+
+msgid "Select More/Less"
+msgstr "மேலும்/குறைவாக தேர்ந்தெடுக்கவும்"
+
+
+msgid "Select Similar"
+msgstr "ஒத்ததைத் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Select All by Trait"
+msgstr "அனைத்தையும் பண்பின் மூலம் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Select Linked"
+msgstr "இணைக்கப்பட்டதைத் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Select Loops"
+msgstr "சுழல்களைத் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Gizmo"
+msgstr "கிச்மோ"
+
+
+msgid "Instances"
+msgstr "நிகழ்வுகள்"
+
+
+msgid "Assign Material"
+msgstr "மூலப்பொருள் ஒதுக்க"
+
+
+msgid "Import"
+msgstr "இறக்குமதி"
+
+
+msgid "Utilities"
+msgstr "பயன்பாடுகள்"
+
+
+msgid "Metaball"
+msgstr "வளர்சிதை மாற்ற"
+
+
+msgid "Deprecated"
+msgstr "மதிப்பிடப்பட்டது"
+
+
+msgid "Light"
+msgstr "ஒளி"
+
+
+msgid "Light Probe"
+msgstr "ஒளி ஆய்வு"
+
+
+msgid "List"
+msgstr "பட்டியல்"
+
+
+msgid "Math"
+msgstr "கணிதம்"
+
+
+msgid "UV"
+msgstr "புறஊதா"
+
+
+msgid "Add Image"
+msgstr "படத்தைச் சேர்க்கவும்"
+
+
+msgid "Relations"
+msgstr "உறவுகள்"
+
+
+msgid "Rigid Body"
+msgstr "கடினமான உடல்"
+
+
+msgid "Apply"
+msgstr "இடு"
+
+
+msgid "Track"
+msgstr "டிராக்"
+
+
 msgid "Quick Effects"
 msgstr "விரைவான விளைவுகள்"
 
@@ -35206,24 +35346,12 @@ msgid "Show/Hide"
 msgstr "காட்டு/மறைக்க"
 
 
-msgid "List"
-msgstr "பட்டியல்"
-
-
 msgid "Clean Up"
 msgstr "தூய்மை செய்"
 
 
-msgid "Math"
-msgstr "கணிதம்"
-
-
 msgid "Asset"
 msgstr "சொத்து"
-
-
-msgid "UV"
-msgstr "புறஊதா"
 
 
 msgid "Make Single User"
@@ -35238,24 +35366,8 @@ msgid "Link/Transfer Data"
 msgstr "இணைப்பு/பரிமாற்ற தரவு"
 
 
-msgid "Read"
-msgstr "படி"
-
-
-msgid "Write"
-msgstr "எழுதுங்கள்"
-
-
 msgid "Hooks"
 msgstr "கொக்கிகள்"
-
-
-msgid "Sample"
-msgstr "மாதிரி"
-
-
-msgid "Primitives"
-msgstr "ப்ரைமிடிவ்ச்"
 
 
 msgid "Vertex Group Locks"
@@ -35298,10 +35410,6 @@ msgid "Names"
 msgstr "பெயர்கள்"
 
 
-msgid "Apply"
-msgstr "இடு"
-
-
 msgid "Toggle Bone Options"
 msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
 
@@ -35330,28 +35438,12 @@ msgid "Set Face Strength"
 msgstr "முக வலிமையை அமைக்கவும்"
 
 
-msgid "Merge"
-msgstr "ஒன்றிணைக்கவும்"
-
-
-msgid "Special Characters"
-msgstr "சிறப்பு எழுத்துக்கள்"
-
-
-msgid "Kerning"
-msgstr "கெர்னிங்"
-
-
 msgid "Layout"
 msgstr "தளவமைப்பு"
 
 
-msgid "Metaball"
-msgstr "வளர்சிதை மாற்ற"
-
-
-msgid "Bone Roll"
-msgstr "எலும்பு ரோல்"
+msgid "Merge"
+msgstr "ஒன்றிணைக்கவும்"
 
 
 msgid "Adjust"
@@ -35362,28 +35454,32 @@ msgid "Keying"
 msgstr "கீயிங்"
 
 
-msgid "Tracking"
-msgstr "கண்காணிப்பு"
+msgid "Special Characters"
+msgstr "சிறப்பு எழுத்துக்கள்"
 
 
 msgid "Render Preview"
 msgstr "வழங்குதல் முன்னோட்டம்"
 
 
-msgid "Utilities"
-msgstr "பயன்பாடுகள்"
+msgid "Kerning"
+msgstr "கெர்னிங்"
 
 
-msgid "Pivot Point"
-msgstr "பிவோட் புள்ளி"
+msgid "Tracking"
+msgstr "கண்காணிப்பு"
 
 
 msgid "Creative"
 msgstr "படைப்பாற்றல்"
 
 
-msgid "Snap"
-msgstr "ச்னாப்"
+msgid "Bone Roll"
+msgstr "எலும்பு ரோல்"
+
+
+msgid "Pivot Point"
+msgstr "பிவோட் புள்ளி"
 
 
 msgid "Proportional Editing Falloff"
@@ -35400,102 +35496,6 @@ msgstr "ஆட்டோமேச்கிங்"
 
 msgid "Face Sets Edit"
 msgstr "முகம் தொகுப்புகள் திருத்து"
-
-
-msgid "Mirror"
-msgstr "கண்ணாடி"
-
-
-msgid "UV Mapping"
-msgstr "புறஊதா மேப்பிங்"
-
-
-msgid "Local View"
-msgstr "உள்ளக பார்வை"
-
-
-msgid "Viewpoint"
-msgstr "பார்வை"
-
-
-msgid "Navigation"
-msgstr "வழிசெலுத்தல்"
-
-
-msgid "Align View"
-msgstr "பார்வையை சீரமைக்கவும்"
-
-
-msgid "Align View to Active"
-msgstr "செயலில் பார்வையை சீரமைக்கவும்"
-
-
-msgid "View Regions"
-msgstr "மண்டலங்களைக் காண்க"
-
-
-msgid "Select More/Less"
-msgstr "மேலும்/குறைவாக தேர்ந்தெடுக்கவும்"
-
-
-msgid "Select Similar"
-msgstr "ஒத்ததைத் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Select All by Trait"
-msgstr "அனைத்தையும் பண்பின் மூலம் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Select Linked"
-msgstr "இணைக்கப்பட்டதைத் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Select Loops"
-msgstr "சுழல்களைத் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Assign Material"
-msgstr "மூலப்பொருள் ஒதுக்க"
-
-
-msgid "Light"
-msgstr "ஒளி"
-
-
-msgid "Light Probe"
-msgstr "ஒளி ஆய்வு"
-
-
-msgid "Gizmo"
-msgstr "கிச்மோ"
-
-
-msgid "Instances"
-msgstr "நிகழ்வுகள்"
-
-
-msgid "Add Image"
-msgstr "படத்தைச் சேர்க்கவும்"
-
-
-msgid "Relations"
-msgstr "உறவுகள்"
-
-
-msgid "Import"
-msgstr "இறக்குமதி"
-
-
-msgid "Rigid Body"
-msgstr "கடினமான உடல்"
-
-
-msgid "Deprecated"
-msgstr "மதிப்பிடப்பட்டது"
-
-
-msgid "Track"
-msgstr "டிராக்"
 
 
 msgid "Keyframe Insert Pie"
@@ -92469,32 +92469,8 @@ msgid "Panel containing UI elements"
 msgstr "இடைமுகம் கூறுகளைக் கொண்ட குழு"
 
 
-msgid "VR"
-msgstr "வி.ஆர்"
-
-
-msgid "VR Info"
-msgstr "வி.ஆர் செய்தி"
-
-
-msgid "Active Tool"
-msgstr "செயலில் உள்ள கருவி"
-
-
-msgid "View Lock"
-msgstr "பூட்டைக் காண்க"
-
-
 msgid "Selectability & Visibility"
 msgstr "தேர்ந்தெடுக்கும் தன்மை மற்றும் தெரிவுநிலை"
-
-
-msgid "glTF Variants"
-msgstr "gltf வகைகள்"
-
-
-msgid "glTF Material Variants"
-msgstr "GLTF பொருள் மாறுபாடுகள்"
 
 
 msgid "Shadow Settings"
@@ -92535,14 +92511,6 @@ msgstr "இயக்க கண்காணிப்பு"
 
 msgid "Mesh Edit Mode"
 msgstr "கண்ணி திருத்து பயன்முறை"
-
-
-msgid "glTF"
-msgstr "gltf"
-
-
-msgid "glTF Animations"
-msgstr "GLTF அனிமேசன்கள்"
 
 
 msgid "Measurement"
@@ -92607,6 +92575,38 @@ msgstr "வளைவுகள் வளரும்/சுருக்கவு�
 
 msgid "Viewport Debug"
 msgstr "வியூபோர்ட் பிழைத்திருத்தம்"
+
+
+msgid "VR"
+msgstr "வி.ஆர்"
+
+
+msgid "VR Info"
+msgstr "வி.ஆர் செய்தி"
+
+
+msgid "glTF Variants"
+msgstr "gltf வகைகள்"
+
+
+msgid "glTF Material Variants"
+msgstr "GLTF பொருள் மாறுபாடுகள்"
+
+
+msgid "glTF"
+msgstr "gltf"
+
+
+msgid "glTF Animations"
+msgstr "GLTF அனிமேசன்கள்"
+
+
+msgid "Active Tool"
+msgstr "செயலில் உள்ள கருவி"
+
+
+msgid "View Lock"
+msgstr "பூட்டைக் காண்க"
 
 
 msgid "Import Settings"
@@ -97826,16 +97826,8 @@ msgid "Catalan - Català"
 msgstr "ஆங்கிலம் - கற்றலான்"
 
 
-msgid "Locale code: ca_AD. Translation progress: 100%"
-msgstr "மொழி குறியீடு: ca_AD. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
-
-
 msgid "Chinese (Simplified) - 简体中文"
 msgstr "சீன (எளிமைப்படுத்தப்பட்ட) - எளிமைப்படுத்தப்பட்ட சீன"
-
-
-msgid "Locale code: zh_HANS. Translation progress: 100%"
-msgstr "மொழி குறியீடு: zh_HANS. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
 
 
 msgid "Chinese (Traditional) - 繁體中文"
@@ -97906,16 +97898,8 @@ msgid "Georgian - ქართული"
 msgstr "சார்சியன் - சார்சியன்"
 
 
-msgid "Locale code: ka. Translation progress: 100%"
-msgstr "மொழி குறியீடு: கா. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
-
-
 msgid "German - Deutsch"
 msgstr "செர்மன் - செர்மன்"
-
-
-msgid "Locale code: de_DE. Translation progress: 37%"
-msgstr "மொழி குறியீடு: de_DE. மொழிபெயர்ப்பு முன்னேற்றம்: 37%"
 
 
 msgid "Greek - Ελληνικά"
@@ -98018,10 +98002,6 @@ msgid "Polish - Polski"
 msgstr "போலிச் - போலந்து"
 
 
-msgid "Locale code: pl_PL. Translation progress: 100%"
-msgstr "மொழி குறியீடு: pl_PL. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
-
-
 msgid "Portuguese (Brazil) - Português brasileiro"
 msgstr "போர்த்துகீசியம் (பிரேசில்) - பிரேசிலிய போர்த்துகீசியம்"
 
@@ -98046,10 +98026,6 @@ msgid "Russian - Русский"
 msgstr "ரச்ய - ரச்ய"
 
 
-msgid "Locale code: ru_RU. Translation progress: 100%"
-msgstr "மொழி குறியீடு: ru_RU. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
-
-
 msgid "Serbian (Cyrillic) - Српски"
 msgstr "செர்பியன் (சிரிலிக்) - செர்பியன்"
 
@@ -98070,24 +98046,12 @@ msgid "Slovak - Slovenčina"
 msgstr "ச்லோவாக் - ச்லோவாக்"
 
 
-msgid "Locale code: sk_SK. Translation progress: 100%"
-msgstr "மொழி குறியீடு: sk_SK. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
-
-
 msgid "Slovenian - Slovenščina"
 msgstr "ச்லோவேனியன் - ச்லோவேனியன்"
 
 
-msgid "Locale code: sl. Translation progress: 51%"
-msgstr "மொழி குறியீடு: sl. மொழிபெயர்ப்பு முன்னேற்றம்: 51%"
-
-
 msgid "Spanish - Español"
 msgstr "ச்பானிச் - எச்பானோல்"
-
-
-msgid "Locale code: es. Translation progress: 100%"
-msgstr "உள்ளக குறியீடு: es. மொழிபெயர்ப்பு முன்னேற்றம்: 100%"
 
 
 msgid "Swahili - Kiswahili"
@@ -98118,24 +98082,12 @@ msgid "Turkish - Türkçe"
 msgstr "துருக்கிய - துருக்கிய"
 
 
-msgid "Locale code: tr_TR. Translation progress: 78%"
-msgstr "மொழி குறியீடு: tr_TR. மொழிபெயர்ப்பு முன்னேற்றம்: 78%"
-
-
 msgid "Ukrainian - Українська"
 msgstr "உக்ரேனிய - உக்ரேனிய"
 
 
-msgid "Locale code: uk_UA. Translation progress: 57%"
-msgstr "மொழி குறியீடு: uk_UA. மொழிபெயர்ப்பு முன்னேற்றம்: 57%"
-
-
 msgid "Urdu - وُدرُا"
 msgstr "உருது - துர்ரா"
-
-
-msgid "Locale code: ur. Translation progress: 86%"
-msgstr "உள்ளக குறியீடு: ur. மொழிபெயர்ப்பு முன்னேற்றம்: 86%"
 
 
 msgid "Vietnamese - Tiếng Việt"
@@ -134882,10 +134834,6 @@ msgstr "எண்ணை எதிர்பார்த்தேன்"
 
 msgid "Paste expected 3 numbers, formatted: '[n, n, n]'"
 msgstr "எதிர்பார்க்கப்படும் 3 எண்களை ஒட்டவும், வடிவமைக்கப்பட்டது: '[n, n, n]'"
-
-
-msgid "Paste expected 4 numbers, formatted: '[n, n, n, n]'"
-msgstr "எதிர்பார்க்கப்படும் 4 எண்களை ஒட்டவும், வடிவமைக்கப்பட்டது: '[n, n, n, n]'"
 
 
 msgid "Unsupported key: Unknown"
