@@ -254,6 +254,12 @@ struct GeoNodesCallData {
   GeoNodesOperatorData *operator_data = nullptr;
 
   /**
+   * Stack limit at which Geometry Nodes should stop the evaluation. This is a preventative measure
+   * to avoid crashes caused by running out of stack space.
+   */
+  int call_depth_limit = 100;
+
+  /**
    * Self object has slightly different semantics depending on how geometry nodes is called.
    * Therefor, it is not stored directly in the global data.
    */
@@ -283,6 +289,11 @@ struct GeoNodesUserData : public fn::UserData {
   bool verbose_log = true;
 
   destruct_ptr<fn::LocalUserData> get_local(LinearAllocator<> &allocator) override;
+
+  bool is_stack_limit_reached() const
+  {
+    return this->compute_context->parents_num() >= this->call_data->call_depth_limit;
+  }
 };
 
 struct GeoNodesLocalUserData : public fn::LocalUserData {
@@ -497,6 +508,11 @@ const std::shared_ptr<const GeometryNodesLazyFunctionGraphInfo> &
 ensure_geometry_nodes_lazy_function_graph(const bNodeTree &btree);
 
 /**
+ * In compute contexts that should not be logged verbosely, still log slow nodes.
+ */
+constexpr auto node_timer_log_threshold = std::chrono::microseconds(100);
+
+/**
  * Utility to measure the time that is spend in a specific compute context during geometry nodes
  * evaluation.
  */
@@ -516,9 +532,13 @@ class ScopedComputeContextTimer {
     const geo_eval_log::TimePoint end = geo_eval_log::Clock::now();
     auto &user_data = static_cast<GeoNodesUserData &>(*context_.user_data);
     auto &local_user_data = static_cast<GeoNodesLocalUserData &>(*context_.local_user_data);
-    if (geo_eval_log::GeoTreeLogger *tree_logger = local_user_data.try_get_tree_logger(user_data))
-    {
-      tree_logger->execution_time += (end - start_);
+    const std::chrono::duration duration = end - start_;
+    if (user_data.verbose_log || duration > node_timer_log_threshold) {
+      if (geo_eval_log::GeoTreeLogger *tree_logger = local_user_data.try_get_tree_logger(
+              user_data))
+      {
+        tree_logger->execution_time += duration;
+      }
     }
   }
 };
@@ -543,10 +563,14 @@ class ScopedNodeTimer {
     const geo_eval_log::TimePoint end = geo_eval_log::Clock::now();
     auto &user_data = static_cast<GeoNodesUserData &>(*context_.user_data);
     auto &local_user_data = static_cast<GeoNodesLocalUserData &>(*context_.local_user_data);
-    if (geo_eval_log::GeoTreeLogger *tree_logger = local_user_data.try_get_tree_logger(user_data))
-    {
-      tree_logger->node_execution_times.append(*tree_logger->allocator,
-                                               {node_.identifier, start_, end});
+    const std::chrono::duration duration = end - start_;
+    if (user_data.verbose_log || duration > node_timer_log_threshold) {
+      if (geo_eval_log::GeoTreeLogger *tree_logger = local_user_data.try_get_tree_logger(
+              user_data))
+      {
+        tree_logger->node_execution_times.append(*tree_logger->allocator,
+                                                 {node_.identifier, start_, end});
+      }
     }
   }
 };
