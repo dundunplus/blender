@@ -104,7 +104,7 @@ void strip_EmitVertex(const uint strip_index,
 void geometry_main(VertOut geom_in[2],
                    uint out_vertex_id,
                    uint out_primitive_id,
-                   uint out_invocation_id)
+                   uint /*out_invocation_id*/)
 {
   float2 ss_pos0 = drw_perspective_divide(geom_in[0].hs_P).xy;
   float2 ss_pos1 = drw_perspective_divide(geom_in[1].hs_P).xy;

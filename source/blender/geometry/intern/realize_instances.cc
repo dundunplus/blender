@@ -1649,11 +1649,11 @@ static AllMeshesInfo preprocess_meshes(const bke::GeometrySet &geometry_set,
 
   info.no_loose_edges_hint = std::all_of(
       info.order.begin(), info.order.end(), [](const Mesh *mesh) {
-        return mesh->runtime->loose_edges_cache.is_cached() && mesh->loose_edges().count == 0;
+        return mesh->runtime->loose_edges_cache.is_cached() && mesh->loose_edges().is_empty();
       });
   info.no_loose_verts_hint = std::all_of(
       info.order.begin(), info.order.end(), [](const Mesh *mesh) {
-        return mesh->runtime->loose_verts_cache.is_cached() && mesh->loose_verts().count == 0;
+        return mesh->runtime->loose_verts_cache.is_cached() && mesh->loose_verts().is_empty();
       });
   info.no_overlapping_hint = std::all_of(
       info.order.begin(), info.order.end(), [](const Mesh *mesh) {

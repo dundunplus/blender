@@ -26,7 +26,7 @@
 
 namespace spherical_harmonics {
 
-float L0_M0_coef(float3 v)
+float L0_M0_coef(float3 /*v*/)
 {
   return 0.282094792f;
 }

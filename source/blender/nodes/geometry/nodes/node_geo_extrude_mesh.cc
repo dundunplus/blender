@@ -467,7 +467,7 @@ static void extrude_mesh_vertices(Mesh &mesh,
   }
 
   const bool no_loose_vert_hint = mesh.runtime->loose_verts_cache.is_cached() &&
-                                  mesh.runtime->loose_verts_cache.data().count == 0;
+                                  mesh.runtime->loose_verts_cache.data().mask.is_empty();
   const bool no_overlapping_hint = mesh.no_overlapping_topology();
   BKE_mesh_runtime_clear_cache(&mesh);
   if (no_loose_vert_hint) {
@@ -549,9 +549,9 @@ static GroupedSpan<int> build_vert_to_edge_map(const Span<int2> edges,
 static void tag_mesh_added_faces(Mesh &mesh)
 {
   const bool no_loose_vert_hint = mesh.runtime->loose_verts_cache.is_cached() &&
-                                  mesh.runtime->loose_verts_cache.data().count == 0;
+                                  mesh.runtime->loose_verts_cache.data().mask.is_empty();
   const bool no_loose_edge_hint = mesh.runtime->loose_edges_cache.is_cached() &&
-                                  mesh.runtime->loose_edges_cache.data().count == 0;
+                                  mesh.runtime->loose_edges_cache.data().mask.is_empty();
   const bool no_overlapping_hint = mesh.no_overlapping_topology();
   BKE_mesh_runtime_clear_cache(&mesh);
   if (no_loose_vert_hint) {

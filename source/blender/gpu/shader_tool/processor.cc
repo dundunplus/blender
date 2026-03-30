@@ -475,12 +475,26 @@ void SourceProcessor::lint_pragma_once(Parser &parser, const string &filename)
 
 void SourceProcessor::lower_namesless_parameters(Parser &parser)
 {
-  parser().foreach_function([&](bool, Token, Token, Scope fn_args, bool, Scope) {
+  parser().foreach_token(ParOpen, [&](Token tok) {
+    if (tok.scope().type() != ScopeType::FunctionArgs) {
+      return;
+    }
+    if (tok.prev(2).str().starts_with("Pipeline")) {
+      return;
+    }
+    /* Make sure we matched a function definition and not a macro call. */
+    if (tok.prev() != '>' && tok.prev(2) != Word && tok.prev(2) != '>') {
+      return;
+    }
     int i = 0;
-    fn_args.foreach_scope(ScopeType::FunctionArg, [&](Scope arg) {
-      if (arg.token_count() == 1 || arg.back().prev() == Const || arg.back() == '&') {
+    tok.scope().foreach_scope(ScopeType::FunctionArg, [&](Scope arg) {
+      if (arg.token_count() == 1 || arg.back().prev() == Const || arg.back() == '&' ||
+          arg.back() == '>')
+      {
         /* Append a name for nameless argument. */
-        parser.insert_after(arg.back(), "unused" + std::to_string(i++));
+        parser.replace(arg.back().str_index_last_no_whitespace() + 1,
+                       arg.back().str_index_last(),
+                       " _" + std::to_string(i++));
       }
     });
   });

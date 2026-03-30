@@ -1182,10 +1182,10 @@ float2 SMAAArea(SMAATexture2D(areaTex), float2 dist, float e1, float e2, float o
 /* ----------------------------------------------------------------------------
  * Corner Detection Functions */
 
-void SMAADetectHorizontalCornerPattern(SMAATexture2D(edgesTex),
-                                       float2 &weights,
-                                       float4 texcoord,
-                                       float2 d)
+void SMAADetectHorizontalCornerPattern([[maybe_unused]] SMAATexture2D(edgesTex),
+                                       [[maybe_unused]] float2 &weights,
+                                       [[maybe_unused]] float4 texcoord,
+                                       [[maybe_unused]] float2 d)
 {
 #  if !defined(SMAA_DISABLE_CORNER_DETECTION)
   float2 leftRight = step(d.xy, d.yx);
@@ -1203,10 +1203,10 @@ void SMAADetectHorizontalCornerPattern(SMAATexture2D(edgesTex),
 #  endif
 }
 
-void SMAADetectVerticalCornerPattern(SMAATexture2D(edgesTex),
-                                     float2 &weights,
-                                     float4 texcoord,
-                                     float2 d)
+void SMAADetectVerticalCornerPattern([[maybe_unused]] SMAATexture2D(edgesTex),
+                                     [[maybe_unused]] float2 &weights,
+                                     [[maybe_unused]] float4 texcoord,
+                                     [[maybe_unused]] float2 d)
 {
 #  if !defined(SMAA_DISABLE_CORNER_DETECTION)
   float2 leftRight = step(d.xy, d.yx);

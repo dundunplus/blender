@@ -49,7 +49,7 @@ float3 volume_light(LightData light, const bool is_directional, LightVector lv)
 #  define VOLUMETRIC_SHADOW_MAX_STEP 128.0f
 
 float3 volume_shadow(
-    LightData ld, const bool is_directional, float3 P, LightVector lv, sampler3D extinction_tx)
+    LightData /*ld*/, const bool is_directional, float3 P, LightVector lv, sampler3D extinction_tx)
 {
 #  if defined(VOLUME_SHADOW) || defined(GLSL_CPP_STUBS)
   if (uniform_buf.volumes.shadow_steps == 0) {

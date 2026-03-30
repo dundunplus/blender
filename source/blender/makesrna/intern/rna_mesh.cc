@@ -1390,8 +1390,7 @@ static bool rna_MeshEdge_is_loose_get(PointerRNA *ptr)
 {
   const Mesh *mesh = rna_mesh(ptr);
   const int index = rna_MeshEdge_index_get(ptr);
-  const bke::LooseEdgeCache &loose_edges = mesh->loose_edges();
-  return loose_edges.count > 0 && loose_edges.is_loose_bits[index];
+  return mesh->loose_edges().contains(index);
 }
 
 static int rna_MeshLoopTriangle_material_index_get(PointerRNA *ptr)

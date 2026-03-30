@@ -34,7 +34,7 @@ float film_depth_convert_to_scene(float depth)
 /* Load a texture sample in a specific format. Combined pass needs to use this. */
 float4 film_texelfetch_as_YCoCg_opacity(sampler2D tx, int2 texel)
 {
-  float4 color = texelFetch(combined_tx, texel, 0);
+  float4 color = texelFetch(tx, texel, 0);
   /* Convert transmittance to opacity. */
   color.a = saturate(1.0f - color.a);
   /* Transform to YCoCg for accumulation. */
@@ -416,8 +416,10 @@ float film_aabb_clipping_dist_alpha(float origin, float direction, float aabb_mi
 }
 
 /* Modulate the history color to avoid ghosting artifact. */
-float4 film_amend_combined_history(
-    float4 min_color, float4 max_color, float4 color_history, float4 src_color, int2 src_texel)
+float4 film_amend_combined_history(float4 min_color,
+                                   float4 max_color,
+                                   float4 color_history,
+                                   float4 src_color)
 {
   /* Clip instead of clamping to avoid color accumulating in the AABB corners. */
   float4 clip_dir = src_color - color_history;
@@ -432,12 +434,8 @@ float4 film_amend_combined_history(
   return color_history;
 }
 
-float film_history_blend_factor(float velocity,
-                                float2 texel,
-                                float luma_min,
-                                float luma_max,
-                                float luma_incoming,
-                                float luma_history)
+float film_history_blend_factor(
+    float velocity, float2 texel, float luma_min, float luma_max, float luma_history)
 {
   /* 5% of incoming color by default. */
   float blend = 0.05f;
@@ -515,9 +513,9 @@ void film_store_combined(
     film_combined_neighbor_boundbox(src_texel, min_color, max_color);
 
     float blend = film_history_blend_factor(
-        velocity, history_texel, min_color.x, max_color.x, color_src.x, color_dst.x);
+        velocity, history_texel, min_color.x, max_color.x, color_dst.x);
 
-    color_dst = film_amend_combined_history(min_color, max_color, color_dst, color_src, src_texel);
+    color_dst = film_amend_combined_history(min_color, max_color, color_dst, color_src);
 
     /* Luma weighted blend to avoid flickering. */
     weight_dst = film_luma_weight(color_dst.x) * (1.0f - blend);
@@ -649,7 +647,7 @@ void film_store_weight(int2 texel, float value)
   imageStoreFast(out_weight_img, int3(texel, FILM_WEIGHT_LAYER_ACCUMULATION), float4(value));
 }
 
-float film_display_depth_amend(int2 texel, float depth)
+float film_display_depth_amend(float depth)
 {
   /* This effectively offsets the depth of the whole 2x2 region to the lowest value of the region
    * twice. One for X and one for Y direction. */

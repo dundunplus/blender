@@ -63,7 +63,7 @@ void validity_capture_surfel(Surfel surfel, float3 P, float &validity)
   validity += float(facing);
 }
 
-void validity_capture_world(float3 L, float &validity)
+void validity_capture_world(float3 /*L*/, float &validity)
 {
   validity += 1.0f;
 }

@@ -37,6 +37,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BKE_context.hh"
+#include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
@@ -84,6 +85,8 @@ static void bpy_op_view_layer_update(bContext *C)
 {
   Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
+
+  BKE_main_view_layers_synced_ensure(bmain);
 
   /* None in background mode. */
   if (view_layer) {

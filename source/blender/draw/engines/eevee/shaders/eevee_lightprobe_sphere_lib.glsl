@@ -54,7 +54,7 @@ ReflectionProbeLowFreqLight lightprobe_spheres_extract_low_freq(SphericalHarmoni
   return result;
 }
 
-float lightprobe_spheres_normalization_eval(float3 L,
+float lightprobe_spheres_normalization_eval(float3 /*L*/,
                                             ReflectionProbeLowFreqLight numerator,
                                             ReflectionProbeLowFreqLight denominator)
 {

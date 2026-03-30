@@ -93,7 +93,7 @@ float3 lightprobe_eval_direction(LightProbeSample samp, float3 P, float3 L, floa
 
 /* TODO: Port that inside a BSSDF file. */
 float3 lightprobe_eval(
-    LightProbeSample samp, ClosureSubsurface cl, float3 P, float3 V, Thickness thickness)
+    LightProbeSample samp, ClosureSubsurface cl, float3 /*P*/, float3 /*V*/, Thickness thickness)
 {
   float3 sss_profile = subsurface_transmission(cl.sss_radius, thickness.value());
   float3 radiance_sh = samp.volume_irradiance.evaluate_lambert(cl.N).rgb;

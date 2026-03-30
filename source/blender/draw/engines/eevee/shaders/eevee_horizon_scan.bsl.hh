@@ -51,15 +51,15 @@ namespace horizon {
 /** \name Buffer Sampling implementation
  * \{ */
 
-template<typename T> float3 sample_radiance(sampler2D screen_radiance_tx, float2 uv)
+template<typename T> float3 sample_radiance(sampler2D /*screen_radiance_tx*/, float2 /*uv*/)
 {
   return float3(0.0f);
 }
-template<typename T> float3 sample_normal(sampler2D screen_normal_tx, float2 uv)
+template<typename T> float3 sample_normal(sampler2D /*screen_normal_tx*/, float2 /*uv*/)
 {
   return float3(0.0f);
 }
-template<typename T> T select_result(float occlusion, SphericalHarmonicL1<float4> sh)
+template<typename T> T select_result(float /*occlusion*/, SphericalHarmonicL1<float4> /*sh*/)
 {
   return T(0.0f);
 }
@@ -67,7 +67,7 @@ template<typename T> T select_result(float occlusion, SphericalHarmonicL1<float4
 /* AO only implementation. */
 template float3 sample_radiance<float>(sampler2D screen_radiance_tx, float2 uv);
 template float3 sample_normal<float>(sampler2D screen_normal_tx, float2 uv);
-template<> float select_result<float>(float occlusion, SphericalHarmonicL1<float4> sh)
+template<> float select_result<float>(float occlusion, SphericalHarmonicL1<float4> /*sh*/)
 {
   return occlusion;
 }
@@ -84,7 +84,7 @@ template<> float3 sample_normal<SphericalHarmonicL1<float4>>(sampler2D screen_no
 }
 template<>
 SphericalHarmonicL1<float4> select_result<SphericalHarmonicL1<float4>>(
-    float occlusion, SphericalHarmonicL1<float4> sh)
+    float /*occlusion*/, SphericalHarmonicL1<float4> sh)
 {
   return sh;
 }

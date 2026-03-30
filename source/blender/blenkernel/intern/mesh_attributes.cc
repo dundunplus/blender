@@ -65,17 +65,7 @@ void adapt_mesh_domain_corner_to_point_impl(const Mesh &mesh,
   });
 
   /* Deselect loose vertices without corners that are still selected from the 'true' default. */
-  const LooseVertCache &loose_verts = mesh.verts_no_face();
-  if (loose_verts.count > 0) {
-    const BitSpan bits = loose_verts.is_loose_bits;
-    threading::parallel_for(bits.index_range(), 2048, [&](const IndexRange range) {
-      for (const int vert_index : range) {
-        if (bits[vert_index]) {
-          r_dst[vert_index] = false;
-        }
-      }
-    });
-  }
+  index_mask::masked_fill(r_dst, false, mesh.loose_verts());
 }
 
 static GVArray adapt_mesh_domain_corner_to_point(const Mesh &mesh, const GVArray &varray)
@@ -195,17 +185,7 @@ void adapt_mesh_domain_corner_to_edge_impl(const Mesh &mesh,
     }
   }
 
-  const LooseEdgeCache &loose_edges = mesh.loose_edges();
-  if (loose_edges.count > 0) {
-    /* Deselect loose edges without corners that are still selected from the 'true' default. */
-    threading::parallel_for(IndexRange(mesh.edges_num), 2048, [&](const IndexRange range) {
-      for (const int edge_index : range) {
-        if (loose_edges.is_loose_bits[edge_index]) {
-          r_values[edge_index] = false;
-        }
-      }
-    });
-  }
+  index_mask::masked_fill(r_values, false, mesh.loose_edges());
 }
 
 static GVArray adapt_mesh_domain_corner_to_edge(const Mesh &mesh, const GVArray &varray)
@@ -574,23 +554,23 @@ static bool can_simple_adapt_for_single(const Mesh &mesh,
       return true;
     case AttrDomain::Edge:
       if (to_domain == AttrDomain::Point) {
-        return mesh.loose_verts().count == 0;
+        return mesh.loose_verts().is_empty();
       }
       return true;
     case AttrDomain::Face:
       if (to_domain == AttrDomain::Point) {
-        return mesh.verts_no_face().count == 0;
+        return mesh.verts_no_face().is_empty();
       }
       if (to_domain == AttrDomain::Edge) {
-        return mesh.loose_edges().count == 0;
+        return mesh.loose_edges().is_empty();
       }
       return true;
     case AttrDomain::Corner:
       if (to_domain == AttrDomain::Point) {
-        return mesh.verts_no_face().count == 0;
+        return mesh.verts_no_face().is_empty();
       }
       if (to_domain == AttrDomain::Edge) {
-        return mesh.loose_edges().count == 0;
+        return mesh.loose_edges().is_empty();
       }
       return true;
     default:

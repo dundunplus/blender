@@ -24,9 +24,7 @@ float quad_solid_angle(float3 A, float3 B, float3 C, float3 D)
   return triangle_solid_angle(A, B, C) + triangle_solid_angle(C, B, D);
 }
 
-float octahedral_texel_solid_angle(int2 local_texel,
-                                   SphereProbePixelArea write_co,
-                                   SphereProbeUvArea sample_co)
+float octahedral_texel_solid_angle(int2 local_texel, SphereProbePixelArea write_co)
 {
   if (any(equal(local_texel, int2(write_co.extent - 1)))) {
     /* Do not weight these border pixels that are redundant. */
@@ -62,10 +60,10 @@ float octahedral_texel_solid_angle(int2 local_texel,
   texel_corner_v01 = clamp(texel_corner_v01, float2(0.0f), float2(half_size - 1));
   texel_corner_v11 = clamp(texel_corner_v11, float2(0.0f), float2(half_size - 1));
   /* Convert to point on sphere. */
-  float3 v00 = sphere_probe_texel_to_direction(texel_corner_v00, write_co, sample_co);
-  float3 v10 = sphere_probe_texel_to_direction(texel_corner_v10, write_co, sample_co);
-  float3 v01 = sphere_probe_texel_to_direction(texel_corner_v01, write_co, sample_co);
-  float3 v11 = sphere_probe_texel_to_direction(texel_corner_v11, write_co, sample_co);
+  float3 v00 = sphere_probe_texel_to_direction(texel_corner_v00, write_co);
+  float3 v10 = sphere_probe_texel_to_direction(texel_corner_v10, write_co);
+  float3 v01 = sphere_probe_texel_to_direction(texel_corner_v01, write_co);
+  float3 v11 = sphere_probe_texel_to_direction(texel_corner_v11, write_co);
   /* The solid angle functions expect normalized vectors. */
   v00 = normalize(v00);
   v10 = normalize(v10);
@@ -100,8 +98,7 @@ void main()
   int2 local_texel = int2(gl_GlobalInvocationID.xy);
 
   float2 wrapped_uv;
-  float3 direction = sphere_probe_texel_to_direction(
-      float2(local_texel), write_coord, sample_coord, wrapped_uv);
+  float3 direction = sphere_probe_texel_to_direction(float2(local_texel), write_coord, wrapped_uv);
   float4 radiance_and_transmittance = texture(cubemap_tx, direction);
   float3 radiance = radiance_and_transmittance.xyz;
 
@@ -129,7 +126,7 @@ void main()
     imageStore(atlas_img, texel, float4(out_radiance, 1.0f));
   }
 
-  float sample_weight = octahedral_texel_solid_angle(local_texel, write_coord, sample_coord);
+  float sample_weight = octahedral_texel_solid_angle(local_texel, write_coord);
 
   if (extract_sun) {
     /* Parallel sum. Result is stored inside local_radiance[0]. */
@@ -199,7 +196,7 @@ void main()
       /* Min direction is the local direction since this is only ran by thread 0. */
       float3 min_direction = normalize(direction);
       float3 max_direction = normalize(
-          sphere_probe_texel_to_direction(float2(max_group_texel), write_coord, sample_coord));
+          sphere_probe_texel_to_direction(float2(max_group_texel), write_coord));
       float3 L = normalize(min_direction + max_direction);
       /* Convert radiance to spherical harmonics. */
       SphericalHarmonicL1<float4> sh = {};

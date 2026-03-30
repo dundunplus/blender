@@ -1659,16 +1659,12 @@ function(compile_sources_as_cpp
     target_compile_options(${library} PRIVATE "-Wno-missing-declarations")
     # Would be nice to enable the warning once we support references.
     target_compile_options(${library} PRIVATE "-Wno-uninitialized")
-    # Would be nice to enable the warning once we support nameless parameters.
-    target_compile_options(${library} PRIVATE "-Wno-unused-parameter")
     # To compile libraries.
     target_compile_options(${library} PRIVATE "-Wno-pragma-once-outside-header")
     target_compile_options(${library} PRIVATE "-Wno-unknown-pragmas")
   elseif(MSVC)
     # Equivalent to "-Wno-uninitialized"
     target_compile_options(${library} PRIVATE "/wd4700")
-    # Equivalent to "-Wno-unused-parameter"
-    target_compile_options(${library} PRIVATE "/wd4100")
     # Disable "potential divide by 0" warning
     target_compile_options(${library} PRIVATE "/wd4723")
     # Disable unkown pragma warning

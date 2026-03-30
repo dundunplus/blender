@@ -32,9 +32,7 @@ int3 lightprobe_volume_grid_brick_coord(float3 lP)
 /**
  * Return the local coordinated of the shading point inside the brick in unnormalized coordinate.
  */
-float3 lightprobe_volume_grid_brick_local_coord(VolumeProbeData grid_data,
-                                                float3 lP,
-                                                int3 brick_coord)
+float3 lightprobe_volume_grid_brick_local_coord(float3 lP, int3 brick_coord)
 {
   /* Avoid sampling adjacent bricks around the origin. */
   lP = max(lP, float3(0.5f));
@@ -188,7 +186,7 @@ SphericalHarmonicL1<float4> lightprobe_volume_sample(
   int brick_index = lightprobe_volume_grid_brick_index_get(grid_data, brick_coord);
   IrradianceBrick brick = irradiance_brick_unpack(bricks_infos_buf[brick_index]);
 
-  float3 brick_lP = lightprobe_volume_grid_brick_local_coord(grid_data, lP, brick_coord);
+  float3 brick_lP = lightprobe_volume_grid_brick_local_coord(lP, brick_coord);
 
   /* Sampling point bias. */
   brick_lP = lightprobe_volume_grid_bias_sample_coord(grid_data, brick.atlas_coord, brick_lP, lNg);

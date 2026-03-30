@@ -25,7 +25,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_surf_world)
 #include "eevee_sampling_lib.glsl"
 #include "eevee_surf_lib.glsl"
 
-float4 closure_to_rgba(Closure cl)
+float4 closure_to_rgba(Closure /*cl*/)
 {
   return float4(0.0f);
 }

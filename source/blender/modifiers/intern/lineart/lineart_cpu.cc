@@ -2135,17 +2135,10 @@ static void lineart_geometry_object_load(LineartObjectInfo *ob_info,
   if (la_data->conf.use_loose) {
     /* Only identifying floating edges at this point because other edges has been taken care of
      * inside #lineart_identify_corner_tri_feature_edges function. */
-    const LooseEdgeCache &loose_edges = mesh->loose_edges();
-    loose_data.loose_array = MEM_new_array_uninitialized<int>(size_t(loose_edges.count), __func__);
-    if (loose_edges.count > 0) {
-      loose_data.loose_count = 0;
-      for (const int64_t edge_i : IndexRange(mesh->edges_num)) {
-        if (loose_edges.is_loose_bits[edge_i]) {
-          loose_data.loose_array[loose_data.loose_count] = int(edge_i);
-          loose_data.loose_count++;
-        }
-      }
-    }
+    const IndexMask &loose_edges = mesh->loose_edges();
+    loose_data.loose_array = MEM_new_array_uninitialized<int>(loose_edges.size(), __func__);
+    loose_data.loose_count = loose_edges.size();
+    loose_edges.to_indices(MutableSpan(loose_data.loose_array, loose_data.loose_count));
   }
 
   int allocate_la_e = edge_reduce.feat_edges + loose_data.loose_count;

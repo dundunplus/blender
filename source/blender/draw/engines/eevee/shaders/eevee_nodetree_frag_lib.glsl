@@ -10,8 +10,8 @@
 #include "eevee_nodetree_lib.glsl"
 
 /* Loading of the attributes into GlobalData. */
-void attrib_load(WorldPoint domain) {}
-void attrib_load(VolumePoint domain) {}
+void attrib_load(WorldPoint /*domain*/) {}
+void attrib_load(VolumePoint /*domain*/) {}
 
 /* Material graph connected to the displacement output. */
 float3 nodetree_displacement()
@@ -20,7 +20,7 @@ float3 nodetree_displacement()
 }
 
 /* Material graph connected to the surface output. */
-Closure nodetree_surface(float closure_rand)
+Closure nodetree_surface(float /*closure_rand*/)
 {
   return Closure(0);
 }

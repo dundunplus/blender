@@ -21,8 +21,7 @@ float4 get_mip_data(int mip,
                     SphereProbePixelArea write_coord,
                     float3x3 rotation_mat)
 {
-  float3 rotated_ws_direction = sphere_probe_texel_to_direction(
-      float2(texel), write_coord, read_coord);
+  float3 rotated_ws_direction = sphere_probe_texel_to_direction(float2(texel), write_coord);
   /* Multiplying with the inverse (which is also the transposed given the rotation matrix is
    * orthonormal) as we want the reversed transform. */
   float3 original_ws_direction = transpose(rotation_mat) * rotated_ws_direction;

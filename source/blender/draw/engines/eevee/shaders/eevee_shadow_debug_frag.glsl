@@ -38,7 +38,7 @@ float3 debug_random_color(int v)
   return debug_random_color(int2(v, 0));
 }
 
-void debug_tile_print(ShadowTileData tile, int4 tile_coord)
+void debug_tile_print([[maybe_unused]] ShadowTileData tile, [[maybe_unused]] int4 tile_coord)
 {
   /* This `printf` injection is based on string literal detection. Comment it out unless needed. */
   /* NOTE: using `#if 0` here causes a crash on exit for debug builds, stick to C++ comments. */
@@ -123,7 +123,7 @@ LightData debug_light_get()
 }
 
 /** Return true if a pixel was written. */
-bool debug_tilemaps(float3 P, LightData light, bool do_debug_sample_tile)
+bool debug_tilemaps(float3 /*P*/, LightData light, bool do_debug_sample_tile)
 {
   constexpr int debug_tile_size_px = 4;
   int2 px = int2(gl_FragCoord.xy) / debug_tile_size_px;
