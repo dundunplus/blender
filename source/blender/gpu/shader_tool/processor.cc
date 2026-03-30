@@ -83,6 +83,7 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
        * Merge tokens that can be combined together,
        * remove the token that are unsupported or that are noop.
        * All these steps should be independent. */
+      lower_namesless_parameters(parser);
       lower_attribute_sequences(parser);
       lower_strings_sequences(parser);
       lower_swizzle_methods(parser);
@@ -101,6 +102,10 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
       lint_constructors(parser);
       lint_forward_declared_structs(parser);
 
+      /* Lower noop attributes after linting them. */
+      lower_maybe_unused(parser);
+      /* Lower assert first to keep original condition. */
+      lower_assert(parser, filename);
       /* Lint and remove C++ accessor templates before lowering template. */
       lower_srt_accessor_templates(parser);
       lower_union_accessor_templates(parser);
@@ -135,7 +140,6 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
       lower_entry_points_signature(parser);
       lower_stage_function(parser);
       /* Lower string, assert, printf. */
-      lower_assert(parser, filename);
       lower_strings(parser);
       lower_printf(parser);
       /* Lower other C++ constructs. */
@@ -467,6 +471,19 @@ void SourceProcessor::lint_pragma_once(Parser &parser, const string &filename)
   if (!has_pragma(parser, "once")) {
     report_error_(0, 0, "", "Header files must contain #pragma once directive.");
   }
+}
+
+void SourceProcessor::lower_namesless_parameters(Parser &parser)
+{
+  parser().foreach_function([&](bool, Token, Token, Scope fn_args, bool, Scope) {
+    int i = 0;
+    fn_args.foreach_scope(ScopeType::FunctionArg, [&](Scope arg) {
+      if (arg.token_count() == 1 || arg.back().prev() == Const || arg.back() == '&') {
+        /* Append a name for nameless argument. */
+        parser.insert_after(arg.back(), "unused" + std::to_string(i++));
+      }
+    });
+  });
 }
 
 string SourceProcessor::disabled_code_mutation(const string &str)
@@ -1045,14 +1062,20 @@ void SourceProcessor::lint_unbraced_statements(Parser &parser)
 void SourceProcessor::lint_reserved_tokens(Parser &parser)
 {
   unordered_set<string> reserved_symbols = {
-      "vec2",   "vec3",   "vec4",   "mat2x2", "mat2x3", "mat2x4", "mat3x2", "mat3x3",
-      "mat3x4", "mat4x2", "mat4x3", "mat4x4", "mat2",   "mat3",   "mat4",   "ivec2",
-      "ivec3",  "ivec4",  "uvec2",  "uvec3",  "uvec4",  "bvec2",  "bvec3",  "bvec4",
+      "vec2",   "vec3",     "vec4",      "mat2x2",   "mat2x3",    "mat2x4",   "mat3x2",
+      "mat3x3", "mat3x4",   "mat4x2",    "mat4x3",   "mat4x4",    "mat2",     "mat3",
+      "mat4",   "ivec2",    "ivec3",     "ivec4",    "uvec2",     "uvec3",    "uvec4",
+      "bvec2",  "bvec3",    "bvec4",     "common",   "partition", "active",   "typedef",
+      "packed", "resource", "goto",      "noinline", "extern",    "external", "interface",
+      "long",   "fixed",    "unsigned",  "superp",   "input",     "output",   "hvec2",
+      "hvec3",  "hvec4",    "fvec2",     "fvec3",    "fvec4",     "sample",   "sampler3DRect",
+      "filter", "cast",     "row_major", "inout",
   };
 
   parser().foreach_token(Word, [&](Token tok) {
     if (reserved_symbols.find(string(tok.str())) != reserved_symbols.end()) {
-      report_error_(ERROR_TOK(tok), "Reserved GLSL token");
+      string err = string(tok.str()) + " is a reserved token";
+      report_error_(ERROR_TOK(tok), err.c_str());
     }
   });
 }
