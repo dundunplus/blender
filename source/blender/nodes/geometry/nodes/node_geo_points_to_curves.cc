@@ -23,19 +23,21 @@ namespace blender::nodes::node_geo_points_to_curves_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Points")
+  b.add_input<decl::Geometry>("Points"_ustr)
       .supported_type(GeometryComponent::Type::PointCloud)
       .description("Points to generate curves from");
-  b.add_input<decl::Int>("Curve Group ID")
+  b.add_input<decl::Int>("Curve Group ID"_ustr)
       .field_on_all()
       .hide_value()
       .description(
           "A curve is created for every distinct group ID. All points with the same ID are put "
           "into the same curve");
-  b.add_input<decl::Float>("Weight").field_on_all().hide_value().description(
-      "Determines the order of points in each curve");
+  b.add_input<decl::Float>("Weight"_ustr)
+      .field_on_all()
+      .hide_value()
+      .description("Determines the order of points in each curve");
 
-  b.add_output<decl::Geometry>("Curves").propagate_all();
+  b.add_output<decl::Geometry>("Curves"_ustr).propagate_all();
 }
 
 static void grouped_sort(const OffsetIndices<int> offsets,

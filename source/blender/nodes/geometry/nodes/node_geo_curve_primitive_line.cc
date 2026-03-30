@@ -21,10 +21,10 @@ static void node_declare(NodeDeclarationBuilder &b)
     node_storage(node).mode = GEO_NODE_CURVE_PRIMITIVE_LINE_MODE_DIRECTION;
   };
 
-  b.add_input<decl::Vector>("Start")
+  b.add_input<decl::Vector>("Start"_ustr)
       .subtype(PROP_TRANSLATION)
       .description("Position of the first control point");
-  auto &end = b.add_input<decl::Vector>("End")
+  auto &end = b.add_input<decl::Vector>("End"_ustr)
                   .default_value({0.0f, 0.0f, 1.0f})
                   .subtype(PROP_TRANSLATION)
                   .description("Position of the second control point")
@@ -32,16 +32,16 @@ static void node_declare(NodeDeclarationBuilder &b)
                     node_storage(node).mode = GEO_NODE_CURVE_PRIMITIVE_LINE_MODE_POINTS;
                   });
   auto &direction =
-      b.add_input<decl::Vector>("Direction")
+      b.add_input<decl::Vector>("Direction"_ustr)
           .default_value({0.0f, 0.0f, 1.0f})
           .description("Direction the line is going in. The length of this vector does not matter")
           .make_available(enable_direction);
-  auto &length = b.add_input<decl::Float>("Length")
+  auto &length = b.add_input<decl::Float>("Length"_ustr)
                      .default_value(1.0f)
                      .subtype(PROP_DISTANCE)
                      .description("Distance between the two points")
                      .make_available(enable_direction);
-  b.add_output<decl::Geometry>("Curve");
+  b.add_output<decl::Geometry>("Curve"_ustr);
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {

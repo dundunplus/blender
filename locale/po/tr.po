@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: VertexSelection <amacsizk2021@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -5527,24 +5527,12 @@ msgid "Stroke"
 msgstr "Vuruş"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "Tepecik Rengi, yalnızca vuruşa etki eder"
-
-
 msgid "Fill"
 msgstr "Doldur"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "Tepecik Rengi, yalnızca dolguya etki eder"
-
-
-msgid "Stroke & Fill"
-msgstr "Vuruş & Dolgu"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "Tepe Noktası Rengi, Kontur ve Dolguyu etkiler"
+msgid "Both"
+msgstr "İkisi de"
 
 
 msgid "Byte Color Attribute Value"
@@ -28922,12 +28910,84 @@ msgid "Editor menu containing buttons"
 msgstr "Düğmeler içeren düzenleyici menüsü"
 
 
-msgid "Mirror"
-msgstr "Yansıtma"
+msgid "Math"
+msgstr "Matematik"
+
+
+msgid "Names"
+msgstr "Adlar"
+
+
+msgid "Utilities"
+msgstr "Kamu hizmetleri"
+
+
+msgid "Bone Roll"
+msgstr "Kemik Rulosu"
+
+
+msgid "Show/Hide"
+msgstr "Göster/Gizle"
+
+
+msgid "Clean Up"
+msgstr "Temizle"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Noktası"
 
 
 msgid "Snap"
 msgstr "Yakala"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Orantılı Düzenleme Düşüşü"
+
+
+msgid "Read"
+msgstr "Okumak"
+
+
+msgid "Mask Edit"
+msgstr "Maske Düzenleme"
+
+
+msgid "Sample"
+msgstr "Örnek"
+
+
+msgid "Automasking"
+msgstr "Otomatik maskeleme"
+
+
+msgid "Write"
+msgstr "Yazmak"
+
+
+msgid "Face Sets Edit"
+msgstr "Yüz Setleri Düzenle"
+
+
+msgid "Primitives"
+msgstr "İlkel"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Grup Kilitleri"
+
+
+msgid "Instances"
+msgstr "Örnekler"
+
+
+msgid "Import"
+msgstr "İçe Aktar"
+
+
+msgid "Mirror"
+msgstr "Yansıtma"
 
 
 msgid "UV Mapping"
@@ -28938,24 +28998,16 @@ msgid "Local View"
 msgstr "Yerel Görünüm"
 
 
-msgid "Read"
-msgstr "Okumak"
-
-
 msgid "Viewpoint"
 msgstr "Bakış açısı"
-
-
-msgid "Sample"
-msgstr "Örnek"
 
 
 msgid "Navigation"
 msgstr "Navigasyon"
 
 
-msgid "Write"
-msgstr "Yazmak"
+msgid "Deprecated"
+msgstr "Kullanım dışı bırakıldı"
 
 
 msgid "Align View"
@@ -28966,16 +29018,16 @@ msgid "Align View to Active"
 msgstr "Görünümü Etkin Olarak Hizala"
 
 
-msgid "Primitives"
-msgstr "İlkel"
-
-
 msgid "View Regions"
 msgstr "Bölgeleri Görüntüle"
 
 
 msgid "Select More/Less"
 msgstr "Daha Fazla/Daha Az Seç"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -28994,28 +29046,12 @@ msgid "Select Loops"
 msgstr "Döngüleri Seç"
 
 
-msgid "Instances"
-msgstr "Örnekler"
-
-
 msgid "Assign Material"
 msgstr "Malzeme Atamak"
 
 
-msgid "Import"
-msgstr "İçe Aktar"
-
-
-msgid "Utilities"
-msgstr "Kamu hizmetleri"
-
-
 msgid "Metaball"
 msgstr "Metabol"
-
-
-msgid "Deprecated"
-msgstr "Kullanım dışı bırakıldı"
 
 
 msgid "Light"
@@ -29024,14 +29060,6 @@ msgstr "Işık"
 
 msgid "Light Probe"
 msgstr "Işık Sondası"
-
-
-msgid "Math"
-msgstr "Matematik"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -29058,14 +29086,6 @@ msgid "Quick Effects"
 msgstr "Hızlı Etkiler"
 
 
-msgid "Show/Hide"
-msgstr "Göster/Gizle"
-
-
-msgid "Clean Up"
-msgstr "Temizle"
-
-
 msgid "Asset"
 msgstr "Varlık"
 
@@ -29086,12 +29106,12 @@ msgid "Hooks"
 msgstr "Kancalar"
 
 
-msgid "Vertex Group Locks"
-msgstr "Vertex Grup Kilitleri"
-
-
 msgid "Trim/Add"
 msgstr "Kırp/Ekle"
+
+
+msgid "Layout"
+msgstr "Yerleşim"
 
 
 msgid "Sculpt Set Pivot"
@@ -29122,8 +29142,16 @@ msgid "Bone Collections"
 msgstr "Kemik Koleksiyonları"
 
 
-msgid "Names"
-msgstr "Adlar"
+msgid "Adjust"
+msgstr "Ayarlamak"
+
+
+msgid "Keying"
+msgstr "Anahtarlama"
+
+
+msgid "Tracking"
+msgstr "Takip"
 
 
 msgid "Toggle Bone Options"
@@ -29154,20 +29182,8 @@ msgid "Set Face Strength"
 msgstr "Yüz Gücünü Ayarla"
 
 
-msgid "Layout"
-msgstr "Yerleşim"
-
-
 msgid "Merge"
 msgstr "Birleştir"
-
-
-msgid "Adjust"
-msgstr "Ayarlamak"
-
-
-msgid "Keying"
-msgstr "Anahtarlama"
 
 
 msgid "Special Characters"
@@ -29176,34 +29192,6 @@ msgstr "Özel Karakterler"
 
 msgid "Kerning"
 msgstr "Harf aralığı"
-
-
-msgid "Tracking"
-msgstr "Takip"
-
-
-msgid "Bone Roll"
-msgstr "Kemik Rulosu"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Noktası"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Orantılı Düzenleme Düşüşü"
-
-
-msgid "Mask Edit"
-msgstr "Maske Düzenleme"
-
-
-msgid "Automasking"
-msgstr "Otomatik maskeleme"
-
-
-msgid "Face Sets Edit"
-msgstr "Yüz Setleri Düzenle"
 
 
 msgid "Keyframe Insert Pie"
@@ -32556,6 +32544,10 @@ msgstr "Yalnızca belirtilen kare aralığında vuruşları değiştirin"
 
 msgid "Attributes to modify"
 msgstr "Değiştirilecek nitelikler"
+
+
+msgid "Stroke & Fill"
+msgstr "Vuruş & Dolgu"
 
 
 msgid "Modify fill and stroke colors"
@@ -49716,10 +49708,6 @@ msgid "Set Handle Type"
 msgstr "Sap Tipini Ayarla"
 
 
-msgid "Set the handle type for bezier curves"
-msgstr "Bezier eğrileri için tutamak türünü ayarlayın"
-
-
 msgid "Toggle Free/Align"
 msgstr "Serbest/Hizala'yı Değiştir"
 
@@ -53176,10 +53164,6 @@ msgstr "Seçili anahtar karelerin sol tutamaklarını eşitle"
 
 msgid "Equalize selected keyframes' right handles"
 msgstr "Seçili anahtar karelerin sağ tutamaklarını eşitle"
-
-
-msgid "Both"
-msgstr "İkisi de"
 
 
 msgid "Equalize both of a keyframe's handles"
@@ -57706,24 +57690,13 @@ msgid "Merge selected vertices"
 msgstr "Seçili köşeleri birleştir"
 
 
+msgctxt "Mesh"
+msgid "Type"
+msgstr "Tip"
+
+
 msgid "Merge method to use"
 msgstr "Kullanılacak birleştirme yöntemi"
-
-
-msgid "At Center"
-msgstr "Merkezde"
-
-
-msgid "At Cursor"
-msgstr "İmleçte"
-
-
-msgid "At First"
-msgstr "Başta"
-
-
-msgid "At Last"
-msgstr "Sonunda"
 
 
 msgid "Move UVs according to merge"
@@ -58557,11 +58530,6 @@ msgstr "Rastgele köşeleri seç"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Benzer köşeleri, kenarları veya yüzeyleri özellik türlerine göre seçin"
-
-
-msgctxt "Mesh"
-msgid "Type"
-msgstr "Tip"
 
 
 msgctxt "Mesh"
@@ -75362,14 +75330,6 @@ msgid "Editable cavity curve"
 msgstr "Düzenlenebilir boşluk eğrisi"
 
 
-msgid "Default eraser brush for quickly alternating with the main brush"
-msgstr "Ana fırçayla hızlı bir şekilde dönüşümlü olarak kullanmak için varsayılan silgi fırçası"
-
-
-msgid "Eraser Brush Asset Reference"
-msgstr "Silgi Fırça Varlık Referansı"
-
-
 msgid "Active Palette"
 msgstr "Aktif Palet"
 
@@ -75826,6 +75786,14 @@ msgid "Panel containing UI elements"
 msgstr "UI öğelerini içeren panel"
 
 
+msgid "Active Tool"
+msgstr "Etkin Araç"
+
+
+msgid "View Lock"
+msgstr "Görünüm Kilidi"
+
+
 msgid "Selectability & Visibility"
 msgstr "Seçilebilirlik ve Görünürlük"
 
@@ -75940,14 +75908,6 @@ msgstr "glTF Çeşitleri"
 
 msgid "glTF Material Variants"
 msgstr "glTF Malzeme Varyantları"
-
-
-msgid "Active Tool"
-msgstr "Etkin Araç"
-
-
-msgid "View Lock"
-msgstr "Görünüm Kilidi"
 
 
 msgid "Chain Scaling"
@@ -81407,10 +81367,6 @@ msgid "Denoising Input Passes"
 msgstr "Gürültü Azaltma Giriş Geçişleri"
 
 
-msgid "Don't use utility passes for denoising"
-msgstr "Gürültüyü azaltmak için hizmet geçiş kartlarını kullanmayın"
-
-
 msgid "Albedo"
 msgstr "Albedo"
 
@@ -81785,58 +81741,6 @@ msgstr "Yüzey Kılavuzluk Olasılığı"
 
 msgid "The probability of guiding a direction on a surface"
 msgstr "Bir yüzeyde bir yönü yönlendirme olasılığı"
-
-
-msgid "Viewport Texture Limit"
-msgstr "Görünüm Doku Sınırı"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Görünüm oluşturma tarafından kullanılan doku boyutunu sınırla"
-
-
-msgid "No Limit"
-msgstr "Sınır Yok"
-
-
-msgid "No texture size limit"
-msgstr "Doku boyutu sınırı yok"
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Doku boyutunu 128 pikselle sınırla"
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Doku boyutunu 256 pikselle sınırla"
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Doku boyutunu 512 pikselle sınırla"
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Doku boyutunu 1024 pikselle sınırla"
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Doku boyutunu 2048 pikselle sınırla"
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Doku boyutunu 4096 pikselle sınırla"
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Doku boyutunu 8192 pikselle sınırla"
-
-
-msgid "Render Texture Limit"
-msgstr "Render Doku Sınırı"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "Son işleme tarafından kullanılan doku boyutunu sınırla"
 
 
 msgid "Tile Size"
@@ -89179,14 +89083,6 @@ msgstr "Ses"
 
 msgid "Use Default Fade"
 msgstr "Varsayılan Solmayı Kullan"
-
-
-msgid "Use Linear Modifiers"
-msgstr "Doğrusal Değiştiricileri Kullan"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Sıralayıcının uzayı yerine doğrusal uzayda değiştiricileri hesapla"
 
 
 msgid "Representation of alpha information in the RGBA pixels"
@@ -98243,6 +98139,10 @@ msgid "OSL support disabled in this build"
 msgstr "Bu sürümde OSL desteği devre dışı bırakıldı"
 
 
+msgid "Object Index"
+msgstr "Nesne Endeksi"
+
+
 msgid "Denoising completed"
 msgstr "Gürültü giderme tamamlandı"
 
@@ -98413,10 +98313,6 @@ msgstr "Görünüm BVH"
 
 msgid "Max Subdivision"
 msgstr "Maksimum Alt Bölüm"
-
-
-msgid "Texture Limit"
-msgstr "Doku Sınırı"
 
 
 msgid "Volume Resolution"
@@ -102372,10 +102268,6 @@ msgid "Two or more channels are needed below this strip"
 msgstr "Bu şeridin altında iki veya daha fazla kanala ihtiyaç var"
 
 
-msgid "Linear Modifiers"
-msgstr "Doğrusal Değiştiriciler"
-
-
 msgid "Second Basis"
 msgstr "İkinci Temel"
 
@@ -104122,6 +104014,10 @@ msgstr "Doldurmak İçin Germe"
 
 msgid "Resolutions"
 msgstr "Kararlar"
+
+
+msgid "Workbench"
+msgstr "Çalışma tezgahı"
 
 
 msgid "Preview Zoom"
@@ -107212,20 +107108,8 @@ msgid "Inserting keyframes failed:"
 msgstr "Anahtar karelerin eklenmesi başarısız oldu:"
 
 
-msgid "<No ID pointer>"
-msgstr "<Kimlik işaretçisi yok>"
-
-
 msgid "Encountered unhandled error during keyframing"
 msgstr "Anahtar kareleme sırasında işlenmemiş bir hatayla karşılaşıldı"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "Anahtar kareler eklemek için F-Eğrisi yok"
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "Anahtar kareleme için değerleri almak üzere RNA işaretçisi mevcut değil"
 
 
 msgid "No ID block and/or AnimData to delete keyframe from"
@@ -107234,6 +107118,18 @@ msgstr "Anahtar kareyi silmek için ID bloğu ve/veya AnimData yok"
 
 msgid "No action to delete keyframes from for ID = %s"
 msgstr "ID = %s için anahtar kareleri silmek için hiçbir eylem yok"
+
+
+msgid "<No ID pointer>"
+msgstr "<Kimlik işaretçisi yok>"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "Anahtar kareler eklemek için F-Eğrisi yok"
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "Anahtar kareleme için değerleri almak üzere RNA işaretçisi mevcut değil"
 
 
 msgid "Named Layer node"
@@ -108417,10 +108313,6 @@ msgstr "Hata: Çok fazla gölge güncellemesi var, bazı gölgeler yanlış olab
 
 msgid "Error: Reached max shadow updates."
 msgstr "Hata: Maksimum gölge güncelleme sayısına ulaşıldı."
-
-
-msgid "Workbench"
-msgstr "Çalışma tezgahı"
 
 
 msgid "Create"
@@ -111080,20 +110972,8 @@ msgid "Active object contains no collections"
 msgstr "Etkin nesne koleksiyon içermiyor"
 
 
-msgid "Could not add the collection because it is overridden"
-msgstr "Koleksiyon eklenemedi çünkü geçersiz kılındı"
-
-
-msgid "Could not add the collection because it is linked"
-msgstr "Bağlantılı olduğu için koleksiyon eklenemedi"
-
-
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "Bağımlılık döngüsü algılandığı için koleksiyon eklenemedi"
-
-
-msgid "Cannot remove an object from a linked or library override collection"
-msgstr "Bağlantılı veya kitaplık geçersiz kılma koleksiyonundan bir nesne kaldırılamıyor"
 
 
 msgid "File handler '%s' not found"
@@ -111222,10 +111102,6 @@ msgstr "Hiçbir koleksiyon seçilmedi"
 
 msgid "Unexpected error, collection not found"
 msgstr "Beklenmeyen hata, koleksiyon bulunamadı"
-
-
-msgid "Cannot add objects to a library override or linked collection"
-msgstr "Bir kitaplık geçersiz kılma veya bağlantılı koleksiyona nesne eklenemez"
 
 
 msgid "%s already in %s"
@@ -113805,6 +113681,10 @@ msgid "Adding node groups isn't supported for custom (Python defined) node trees
 msgstr "Özel (Python tanımlı) düğüm ağaçları için düğüm grupları ekleme desteklenmiyor"
 
 
+msgid "Render size too large for GPU, use CPU compositor instead"
+msgstr "GPU için render boyutu çok büyük, bunun yerine CPU kompozitörünü kullanın"
+
+
 msgid "Accessed named attributes:"
 msgstr "Adlandırılmış özniteliklere erişildi:"
 
@@ -113831,10 +113711,6 @@ msgstr " Adlı Öznitelik"
 
 msgid " Named Attributes"
 msgstr " Adlandırılmış Nitelikler"
-
-
-msgid "Render size too large for GPU, use CPU compositor instead"
-msgstr "GPU için render boyutu çok büyük, bunun yerine CPU kompozitörünü kullanın"
 
 
 msgid "Not inside node group"
@@ -113915,10 +113791,6 @@ msgstr "Grup Soketleri"
 
 msgid "More than one collection is selected"
 msgstr "Birden fazla koleksiyon seçildi"
-
-
-msgid "No active collection"
-msgstr "Etkin koleksiyon yok"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
@@ -120409,10 +120281,6 @@ msgstr "Normal eşleme etkisinin gücü"
 
 msgid "Color that encodes the normal map in the specified space"
 msgstr "Belirtilen uzayda normal haritayı kodlayan renk"
-
-
-msgid "Object Index"
-msgstr "Nesne Endeksi"
 
 
 msgid "Color Fac"

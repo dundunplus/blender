@@ -46,25 +46,25 @@ static const EnumPropertyItem fill_rule_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description(
           "Curves to fill. All curves are treated as cyclic and projected to the XY plane");
-  b.add_input<decl::Int>("Group ID")
+  b.add_input<decl::Int>("Group ID"_ustr)
       .field_on_all()
       .hide_value()
       .description(
           "An index used to group curves together. Filling is done separately for each group");
-  b.add_input<decl::Menu>("Mode")
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(mode_items)
       .default_value(GEO_NODE_CURVE_FILL_MODE_TRIANGULATED)
       .optional_label();
-  b.add_input<decl::Menu>("Fill Rule")
+  b.add_input<decl::Menu>("Fill Rule"_ustr)
       .static_items(fill_rule_items)
       .default_value(GEO_NODE_CURVE_FILL_RULE_EVEN_ODD)
       .optional_label()
       .description("Rule used to determine which regions are inside or outside");
-  b.add_output<decl::Geometry>("Mesh").propagate_all_instance_attributes();
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all_instance_attributes();
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)

@@ -16,13 +16,13 @@ namespace blender::nodes::node_geo_import_text {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.txt")
       .optional_label()
       .description("Path to a text file");
 
-  b.add_output<decl::String>("String");
+  b.add_output<decl::String>("String"_ustr);
 }
 
 class LoadTextCache : public memory_cache::CachedValue {

@@ -31,19 +31,19 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type(GeometryComponent::Type::Curve)
       .description("Curves to change the handles on");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  auto &position = b.add_input<decl::Vector>("Position");
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  auto &position = b.add_input<decl::Vector>("Position"_ustr);
   if (node) {
     const NodeGeometrySetCurveHandlePositions &storage = node_storage(*node);
     position.implicit_field_on_all(storage.mode == GEO_NODE_CURVE_HANDLE_LEFT ?
                                        NODE_DEFAULT_INPUT_HANDLE_LEFT_FIELD :
                                        NODE_DEFAULT_INPUT_HANDLE_RIGHT_FIELD);
   }
-  b.add_input<decl::Vector>("Offset")
+  b.add_input<decl::Vector>("Offset"_ustr)
       .default_value(float3(0.0f, 0.0f, 0.0f))
       .subtype(PROP_TRANSLATION)
       .field_on_all();

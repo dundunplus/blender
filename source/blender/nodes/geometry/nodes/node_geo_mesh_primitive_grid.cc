@@ -12,28 +12,28 @@ namespace blender::nodes::node_geo_mesh_primitive_grid_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Size X")
+  b.add_input<decl::Float>("Size X"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Side length of the plane in the X direction");
-  b.add_input<decl::Float>("Size Y")
+  b.add_input<decl::Float>("Size Y"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Side length of the plane in the Y direction");
-  b.add_input<decl::Int>("Vertices X")
+  b.add_input<decl::Int>("Vertices X"_ustr)
       .default_value(3)
       .min(2)
       .max(1000)
       .description("Number of vertices in the X direction");
-  b.add_input<decl::Int>("Vertices Y")
+  b.add_input<decl::Int>("Vertices Y"_ustr)
       .default_value(3)
       .min(2)
       .max(1000)
       .description("Number of vertices in the Y direction");
-  b.add_output<decl::Geometry>("Mesh");
-  b.add_output<decl::Vector>("UV Map").field_on_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr);
+  b.add_output<decl::Vector>("UV Map"_ustr).field_on_all();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

@@ -309,11 +309,12 @@ Vector<GreasePencilExporter::ObjectInfo> GreasePencilExporter::retrieve_objects(
 {
   using SelectMode = ExportParams::SelectMode;
 
+  const Main *bmain = CTX_data_main(&context_.C);
   Scene &scene = *CTX_data_scene(&context_.C);
   ViewLayer *view_layer = CTX_data_view_layer(&context_.C);
   const float3 camera_z_axis = float3(context_.rv3d->viewinv[2]);
 
-  BKE_view_layer_synced_ensure(&scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, &scene, view_layer);
 
   Vector<ObjectInfo> objects;
   auto add_object = [&](Object *object) {

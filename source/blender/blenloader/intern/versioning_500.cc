@@ -1324,8 +1324,15 @@ static void do_version_convert_to_generic_nodes_after_linking(Main *bmain,
       case SH_NODE_CURVE_VEC: {
         /* The node gained a new Factor input as a first socket, so the vector socket moved to be
          * the second socket and we need to transfer its animation as well. */
-        BKE_animdata_fix_paths_rename_all_ex(
-            bmain, id, rna_path_prefix.c_str(), nullptr, nullptr, 0, 1, false);
+        BKE_animdata_fix_paths_rename_all_ex(bmain,
+                                             id,
+                                             rna_path_prefix.c_str(),
+                                             nullptr,
+                                             nullptr,
+                                             0,
+                                             1,
+                                             /*verify_paths=*/false,
+                                             /*infix_is_name=*/true);
         break;
       }
       /* Notice that we use the shader type because the node is already converted in versioning
@@ -1333,10 +1340,24 @@ static void do_version_convert_to_generic_nodes_after_linking(Main *bmain,
       case SH_NODE_MIX: {
         /* The node gained multiple new sockets after the factor socket, so the second and third
          * sockets moved to be the 7th and 8th sockets. */
-        BKE_animdata_fix_paths_rename_all_ex(
-            bmain, id, rna_path_prefix.c_str(), nullptr, nullptr, 1, 6, false);
-        BKE_animdata_fix_paths_rename_all_ex(
-            bmain, id, rna_path_prefix.c_str(), nullptr, nullptr, 2, 7, false);
+        BKE_animdata_fix_paths_rename_all_ex(bmain,
+                                             id,
+                                             rna_path_prefix.c_str(),
+                                             nullptr,
+                                             nullptr,
+                                             1,
+                                             6,
+                                             /*verify_paths=*/false,
+                                             /*infix_is_name=*/true);
+        BKE_animdata_fix_paths_rename_all_ex(bmain,
+                                             id,
+                                             rna_path_prefix.c_str(),
+                                             nullptr,
+                                             nullptr,
+                                             2,
+                                             7,
+                                             /*verify_paths=*/false,
+                                             /*infix_is_name=*/true);
         break;
       }
       default:

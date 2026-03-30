@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2026-02-16 18:12+0000\n"
 "Last-Translator: Deniz Jones <sdfoakes@gmail.com>\n"
 "Language-Team: English (United Kingdom) <https://translate.blender.org/projects/blender-ui/ui/en_GB/>\n"
@@ -3292,6 +3292,10 @@ msgid "Action data-blocks"
 msgstr "Action data-blocks"
 
 
+msgid "All Data-Blocks"
+msgstr "All Data-Blocks"
+
+
 msgid "Annotation"
 msgstr "Annotation"
 
@@ -6267,24 +6271,12 @@ msgid "Stroke"
 msgstr "Stroke"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "Vertex Colour affects to Stroke only"
-
-
 msgid "Fill"
 msgstr "Fill"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "Vertex Colour affects to Fill only"
-
-
-msgid "Stroke & Fill"
-msgstr "Stroke & Fill"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "Vertex Colour affects to Stroke and Fill"
+msgid "Both"
+msgstr "Both"
 
 
 msgid "Byte Color Attribute Value"
@@ -23795,10 +23787,6 @@ msgid "Half Float Precision"
 msgstr "Half Float Precision"
 
 
-msgid "Use 16 bits per channel to lower the memory usage during rendering"
-msgstr "Use 16 bits per channel to lower the memory usage during rendering"
-
-
 msgid "Use Multi-View"
 msgstr "Use Multi-View"
 
@@ -35068,12 +35056,88 @@ msgid "Editor menu containing buttons"
 msgstr "Editor menu containing buttons"
 
 
-msgid "Mirror"
-msgstr "Mirror"
+msgid "Math"
+msgstr "Maths"
+
+
+msgid "Names"
+msgstr "Names"
+
+
+msgid "Utilities"
+msgstr "Utilities"
+
+
+msgid "Bone Roll"
+msgstr "Bone Roll"
+
+
+msgid "Show/Hide"
+msgstr "Show/Hide"
+
+
+msgid "Clean Up"
+msgstr "Clean Up"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Point"
 
 
 msgid "Snap"
 msgstr "Snap"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proportional Editing Falloff"
+
+
+msgid "Read"
+msgstr "Read"
+
+
+msgid "Mask Edit"
+msgstr "Mask Edit"
+
+
+msgid "Sample"
+msgstr "Sample"
+
+
+msgid "Automasking"
+msgstr "Automasking"
+
+
+msgid "Write"
+msgstr "Write"
+
+
+msgid "Face Sets Edit"
+msgstr "Face Sets Edit"
+
+
+msgid "Primitives"
+msgstr "Primitives"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Group Locks"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instances"
+
+
+msgid "Import"
+msgstr "Import"
+
+
+msgid "Mirror"
+msgstr "Mirror"
 
 
 msgid "UV Mapping"
@@ -35084,24 +35148,16 @@ msgid "Local View"
 msgstr "Local View"
 
 
-msgid "Read"
-msgstr "Read"
-
-
 msgid "Viewpoint"
 msgstr "Viewpoint"
-
-
-msgid "Sample"
-msgstr "Sample"
 
 
 msgid "Navigation"
 msgstr "Navigation"
 
 
-msgid "Write"
-msgstr "Write"
+msgid "Deprecated"
+msgstr "Deprecated"
 
 
 msgid "Align View"
@@ -35112,16 +35168,20 @@ msgid "Align View to Active"
 msgstr "Align View to Active"
 
 
-msgid "Primitives"
-msgstr "Primitives"
-
-
 msgid "View Regions"
 msgstr "View Regions"
 
 
 msgid "Select More/Less"
 msgstr "Select More/Less"
+
+
+msgid "List"
+msgstr "List"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -35140,32 +35200,12 @@ msgid "Select Loops"
 msgstr "Select Loops"
 
 
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Instances"
-
-
 msgid "Assign Material"
 msgstr "Assign Material"
 
 
-msgid "Import"
-msgstr "Import"
-
-
-msgid "Utilities"
-msgstr "Utilities"
-
-
 msgid "Metaball"
 msgstr "Metaball"
-
-
-msgid "Deprecated"
-msgstr "Deprecated"
 
 
 msgid "Light"
@@ -35174,18 +35214,6 @@ msgstr "Light"
 
 msgid "Light Probe"
 msgstr "Light Probe"
-
-
-msgid "List"
-msgstr "List"
-
-
-msgid "Math"
-msgstr "Maths"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -35212,14 +35240,6 @@ msgid "Quick Effects"
 msgstr "Quick Effects"
 
 
-msgid "Show/Hide"
-msgstr "Show/Hide"
-
-
-msgid "Clean Up"
-msgstr "Clean Up"
-
-
 msgid "Asset"
 msgstr "Asset"
 
@@ -35240,12 +35260,12 @@ msgid "Hooks"
 msgstr "Hooks"
 
 
-msgid "Vertex Group Locks"
-msgstr "Vertex Group Locks"
-
-
 msgid "Trim/Add"
 msgstr "Trim/Add"
+
+
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Sculpt Set Pivot"
@@ -35276,12 +35296,24 @@ msgid "Bone Collections"
 msgstr "Bone Collections"
 
 
-msgid "Names"
-msgstr "Names"
+msgid "Adjust"
+msgstr "Adjust"
+
+
+msgid "Keying"
+msgstr "Keying"
+
+
+msgid "Tracking"
+msgstr "Tracking"
 
 
 msgid "Toggle Bone Options"
 msgstr "Toggle Bone Options"
+
+
+msgid "Render Preview"
+msgstr "Render Preview"
 
 
 msgid "Enable Bone Options"
@@ -35296,6 +35328,10 @@ msgid "Mesh Select Mode"
 msgstr "Mesh Select Mode"
 
 
+msgid "Creative"
+msgstr "Creative"
+
+
 msgid "Face Data"
 msgstr "Face Data"
 
@@ -35308,64 +35344,16 @@ msgid "Set Face Strength"
 msgstr "Set Face Strength"
 
 
-msgid "Layout"
-msgstr "Layout"
-
-
 msgid "Merge"
 msgstr "Merge"
-
-
-msgid "Adjust"
-msgstr "Adjust"
-
-
-msgid "Keying"
-msgstr "Keying"
 
 
 msgid "Special Characters"
 msgstr "Special Characters"
 
 
-msgid "Render Preview"
-msgstr "Render Preview"
-
-
 msgid "Kerning"
 msgstr "Kerning"
-
-
-msgid "Tracking"
-msgstr "Tracking"
-
-
-msgid "Creative"
-msgstr "Creative"
-
-
-msgid "Bone Roll"
-msgstr "Bone Roll"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Point"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportional Editing Falloff"
-
-
-msgid "Mask Edit"
-msgstr "Mask Edit"
-
-
-msgid "Automasking"
-msgstr "Automasking"
-
-
-msgid "Face Sets Edit"
-msgstr "Face Sets Edit"
 
 
 msgid "Keyframe Insert Pie"
@@ -39118,6 +39106,10 @@ msgstr "Grease Pencil Colour Modifier"
 
 msgid "Attributes to modify"
 msgstr "Attributes to modify"
+
+
+msgid "Stroke & Fill"
+msgstr "Stroke & Fill"
 
 
 msgid "Modify fill and stroke colors"
@@ -60364,8 +60356,8 @@ msgid "Set Handle Type"
 msgstr "Set Handle Type"
 
 
-msgid "Set the handle type for bezier curves"
-msgstr "Set the handle type for bezier curves"
+msgid "Set the handle type for Bézier curves"
+msgstr "Set the handle type for Bézier curves"
 
 
 msgid "Toggle Free/Align"
@@ -64445,10 +64437,6 @@ msgid "Equalize selected keyframes' right handles"
 msgstr "Equalise selected keyframes' right handles"
 
 
-msgid "Both"
-msgstr "Both"
-
-
 msgid "Equalize both of a keyframe's handles"
 msgstr "Equalise both of a keyframe's handles"
 
@@ -66291,10 +66279,6 @@ msgstr "Set resolution of selected curves"
 
 msgid "The resolution to use for each curve segment"
 msgstr "The resolution to use for each curve segment"
-
-
-msgid "Set the handle type for Bézier curves"
-msgstr "Set the handle type for Bézier curves"
 
 
 msgid "Set active material"
@@ -69862,24 +69846,13 @@ msgid "Merge selected vertices"
 msgstr "Merge selected vertices"
 
 
+msgctxt "Mesh"
+msgid "Type"
+msgstr "Type"
+
+
 msgid "Merge method to use"
 msgstr "Merge method to use"
-
-
-msgid "At Center"
-msgstr "At Centre"
-
-
-msgid "At Cursor"
-msgstr "At Cursor"
-
-
-msgid "At First"
-msgstr "At First"
-
-
-msgid "At Last"
-msgstr "At Last"
 
 
 msgid "Move UVs according to merge"
@@ -70789,11 +70762,6 @@ msgstr "Randomly select vertices"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Select similar vertices, edges or faces by property types"
-
-
-msgctxt "Mesh"
-msgid "Type"
-msgstr "Type"
 
 
 msgctxt "Mesh"
@@ -91201,18 +91169,6 @@ msgid "Editable cavity curve"
 msgstr "Editable cavity curve"
 
 
-msgid "Default Eraser Brush"
-msgstr "Default Eraser Brush"
-
-
-msgid "Default eraser brush for quickly alternating with the main brush"
-msgstr "Default eraser brush for quickly alternating with the main brush"
-
-
-msgid "Eraser Brush Asset Reference"
-msgstr "Eraser Brush Asset Reference"
-
-
 msgid "Active Palette"
 msgstr "Active Palette"
 
@@ -91721,6 +91677,22 @@ msgid "Panel containing UI elements"
 msgstr "Panel containing UI elements"
 
 
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF Animations"
+
+
+msgid "Active Tool"
+msgstr "Active Tool"
+
+
+msgid "View Lock"
+msgstr "View Lock"
+
+
 msgid "Selectability & Visibility"
 msgstr "Selectability & Visibility"
 
@@ -91843,22 +91815,6 @@ msgstr "glTF Variants"
 
 msgid "glTF Material Variants"
 msgstr "glTF Material Variants"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF Animations"
-
-
-msgid "Active Tool"
-msgstr "Active Tool"
-
-
-msgid "View Lock"
-msgstr "View Lock"
 
 
 msgid "Import Settings"
@@ -99033,10 +98989,6 @@ msgid "Passes used by the denoiser to distinguish noise from shader and geometry
 msgstr "Passes used by the denoiser to distinguish noise from shader and geometry detail"
 
 
-msgid "Don't use utility passes for denoising"
-msgstr "Don't use utility passes for denoising"
-
-
 msgid "Albedo"
 msgstr "Albedo"
 
@@ -99533,58 +99485,6 @@ msgid "The probability of guiding a direction on a surface"
 msgstr "The probability of guiding a direction on a surface"
 
 
-msgid "Viewport Texture Limit"
-msgstr "Viewport Texture Limit"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Limit texture size used by viewport rendering"
-
-
-msgid "No Limit"
-msgstr "No Limit"
-
-
-msgid "No texture size limit"
-msgstr "No texture size limit"
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Limit texture size to 128 pixels"
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Limit texture size to 256 pixels"
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Limit texture size to 512 pixels"
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Limit texture size to 1024 pixels"
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Limit texture size to 2048 pixels"
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Limit texture size to 4096 pixels"
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Limit texture size to 8192 pixels"
-
-
-msgid "Render Texture Limit"
-msgstr "Render Texture Limit"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "Limit texture size used by final rendering"
-
-
 msgid "Tile Size"
 msgstr "Tile Size"
 
@@ -99975,10 +99875,6 @@ msgstr "Sampling Method"
 
 msgid "How to sample the background light"
 msgstr "How to sample the background light"
-
-
-msgid "Don't sample the background, faster but might cause noise for non-solid backgrounds"
-msgstr "Don't sample the background, faster but might cause noise for non-solid backgrounds"
 
 
 msgid "Automatically try to determine the best setting"
@@ -102168,10 +102064,6 @@ msgstr "Process the render (and composited) result through the video sequence ed
 
 msgid "Override Scene Settings"
 msgstr "Override Scene Settings"
-
-
-msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
-msgstr "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
 
 
 msgid "Use Simplify"
@@ -108286,14 +108178,6 @@ msgstr "Use Default Fade"
 
 msgid "Fade effect using the built-in default (usually makes the transition as long as the effect strip)"
 msgstr "Fade effect using the built-in default (usually makes the transition as long as the effect strip)"
-
-
-msgid "Use Linear Modifiers"
-msgstr "Use Linear Modifiers"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Calculate modifiers in linear space instead of sequencer's space"
 
 
 msgid "Sequence strip applying an effect on the images created by other strips"
@@ -119229,6 +119113,10 @@ msgid "OSL support disabled in this build"
 msgstr "OSL support disabled in this build"
 
 
+msgid "Object Index"
+msgstr "Object Index"
+
+
 msgid "Denoising completed"
 msgstr "Denoising completed"
 
@@ -119527,10 +119415,6 @@ msgstr "Viewport BVH"
 
 msgid "Max Subdivision"
 msgstr "Max Subdivision"
-
-
-msgid "Texture Limit"
-msgstr "Texture Limit"
 
 
 msgid "Volume Resolution"
@@ -124650,10 +124534,6 @@ msgid "Two or more channels are needed below this strip"
 msgstr "Two or more channels are needed below this strip"
 
 
-msgid "Linear Modifiers"
-msgstr "Linear Modifiers"
-
-
 msgid "Second Basis"
 msgstr "Second Basis"
 
@@ -126663,6 +126543,10 @@ msgid "Resolutions"
 msgstr "Resolutions"
 
 
+msgid "Workbench"
+msgstr "Workbench"
+
+
 msgid "Preview Zoom"
 msgstr "Preview Zoom"
 
@@ -126725,10 +126609,6 @@ msgstr "Internal Attributes"
 
 msgid "Wrap Around"
 msgstr "Wrap Around"
-
-
-msgid "All Data-Blocks"
-msgstr "All Data-Blocks"
 
 
 msgctxt "Text"
@@ -130155,20 +130035,8 @@ msgid "Inserting keyframes failed:"
 msgstr "Inserting keyframes failed:"
 
 
-msgid "<No ID pointer>"
-msgstr "<No ID pointer>"
-
-
 msgid "Encountered unhandled error during keyframing"
 msgstr "Encountered unhandled error during keyframing"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "No F-Curve to add keyframes to"
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "No RNA pointer available to retrieve values for keyframing from"
 
 
 msgid "No ID block and/or AnimData to delete keyframe from"
@@ -130177,18 +130045,6 @@ msgstr "No ID block and/or AnimData to delete keyframe from"
 
 msgid "No keys have been inserted and no errors have been reported."
 msgstr "No keys have been inserted and no errors have been reported."
-
-
-msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
-msgstr "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-
-
-msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
-msgstr "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -130205,6 +130061,30 @@ msgstr "Could not clear keyframe, as RNA path is invalid for the given ID (ID = 
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
+
+
+msgid "<No ID pointer>"
+msgstr "<No ID pointer>"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "No F-Curve to add keyframes to"
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "No RNA pointer available to retrieve values for keyframing from"
+
+
+msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+msgstr "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+
+
+msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
+msgstr "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
 
 
 msgid "\"%s\" is using Action \"%s\", which does not have a slot with identifier \"%s\" or \"%s\". Manually assign the right action slot to \"%s\"."
@@ -131924,10 +131804,6 @@ msgstr "Error: Reached max shadow updates."
 
 msgid "Warning: Volume rendering data could not be allocated. Now using a resolution of 1:{} instead of 1:{}."
 msgstr "Warning: Volume rendering data could not be allocated. Now using a resolution of 1:{} instead of 1:{}."
-
-
-msgid "Workbench"
-msgstr "Workbench"
 
 
 msgid "Error: Curves object contains too many points. Reduce curve resolution or curve count to fix this issue."
@@ -136015,20 +135891,8 @@ msgid "Active object contains no collections"
 msgstr "Active object contains no collections"
 
 
-msgid "Could not add the collection because it is overridden"
-msgstr "Could not add the collection because it is overridden"
-
-
-msgid "Could not add the collection because it is linked"
-msgstr "Could not add the collection because it is linked"
-
-
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "Could not add the collection because of dependency cycle detected"
-
-
-msgid "Cannot remove an object from a linked or library override collection"
-msgstr "Cannot remove an object from a linked or library override collection"
 
 
 msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
@@ -136229,10 +136093,6 @@ msgstr "No collection selected"
 
 msgid "Unexpected error, collection not found"
 msgstr "Unexpected error, collection not found"
-
-
-msgid "Cannot add objects to a library override or linked collection"
-msgstr "Cannot add objects to a library override or linked collection"
 
 
 msgid "Unable to change object mode while transforming"
@@ -139629,6 +139489,14 @@ msgid "Cannot drag panel with no inputs"
 msgstr "Cannot drag panel with no inputs"
 
 
+msgid "Render size too large for GPU, use CPU compositor instead"
+msgstr "Render size too large for GPU, use CPU compositor instead"
+
+
+msgid "Compositing..."
+msgstr "Compositing..."
+
+
 msgid "Accessed named attributes:"
 msgstr "Accessed named attributes:"
 
@@ -139663,14 +139531,6 @@ msgstr " Named Attribute"
 
 msgid " Named Attributes"
 msgstr " Named Attributes"
-
-
-msgid "Render size too large for GPU, use CPU compositor instead"
-msgstr "Render size too large for GPU, use CPU compositor instead"
-
-
-msgid "Compositing..."
-msgstr "Compositing..."
 
 
 msgctxt "Operator"
@@ -139987,10 +139847,6 @@ msgstr "More than one collection is selected"
 
 msgid "Cannot add a new collection to linked/override scene"
 msgstr "Cannot add a new collection to linked/override scene"
-
-
-msgid "No active collection"
-msgstr "No active collection"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
@@ -143449,28 +143305,12 @@ msgid "Collection '%s' is not an original ID"
 msgstr "Collection '%s' is not an original ID"
 
 
-msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
-msgstr "Could not (un)link the object '%s' because the collection '%s' is overridden"
-
-
-msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
-msgstr "Could not (un)link the object '%s' because the collection '%s' is linked"
-
-
 msgid "Object '%s' already in collection '%s'"
 msgstr "Object '%s' already in collection '%s'"
 
 
 msgid "Object '%s' not in collection '%s'"
 msgstr "Object '%s' not in collection '%s'"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
-msgstr "Could not (un)link the collection '%s' because the collection '%s' is overridden"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
-msgstr "Could not (un)link the collection '%s' because the collection '%s' is linked"
 
 
 msgid "Collection '%s' already in collection '%s'"
@@ -150742,11 +150582,6 @@ msgid "Node group has different type"
 msgstr "Node group has different type"
 
 
-msgctxt "NodeTree"
-msgid "Missing Data-Block"
-msgstr "Missing Data-Block"
-
-
 msgid "Instances in input geometry are ignored"
 msgstr "Instances in input geometry are ignored"
 
@@ -151572,10 +151407,6 @@ msgstr "Strength of the normal mapping effect"
 
 msgid "Color that encodes the normal map in the specified space"
 msgstr "Colour that encodes the normal map in the specified space"
-
-
-msgid "Object Index"
-msgstr "Object Index"
 
 
 msgid "Color Fac"

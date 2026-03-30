@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2026-03-19 19:12+0000\n"
 "Last-Translator: Tamás Máté <royalpython132@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.blender.org/projects/blender-ui/ui/hu/>\n"
@@ -1280,6 +1280,10 @@ msgstr "Az ecsethez rendelt anyag megtartása"
 
 msgid "Outline"
 msgstr "Körvonal"
+
+
+msgid "Both"
+msgstr "Mindkettő"
 
 
 msgid "Stretch"
@@ -6605,6 +6609,18 @@ msgid "Use Material Mask"
 msgstr "Anyagmaszk használata"
 
 
+msgid "Show/Hide"
+msgstr "Mutat/Rejt"
+
+
+msgid "Clean Up"
+msgstr "Tisztítás"
+
+
+msgid "Import"
+msgstr "Importálás"
+
+
 msgid "Mirror"
 msgstr "Tükrözés"
 
@@ -6621,8 +6637,8 @@ msgid "Align View"
 msgstr "Nézet igazítása"
 
 
-msgid "Import"
-msgstr "Importálás"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Metaball"
@@ -6631,10 +6647,6 @@ msgstr "Meta test"
 
 msgid "Light"
 msgstr "Fényforrás"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Relations"
@@ -6653,24 +6665,16 @@ msgid "Track"
 msgstr "Nyom"
 
 
-msgid "Show/Hide"
-msgstr "Mutat/Rejt"
-
-
-msgid "Clean Up"
-msgstr "Tisztítás"
-
-
-msgid "Merge"
-msgstr "Összefésülés"
-
-
 msgid "Keying"
 msgstr "Kulcsozás"
 
 
 msgid "Tracking"
 msgstr "Követés"
+
+
+msgid "Merge"
+msgstr "Összefésülés"
 
 
 msgctxt "MovieClip"
@@ -10434,10 +10438,6 @@ msgstr "Alapértelmezett kitöltő szín"
 msgctxt "Operator"
 msgid "Decimate Keyframes"
 msgstr "Kulcs-képkockák tizedelése"
-
-
-msgid "Both"
-msgstr "Mindkettő"
 
 
 msgid "Jump to previous/next keyframe"
@@ -15127,6 +15127,10 @@ msgid "Report a Bug"
 msgstr "Hiba bejelentése"
 
 
+msgid "Object Index"
+msgstr "Objektum index"
+
+
 msgctxt "Operator"
 msgid "Assign"
 msgstr "Hozzárendelés"
@@ -16920,10 +16924,6 @@ msgstr "Átlátszóság"
 
 msgid "Tangent Normal"
 msgstr "Érintőre merőleges"
-
-
-msgid "Object Index"
-msgstr "Objektum index"
 
 
 msgid "iScale"

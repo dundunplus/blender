@@ -1269,6 +1269,7 @@ void NODE_OT_collapse_toggle(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Collapse";
+  ot->translation_context = BLT_I18NCONTEXT_OPERATOR_DEFAULT;
   ot->description = "Toggle collapsing of selected nodes";
   ot->idname = "NODE_OT_hide_toggle";
 

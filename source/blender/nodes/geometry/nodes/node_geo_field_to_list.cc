@@ -27,8 +27,10 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Int>("Count").default_value(1).min(1).description(
-      "The number of elements in the list");
+  b.add_input<decl::Int>("Count"_ustr)
+      .default_value(1)
+      .min(1)
+      .description("The number of elements in the list");
 
   const bNode *node = b.node_or_null();
   if (!node) {
@@ -42,16 +44,17 @@ static void node_declare(NodeDeclarationBuilder &b)
     const auto type = eNodeSocketDatatype(item.socket_type);
     const std::string input_identifier = ItemsAccessor::input_socket_identifier_for_item(item);
     const std::string output_identifier = ItemsAccessor::output_socket_identifier_for_item(item);
+    const UString name(item.name);
 
-    b.add_input(type, item.name, input_identifier).supports_field();
-    b.add_output(type, item.name, output_identifier)
+    b.add_input(type, name, UString(input_identifier)).supports_field();
+    b.add_output(type, name, UString(output_identifier))
         .structure_type(StructureType::List)
         .align_with_previous()
         .description("Output list with evaluated field values");
   }
 
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Field);
-  b.add_output<decl::Extend>("", "__extend__")
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr).structure_type(StructureType::Field);
+  b.add_output<decl::Extend>(""_ustr, "__extend__"_ustr)
       .structure_type(StructureType::List)
       .align_with_previous();
 }
@@ -80,14 +83,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     if (params.node_tree().typeinfo->validate_link(data_type, SOCK_INT)) {
       params.add_item(IFACE_("Count"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeFieldToList");
-        params.update_and_connect_available_socket(node, "Count");
+        params.update_and_connect_available_socket(node, "Count"_ustr);
       });
     }
     params.add_item(IFACE_("Field"), [data_type](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeFieldToList");
       socket_items::add_item_with_socket_type_and_name<ItemsAccessor>(
           params.node_tree, node, data_type, params.socket.name);
-      params.update_and_connect_available_socket(node, params.socket.name);
+      params.update_and_connect_available_socket(node, UString(params.socket.name));
     });
   }
   else {
@@ -95,7 +98,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       bNode &node = params.add_node("GeometryNodeFieldToList");
       socket_items::add_item_with_socket_type_and_name<ItemsAccessor>(
           params.node_tree, node, data_type, params.socket.name);
-      params.update_and_connect_available_socket(node, params.socket.name);
+      params.update_and_connect_available_socket(node, UString(params.socket.name));
     });
   }
 }

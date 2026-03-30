@@ -278,8 +278,16 @@ static void version_principled_bsdf_update_animdata(ID *owner_id, bNodeTree *ntr
         {21, 4}   /* Alpha */
     };
     for (const auto &entry : remap_table) {
-      BKE_animdata_fix_paths_rename(
-          id, adt, owner_id, prefix.c_str(), nullptr, nullptr, entry.first, entry.second, false);
+      BKE_animdata_fix_paths_rename(id,
+                                    adt,
+                                    owner_id,
+                                    prefix.c_str(),
+                                    nullptr,
+                                    nullptr,
+                                    entry.first,
+                                    entry.second,
+                                    /*verify_paths=*/false,
+                                    /*infix_is_name=*/true);
     }
   }
 }

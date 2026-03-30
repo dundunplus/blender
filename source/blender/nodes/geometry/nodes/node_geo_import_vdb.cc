@@ -15,13 +15,13 @@ namespace blender::nodes::node_geo_import_vdb {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.vdb")
       .optional_label()
       .description("Path to a OpenVDB file");
 
-  b.add_output<decl::Geometry>("Volume");
+  b.add_output<decl::Geometry>("Volume"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

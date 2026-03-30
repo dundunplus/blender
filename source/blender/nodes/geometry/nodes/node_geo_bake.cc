@@ -68,8 +68,8 @@ static void node_declare(NodeDeclarationBuilder &b)
   for (const int i : IndexRange(storage.items_num)) {
     const NodeGeometryBakeItem &item = storage.items[i];
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-    const StringRef name = item.name;
-    const std::string identifier = BakeItemsAccessor::socket_identifier_for_item(item);
+    const UString name(item.name);
+    const UString identifier(BakeItemsAccessor::socket_identifier_for_item(item));
     auto &input_decl = b.add_input(socket_type, name, identifier)
                            .socket_name_ptr(
                                &ntree->id, *BakeItemsAccessor::item_srna, &item, "name");
@@ -90,8 +90,8 @@ static void node_declare(NodeDeclarationBuilder &b)
           .pass_through_input_index(input_decl.index());
     }
   }
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Extend>("", "__extend__")
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Extend>(""_ustr, "__extend__"_ustr)
       .structure_type(StructureType::Dynamic)
       .align_with_previous();
 }
@@ -523,7 +523,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         bNode &node = params.add_node("GeometryNodeBake");
         socket_items::add_item_with_socket_type_and_name<BakeItemsAccessor>(
             params.node_tree, node, type, params.socket.name);
-        params.update_and_connect_available_socket(node, params.socket.name);
+        params.update_and_connect_available_socket(node, UString(params.socket.name));
       },
       -1);
 }

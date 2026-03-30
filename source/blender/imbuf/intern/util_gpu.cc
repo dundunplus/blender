@@ -283,12 +283,24 @@ gpu::Texture *IMB_touch_gpu_texture(const char *name,
 
   gpu::Texture *tex;
   if (layers > 0) {
-    tex = GPU_texture_create_2d_array(
-        name, w, h, layers, 9999, tex_format, GPU_TEXTURE_USAGE_SHADER_READ, nullptr);
+    tex = GPU_texture_create_2d_array(name,
+                                      w,
+                                      h,
+                                      layers,
+                                      9999,
+                                      tex_format,
+                                      GPU_TEXTURE_USAGE_SHADER_READ |
+                                          GPU_TEXTURE_USAGE_SHADER_WRITE,
+                                      nullptr);
   }
   else {
-    tex = GPU_texture_create_2d(
-        name, w, h, 9999, tex_format, GPU_TEXTURE_USAGE_SHADER_READ, nullptr);
+    tex = GPU_texture_create_2d(name,
+                                w,
+                                h,
+                                9999,
+                                tex_format,
+                                GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE,
+                                nullptr);
   }
 
   GPU_texture_swizzle_set(tex, imb_gpu_get_swizzle(ibuf));
@@ -389,7 +401,8 @@ gpu::Texture *IMB_create_gpu_texture(
 
   /* Create Texture. Specify read usage to allow both shader and host reads, the latter is needed
    * by the GPU compositor. */
-  const eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_HOST_READ;
+  const eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE |
+                                 GPU_TEXTURE_USAGE_HOST_READ;
   tex = GPU_texture_create_2d(name, UNPACK2(size), 9999, tex_format, usage, nullptr);
   if (tex == nullptr) {
     size[0] = max_ii(1, size[0] / 2);

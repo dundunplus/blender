@@ -20,16 +20,16 @@ NODE_STORAGE_FUNCS(NodeGeometrySeparateGeometry)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry").description("Geometry to split into two parts");
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to split into two parts");
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .field_on_all()
       .description("The parts of the geometry that go into the first output");
-  b.add_output<decl::Geometry>("Selection")
+  b.add_output<decl::Geometry>("Selection"_ustr)
       .propagate_all()
       .description("The parts of the geometry in the selection");
-  b.add_output<decl::Geometry>("Inverted")
+  b.add_output<decl::Geometry>("Inverted"_ustr)
       .propagate_all()
       .description("The parts of the geometry not in the selection");
 }

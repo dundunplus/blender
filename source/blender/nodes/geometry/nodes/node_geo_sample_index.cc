@@ -20,7 +20,7 @@ NODE_STORAGE_FUNCS(NodeGeometrySampleIndex);
 static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh,
                        GeometryComponent::Type::PointCloud,
                        GeometryComponent::Type::Curve,
@@ -29,16 +29,16 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description("Geometry to sample a value on");
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node_storage(*node).data_type);
-    b.add_input(data_type, "Value").hide_value().field_on_all();
+    b.add_input(data_type, "Value"_ustr).hide_value().field_on_all();
   }
-  b.add_input<decl::Int>("Index")
+  b.add_input<decl::Int>("Index"_ustr)
       .supports_field()
       .description("Which element to retrieve a value from on the geometry")
       .structure_type(StructureType::Dynamic);
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node_storage(*node).data_type);
-    b.add_output(data_type, "Value").dependent_field({2});
+    b.add_output(data_type, "Value"_ustr).dependent_field({2});
   }
 }
 
@@ -70,7 +70,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeSampleIndex");
       node_storage(node).data_type = *type;
-      params.update_and_connect_available_socket(node, "Value");
+      params.update_and_connect_available_socket(node, "Value"_ustr);
     });
   }
 }

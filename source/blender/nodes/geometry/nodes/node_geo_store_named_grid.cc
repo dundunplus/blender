@@ -23,16 +23,16 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Volume").description("Volume geometry to add a grid to");
-  b.add_output<decl::Geometry>("Volume").align_with_previous();
-  b.add_input<decl::String>("Name").optional_label().is_volume_grid_name();
+  b.add_input<decl::Geometry>("Volume"_ustr).description("Volume geometry to add a grid to");
+  b.add_output<decl::Geometry>("Volume"_ustr).align_with_previous();
+  b.add_input<decl::String>("Name"_ustr).optional_label().is_volume_grid_name();
 
   const bNode *node = b.node_or_null();
   if (!node) {
     return;
   }
 
-  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid")
+  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid"_ustr)
       .hide_value()
       .structure_type(StructureType::Grid);
 }
@@ -42,14 +42,14 @@ static void search_link_ops(GatherLinkSearchOpParams &params)
   if (params.other_socket().type == SOCK_GEOMETRY) {
     params.add_item(IFACE_("Volume"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
-      params.update_and_connect_available_socket(node, "Volume");
+      params.update_and_connect_available_socket(node, "Volume"_ustr);
     });
   }
   if (params.in_out() == SOCK_IN) {
     if (params.other_socket().type == SOCK_STRING) {
       params.add_item(IFACE_("Name"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
-        params.update_and_connect_available_socket(node, "Name");
+        params.update_and_connect_available_socket(node, "Name"_ustr);
       });
     }
     if (const std::optional<VolumeGridType> data_type = bke::socket_type_to_grid_type(
@@ -58,7 +58,7 @@ static void search_link_ops(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Grid");
+        params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
     }
   }

@@ -10,16 +10,16 @@ namespace blender::nodes::node_geo_input_mesh_edge_vertices_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Vertex Index 1")
+  b.add_output<decl::Int>("Vertex Index 1"_ustr)
       .field_source()
       .description("The index of the first vertex in the edge");
-  b.add_output<decl::Int>("Vertex Index 2")
+  b.add_output<decl::Int>("Vertex Index 2"_ustr)
       .field_source()
       .description("The index of the second vertex in the edge");
-  b.add_output<decl::Vector>("Position 1")
+  b.add_output<decl::Vector>("Position 1"_ustr)
       .field_source()
       .description("The position of the first vertex in the edge");
-  b.add_output<decl::Vector>("Position 2")
+  b.add_output<decl::Vector>("Position 2"_ustr)
       .field_source()
       .description("The position of the second vertex in the edge");
 }

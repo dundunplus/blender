@@ -20,11 +20,11 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh to compute the dual of");
-  b.add_output<decl::Geometry>("Dual Mesh").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Keep Boundaries")
+  b.add_output<decl::Geometry>("Dual Mesh"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Keep Boundaries"_ustr)
       .default_value(false)
       .description(
           "Keep non-manifold boundaries of the input mesh in place by avoiding the dual "

@@ -531,7 +531,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_shadow_tilemap_lib.glsl
   engines/eevee/shaders/eevee_shadow_tilemap_rendermap_comp.glsl
   engines/eevee/shaders/eevee_shadow_visibility_comp.glsl
-  engines/eevee/shaders/eevee_spherical_harmonics_lib.glsl
+  engines/eevee/shaders/eevee_spherical_harmonics.bsl.hh
   engines/eevee/shaders/eevee_subsurface_lib.glsl
   engines/eevee/shaders/eevee_subsurface.bsl.hh
   engines/eevee/shaders/eevee_surf_capture_frag.glsl
@@ -610,12 +610,8 @@ set(GLSL_SRC
   engines/workbench/shaders/workbench_merge_depth_frag.glsl
   engines/workbench/shaders/workbench_overlay_depth_frag.glsl
   engines/workbench/shaders/workbench_prepass.bsl.hh
-  engines/workbench/shaders/workbench_shadow_caps_vert.glsl
-  engines/workbench/shaders/workbench_shadow_debug_frag.glsl
-  engines/workbench/shaders/workbench_shadow_frag.glsl
-  engines/workbench/shaders/workbench_shadow_lib.glsl
-  engines/workbench/shaders/workbench_shadow_vert.glsl
-  engines/workbench/shaders/workbench_shadow_visibility_comp.glsl
+  engines/workbench/shaders/workbench_shadow.bsl.hh
+  engines/workbench/shaders/workbench_shadow_visibility.bsl.hh
   engines/workbench/shaders/workbench_transparent_accum_frag.glsl
   engines/workbench/shaders/workbench_transparent_resolve_frag.glsl
   engines/workbench/shaders/workbench_volume.bsl.hh

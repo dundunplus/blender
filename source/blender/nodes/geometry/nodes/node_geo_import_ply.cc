@@ -17,13 +17,13 @@ namespace blender::nodes::nodes_geo_import_ply {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.ply")
       .optional_label()
       .description("Path to a PLY file");
 
-  b.add_output<decl::Geometry>("Mesh");
+  b.add_output<decl::Geometry>("Mesh"_ustr);
 }
 
 class LoadPlyCache : public memory_cache::CachedValue {

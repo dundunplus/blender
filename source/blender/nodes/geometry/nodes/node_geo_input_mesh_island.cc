@@ -13,12 +13,12 @@ namespace blender::nodes::node_geo_input_mesh_island_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Island Index")
+  b.add_output<decl::Int>("Island Index"_ustr)
       .field_source()
       .description(
           "The index of the each vertex's island. Indices are based on the "
           "lowest vertex index contained in each island");
-  b.add_output<decl::Int>("Island Count")
+  b.add_output<decl::Int>("Island Count"_ustr)
       .field_source()
       .description("The total number of mesh islands");
 }

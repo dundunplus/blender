@@ -71,8 +71,14 @@ void immDrawPixelsTexScaledFullSize(const IMMDrawPixelsTexState *state,
   const bool use_mipmap = use_filter && ((draw_width < img_w) || (draw_height < img_h));
   const int mip_len = use_mipmap ? 9999 : 1;
 
-  gpu::Texture *tex = GPU_texture_create_2d(
-      "immDrawPixels", img_w, img_h, mip_len, gpu_format, GPU_TEXTURE_USAGE_SHADER_READ, nullptr);
+  gpu::Texture *tex = GPU_texture_create_2d("immDrawPixels",
+                                            img_w,
+                                            img_h,
+                                            mip_len,
+                                            gpu_format,
+                                            GPU_TEXTURE_USAGE_SHADER_READ |
+                                                GPU_TEXTURE_USAGE_SHADER_WRITE,
+                                            nullptr);
 
   const bool use_float_data = ELEM(gpu_format,
                                    gpu::TextureFormat::SFLOAT_16_16_16_16,

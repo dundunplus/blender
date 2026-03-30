@@ -11,10 +11,10 @@ namespace blender::nodes::node_geo_curve_length_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curve to compute the length of");
-  b.add_output<decl::Float>("Length");
+  b.add_output<decl::Float>("Length"_ustr);
 }
 
 static float curves_total_length(const bke::CurvesGeometry &curves)

@@ -16,12 +16,12 @@ namespace blender::nodes::node_geo_grid_to_mesh_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_input<decl::Float>("Threshold")
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Threshold"_ustr)
       .default_value(0.1f)
       .description("Values larger than the threshold are inside the generated mesh");
-  b.add_input<decl::Float>("Adaptivity").min(0.0f).max(1.0f).subtype(PROP_FACTOR);
-  b.add_output<decl::Geometry>("Mesh");
+  b.add_input<decl::Float>("Adaptivity"_ustr).min(0.0f).max(1.0f).subtype(PROP_FACTOR);
+  b.add_output<decl::Geometry>("Mesh"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

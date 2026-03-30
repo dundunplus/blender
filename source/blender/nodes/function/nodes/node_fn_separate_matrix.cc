@@ -18,30 +18,30 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.allow_any_socket_order();
 
   PanelDeclarationBuilder &column_a = b.add_panel("Column 1"_ustr).default_closed(true);
-  column_a.add_output<decl::Float>("Column 1 Row 1");
-  column_a.add_output<decl::Float>("Column 1 Row 2");
-  column_a.add_output<decl::Float>("Column 1 Row 3");
-  column_a.add_output<decl::Float>("Column 1 Row 4");
+  column_a.add_output<decl::Float>("Column 1 Row 1"_ustr);
+  column_a.add_output<decl::Float>("Column 1 Row 2"_ustr);
+  column_a.add_output<decl::Float>("Column 1 Row 3"_ustr);
+  column_a.add_output<decl::Float>("Column 1 Row 4"_ustr);
 
   PanelDeclarationBuilder &column_b = b.add_panel("Column 2"_ustr).default_closed(true);
-  column_b.add_output<decl::Float>("Column 2 Row 1");
-  column_b.add_output<decl::Float>("Column 2 Row 2");
-  column_b.add_output<decl::Float>("Column 2 Row 3");
-  column_b.add_output<decl::Float>("Column 2 Row 4");
+  column_b.add_output<decl::Float>("Column 2 Row 1"_ustr);
+  column_b.add_output<decl::Float>("Column 2 Row 2"_ustr);
+  column_b.add_output<decl::Float>("Column 2 Row 3"_ustr);
+  column_b.add_output<decl::Float>("Column 2 Row 4"_ustr);
 
   PanelDeclarationBuilder &column_c = b.add_panel("Column 3"_ustr).default_closed(true);
-  column_c.add_output<decl::Float>("Column 3 Row 1");
-  column_c.add_output<decl::Float>("Column 3 Row 2");
-  column_c.add_output<decl::Float>("Column 3 Row 3");
-  column_c.add_output<decl::Float>("Column 3 Row 4");
+  column_c.add_output<decl::Float>("Column 3 Row 1"_ustr);
+  column_c.add_output<decl::Float>("Column 3 Row 2"_ustr);
+  column_c.add_output<decl::Float>("Column 3 Row 3"_ustr);
+  column_c.add_output<decl::Float>("Column 3 Row 4"_ustr);
 
   PanelDeclarationBuilder &column_d = b.add_panel("Column 4"_ustr).default_closed(true);
-  column_d.add_output<decl::Float>("Column 4 Row 1");
-  column_d.add_output<decl::Float>("Column 4 Row 2");
-  column_d.add_output<decl::Float>("Column 4 Row 3");
-  column_d.add_output<decl::Float>("Column 4 Row 4");
+  column_d.add_output<decl::Float>("Column 4 Row 1"_ustr);
+  column_d.add_output<decl::Float>("Column 4 Row 2"_ustr);
+  column_d.add_output<decl::Float>("Column 4 Row 3"_ustr);
+  column_d.add_output<decl::Float>("Column 4 Row 4"_ustr);
 
-  b.add_input<decl::Matrix>("Matrix");
+  b.add_input<decl::Matrix>("Matrix"_ustr);
 }
 
 static void copy_with_stride(const IndexMask &mask,

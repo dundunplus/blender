@@ -480,6 +480,7 @@ static bool wm_notifier_is_clear(const wmNotifier *note)
 
 void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
 {
+  const Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   /* The whole idea of locked interface is to prevent viewport and whatever thread from
    * modifying the same data. Because of this, we can not perform dependency graph update. */
@@ -493,7 +494,7 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
     ViewLayer *view_layer = WM_window_get_active_view_layer(&win);
     const bScreen *screen = WM_window_get_active_screen(&win);
 
-    ED_view3d_screen_datamask(scene, view_layer, screen, &win_combine_v3d_datamask);
+    ED_view3d_screen_datamask(*bmain, scene, view_layer, screen, &win_combine_v3d_datamask);
   }
   /* Update all the dependency graphs of visible view layers. */
   for (wmWindow &win : wm->windows) {
@@ -795,6 +796,7 @@ void wm_event_do_notifiers(bContext *C)
           area_params.area = area;
           area_params.notifier = note;
           area_params.scene = scene;
+          area_params.bmain = CTX_data_main(C);
           ED_area_do_listen(&area_params);
           for (ARegion &region : area->regionbase) {
             wmRegionListenerParams region_params{};
@@ -5075,8 +5077,10 @@ bool WM_event_handler_region_marker_poll(const wmWindow *win,
     }
   }
 
+  /* FIXME: Ideally we should not have to use G_MAIN here, though practically this is probably fine
+   * for now. */
   const ListBaseT<TimeMarker> *markers = ED_scene_markers_get_from_area(
-      scene, WM_window_get_active_view_layer(win), area);
+      *G_MAIN, scene, WM_window_get_active_view_layer(win), area);
   if (BLI_listbase_is_empty(markers)) {
     return false;
   }
@@ -5097,8 +5101,10 @@ bool WM_event_handler_region_v2d_mask_no_marker_poll(const wmWindow *win,
     return false;
   }
   /* Casting away `const` is only needed for a non-constant return value. */
+  /* FIXME: Ideally we should not have to use G_MAIN here, though practically this is probably fine
+   * for now. */
   const ListBaseT<TimeMarker> *markers = ED_scene_markers_get_from_area(
-      WM_window_get_active_scene(win), WM_window_get_active_view_layer(win), area);
+      *G_MAIN, WM_window_get_active_scene(win), WM_window_get_active_view_layer(win), area);
   if (markers && !BLI_listbase_is_empty(markers)) {
     return !WM_event_handler_region_marker_poll(win, area, region, event);
   }
@@ -6754,6 +6760,7 @@ void WM_window_cursor_keymap_status_free(wmWindow *win)
 
 void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
 {
+  const Main *bmain = CTX_data_main(C);
   bScreen *screen = WM_window_get_active_screen(win);
   ScrArea *area_statusbar = WM_window_status_area_find(win, screen);
   if (area_statusbar == nullptr) {
@@ -6825,7 +6832,8 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
       WorkSpace *workspace = WM_window_get_active_workspace(win);
       bToolKey tkey{};
       tkey.space_type = area->spacetype;
-      tkey.mode = WM_toolsystem_mode_from_spacetype(scene, view_layer, area, area->spacetype);
+      tkey.mode = WM_toolsystem_mode_from_spacetype(
+          *bmain, scene, view_layer, area, area->spacetype);
       tref = WM_toolsystem_ref_find(workspace, &tkey);
     }
     wm_event_cursor_store(

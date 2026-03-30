@@ -10,15 +10,15 @@ namespace blender::nodes::node_geo_mesh_topology_edges_of_corner_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Corner Index")
+  b.add_input<decl::Int>("Corner Index"_ustr)
       .implicit_field(NODE_DEFAULT_INPUT_INDEX_FIELD)
       .description("The corner to retrieve data from. Defaults to the corner from the context")
       .structure_type(StructureType::Field);
-  b.add_output<decl::Int>("Next Edge Index")
+  b.add_output<decl::Int>("Next Edge Index"_ustr)
       .field_source_reference_all()
       .description(
           "The edge after the corner in the face, in the direction of increasing indices");
-  b.add_output<decl::Int>("Previous Edge Index")
+  b.add_output<decl::Int>("Previous Edge Index"_ustr)
       .field_source_reference_all()
       .description(
           "The edge before the corner in the face, in the direction of decreasing indices");

@@ -251,7 +251,8 @@ static void screen_opengl_views_setup(OGLRender *oglrender)
 
   /* will only work for non multiview correctly */
   if (v3d) {
-    camera = BKE_camera_multiview_render(oglrender->scene, v3d->camera, "new opengl render view");
+    camera = BKE_camera_multiview_render(
+        *oglrender->bmain, oglrender->scene, v3d->camera, "new opengl render view");
     BKE_render_result_stamp_info(oglrender->scene, camera, rr, false);
   }
   else {
@@ -360,7 +361,8 @@ static void screen_opengl_render_doit(OGLRender *oglrender, RenderResult *rr)
 
       /* for stamp only */
       if (oglrender->rv3d->persp == RV3D_CAMOB && v3d->camera) {
-        camera = BKE_camera_multiview_render(oglrender->scene, v3d->camera, viewname);
+        camera = BKE_camera_multiview_render(
+            *oglrender->bmain, oglrender->scene, v3d->camera, viewname);
       }
     }
     else {
@@ -828,7 +830,8 @@ static bool screen_opengl_render_init(bContext *C, wmOperator *op)
 
     /* MUST be cleared on exit */
     oglrender->scene->customdata_mask_modal = CustomData_MeshMasks{};
-    ED_view3d_datamask(oglrender->scene,
+    ED_view3d_datamask(*oglrender->bmain,
+                       oglrender->scene,
                        oglrender->view_layer,
                        oglrender->v3d,
                        &oglrender->scene->customdata_mask_modal);

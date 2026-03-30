@@ -382,11 +382,12 @@ static wmOperatorStatus loopcut_init(bContext *C, wmOperator *op, const wmEvent 
   exec_data.base_index = uint(RNA_int_get(op->ptr, "object_index"));
   exec_data.e_index = uint(RNA_int_get(op->ptr, "edge_index"));
 
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
 
   if (is_interactive) {
     for (Base *base : bases) {

@@ -12,20 +12,22 @@ namespace blender::nodes::node_geo_points_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Count").default_value(1).min(0).description(
-      "The number of points to create");
-  b.add_input<decl::Vector>("Position")
+  b.add_input<decl::Int>("Count"_ustr)
+      .default_value(1)
+      .min(0)
+      .description("The number of points to create");
+  b.add_input<decl::Vector>("Position"_ustr)
       .subtype(PROP_TRANSLATION)
       .default_value(float3(0.0f))
       .supports_field()
       .description("The positions of the new points");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Float>("Radius"_ustr)
       .min(0.0f)
       .default_value(0.1f)
       .subtype(PROP_DISTANCE)
       .supports_field()
       .description("The radii of the new points");
-  b.add_output<decl::Geometry>("Points", "Geometry");
+  b.add_output<decl::Geometry>("Points"_ustr, "Geometry"_ustr);
 }
 
 class PointsFieldContext : public FieldContext {

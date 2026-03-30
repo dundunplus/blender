@@ -14,8 +14,8 @@ namespace blender::nodes::node_geo_grid_divergence_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output<decl::Float>("Divergence").structure_type(StructureType::Grid);
+  b.add_input<decl::Vector>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Float>("Divergence"_ustr).structure_type(StructureType::Grid);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

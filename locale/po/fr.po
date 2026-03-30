@@ -1,18 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
-"PO-Revision-Date: 2026-03-11 21:12+0000\n"
-"Last-Translator: Alexandr Fatih <radix83@rambler.ru>\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"PO-Revision-Date: 2026-03-25 20:12+0000\n"
+"Last-Translator: Damien Picard <dam.pic@free.fr>\n"
 "Language-Team: French <https://translate.blender.org/projects/blender-ui/ui/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.15.2"
+"X-Generator: Weblate 5.16.2"
 
 
 msgid "Shader AOV"
@@ -1520,6 +1520,34 @@ msgid "Display Mode"
 msgstr "Mode d’affichage"
 
 
+msgid "Coordinate space that stroke is in"
+msgstr "Espace de coordonnées dans lequel se trouve le trait"
+
+
+msgid "3D Space"
+msgstr "Espace 3D"
+
+
+msgid "Stroke is in 3D space"
+msgstr "Le trait est dans un espace 3D"
+
+
+msgid "2D Space"
+msgstr "Espace 2D"
+
+
+msgid "Stroke is in 2D space, locked to the camera view"
+msgstr "Le trait est dans un espace 2D, verrouillé à la vue caméra"
+
+
+msgid "2D Image"
+msgstr "Image 2D"
+
+
+msgid "Stroke is in 2D image/UV space"
+msgstr "Le trait est dans l’espace image 2D/UV"
+
+
 msgid "Stroke Points"
 msgstr "Points de trait"
 
@@ -1538,6 +1566,22 @@ msgstr "Point de données pour la courbe de trait à main levée"
 
 msgid "Coordinates"
 msgstr "Coordonnées"
+
+
+msgid "Annotation Stroke Points"
+msgstr "Points de traits d’annotation"
+
+
+msgid "Collection of annotation stroke points"
+msgstr "Collection de points de traits d’annotation"
+
+
+msgid "Annotation Strokes"
+msgstr "Traits d’annotation"
+
+
+msgid "Collection of annotation strokes"
+msgstr "Collection de traits d’annotation"
 
 
 msgid "Any Type"
@@ -1935,6 +1979,14 @@ msgstr "Type de bloc de données"
 
 msgid "The type of the data-block, if the asset represents one ('NONE' otherwise)"
 msgstr "Le type du bloc de données, si l’asset en représente un ('NONE' autrement)"
+
+
+msgid "Is Online"
+msgstr "Est en ligne"
+
+
+msgid "True if this asset is accessed via internet, not stored on disk"
+msgstr "Vrai si cet asset est accessible par Internet, et non stocké sur le disque"
 
 
 msgid "The local data-block this asset represents; only valid if that is a data-block in this file"
@@ -2509,6 +2561,14 @@ msgid "2D vector with floating-point values"
 msgstr "Vecteur 2D avec des valeurs en virgule flottante"
 
 
+msgid "4D Vector"
+msgstr "Vecteur 4D"
+
+
+msgid "4D vector with floating-point values"
+msgstr "Vecteur 4D avec des valeurs en virgule flottante"
+
+
 msgid "Byte Color"
 msgstr "Couleur (octet)"
 
@@ -2658,6 +2718,14 @@ msgstr "Attribut Float2"
 
 msgid "Geometry attribute that stores floating-point 2D vectors"
 msgstr "Attribut de géométrie contenant des vecteurs 2D à virgule flottante"
+
+
+msgid "Float4 Attribute"
+msgstr "Attribut Float4"
+
+
+msgid "Geometry attribute that stores floating-point 4D vectors"
+msgstr "Attribut de géométrie contenant des vecteurs 4D à virgule flottante"
 
 
 msgid "4x4 Matrix Attribute"
@@ -3290,6 +3358,10 @@ msgstr "Structure de données principale représentant un fichier .blend et tous
 
 msgid "Action data-blocks"
 msgstr "Blocs de données actions"
+
+
+msgid "All Data-Blocks"
+msgstr "Tous les blocs de données"
 
 
 msgid "Annotation"
@@ -5666,12 +5738,12 @@ msgstr "Forme de début et de fin du trait"
 
 msgctxt "GPencil"
 msgid "Round"
-msgstr "Rondes"
+msgstr "Ronde"
 
 
 msgctxt "GPencil"
 msgid "Flat"
-msgstr "Plates"
+msgstr "Plate"
 
 
 msgid "Curve Jitter"
@@ -6290,24 +6362,12 @@ msgid "Stroke"
 msgstr "Trait"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "La couleur de sommets n’affecte que le trait"
-
-
 msgid "Fill"
 msgstr "Remplissage"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "La couleur de sommets n’affecte que le remplissage"
-
-
-msgid "Stroke & Fill"
-msgstr "Trait et remplissage"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "La couleur de sommets affecte le trait et le remplissage"
+msgid "Both"
+msgstr "Les deux"
 
 
 msgid "Byte Color Attribute Value"
@@ -7670,6 +7730,38 @@ msgid "ACES color correction space with toe, using AP1 primaries."
 msgstr "Espace de correction de couleur ACES avec « pied », utilisant les primaires AP1."
 
 
+msgid "ADX10"
+msgstr "ADX10"
+
+
+msgid "Film scan input space using ADX10 encoding."
+msgstr "Espace d’entrée de scan pellicule utilisant l’encodage ADX10."
+
+
+msgid "ADX16"
+msgstr "ADX16"
+
+
+msgid "Film scan input space using ADX16 encoding."
+msgstr "Espace d’entrée de scan pellicule utilisant l’encodage ADX16."
+
+
+msgid "ARRI LogC3 (EI800)"
+msgstr "ARRI LogC3 (EI800)"
+
+
+msgid "ARRI camera input space using LogC3 (EI800) transfer function and ARRI Wide Gamut primaries."
+msgstr "Espace d’entrée de caméra ARRI utilisant la fonction de transfert LogC3 (EI800) et les primaires ARRI Wide Gamut."
+
+
+msgid "ARRI LogC4"
+msgstr "ARRI LogC4"
+
+
+msgid "ARRI camera input space using LogC4 transfer function and ARRI Wide Gamut 4 primaries."
+msgstr "Espace d’entrée de caméra ARRI utilisant la fonction de transfert LogC4 et les primaires ARRI Wide Gamut 4."
+
+
 msgid "AgX Base sRGB"
 msgstr "AgX Base sRGB"
 
@@ -7684,6 +7776,54 @@ msgstr "AgX Log"
 
 msgid "Log Encoding with Chroma inset and rotation of primaries, and with 25 Stops of Dynamic Range"
 msgstr "Encodage log avec rétrécissement et rotation chroma des couleurs primaires, et 25 stops de gamme dynamique"
+
+
+msgid "Apple Log"
+msgstr "Apple Log"
+
+
+msgid "Apple camera input space using Apple Log transfer function and Rec.2020 primaries."
+msgstr "Espace d’entrée de caméra Apple utilisant la fonction de transfert Apple Log et les primaires Rec.2020."
+
+
+msgid "BMDFilm WideGamut Gen5"
+msgstr "BMDFilm WideGamut Gen5"
+
+
+msgid "Blackmagic camera input space using BMDFilm Gen5 transfer function and Blackmagic Wide Gamut Gen5 primaries."
+msgstr "Espace d’entrée de caméra Blackmagic utilisant la fonction de transfert BMDFilm Gen5 et les primaires Blackmagic Wide Gamut Gen5."
+
+
+msgid "CanonLog2 CinemaGamut D55"
+msgstr "CanonLog2 CinemaGamut D55"
+
+
+msgid "Canon camera input space using Canon-Log2 transfer function and Cinema Gamut primaries."
+msgstr "Espace d’entrée de caméra Canon utilisant la fonction de transfert Canon-Log2 et les primaires Cinema Gamut."
+
+
+msgid "CanonLog3 CinemaGamut D55"
+msgstr "CanonLog3 CinemaGamut D55"
+
+
+msgid "Canon camera input space using Canon-Log3 transfer function and Cinema Gamut primaries."
+msgstr "Espace d’entrée de caméra Canon utilisant la fonction de transfert Canon-Log3 et les primaires Cinema Gamut."
+
+
+msgid "D-Log D-Gamut"
+msgstr "D-Log D-Gamut"
+
+
+msgid "DJI camera input space using D-Log transfer function and D-Gamut primaries."
+msgstr "Espace d’entrée de caméra DJI utilisant la fonction de transfert D-Log et les primaires D-Gamut."
+
+
+msgid "DaVinci Intermediate WideGamut"
+msgstr "DaVinci Intermediate WideGamut"
+
+
+msgid "Blackmagic camera input space using DaVinci Intermediate transfer function and DaVinci Wide Gamut primaries."
+msgstr "Espace d’entrée de caméra Blackmagic utilisant la fonction de transfert DaVinci Intermediate et les primaires DaVinci Wide Gamut."
 
 
 msgid "Display P3"
@@ -7718,6 +7858,30 @@ msgid "Khronos PBR Neutral Image Encoding for sRGB Display"
 msgstr "Encodage d’image Khronos PBR Neutral pour écran sRGB"
 
 
+msgid "Linear ARRI Wide Gamut 3"
+msgstr "Linear ARRI Wide Gamut 3"
+
+
+msgid "ARRI camera input space using linear ARRI Wide Gamut primaries."
+msgstr "Espace d’entrée de caméra ARRI utilisant les primaires ARRI Wide Gamut linéaires."
+
+
+msgid "Linear ARRI Wide Gamut 4"
+msgstr "Linear ARRI Wide Gamut 4"
+
+
+msgid "ARRI camera input space using linear ARRI Wide Gamut 4 primaries."
+msgstr "Espace d’entrée de caméra ARRI utilisant les primaires ARRI Wide Gamut 4 linéaires."
+
+
+msgid "Linear BMD WideGamut Gen5"
+msgstr "Linear BMD WideGamut Gen5"
+
+
+msgid "Blackmagic camera input space using linear Blackmagic Wide Gamut Gen5 primaries."
+msgstr "Espace d’entrée de caméra Blackmagic utilisant les primaires Blackmagic Wide Gamut Gen5 linéaires."
+
+
 msgid "Linear CIE-XYZ D65"
 msgstr "CIE-XYZ D65 linéaire"
 
@@ -7734,6 +7898,22 @@ msgid "1931 CIE XYZ standard with assumed illuminant E white point"
 msgstr "Norme CIE XYZ 1931 avec pour point blanc présumé l’illuminant E"
 
 
+msgid "Linear CinemaGamut D55"
+msgstr "Linear CinemaGamut D55"
+
+
+msgid "Canon camera input space using linear Cinema Gamut primaries."
+msgstr "Espace d’entrée de caméra Canon utilisant les primaires Cinema Gamut linéaires."
+
+
+msgid "Linear D-Gamut"
+msgstr "Linear D-Gamut"
+
+
+msgid "DJI camera input space using linear D-Gamut primaries."
+msgstr "Espace d’entrée de caméra DJI utilisant les primaires D-Gamut linéaires."
+
+
 msgid "Linear DCI-P3 D65"
 msgstr "DCI-P3 D65 linéaire"
 
@@ -7742,12 +7922,76 @@ msgid "Linear DCI-P3 with illuminant D65 white point"
 msgstr "DCI-P3 linéaire avec pour point blanc l’illuminant D65"
 
 
+msgid "Linear DaVinci WideGamut"
+msgstr "Linear DaVinci WideGamut"
+
+
+msgid "Blackmagic camera input space using linear DaVinci Wide Gamut primaries."
+msgstr "Espace d’entrée de caméra Blackmagic utilisant les primaires DaVinci Wide Gamut linéaires."
+
+
 msgid "Linear FilmLight E-Gamut"
 msgstr "FilmLight E-Gamut linéaire"
 
 
 msgid "Linear E-Gamut with illuminant D65 white point"
 msgstr "E-Gamut linéaire avec pour point blanc l’illuminant D65"
+
+
+msgid "Linear REDWideGamutRGB"
+msgstr "Linear REDWideGamutRGB"
+
+
+msgid "RED camera input space using linear REDWideGamutRGB primaries."
+msgstr "Espace d’entrée de caméra RED utilisant les primaires REDWideGamutRGB linéaires."
+
+
+msgid "Linear S-Gamut3"
+msgstr "Linear S-Gamut3"
+
+
+msgid "Sony camera input space using linear S-Gamut3 primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant les primaires S-Gamut3 linéaires."
+
+
+msgid "Linear S-Gamut3.Cine"
+msgstr "Linear S-Gamut3.Cine"
+
+
+msgid "Sony camera input space using linear S-Gamut3.Cine primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant les primaires S-Gamut3.Cine linéaires."
+
+
+msgid "Linear V-Gamut"
+msgstr "Linear V-Gamut"
+
+
+msgid "Panasonic camera input space using linear V-Gamut primaries."
+msgstr "Espace d’entrée de caméra Panasonic utilisant les primaires V-Gamut linéaires."
+
+
+msgid "Linear Venice S-Gamut3"
+msgstr "Linear Venice S-Gamut3"
+
+
+msgid "Sony camera input space using linear Venice S-Gamut3 primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant les primaires Venice S-Gamut3 linéaires."
+
+
+msgid "Linear Venice S-Gamut3.Cine"
+msgstr "Linear Venice S-Gamut3.Cine"
+
+
+msgid "Sony camera input space using linear Venice S-Gamut3.Cine primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant les primaires Venice S-Gamut3.Cine linéaires."
+
+
+msgid "Log3G10 REDWideGamutRGB"
+msgstr "Log3G10 REDWideGamutRGB"
+
+
+msgid "RED camera input space using REDLog3G10 transfer function and REDWideGamutRGB primaries."
+msgstr "Espace d’entrée de caméra RED utilisant la fonction de transfert REDLog3G10 et les primaires REDWideGamutRGB."
 
 
 msgid "Non-Color"
@@ -7788,6 +8032,46 @@ msgstr "Rec.2100-PQ"
 
 msgid "Rec.2100-PQ 10000 nits peak display with reference white at 100 nits"
 msgstr "Affichage Rec.2100-PQ 10000 nits maximum, avec blanc de référence à 100 nits"
+
+
+msgid "S-Log3 S-Gamut3"
+msgstr "S-Log3 S-Gamut3"
+
+
+msgid "Sony camera input space using S-Log3 transfer function and S-Gamut3 primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant la fonction de transfert S-Log3 et les primaires S-Gamut3."
+
+
+msgid "S-Log3 S-Gamut3.Cine"
+msgstr "S-Log3 S-Gamut3.Cine"
+
+
+msgid "Sony camera input space using S-Log3 transfer function and S-Gamut3.Cine primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant la fonction de transfert S-Log3 et les primaires S-Gamut3.Cine."
+
+
+msgid "S-Log3 Venice S-Gamut3"
+msgstr "S-Log3 Venice S-Gamut3"
+
+
+msgid "Sony camera input space using S-Log3 transfer function and Venice S-Gamut3 primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant la fonction de transfert S-Log3 et les primaires Venice S-Gamut3."
+
+
+msgid "S-Log3 Venice S-Gamut3.Cine"
+msgstr "S-Log3 Venice S-Gamut3.Cine"
+
+
+msgid "Sony camera input space using S-Log3 transfer function and Venice S-Gamut3.Cine primaries."
+msgstr "Espace d’entrée de caméra Sony utilisant la fonction de transfert S-Log3 et les primaires Venice S-Gamut3.Cine."
+
+
+msgid "V-Log V-Gamut"
+msgstr "V-Log V-Gamut"
+
+
+msgid "Panasonic camera input space using V-Log transfer function and V-Gamut primaries."
+msgstr "Espace d’entrée de caméra Panasonic utilisant la fonction de transfert V-Log et les primaires V-Gamut."
 
 
 msgid "sRGB IEC 61966-2-1 compound (piece-wise) encoding"
@@ -15158,6 +15442,14 @@ msgid "Create instances for collections when linking, rather than adding them di
 msgstr "Créer des instances pour les collections lors d’un lien, plutôt que de les ajouter directement dans la scène"
 
 
+msgid "Show Online Assets"
+msgstr "Afficher les assets en ligne"
+
+
+msgid "When internet access is enabled, load and display online assets"
+msgstr "Lorsque l’accès à Internet est activé, charger et afficher les assets en ligne"
+
+
 msgid "Float2 Attribute Value"
 msgstr "Valeur d’attribut de vecteur 2D de flottants"
 
@@ -15168,6 +15460,18 @@ msgstr "Valeur vecteur 2D dans un attribut de géométrie"
 
 msgid "2D vector"
 msgstr "Vecteur 2D"
+
+
+msgid "Float4 Attribute Value"
+msgstr "Valeur d’attribut de vecteur 4D de flottants"
+
+
+msgid "4D Vector value in geometry attribute"
+msgstr "Valeur vecteur 4D dans un attribut de géométrie"
+
+
+msgid "4D vector"
+msgstr "Vecteur 4D"
 
 
 msgid "Matrix Attribute Value"
@@ -20141,6 +20445,10 @@ msgid "Smooth"
 msgstr "Adoucir"
 
 
+msgid "Minimum distance to other scene objects after projecting onto them"
+msgstr "Distance minimale aux autres objets de la scène après projection sur eux"
+
+
 msgid "Plane Angle"
 msgstr "Angle des plans"
 
@@ -23915,10 +24223,6 @@ msgstr "Générer un tampon en virgule flottante"
 
 msgid "Half Float Precision"
 msgstr "Demi-précision flottante"
-
-
-msgid "Use 16 bits per channel to lower the memory usage during rendering"
-msgstr "Utiliser 16 bits par canal pour diminuer l’utilisation mémoire pendant le rendu"
 
 
 msgid "Use Multi-View"
@@ -35206,12 +35510,88 @@ msgid "Editor menu containing buttons"
 msgstr "Menu d’éditeur contenant des boutons"
 
 
-msgid "Mirror"
-msgstr "Miroir"
+msgid "Math"
+msgstr "Maths"
+
+
+msgid "Names"
+msgstr "Noms"
+
+
+msgid "Utilities"
+msgstr "Utilitaires"
+
+
+msgid "Bone Roll"
+msgstr "Roulis de l’os"
+
+
+msgid "Show/Hide"
+msgstr "Afficher/cacher"
+
+
+msgid "Clean Up"
+msgstr "Nettoyer"
+
+
+msgid "Pivot Point"
+msgstr "Point de pivot"
 
 
 msgid "Snap"
 msgstr "Aimanter"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Atténuation de l’édition proportionnelle"
+
+
+msgid "Read"
+msgstr "Lecture"
+
+
+msgid "Mask Edit"
+msgstr "Édition du masque"
+
+
+msgid "Sample"
+msgstr "Échantillonner"
+
+
+msgid "Automasking"
+msgstr "Masquage auto"
+
+
+msgid "Write"
+msgstr "Écriture"
+
+
+msgid "Face Sets Edit"
+msgstr "Édition des ensembles de faces"
+
+
+msgid "Primitives"
+msgstr "Primitives"
+
+
+msgid "Vertex Group Locks"
+msgstr "Verrouillages des groupes de sommets"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instances"
+
+
+msgid "Import"
+msgstr "Importer"
+
+
+msgid "Mirror"
+msgstr "Miroir"
 
 
 msgid "UV Mapping"
@@ -35222,24 +35602,16 @@ msgid "Local View"
 msgstr "Vue locale"
 
 
-msgid "Read"
-msgstr "Lecture"
-
-
 msgid "Viewpoint"
 msgstr "Point de vue"
-
-
-msgid "Sample"
-msgstr "Échantillonner"
 
 
 msgid "Navigation"
 msgstr "Navigation"
 
 
-msgid "Write"
-msgstr "Écriture"
+msgid "Deprecated"
+msgstr "Obsolète"
 
 
 msgid "Align View"
@@ -35250,16 +35622,20 @@ msgid "Align View to Active"
 msgstr "Aligner la vue sur l’actif"
 
 
-msgid "Primitives"
-msgstr "Primitives"
-
-
 msgid "View Regions"
 msgstr "Régions dans la vue"
 
 
 msgid "Select More/Less"
 msgstr "Sélectionner plus ou moins"
+
+
+msgid "List"
+msgstr "Liste"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -35278,32 +35654,12 @@ msgid "Select Loops"
 msgstr "Sélectionner les boucles"
 
 
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Instances"
-
-
 msgid "Assign Material"
 msgstr "Assigner un matériau"
 
 
-msgid "Import"
-msgstr "Importer"
-
-
-msgid "Utilities"
-msgstr "Utilitaires"
-
-
 msgid "Metaball"
 msgstr "Métaballe"
-
-
-msgid "Deprecated"
-msgstr "Obsolète"
 
 
 msgid "Light"
@@ -35312,18 +35668,6 @@ msgstr "Éclairage"
 
 msgid "Light Probe"
 msgstr "Sonde d’éclairage"
-
-
-msgid "List"
-msgstr "Liste"
-
-
-msgid "Math"
-msgstr "Maths"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -35350,14 +35694,6 @@ msgid "Quick Effects"
 msgstr "Effets rapides"
 
 
-msgid "Show/Hide"
-msgstr "Afficher/cacher"
-
-
-msgid "Clean Up"
-msgstr "Nettoyer"
-
-
 msgid "Asset"
 msgstr "Asset"
 
@@ -35378,12 +35714,12 @@ msgid "Hooks"
 msgstr "Crochets"
 
 
-msgid "Vertex Group Locks"
-msgstr "Verrouillages des groupes de sommets"
-
-
 msgid "Trim/Add"
 msgstr "Découper/Ajouter"
+
+
+msgid "Layout"
+msgstr "Disposition"
 
 
 msgid "Sculpt Set Pivot"
@@ -35414,12 +35750,24 @@ msgid "Bone Collections"
 msgstr "Collections d’os"
 
 
-msgid "Names"
-msgstr "Noms"
+msgid "Adjust"
+msgstr "Ajuster"
+
+
+msgid "Keying"
+msgstr "Incrustation"
+
+
+msgid "Tracking"
+msgstr "Suivi"
 
 
 msgid "Toggle Bone Options"
 msgstr "(Dés)activer des options d’os"
+
+
+msgid "Render Preview"
+msgstr "Rendu de prévisualisation"
 
 
 msgid "Enable Bone Options"
@@ -35434,6 +35782,10 @@ msgid "Mesh Select Mode"
 msgstr "Mode de sélection du maillage"
 
 
+msgid "Creative"
+msgstr "Créatif"
+
+
 msgid "Face Data"
 msgstr "Données de face"
 
@@ -35446,64 +35798,16 @@ msgid "Set Face Strength"
 msgstr "Définir la force de face"
 
 
-msgid "Layout"
-msgstr "Disposition"
-
-
 msgid "Merge"
 msgstr "Fusionner"
-
-
-msgid "Adjust"
-msgstr "Ajuster"
-
-
-msgid "Keying"
-msgstr "Incrustation"
 
 
 msgid "Special Characters"
 msgstr "Caractères spéciaux"
 
 
-msgid "Render Preview"
-msgstr "Rendu de prévisualisation"
-
-
 msgid "Kerning"
 msgstr "Approche"
-
-
-msgid "Tracking"
-msgstr "Suivi"
-
-
-msgid "Creative"
-msgstr "Créatif"
-
-
-msgid "Bone Roll"
-msgstr "Roulis de l’os"
-
-
-msgid "Pivot Point"
-msgstr "Point de pivot"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Atténuation de l’édition proportionnelle"
-
-
-msgid "Mask Edit"
-msgstr "Édition du masque"
-
-
-msgid "Automasking"
-msgstr "Masquage auto"
-
-
-msgid "Face Sets Edit"
-msgstr "Édition des ensembles de faces"
 
 
 msgid "Keyframe Insert Pie"
@@ -39282,6 +39586,10 @@ msgstr "Modificateur de couleur du Grease Pencil"
 
 msgid "Attributes to modify"
 msgstr "Attributs à modifier"
+
+
+msgid "Stroke & Fill"
+msgstr "Trait et remplissage"
 
 
 msgid "Modify fill and stroke colors"
@@ -60826,7 +61134,7 @@ msgid "Set Handle Type"
 msgstr "Définir le type de poignée"
 
 
-msgid "Set the handle type for bezier curves"
+msgid "Set the handle type for Bézier curves"
 msgstr "Définir le type de poignée pour les courbes de Bézier"
 
 
@@ -64923,10 +65231,6 @@ msgid "Equalize selected keyframes' right handles"
 msgstr "Égaliser les poignées de droite des images clés sélectionnées"
 
 
-msgid "Both"
-msgstr "Les deux"
-
-
 msgid "Equalize both of a keyframe's handles"
 msgstr "Égaliser les deux poignées des images clés sélectionnées"
 
@@ -66811,10 +67115,6 @@ msgstr "Définir la résolution des courbes sélectionnées"
 
 msgid "The resolution to use for each curve segment"
 msgstr "Résolution à utiliser pour chaque segment de courbe"
-
-
-msgid "Set the handle type for Bézier curves"
-msgstr "Définir le type de poignée pour les courbes de Bézier"
 
 
 msgid "Set active material"
@@ -70434,24 +70734,13 @@ msgid "Merge selected vertices"
 msgstr "Fusionner les sommets sélectionnés"
 
 
+msgctxt "Mesh"
+msgid "Type"
+msgstr "Type"
+
+
 msgid "Merge method to use"
 msgstr "Méthode de fusion à utiliser"
-
-
-msgid "At Center"
-msgstr "Au centre"
-
-
-msgid "At Cursor"
-msgstr "Au curseur"
-
-
-msgid "At First"
-msgstr "Au premier"
-
-
-msgid "At Last"
-msgstr "Au dernier"
 
 
 msgid "Move UVs according to merge"
@@ -71386,11 +71675,6 @@ msgstr "Sélectionner des sommets aléatoirement"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Sélectionner les sommets, arêtes ou faces similaires d’après un type de propriété"
-
-
-msgctxt "Mesh"
-msgid "Type"
-msgstr "Type"
 
 
 msgctxt "Mesh"
@@ -91985,18 +92269,6 @@ msgid "Editable cavity curve"
 msgstr "Courbe de cavité éditable"
 
 
-msgid "Default Eraser Brush"
-msgstr "Brosse de gomme par défaut"
-
-
-msgid "Default eraser brush for quickly alternating with the main brush"
-msgstr "Brosse de gomme par défaut pour alterner rapidement avec la brosse principale"
-
-
-msgid "Eraser Brush Asset Reference"
-msgstr "Référence d’asset de brosse de gomme"
-
-
 msgid "Active Palette"
 msgstr "Palette active"
 
@@ -92505,6 +92777,22 @@ msgid "Panel containing UI elements"
 msgstr "Panneau contenant des éléments d’interface"
 
 
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "Animations glTF"
+
+
+msgid "Active Tool"
+msgstr "Outil actif"
+
+
+msgid "View Lock"
+msgstr "Verrouillage de la vue"
+
+
 msgid "Selectability & Visibility"
 msgstr "Sélectionnabilité et visibilité"
 
@@ -92627,22 +92915,6 @@ msgstr "Variantes glTF"
 
 msgid "glTF Material Variants"
 msgstr "Variantes de matériaux glTF"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "Animations glTF"
-
-
-msgid "Active Tool"
-msgstr "Outil actif"
-
-
-msgid "View Lock"
-msgstr "Verrouillage de la vue"
 
 
 msgid "Import Settings"
@@ -97902,10 +98174,6 @@ msgid "English (UK)"
 msgstr "Anglais (UK) - English (UK)"
 
 
-msgid "Locale code: en_GB. Translation progress: 99%"
-msgstr "Identificateur de culture : en_GB. Progrès de la traduction : 99%"
-
-
 msgid "English (US)"
 msgstr "Anglais (USA) - English (US)"
 
@@ -98096,10 +98364,6 @@ msgstr "Espagnol - Español"
 
 msgid "Swahili - Kiswahili"
 msgstr "Swahili - Kiswahili"
-
-
-msgid "Locale code: sw. Translation progress: 72%"
-msgstr "Identificateur de culture : sw. Progrès de la traduction : 72%"
 
 
 msgid "Swedish - Svenska"
@@ -99877,10 +100141,6 @@ msgid "Passes used by the denoiser to distinguish noise from shader and geometry
 msgstr "Passes utilisées par le débruiteur pour distinguer le bruit des détails de shading ou de géométrie"
 
 
-msgid "Don't use utility passes for denoising"
-msgstr "Ne pas utiliser de passes utilitaires pour le débruitage"
-
-
 msgid "Albedo"
 msgstr "Albédo"
 
@@ -100377,58 +100637,6 @@ msgid "The probability of guiding a direction on a surface"
 msgstr "Probabilité de guider une direction sur une surface"
 
 
-msgid "Viewport Texture Limit"
-msgstr "Limiter la texture à l’affichage"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Limiter la taille de texture utilisée pour le rendu de la vue 3D"
-
-
-msgid "No Limit"
-msgstr "Pas de limite"
-
-
-msgid "No texture size limit"
-msgstr "Pas de limite de taille de texture"
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Limiter la taille de texture à 128 pixels"
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Limiter la taille de texture à 256 pixels"
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Limiter la taille de texture à 512 pixels"
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Limiter la taille de texture à 1024 pixels"
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Limiter la taille de texture à 2048 pixels"
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Limiter la taille de texture à 4096 pixels"
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Limiter la taille de texture à 8192 pixels"
-
-
-msgid "Render Texture Limit"
-msgstr "Limite de texture de rendu"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "Limiter la taille de texture utilisée pour le rendu final"
-
-
 msgid "Tile Size"
 msgstr "Taille de tuile"
 
@@ -100819,10 +101027,6 @@ msgstr "Méthode d’échantillonnage"
 
 msgid "How to sample the background light"
 msgstr "Comment échantillonner la lumière d’arrière-plan"
-
-
-msgid "Don't sample the background, faster but might cause noise for non-solid backgrounds"
-msgstr "Ne pas échantillonner l’arrière-plan, plus rapide mais peut ajouter du bruit pour les arrière-plans non uniformes"
 
 
 msgid "Automatically try to determine the best setting"
@@ -103012,10 +103216,6 @@ msgstr "Faire passer le résultat du rendu (et du compositing) dans le pipeline 
 
 msgid "Override Scene Settings"
 msgstr "Remplacer les réglages de rendu"
-
-
-msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
-msgstr "Utiliser les réglages de rendu workbench de la scène du séquenceur, au lieu des scènes individuelles utilisées dans les bandes"
 
 
 msgid "Use Simplify"
@@ -109182,14 +109382,6 @@ msgstr "Utiliser le fondu par défaut"
 
 msgid "Fade effect using the built-in default (usually makes the transition as long as the effect strip)"
 msgstr "Effet de fondu par défaut (généralement, crée une transition aussi longue que la bande d’effet)"
-
-
-msgid "Use Linear Modifiers"
-msgstr "Utiliser des modificateurs linéaires"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Calculer les modificateurs en espace linéaire au lieu de l’espace du séquenceur"
 
 
 msgid "Sequence strip applying an effect on the images created by other strips"
@@ -120237,6 +120429,10 @@ msgid "OSL support disabled in this build"
 msgstr "OSL est désactivé dans cette build"
 
 
+msgid "Object Index"
+msgstr "Indice d’objet"
+
+
 msgid "Denoising completed"
 msgstr "Débruitage terminé"
 
@@ -120535,10 +120731,6 @@ msgstr "BVH vues 3D"
 
 msgid "Max Subdivision"
 msgstr "Subdivisions max"
-
-
-msgid "Texture Limit"
-msgstr "Limite de texture"
 
 
 msgid "Volume Resolution"
@@ -125667,10 +125859,6 @@ msgid "Two or more channels are needed below this strip"
 msgstr "Il faut deux pistes ou plus sous cette bande"
 
 
-msgid "Linear Modifiers"
-msgstr "Modificateurs linéaires"
-
-
 msgid "Second Basis"
 msgstr "Deuxième base"
 
@@ -127698,6 +127886,10 @@ msgid "Resolutions"
 msgstr "Résolutions"
 
 
+msgid "Workbench"
+msgstr "Workbench"
+
+
 msgid "Preview Zoom"
 msgstr "Zoom de prévis"
 
@@ -127760,10 +127952,6 @@ msgstr "Attributs internes"
 
 msgid "Wrap Around"
 msgstr "Boucler"
-
-
-msgid "All Data-Blocks"
-msgstr "Tous les blocs de données"
 
 
 msgctxt "Text"
@@ -131220,20 +131408,8 @@ msgid "Inserting keyframes failed:"
 msgstr "L’insertion d’images clés a échoué :"
 
 
-msgid "<No ID pointer>"
-msgstr "<Pas de pointeur ID>"
-
-
 msgid "Encountered unhandled error during keyframing"
 msgstr "Erreur inopinée lors de l’insertion de clé"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "Pas de F-courbe à laquelle ajouter des images clés"
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "Aucun pointeur RNA disponible duquel obtenir des valeurs pour la création d’images clés"
 
 
 msgid "No ID block and/or AnimData to delete keyframe from"
@@ -131242,18 +131418,6 @@ msgstr "Aucun bloc ID et/ou de données d’animation d’où supprimer des imag
 
 msgid "No keys have been inserted and no errors have been reported."
 msgstr "Aucune clé n’a été insérée, et aucune erreur n’a été signalée."
-
-
-msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
-msgstr "Impossible d’insérer %i image(s) clé(s) car la NLA a une influence ou une valeur de base à 0, ou la correspondance de valeurs a échoué : %s.%s pour les indices [%s]"
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "Impossible d’insérer une image clé, car le chemin RNA est invalide pour l’ID donnée (ID : %s, chemin : %s)"
-
-
-msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
-msgstr "Impossible d’insérer des images clés sur la F-courbe de chemin « %s[%d] », assurez-vous qu’elle n’est pas verrouillée ou échantillonnée, et essayez d’enlever les F-modificateurs"
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -131270,6 +131434,30 @@ msgstr "Impossible d’insérer une image clé, car le chemin RNA est invalide p
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "Chemin dans l’ensemble de clés ignoré, car il n’a pas d’ID (KS : « %s », chemin : « %s[%d] »)"
+
+
+msgid "<No ID pointer>"
+msgstr "<Pas de pointeur ID>"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "Pas de F-courbe à laquelle ajouter des images clés"
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "Aucun pointeur RNA disponible duquel obtenir des valeurs pour la création d’images clés"
+
+
+msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+msgstr "Impossible d’insérer %i image(s) clé(s) car la NLA a une influence ou une valeur de base à 0, ou la correspondance de valeurs a échoué : %s.%s pour les indices [%s]"
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "Impossible d’insérer une image clé, car le chemin RNA est invalide pour l’ID donnée (ID : %s, chemin : %s)"
+
+
+msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
+msgstr "Impossible d’insérer des images clés sur la F-courbe de chemin « %s[%d] », assurez-vous qu’elle n’est pas verrouillée ou échantillonnée, et essayez d’enlever les F-modificateurs"
 
 
 msgid "\"%s\" is using Action \"%s\", which does not have a slot with identifier \"%s\" or \"%s\". Manually assign the right action slot to \"%s\"."
@@ -132994,10 +133182,6 @@ msgstr "Erreur : nombre de mises à jour d’ombres maximum atteint."
 
 msgid "Warning: Volume rendering data could not be allocated. Now using a resolution of 1:{} instead of 1:{}."
 msgstr "Attention : Impossible d’allouer les données de rendu volumique. Une résolution de 1:{} sera utilisée au lieu de 1:{}."
-
-
-msgid "Workbench"
-msgstr "Workbench"
 
 
 msgid "Error: Curves object contains too many points. Reduce curve resolution or curve count to fix this issue."
@@ -137157,20 +137341,8 @@ msgid "Active object contains no collections"
 msgstr "L’objet actif ne contient aucune collection"
 
 
-msgid "Could not add the collection because it is overridden"
-msgstr "Impossible d’ajouter la collection car elle est redéfinie"
-
-
-msgid "Could not add the collection because it is linked"
-msgstr "Impossible d’ajouter la collection car elle est liée"
-
-
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "Impossible d’ajouter la collection car un cycle de dépendances a été détecté"
-
-
-msgid "Cannot remove an object from a linked or library override collection"
-msgstr "Impossible d’enlever un objet d’une collection de redéfinition liée ou bibliothèque"
 
 
 msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
@@ -137371,10 +137543,6 @@ msgstr "Aucune collection sélectionnée"
 
 msgid "Unexpected error, collection not found"
 msgstr "Erreur inopinée, collection introuvable"
-
-
-msgid "Cannot add objects to a library override or linked collection"
-msgstr "Impossible d’ajouter des objets à une collection de redéfinition de bibliothèque ou à une collection liée"
 
 
 msgid "Unable to change object mode while transforming"
@@ -140831,6 +140999,14 @@ msgid "Cannot drag panel with no inputs"
 msgstr "Impossible de glisser un panneau sans entrées"
 
 
+msgid "Render size too large for GPU, use CPU compositor instead"
+msgstr "Taille de rendu trop grande pour le GPU, utiliser plutôt le compositeur CPU"
+
+
+msgid "Compositing..."
+msgstr "Compositing…"
+
+
 msgid "Accessed named attributes:"
 msgstr "Accès attribut nommé :"
 
@@ -140865,14 +141041,6 @@ msgstr " attribut nommé"
 
 msgid " Named Attributes"
 msgstr " attributs nommés"
-
-
-msgid "Render size too large for GPU, use CPU compositor instead"
-msgstr "Taille de rendu trop grande pour le GPU, utiliser plutôt le compositeur CPU"
-
-
-msgid "Compositing..."
-msgstr "Compositing…"
 
 
 msgctxt "Operator"
@@ -141189,10 +141357,6 @@ msgstr "Plus d’une collection sont sélectionnées"
 
 msgid "Cannot add a new collection to linked/override scene"
 msgstr "Impossible d’ajouter une nouvelle collection à une scène liée ou redéfinie"
-
-
-msgid "No active collection"
-msgstr "Aucune collection active"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
@@ -144663,28 +144827,12 @@ msgid "Collection '%s' is not an original ID"
 msgstr "La collection « %s » n’est pas un ID original"
 
 
-msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
-msgstr "Impossible de (de-)lier l’objet « %s » car la collection « %s » est redéfinie"
-
-
-msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
-msgstr "Impossible de (de-)lier l’objet « %s » car la collection « %s » est liée"
-
-
 msgid "Object '%s' already in collection '%s'"
 msgstr "L’objet « %s » est déjà dans la collection « %s »"
 
 
 msgid "Object '%s' not in collection '%s'"
 msgstr "L’objet « %s » n’est pas dans la collection « %s »"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
-msgstr "Impossible de (de-)lier la collection « %s » car la collection « %s » est redéfinie"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
-msgstr "Impossible de (de-)lier la collection « %s » car la collection « %s » est liée"
 
 
 msgid "Collection '%s' already in collection '%s'"
@@ -152017,11 +152165,6 @@ msgid "Node group has different type"
 msgstr "Le groupe de nœuds a un type différent"
 
 
-msgctxt "NodeTree"
-msgid "Missing Data-Block"
-msgstr "Bloc de données manquant"
-
-
 msgid "Instances in input geometry are ignored"
 msgstr "Les instances de la géométrie d’entrée sont ignorées"
 
@@ -152854,10 +152997,6 @@ msgid "Color that encodes the normal map in the specified space"
 msgstr "Couleur représentant la carte de normales dans l’espace spécifié"
 
 
-msgid "Object Index"
-msgstr "Indice d’objet"
-
-
 msgid "Color Fac"
 msgstr "Facteur couleur"
 
@@ -153460,6 +153599,10 @@ msgid "Dragging {} files"
 msgstr "{} fichiers glissés"
 
 
+msgid "Downloading asset..."
+msgstr "Téléchargement de l’asset…"
+
+
 msgid "Asset not found"
 msgstr "Asset introuvable"
 
@@ -153486,6 +153629,10 @@ msgstr "le sondage (poll) a échoué"
 
 msgid "Failed to open file browser!"
 msgstr "Impossible d’ouvrir le navigateur de fichiers !"
+
+
+msgid "Asset '%s' is still downloading"
+msgstr "L’asset « %s » est toujours en téléchargement"
 
 
 msgid "Missing 'window' in context"

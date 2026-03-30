@@ -4551,7 +4551,7 @@ std::optional<ActiveElementInfo> active_element_info_get(ViewContext &vc, const 
   Object &ob = *vc.obact;
   SculptSession &ss = *ob.runtime->sculpt_session;
 
-  BKE_view_layer_synced_ensure(vc.scene, vc.view_layer);
+  BKE_view_layer_synced_ensure(*vc.bmain, vc.scene, vc.view_layer);
 
   bke::pbvh::Tree *pbvh = bke::object::pbvh_get(ob);
 

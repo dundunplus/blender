@@ -20,19 +20,22 @@ namespace blender::nodes::node_geo_curve_to_mesh_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curve to convert to a mesh using the given profile");
-  b.add_input<decl::Geometry>("Profile Curve")
+  b.add_input<decl::Geometry>("Profile Curve"_ustr)
       .only_realized_data()
       .supported_type(GeometryComponent::Type::Curve)
       .description("Curves that are swept along the main curve");
-  b.add_input<decl::Float>("Scale").default_value(1.0f).min(0.0f).field_on({0}).description(
-      "Scale of the profile at each point");
-  b.add_input<decl::Bool>("Fill Caps")
+  b.add_input<decl::Float>("Scale"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .field_on({0})
+      .description("Scale of the profile at each point");
+  b.add_input<decl::Bool>("Fill Caps"_ustr)
       .description(
           "If the profile spline is cyclic, fill the ends of the generated mesh with N-gons");
-  b.add_output<decl::Geometry>("Mesh").propagate_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all();
 }
 
 static Mesh *curve_to_mesh(const bke::CurvesGeometry &curves,

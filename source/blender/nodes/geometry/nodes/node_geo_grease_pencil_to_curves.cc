@@ -16,18 +16,18 @@ namespace blender::nodes::node_geo_grease_pencil_to_curves_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Grease Pencil")
+  b.add_input<decl::Geometry>("Grease Pencil"_ustr)
       .supported_type(bke::GeometryComponent::Type::GreasePencil)
       .description("Grease Pencil data to convert to curves");
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .field_on_all()
       .description("Select the layers to convert");
-  b.add_input<decl::Bool>("Layers as Instances")
+  b.add_input<decl::Bool>("Layers as Instances"_ustr)
       .default_value(true)
       .description("Create a separate curve instance for every layer");
-  b.add_output<decl::Geometry>("Curves").propagate_all();
+  b.add_output<decl::Geometry>("Curves"_ustr).propagate_all();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -78,7 +78,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     curves_id->mat = MEM_dupalloc(grease_pencil->material_array);
     curves_id->totcol = grease_pencil->material_array_num;
     GeometrySet curves_geometry = GeometrySet::from_curves(curves_id);
-    curves_geometry.name = layer.name();
+    curves_geometry.set_name(layer.name());
     handles[pos] = instances->add_reference(std::move(curves_geometry));
     transforms[pos] = transform;
   });
@@ -132,7 +132,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   GeometrySet curves_geometry = GeometrySet::from_instances(std::move(instances));
-  curves_geometry.name = std::move(grease_pencil_geometry.name);
+  curves_geometry.set_name(grease_pencil_geometry.name());
   curves_geometry.copy_bundle_from(grease_pencil_geometry);
 
   const bool layers_as_instances = params.extract_input<bool>("Layers as Instances"_ustr);

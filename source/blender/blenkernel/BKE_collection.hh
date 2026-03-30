@@ -333,7 +333,8 @@ void BKE_collection_object_cache_free(const Main *bmain,
  */
 void BKE_main_collections_object_cache_free(const Main *bmain);
 
-Base *BKE_collection_or_layer_objects(const Scene *scene,
+Base *BKE_collection_or_layer_objects(const Main &bmain,
+                                      const Scene *scene,
                                       ViewLayer *view_layer,
                                       Collection *collection);
 
@@ -486,6 +487,7 @@ void BKE_scene_objects_iterator_end(BLI_Iterator *iter);
  * \note The object->flag is tested against flag.
  */
 struct SceneObjectsIteratorExData {
+  Main *bmain;
   Scene *scene;
   int flag;
   void *iter_data;

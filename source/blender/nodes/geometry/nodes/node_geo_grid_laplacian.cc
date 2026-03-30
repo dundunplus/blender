@@ -14,8 +14,8 @@ namespace blender::nodes::node_geo_grid_laplacian_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output<decl::Float>("Laplacian").structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Float>("Laplacian"_ustr).structure_type(StructureType::Grid);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

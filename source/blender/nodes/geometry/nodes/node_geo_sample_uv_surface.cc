@@ -27,27 +27,27 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh whose UV map is used");
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value").hide_value().field_on_all();
+    b.add_input(data_type, "Value"_ustr).hide_value().field_on_all();
   }
-  b.add_input<decl::Vector>("UV Map", "Source UV Map")
+  b.add_input<decl::Vector>("UV Map"_ustr, "Source UV Map"_ustr)
       .hide_value()
       .field_on_all()
       .description("The mesh UV map to sample. Should not have overlapping faces");
-  b.add_input<decl::Vector>("Sample UV")
+  b.add_input<decl::Vector>("Sample UV"_ustr)
       .supports_field()
       .description("The coordinates to sample within the UV map")
       .structure_type(StructureType::Dynamic);
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_output(data_type, "Value").dependent_field({3});
+    b.add_output(data_type, "Value"_ustr).dependent_field({3});
   }
-  b.add_output<decl::Bool>("Is Valid")
+  b.add_output<decl::Bool>("Is Valid"_ustr)
       .dependent_field({3})
       .description("Whether the node could find a single face to sample at the UV coordinate");
 }
@@ -75,7 +75,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeSampleUVSurface");
       node.custom1 = *type;
-      params.update_and_connect_available_socket(node, "Value");
+      params.update_and_connect_available_socket(node, "Value"_ustr);
     });
   }
 }

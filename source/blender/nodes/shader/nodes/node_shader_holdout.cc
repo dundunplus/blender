@@ -10,8 +10,8 @@ namespace nodes::node_shader_holdout_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Weight").available(false);
-  b.add_output<decl::Shader>("Holdout");
+  b.add_input<decl::Float>("Weight"_ustr).available(false);
+  b.add_output<decl::Shader>("Holdout"_ustr);
 }
 
 static int gpu_shader_rgb(GPUMaterial *mat,

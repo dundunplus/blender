@@ -28,17 +28,18 @@ NODE_STORAGE_FUNCS(NodeGeometryMeshToPoints)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh whose elements are converted to points");
-  b.add_input<decl::Bool>("Selection").default_value(true).field_on_all().hide_value();
-  b.add_input<decl::Vector>("Position").implicit_field_on_all(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all().hide_value();
+  b.add_input<decl::Vector>("Position"_ustr)
+      .implicit_field_on_all(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(0.05f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .field_on_all();
-  b.add_output<decl::Geometry>("Points").propagate_all();
+  b.add_output<decl::Geometry>("Points"_ustr).propagate_all();
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

@@ -5,6 +5,10 @@
 #include "BKE_mesh.hh"
 #include "BKE_type_conversions.hh"
 
+#include "FN_field.hh"
+#include "FN_multi_function.hh"
+#include "FN_multi_function_registry.hh"
+
 #include "NOD_rna_define.hh"
 
 #include "UI_interface_layout.hh"
@@ -31,15 +35,15 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Geometry").description("Geometry to update the selection of");
-  b.add_output<decl::Geometry>("Geometry").align_with_previous();
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to update the selection of");
+  b.add_output<decl::Geometry>("Geometry"_ustr).align_with_previous();
   if (const bNode *node = b.node_or_null()) {
     switch (SelectionType(node->custom2)) {
       case SelectionType::Boolean:
-        b.add_input<decl::Bool>("Selection").default_value(true).field_on_all();
+        b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all();
         break;
       case SelectionType::Float:
-        b.add_input<decl::Float>("Selection").default_value(1.0f).field_on_all();
+        b.add_input<decl::Float>("Selection"_ustr).default_value(1.0f).field_on_all();
         break;
     }
   }
@@ -70,14 +74,13 @@ static GField clamp_selection(const GField &selection)
 static GField invert_selection(const GField &selection)
 {
   if (selection.cpp_type().is<bool>()) {
-    static auto invert = mf::build::SI1_SO<bool, bool>("Invert Selection",
-                                                       [](const bool value) { return !value; });
+    static const mf::MultiFunction &invert = fn::multi_function::registry::lookup("!bool"_ustr);
     return GField(FieldOperation::from(invert, {selection}));
   }
 
-  static auto invert = mf::build::SI1_SO<float, float>(
-      "Invert Selection", [](const float value) { return 1.0f - value; });
-  return GField(FieldOperation::from(invert, {selection}));
+  static const mf::MultiFunction &invert = fn::multi_function::registry::lookup(
+      "float - float"_ustr);
+  return GField(FieldOperation::from(invert, {fn::make_constant_field(1.0f), selection}));
 }
 
 /**

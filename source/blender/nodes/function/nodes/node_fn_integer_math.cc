@@ -24,7 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
 
-  b.add_input<decl::Int>("Value").label_fn([](bNode node) {
+  b.add_input<decl::Int>("Value"_ustr).label_fn([](bNode node) {
     switch (node.custom1) {
       case NODE_INTEGER_MATH_POWER:
         return IFACE_("Base");
@@ -33,7 +33,7 @@ static void node_declare(NodeDeclarationBuilder &b)
     }
   });
 
-  b.add_input<decl::Int>("Value", "Value_001").label_fn([](bNode node) {
+  b.add_input<decl::Int>("Value"_ustr, "Value_001"_ustr).label_fn([](bNode node) {
     switch (node.custom1) {
       case NODE_INTEGER_MATH_MULTIPLY_ADD:
         return IFACE_("Multiplier");
@@ -43,7 +43,7 @@ static void node_declare(NodeDeclarationBuilder &b)
         return IFACE_("Value");
     }
   });
-  b.add_input<decl::Int>("Value", "Value_002").label_fn([](bNode node) {
+  b.add_input<decl::Int>("Value"_ustr, "Value_002"_ustr).label_fn([](bNode node) {
     switch (node.custom1) {
       case NODE_INTEGER_MATH_MULTIPLY_ADD:
         return IFACE_("Addend");
@@ -51,7 +51,7 @@ static void node_declare(NodeDeclarationBuilder &b)
         return IFACE_("Value");
     }
   });
-  b.add_output<decl::Int>("Value");
+  b.add_output<decl::Int>("Value"_ustr);
 };
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -75,7 +75,7 @@ static void node_update(bNodeTree *ntree, bNode *node)
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   NodeIntegerMathOperation operation;
   void operator()(LinkSearchOpParams &params)
   {
@@ -103,7 +103,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   {
     if (item->name != nullptr && item->identifier[0] != '\0') {
       params.add_item(CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, item->name),
-                      SocketSearchOp{"Value", NodeIntegerMathOperation(item->value)},
+                      SocketSearchOp{"Value"_ustr, NodeIntegerMathOperation(item->value)},
                       weight);
     }
   }

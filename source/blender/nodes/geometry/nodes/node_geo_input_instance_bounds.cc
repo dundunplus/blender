@@ -11,13 +11,13 @@ namespace blender::nodes::node_geo_input_instance_bounds_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Use Radius")
+  b.add_input<decl::Bool>("Use Radius"_ustr)
       .default_value(true)
       .description(
           "For curves, point clouds, and Grease Pencil, take the radius attribute into account "
           "when computing the bounds.");
-  b.add_output<decl::Vector>("Min").field_source();
-  b.add_output<decl::Vector>("Max").field_source();
+  b.add_output<decl::Vector>("Min"_ustr).field_source();
+  b.add_output<decl::Vector>("Max"_ustr).field_source();
 }
 
 class InstanceBoundsField final : public bke::InstancesFieldInput {

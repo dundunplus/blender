@@ -45,24 +45,27 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Geometry to scale elements of");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
 
-  b.add_input<decl::Float>("Scale", "Scale").default_value(1.0f).min(0.0f).field_on_all();
-  b.add_input<decl::Vector>("Center")
+  b.add_input<decl::Float>("Scale"_ustr, "Scale"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .field_on_all();
+  b.add_input<decl::Vector>("Center"_ustr)
       .subtype(PROP_TRANSLATION)
       .implicit_field_on_all(NODE_DEFAULT_INPUT_POSITION_FIELD)
       .description(
           "Origin of the scaling for each element. If multiple elements are connected, their "
           "center is averaged");
-  b.add_input<decl::Menu>("Scale Mode")
+  b.add_input<decl::Menu>("Scale Mode"_ustr)
       .static_items(scale_mode_items)
       .default_value(GEO_NODE_SCALE_ELEMENTS_UNIFORM)
       .optional_label();
-  b.add_input<decl::Vector>("Axis")
+  b.add_input<decl::Vector>("Axis"_ustr)
       .default_value({1.0f, 0.0f, 0.0f})
       .field_on_all()
       .description("Direction in which to scale the element")

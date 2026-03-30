@@ -908,8 +908,16 @@ static void rna_Strip_name_set(PointerRNA *ptr, const char *value)
 #  endif
   adt = BKE_animdata_from_id(&scene->id);
   if (adt) {
-    BKE_animdata_fix_paths_rename(
-        &scene->id, adt, nullptr, "sequence_editor.strips_all", oldname, strip->name + 2, 0, 0, 1);
+    BKE_animdata_fix_paths_rename(&scene->id,
+                                  adt,
+                                  nullptr,
+                                  "sequence_editor.strips_all",
+                                  oldname,
+                                  strip->name + 2,
+                                  0,
+                                  0,
+                                  /*verify_paths=*/true,
+                                  /*infix_is_name=*/true);
   }
 }
 
@@ -1583,8 +1591,16 @@ static void rna_StripModifier_name_set(PointerRNA *ptr, const char *value)
     BLI_str_escape(strip_name_esc, strip->name + 2, sizeof(strip_name_esc));
 
     SNPRINTF(rna_path_prefix, "sequence_editor.strips_all[\"%s\"].modifiers", strip_name_esc);
-    BKE_animdata_fix_paths_rename(
-        &scene->id, adt, nullptr, rna_path_prefix, oldname, smd->name, 0, 0, 1);
+    BKE_animdata_fix_paths_rename(&scene->id,
+                                  adt,
+                                  nullptr,
+                                  rna_path_prefix,
+                                  oldname,
+                                  smd->name,
+                                  0,
+                                  0,
+                                  /*verify_paths=*/true,
+                                  /*infix_is_name=*/true);
   }
 }
 

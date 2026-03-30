@@ -36,27 +36,27 @@ static void node_declare(NodeDeclarationBuilder &b)
     node.custom1 = GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_POISSON;
   };
 
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh on whose faces to distribute points on");
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  auto &distance_min = b.add_input<decl::Float>("Distance Min")
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  auto &distance_min = b.add_input<decl::Float>("Distance Min"_ustr)
                            .min(0.0f)
                            .subtype(PROP_DISTANCE)
                            .make_available(enable_poisson)
                            .available(false);
-  auto &density_max = b.add_input<decl::Float>("Density Max")
+  auto &density_max = b.add_input<decl::Float>("Density Max"_ustr)
                           .default_value(10.0f)
                           .min(0.0f)
                           .make_available(enable_poisson)
                           .available(false);
-  auto &density = b.add_input<decl::Float>("Density")
+  auto &density = b.add_input<decl::Float>("Density"_ustr)
                       .default_value(10.0f)
                       .min(0.0f)
                       .field_on_all()
                       .make_available(enable_random)
                       .available(false);
-  auto &density_factor = b.add_input<decl::Float>("Density Factor")
+  auto &density_factor = b.add_input<decl::Float>("Density Factor"_ustr)
                              .default_value(1.0f)
                              .min(0.0f)
                              .max(1.0f)
@@ -64,11 +64,11 @@ static void node_declare(NodeDeclarationBuilder &b)
                              .field_on_all()
                              .make_available(enable_poisson)
                              .available(false);
-  b.add_input<decl::Int>("Seed");
+  b.add_input<decl::Int>("Seed"_ustr);
 
-  b.add_output<decl::Geometry>("Points").propagate_all();
-  b.add_output<decl::Vector>("Normal").field_on_all();
-  b.add_output<decl::Rotation>("Rotation").field_on_all();
+  b.add_output<decl::Geometry>("Points"_ustr).propagate_all();
+  b.add_output<decl::Vector>("Normal"_ustr).field_on_all();
+  b.add_output<decl::Rotation>("Rotation"_ustr).field_on_all();
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {

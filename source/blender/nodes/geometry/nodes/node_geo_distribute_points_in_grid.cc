@@ -34,8 +34,8 @@ enum class DistributeMode {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  auto &density = b.add_input<decl::Float>("Density")
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  auto &density = b.add_input<decl::Float>("Density"_ustr)
                       .default_value(1.0f)
                       .min(0.0f)
                       .max(100000.0f)
@@ -46,26 +46,26 @@ static void node_declare(NodeDeclarationBuilder &b)
                       .make_available(
                           [](bNode &node) { node.custom1 = int16_t(DistributeMode::Random); });
   auto &seed =
-      b.add_input<decl::Int>("Seed")
+      b.add_input<decl::Int>("Seed"_ustr)
           .min(-10000)
           .max(10000)
           .description("Seed used by the random number generator to generate random points")
           .make_available([](bNode &node) { node.custom1 = int16_t(DistributeMode::Random); });
-  auto &spacing = b.add_input<decl::Vector>("Spacing")
+  auto &spacing = b.add_input<decl::Vector>("Spacing"_ustr)
                       .default_value({0.3, 0.3, 0.3})
                       .min(0.0001f)
                       .subtype(PROP_XYZ)
                       .description("Spacing between grid points")
                       .make_available(
                           [](bNode &node) { node.custom1 = int16_t(DistributeMode::Grid); });
-  auto &threshold = b.add_input<decl::Float>("Threshold")
+  auto &threshold = b.add_input<decl::Float>("Threshold"_ustr)
                         .default_value(0.1f)
                         .min(0.0f)
                         .max(FLT_MAX)
                         .description("Minimum density of a voxel to contain a grid point")
                         .make_available(
                             [](bNode &node) { node.custom1 = int16_t(DistributeMode::Grid); });
-  b.add_output<decl::Geometry>("Points").propagate_all();
+  b.add_output<decl::Geometry>("Points"_ustr).propagate_all();
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {

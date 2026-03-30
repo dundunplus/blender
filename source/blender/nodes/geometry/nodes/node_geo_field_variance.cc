@@ -28,22 +28,22 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value")
+    b.add_input(data_type, "Value"_ustr)
         .supports_field()
         .description("The values the standard deviation and variance will be calculated from");
   }
 
-  b.add_input<decl::Int>("Group ID", "Group Index")
+  b.add_input<decl::Int>("Group ID"_ustr, "Group Index"_ustr)
       .supports_field()
       .hide_value()
       .description("An index used to group values together for multiple separate operations");
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_output(data_type, "Standard Deviation")
+    b.add_output(data_type, "Standard Deviation"_ustr)
         .field_source_reference_all()
         .description("The square root of the variance for each group");
-    b.add_output(data_type, "Variance")
+    b.add_output(data_type, "Variance"_ustr)
         .field_source_reference_all()
         .description("The expected squared deviation from the mean for each group");
   }
@@ -93,7 +93,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldVariance");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Standard Deviation");
+          params.update_and_connect_available_socket(node, "Standard Deviation"_ustr);
         },
         0);
     params.add_item(
@@ -101,7 +101,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldVariance");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Variance");
+          params.update_and_connect_available_socket(node, "Variance"_ustr);
         },
         -1);
   }
@@ -111,7 +111,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldVariance");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Value");
+          params.update_and_connect_available_socket(node, "Value"_ustr);
         },
         0);
   }

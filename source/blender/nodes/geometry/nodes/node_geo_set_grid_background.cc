@@ -29,13 +29,13 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input(data_type, "Grid")
+  b.add_input(data_type, "Grid"_ustr)
       .hide_value()
       .structure_type(StructureType::Grid)
       .is_default_link_socket();
-  b.add_output(data_type, "Grid").structure_type(StructureType::Grid).align_with_previous();
-  b.add_input(data_type, "Background").structure_type(StructureType::Single);
-  b.add_input<decl::Bool>("Update Inactive")
+  b.add_output(data_type, "Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
+  b.add_input(data_type, "Background"_ustr).structure_type(StructureType::Single);
+  b.add_input<decl::Bool>("Update Inactive"_ustr)
       .description("Override all values stored for inactive voxels as well");
 }
 
@@ -80,14 +80,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeSetGridBackground");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Grid");
+        params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
     }
     if (!is_grid || is_dynamic) {
       params.add_item(IFACE_("Background"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeSetGridBackground");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Background");
+        params.update_and_connect_available_socket(node, "Background"_ustr);
       });
     }
   }
@@ -95,7 +95,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeSetGridBackground");
       node.custom1 = *data_type;
-      params.update_and_connect_available_socket(node, "Grid");
+      params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
   }
 }

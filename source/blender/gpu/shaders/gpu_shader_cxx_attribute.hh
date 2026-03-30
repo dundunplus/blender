@@ -109,6 +109,8 @@
 #  define resource_table maybe_unused
 /* Only declare the member if cond evaluates to true. */
 #  define condition(cond) maybe_unused
+/* Set binding frequency of a resource (storage, uniform, image, sampler). */
+#  define frequency(freq) maybe_unused
 
 /* Make a structure layout or enum shared between CPU and GPU code.
  * Required for structs defining storage and uniform buffer layout. */

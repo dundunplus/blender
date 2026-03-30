@@ -22,38 +22,38 @@ namespace blender::nodes::node_geo_interpolate_curves_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Guide Curves")
+  b.add_input<decl::Geometry>("Guide Curves"_ustr)
       .description("Base curves that new curves are interpolated between");
-  b.add_input<decl::Vector>("Guide Up")
+  b.add_input<decl::Vector>("Guide Up"_ustr)
       .field_on({0})
       .hide_value()
       .description("Optional up vector that is typically a surface normal");
-  b.add_input<decl::Int>("Guide Group ID")
+  b.add_input<decl::Int>("Guide Group ID"_ustr)
       .field_on({0})
       .hide_value()
       .description(
           "Splits guides into separate groups. New curves interpolate existing curves "
           "from a single group");
-  b.add_input<decl::Geometry>("Points").description(
-      "First control point positions for new interpolated curves");
-  b.add_input<decl::Vector>("Point Up")
+  b.add_input<decl::Geometry>("Points"_ustr)
+      .description("First control point positions for new interpolated curves");
+  b.add_input<decl::Vector>("Point Up"_ustr)
       .field_on({3})
       .hide_value()
       .description("Optional up vector that is typically a surface normal");
-  b.add_input<decl::Int>("Point Group ID")
+  b.add_input<decl::Int>("Point Group ID"_ustr)
       .field_on({3})
       .hide_value()
       .description("The curve group to interpolate in");
-  b.add_input<decl::Int>("Max Neighbors")
+  b.add_input<decl::Int>("Max Neighbors"_ustr)
       .default_value(4)
       .min(1)
       .description(
           "Maximum amount of close guide curves that are taken into account for interpolation");
-  b.add_output<decl::Geometry>("Curves").propagate_all();
-  b.add_output<decl::Int>("Closest Index")
+  b.add_output<decl::Geometry>("Curves"_ustr).propagate_all();
+  b.add_output<decl::Int>("Closest Index"_ustr)
       .field_on_all()
       .description("Index of the closest guide curve for each generated curve");
-  b.add_output<decl::Float>("Closest Weight")
+  b.add_output<decl::Float>("Closest Weight"_ustr)
       .field_on_all()
       .description("Weight of the closest guide curve for each generated curve");
 }
@@ -868,7 +868,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   {
     new_curves.add(*curve_edit_data);
   }
-  new_curves.name = guide_curves_geometry.name;
+  new_curves.set_name(guide_curves_geometry.name());
   new_curves.copy_bundle_from(guide_curves_geometry);
 
   params.set_output("Curves"_ustr, std::move(new_curves));

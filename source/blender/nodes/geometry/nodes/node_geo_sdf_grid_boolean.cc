@@ -30,8 +30,8 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  auto &first_grid = b.add_input<decl::Float>("Grid 1").hide_value().structure_type(
-      StructureType::Grid);
+  auto &first_grid =
+      b.add_input<decl::Float>("Grid 1"_ustr).hide_value().structure_type(StructureType::Grid);
 
   if (node) {
     static const auto make_available = [](bNode &node) {
@@ -40,14 +40,14 @@ static void node_declare(NodeDeclarationBuilder &b)
     switch (Operation(node->custom1)) {
       case Operation::Intersect:
       case Operation::Union:
-        b.add_input<decl::Float>("Grid", "Grid 2")
+        b.add_input<decl::Float>("Grid"_ustr, "Grid 2"_ustr)
             .hide_value()
             .multi_input()
             .make_available(make_available)
             .structure_type(StructureType::Grid);
         break;
       case Operation::Difference:
-        b.add_input<decl::Float>("Grid 2")
+        b.add_input<decl::Float>("Grid 2"_ustr)
             .hide_value()
             .multi_input()
             .make_available(make_available)
@@ -56,7 +56,7 @@ static void node_declare(NodeDeclarationBuilder &b)
     }
   }
 
-  b.add_output<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
 
   if (node) {
     switch (Operation(node->custom1)) {

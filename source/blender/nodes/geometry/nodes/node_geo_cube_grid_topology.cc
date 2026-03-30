@@ -19,36 +19,39 @@ namespace blender::nodes::node_geo_cube_grid_topology_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
-  b.add_output<decl::Bool>("Topology")
+  b.add_output<decl::Bool>("Topology"_ustr)
       .structure_type(StructureType::Grid)
       .description("Boolean grid defining the topology/active regions");
-  b.add_input<decl::Vector>("Bounds Min")
+  b.add_input<decl::Vector>("Bounds Min"_ustr)
       .default_value(float3(-1.0f))
       .description("Minimum boundary of the grid (world space)");
-  b.add_input<decl::Vector>("Bounds Max")
+  b.add_input<decl::Vector>("Bounds Max"_ustr)
       .default_value(float3(1.0f))
       .description("Maximum boundary of the grid (world space)");
 
-  b.add_input<decl::Int>("Resolution X")
+  b.add_input<decl::Int>("Resolution X"_ustr)
       .default_value(32)
       .min(1)
       .description("Number of voxels in the X axis");
-  b.add_input<decl::Int>("Resolution Y")
+  b.add_input<decl::Int>("Resolution Y"_ustr)
       .default_value(32)
       .min(1)
       .description("Number of voxels in the Y axis");
-  b.add_input<decl::Int>("Resolution Z")
+  b.add_input<decl::Int>("Resolution Z"_ustr)
       .default_value(32)
       .min(1)
       .description("Number of voxels in the Z axis");
 
   PanelDeclarationBuilder &min_panel = b.add_panel("Min"_ustr).default_closed(true);
-  min_panel.add_input<decl::Int>("Min X").default_value(0).description(
-      "Minimum coordinate in X axis (grid index space)");
-  min_panel.add_input<decl::Int>("Min Y").default_value(0).description(
-      "Minimum coordinate in Y axis (grid index space)");
-  min_panel.add_input<decl::Int>("Min Z").default_value(0).description(
-      "Minimum coordinate in Z axis (grid index space)");
+  min_panel.add_input<decl::Int>("Min X"_ustr)
+      .default_value(0)
+      .description("Minimum coordinate in X axis (grid index space)");
+  min_panel.add_input<decl::Int>("Min Y"_ustr)
+      .default_value(0)
+      .description("Minimum coordinate in Y axis (grid index space)");
+  min_panel.add_input<decl::Int>("Min Z"_ustr)
+      .default_value(0)
+      .description("Minimum coordinate in Z axis (grid index space)");
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

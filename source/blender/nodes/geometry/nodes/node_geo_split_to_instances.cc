@@ -24,18 +24,18 @@ namespace blender::nodes::node_geo_split_to_instances_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh,
                        GeometryComponent::Type::PointCloud,
                        GeometryComponent::Type::Curve,
                        GeometryComponent::Type::Instance})
       .description("Geometry to split into instances");
-  b.add_input<decl::Bool>("Selection").default_value(true).field_on_all().hide_value();
-  b.add_input<decl::Int>("Group ID").field_on_all().hide_value();
-  b.add_output<decl::Geometry>("Instances")
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all().hide_value();
+  b.add_input<decl::Int>("Group ID"_ustr).field_on_all().hide_value();
+  b.add_output<decl::Geometry>("Instances"_ustr)
       .propagate_all()
       .description("All geometry groups as separate instances");
-  b.add_output<decl::Int>("Group ID")
+  b.add_output<decl::Int>("Group ID"_ustr)
       .field_on_all()
       .description("The group ID of each group instance");
 }
@@ -333,7 +333,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   geometry::debug_randomize_instance_order(dst_instances.get());
 
   GeometrySet dst_geometry = GeometrySet::from_instances(std::move(dst_instances));
-  dst_geometry.name = src_geometry.name;
+  dst_geometry.set_name(src_geometry.name());
   dst_geometry.copy_bundle_from(src_geometry);
 
   params.set_output("Instances"_ustr, std::move(dst_geometry));

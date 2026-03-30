@@ -19,13 +19,13 @@ namespace blender::nodes::node_geo_import_stl {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.stl")
       .optional_label()
       .description("Path to a STL file");
 
-  b.add_output<decl::Geometry>("Mesh");
+  b.add_output<decl::Geometry>("Mesh"_ustr);
 }
 
 class LoadStlCache : public memory_cache::CachedValue {

@@ -10,27 +10,27 @@ namespace blender::nodes::node_geo_curve_primitive_star_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Points")
+  b.add_input<decl::Int>("Points"_ustr)
       .default_value(8)
       .min(3)
       .max(256)
       .subtype(PROP_UNSIGNED)
       .description("Number of points on each of the circles");
-  b.add_input<decl::Float>("Inner Radius")
+  b.add_input<decl::Float>("Inner Radius"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Radius of the inner circle; can be larger than outer radius");
-  b.add_input<decl::Float>("Outer Radius")
+  b.add_input<decl::Float>("Outer Radius"_ustr)
       .default_value(2.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Radius of the outer circle; can be smaller than inner radius");
-  b.add_input<decl::Float>("Twist")
+  b.add_input<decl::Float>("Twist"_ustr)
       .subtype(PROP_ANGLE)
       .description("The counterclockwise rotation of the inner set of points");
-  b.add_output<decl::Geometry>("Curve");
-  b.add_output<decl::Bool>("Outer Points")
+  b.add_output<decl::Geometry>("Curve"_ustr);
+  b.add_output<decl::Bool>("Outer Points"_ustr)
       .field_on_all()
       .description("An attribute field with a selection of the outer points");
 }

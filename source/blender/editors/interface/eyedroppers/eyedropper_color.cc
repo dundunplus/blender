@@ -26,6 +26,7 @@
 #include "BKE_context.hh"
 #include "BKE_cryptomatte.h"
 #include "BKE_image.hh"
+#include "BKE_layer.hh"
 #include "BKE_material.hh"
 #include "BKE_report.hh"
 #include "BKE_screen.hh"
@@ -133,6 +134,7 @@ static bool eyedropper_init(bContext *C, wmOperator *op)
   float col[4];
   RNA_property_float_get_array_at_most(&eye->ptr, eye->prop, col, ARRAY_SIZE(col));
   if (eye->ptr.type == RNA_CompositorNodeCryptomatteV2) {
+    BKE_main_view_layers_synced_ensure(CTX_data_main(C));
     eye->crypto_node = static_cast<bNode *>(eye->ptr.data);
     eye->cryptomatte_session = ntreeCompositCryptomatteSession(eye->crypto_node);
     eye->cb_win = CTX_wm_window(C);

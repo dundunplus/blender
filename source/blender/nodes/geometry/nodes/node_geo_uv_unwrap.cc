@@ -36,30 +36,35 @@ static EnumPropertyItem method_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .supports_field()
       .description("Faces to participate in the unwrap operation");
-  b.add_input<decl::Bool>("Seam").hide_value().supports_field().description(
-      "Edges to mark where the mesh is \"cut\" for the purposes of unwrapping");
-  b.add_input<decl::Float>("Margin").default_value(0.001f).min(0.0f).max(1.0f).description(
-      "Space between islands");
-  b.add_input<decl::Bool>("Fill Holes")
+  b.add_input<decl::Bool>("Seam"_ustr)
+      .hide_value()
+      .supports_field()
+      .description("Edges to mark where the mesh is \"cut\" for the purposes of unwrapping");
+  b.add_input<decl::Float>("Margin"_ustr)
+      .default_value(0.001f)
+      .min(0.0f)
+      .max(1.0f)
+      .description("Space between islands");
+  b.add_input<decl::Bool>("Fill Holes"_ustr)
       .default_value(true)
       .description(
           "Virtually fill holes in mesh before unwrapping, to better avoid overlaps "
           "and preserve symmetry");
-  b.add_input<decl::Menu>("Method").static_items(method_items).optional_label();
-  b.add_input<decl::Int>("Iterations")
+  b.add_input<decl::Menu>("Method"_ustr).static_items(method_items).optional_label();
+  b.add_input<decl::Int>("Iterations"_ustr)
       .default_value(10)
       .min(1)
       .usage_by_single_menu(GEO_NODE_UV_UNWRAP_METHOD_MINIMUM_STRETCH)
       .description("Number of iterations to run the SLIM solver for");
-  b.add_input<decl::Bool>("No Flip")
+  b.add_input<decl::Bool>("No Flip"_ustr)
       .usage_by_single_menu(GEO_NODE_UV_UNWRAP_METHOD_MINIMUM_STRETCH)
       .description("Prevents flipping UVs");
-  b.add_output<decl::Vector>("UV").field_source_reference_all().description(
+  b.add_output<decl::Vector>("UV"_ustr).field_source_reference_all().description(
       "UV coordinates between 0 and 1 for each face corner in the selected faces");
 }
 

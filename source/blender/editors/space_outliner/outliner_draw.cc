@@ -304,7 +304,7 @@ static void outliner_object_set_flag_recursive_fn(bContext *C,
         DEG_id_tag_update(&ob_iter->id, ID_RECALC_SYNC_TO_EVAL);
       }
       else {
-        BKE_view_layer_synced_ensure(scene, view_layer);
+        BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
         Base *base_iter = BKE_view_layer_base_find(view_layer, ob_iter);
         /* Child can be in a collection excluded from view-layer. */
         if (base_iter == nullptr) {
@@ -364,14 +364,18 @@ static void outliner_layer_or_collection_pointer_create(Scene *scene,
 }
 
 /** Create either a RNA_ObjectBase or a RNA_Object pointer. */
-static void outliner_base_or_object_pointer_create(
-    Scene *scene, ViewLayer *view_layer, Collection *collection, Object *ob, PointerRNA *ptr)
+static void outliner_base_or_object_pointer_create(const Main &bmain,
+                                                   Scene *scene,
+                                                   ViewLayer *view_layer,
+                                                   Collection *collection,
+                                                   Object *ob,
+                                                   PointerRNA *ptr)
 {
   if (collection) {
     *ptr = RNA_id_pointer_create(&ob->id);
   }
   else {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(bmain, scene, view_layer);
     Base *base = BKE_view_layer_base_find(view_layer, ob);
     *ptr = RNA_pointer_create_discrete(&scene->id, RNA_ObjectBase, base);
   }
@@ -379,7 +383,8 @@ static void outliner_base_or_object_pointer_create(
 
 /* NOTE: Collection is only valid when we want to change the collection data, otherwise we get it
  * from layer collection. Layer collection is valid whenever we are looking at a view layer. */
-static void outliner_collection_set_flag_recursive(Scene *scene,
+static void outliner_collection_set_flag_recursive(const Main &bmain,
+                                                   Scene *scene,
                                                    ViewLayer *view_layer,
                                                    LayerCollection *layer_collection,
                                                    Collection *collection,
@@ -405,7 +410,7 @@ static void outliner_collection_set_flag_recursive(Scene *scene,
      * otherwise we would not take collection exclusion into account. */
     for (CollectionObject &cob : layer_collection->collection->gobject) {
 
-      outliner_base_or_object_pointer_create(scene, view_layer, collection, cob.ob, &ptr);
+      outliner_base_or_object_pointer_create(bmain, scene, view_layer, collection, cob.ob, &ptr);
       if (!RNA_property_editable(&ptr, base_or_object_prop)) {
         continue;
       }
@@ -421,7 +426,8 @@ static void outliner_collection_set_flag_recursive(Scene *scene,
   /* Keep going recursively. */
   if (layer_collection) {
     for (LayerCollection &layer_collection_iter : layer_collection->layer_collections) {
-      outliner_collection_set_flag_recursive(scene,
+      outliner_collection_set_flag_recursive(bmain,
+                                             scene,
                                              view_layer,
                                              &layer_collection_iter,
                                              collection ? layer_collection_iter.collection :
@@ -433,7 +439,8 @@ static void outliner_collection_set_flag_recursive(Scene *scene,
   }
   else {
     for (CollectionChild &child : collection->children) {
-      outliner_collection_set_flag_recursive(scene,
+      outliner_collection_set_flag_recursive(bmain,
+                                             scene,
                                              view_layer,
                                              nullptr,
                                              child.collection,
@@ -539,7 +546,8 @@ static bool outliner_collection_is_isolated(Scene *scene,
   return true;
 }
 
-void outliner_collection_isolate_flag(Scene *scene,
+void outliner_collection_isolate_flag(const Main &bmain,
+                                      Scene *scene,
                                       ViewLayer *view_layer,
                                       LayerCollection *layer_collection,
                                       Collection *collection,
@@ -568,7 +576,8 @@ void outliner_collection_isolate_flag(Scene *scene,
   if (was_isolated) {
     const bool default_value = RNA_property_boolean_get_default(nullptr, layer_or_collection_prop);
     /* Make every collection go back to its default "visibility" state. */
-    outliner_collection_set_flag_recursive(scene,
+    outliner_collection_set_flag_recursive(bmain,
+                                           scene,
                                            view_layer,
                                            top_layer_collection,
                                            top_collection,
@@ -579,7 +588,8 @@ void outliner_collection_isolate_flag(Scene *scene,
   }
 
   /* Make every collection "invisible". */
-  outliner_collection_set_flag_recursive(scene,
+  outliner_collection_set_flag_recursive(bmain,
+                                         scene,
                                          view_layer,
                                          top_layer_collection,
                                          top_collection,
@@ -588,7 +598,8 @@ void outliner_collection_isolate_flag(Scene *scene,
                                          is_hide);
 
   /* Make this collection and its children collections the only "visible". */
-  outliner_collection_set_flag_recursive(scene,
+  outliner_collection_set_flag_recursive(bmain,
+                                         scene,
                                          view_layer,
                                          layer_collection,
                                          collection,
@@ -670,7 +681,8 @@ static void outliner_collection_set_flag_recursive_fn(bContext *C,
   }
 
   if (extend) {
-    outliner_collection_set_flag_recursive(scene,
+    outliner_collection_set_flag_recursive(*bmain,
+                                           scene,
                                            view_layer,
                                            layer_collection,
                                            collection,
@@ -679,7 +691,8 @@ static void outliner_collection_set_flag_recursive_fn(bContext *C,
                                            value);
   }
   else {
-    outliner_collection_isolate_flag(scene,
+    outliner_collection_isolate_flag(*bmain,
+                                     scene,
                                      view_layer,
                                      layer_collection,
                                      collection,
@@ -1141,6 +1154,7 @@ static bool outliner_restrict_properties_collection_set(Scene *scene,
 }
 
 static void outliner_draw_restrictbuts(ui::Block *block,
+                                       const Main &bmain,
                                        Scene *scene,
                                        ViewLayer *view_layer,
                                        ARegion *region,
@@ -1258,7 +1272,7 @@ static void outliner_draw_restrictbuts(ui::Block *block,
         PointerRNA ptr = RNA_id_pointer_create(&ob->id);
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_HIDE) {
-          BKE_view_layer_synced_ensure(scene, view_layer);
+          BKE_view_layer_synced_ensure(bmain, scene, view_layer);
           Base *base = (te.directdata) ? static_cast<Base *>(te.directdata) :
                                          BKE_view_layer_base_find(view_layer, ob);
           if (base) {
@@ -1817,7 +1831,7 @@ static void outliner_draw_restrictbuts(ui::Block *block,
 
     if (TSELEM_OPEN(tselem, space_outliner)) {
       outliner_draw_restrictbuts(
-          block, scene, view_layer, region, space_outliner, &te.subtree, props_active);
+          block, bmain, scene, view_layer, region, space_outliner, &te.subtree, props_active);
     }
   }
 }
@@ -3268,7 +3282,7 @@ static bool element_should_draw_faded(const TreeViewContext &tvc,
       case ID_OB: {
         const Object *ob = id_cast<const Object *>(tselem->id);
         /* Lookup in view layer is logically const as it only checks a cache. */
-        BKE_view_layer_synced_ensure(tvc.scene, tvc.view_layer);
+        BKE_view_layer_synced_ensure(*tvc.bmain, tvc.scene, tvc.view_layer);
         const Base *base = (te->directdata) ?
                                static_cast<const Base *>(te->directdata) :
                                BKE_view_layer_base_find(static_cast<ViewLayer *>(tvc.view_layer),
@@ -3353,7 +3367,7 @@ static void outliner_draw_tree_element(ui::Block *block,
     if (tselem->type == TSE_SOME_ID) {
       if (te->idcode == ID_OB) {
         Object *ob = id_cast<Object *>(tselem->id);
-        BKE_view_layer_synced_ensure(tvc.scene, tvc.view_layer);
+        BKE_view_layer_synced_ensure(*tvc.bmain, tvc.scene, tvc.view_layer);
         Base *base = (te->directdata) ? static_cast<Base *>(te->directdata) :
                                         BKE_view_layer_base_find(tvc.view_layer, ob);
         const bool is_selected = (base != nullptr) && ((base->flag & BASE_SELECTED) != 0);
@@ -4094,6 +4108,7 @@ void draw_outliner(const bContext *C, bool do_rebuild)
     RestrictPropertiesActive props_active;
     memset(&props_active, 1, sizeof(RestrictPropertiesActive));
     outliner_draw_restrictbuts(block,
+                               *tvc.bmain,
                                tvc.scene,
                                tvc.view_layer,
                                region,

@@ -6286,7 +6286,7 @@ static wmOperatorStatus texture_paint_camera_project_exec(bContext *C, wmOperato
   int orig_brush_size;
   IDProperty *idgroup;
   IDProperty *view_data = nullptr;
-  BKE_view_layer_synced_ensure(&scene, &view_layer);
+  BKE_view_layer_synced_ensure(*bmain, &scene, &view_layer);
   Object *ob = BKE_view_layer_active_object_get(&view_layer);
   bool uvs, mat, tex;
 

@@ -8,7 +8,7 @@ namespace blender::nodes::node_geo_input_radius_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Radius").default_value(1.0f).min(0.0f).field_source();
+  b.add_output<decl::Float>("Radius"_ustr).default_value(1.0f).min(0.0f).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

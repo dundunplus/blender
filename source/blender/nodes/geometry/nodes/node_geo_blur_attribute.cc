@@ -38,14 +38,14 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value").supports_field().hide_value().is_default_link_socket();
-    b.add_output(data_type, "Value").field_source_reference_all().align_with_previous();
+    b.add_input(data_type, "Value"_ustr).supports_field().hide_value().is_default_link_socket();
+    b.add_output(data_type, "Value"_ustr).field_source_reference_all().align_with_previous();
   }
-  b.add_input<decl::Int>("Iterations")
+  b.add_input<decl::Int>("Iterations"_ustr)
       .default_value(1)
       .min(0)
       .description("How many times to blur the values for all elements");
-  b.add_input<decl::Float>("Weight")
+  b.add_input<decl::Float>("Weight"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -95,7 +95,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   params.add_item(IFACE_("Value"), [node_type, fixed_data_type](LinkSearchOpParams &params) {
     bNode &node = params.add_node(node_type);
     node.custom1 = fixed_data_type;
-    params.update_and_connect_available_socket(node, "Value");
+    params.update_and_connect_available_socket(node, "Value"_ustr);
   });
 }
 

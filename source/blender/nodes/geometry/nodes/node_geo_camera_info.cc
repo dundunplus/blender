@@ -18,20 +18,20 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
 
-  b.add_output<decl::Matrix>("Projection Matrix").description("Camera projection matrix");
-  b.add_output<decl::Float>("Focal Length").description("Perspective camera focal length");
-  b.add_output<decl::Vector>("Sensor").dimensions(2).description("Size of the camera sensor");
-  b.add_output<decl::Vector>("Shift").dimensions(2).description("Camera shift");
-  b.add_output<decl::Float>("Clip Start").description("Camera near clipping distance");
-  b.add_output<decl::Float>("Clip End").description("Camera far clipping distance");
-  b.add_output<decl::Float>("Focus Distance")
+  b.add_output<decl::Matrix>("Projection Matrix"_ustr).description("Camera projection matrix");
+  b.add_output<decl::Float>("Focal Length"_ustr).description("Perspective camera focal length");
+  b.add_output<decl::Vector>("Sensor"_ustr).dimensions(2).description("Size of the camera sensor");
+  b.add_output<decl::Vector>("Shift"_ustr).dimensions(2).description("Camera shift");
+  b.add_output<decl::Float>("Clip Start"_ustr).description("Camera near clipping distance");
+  b.add_output<decl::Float>("Clip End"_ustr).description("Camera far clipping distance");
+  b.add_output<decl::Float>("Focus Distance"_ustr)
       .description("Distance to the focus point for depth of field");
-  b.add_output<decl::Bool>("Is Orthographic")
+  b.add_output<decl::Bool>("Is Orthographic"_ustr)
       .description("Whether the camera is using orthographic projection");
-  b.add_output<decl::Float>("Orthographic Scale")
+  b.add_output<decl::Float>("Orthographic Scale"_ustr)
       .description("Orthographic camera scale (similar to zoom)");
 
-  b.add_input<decl::Object>("Camera").optional_label();
+  b.add_input<decl::Object>("Camera"_ustr).optional_label();
 }
 
 static CameraParams get_camera_parameters(const Scene &scene, const Object &camera_object)

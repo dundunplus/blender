@@ -24,22 +24,22 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Geometry>("Geometry").description("Geometry to get the statistics from");
-  b.add_input<decl::Bool>("Selection").default_value(true).field_on_all().hide_value();
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to get the statistics from");
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all().hide_value();
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Attribute").hide_value().field_on_all();
+    b.add_input(data_type, "Attribute"_ustr).hide_value().field_on_all();
 
-    b.add_output(data_type, N_("Mean"));
-    b.add_output(data_type, CTX_N_(BLT_I18NCONTEXT_ID_NODETREE, "Median"))
+    b.add_output(data_type, "Mean"_ustr);
+    b.add_output(data_type, CTX_N_(BLT_I18NCONTEXT_ID_NODETREE, "Median"_ustr))
         .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-    b.add_output(data_type, N_("Sum"));
-    b.add_output(data_type, N_("Min"));
-    b.add_output(data_type, N_("Max"));
-    b.add_output(data_type, N_("Range"));
-    b.add_output(data_type, N_("Standard Deviation"));
-    b.add_output(data_type, N_("Variance"));
+    b.add_output(data_type, "Sum"_ustr);
+    b.add_output(data_type, "Min"_ustr);
+    b.add_output(data_type, "Max"_ustr);
+    b.add_output(data_type, "Range"_ustr);
+    b.add_output(data_type, "Standard Deviation"_ustr);
+    b.add_output(data_type, "Variance"_ustr);
   }
 }
 
@@ -86,14 +86,20 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Attribute"), [node_type, type](LinkSearchOpParams &params) {
       bNode &node = params.add_node(node_type);
       node.custom1 = *type;
-      params.update_and_connect_available_socket(node, "Attribute");
+      params.update_and_connect_available_socket(node, "Attribute"_ustr);
     });
   }
   else {
-    for (const StringRefNull name :
-         {"Mean", "Median", "Sum", "Min", "Max", "Range", "Standard Deviation", "Variance"})
+    for (const UString name : {"Mean"_ustr,
+                               "Median"_ustr,
+                               "Sum"_ustr,
+                               "Min"_ustr,
+                               "Max"_ustr,
+                               "Range"_ustr,
+                               "Standard Deviation"_ustr,
+                               "Variance"_ustr})
     {
-      params.add_item(IFACE_(name), [node_type, name, type](LinkSearchOpParams &params) {
+      params.add_item(IFACE_(name.ref()), [node_type, name, type](LinkSearchOpParams &params) {
         bNode &node = params.add_node(node_type);
         node.custom1 = *type;
         params.update_and_connect_available_socket(node, name);

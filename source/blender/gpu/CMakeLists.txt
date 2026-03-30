@@ -118,7 +118,6 @@ set(SRC
   shader_tool/namespace.cc
   shader_tool/processor.cc
   shader_tool/resource_table.cc
-  shader_tool/shader_tool.cc
   shader_tool/string.cc
   shader_tool/struct.cc
   shader_tool/template.cc

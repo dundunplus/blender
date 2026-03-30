@@ -241,6 +241,8 @@ struct TreeViewContext {
   /* Workspace. */
   WorkSpace *workspace;
 
+  Main *bmain;
+
   /* Scene level. */
   Scene *scene;
   ViewLayer *view_layer;
@@ -311,7 +313,8 @@ void outliner_tree_dimensions(SpaceOutliner *space_outliner, int *r_width, int *
 
 TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te);
 
-void outliner_collection_isolate_flag(Scene *scene,
+void outliner_collection_isolate_flag(const Main &bmain,
+                                      Scene *scene,
                                       ViewLayer *view_layer,
                                       LayerCollection *layer_collection,
                                       Collection *collection,

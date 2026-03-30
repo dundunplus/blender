@@ -16,31 +16,31 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.is_function_node();
   b.use_custom_socket_order();
 
-  b.add_output<decl::Matrix>("Matrix");
+  b.add_output<decl::Matrix>("Matrix"_ustr);
 
   PanelDeclarationBuilder &column_a = b.add_panel("Column 1"_ustr).default_closed(true);
-  column_a.add_input<decl::Float>("Column 1 Row 1").default_value(1.0f);
-  column_a.add_input<decl::Float>("Column 1 Row 2");
-  column_a.add_input<decl::Float>("Column 1 Row 3");
-  column_a.add_input<decl::Float>("Column 1 Row 4");
+  column_a.add_input<decl::Float>("Column 1 Row 1"_ustr).default_value(1.0f);
+  column_a.add_input<decl::Float>("Column 1 Row 2"_ustr);
+  column_a.add_input<decl::Float>("Column 1 Row 3"_ustr);
+  column_a.add_input<decl::Float>("Column 1 Row 4"_ustr);
 
   PanelDeclarationBuilder &column_b = b.add_panel("Column 2"_ustr).default_closed(true);
-  column_b.add_input<decl::Float>("Column 2 Row 1");
-  column_b.add_input<decl::Float>("Column 2 Row 2").default_value(1.0f);
-  column_b.add_input<decl::Float>("Column 2 Row 3");
-  column_b.add_input<decl::Float>("Column 2 Row 4");
+  column_b.add_input<decl::Float>("Column 2 Row 1"_ustr);
+  column_b.add_input<decl::Float>("Column 2 Row 2"_ustr).default_value(1.0f);
+  column_b.add_input<decl::Float>("Column 2 Row 3"_ustr);
+  column_b.add_input<decl::Float>("Column 2 Row 4"_ustr);
 
   PanelDeclarationBuilder &column_c = b.add_panel("Column 3"_ustr).default_closed(true);
-  column_c.add_input<decl::Float>("Column 3 Row 1");
-  column_c.add_input<decl::Float>("Column 3 Row 2");
-  column_c.add_input<decl::Float>("Column 3 Row 3").default_value(1.0f);
-  column_c.add_input<decl::Float>("Column 3 Row 4");
+  column_c.add_input<decl::Float>("Column 3 Row 1"_ustr);
+  column_c.add_input<decl::Float>("Column 3 Row 2"_ustr);
+  column_c.add_input<decl::Float>("Column 3 Row 3"_ustr).default_value(1.0f);
+  column_c.add_input<decl::Float>("Column 3 Row 4"_ustr);
 
   PanelDeclarationBuilder &column_d = b.add_panel("Column 4"_ustr).default_closed(true);
-  column_d.add_input<decl::Float>("Column 4 Row 1");
-  column_d.add_input<decl::Float>("Column 4 Row 2");
-  column_d.add_input<decl::Float>("Column 4 Row 3");
-  column_d.add_input<decl::Float>("Column 4 Row 4").default_value(1.0f);
+  column_d.add_input<decl::Float>("Column 4 Row 1"_ustr);
+  column_d.add_input<decl::Float>("Column 4 Row 2"_ustr);
+  column_d.add_input<decl::Float>("Column 4 Row 3"_ustr);
+  column_d.add_input<decl::Float>("Column 4 Row 4"_ustr).default_value(1.0f);
 }
 
 static void copy_with_stride(const IndexMask &mask,

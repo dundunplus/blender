@@ -179,7 +179,6 @@ set(SRC_GLSL_LIB
   eevee_shadow_lib.glsl
   eevee_shadow_tilemap_lib.glsl
   eevee_shadow_tracing_lib.glsl
-  eevee_spherical_harmonics_lib.glsl
   eevee_subsurface_lib.glsl
   eevee_surf_lib.glsl
   eevee_surfel_list_lib.glsl

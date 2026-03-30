@@ -10,7 +10,7 @@ COMPUTE_SHADER_CREATE_INFO(eevee_lightprobe_sphere_remap)
 
 #include "eevee_colorspace_lib.glsl"
 #include "eevee_lightprobe_sphere_mapping_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 
 shared float4 local_radiance[gl_WorkGroupSize.x * gl_WorkGroupSize.y];
 
@@ -202,14 +202,8 @@ void main()
           sphere_probe_texel_to_direction(float2(max_group_texel), write_coord, sample_coord));
       float3 L = normalize(min_direction + max_direction);
       /* Convert radiance to spherical harmonics. */
-      SphericalHarmonicL1 sh;
-      sh.L0.M0 = float4(0.0f);
-      sh.L1.Mn1 = float4(0.0f);
-      sh.L1.M0 = float4(0.0f);
-      sh.L1.Mp1 = float4(0.0f);
-      /* TODO(fclem): Cleanup: Should spherical_harmonics_encode_signal_sample return a new sh
-       * instead of adding to it? */
-      spherical_harmonics_encode_signal_sample(L, local_radiance[0], sh);
+      SphericalHarmonicL1<float4> sh = {};
+      sh.encode_signal_sample(L, local_radiance[0]);
       /* Outputs one SH for each thread-group. */
       out_sh[work_group_index].L0_M0 = sh.L0.M0;
       out_sh[work_group_index].L1_Mn1 = sh.L1.Mn1;

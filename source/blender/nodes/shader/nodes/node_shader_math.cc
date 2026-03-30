@@ -27,8 +27,11 @@ namespace nodes::node_shader_math_cc {
 static void sh_node_math_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Value").default_value(0.5f).min(-10000.0f).max(10000.0f).label_fn(
-      [](bNode node) {
+  b.add_input<decl::Float>("Value"_ustr)
+      .default_value(0.5f)
+      .min(-10000.0f)
+      .max(10000.0f)
+      .label_fn([](bNode node) {
         switch (node.custom1) {
           case NODE_MATH_POWER:
             return IFACE_("Base");
@@ -40,7 +43,7 @@ static void sh_node_math_declare(NodeDeclarationBuilder &b)
             return IFACE_("Value");
         }
       });
-  b.add_input<decl::Float>("Value", "Value_001")
+  b.add_input<decl::Float>("Value"_ustr, "Value_001"_ustr)
       .default_value(0.5f)
       .min(-10000.0f)
       .max(10000.0f)
@@ -65,7 +68,7 @@ static void sh_node_math_declare(NodeDeclarationBuilder &b)
             return IFACE_("Value");
         }
       });
-  b.add_input<decl::Float>("Value", "Value_002")
+  b.add_input<decl::Float>("Value"_ustr, "Value_002"_ustr)
       .default_value(0.5f)
       .min(-10000.0f)
       .max(10000.0f)
@@ -84,7 +87,7 @@ static void sh_node_math_declare(NodeDeclarationBuilder &b)
             return IFACE_("Value");
         }
       });
-  b.add_output<decl::Float>("Value");
+  b.add_output<decl::Float>("Value"_ustr);
 }
 
 static void math_input_defaults(bNode &node, const NodeMathOperation mode)
@@ -123,7 +126,7 @@ static void math_input_defaults(bNode &node, const NodeMathOperation mode)
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   NodeMathOperation mode = NODE_MATH_ADD;
   void operator()(LinkSearchOpParams &params)
   {
@@ -155,7 +158,7 @@ static void sh_node_math_gather_link_searches(GatherLinkSearchOpParams &params)
               -1 :
               weight;
       params.add_item(CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, item->name),
-                      SocketSearchOp{"Value", NodeMathOperation(item->value)},
+                      SocketSearchOp{"Value"_ustr, NodeMathOperation(item->value)},
                       gn_weight);
     }
   }

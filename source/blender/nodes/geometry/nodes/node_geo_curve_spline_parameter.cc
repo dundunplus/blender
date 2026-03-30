@@ -13,14 +13,19 @@ namespace blender::nodes::node_geo_curve_spline_parameter_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Factor").field_source().description(
-      "For points, the portion of the spline's total length at the control point. For "
-      "Splines, the factor of that spline within the entire curve");
-  b.add_output<decl::Float>("Length").field_source().description(
-      "For points, the distance along the control point's spline, For splines, the "
-      "distance along the entire curve");
-  b.add_output<decl::Int>("Index").field_source().description(
-      "Each control point's index on its spline");
+  b.add_output<decl::Float>("Factor"_ustr)
+      .field_source()
+      .description(
+          "For points, the portion of the spline's total length at the control point. For "
+          "Splines, the factor of that spline within the entire curve");
+  b.add_output<decl::Float>("Length"_ustr)
+      .field_source()
+      .description(
+          "For points, the distance along the control point's spline, For splines, the "
+          "distance along the entire curve");
+  b.add_output<decl::Int>("Index"_ustr)
+      .field_source()
+      .description("Each control point's index on its spline");
 }
 
 /**

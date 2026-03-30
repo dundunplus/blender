@@ -16,9 +16,9 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output<decl::Float>("Grid").structure_type(StructureType::Grid).align_with_previous();
-  b.add_input<decl::Float>("Distance")
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Float>("Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
+  b.add_input<decl::Float>("Distance"_ustr)
       .subtype(PROP_DISTANCE)
       .default_value(0.1f)
       .description("Object-space distance to offset the SDF surface");

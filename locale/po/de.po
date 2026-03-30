@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2025-12-02 20:06+0000\n"
 "Last-Translator: Bastitron <bastitronhd@gmail.com>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -4319,20 +4319,12 @@ msgid "Stroke"
 msgstr "Pinselstrich"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "Eckpunktfarbe wirkt sich nur auf Strich aus"
-
-
 msgid "Fill"
 msgstr "Füllen"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "Eckpunktfarbe wirkt sich nur auf Füllung aus"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "Eckpunktfarbe wirkt sich auf Strich und Füllung aus"
+msgid "Both"
+msgstr "Beides"
 
 
 msgid "Byte Color Attribute Value"
@@ -18694,36 +18686,80 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
-msgid "Mirror"
-msgstr "Spiegeln"
+msgid "Math"
+msgstr "Mathematisch"
+
+
+msgid "Names"
+msgstr "Namen"
+
+
+msgid "Show/Hide"
+msgstr "Zeigen/Verbergen"
+
+
+msgid "Clean Up"
+msgstr "Aufräumen"
+
+
+msgid "Pivot Point"
+msgstr "Drehpunkt"
 
 
 msgid "Snap"
 msgstr "Einrasten"
 
 
-msgid "Local View"
-msgstr "Lokale Ansicht"
+msgid "Proportional Editing Falloff"
+msgstr "Proportionaler Bearbeitungsabfall"
 
 
 msgid "Read"
 msgstr "Lesen"
 
 
-msgid "Viewpoint"
-msgstr "Ansicht"
+msgid "Mask Edit"
+msgstr "Maskenbearbeitung"
 
 
 msgid "Sample"
 msgstr "Beispiel"
 
 
-msgid "Navigation"
-msgstr "Navigation"
-
-
 msgid "Write"
 msgstr "Schreiben"
+
+
+msgid "Primitives"
+msgstr "Grundkörper"
+
+
+msgid "Vertex Group Locks"
+msgstr "Punktgruppen sperren"
+
+
+msgid "Instances"
+msgstr "Instanzen"
+
+
+msgid "Import"
+msgstr "Importieren"
+
+
+msgid "Mirror"
+msgstr "Spiegeln"
+
+
+msgid "Local View"
+msgstr "Lokale Ansicht"
+
+
+msgid "Viewpoint"
+msgstr "Ansicht"
+
+
+msgid "Navigation"
+msgstr "Navigation"
 
 
 msgid "Align View"
@@ -18734,16 +18770,16 @@ msgid "Align View to Active"
 msgstr "Ansicht auf Aktiv ausrichten"
 
 
-msgid "Primitives"
-msgstr "Grundkörper"
-
-
 msgid "View Regions"
 msgstr "Vierfenster Ansicht"
 
 
 msgid "Select More/Less"
 msgstr "Mehr/weniger anzeigen"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -18762,16 +18798,8 @@ msgid "Select Loops"
 msgstr "Schleifen auswählen"
 
 
-msgid "Instances"
-msgstr "Instanzen"
-
-
 msgid "Assign Material"
 msgstr "Material zuweisen"
-
-
-msgid "Import"
-msgstr "Importieren"
 
 
 msgid "Metaball"
@@ -18784,14 +18812,6 @@ msgstr "Licht"
 
 msgid "Light Probe"
 msgstr "Lichtsonde"
-
-
-msgid "Math"
-msgstr "Mathematisch"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -18818,14 +18838,6 @@ msgid "Quick Effects"
 msgstr "Schnelle Effekte"
 
 
-msgid "Show/Hide"
-msgstr "Zeigen/Verbergen"
-
-
-msgid "Clean Up"
-msgstr "Aufräumen"
-
-
 msgid "Asset"
 msgstr "Asset"
 
@@ -18842,8 +18854,8 @@ msgid "Hooks"
 msgstr "Haken"
 
 
-msgid "Vertex Group Locks"
-msgstr "Punktgruppen sperren"
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Random Mask"
@@ -18858,8 +18870,12 @@ msgid "In-Betweens"
 msgstr "Dazwischen"
 
 
-msgid "Names"
-msgstr "Namen"
+msgid "Keying"
+msgstr "Schlüsselbilder"
+
+
+msgid "Tracking"
+msgstr "Verfolgen"
 
 
 msgid "Toggle Bone Options"
@@ -18882,16 +18898,8 @@ msgid "Face Data"
 msgstr "Flächendaten"
 
 
-msgid "Layout"
-msgstr "Layout"
-
-
 msgid "Merge"
 msgstr "Zusammenführen"
-
-
-msgid "Keying"
-msgstr "Schlüsselbilder"
 
 
 msgid "Special Characters"
@@ -18900,22 +18908,6 @@ msgstr "Sonderzeichen"
 
 msgid "Kerning"
 msgstr "Kerning"
-
-
-msgid "Tracking"
-msgstr "Verfolgen"
-
-
-msgid "Pivot Point"
-msgstr "Drehpunkt"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportionaler Bearbeitungsabfall"
-
-
-msgid "Mask Edit"
-msgstr "Maskenbearbeitung"
 
 
 msgid "Assets"
@@ -29141,10 +29133,6 @@ msgid "Side"
 msgstr "Seite"
 
 
-msgid "Both"
-msgstr "Beides"
-
-
 msgctxt "Operator"
 msgid "Add F-Curve Modifier"
 msgstr "F-Kurven Modifikator hinzufügen"
@@ -31046,10 +31034,6 @@ msgstr "Grenzen als Kugel darstellen"
 
 msgid "Merge selected vertices"
 msgstr "Ausgewählte Punkt zusammenfügen"
-
-
-msgid "At Center"
-msgstr "Zur Mitte"
 
 
 msgctxt "Operator"
@@ -38783,6 +38767,14 @@ msgid "Active Palette Color"
 msgstr "Aktive Farbpalette"
 
 
+msgid "Active Tool"
+msgstr "Aktives Werkzeug"
+
+
+msgid "View Lock"
+msgstr "Ansicht sperren"
+
+
 msgid "Shadow Settings"
 msgstr "Schatteneinstellungen"
 
@@ -38853,14 +38845,6 @@ msgstr "Automatisches Maskieren"
 
 msgid "VR"
 msgstr "VR"
-
-
-msgid "Active Tool"
-msgstr "Aktives Werkzeug"
-
-
-msgid "View Lock"
-msgstr "Ansicht sperren"
 
 
 msgid "Chain Scaling"
@@ -42267,54 +42251,6 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "Startwert für den Integrator, um verschiedene Rauschmuster zu erzeugen"
 
 
-msgid "Viewport Texture Limit"
-msgstr "Viewport Texturbeschränkung"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Begrenzung der Texturgröße von Viewport rendern verwendet"
-
-
-msgid "No Limit"
-msgstr "Keine Begrenzung"
-
-
-msgid "No texture size limit"
-msgstr "Keine Texturgrößenbegrenzung"
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Begrenzung der Texturgröße auf 128 pixel"
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Begrenzung der Texturgröße auf 256 pixel"
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Begrenzung der Texturgröße auf 512 pixel"
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Begrenzung der Texturgröße auf 1024 pixel"
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Begrenzung der Texturgröße auf 2048 pixel"
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Begrenzung der Texturgröße auf 4096 pixel"
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Begrenzung der Texturgröße auf 8192 pixel"
-
-
-msgid "Render Texture Limit"
-msgstr "Texturbegrenzung rendern"
-
-
 msgid "Tile Size"
 msgstr "Kachelgröße"
 
@@ -45508,10 +45444,6 @@ msgid "Use Default Fade"
 msgstr "Standard-Blende verwenden"
 
 
-msgid "Use Linear Modifiers"
-msgstr "Linearen Modifikator verwenden"
-
-
 msgid "Representation of alpha information in the RGBA pixels"
 msgstr "Darstellung der Alphainformation in den RGBA Pixeln"
 
@@ -48469,6 +48401,10 @@ msgid "Report a Bug"
 msgstr "Fehler melden"
 
 
+msgid "Object Index"
+msgstr "Objekt-Index"
+
+
 msgid "Denoising completed"
 msgstr "Entrauschen abgeschlossen"
 
@@ -48547,10 +48483,6 @@ msgstr "Ansichtsfenster BVH"
 
 msgid "Max Subdivision"
 msgstr "Maximale Unterteilungen"
-
-
-msgid "Texture Limit"
-msgstr "Texturlimit"
 
 
 msgid "Volume Resolution"
@@ -56113,10 +56045,6 @@ msgid "Disconnect"
 msgstr "Trennen"
 
 
-msgid "No active collection"
-msgstr "Keine Aktive Auswahl"
-
-
 msgid "Reorder"
 msgstr "Neu Ordnen"
 
@@ -57719,10 +57647,6 @@ msgstr "Farbe2"
 
 msgid "Dot"
 msgstr "Punkt"
-
-
-msgid "Object Index"
-msgstr "Objekt-Index"
 
 
 msgid "Color Fac"

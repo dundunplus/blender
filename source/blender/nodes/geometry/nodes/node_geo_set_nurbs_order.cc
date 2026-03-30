@@ -18,12 +18,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Curves")
+  b.add_input<decl::Geometry>("Curves"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curves to change the order of");
-  b.add_output<decl::Geometry>("Curves").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Int>("Order").default_value(4).min(2).max(127).field_on_all();
+  b.add_output<decl::Geometry>("Curves"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Int>("Order"_ustr).default_value(4).min(2).max(127).field_on_all();
 }
 
 static void set_grease_pencil_order(GreasePencil &grease_pencil,

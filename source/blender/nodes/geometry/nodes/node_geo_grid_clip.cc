@@ -34,30 +34,30 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_default_layout();
 
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
-  b.add_input(data_type, "Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output(data_type, "Grid").structure_type(StructureType::Grid).align_with_previous();
+  b.add_input(data_type, "Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output(data_type, "Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
 
-  b.add_input<decl::Int>("Min X")
+  b.add_input<decl::Int>("Min X"_ustr)
       .default_value(0)
       .structure_type(StructureType::Single)
       .description("Minimum X index of the clipping bounding box");
-  b.add_input<decl::Int>("Min Y")
+  b.add_input<decl::Int>("Min Y"_ustr)
       .default_value(0)
       .structure_type(StructureType::Single)
       .description("Minimum Y index of the clipping bounding box");
-  b.add_input<decl::Int>("Min Z")
+  b.add_input<decl::Int>("Min Z"_ustr)
       .default_value(0)
       .structure_type(StructureType::Single)
       .description("Minimum Z index of the clipping bounding box");
-  b.add_input<decl::Int>("Max X")
+  b.add_input<decl::Int>("Max X"_ustr)
       .default_value(32)
       .structure_type(StructureType::Single)
       .description("Maximum X index of the clipping bounding box");
-  b.add_input<decl::Int>("Max Y")
+  b.add_input<decl::Int>("Max Y"_ustr)
       .default_value(32)
       .structure_type(StructureType::Single)
       .description("Maximum Y index of the clipping bounding box");
-  b.add_input<decl::Int>("Max Z")
+  b.add_input<decl::Int>("Max Z"_ustr)
       .default_value(32)
       .structure_type(StructureType::Single)
       .description("Maximum Z index of the clipping bounding box");
@@ -95,7 +95,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
     bNode &node = params.add_node("GeometryNodeGridClip");
     node.custom1 = *data_type;
-    params.update_and_connect_available_socket(node, "Grid");
+    params.update_and_connect_available_socket(node, "Grid"_ustr);
   });
 }
 

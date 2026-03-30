@@ -1006,6 +1006,8 @@ static wmOperatorStatus image_view_selected_exec(bContext *C, wmOperator * /*op*
   ViewLayer *view_layer;
   Object *obedit;
 
+  const Main *bmain = CTX_data_main(C);
+
   /* retrieve state */
   sima = CTX_wm_space_image(C);
   region = CTX_wm_region(C);
@@ -1017,7 +1019,7 @@ static wmOperatorStatus image_view_selected_exec(bContext *C, wmOperator * /*op*
   float min[2], max[2];
   if (ED_space_image_show_uvedit(sima, obedit)) {
     Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-        scene, view_layer, nullptr);
+        *bmain, scene, view_layer, nullptr);
     bool success = ED_uvedit_minmax_multi(scene, objects, min, max);
     if (!success) {
       return OPERATOR_CANCELLED;

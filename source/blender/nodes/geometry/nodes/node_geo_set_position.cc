@@ -19,11 +19,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry").description("Points to modify the positions of");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Vector>("Position").implicit_field_on_all(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Vector>("Offset").subtype(PROP_TRANSLATION).field_on_all();
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Points to modify the positions of");
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Vector>("Position"_ustr)
+      .implicit_field_on_all(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_input<decl::Vector>("Offset"_ustr).subtype(PROP_TRANSLATION).field_on_all();
 }
 
 static const auto &get_add_fn()

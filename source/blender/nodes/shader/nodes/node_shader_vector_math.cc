@@ -31,7 +31,7 @@ namespace nodes::node_shader_vector_math_cc {
 static void sh_node_vector_math_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").min(-10000.0f).max(10000.0f).label_fn([](bNode node) {
+  b.add_input<decl::Vector>("Vector"_ustr).min(-10000.0f).max(10000.0f).label_fn([](bNode node) {
     switch (node.custom1) {
       case NODE_VECTOR_MATH_POWER:
         return IFACE_("Base");
@@ -39,7 +39,7 @@ static void sh_node_vector_math_declare(NodeDeclarationBuilder &b)
         return IFACE_("Vector");
     }
   });
-  b.add_input<decl::Vector>("Vector", "Vector_001")
+  b.add_input<decl::Vector>("Vector"_ustr, "Vector_001"_ustr)
       .min(-10000.0f)
       .max(10000.0f)
       .label_fn([](bNode node) {
@@ -58,7 +58,7 @@ static void sh_node_vector_math_declare(NodeDeclarationBuilder &b)
             return IFACE_("Vector");
         }
       });
-  b.add_input<decl::Vector>("Vector", "Vector_002")
+  b.add_input<decl::Vector>("Vector"_ustr, "Vector_002"_ustr)
       .min(-10000.0f)
       .max(10000.0f)
       .label_fn([](bNode node) {
@@ -73,8 +73,11 @@ static void sh_node_vector_math_declare(NodeDeclarationBuilder &b)
             return IFACE_("Vector");
         }
       });
-  b.add_input<decl::Float>("Scale").default_value(1.0f).min(-10000.0f).max(10000.0f).label_fn(
-      [](bNode node) {
+  b.add_input<decl::Float>("Scale"_ustr)
+      .default_value(1.0f)
+      .min(-10000.0f)
+      .max(10000.0f)
+      .label_fn([](bNode node) {
         switch (node.custom1) {
           case NODE_VECTOR_MATH_SCALE:
           default:
@@ -83,8 +86,8 @@ static void sh_node_vector_math_declare(NodeDeclarationBuilder &b)
             return IFACE_("IOR");
         }
       });
-  b.add_output<decl::Vector>("Vector");
-  b.add_output<decl::Float>("Value");
+  b.add_output<decl::Vector>("Vector"_ustr);
+  b.add_output<decl::Float>("Value"_ustr);
 }
 
 static void node_shader_buts_vect_math(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -94,7 +97,7 @@ static void node_shader_buts_vect_math(ui::Layout &layout, bContext * /*C*/, Poi
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   NodeVectorMathOperation mode = NODE_VECTOR_MATH_ADD;
   void operator()(LinkSearchOpParams &params)
   {
@@ -124,12 +127,12 @@ static void sh_node_vector_math_gather_link_searches(GatherLinkSearchOpParams &p
                                                 NODE_VECTOR_MATH_DOT_PRODUCT))
       {
         params.add_item(CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, item->name),
-                        SocketSearchOp{"Value", NodeVectorMathOperation(item->value)},
+                        SocketSearchOp{"Value"_ustr, NodeVectorMathOperation(item->value)},
                         weight);
       }
       else {
         params.add_item(CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, item->name),
-                        SocketSearchOp{"Vector", NodeVectorMathOperation(item->value)},
+                        SocketSearchOp{"Vector"_ustr, NodeVectorMathOperation(item->value)},
                         weight);
       }
     }

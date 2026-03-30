@@ -58,11 +58,12 @@ namespace nodes::node_geo_sample_nearest_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh, GeometryComponent::Type::PointCloud})
       .description("Mesh or point cloud to find the nearest point on");
-  b.add_input<decl::Vector>("Sample Position").implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_output<decl::Int>("Index").dependent_field({1});
+  b.add_input<decl::Vector>("Sample Position"_ustr)
+      .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_output<decl::Int>("Index"_ustr).dependent_field({1});
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

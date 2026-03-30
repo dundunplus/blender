@@ -10,11 +10,13 @@
 #include "BLI_vector_set.hh"
 
 #include "FN_field.hh"
+#include "FN_multi_function.hh"
 #include "FN_multi_function_builder.hh"
 #include "FN_multi_function_procedure.hh"
 #include "FN_multi_function_procedure_builder.hh"
 #include "FN_multi_function_procedure_executor.hh"
 #include "FN_multi_function_procedure_optimization.hh"
+#include "FN_multi_function_registry.hh"
 
 namespace blender::fn {
 
@@ -520,8 +522,7 @@ GField make_field_constant_if_possible(GField field)
 
 Field<bool> invert_boolean_field(const Field<bool> &field)
 {
-  static auto not_fn = mf::build::SI1_SO<bool, bool>(
-      "Not", [](bool a) { return !a; }, mf::build::exec_presets::AllSpanOrSingle());
+  const mf::MultiFunction &not_fn = fn::multi_function::registry::lookup("!bool"_ustr);
   auto not_op = FieldOperation::from(not_fn, {field});
   return Field<bool>(not_op);
 }

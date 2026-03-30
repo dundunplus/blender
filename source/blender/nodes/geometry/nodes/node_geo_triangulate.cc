@@ -60,18 +60,18 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .is_default_link_socket()
       .description("Mesh to triangulate");
-  b.add_output<decl::Geometry>("Mesh").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).field_on_all().hide_value();
-  b.add_input<decl::Menu>("Quad Method")
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all().hide_value();
+  b.add_input<decl::Menu>("Quad Method"_ustr)
       .static_items(rna_node_geometry_triangulate_quad_method_items)
       .default_value(geometry::TriangulateQuadMode::ShortEdge)
       .optional_label()
       .description("Method for splitting the quads into triangles");
-  b.add_input<decl::Menu>("N-gon Method")
+  b.add_input<decl::Menu>("N-gon Method"_ustr)
       .default_value(geometry::TriangulateNGonMode::Beauty)
       .static_items(rna_node_geometry_triangulate_ngon_method_items)
       .optional_label()

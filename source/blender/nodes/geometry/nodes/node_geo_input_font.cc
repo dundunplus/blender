@@ -15,7 +15,7 @@ namespace blender::nodes::node_geo_input_font_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Font>("Font").custom_draw([](CustomSocketDrawParams &params) {
+  b.add_output<decl::Font>("Font"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     ui::template_id(&params.layout,
                     &params.C,

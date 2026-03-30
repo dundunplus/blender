@@ -10,7 +10,7 @@ namespace blender::nodes::node_geo_input_spline_resolution_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Resolution").field_source();
+  b.add_output<decl::Int>("Resolution"_ustr).field_source();
 }
 
 class ResolutionFieldInput final : public bke::CurvesFieldInput {

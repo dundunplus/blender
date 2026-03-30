@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2026-03-21 07:12+0000\n"
 "Last-Translator: 居樂行 <oscilloscope9705@gmail.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -3275,6 +3275,10 @@ msgid "Action data-blocks"
 msgstr "動作數據組塊"
 
 
+msgid "All Data-Blocks"
+msgstr "所有資料組塊"
+
+
 msgid "Annotation"
 msgstr "註解"
 
@@ -5605,24 +5609,12 @@ msgid "Stroke"
 msgstr "筆觸"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "頂點色彩僅影響筆觸"
-
-
 msgid "Fill"
 msgstr "填入"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "頂點色彩僅影響填充"
-
-
-msgid "Stroke & Fill"
-msgstr "筆觸 & 填充"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "頂點色彩影響筆觸及填充"
+msgid "Both"
+msgstr "兩者"
 
 
 msgid "Byte Color Attribute Value"
@@ -26563,12 +26555,88 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
-msgid "Mirror"
-msgstr "鏡像"
+msgid "Math"
+msgstr "數學公式"
+
+
+msgid "Names"
+msgstr "名稱"
+
+
+msgid "Utilities"
+msgstr "效用"
+
+
+msgid "Bone Roll"
+msgstr "骨骼滾動"
+
+
+msgid "Show/Hide"
+msgstr "顯示/隱藏"
+
+
+msgid "Clean Up"
+msgstr "清理"
+
+
+msgid "Pivot Point"
+msgstr "樞紐點"
 
 
 msgid "Snap"
 msgstr "吸附"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "比例化編輯衰落"
+
+
+msgid "Read"
+msgstr "讀取"
+
+
+msgid "Mask Edit"
+msgstr "遮罩編輯"
+
+
+msgid "Sample"
+msgstr "取樣"
+
+
+msgid "Automasking"
+msgstr "自動遮罩"
+
+
+msgid "Write"
+msgstr "寫入"
+
+
+msgid "Face Sets Edit"
+msgstr "面集編輯"
+
+
+msgid "Primitives"
+msgstr "原形"
+
+
+msgid "Vertex Group Locks"
+msgstr "頂點群組鎖定"
+
+
+msgid "Gizmo"
+msgstr "操縱器"
+
+
+msgid "Instances"
+msgstr "實例化"
+
+
+msgid "Import"
+msgstr "匯入"
+
+
+msgid "Mirror"
+msgstr "鏡像"
 
 
 msgid "UV Mapping"
@@ -26579,24 +26647,16 @@ msgid "Local View"
 msgstr "區域檢視"
 
 
-msgid "Read"
-msgstr "讀取"
-
-
 msgid "Viewpoint"
 msgstr "視點"
-
-
-msgid "Sample"
-msgstr "取樣"
 
 
 msgid "Navigation"
 msgstr "導覽"
 
 
-msgid "Write"
-msgstr "寫入"
+msgid "Deprecated"
+msgstr "已棄用"
 
 
 msgid "Align View"
@@ -26607,16 +26667,20 @@ msgid "Align View to Active"
 msgstr "對齊檢視至作用項"
 
 
-msgid "Primitives"
-msgstr "原形"
-
-
 msgid "View Regions"
 msgstr "檢視範圍"
 
 
 msgid "Select More/Less"
 msgstr "選取更多/更少"
+
+
+msgid "List"
+msgstr "列表"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -26635,32 +26699,12 @@ msgid "Select Loops"
 msgstr "選取迴圈"
 
 
-msgid "Gizmo"
-msgstr "操縱器"
-
-
-msgid "Instances"
-msgstr "實例化"
-
-
 msgid "Assign Material"
 msgstr "指派材質"
 
 
-msgid "Import"
-msgstr "匯入"
-
-
-msgid "Utilities"
-msgstr "效用"
-
-
 msgid "Metaball"
 msgstr "變幻球"
-
-
-msgid "Deprecated"
-msgstr "已棄用"
 
 
 msgid "Light"
@@ -26669,18 +26713,6 @@ msgstr "燈光"
 
 msgid "Light Probe"
 msgstr "燈光採樣器"
-
-
-msgid "List"
-msgstr "列表"
-
-
-msgid "Math"
-msgstr "數學公式"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -26707,14 +26739,6 @@ msgid "Quick Effects"
 msgstr "快速效果"
 
 
-msgid "Show/Hide"
-msgstr "顯示/隱藏"
-
-
-msgid "Clean Up"
-msgstr "清理"
-
-
 msgid "Asset"
 msgstr "素材"
 
@@ -26735,12 +26759,12 @@ msgid "Hooks"
 msgstr "鉤"
 
 
-msgid "Vertex Group Locks"
-msgstr "頂點群組鎖定"
-
-
 msgid "Trim/Add"
 msgstr "修剪/增加"
+
+
+msgid "Layout"
+msgstr "配置"
 
 
 msgid "Sculpt Set Pivot"
@@ -26771,12 +26795,24 @@ msgid "Bone Collections"
 msgstr "骨骼集盒"
 
 
-msgid "Names"
-msgstr "名稱"
+msgid "Adjust"
+msgstr "調整"
+
+
+msgid "Keying"
+msgstr "鍵處理"
+
+
+msgid "Tracking"
+msgstr "跟蹤"
 
 
 msgid "Toggle Bone Options"
 msgstr "開關骨骼選項"
+
+
+msgid "Render Preview"
+msgstr "算繪預覽"
 
 
 msgid "Enable Bone Options"
@@ -26791,6 +26827,10 @@ msgid "Mesh Select Mode"
 msgstr "網格選取模式"
 
 
+msgid "Creative"
+msgstr "創意"
+
+
 msgid "Face Data"
 msgstr "面資料"
 
@@ -26799,64 +26839,16 @@ msgid "Set Face Strength"
 msgstr "設定面強度"
 
 
-msgid "Layout"
-msgstr "配置"
-
-
 msgid "Merge"
 msgstr "合併"
-
-
-msgid "Adjust"
-msgstr "調整"
-
-
-msgid "Keying"
-msgstr "鍵處理"
 
 
 msgid "Special Characters"
 msgstr "特殊字元"
 
 
-msgid "Render Preview"
-msgstr "算繪預覽"
-
-
 msgid "Kerning"
 msgstr "字間微調"
-
-
-msgid "Tracking"
-msgstr "跟蹤"
-
-
-msgid "Creative"
-msgstr "創意"
-
-
-msgid "Bone Roll"
-msgstr "骨骼滾動"
-
-
-msgid "Pivot Point"
-msgstr "樞紐點"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "比例化編輯衰落"
-
-
-msgid "Mask Edit"
-msgstr "遮罩編輯"
-
-
-msgid "Automasking"
-msgstr "自動遮罩"
-
-
-msgid "Face Sets Edit"
-msgstr "面集編輯"
 
 
 msgid "Keyframe Insert Pie"
@@ -29343,6 +29335,10 @@ msgstr "使用淡化"
 
 msgid "Grease Pencil Color Modifier"
 msgstr "蠟筆色彩修改器"
+
+
+msgid "Stroke & Fill"
+msgstr "筆觸 & 填充"
 
 
 msgid "Color hue offset"
@@ -44615,10 +44611,6 @@ msgid "Side"
 msgstr "側"
 
 
-msgid "Both"
-msgstr "兩者"
-
-
 msgctxt "Operator"
 msgid "Euler Discontinuity Filter"
 msgstr "非連續性尤拉過濾器"
@@ -47797,24 +47789,13 @@ msgid "Merge selected vertices"
 msgstr "合併所選頂點"
 
 
+msgctxt "Mesh"
+msgid "Type"
+msgstr "類型"
+
+
 msgid "Merge method to use"
 msgstr "要使用的合併方法"
-
-
-msgid "At Center"
-msgstr "在中心"
-
-
-msgid "At Cursor"
-msgstr "在游標"
-
-
-msgid "At First"
-msgstr "到第一個"
-
-
-msgid "At Last"
-msgstr "到最後一個"
 
 
 msgid "Move UVs according to merge"
@@ -48439,11 +48420,6 @@ msgstr "隨機選取頂點"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "依屬性類型選取相似的頂點、邊線或面"
-
-
-msgctxt "Mesh"
-msgid "Type"
-msgstr "類型"
 
 
 msgctxt "Mesh"
@@ -61655,6 +61631,22 @@ msgid "Palette Splines"
 msgstr "調色盤雲型線"
 
 
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 動畫"
+
+
+msgid "Active Tool"
+msgstr "作用中工具"
+
+
+msgid "View Lock"
+msgstr "視圖鎖定"
+
+
 msgid "Shadow Settings"
 msgstr "陰影設定"
 
@@ -61761,22 +61753,6 @@ msgstr "glTF 變體"
 
 msgid "glTF Material Variants"
 msgstr "glTF 材質變體"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 動畫"
-
-
-msgid "Active Tool"
-msgstr "作用中工具"
-
-
-msgid "View Lock"
-msgstr "視圖鎖定"
 
 
 msgid "Import Settings"
@@ -67257,10 +67233,6 @@ msgstr "整合器取得不同噪訊樣式的的種子值"
 
 msgid "Use Open Shading Language"
 msgstr "使用開放式著色語言"
-
-
-msgid "No Limit"
-msgstr "無限制"
 
 
 msgid "Tile Size"
@@ -72808,14 +72780,6 @@ msgstr "聲音"
 
 msgid "Use Default Fade"
 msgstr "使用預設淡化"
-
-
-msgid "Use Linear Modifiers"
-msgstr "使用線性修改器"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "以線性空間而非序段編輯器空間來計算修改器"
 
 
 msgid "Sequence strip applying an effect on the images created by other strips"
@@ -79256,6 +79220,10 @@ msgid "Downloading \"{:s}\""
 msgstr "正在下載「{:s}」"
 
 
+msgid "Object Index"
+msgstr "物件索引"
+
+
 msgid "Denoising completed"
 msgstr "降噪已完成"
 
@@ -79454,10 +79422,6 @@ msgstr "視圖 BVH"
 
 msgid "Max Subdivision"
 msgstr "最大細分"
-
-
-msgid "Texture Limit"
-msgstr "紋理限制"
 
 
 msgid "Volume Resolution"
@@ -82639,10 +82603,6 @@ msgid "Cut To"
 msgstr "剪輯至"
 
 
-msgid "Linear Modifiers"
-msgstr "線性修改器"
-
-
 msgid "Second Basis"
 msgstr "第二基形"
 
@@ -84257,6 +84217,10 @@ msgid "Resolutions"
 msgstr "解析度"
 
 
+msgid "Workbench"
+msgstr "工作台"
+
+
 msgid "Preview Zoom"
 msgstr "預覽縮放"
 
@@ -84305,10 +84269,6 @@ msgstr "{:d} MB"
 
 msgid "Wrap Around"
 msgstr "環繞"
-
-
-msgid "All Data-Blocks"
-msgstr "所有資料組塊"
 
 
 msgctxt "Text"
@@ -87126,24 +87086,8 @@ msgid "%sAction"
 msgstr "%s動作"
 
 
-msgid "<No ID pointer>"
-msgstr "<無 ID 指標>"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "無 F 曲線可新增鍵幀"
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "無 RNA 指標可供鍵幀擷取值"
-
-
 msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "無 ID 塊與/或動畫資料可供刪除鍵幀"
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "無法插入鍵幀，因為給定 ID 的 RNA 路徑無效 (ID = %s，路徑 = %s)"
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -87160,6 +87104,22 @@ msgstr "無法清除鍵幀，因為給定 ID 的 RNA 路徑無效 (ID = %s，路
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "略過鍵處理集中的路徑，因為它沒有 ID (KS = '%s'，路徑 = '%s[%d]')"
+
+
+msgid "<No ID pointer>"
+msgstr "<無 ID 指標>"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "無 F 曲線可新增鍵幀"
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "無 RNA 指標可供鍵幀擷取值"
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "無法插入鍵幀，因為給定 ID 的 RNA 路徑無效 (ID = %s，路徑 = %s)"
 
 
 msgid "Named Layer node"
@@ -88188,10 +88148,6 @@ msgstr "將偏好設定→系統→著色器編譯方法設為「子程序」可
 
 msgid "Baking lighting..."
 msgstr "烘焙光照中..."
-
-
-msgid "Workbench"
-msgstr "工作台"
 
 
 msgid "Create"
@@ -92053,6 +92009,10 @@ msgid "Node tree type %s undefined"
 msgstr "節點樹類型 %s 尚未定義"
 
 
+msgid "Compositing..."
+msgstr "合成中..."
+
+
 msgid "Accessed named attributes:"
 msgstr "存取的命名特性："
 
@@ -92079,10 +92039,6 @@ msgstr " 具名的屬性"
 
 msgid " Named Attributes"
 msgstr " 具名的屬性"
-
-
-msgid "Compositing..."
-msgstr "合成中..."
 
 
 msgctxt "Operator"
@@ -96684,11 +96640,6 @@ msgid "Unused Output"
 msgstr "未使用的輸出"
 
 
-msgctxt "NodeTree"
-msgid "Missing Data-Block"
-msgstr "遺失資料區塊"
-
-
 msgid "Undefined Node Tree Type"
 msgstr "未定義的節點樹類型"
 
@@ -97045,10 +96996,6 @@ msgstr "色彩2"
 
 msgid "Dot"
 msgstr "點"
-
-
-msgid "Object Index"
-msgstr "物件索引"
 
 
 msgid "Color Fac"

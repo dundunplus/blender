@@ -28,20 +28,20 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh to set the custom normals on");
-  b.add_output<decl::Geometry>("Mesh").propagate_all().align_with_previous();
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all().align_with_previous();
   if (const bNode *node = b.node_or_null()) {
     switch (Mode(node->custom1)) {
       case Mode::Sharpness:
-        b.add_input<decl::Bool>("Remove Custom").default_value(true);
-        b.add_input<decl::Bool>("Edge Sharpness").field_on_all();
-        b.add_input<decl::Bool>("Face Sharpness").field_on_all();
+        b.add_input<decl::Bool>("Remove Custom"_ustr).default_value(true);
+        b.add_input<decl::Bool>("Edge Sharpness"_ustr).field_on_all();
+        b.add_input<decl::Bool>("Face Sharpness"_ustr).field_on_all();
         break;
       case Mode::Free:
       case Mode::CornerFanSpace:
-        b.add_input<decl::Vector>("Custom Normal")
+        b.add_input<decl::Vector>("Custom Normal"_ustr)
             .subtype(PROP_XYZ)
             .implicit_field_on_all(NODE_DEFAULT_INPUT_NORMAL_FIELD)
             .hide_value();

@@ -14,8 +14,8 @@ namespace blender::nodes::node_fn_euler_to_rotation_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Euler").subtype(PROP_EULER);
-  b.add_output<decl::Rotation>("Rotation");
+  b.add_input<decl::Vector>("Euler"_ustr).subtype(PROP_EULER);
+  b.add_output<decl::Rotation>("Rotation"_ustr);
 };
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

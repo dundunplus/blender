@@ -466,13 +466,14 @@ static bool is_noncolor_pass(eScenePassType pass_type)
 }
 
 /* if all is good tag image and return true */
-static bool bake_object_check(const Scene *scene,
+static bool bake_object_check(const Main &bmain,
+                              const Scene *scene,
                               ViewLayer *view_layer,
                               Object *ob,
                               const eBakeTarget target,
                               ReportList *reports)
 {
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, ob);
 
   if (base == nullptr) {
@@ -663,7 +664,7 @@ static bool bake_objects_check(Main *bmain,
   if (is_selected_to_active) {
     int tot_objects = 0;
 
-    if (!bake_object_check(scene, view_layer, ob, target, reports)) {
+    if (!bake_object_check(*bmain, scene, view_layer, ob, target, reports)) {
       return false;
     }
 
@@ -696,7 +697,8 @@ static bool bake_objects_check(Main *bmain,
     }
 
     for (const PointerRNA &ptr : selected_objects) {
-      if (!bake_object_check(scene, view_layer, static_cast<Object *>(ptr.data), target, reports))
+      if (!bake_object_check(
+              *bmain, scene, view_layer, static_cast<Object *>(ptr.data), target, reports))
       {
         return false;
       }

@@ -14,8 +14,8 @@ namespace blender::nodes::node_geo_grid_gradient_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output<decl::Vector>("Gradient").structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Vector>("Gradient"_ustr).structure_type(StructureType::Grid);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

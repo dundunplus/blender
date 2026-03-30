@@ -34,13 +34,13 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry").description("Geometry to remove attributes from");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Menu>("Pattern Mode")
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to remove attributes from");
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Menu>("Pattern Mode"_ustr)
       .static_items(pattern_mode_items)
       .optional_label()
       .description("How the attributes to remove are chosen");
-  b.add_input<decl::String>("Name").is_attribute_name().optional_label();
+  b.add_input<decl::String>("Name"_ustr).is_attribute_name().optional_label();
 }
 
 struct RemoveAttributeParams {

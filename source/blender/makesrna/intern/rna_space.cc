@@ -1765,7 +1765,7 @@ static void rna_SpaceView3D_use_local_collections_update(bContext *C, PointerRNA
   View3D *v3d = static_cast<View3D *>(ptr->data);
 
   if (ED_view3d_local_collections_set(bmain, v3d)) {
-    BKE_layer_collection_local_sync(scene, view_layer, v3d);
+    BKE_layer_collection_local_sync(*bmain, scene, view_layer, v3d);
     DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
   }
 }
@@ -1954,7 +1954,9 @@ static bool rna_SpaceImageEditor_show_uvedit_get(PointerRNA *ptr)
   if (win != nullptr) {
     Scene *scene = WM_window_get_active_scene(win);
     ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    /* FIXME Using G_MAIN is weak, but should work in practrice given current context (code already
+     * relies on 'G_MAIN data'). */
+    BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
     obedit = BKE_view_layer_edit_object_get(view_layer);
   }
   return ED_space_image_show_uvedit(sima, obedit);
@@ -1969,7 +1971,9 @@ static bool rna_SpaceImageEditor_show_maskedit_get(PointerRNA *ptr)
   if (win != nullptr) {
     Scene *scene = WM_window_get_active_scene(win);
     ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    /* FIXME Using G_MAIN is weak, but should work in practrice given current context (code already
+     * relies on 'G_MAIN data'). */
+    BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
     obedit = BKE_view_layer_edit_object_get(view_layer);
   }
   return ED_space_image_check_show_maskedit(sima, obedit);

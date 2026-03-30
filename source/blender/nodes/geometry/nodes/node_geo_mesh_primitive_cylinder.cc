@@ -21,37 +21,40 @@ NODE_STORAGE_FUNCS(NodeGeometryMeshCylinder)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Vertices")
+  b.add_input<decl::Int>("Vertices"_ustr)
       .default_value(32)
       .min(3)
       .max(512)
       .description("The number of vertices on the top and bottom circles");
-  b.add_input<decl::Int>("Side Segments")
+  b.add_input<decl::Int>("Side Segments"_ustr)
       .default_value(1)
       .min(1)
       .max(512)
       .description("The number of rectangular segments along each side");
-  auto &fill = b.add_input<decl::Int>("Fill Segments")
+  auto &fill = b.add_input<decl::Int>("Fill Segments"_ustr)
                    .default_value(1)
                    .min(1)
                    .max(512)
                    .description("The number of concentric rings used to fill the round faces");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("The radius of the cylinder");
-  b.add_input<decl::Float>("Depth")
+  b.add_input<decl::Float>("Depth"_ustr)
       .default_value(2.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("The height of the cylinder");
-  b.add_output<decl::Geometry>("Mesh");
-  b.add_output<decl::Bool>("Top").field_on_all().translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_output<decl::Bool>("Side").field_on_all();
-  b.add_output<decl::Bool>("Bottom").field_on_all().translation_context(
-      BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_output<decl::Vector>("UV Map").field_on_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr);
+  b.add_output<decl::Bool>("Top"_ustr)
+      .field_on_all()
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_output<decl::Bool>("Side"_ustr).field_on_all();
+  b.add_output<decl::Bool>("Bottom"_ustr)
+      .field_on_all()
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_output<decl::Vector>("UV Map"_ustr).field_on_all();
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {

@@ -16,7 +16,7 @@
 
 #include "eevee_lightprobe_lib.glsl"
 #include "eevee_sampling_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 #include "gpu_shader_math_base_lib.glsl"
 
 /**
@@ -112,11 +112,11 @@ float3 lightprobe_volume_grid_bias_sample_coord(VolumeProbeData grid_data,
   return 0.5f + cell_start + trilinear_coord;
 }
 
-SphericalHarmonicL1 lightprobe_volume_sample_atlas(sampler3D atlas_tx, float3 atlas_coord)
+SphericalHarmonicL1<float4> lightprobe_volume_sample_atlas(sampler3D atlas_tx, float3 atlas_coord)
 {
   float4 texture_coord = float4(atlas_coord, float(IRRADIANCE_GRID_BRICK_SIZE)) /
                          float3(textureSize(atlas_tx, 0)).xyzz;
-  SphericalHarmonicL1 sh;
+  SphericalHarmonicL1<float4> sh;
   sh.L0.M0 = textureLod(atlas_tx, texture_coord.xyz, 0.0f);
   texture_coord.z += texture_coord.w;
   sh.L1.Mn1 = textureLod(atlas_tx, texture_coord.xyz, 0.0f);
@@ -127,7 +127,7 @@ SphericalHarmonicL1 lightprobe_volume_sample_atlas(sampler3D atlas_tx, float3 at
   return sh;
 }
 
-SphericalHarmonicL1 lightprobe_volume_sample(
+SphericalHarmonicL1<float4> lightprobe_volume_sample(
     sampler3D atlas_tx, float3 P, float3 V, float3 Ng, const bool do_bias)
 {
   float3 lP;
@@ -198,18 +198,18 @@ SphericalHarmonicL1 lightprobe_volume_sample(
   return lightprobe_volume_sample_atlas(atlas_tx, atlas_coord);
 }
 
-SphericalHarmonicL1 lightprobe_volume_world()
+SphericalHarmonicL1<float4> lightprobe_volume_world()
 {
   /* We need a 0.5 offset because of filtering. */
   return lightprobe_volume_sample_atlas(irradiance_atlas_tx, float3(0.5001f));
 }
 
-SphericalHarmonicL1 lightprobe_volume_sample(float3 P)
+SphericalHarmonicL1<float4> lightprobe_volume_sample(float3 P)
 {
   return lightprobe_volume_sample(irradiance_atlas_tx, P, float3(0), float3(0), false);
 }
 
-SphericalHarmonicL1 lightprobe_volume_sample(float3 P, float3 V, float3 Ng)
+SphericalHarmonicL1<float4> lightprobe_volume_sample(float3 P, float3 V, float3 Ng)
 {
   return lightprobe_volume_sample(irradiance_atlas_tx, P, V, Ng, true);
 }

@@ -132,13 +132,13 @@ float3 volume_light_eval(
 
 float3 volume_lightprobe_eval(float3 P, float3 V, float s_anisotropy)
 {
-  SphericalHarmonicL1 phase_sh = volume_phase_function_as_sh_L1(V, s_anisotropy);
-  SphericalHarmonicL1 volume_radiance_sh = lightprobe_volume_sample(P);
+  SphericalHarmonicL1<float4> phase_sh = volume_phase_function_as_sh_L1(V, s_anisotropy);
+  SphericalHarmonicL1<float4> volume_radiance_sh = lightprobe_volume_sample(P);
 
   float clamp_indirect = uniform_buf.clamp.volume_indirect;
-  volume_radiance_sh = spherical_harmonics_clamp(volume_radiance_sh, clamp_indirect);
+  volume_radiance_sh = spherical_harmonics::clamp_energy(volume_radiance_sh, clamp_indirect);
 
-  return spherical_harmonics_dot(volume_radiance_sh, phase_sh).xyz;
+  return spherical_harmonics::dot(volume_radiance_sh, phase_sh).xyz;
 }
 
 #endif

@@ -1756,6 +1756,8 @@ static bool write_file_handle(Main *mainvar,
   wd->debug_dst = debug_dst;
   BlendWriter writer = {wd};
 
+  BKE_main_view_layers_synced_ensure(mainvar);
+
   prepare_stable_data_block_ids(*wd, *mainvar);
 
   /* Clear 'directly linked' flag for all linked data, these are not necessarily valid/up-to-date

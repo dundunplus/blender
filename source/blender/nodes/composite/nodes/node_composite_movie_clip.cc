@@ -28,12 +28,12 @@ namespace blender::nodes::node_composite_movie_clip_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Offset X");
-  b.add_output<decl::Float>("Offset Y");
-  b.add_output<decl::Float>("Scale");
-  b.add_output<decl::Float>("Angle");
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Offset X"_ustr);
+  b.add_output<decl::Float>("Offset Y"_ustr);
+  b.add_output<decl::Float>("Scale"_ustr);
+  b.add_output<decl::Float>("Angle"_ustr);
 }
 
 static void node_init(const bContext *C, PointerRNA *ptr)

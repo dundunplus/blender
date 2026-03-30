@@ -8,7 +8,7 @@ namespace blender::nodes::node_geo_input_index_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Index").field_source();
+  b.add_output<decl::Int>("Index"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

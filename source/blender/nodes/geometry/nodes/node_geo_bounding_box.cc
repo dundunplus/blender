@@ -12,20 +12,20 @@ namespace blender::nodes::node_geo_bounding_box_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .description(
           "Geometry to compute the bounding box of. Instances have to be realized before the full "
           "bounding box can be computed");
-  b.add_input<decl::Bool>("Use Radius")
+  b.add_input<decl::Bool>("Use Radius"_ustr)
       .default_value(true)
       .description(
           "For curves, point clouds, and Grease Pencil, take the radius attribute into account "
           "when computing the bounds.");
-  b.add_output<decl::Geometry>("Bounding Box")
+  b.add_output<decl::Geometry>("Bounding Box"_ustr)
       .propagate_all_instance_attributes()
       .description("A cube mesh enclosing the input geometry");
-  b.add_output<decl::Vector>("Min");
-  b.add_output<decl::Vector>("Max");
+  b.add_output<decl::Vector>("Min"_ustr);
+  b.add_output<decl::Vector>("Max"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

@@ -12,7 +12,7 @@ namespace blender::nodes::node_geo_input_active_camera_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Object>("Active Camera")
+  b.add_output<decl::Object>("Active Camera"_ustr)
       .description("The camera used for rendering the scene");
 }
 

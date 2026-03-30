@@ -14,12 +14,12 @@ namespace blender::nodes::node_geo_edges_to_face_groups_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Boundary Edges")
+  b.add_input<decl::Bool>("Boundary Edges"_ustr)
       .default_value(true)
       .hide_value()
       .supports_field()
       .description("Edges used to split faces into separate groups");
-  b.add_output<decl::Int>("Face Group ID")
+  b.add_output<decl::Int>("Face Group ID"_ustr)
       .field_source_reference_all()
       .description("Index of the face group inside each boundary edge region");
 }

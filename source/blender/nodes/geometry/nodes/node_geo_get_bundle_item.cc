@@ -26,12 +26,15 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_default_layout();
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Bundle>("Bundle");
-  b.add_output<decl::Bundle>("Bundle").align_with_previous().propagate_all().reference_pass_all();
+  b.add_input<decl::Bundle>("Bundle"_ustr);
+  b.add_output<decl::Bundle>("Bundle"_ustr)
+      .align_with_previous()
+      .propagate_all()
+      .reference_pass_all();
   if (node != nullptr) {
     const NodeGetBundleItem &storage = node_storage(*node);
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(storage.socket_type);
-    auto &decl = b.add_output(socket_type, "Item");
+    auto &decl = b.add_output(socket_type, "Item"_ustr);
     if (storage.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
       decl.structure_type(StructureType::Dynamic);
     }
@@ -39,9 +42,9 @@ static void node_declare(NodeDeclarationBuilder &b)
       decl.structure_type(StructureType(storage.structure_type));
     }
   }
-  b.add_output<decl::Bool>("Exists");
-  b.add_input<decl::String>("Path").optional_label();
-  b.add_input<decl::Bool>("Remove");
+  b.add_output<decl::Bool>("Exists"_ustr);
+  b.add_input<decl::String>("Path"_ustr).optional_label();
+  b.add_input<decl::Bool>("Remove"_ustr);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

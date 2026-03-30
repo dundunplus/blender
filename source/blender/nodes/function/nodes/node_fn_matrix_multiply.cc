@@ -16,9 +16,9 @@ namespace blender::nodes::node_fn_matrix_multiply_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Matrix>("Matrix");
-  b.add_input<decl::Matrix>("Matrix", "Matrix_001");
-  b.add_output<decl::Matrix>("Matrix");
+  b.add_input<decl::Matrix>("Matrix"_ustr);
+  b.add_input<decl::Matrix>("Matrix"_ustr, "Matrix_001"_ustr);
+  b.add_output<decl::Matrix>("Matrix"_ustr);
 }
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

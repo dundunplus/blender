@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -3292,6 +3292,10 @@ msgid "Action data-blocks"
 msgstr "செயல் தரவு-தொகுதிகள்"
 
 
+msgid "All Data-Blocks"
+msgstr "அனைத்து தரவு-தொகுதிகளும்"
+
+
 msgid "Annotation"
 msgstr "சிறுகுறி"
 
@@ -6290,24 +6294,12 @@ msgid "Stroke"
 msgstr "வீச்சு"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "வெர்டெக்ச் வண்ணம் பக்கவாதத்திற்கு மட்டுமே பாதிக்கிறது"
-
-
 msgid "Fill"
 msgstr "நிரப்பவும்"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "வெர்டெக்ச் வண்ணம் நிரப்ப மட்டுமே பாதிக்கிறது"
-
-
-msgid "Stroke & Fill"
-msgstr "வீச்சு & நிரப்பு"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "வெர்டெக்ச் வண்ணம் வீச்சு மற்றும் நிரப்புதலுக்கு பாதிப்பை ஏற்படுத்துகிறது"
+msgid "Both"
+msgstr "இரண்டும்"
 
 
 msgid "Byte Color Attribute Value"
@@ -23909,10 +23901,6 @@ msgid "Half Float Precision"
 msgstr "அரை மிதவை மதிப்புகளருகில்"
 
 
-msgid "Use 16 bits per channel to lower the memory usage during rendering"
-msgstr "வழங்குதல் போது நினைவக பயன்பாட்டைக் குறைக்க சேனலுக்கு 16 பிட்களைப் பயன்படுத்தவும்"
-
-
 msgid "Use Multi-View"
 msgstr "மல்டி வியூவைப் பயன்படுத்தவும்"
 
@@ -35198,12 +35186,88 @@ msgid "Editor menu containing buttons"
 msgstr "பொத்தான்களைக் கொண்ட திருத்தி பட்டியல்"
 
 
-msgid "Mirror"
-msgstr "கண்ணாடி"
+msgid "Math"
+msgstr "கணிதம்"
+
+
+msgid "Names"
+msgstr "பெயர்கள்"
+
+
+msgid "Utilities"
+msgstr "பயன்பாடுகள்"
+
+
+msgid "Bone Roll"
+msgstr "எலும்பு ரோல்"
+
+
+msgid "Show/Hide"
+msgstr "காட்டு/மறைக்க"
+
+
+msgid "Clean Up"
+msgstr "தூய்மை செய்"
+
+
+msgid "Pivot Point"
+msgstr "பிவோட் புள்ளி"
 
 
 msgid "Snap"
 msgstr "ச்னாப்"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "விகிதாசார திருத்துதல் வீழ்ச்சி"
+
+
+msgid "Read"
+msgstr "படி"
+
+
+msgid "Mask Edit"
+msgstr "முகமூடி திருத்து"
+
+
+msgid "Sample"
+msgstr "மாதிரி"
+
+
+msgid "Automasking"
+msgstr "ஆட்டோமேச்கிங்"
+
+
+msgid "Write"
+msgstr "எழுதுங்கள்"
+
+
+msgid "Face Sets Edit"
+msgstr "முகம் தொகுப்புகள் திருத்து"
+
+
+msgid "Primitives"
+msgstr "ப்ரைமிடிவ்ச்"
+
+
+msgid "Vertex Group Locks"
+msgstr "வெர்டெக்ச் குழு பூட்டுகள்"
+
+
+msgid "Gizmo"
+msgstr "கிச்மோ"
+
+
+msgid "Instances"
+msgstr "நிகழ்வுகள்"
+
+
+msgid "Import"
+msgstr "இறக்குமதி"
+
+
+msgid "Mirror"
+msgstr "கண்ணாடி"
 
 
 msgid "UV Mapping"
@@ -35214,24 +35278,16 @@ msgid "Local View"
 msgstr "உள்ளக பார்வை"
 
 
-msgid "Read"
-msgstr "படி"
-
-
 msgid "Viewpoint"
 msgstr "பார்வை"
-
-
-msgid "Sample"
-msgstr "மாதிரி"
 
 
 msgid "Navigation"
 msgstr "வழிசெலுத்தல்"
 
 
-msgid "Write"
-msgstr "எழுதுங்கள்"
+msgid "Deprecated"
+msgstr "மதிப்பிடப்பட்டது"
 
 
 msgid "Align View"
@@ -35242,16 +35298,20 @@ msgid "Align View to Active"
 msgstr "செயலில் பார்வையை சீரமைக்கவும்"
 
 
-msgid "Primitives"
-msgstr "ப்ரைமிடிவ்ச்"
-
-
 msgid "View Regions"
 msgstr "மண்டலங்களைக் காண்க"
 
 
 msgid "Select More/Less"
 msgstr "மேலும்/குறைவாக தேர்ந்தெடுக்கவும்"
+
+
+msgid "List"
+msgstr "பட்டியல்"
+
+
+msgid "UV"
+msgstr "புறஊதா"
 
 
 msgid "Select Similar"
@@ -35270,32 +35330,12 @@ msgid "Select Loops"
 msgstr "சுழல்களைத் தேர்ந்தெடுக்கவும்"
 
 
-msgid "Gizmo"
-msgstr "கிச்மோ"
-
-
-msgid "Instances"
-msgstr "நிகழ்வுகள்"
-
-
 msgid "Assign Material"
 msgstr "மூலப்பொருள் ஒதுக்க"
 
 
-msgid "Import"
-msgstr "இறக்குமதி"
-
-
-msgid "Utilities"
-msgstr "பயன்பாடுகள்"
-
-
 msgid "Metaball"
 msgstr "வளர்சிதை மாற்ற"
-
-
-msgid "Deprecated"
-msgstr "மதிப்பிடப்பட்டது"
 
 
 msgid "Light"
@@ -35304,18 +35344,6 @@ msgstr "ஒளி"
 
 msgid "Light Probe"
 msgstr "ஒளி ஆய்வு"
-
-
-msgid "List"
-msgstr "பட்டியல்"
-
-
-msgid "Math"
-msgstr "கணிதம்"
-
-
-msgid "UV"
-msgstr "புறஊதா"
 
 
 msgid "Add Image"
@@ -35342,14 +35370,6 @@ msgid "Quick Effects"
 msgstr "விரைவான விளைவுகள்"
 
 
-msgid "Show/Hide"
-msgstr "காட்டு/மறைக்க"
-
-
-msgid "Clean Up"
-msgstr "தூய்மை செய்"
-
-
 msgid "Asset"
 msgstr "சொத்து"
 
@@ -35370,12 +35390,12 @@ msgid "Hooks"
 msgstr "கொக்கிகள்"
 
 
-msgid "Vertex Group Locks"
-msgstr "வெர்டெக்ச் குழு பூட்டுகள்"
-
-
 msgid "Trim/Add"
 msgstr "டிரிம்/சேர்"
+
+
+msgid "Layout"
+msgstr "தளவமைப்பு"
 
 
 msgid "Sculpt Set Pivot"
@@ -35406,12 +35426,24 @@ msgid "Bone Collections"
 msgstr "எலும்பு வசூல்"
 
 
-msgid "Names"
-msgstr "பெயர்கள்"
+msgid "Adjust"
+msgstr "சரிசெய்யவும்"
+
+
+msgid "Keying"
+msgstr "கீயிங்"
+
+
+msgid "Tracking"
+msgstr "கண்காணிப்பு"
 
 
 msgid "Toggle Bone Options"
 msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
+
+
+msgid "Render Preview"
+msgstr "வழங்குதல் முன்னோட்டம்"
 
 
 msgid "Enable Bone Options"
@@ -35426,6 +35458,10 @@ msgid "Mesh Select Mode"
 msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
 
 
+msgid "Creative"
+msgstr "படைப்பாற்றல்"
+
+
 msgid "Face Data"
 msgstr "முகத்தை முகம்"
 
@@ -35438,64 +35474,16 @@ msgid "Set Face Strength"
 msgstr "முக வலிமையை அமைக்கவும்"
 
 
-msgid "Layout"
-msgstr "தளவமைப்பு"
-
-
 msgid "Merge"
 msgstr "ஒன்றிணைக்கவும்"
-
-
-msgid "Adjust"
-msgstr "சரிசெய்யவும்"
-
-
-msgid "Keying"
-msgstr "கீயிங்"
 
 
 msgid "Special Characters"
 msgstr "சிறப்பு எழுத்துக்கள்"
 
 
-msgid "Render Preview"
-msgstr "வழங்குதல் முன்னோட்டம்"
-
-
 msgid "Kerning"
 msgstr "கெர்னிங்"
-
-
-msgid "Tracking"
-msgstr "கண்காணிப்பு"
-
-
-msgid "Creative"
-msgstr "படைப்பாற்றல்"
-
-
-msgid "Bone Roll"
-msgstr "எலும்பு ரோல்"
-
-
-msgid "Pivot Point"
-msgstr "பிவோட் புள்ளி"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "விகிதாசார திருத்துதல் வீழ்ச்சி"
-
-
-msgid "Mask Edit"
-msgstr "முகமூடி திருத்து"
-
-
-msgid "Automasking"
-msgstr "ஆட்டோமேச்கிங்"
-
-
-msgid "Face Sets Edit"
-msgstr "முகம் தொகுப்புகள் திருத்து"
 
 
 msgid "Keyframe Insert Pie"
@@ -39272,6 +39260,10 @@ msgstr "கிரீச் பென்சில் வண்ண மாற்ற
 
 msgid "Attributes to modify"
 msgstr "மாற்றுவதற்கான பண்புக்கூறுகள்"
+
+
+msgid "Stroke & Fill"
+msgstr "வீச்சு & நிரப்பு"
 
 
 msgid "Modify fill and stroke colors"
@@ -60795,8 +60787,8 @@ msgid "Set Handle Type"
 msgstr "கைப்பிடி வகையை அமைக்கவும்"
 
 
-msgid "Set the handle type for bezier curves"
-msgstr "பெசியர் வளைவுகளுக்கு கைப்பிடி வகையை அமைக்கவும்"
+msgid "Set the handle type for Bézier curves"
+msgstr "Bézier வளைவுகளுக்கு கைப்பிடி வகையை அமைக்கவும்"
 
 
 msgid "Toggle Free/Align"
@@ -64892,10 +64884,6 @@ msgid "Equalize selected keyframes' right handles"
 msgstr "தேர்ந்தெடுக்கப்பட்ட கீஃப்ரேம்களின் வலது கைப்பிடிகளை சமப்படுத்தவும்"
 
 
-msgid "Both"
-msgstr "இரண்டும்"
-
-
 msgid "Equalize both of a keyframe's handles"
 msgstr "கீஃப்ரேம் கைப்பிடிகள் இரண்டையும் சமப்படுத்தவும்"
 
@@ -66780,10 +66768,6 @@ msgstr "தேர்ந்தெடுக்கப்பட்ட வளைவ�
 
 msgid "The resolution to use for each curve segment"
 msgstr "ஒவ்வொரு வளைவு பிரிவிற்கும் பயன்படுத்துவதற்கான தீர்மானம்"
-
-
-msgid "Set the handle type for Bézier curves"
-msgstr "Bézier வளைவுகளுக்கு கைப்பிடி வகையை அமைக்கவும்"
 
 
 msgid "Set active material"
@@ -70403,24 +70387,13 @@ msgid "Merge selected vertices"
 msgstr "தேர்ந்தெடுக்கப்பட்ட செங்குத்துகளை ஒன்றிணைக்கவும்"
 
 
+msgctxt "Mesh"
+msgid "Type"
+msgstr "தட்டச்சு செய்க"
+
+
 msgid "Merge method to use"
 msgstr "பயன்படுத்த முறை ஒன்றிணைக்கவும்"
-
-
-msgid "At Center"
-msgstr "மையத்தில்"
-
-
-msgid "At Cursor"
-msgstr "கர்சரில்"
-
-
-msgid "At First"
-msgstr "முதலில்"
-
-
-msgid "At Last"
-msgstr "கடைசியாக"
 
 
 msgid "Move UVs according to merge"
@@ -71355,11 +71328,6 @@ msgstr "தோராயமாக செங்குத்துகளைத் �
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "சொத்து வகைகளால் ஒத்த செங்குத்துகள், விளிம்புகள் அல்லது முகங்களைத் தேர்ந்தெடுக்கவும்"
-
-
-msgctxt "Mesh"
-msgid "Type"
-msgstr "தட்டச்சு செய்க"
 
 
 msgctxt "Mesh"
@@ -91949,18 +91917,6 @@ msgid "Editable cavity curve"
 msgstr "திருத்தக்கூடிய குழி வளைவு"
 
 
-msgid "Default Eraser Brush"
-msgstr "இயல்புநிலை அழிப்பான் தூரிகை"
-
-
-msgid "Default eraser brush for quickly alternating with the main brush"
-msgstr "முதன்மையான தூரிகையுடன் விரைவாக மாற்றுவதற்கான இயல்புநிலை அழிப்பான் தூரிகை"
-
-
-msgid "Eraser Brush Asset Reference"
-msgstr "அழிப்பான் தூரிகை சொத்து குறிப்பு"
-
-
 msgid "Active Palette"
 msgstr "செயலில் தட்டு"
 
@@ -92469,6 +92425,22 @@ msgid "Panel containing UI elements"
 msgstr "இடைமுகம் கூறுகளைக் கொண்ட குழு"
 
 
+msgid "glTF"
+msgstr "gltf"
+
+
+msgid "glTF Animations"
+msgstr "GLTF அனிமேசன்கள்"
+
+
+msgid "Active Tool"
+msgstr "செயலில் உள்ள கருவி"
+
+
+msgid "View Lock"
+msgstr "பூட்டைக் காண்க"
+
+
 msgid "Selectability & Visibility"
 msgstr "தேர்ந்தெடுக்கும் தன்மை மற்றும் தெரிவுநிலை"
 
@@ -92591,22 +92563,6 @@ msgstr "gltf வகைகள்"
 
 msgid "glTF Material Variants"
 msgstr "GLTF பொருள் மாறுபாடுகள்"
-
-
-msgid "glTF"
-msgstr "gltf"
-
-
-msgid "glTF Animations"
-msgstr "GLTF அனிமேசன்கள்"
-
-
-msgid "Active Tool"
-msgstr "செயலில் உள்ள கருவி"
-
-
-msgid "View Lock"
-msgstr "பூட்டைக் காண்க"
 
 
 msgid "Import Settings"
@@ -98058,10 +98014,6 @@ msgid "Swahili - Kiswahili"
 msgstr "சுவாஇலி - சுவாஇலி"
 
 
-msgid "Locale code: sw. Translation progress: 72%"
-msgstr "மொழி குறியீடு: sw. மொழிபெயர்ப்பு முன்னேற்றம்: 72%"
-
-
 msgid "Swedish - Svenska"
 msgstr "ச்வீடிச் - ச்வீடிச்"
 
@@ -99837,10 +99789,6 @@ msgid "Passes used by the denoiser to distinguish noise from shader and geometry
 msgstr "சேடர் மற்றும் வடிவியல் விவரங்களிலிருந்து சத்தத்தை வேறுபடுத்த டெனோசர் பயன்படுத்தும் பாச்கள்"
 
 
-msgid "Don't use utility passes for denoising"
-msgstr "டெனோயிங் செய்வதற்கு பயன்பாட்டு பாச்களைப் பயன்படுத்த வேண்டாம்"
-
-
 msgid "Albedo"
 msgstr "ஆல்பெடோ"
 
@@ -100337,58 +100285,6 @@ msgid "The probability of guiding a direction on a surface"
 msgstr "ஒரு மேற்பரப்பில் ஒரு திசையை வழிநடத்தும் நிகழ்தகவு"
 
 
-msgid "Viewport Texture Limit"
-msgstr "viewport அமைப்பு வரம்பு"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "வியூபோர்ட் வழங்குதல் பயன்படுத்தும் அமைப்பு அளவைக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "No Limit"
-msgstr "எல்லை இல்லாத"
-
-
-msgid "No texture size limit"
-msgstr "அமைப்பு அளவு வரம்பு இல்லை"
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "அமைப்பு அளவை 128 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "அமைப்பு அளவை 256 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "அமைப்பு அளவை 512 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "அமைப்பு அளவை 1024 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "அமைப்பு அளவை 2048 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "அமைப்பு அளவை 4096 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "அமைப்பு அளவை 8192 பிக்சல்களாகக் கட்டுப்படுத்துங்கள்"
-
-
-msgid "Render Texture Limit"
-msgstr "அமைப்பு வரம்பை வழங்கவும்"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "இறுதி வழங்குதல் மூலம் பயன்படுத்தப்படும் அமைப்பு அளவைக் கட்டுப்படுத்துங்கள்"
-
-
 msgid "Tile Size"
 msgstr "ஓடு அளவு"
 
@@ -100779,10 +100675,6 @@ msgstr "மாதிரி முறை"
 
 msgid "How to sample the background light"
 msgstr "பின்னணி ஒளியை எவ்வாறு மாதிரி செய்வது"
-
-
-msgid "Don't sample the background, faster but might cause noise for non-solid backgrounds"
-msgstr "பின்னணியை மாதிரியாக, வேகமாக மாதிரி செய்யாதீர்கள், ஆனால் திடமற்ற பின்னணிக்கு சத்தத்தை ஏற்படுத்தக்கூடும்"
 
 
 msgid "Automatically try to determine the best setting"
@@ -102972,10 +102864,6 @@ msgstr "வரிசைமுறை கீற்றுகள் இருந்�
 
 msgid "Override Scene Settings"
 msgstr "காட்சி அமைப்புகளை மீறவும்"
-
-
-msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
-msgstr "உரிபில் பயன்படுத்தப்படும் ஒவ்வொரு தனிப்பட்ட காட்சிக்கும் பதிலாக, சீக்வென்சர் காட்சியில் இருந்து வொர்க் பெஞ்ச் வழங்குதல் அமைப்புகளைப் பயன்படுத்தவும்"
 
 
 msgid "Use Simplify"
@@ -109142,14 +109030,6 @@ msgstr "இயல்புநிலை மங்கலைப் பயன்ப�
 
 msgid "Fade effect using the built-in default (usually makes the transition as long as the effect strip)"
 msgstr "உள்ளமைக்கப்பட்ட இயல்புநிலையைப் பயன்படுத்தி மங்கல் விளைவு (வழக்கமாக விளைவு துண்டு வரை மாற்றத்தை ஏற்படுத்துகிறது)"
-
-
-msgid "Use Linear Modifiers"
-msgstr "நேரியல் மாற்றிகளைப் பயன்படுத்தவும்"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "சீக்வென்சரின் இடத்திற்கு பதிலாக நேரியல் இடத்தில் மாற்றியமைப்பாளர்களைக் கணக்கிடுங்கள்"
 
 
 msgid "Sequence strip applying an effect on the images created by other strips"
@@ -120189,6 +120069,10 @@ msgid "OSL support disabled in this build"
 msgstr "இந்த கட்டமைப்பில் osl உதவி முடக்கப்பட்டுள்ளது"
 
 
+msgid "Object Index"
+msgstr "பொருள் அட்டவணை"
+
+
 msgid "Denoising completed"
 msgstr "டெனோயிங் முடிந்தது"
 
@@ -120487,10 +120371,6 @@ msgstr "வியூபோர்ட் பி.வி.எச்"
 
 msgid "Max Subdivision"
 msgstr "அதிகபட்ச துணைப்பிரிவு"
-
-
-msgid "Texture Limit"
-msgstr "அமைப்பு வரம்பு"
 
 
 msgid "Volume Resolution"
@@ -125615,10 +125495,6 @@ msgid "Two or more channels are needed below this strip"
 msgstr "இந்த துண்டுக்கு கீழே இரண்டு அல்லது அதற்கு மேற்பட்ட சேனல்கள் தேவை"
 
 
-msgid "Linear Modifiers"
-msgstr "நேரியல் மாற்றிகள்"
-
-
 msgid "Second Basis"
 msgstr "இரண்டாம் அடிப்படை"
 
@@ -127646,6 +127522,10 @@ msgid "Resolutions"
 msgstr "தீர்மானங்கள்"
 
 
+msgid "Workbench"
+msgstr "பணிப்பெண்"
+
+
 msgid "Preview Zoom"
 msgstr "முன்னோட்டம் சூம்"
 
@@ -127708,10 +127588,6 @@ msgstr "உள் பண்புக்கூறுகள்"
 
 msgid "Wrap Around"
 msgstr "சுற்றி மடக்கு"
-
-
-msgid "All Data-Blocks"
-msgstr "அனைத்து தரவு-தொகுதிகளும்"
 
 
 msgctxt "Text"
@@ -131168,20 +131044,8 @@ msgid "Inserting keyframes failed:"
 msgstr "கீஃப்ரேம்களை செருகுவது தோல்வியுற்றது:"
 
 
-msgid "<No ID pointer>"
-msgstr "<ஐடி சுட்டிக்காட்டி இல்லை>"
-
-
 msgid "Encountered unhandled error during keyframing"
 msgstr "கீஃப்மிங்கின் போது தடையற்ற பிழை ஏற்பட்டது"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "கீஃப்ரேம்களைச் சேர்க்க எஃப்-வளைவும் இல்லை"
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "கீஃப்மிங்கிற்கான மதிப்புகளை மீட்டெடுக்க ஆர்என்ஏ சுட்டிக்காட்டி எதுவும் கிடைக்கவில்லை"
 
 
 msgid "No ID block and/or AnimData to delete keyframe from"
@@ -131190,18 +131054,6 @@ msgstr "கீஃப்ரேமை நீக்க ஐடி பிளாக்
 
 msgid "No keys have been inserted and no errors have been reported."
 msgstr "விசைகள் எதுவும் செருகப்படவில்லை மற்றும் பிழைகள் எதுவும் தெரிவிக்கப்படவில்லை."
-
-
-msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
-msgstr "சுழிய என்எல்ஏ செல்வாக்கு, அடிப்படை மதிப்பு அல்லது மதிப்பு மறுபிரவேசம் தோல்வியுற்றதால் %i கீஃப்ரேம் (களை) செருக முடியவில்லை: குறியீடுகளுக்கு %s. %s [ %s]"
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "கொடுக்கப்பட்ட ஐடியுக்கு ஆர்என்ஏ பாதை செல்லாது என்பதால் (ஐடி = %s, பாதை = %s)"
-
-
-msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
-msgstr "எஃப்-வளைவில் விசைகளைச் செருகுவதில் தோல்வி '%s [%d]', அது பூட்டப்படவில்லை அல்லது மாதிரி செய்யப்படவில்லை என்பதை உறுதிசெய்து, எஃப்-மாற்றியமைப்பாளர்களை அகற்ற முயற்சிக்கவும்"
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -131218,6 +131070,30 @@ msgstr "கொடுக்கப்பட்ட ஐடிக்கு ஆர்�
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "கீயிங் தொகுப்பில் பாதையைத் தவிர்ப்பது, ஏனெனில் அதற்கு ஐடி இல்லை (ks = '%s', பாதை = '%s [%d]')"
+
+
+msgid "<No ID pointer>"
+msgstr "<ஐடி சுட்டிக்காட்டி இல்லை>"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "கீஃப்ரேம்களைச் சேர்க்க எஃப்-வளைவும் இல்லை"
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "கீஃப்மிங்கிற்கான மதிப்புகளை மீட்டெடுக்க ஆர்என்ஏ சுட்டிக்காட்டி எதுவும் கிடைக்கவில்லை"
+
+
+msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+msgstr "சுழிய என்எல்ஏ செல்வாக்கு, அடிப்படை மதிப்பு அல்லது மதிப்பு மறுபிரவேசம் தோல்வியுற்றதால் %i கீஃப்ரேம் (களை) செருக முடியவில்லை: குறியீடுகளுக்கு %s. %s [ %s]"
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "கொடுக்கப்பட்ட ஐடியுக்கு ஆர்என்ஏ பாதை செல்லாது என்பதால் (ஐடி = %s, பாதை = %s)"
+
+
+msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
+msgstr "எஃப்-வளைவில் விசைகளைச் செருகுவதில் தோல்வி '%s [%d]', அது பூட்டப்படவில்லை அல்லது மாதிரி செய்யப்படவில்லை என்பதை உறுதிசெய்து, எஃப்-மாற்றியமைப்பாளர்களை அகற்ற முயற்சிக்கவும்"
 
 
 msgid "\"%s\" is using Action \"%s\", which does not have a slot with identifier \"%s\" or \"%s\". Manually assign the right action slot to \"%s\"."
@@ -132938,10 +132814,6 @@ msgstr "பிழை: அதிகபட்ச நிழல் புதுப�
 
 msgid "Warning: Volume rendering data could not be allocated. Now using a resolution of 1:{} instead of 1:{}."
 msgstr "எச்சரிக்கை: தொகுதி வழங்குதல் தரவை ஒதுக்க முடியவில்லை. இப்போது 1: {the க்கு பதிலாக 1: {} என்ற தீர்மானத்தைப் பயன்படுத்துகிறது."
-
-
-msgid "Workbench"
-msgstr "பணிப்பெண்"
 
 
 msgid "Error: Curves object contains too many points. Reduce curve resolution or curve count to fix this issue."
@@ -137081,20 +136953,8 @@ msgid "Active object contains no collections"
 msgstr "செயலில் உள்ள பொருளில் எந்த சேகரிப்பும் இல்லை"
 
 
-msgid "Could not add the collection because it is overridden"
-msgstr "சேகரிப்பை மீறப்பட்டதால் சேர்க்க முடியவில்லை"
-
-
-msgid "Could not add the collection because it is linked"
-msgstr "சேகரிப்பு இணைக்கப்பட்டுள்ளதால் சேர்க்க முடியவில்லை"
-
-
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "சார்பு சுழற்சி கண்டறியப்பட்டதால் சேகரிப்பைச் சேர்க்க முடியவில்லை"
-
-
-msgid "Cannot remove an object from a linked or library override collection"
-msgstr "இணைக்கப்பட்ட அல்லது நூலகத்தை மேலெழுதும் சேகரிப்பிலிருந்து ஒரு பொருளை அகற்ற முடியாது"
 
 
 msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
@@ -137291,10 +137151,6 @@ msgstr "எந்த சேகரிப்பும் தேர்ந்தெ�
 
 msgid "Unexpected error, collection not found"
 msgstr "எதிர்பாராத பிழை, சேகரிப்பு காணப்படவில்லை"
-
-
-msgid "Cannot add objects to a library override or linked collection"
-msgstr "ஒரு நூலக மேலெழுத அல்லது இணைக்கப்பட்ட சேகரிப்பில் பொருட்களைச் சேர்க்க முடியாது"
 
 
 msgid "Unable to change object mode while transforming"
@@ -140715,6 +140571,14 @@ msgid "Cannot drag panel with no inputs"
 msgstr "உள்ளீடுகள் இல்லாமல் பேனலை இழுக்க முடியாது"
 
 
+msgid "Render size too large for GPU, use CPU compositor instead"
+msgstr "gpu க்கு அளவு மிகப் பெரியதாக வழங்கவும், அதற்கு பதிலாக சிபியு இசையமைப்பாளரைப் பயன்படுத்தவும்"
+
+
+msgid "Compositing..."
+msgstr "கட்டமைத்தல் ..."
+
+
 msgid "Accessed named attributes:"
 msgstr "பெயரிடப்பட்ட பண்புக்கூறுகள் அணுகப்பட்டன:"
 
@@ -140749,14 +140613,6 @@ msgstr " பெயரிடப்பட்ட பண்புக்கூறு"
 
 msgid " Named Attributes"
 msgstr " பெயரிடப்பட்ட பண்புக்கூறுகள்"
-
-
-msgid "Render size too large for GPU, use CPU compositor instead"
-msgstr "gpu க்கு அளவு மிகப் பெரியதாக வழங்கவும், அதற்கு பதிலாக சிபியு இசையமைப்பாளரைப் பயன்படுத்தவும்"
-
-
-msgid "Compositing..."
-msgstr "கட்டமைத்தல் ..."
 
 
 msgctxt "Operator"
@@ -141073,10 +140929,6 @@ msgstr "ஒன்றுக்கு மேற்பட்ட சேகரிப�
 
 msgid "Cannot add a new collection to linked/override scene"
 msgstr "இணைக்கப்பட்ட/ஓவர்ரைடு காட்சியில் புதிய தொகுப்பைச் சேர்க்க முடியாது"
-
-
-msgid "No active collection"
-msgstr "செயலில் சேகரிப்பு இல்லை"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
@@ -144529,22 +144381,6 @@ msgstr "கோண வளைக்கும் நீரூற்றுகளு�
 
 msgid "Collection '%s' is not an original ID"
 msgstr "'%s' சேகரிப்பு அசல் ஐடி அல்ல"
-
-
-msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
-msgstr "'%s' என்ற பொருளை (அன்) இணைக்க முடியவில்லை, ஏனெனில் '%s' சேகரிப்பு மேலெழுதப்பட்டுள்ளது"
-
-
-msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
-msgstr "'%s' என்ற பொருளை '%s' இணைக்கப்பட்டுள்ளதால் (அன்) இணைக்க முடியவில்லை"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
-msgstr "'%s' சேகரிப்பை (un) இணைக்க முடியவில்லை, ஏனெனில் '%s' சேகரிப்பு மேலெழுதப்பட்டுள்ளது"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
-msgstr "Could not (un)link the collection '%s' because the collection '%s' is linked"
 
 
 msgid "File handler not found"
@@ -151853,11 +151689,6 @@ msgid "Node group has different type"
 msgstr "முனை குழு வெவ்வேறு வகைகளைக் கொண்டுள்ளது"
 
 
-msgctxt "NodeTree"
-msgid "Missing Data-Block"
-msgstr "தரவு-தடுப்பு காணவில்லை"
-
-
 msgid "Instances in input geometry are ignored"
 msgstr "உள்ளீட்டு வடிவவியலில் நிகழ்வுகள் புறக்கணிக்கப்படுகின்றன"
 
@@ -152688,10 +152519,6 @@ msgstr "சாதாரண மேப்பிங் விளைவின் வ
 
 msgid "Color that encodes the normal map in the specified space"
 msgstr "குறிப்பிட்ட இடத்தில் சாதாரண வரைபடத்தை குறியீடாக்கும் வண்ணம்"
-
-
-msgid "Object Index"
-msgstr "பொருள் அட்டவணை"
 
 
 msgid "Color Fac"

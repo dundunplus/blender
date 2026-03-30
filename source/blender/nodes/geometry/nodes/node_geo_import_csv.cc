@@ -19,14 +19,14 @@ namespace blender::nodes::node_geo_import_csv {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.csv")
       .optional_label()
       .description("Path to a CSV file");
-  b.add_input<decl::String>("Delimiter").default_value(",");
+  b.add_input<decl::String>("Delimiter"_ustr).default_value(",");
 
-  b.add_output<decl::Geometry>("Point Cloud");
+  b.add_output<decl::Geometry>("Point Cloud"_ustr);
 }
 
 class LoadCsvCache : public memory_cache::CachedValue {

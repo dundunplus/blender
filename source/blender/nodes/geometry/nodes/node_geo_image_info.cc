@@ -15,19 +15,21 @@ namespace blender::nodes::node_geo_image_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Image>("Image").optional_label();
-  b.add_input<decl::Int>("Frame").min(0).description(
-      "Which frame to use for videos. Note that different frames in videos can "
-      "have different resolutions");
+  b.add_input<decl::Image>("Image"_ustr).optional_label();
+  b.add_input<decl::Int>("Frame"_ustr)
+      .min(0)
+      .description(
+          "Which frame to use for videos. Note that different frames in videos can "
+          "have different resolutions");
 
-  b.add_output<decl::Int>("Width");
-  b.add_output<decl::Int>("Height");
-  b.add_output<decl::Bool>("Has Alpha").description("Whether the image has an alpha channel");
+  b.add_output<decl::Int>("Width"_ustr);
+  b.add_output<decl::Int>("Height"_ustr);
+  b.add_output<decl::Bool>("Has Alpha"_ustr).description("Whether the image has an alpha channel");
 
-  b.add_output<decl::Int>("Frame Count")
+  b.add_output<decl::Int>("Frame Count"_ustr)
       .description("The number of animation frames. If a single image, then 1");
-  b.add_output<decl::Float>("FPS").description(
-      "Animation playback speed in frames per second. If a single image, then 0");
+  b.add_output<decl::Float>("FPS"_ustr)
+      .description("Animation playback speed in frames per second. If a single image, then 0");
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

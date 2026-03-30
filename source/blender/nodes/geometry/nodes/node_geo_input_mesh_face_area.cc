@@ -10,7 +10,7 @@ namespace blender::nodes::node_geo_input_mesh_face_area_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Area")
+  b.add_output<decl::Float>("Area"_ustr)
       .translation_context(BLT_I18NCONTEXT_AMOUNT)
       .field_source()
       .description("The surface area of each of the mesh's faces");

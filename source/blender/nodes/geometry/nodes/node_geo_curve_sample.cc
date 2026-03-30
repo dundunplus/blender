@@ -24,17 +24,17 @@ NODE_STORAGE_FUNCS(NodeGeometryCurveSample)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curves")
+  b.add_input<decl::Geometry>("Curves"_ustr)
       .only_realized_data()
       .supported_type(GeometryComponent::Type::Curve)
       .description("Curves to sample positions on");
 
   if (const bNode *node = b.node_or_null()) {
     const NodeGeometryCurveSample &storage = node_storage(*node);
-    b.add_input(eCustomDataType(storage.data_type), "Value").hide_value().field_on_all();
+    b.add_input(eCustomDataType(storage.data_type), "Value"_ustr).hide_value().field_on_all();
   }
 
-  auto &factor = b.add_input<decl::Float>("Factor")
+  auto &factor = b.add_input<decl::Float>("Factor"_ustr)
                      .min(0.0f)
                      .max(1.0f)
                      .subtype(PROP_FACTOR)
@@ -43,7 +43,7 @@ static void node_declare(NodeDeclarationBuilder &b)
                      .make_available([](bNode &node) {
                        node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_FACTOR;
                      });
-  auto &length = b.add_input<decl::Float>("Length")
+  auto &length = b.add_input<decl::Float>("Length"_ustr)
                      .min(0.0f)
                      .subtype(PROP_DISTANCE)
                      .supports_field()
@@ -51,7 +51,7 @@ static void node_declare(NodeDeclarationBuilder &b)
                      .make_available([](bNode &node) {
                        node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_LENGTH;
                      });
-  auto &index = b.add_input<decl::Int>("Curve Index")
+  auto &index = b.add_input<decl::Int>("Curve Index"_ustr)
                     .supports_field()
                     .structure_type(StructureType::Dynamic)
                     .make_available(
@@ -60,16 +60,16 @@ static void node_declare(NodeDeclarationBuilder &b)
   if (const bNode *node = b.node_or_null()) {
     const NodeGeometryCurveSample &storage = node_storage(*node);
     const GeometryNodeCurveSampleMode mode = GeometryNodeCurveSampleMode(storage.mode);
-    b.add_output(eCustomDataType(storage.data_type), "Value").dependent_field({2, 3, 4});
+    b.add_output(eCustomDataType(storage.data_type), "Value"_ustr).dependent_field({2, 3, 4});
 
     factor.available(mode == GEO_NODE_CURVE_SAMPLE_FACTOR);
     length.available(mode == GEO_NODE_CURVE_SAMPLE_LENGTH);
     index.available(!storage.use_all_curves);
   }
 
-  b.add_output<decl::Vector>("Position").dependent_field({2, 3, 4});
-  b.add_output<decl::Vector>("Tangent").dependent_field({2, 3, 4});
-  b.add_output<decl::Vector>("Normal").dependent_field({2, 3, 4});
+  b.add_output<decl::Vector>("Position"_ustr).dependent_field({2, 3, 4});
+  b.add_output<decl::Vector>("Tangent"_ustr).dependent_field({2, 3, 4});
+  b.add_output<decl::Vector>("Normal"_ustr).dependent_field({2, 3, 4});
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -102,7 +102,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeSampleCurve");
       node_storage(node).data_type = *type;
-      params.update_and_connect_available_socket(node, "Value");
+      params.update_and_connect_available_socket(node, "Value"_ustr);
     });
   }
 }

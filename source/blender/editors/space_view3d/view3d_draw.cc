@@ -296,7 +296,8 @@ static void view3d_stereo3d_setup(
   else { /* SCE_VIEWS_FORMAT_MULTIVIEW */
     float viewmat[4][4];
     Object *view_ob = v3d->camera;
-    Object *camera = BKE_camera_multiview_render(scene, v3d->camera, viewname);
+    Object *camera = BKE_camera_multiview_render(
+        *DEG_get_bmain(depsgraph), scene, v3d->camera, viewname);
 
     BLI_thread_lock(LOCK_VIEW3D);
     v3d->camera = camera;
@@ -1371,8 +1372,13 @@ static bool is_grease_pencil_with_layer_keyframe(const Object &ob)
  * Draw info beside axes in top-left corner:
  * frame-number, collection, object name, bone name (if available), marker name (if available).
  */
-static void draw_selected_name(
-    const View3D *v3d, Scene *scene, ViewLayer *view_layer, Object *ob, int xoffset, int *yoffset)
+static void draw_selected_name(const Main &bmain,
+                               const View3D *v3d,
+                               Scene *scene,
+                               ViewLayer *view_layer,
+                               Object *ob,
+                               int xoffset,
+                               int *yoffset)
 {
   const int cfra = scene->r.cfra;
   const char *msg_pin = " (Soloed)";
@@ -1403,7 +1409,7 @@ static void draw_selected_name(
   info_array[i++] = info_buffers.frame;
 
   if ((ob == nullptr) || (ob->mode == OB_MODE_OBJECT)) {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(bmain, scene, view_layer);
     LayerCollection *layer_collection = BKE_view_layer_active_collection_get(view_layer);
     info_array[i++] = msg_space;
     info_array[i++] = BKE_collection_ui_name_get(layer_collection->collection);
@@ -1701,9 +1707,9 @@ void view3d_draw_region_info(const bContext *C, ARegion *region)
       }
 
       if (U.uiflag & USER_DRAWVIEWINFO && region_ok) {
-        BKE_view_layer_synced_ensure(scene, view_layer);
+        BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
         Object *ob = BKE_view_layer_active_object_get(view_layer);
-        draw_selected_name(v3d, scene, view_layer, ob, xoffset, &yoffset);
+        draw_selected_name(*bmain, v3d, scene, view_layer, ob, xoffset, &yoffset);
         BLF_color4fv(font_id, text_color);
       }
 
@@ -1828,7 +1834,8 @@ static void view3d_stereo3d_setup_offscreen(Depsgraph *depsgraph,
   }
   else { /* SCE_VIEWS_FORMAT_MULTIVIEW */
     float viewmat[4][4];
-    Object *camera = BKE_camera_multiview_render(scene, v3d->camera, viewname);
+    Object *camera = BKE_camera_multiview_render(
+        *DEG_get_bmain(depsgraph), scene, v3d->camera, viewname);
 
     BKE_camera_multiview_view_matrix(&scene->r, camera, false, viewmat);
     view3d_main_region_setup_offscreen(depsgraph, scene, v3d, region, viewmat, winmat);
@@ -2169,7 +2176,8 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
   /* render 3d view */
   if (use_camera_view_bounds && rv3d->persp == RV3D_CAMOB && v3d->camera) {
     CameraParams params;
-    Object *camera = BKE_camera_multiview_render(scene, v3d->camera, viewname);
+    Object *camera = BKE_camera_multiview_render(
+        *DEG_get_bmain(depsgraph), scene, v3d->camera, viewname);
     const Object *camera_eval = DEG_get_evaluated(depsgraph, camera);
 
     BKE_camera_params_init(&params);
@@ -2354,7 +2362,8 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
   {
     CameraParams params;
     const Object *view_camera_eval = DEG_get_evaluated(
-        depsgraph, BKE_camera_multiview_render(scene, v3d.camera, viewname));
+        depsgraph,
+        BKE_camera_multiview_render(*DEG_get_bmain(depsgraph), scene, v3d.camera, viewname));
 
     BKE_camera_params_init(&params);
     BKE_camera_params_from_object(&params, view_camera_eval);
@@ -2423,7 +2432,8 @@ bool ED_view3d_clipping_test(const RegionView3D *rv3d, const float co[3], const 
 /**
  * \note Only use in object mode.
  */
-static void validate_object_select_id(Depsgraph *depsgraph,
+static void validate_object_select_id(const Main &bmain,
+                                      Depsgraph *depsgraph,
                                       const Scene *scene,
                                       ViewLayer *view_layer,
                                       ARegion *region,
@@ -2459,7 +2469,7 @@ static void validate_object_select_id(Depsgraph *depsgraph,
   }
 
   if (obact_eval && ((obact_eval->base_flag & BASE_ENABLED_AND_MAYBE_VISIBLE_IN_VIEWPORT) != 0)) {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(bmain, scene, view_layer);
     Base *base = BKE_view_layer_base_find(view_layer, obact);
     DRW_select_buffer_context_create(depsgraph, {base}, -1);
   }
@@ -2496,7 +2506,7 @@ static void view3d_gpu_read_Z_pixels(GPUViewport *viewport, rcti *rect, void *da
 void ED_view3d_select_id_validate(const ViewContext *vc)
 {
   validate_object_select_id(
-      vc->depsgraph, vc->scene, vc->view_layer, vc->region, vc->v3d, vc->obact);
+      *vc->bmain, vc->depsgraph, vc->scene, vc->view_layer, vc->region, vc->v3d, vc->obact);
 }
 
 int ED_view3d_backbuf_sample_size_clamp(ARegion *region, const float dist)
@@ -2750,7 +2760,8 @@ bool ED_view3d_has_depth_buffer_updated(const Depsgraph *depsgraph, const View3D
 /** \name Custom-data Utilities
  * \{ */
 
-void ED_view3d_datamask(const Scene *scene,
+void ED_view3d_datamask(const Main &bmain,
+                        const Scene *scene,
                         ViewLayer *view_layer,
                         const View3D *v3d,
                         CustomData_MeshMasks *r_cddata_masks)
@@ -2772,7 +2783,7 @@ void ED_view3d_datamask(const Scene *scene,
     }
   }
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Object *obact = BKE_view_layer_active_object_get(view_layer);
   if (obact) {
     switch (obact->type) {
@@ -2791,7 +2802,8 @@ void ED_view3d_datamask(const Scene *scene,
   }
 }
 
-void ED_view3d_screen_datamask(const Scene *scene,
+void ED_view3d_screen_datamask(const Main &bmain,
+                               const Scene *scene,
                                ViewLayer *view_layer,
                                const bScreen *screen,
                                CustomData_MeshMasks *r_cddata_masks)
@@ -2802,7 +2814,7 @@ void ED_view3d_screen_datamask(const Scene *scene,
   for (const ScrArea &area : screen->areabase) {
     if (area.spacetype == SPACE_VIEW3D) {
       ED_view3d_datamask(
-          scene, view_layer, static_cast<View3D *>(area.spacedata.first), r_cddata_masks);
+          bmain, scene, view_layer, static_cast<View3D *>(area.spacedata.first), r_cddata_masks);
     }
   }
 }

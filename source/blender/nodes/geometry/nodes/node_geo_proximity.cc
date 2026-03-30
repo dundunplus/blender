@@ -23,25 +23,25 @@ NODE_STORAGE_FUNCS(NodeGeometryProximity)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry", "Target")
+  b.add_input<decl::Geometry>("Geometry"_ustr, "Target"_ustr)
       .only_realized_data()
       .supported_type({GeometryComponent::Type::Mesh, GeometryComponent::Type::PointCloud})
       .description("Geometry to find the closest point on");
-  b.add_input<decl::Int>("Group ID")
+  b.add_input<decl::Int>("Group ID"_ustr)
       .hide_value()
       .field_on_all()
       .description(
           "Splits the elements of the input geometry into groups which can be sampled "
           "individually");
-  b.add_input<decl::Vector>("Sample Position", "Source Position")
+  b.add_input<decl::Vector>("Sample Position"_ustr, "Source Position"_ustr)
       .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Int>("Sample Group ID")
+  b.add_input<decl::Int>("Sample Group ID"_ustr)
       .hide_value()
       .supports_field()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Vector>("Position").dependent_field({2, 3}).reference_pass_all();
-  b.add_output<decl::Float>("Distance").dependent_field({2, 3}).reference_pass_all();
-  b.add_output<decl::Bool>("Is Valid")
+  b.add_output<decl::Vector>("Position"_ustr).dependent_field({2, 3}).reference_pass_all();
+  b.add_output<decl::Float>("Distance"_ustr).dependent_field({2, 3}).reference_pass_all();
+  b.add_output<decl::Bool>("Is Valid"_ustr)
       .dependent_field({2, 3})
       .description(
           "Whether the sampling was successful. It can fail when the sampled group is empty");

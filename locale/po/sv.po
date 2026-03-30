@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2026-03-17 14:12+0000\n"
 "Last-Translator: Daniel Nylander <blender@danielnylander.se>\n"
 "Language-Team: Swedish <https://translate.blender.org/projects/blender-ui/ui/sv/>\n"
@@ -3290,6 +3290,10 @@ msgid "Action data-blocks"
 msgstr "Åtgärdsdatablock"
 
 
+msgid "All Data-Blocks"
+msgstr "Alla datablock"
+
+
 msgid "Annotation"
 msgstr "Kommentar"
 
@@ -6288,24 +6292,12 @@ msgid "Stroke"
 msgstr "Penseldrag"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "Vertexfärg påverkar endast konturen"
-
-
 msgid "Fill"
 msgstr "Fyll"
 
 
-msgid "Vertex Color affects to Fill only"
-msgstr "Vertexfärg påverkar endast fyllning"
-
-
-msgid "Stroke & Fill"
-msgstr "Streck och fyllning"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "Vertexfärg påverkar kontur och fyllning"
+msgid "Both"
+msgstr "Båda"
 
 
 msgid "Byte Color Attribute Value"
@@ -23911,10 +23903,6 @@ msgid "Half Float Precision"
 msgstr "Halvflytande precision"
 
 
-msgid "Use 16 bits per channel to lower the memory usage during rendering"
-msgstr "Använd 16 bitar per kanal för att minska minnesanvändningen under rendering"
-
-
 msgid "Use Multi-View"
 msgstr "Använd Multi-View"
 
@@ -35196,12 +35184,88 @@ msgid "Editor menu containing buttons"
 msgstr "Redigeringsmeny med knappar"
 
 
-msgid "Mirror"
-msgstr "Spegel"
+msgid "Math"
+msgstr "Matematik"
+
+
+msgid "Names"
+msgstr "Namn"
+
+
+msgid "Utilities"
+msgstr "Allmännyttiga tjänster"
+
+
+msgid "Bone Roll"
+msgstr "Benrulle"
+
+
+msgid "Show/Hide"
+msgstr "Visa/Dölj"
+
+
+msgid "Clean Up"
+msgstr "Rensa upp"
+
+
+msgid "Pivot Point"
+msgstr "Pivotpunkt"
 
 
 msgid "Snap"
 msgstr "Fäst"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proportionell redigering Falloff"
+
+
+msgid "Read"
+msgstr "Läs"
+
+
+msgid "Mask Edit"
+msgstr "Maskredigering"
+
+
+msgid "Sample"
+msgstr "Exempel"
+
+
+msgid "Automasking"
+msgstr "Automatisk maskering"
+
+
+msgid "Write"
+msgstr "Skriv"
+
+
+msgid "Face Sets Edit"
+msgstr "Ansiktsuppsättningar Redigera"
+
+
+msgid "Primitives"
+msgstr "Primitiva"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Group Lås"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instanser"
+
+
+msgid "Import"
+msgstr "Importera"
+
+
+msgid "Mirror"
+msgstr "Spegel"
 
 
 msgid "UV Mapping"
@@ -35212,24 +35276,16 @@ msgid "Local View"
 msgstr "Lokal vy"
 
 
-msgid "Read"
-msgstr "Läs"
-
-
 msgid "Viewpoint"
 msgstr "Synpunkt"
-
-
-msgid "Sample"
-msgstr "Exempel"
 
 
 msgid "Navigation"
 msgstr "Navigering"
 
 
-msgid "Write"
-msgstr "Skriv"
+msgid "Deprecated"
+msgstr "Föråldrad"
 
 
 msgid "Align View"
@@ -35240,16 +35296,20 @@ msgid "Align View to Active"
 msgstr "Justera vy till aktiv"
 
 
-msgid "Primitives"
-msgstr "Primitiva"
-
-
 msgid "View Regions"
 msgstr "Visa regioner"
 
 
 msgid "Select More/Less"
 msgstr "Välj Mer/Mindre"
+
+
+msgid "List"
+msgstr "Lista"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -35268,32 +35328,12 @@ msgid "Select Loops"
 msgstr "Välj slingor"
 
 
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Instanser"
-
-
 msgid "Assign Material"
 msgstr "Tilldela material"
 
 
-msgid "Import"
-msgstr "Importera"
-
-
-msgid "Utilities"
-msgstr "Allmännyttiga tjänster"
-
-
 msgid "Metaball"
 msgstr "Metaball"
-
-
-msgid "Deprecated"
-msgstr "Föråldrad"
 
 
 msgid "Light"
@@ -35302,18 +35342,6 @@ msgstr "Ljus"
 
 msgid "Light Probe"
 msgstr "Ljusprob"
-
-
-msgid "List"
-msgstr "Lista"
-
-
-msgid "Math"
-msgstr "Matematik"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -35340,14 +35368,6 @@ msgid "Quick Effects"
 msgstr "Snabba effekter"
 
 
-msgid "Show/Hide"
-msgstr "Visa/Dölj"
-
-
-msgid "Clean Up"
-msgstr "Rensa upp"
-
-
 msgid "Asset"
 msgstr "Tillgång"
 
@@ -35368,12 +35388,12 @@ msgid "Hooks"
 msgstr "Krokar"
 
 
-msgid "Vertex Group Locks"
-msgstr "Vertex Group Lås"
-
-
 msgid "Trim/Add"
 msgstr "Trimma/Lägg till"
+
+
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Sculpt Set Pivot"
@@ -35404,12 +35424,24 @@ msgid "Bone Collections"
 msgstr "Benskörningar"
 
 
-msgid "Names"
-msgstr "Namn"
+msgid "Adjust"
+msgstr "Justera"
+
+
+msgid "Keying"
+msgstr "Nyckel"
+
+
+msgid "Tracking"
+msgstr "Spårning"
 
 
 msgid "Toggle Bone Options"
 msgstr "Växla mellan benalternativ"
+
+
+msgid "Render Preview"
+msgstr "Förhandsgranska rendering"
 
 
 msgid "Enable Bone Options"
@@ -35424,6 +35456,10 @@ msgid "Mesh Select Mode"
 msgstr "Välj nätläge"
 
 
+msgid "Creative"
+msgstr "Kreativ"
+
+
 msgid "Face Data"
 msgstr "Ansiktsdata"
 
@@ -35436,64 +35472,16 @@ msgid "Set Face Strength"
 msgstr "Ställ in ansiktsstyrka"
 
 
-msgid "Layout"
-msgstr "Layout"
-
-
 msgid "Merge"
 msgstr "Sammanfoga"
-
-
-msgid "Adjust"
-msgstr "Justera"
-
-
-msgid "Keying"
-msgstr "Nyckel"
 
 
 msgid "Special Characters"
 msgstr "Specialtecken"
 
 
-msgid "Render Preview"
-msgstr "Förhandsgranska rendering"
-
-
 msgid "Kerning"
 msgstr "Kerning"
-
-
-msgid "Tracking"
-msgstr "Spårning"
-
-
-msgid "Creative"
-msgstr "Kreativ"
-
-
-msgid "Bone Roll"
-msgstr "Benrulle"
-
-
-msgid "Pivot Point"
-msgstr "Pivotpunkt"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportionell redigering Falloff"
-
-
-msgid "Mask Edit"
-msgstr "Maskredigering"
-
-
-msgid "Automasking"
-msgstr "Automatisk maskering"
-
-
-msgid "Face Sets Edit"
-msgstr "Ansiktsuppsättningar Redigera"
 
 
 msgid "Keyframe Insert Pie"
@@ -39266,6 +39254,10 @@ msgstr "Fettpenna färgmodifierare"
 
 msgid "Attributes to modify"
 msgstr "Attribut att ändra"
+
+
+msgid "Stroke & Fill"
+msgstr "Streck och fyllning"
 
 
 msgid "Modify fill and stroke colors"
@@ -60739,8 +60731,8 @@ msgid "Set Handle Type"
 msgstr "Ställ in handtagstyp"
 
 
-msgid "Set the handle type for bezier curves"
-msgstr "Ställ in handtagstyp för bezierkurvor"
+msgid "Set the handle type for Bézier curves"
+msgstr "Ställ in handtagstyp för Bézier-kurvor"
 
 
 msgid "Toggle Free/Align"
@@ -64834,10 +64826,6 @@ msgid "Equalize selected keyframes' right handles"
 msgstr "Jämna ut valda nyckelrutors högra handtag"
 
 
-msgid "Both"
-msgstr "Båda"
-
-
 msgid "Equalize both of a keyframe's handles"
 msgstr "Jämna ut båda handtagen på en nyckelbildruta"
 
@@ -66722,10 +66710,6 @@ msgstr "Ställ in upplösningen för valda kurvor"
 
 msgid "The resolution to use for each curve segment"
 msgstr "Upplösningen som ska användas för varje kurvsegment"
-
-
-msgid "Set the handle type for Bézier curves"
-msgstr "Ställ in handtagstyp för Bézier-kurvor"
 
 
 msgid "Set active material"
@@ -70342,24 +70326,13 @@ msgid "Merge selected vertices"
 msgstr "Sammanfoga valda hörn"
 
 
+msgctxt "Mesh"
+msgid "Type"
+msgstr "Typ"
+
+
 msgid "Merge method to use"
 msgstr "Sammanfogningsmetod att använda"
-
-
-msgid "At Center"
-msgstr "På Center"
-
-
-msgid "At Cursor"
-msgstr "På Cursor"
-
-
-msgid "At First"
-msgstr "Först"
-
-
-msgid "At Last"
-msgstr "Äntligen"
 
 
 msgid "Move UVs according to merge"
@@ -71294,11 +71267,6 @@ msgstr "Välj slumpmässigt ut hörnpunkter"
 
 msgid "Select similar vertices, edges or faces by property types"
 msgstr "Välj liknande hörn, kanter eller ytor efter egenskapstyp"
-
-
-msgctxt "Mesh"
-msgid "Type"
-msgstr "Typ"
 
 
 msgctxt "Mesh"
@@ -91885,18 +91853,6 @@ msgid "Editable cavity curve"
 msgstr "Redigerbar kavitetskurva"
 
 
-msgid "Default Eraser Brush"
-msgstr "Standard raderingspensel"
-
-
-msgid "Default eraser brush for quickly alternating with the main brush"
-msgstr "Standardraderingspensel för snabb växling med huvudpenseln"
-
-
-msgid "Eraser Brush Asset Reference"
-msgstr "Referens för raderingspensel"
-
-
 msgid "Active Palette"
 msgstr "Aktiv palett"
 
@@ -92405,6 +92361,22 @@ msgid "Panel containing UI elements"
 msgstr "Panel som innehåller UI-element"
 
 
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF-animationer"
+
+
+msgid "Active Tool"
+msgstr "Aktivt verktyg"
+
+
+msgid "View Lock"
+msgstr "Visa lås"
+
+
 msgid "Selectability & Visibility"
 msgstr "Valbarhet och synlighet"
 
@@ -92527,22 +92499,6 @@ msgstr "glTF-varianter"
 
 msgid "glTF Material Variants"
 msgstr "glTF-materialvarianter"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF-animationer"
-
-
-msgid "Active Tool"
-msgstr "Aktivt verktyg"
-
-
-msgid "View Lock"
-msgstr "Visa lås"
 
 
 msgid "Import Settings"
@@ -97793,10 +97749,6 @@ msgid "English (UK)"
 msgstr "Engelska (Storbritannien)"
 
 
-msgid "Locale code: en_GB. Translation progress: 99%"
-msgstr "Lokalkod: en_GB. Översättningsförlopp: 99 %"
-
-
 msgid "English (US)"
 msgstr "Engelska (USA)"
 
@@ -97987,10 +97939,6 @@ msgstr "Spanska - Español"
 
 msgid "Swahili - Kiswahili"
 msgstr "Swahili - Kiswahili"
-
-
-msgid "Locale code: sw. Translation progress: 72%"
-msgstr "Lokalkod: sw. Översättningsförlopp: 72 %"
 
 
 msgid "Swedish - Svenska"
@@ -99766,10 +99714,6 @@ msgid "Passes used by the denoiser to distinguish noise from shader and geometry
 msgstr "Pass som används av brusreduceraren för att skilja brus från shader och geometridetaljer"
 
 
-msgid "Don't use utility passes for denoising"
-msgstr "Använd inte verktygspass för brusreducering"
-
-
 msgid "Albedo"
 msgstr "Albedo"
 
@@ -100266,58 +100210,6 @@ msgid "The probability of guiding a direction on a surface"
 msgstr "Sannolikheten för att styra en riktning på en yta"
 
 
-msgid "Viewport Texture Limit"
-msgstr "Begränsning av textur i visningsfönstret"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Begränsa texturstorleken som används vid rendering av visningsfönstret"
-
-
-msgid "No Limit"
-msgstr "Ingen gräns"
-
-
-msgid "No texture size limit"
-msgstr "Ingen begränsning av texturstorlek"
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Begränsa texturstorleken till 128 pixlar"
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Begränsa texturstorleken till 256 pixlar"
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Begränsa texturstorleken till 512 pixlar"
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Begränsa texturstorleken till 1024 pixlar"
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Begränsa texturstorleken till 2048 pixlar"
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Begränsa texturstorleken till 4096 pixlar"
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Begränsa texturstorleken till 8192 pixlar"
-
-
-msgid "Render Texture Limit"
-msgstr "Rendera texturgräns"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "Begränsa texturstorleken som används vid slutlig rendering"
-
-
 msgid "Tile Size"
 msgstr "Rutstorlek"
 
@@ -100708,10 +100600,6 @@ msgstr "Provtagningsmetod"
 
 msgid "How to sample the background light"
 msgstr "Hur man samplar bakgrundsbelysningen"
-
-
-msgid "Don't sample the background, faster but might cause noise for non-solid backgrounds"
-msgstr "Sampla inte bakgrunden, snabbare men kan orsaka brus för icke-solida bakgrunder"
 
 
 msgid "Automatically try to determine the best setting"
@@ -102901,10 +102789,6 @@ msgstr "Bearbeta renderingsresultatet (och det sammansatta resultatet) genom vid
 
 msgid "Override Scene Settings"
 msgstr "Åsidosätt sceninställningar"
-
-
-msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
-msgstr "Använd arbetsbänkens renderingsinställningar från sekvensscenen istället för varje enskild scen som används i remsan."
 
 
 msgid "Use Simplify"
@@ -109071,14 +108955,6 @@ msgstr "Använd standardtoning"
 
 msgid "Fade effect using the built-in default (usually makes the transition as long as the effect strip)"
 msgstr "Fade-effekt med den inbyggda standardinställningen (gör vanligtvis övergången lika lång som effektremsan)"
-
-
-msgid "Use Linear Modifiers"
-msgstr "Använd linjära modifierare"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Beräkna modifierare i linjärt utrymme istället för sekvenserarens utrymme"
 
 
 msgid "Sequence strip applying an effect on the images created by other strips"
@@ -120106,6 +119982,10 @@ msgid "OSL support disabled in this build"
 msgstr "OSL-stöd inaktiverat i denna version"
 
 
+msgid "Object Index"
+msgstr "Objektindex"
+
+
 msgid "Denoising completed"
 msgstr "Brusreducering slutförd"
 
@@ -120404,10 +120284,6 @@ msgstr "Visningsvy BVH"
 
 msgid "Max Subdivision"
 msgstr "Maximal indelning"
-
-
-msgid "Texture Limit"
-msgstr "Texturgräns"
 
 
 msgid "Volume Resolution"
@@ -125537,10 +125413,6 @@ msgid "Two or more channels are needed below this strip"
 msgstr "Två eller flera kanaler behövs under denna remsa."
 
 
-msgid "Linear Modifiers"
-msgstr "Linjära modifierare"
-
-
 msgid "Second Basis"
 msgstr "Andra grunden"
 
@@ -127568,6 +127440,10 @@ msgid "Resolutions"
 msgstr "Resolutioner"
 
 
+msgid "Workbench"
+msgstr "Arbetsbänk"
+
+
 msgid "Preview Zoom"
 msgstr "Förhandsgranska zoom"
 
@@ -127630,10 +127506,6 @@ msgstr "Interna attribut"
 
 msgid "Wrap Around"
 msgstr "Wrap Around"
-
-
-msgid "All Data-Blocks"
-msgstr "Alla datablock"
 
 
 msgctxt "Text"
@@ -131080,20 +130952,8 @@ msgid "Inserting keyframes failed:"
 msgstr "Infogning av nyckelrutor misslyckades:"
 
 
-msgid "<No ID pointer>"
-msgstr "<Ingen ID-pekare>"
-
-
 msgid "Encountered unhandled error during keyframing"
 msgstr "Ohanterat fel uppstod under nyckelbildsinställning"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "Ingen F-kurva att lägga till nyckelrutor till"
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "Ingen RNA-pekare tillgänglig för att hämta värden för nyckelbildsinställning från"
 
 
 msgid "No ID block and/or AnimData to delete keyframe from"
@@ -131102,18 +130962,6 @@ msgstr "Inget ID-block och/eller AnimData för att ta bort nyckelbildruta från"
 
 msgid "No keys have been inserted and no errors have been reported."
 msgstr "Inga nycklar har satts in och inga fel har rapporterats."
-
-
-msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
-msgstr "Kunde inte infoga %i nyckelbildrutor på grund av noll NLA-inflytande, basvärde eller värdemappning misslyckades: %s.%s för index [%s]"
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "Det gick inte att infoga nyckelbildruta, eftersom RNA-sökvägen är ogiltig för det angivna ID:t (ID = %s, sökväg = %s)"
-
-
-msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
-msgstr "Det gick inte att infoga nycklar på F-kurvan med sökvägen '%s[%d]'. Kontrollera att den inte är låst eller samplad och försök ta bort F-modifierare."
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -131130,6 +130978,30 @@ msgstr "Kunde inte rensa nyckelramen, eftersom RNA-sökvägen är ogiltig för d
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "Hoppar över sökvägen i nyckelsatsen, eftersom den inte har något ID (KS = '%s', sökväg = '%s[%d]')"
+
+
+msgid "<No ID pointer>"
+msgstr "<Ingen ID-pekare>"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "Ingen F-kurva att lägga till nyckelrutor till"
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "Ingen RNA-pekare tillgänglig för att hämta värden för nyckelbildsinställning från"
+
+
+msgid "Could not insert %i keyframe(s) due to zero NLA influence, base value, or value remapping failed: %s.%s for indices [%s]"
+msgstr "Kunde inte infoga %i nyckelbildrutor på grund av noll NLA-inflytande, basvärde eller värdemappning misslyckades: %s.%s för index [%s]"
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "Det gick inte att infoga nyckelbildruta, eftersom RNA-sökvägen är ogiltig för det angivna ID:t (ID = %s, sökväg = %s)"
+
+
+msgid "Failed to insert keys on F-Curve with path '%s[%d]', ensure that it is not locked or sampled, and try removing F-Modifiers"
+msgstr "Det gick inte att infoga nycklar på F-kurvan med sökvägen '%s[%d]'. Kontrollera att den inte är låst eller samplad och försök ta bort F-modifierare."
 
 
 msgid "\"%s\" is using Action \"%s\", which does not have a slot with identifier \"%s\" or \"%s\". Manually assign the right action slot to \"%s\"."
@@ -132850,10 +132722,6 @@ msgstr "Fel: Max antal skugguppdateringar har nåtts."
 
 msgid "Warning: Volume rendering data could not be allocated. Now using a resolution of 1:{} instead of 1:{}."
 msgstr "Varning: Volymrenderingdata kunde inte allokeras. Använder nu en upplösning på 1:{} istället för 1:{}."
-
-
-msgid "Workbench"
-msgstr "Arbetsbänk"
 
 
 msgid "Error: Curves object contains too many points. Reduce curve resolution or curve count to fix this issue."
@@ -137000,20 +136868,8 @@ msgid "Active object contains no collections"
 msgstr "Aktivt objekt innehåller inga samlingar"
 
 
-msgid "Could not add the collection because it is overridden"
-msgstr "Kollektionen kunde inte läggas till eftersom den är överskriven."
-
-
-msgid "Could not add the collection because it is linked"
-msgstr "Kollektionen kunde inte läggas till eftersom den är länkad."
-
-
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "Kunde inte lägga till samlingen på grund av upptäckt beroendecykel."
-
-
-msgid "Cannot remove an object from a linked or library override collection"
-msgstr "Det går inte att ta bort ett objekt från en länkad eller biblioteksöverskrivningssamling."
 
 
 msgid "Cannot unlink a library override collection which is not the root of its override hierarchy"
@@ -137214,10 +137070,6 @@ msgstr "Ingen samling vald"
 
 msgid "Unexpected error, collection not found"
 msgstr "Oväntat fel, samlingen hittades inte"
-
-
-msgid "Cannot add objects to a library override or linked collection"
-msgstr "Det går inte att lägga till objekt till en biblioteksöverskrivning eller länkad samling."
 
 
 msgid "Unable to change object mode while transforming"
@@ -140668,6 +140520,14 @@ msgid "Cannot drag panel with no inputs"
 msgstr "Det går inte att dra panelen utan inmatningar"
 
 
+msgid "Render size too large for GPU, use CPU compositor instead"
+msgstr "Renderingsstorlek för stor för GPU, använd istället CPU-kompositör"
+
+
+msgid "Compositing..."
+msgstr "Komponering..."
+
+
 msgid "Accessed named attributes:"
 msgstr "Åtkomst till namngivna attribut:"
 
@@ -140702,14 +140562,6 @@ msgstr " Namngiven attribut"
 
 msgid " Named Attributes"
 msgstr " Namngivna attribut"
-
-
-msgid "Render size too large for GPU, use CPU compositor instead"
-msgstr "Renderingsstorlek för stor för GPU, använd istället CPU-kompositör"
-
-
-msgid "Compositing..."
-msgstr "Komponering..."
 
 
 msgctxt "Operator"
@@ -141024,10 +140876,6 @@ msgstr "Mer än en samling är vald"
 
 msgid "Cannot add a new collection to linked/override scene"
 msgstr "Det går inte att lägga till en ny samling till länkad/ersättande scen."
-
-
-msgid "No active collection"
-msgstr "Ingen aktiv insamling"
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
@@ -144464,28 +144312,12 @@ msgid "Collection '%s' is not an original ID"
 msgstr "Samlingen '%s' är inte ett original-ID."
 
 
-msgid "Could not (un)link the object '%s' because the collection '%s' is overridden"
-msgstr "Det gick inte att (av)länka objektet '%s' eftersom samlingen '%s' är överskriven."
-
-
-msgid "Could not (un)link the object '%s' because the collection '%s' is linked"
-msgstr "Det gick inte att (av)länka objektet '%s' eftersom samlingen '%s' är länkad."
-
-
 msgid "Object '%s' already in collection '%s'"
 msgstr "Objektet '%s' finns redan i samlingen '%s'"
 
 
 msgid "Object '%s' not in collection '%s'"
 msgstr "Objektet '%s' finns inte i samlingen '%s'"
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is overridden"
-msgstr "Kunde inte (av)länka samlingen '%s' eftersom samlingen '%s' är överskriven."
-
-
-msgid "Could not (un)link the collection '%s' because the collection '%s' is linked"
-msgstr "Det gick inte att (av)länka samlingen '%s' eftersom samlingen '%s' är länkad."
 
 
 msgid "Collection '%s' already in collection '%s'"
@@ -151816,11 +151648,6 @@ msgid "Node group has different type"
 msgstr "Nodgruppen har olika typer"
 
 
-msgctxt "NodeTree"
-msgid "Missing Data-Block"
-msgstr "Saknad datablock"
-
-
 msgid "Instances in input geometry are ignored"
 msgstr "Instanser i ingångsgeometrin ignoreras"
 
@@ -152638,10 +152465,6 @@ msgstr "Styrkan hos normal mapping-effekten"
 
 msgid "Color that encodes the normal map in the specified space"
 msgstr "Färg som kodar normal kartan i det angivna utrymmet"
-
-
-msgid "Object Index"
-msgstr "Objektindex"
 
 
 msgid "Color Fac"

@@ -161,9 +161,10 @@ static PointerRNA rna_ParticleBrush_curve_get(PointerRNA * /*ptr*/)
 static void rna_ParticleEdit_redo(bContext *C, PointerRNA * /*ptr*/)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   PTCacheEdit *edit = PE_get_current(depsgraph, scene, ob);
 
@@ -184,9 +185,10 @@ static void rna_ParticleEdit_redo(bContext *C, PointerRNA * /*ptr*/)
 
 static void rna_ParticleEdit_update(bContext *C, PointerRNA * /*ptr*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob) {
@@ -218,9 +220,10 @@ static const EnumPropertyItem *rna_ParticleEdit_tool_itemf(bContext *C,
                                                            bool * /*r_free*/)
 {
   if (C) {
+    const Main *bmain = CTX_data_main(C);
     const Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *ob = BKE_view_layer_active_object_get(view_layer);
 #  if 0
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
@@ -291,9 +294,10 @@ static bool rna_Paint_brush_poll(PointerRNA *ptr, PointerRNA value)
 
 static void rna_Sculpt_update(bContext *C, PointerRNA * /*ptr*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob) {
@@ -304,9 +308,10 @@ static void rna_Sculpt_update(bContext *C, PointerRNA * /*ptr*/)
 
 static void rna_Paint_update(bContext *C, PointerRNA * /*ptr*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob) {
@@ -383,9 +388,10 @@ static void rna_ImaPaint_viewport_update(Main * /*bmain*/, Scene * /*scene*/, Po
 
 static void rna_ImaPaint_mode_update(bContext *C, PointerRNA * /*ptr*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob && ob->type == OB_MESH) {
@@ -401,9 +407,10 @@ static void rna_ImaPaint_mode_update(bContext *C, PointerRNA * /*ptr*/)
 
 static void rna_ImaPaint_stencil_update(bContext *C, PointerRNA * /*ptr*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob && ob->type == OB_MESH) {
@@ -417,7 +424,7 @@ static void rna_ImaPaint_canvas_update(bContext *C, PointerRNA * /*ptr*/)
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   Image *ima = scene->toolsettings->imapaint.canvas;
 
@@ -502,9 +509,10 @@ static void rna_Sculpt_automasking_cavity_set(PointerRNA *ptr, bool val)
 
 static void rna_UnifiedPaintSettings_update(bContext *C, PointerRNA * /*ptr*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Brush *br = BKE_paint_brush(BKE_paint_get_active(scene, view_layer));
+  Brush *br = BKE_paint_brush(BKE_paint_get_active(*bmain, scene, view_layer));
   /* TODO: Verify if tagging the brush for these settings being changed is correct. */
   WM_main_add_notifier(NC_BRUSH | NA_EDITED, br);
   WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);

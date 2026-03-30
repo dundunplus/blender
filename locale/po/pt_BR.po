@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2025-11-11 12:13+0000\n"
 "Last-Translator: Rafael Teixeira de Avila Soares <rafaeltas@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -4156,8 +4156,8 @@ msgid "Fill"
 msgstr "Preencher"
 
 
-msgid "Stroke & Fill"
-msgstr "Contorno e Preenchimento"
+msgid "Both"
+msgstr "Ambos"
 
 
 msgid "Path to the archive"
@@ -21203,12 +21203,48 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Mirror"
-msgstr "Espelhar"
+msgid "Math"
+msgstr "Matemática"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
 
 
 msgid "Snap"
 msgstr "Atrair"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
+
+
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Import"
+msgstr "Importar"
+
+
+msgid "Mirror"
+msgstr "Espelhar"
 
 
 msgid "UV Mapping"
@@ -21243,6 +21279,10 @@ msgid "Select More/Less"
 msgstr "Selecionar mais ou menos"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Selecionar por similaridades"
 
@@ -21259,14 +21299,6 @@ msgid "Select Loops"
 msgstr "Selecionar anéis"
 
 
-msgid "Instances"
-msgstr "Instâncias"
-
-
-msgid "Import"
-msgstr "Importar"
-
-
 msgid "Metaball"
 msgstr "Meta-esfera"
 
@@ -21277,14 +21309,6 @@ msgstr "Luz"
 
 msgid "Light Probe"
 msgstr "Sonda de Luz"
-
-
-msgid "Math"
-msgstr "Matemática"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -21311,14 +21335,6 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
 msgid "Make Single User"
 msgstr "Tornar usuário único"
 
@@ -21329,6 +21345,10 @@ msgstr "Converter"
 
 msgid "Hooks"
 msgstr "Ganchos"
+
+
+msgid "Layout"
+msgstr "Organizar"
 
 
 msgid "Random Mask"
@@ -21347,8 +21367,12 @@ msgid "Propagate"
 msgstr "Propagar"
 
 
-msgid "Names"
-msgstr "Nomes"
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
 
 
 msgid "Toggle Bone Options"
@@ -21371,36 +21395,12 @@ msgid "Face Data"
 msgstr "Dados das faces"
 
 
-msgid "Layout"
-msgstr "Organizar"
-
-
 msgid "Merge"
 msgstr "Fundir"
 
 
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
 msgid "Special Characters"
 msgstr "Caracteres especiais"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Basic"
@@ -23518,6 +23518,10 @@ msgstr "Temporização"
 
 msgid "Grow"
 msgstr "Crescer"
+
+
+msgid "Stroke & Fill"
+msgstr "Contorno e Preenchimento"
 
 
 msgid "Hook Modifier"
@@ -34447,10 +34451,6 @@ msgid "Side"
 msgstr "Lado"
 
 
-msgid "Both"
-msgstr "Ambos"
-
-
 msgctxt "Operator"
 msgid "Euler Discontinuity Filter"
 msgstr "Filtro de descontinuidade para Euler"
@@ -37100,22 +37100,6 @@ msgstr "Funde os vértices selecionados."
 
 msgid "Merge method to use"
 msgstr "Método de fusão para usar."
-
-
-msgid "At Center"
-msgstr "No centro"
-
-
-msgid "At Cursor"
-msgstr "No cursor"
-
-
-msgid "At First"
-msgstr "No primeiro"
-
-
-msgid "At Last"
-msgstr "No último"
 
 
 msgid "Move UVs according to merge"
@@ -51773,58 +51757,6 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "Valor de semente para que o integrador obtenha diferentes padrões de ruído."
 
 
-msgid "Viewport Texture Limit"
-msgstr "Limitar texturas na janela de exibição"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Limita o tamanho das texturas usadas pela renderização na janela de exibição."
-
-
-msgid "No Limit"
-msgstr "Sem limitações"
-
-
-msgid "No texture size limit"
-msgstr "Sem limitações de tamanho de texturas."
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Limita o tamanho da textura para 128 pixeis."
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Limita o tamanho da textura para 256 pixeis."
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Limita o tamanho da textura para 512 pixeis."
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Limita o tamanho da textura para 1024 pixeis."
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Limita o tamanho da textura para 2048 pixeis."
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Limita o tamanho da textura para 4096 pixeis."
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Limita o tamanho da textura para 8192 pixeis."
-
-
-msgid "Render Texture Limit"
-msgstr "Limitar texturas de renderização"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "Limita o tamanho da textura utilizada para a renderização final."
-
-
 msgid "Tile Size"
 msgstr "Tamanho dos ladrilhos"
 
@@ -55792,14 +55724,6 @@ msgid "Use Default Fade"
 msgstr "Usar esmaecimento padrão"
 
 
-msgid "Use Linear Modifiers"
-msgstr "Usar modificadores lineares"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Calcula os modificadores dentro do espaço linear invés do espaço do sequenciador."
-
-
 msgid "Sequence strip applying an effect on the images created by other strips"
 msgstr "Faixas de sequência aplicando efeitos nas imagens criadas por outras faixas."
 
@@ -59069,6 +58993,10 @@ msgid "Report a Bug"
 msgstr "Relatar defeito (em inglês)"
 
 
+msgid "Object Index"
+msgstr "Índice de objeto"
+
+
 msgid "OSL shader compilation succeeded"
 msgstr "Compilação de sombreador OSL realizada com sucesso."
 
@@ -62332,24 +62260,8 @@ msgid "Cannot change action, as it is still being edited in NLA"
 msgstr "Não é possível alterar a ação, pois esta ainda está sendo editada no editor de animação não linear."
 
 
-msgid "<No ID pointer>"
-msgstr "<Sem ponteiro para o identificador >"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "Sem curvas-f para as quais adicionar quadros-chave."
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "Sem ponteiro RNA disponível para obter valores nos quais colocar o conjunto de inserção de chaves."
-
-
 msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Sem identificador de bloco e / ou dados de animação a partir dos quais apagar o quadro-chave."
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "Não é possível inserir quadro-chave, pois o caminho RNA é inválido para o identificador fornecido (ID = %s, Caminho = %s)."
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -62366,6 +62278,22 @@ msgstr "Não é possível limpar o quadro-chave, pois o caminho RNA é inválido
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "Saltando caminho dentro do conjunto de inserção de chaves, pois este não possui identificador (KS = '%s', Caminho = '%s[%d]')."
+
+
+msgid "<No ID pointer>"
+msgstr "<Sem ponteiro para o identificador >"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "Sem curvas-f para as quais adicionar quadros-chave."
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "Sem ponteiro RNA disponível para obter valores nos quais colocar o conjunto de inserção de chaves."
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "Não é possível inserir quadro-chave, pois o caminho RNA é inválido para o identificador fornecido (ID = %s, Caminho = %s)."
 
 
 msgid "KeyingSet"
@@ -67327,10 +67255,6 @@ msgstr "Cor 2"
 
 msgid "Dot"
 msgstr "Ponto"
-
-
-msgid "Object Index"
-msgstr "Índice de objeto"
 
 
 msgid "Color Fac"

@@ -12,20 +12,24 @@ namespace blender::nodes::node_geo_curve_topology_points_of_curve_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Curve Index")
+  b.add_input<decl::Int>("Curve Index"_ustr)
       .implicit_field(NODE_DEFAULT_INPUT_INDEX_FIELD)
       .description("The curve to retrieve data from. Defaults to the curve from the context")
       .structure_type(StructureType::Field);
-  b.add_input<decl::Float>("Weights").supports_field().hide_value().description(
-      "Values used to sort the curve's points. Uses indices by default");
-  b.add_input<decl::Int>("Sort Index")
+  b.add_input<decl::Float>("Weights"_ustr)
+      .supports_field()
+      .hide_value()
+      .description("Values used to sort the curve's points. Uses indices by default");
+  b.add_input<decl::Int>("Sort Index"_ustr)
       .supports_field()
       .description("Which of the sorted points to output. Negative indexing is supported");
-  b.add_output<decl::Int>("Point Index")
+  b.add_output<decl::Int>("Point Index"_ustr)
       .field_source_reference_all()
       .description("A point of the curve, chosen by the sort index");
-  b.add_output<decl::Int>("Total").field_source().reference_pass({0}).description(
-      "The number of points in the curve");
+  b.add_output<decl::Int>("Total"_ustr)
+      .field_source()
+      .reference_pass({0})
+      .description("The number of points in the curve");
 }
 
 /**

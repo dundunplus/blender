@@ -87,7 +87,6 @@ void SourceProcessor::lower_entry_points(Parser &parser)
 
     /* For now, just emit good old create info macros. */
     string create_info_decl;
-    create_info_decl += "GPU_SHADER_CREATE_INFO(" + string(fn_name.str()) + "_infos_)\n";
 
     if (!local_size.empty()) {
       if (!is_compute_func) {
@@ -432,9 +431,13 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       process_argument(toks[8], toks[11], toks[1].scope());
     });
 
-    create_info_decl += "GPU_SHADER_CREATE_END()\n";
-
     if (is_entry_point) {
+      if (create_info_decl.empty()) {
+        /* Add unused define to avoid warning about unused expression. */
+        create_info_decl += "DEFINE(\"EMPTY_CREATE_INFO\")\n";
+      }
+      create_info_decl = "GPU_SHADER_CREATE_INFO(" + string(fn_name.str()) + "_infos_)\n" +
+                         create_info_decl + "GPU_SHADER_CREATE_END()\n";
       metadata_.create_infos_declarations.emplace_back(create_info_decl);
     }
   });

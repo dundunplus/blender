@@ -727,7 +727,7 @@ static void rna_Brush_main_tex_update(bContext *C, PointerRNA *ptr)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Brush *br = static_cast<Brush *>(ptr->data);
-  BKE_paint_invalidate_overlay_tex(scene, view_layer, br->mtex.tex);
+  BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, br->mtex.tex);
   rna_Brush_update(bmain, scene, ptr);
 }
 
@@ -737,7 +737,7 @@ static void rna_Brush_secondary_tex_update(bContext *C, PointerRNA *ptr)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Brush *br = static_cast<Brush *>(ptr->data);
-  BKE_paint_invalidate_overlay_tex(scene, view_layer, br->mask_mtex.tex);
+  BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, br->mask_mtex.tex);
   rna_Brush_update(bmain, scene, ptr);
 }
 
@@ -755,12 +755,13 @@ static void rna_Brush_stroke_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 
 static void rna_TextureSlot_brush_angle_update(bContext *C, PointerRNA *ptr)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   MTex *mtex = static_cast<MTex *>(ptr->data);
   /* skip invalidation of overlay for stencil mode */
   if (mtex->mapping != MTEX_MAP_MODE_STENCIL) {
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_paint_invalidate_overlay_tex(scene, view_layer, mtex->tex);
+    BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, mtex->tex);
   }
 
   rna_TextureSlot_update(C, ptr);
@@ -1034,9 +1035,10 @@ static void rna_BrushGpencilSettings_update(Main * /*bmain*/, Scene * /*scene*/,
 
 static void rna_BrushGpencilSettings_use_material_pin_update(bContext *C, PointerRNA *ptr)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   Brush *brush = reinterpret_cast<Brush *>(ptr->owner_id);
 

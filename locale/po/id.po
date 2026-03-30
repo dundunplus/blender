@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2025-12-23 20:36+0000\n"
 "Last-Translator: \"Adriel Y.\" <mixnblend@users.noreply.translate.blender.org>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
@@ -5676,24 +5676,8 @@ msgid "Stroke"
 msgstr "Sapuan"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "Warna Titik Sudut hanya mempengaruhi Sapuan"
-
-
 msgid "Fill"
 msgstr "Isi"
-
-
-msgid "Vertex Color affects to Fill only"
-msgstr "Warna Titik Sudut mempengaruhi Isi saja"
-
-
-msgid "Stroke & Fill"
-msgstr "Sapuan & Isi"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "Warna Titik Sudut mempengaruhi Sapuan dan Isi"
 
 
 msgid "Byte Color Attribute Value"
@@ -15683,8 +15667,16 @@ msgid "Use Material Mask"
 msgstr "Gunakan Masker Bahan"
 
 
-msgid "Mirror"
-msgstr "Cermin"
+msgid "Math"
+msgstr "Matematika"
+
+
+msgid "Names"
+msgstr "Nama"
+
+
+msgid "Utilities"
+msgstr "Utilitas"
 
 
 msgid "Snap"
@@ -15695,14 +15687,6 @@ msgid "Sample"
 msgstr "Sampel"
 
 
-msgid "Navigation"
-msgstr "Navigasi"
-
-
-msgid "Select Linked"
-msgstr "Seleksi yang Terhubung"
-
-
 msgid "Gizmo"
 msgstr "Gizmo"
 
@@ -15711,16 +15695,28 @@ msgid "Instances"
 msgstr "Contoh-contoh"
 
 
-msgid "Assign Material"
-msgstr "Tugaskan Bahan"
-
-
 msgid "Import"
 msgstr "Impor"
 
 
-msgid "Utilities"
-msgstr "Utilitas"
+msgid "Mirror"
+msgstr "Cermin"
+
+
+msgid "Navigation"
+msgstr "Navigasi"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Select Linked"
+msgstr "Seleksi yang Terhubung"
+
+
+msgid "Assign Material"
+msgstr "Tugaskan Bahan"
 
 
 msgid "Metaball"
@@ -15733,14 +15729,6 @@ msgstr "Cahaya"
 
 msgid "Light Probe"
 msgstr "Probe Cahaya"
-
-
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Add Image"
@@ -15763,20 +15751,16 @@ msgid "Hooks"
 msgstr "Kait"
 
 
-msgid "Names"
-msgstr "Nama"
-
-
 msgid "Layout"
 msgstr "Tata Letak"
 
 
-msgid "Merge"
-msgstr "Menggabungkan"
-
-
 msgid "Tracking"
 msgstr "Pelacakan"
+
+
+msgid "Merge"
+msgstr "Menggabungkan"
 
 
 msgid "Animals"
@@ -16502,6 +16486,10 @@ msgstr "Tumbuh"
 
 msgid "Vanish"
 msgstr "Hilang"
+
+
+msgid "Stroke & Fill"
+msgstr "Sapuan & Isi"
 
 
 msgid "Fills"
@@ -26435,14 +26423,6 @@ msgid "Surface Guiding Probability"
 msgstr "Probabilitas Pemandu Permukaan"
 
 
-msgid "No Limit"
-msgstr "Tidak Ada Batas"
-
-
-msgid "No texture size limit"
-msgstr "Tidak ada batas ukuran tekstur"
-
-
 msgid "Tile Size"
 msgstr "Ukurang"
 
@@ -27447,10 +27427,6 @@ msgstr "Masker"
 msgctxt "Sequence"
 msgid "Sound"
 msgstr "Suara"
-
-
-msgid "Use Linear Modifiers"
-msgstr "Modus Pahat"
 
 
 msgid "Multiply Colors"
@@ -28535,10 +28511,6 @@ msgstr "Render"
 
 msgid "No output node"
 msgstr "Tidak ada node keluaran"
-
-
-msgid "Texture Limit"
-msgstr "Batas Tekstur"
 
 
 msgid "Distance Culling"
@@ -32497,16 +32469,16 @@ msgid "Subtype"
 msgstr "Subtipe"
 
 
+msgid "Compositing..."
+msgstr "Pengomposisian..."
+
+
 msgid " Named Attribute"
 msgstr " Atribut bernama"
 
 
 msgid " Named Attributes"
 msgstr " Atribut Bernama"
-
-
-msgid "Compositing..."
-msgstr "Pengomposisian..."
 
 
 msgid "3D Float Vector"

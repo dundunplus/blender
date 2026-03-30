@@ -14,11 +14,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Mesh");
-  b.add_output<decl::Geometry>("Mesh").align_with_previous().description(
-      "Mesh to override the face set attribute on");
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Int>("Face Set").hide_value().field_on_all();
+  b.add_input<decl::Geometry>("Mesh"_ustr);
+  b.add_output<decl::Geometry>("Mesh"_ustr)
+      .align_with_previous()
+      .description("Mesh to override the face set attribute on");
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Int>("Face Set"_ustr).hide_value().field_on_all();
 }
 
 static bool is_constant_zero(const Field<int> &face_set)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2026-02-14 01:12+0000\n"
 "Last-Translator: Timo Hoetmer <timo@timohoetmer.nl>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -5775,6 +5775,18 @@ msgid "Dots"
 msgstr "Stippen"
 
 
+msgid "Names"
+msgstr "Namen"
+
+
+msgid "Show/Hide"
+msgstr "Toon/Verberg"
+
+
+msgid "Import"
+msgstr "Importeren"
+
+
 msgid "Mirror"
 msgstr "Spiegel"
 
@@ -5793,10 +5805,6 @@ msgstr "Selecteer Vergelijkbaar"
 
 msgid "Select Linked"
 msgstr "Selecteer Aaneengesloten"
-
-
-msgid "Import"
-msgstr "Importeren"
 
 
 msgid "Light"
@@ -5819,10 +5827,6 @@ msgid "Quick Effects"
 msgstr "Snelle Effecten"
 
 
-msgid "Show/Hide"
-msgstr "Toon/Verberg"
-
-
 msgid "Convert"
 msgstr "Converteer"
 
@@ -5831,16 +5835,12 @@ msgid "Hooks"
 msgstr "Haken"
 
 
-msgid "Clear Transform"
-msgstr "Maak Transformatie Leeg"
-
-
-msgid "Names"
-msgstr "Namen"
-
-
 msgid "Layout"
 msgstr "Indeling"
+
+
+msgid "Clear Transform"
+msgstr "Maak Transformatie Leeg"
 
 
 msgctxt "MovieClip"

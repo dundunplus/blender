@@ -106,22 +106,22 @@ static void node_declare(NodeDeclarationBuilder &b)
   }
 
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
-  b.add_input(data_type, "Grid")
+  b.add_input(data_type, "Grid"_ustr)
       .hide_value()
       .structure_type(StructureType::Grid)
       .is_default_link_socket();
-  b.add_output(data_type, "Grid").structure_type(StructureType::Grid).align_with_previous();
-  b.add_input<decl::Vector>("Velocity").hide_value().structure_type(StructureType::Grid);
-  b.add_input<decl::Float>("Time Step")
+  b.add_output(data_type, "Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
+  b.add_input<decl::Vector>("Velocity"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Time Step"_ustr)
       .subtype(PROP_TIME_ABSOLUTE)
       .default_value(1.0f)
       .description("Time step for advection in seconds");
-  b.add_input<decl::Menu>("Integration Scheme")
+  b.add_input<decl::Menu>("Integration Scheme"_ustr)
       .static_items(integration_scheme_items)
       .default_value(IntegrationScheme::RungeKutta3)
       .optional_label()
       .description("Numerical integration method for advection");
-  b.add_input<decl::Menu>("Limiter")
+  b.add_input<decl::Menu>("Limiter"_ustr)
       .static_items(limiter_type_items)
       .default_value(LimiterType::Clamp)
       .optional_label()
@@ -161,7 +161,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     {
       params.add_item(IFACE_("Velocity"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeGridAdvect");
-        params.update_and_connect_available_socket(node, "Velocity");
+        params.update_and_connect_available_socket(node, "Velocity"_ustr);
       });
     }
     if (params.node_tree().typeinfo->validate_link(eNodeSocketDatatype(params.other_socket().type),
@@ -169,14 +169,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     {
       params.add_item(IFACE_("Time Step"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeGridAdvect");
-        params.update_and_connect_available_socket(node, "Time Step");
+        params.update_and_connect_available_socket(node, "Time Step"_ustr);
       });
     }
   }
   params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
     bNode &node = params.add_node("GeometryNodeGridAdvect");
     node.custom1 = *data_type;
-    params.update_and_connect_available_socket(node, "Grid");
+    params.update_and_connect_available_socket(node, "Grid"_ustr);
   });
 }
 

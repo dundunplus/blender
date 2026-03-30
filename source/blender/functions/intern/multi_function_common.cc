@@ -434,6 +434,40 @@ void register_common_functions()
   });
   registry::add_new_cb(
       [] { return mf::build::SI1_SO<int, int>("-int", [](int a) { return -a; }, exec_fast); });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "bool && bool", [](bool a, bool b) { return a && b; }, exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "bool || bool", [](bool a, bool b) { return a || b; }, exec_fast);
+  });
+  registry::add_new_cb(
+      [] { return mf::build::SI1_SO<bool, bool>("!bool", [](bool a) { return !a; }, exec_fast); });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "!(bool && bool)", [](bool a, bool b) { return !(a && b); }, exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "!(bool || bool)", [](bool a, bool b) { return !(a || b); }, exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "bool == bool", [](bool a, bool b) { return a == b; }, exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "bool != bool", [](bool a, bool b) { return a != b; }, exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "!bool || bool", [](bool a, bool b) { return !a || b; }, exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<bool, bool, bool>(
+        "bool && !bool", [](bool a, bool b) { return a && !b; }, exec_fast);
+  });
 }
 
 }  // namespace blender::fn::multi_function

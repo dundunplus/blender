@@ -54,21 +54,24 @@ struct MaskApplyOp {
 };
 
 static void maskmodifier_apply(ModifierApplyContext &context,
-                               StripModifierData * /*smd*/,
-                               ImBuf *mask)
+                               StripModifierData *smd,
+                               int timeline_frame)
 {
-  if (mask == nullptr || (mask->byte_buffer.data == nullptr && mask->float_buffer.data == nullptr))
+  ImBuf *mask = modifier_render_mask_input(context, *smd, timeline_frame);
+  if (mask != nullptr && (mask->byte_buffer.data != nullptr || mask->float_buffer.data != nullptr))
   {
-    return;
+    ensure_ibuf_is_sequencer_space(context.render_data.scene, context.image, false);
+
+    MaskApplyOp op;
+    apply_modifier_op(op, context.image, mask, context.transform);
+
+    /* Image has gained transparency. */
+    context.image->planes = R_IMF_PLANES_RGBA;
   }
 
-  ensure_ibuf_is_sequencer_space(context.render_data.scene, context.image, false);
-
-  MaskApplyOp op;
-  apply_modifier_op(op, context.image, mask, context.transform);
-
-  /* Image has gained transparency. */
-  context.image->planes = R_IMF_PLANES_RGBA;
+  if (mask != nullptr) {
+    IMB_freeImBuf(mask);
+  }
 }
 
 static void maskmodifier_panel_draw(const bContext *C, Panel *panel)

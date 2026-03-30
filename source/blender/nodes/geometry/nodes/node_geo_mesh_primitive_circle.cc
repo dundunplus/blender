@@ -24,16 +24,16 @@ NODE_STORAGE_FUNCS(NodeGeometryMeshCircle)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Vertices")
+  b.add_input<decl::Int>("Vertices"_ustr)
       .default_value(32)
       .min(3)
       .description("Number of vertices on the circle");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Distance of the vertices from the origin");
-  b.add_output<decl::Geometry>("Mesh");
+  b.add_output<decl::Geometry>("Mesh"_ustr);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

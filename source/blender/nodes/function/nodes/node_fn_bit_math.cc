@@ -71,10 +71,10 @@ constexpr static int32_t min_shift = -max_shift;
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Int>("A");
-  auto &b_socket = b.add_input<decl::Int>("B");
-  auto &shift = b.add_input<decl::Int>("Shift").min(min_shift).max(max_shift);
-  b.add_output<decl::Int>("Value");
+  b.add_input<decl::Int>("A"_ustr);
+  auto &b_socket = b.add_input<decl::Int>("B"_ustr);
+  auto &shift = b.add_input<decl::Int>("Shift"_ustr).min(min_shift).max(max_shift);
+  b.add_output<decl::Int>("Value"_ustr);
 
   if (const bNode *node = b.node_or_null()) {
     const BitMathOperation operation = BitMathOperation(node->custom1);
@@ -91,7 +91,7 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   BitMathOperation operation;
   void operator()(LinkSearchOpParams &params)
   {
@@ -112,7 +112,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   const bool is_integer = params.other_socket().type == SOCK_INT;
   const int weight = is_integer ? 0 : -1;
 
-  const StringRef socket_name = (params.in_out() == SOCK_OUT) ? "Value" : "A";
+  const UString socket_name = (params.in_out() == SOCK_OUT) ? "Value"_ustr : "A"_ustr;
 
   for (const auto &item : bit_math_operation_items) {
     if (item.name != nullptr && item.identifier[0] != '\0') {

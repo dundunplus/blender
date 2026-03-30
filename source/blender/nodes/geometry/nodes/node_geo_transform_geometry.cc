@@ -27,23 +27,24 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .is_default_link_socket()
       .description("Geometry to transform");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Menu>("Mode")
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(mode_items)
       .optional_label()
       .description("How the transformation is specified");
-  b.add_input<decl::Vector>("Translation")
+  b.add_input<decl::Vector>("Translation"_ustr)
       .subtype(PROP_TRANSLATION)
       .usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
-  b.add_input<decl::Rotation>("Rotation").usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
-  b.add_input<decl::Vector>("Scale")
+  b.add_input<decl::Rotation>("Rotation"_ustr)
+      .usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
+  b.add_input<decl::Vector>("Scale"_ustr)
       .default_value({1, 1, 1})
       .subtype(PROP_XYZ)
       .usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
-  b.add_input<decl::Matrix>("Transform").usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_MATRIX);
+  b.add_input<decl::Matrix>("Transform"_ustr).usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_MATRIX);
 }
 
 static bool use_translate(const math::Quaternion &rotation, const float3 scale)

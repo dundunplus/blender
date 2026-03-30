@@ -254,9 +254,12 @@ IDTypeInfo IDType_ID_PC = {
 
 static ePaintOverlayControlFlags overlay_flags = ePaintOverlayControlFlags(0);
 
-void BKE_paint_invalidate_overlay_tex(Scene *scene, ViewLayer *view_layer, const Tex *tex)
+void BKE_paint_invalidate_overlay_tex(const Main &bmain,
+                                      Scene *scene,
+                                      ViewLayer *view_layer,
+                                      const Tex *tex)
 {
-  Paint *paint = BKE_paint_get_active(scene, view_layer);
+  Paint *paint = BKE_paint_get_active(bmain, scene, view_layer);
   if (!paint) {
     return;
   }
@@ -274,9 +277,12 @@ void BKE_paint_invalidate_overlay_tex(Scene *scene, ViewLayer *view_layer, const
   }
 }
 
-void BKE_paint_invalidate_cursor_overlay(Scene *scene, ViewLayer *view_layer, CurveMapping *curve)
+void BKE_paint_invalidate_cursor_overlay(const Main &bmain,
+                                         Scene *scene,
+                                         ViewLayer *view_layer,
+                                         CurveMapping *curve)
 {
-  Paint *paint = BKE_paint_get_active(scene, view_layer);
+  Paint *paint = BKE_paint_get_active(bmain, scene, view_layer);
   if (paint == nullptr) {
     return;
   }
@@ -432,11 +438,11 @@ const EnumPropertyItem *BKE_paint_get_tool_enum_from_paintmode(const PaintMode m
   return nullptr;
 }
 
-Paint *BKE_paint_get_active(Scene *sce, ViewLayer *view_layer)
+Paint *BKE_paint_get_active(const Main &bmain, Scene *sce, ViewLayer *view_layer)
 {
   if (sce && view_layer) {
     ToolSettings *ts = sce->toolsettings;
-    BKE_view_layer_synced_ensure(sce, view_layer);
+    BKE_view_layer_synced_ensure(bmain, sce, view_layer);
     Object *actob = BKE_view_layer_active_object_get(view_layer);
 
     if (actob) {
@@ -473,12 +479,13 @@ Paint *BKE_paint_get_active(Scene *sce, ViewLayer *view_layer)
 
 Paint *BKE_paint_get_active_from_context(const bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *sce = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   if (sce && view_layer) {
     ToolSettings *ts = sce->toolsettings;
-    BKE_view_layer_synced_ensure(sce, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, sce, view_layer);
     Object *obact = BKE_view_layer_active_object_get(view_layer);
 
     SpaceImage *sima = CTX_wm_space_image(C);
@@ -493,7 +500,7 @@ Paint *BKE_paint_get_active_from_context(const bContext *C)
       }
     }
     else {
-      return BKE_paint_get_active(sce, view_layer);
+      return BKE_paint_get_active(*bmain, sce, view_layer);
     }
   }
 
@@ -502,11 +509,12 @@ Paint *BKE_paint_get_active_from_context(const bContext *C)
 
 PaintMode BKE_paintmode_get_active_from_context(const bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *sce = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   if (sce && view_layer) {
-    BKE_view_layer_synced_ensure(sce, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, sce, view_layer);
     Object *obact = BKE_view_layer_active_object_get(view_layer);
 
     SpaceImage *sima = CTX_wm_space_image(C);

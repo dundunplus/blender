@@ -400,7 +400,7 @@ std::unique_ptr<SocketDeclaration> make_declaration_for_socket_type(
 }
 
 BaseSocketDeclarationBuilder &DeclarationListBuilder::add_input(
-    const eNodeSocketDatatype socket_type, const StringRef name, const StringRef identifier)
+    const eNodeSocketDatatype socket_type, const UString name, const UString identifier)
 {
   BaseSocketDeclarationBuilder *decl = nullptr;
   socket_type_to_static_decl_type(socket_type, [&]<std::derived_from<SocketDeclaration> DeclT>() {
@@ -408,20 +408,20 @@ BaseSocketDeclarationBuilder &DeclarationListBuilder::add_input(
   });
   if (!decl) {
     BLI_assert_unreachable();
-    decl = &this->add_input<decl::Float>("", "");
+    decl = &this->add_input<decl::Float>(""_ustr, ""_ustr);
   }
   return *decl;
 }
 
 BaseSocketDeclarationBuilder &DeclarationListBuilder::add_input(const eCustomDataType data_type,
-                                                                const StringRef name,
-                                                                const StringRef identifier)
+                                                                const UString name,
+                                                                const UString identifier)
 {
   return this->add_input(*bke::custom_data_type_to_socket_type(data_type), name, identifier);
 }
 
 BaseSocketDeclarationBuilder &DeclarationListBuilder::add_output(
-    const eNodeSocketDatatype socket_type, const StringRef name, const StringRef identifier)
+    const eNodeSocketDatatype socket_type, const UString name, const UString identifier)
 {
   BaseSocketDeclarationBuilder *decl = nullptr;
   socket_type_to_static_decl_type(socket_type, [&]<std::derived_from<SocketDeclaration> DeclT>() {
@@ -429,14 +429,14 @@ BaseSocketDeclarationBuilder &DeclarationListBuilder::add_output(
   });
   if (!decl) {
     BLI_assert_unreachable();
-    decl = &this->add_output<decl::Float>("", "");
+    decl = &this->add_output<decl::Float>(""_ustr, ""_ustr);
   }
   return *decl;
 }
 
 BaseSocketDeclarationBuilder &DeclarationListBuilder::add_output(const eCustomDataType data_type,
-                                                                 const StringRef name,
-                                                                 const StringRef identifier)
+                                                                 const UString name,
+                                                                 const UString identifier)
 {
   return this->add_output(*bke::custom_data_type_to_socket_type(data_type), name, identifier);
 }

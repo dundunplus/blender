@@ -284,9 +284,10 @@ static AreaLuminance tonemap_calc_input_luminance(const ImBuf *ibuf)
 
 static void tonemapmodifier_apply(ModifierApplyContext &context,
                                   StripModifierData *smd,
-                                  ImBuf *mask)
+                                  int timeline_frame)
 {
   ensure_ibuf_is_sequencer_space(context.render_data.scene, context.image, false);
+  ImBuf *mask = modifier_render_mask_input(context, *smd, timeline_frame);
 
   const SequencerTonemapModifierData *tmmd =
       reinterpret_cast<const SequencerTonemapModifierData *>(smd);
@@ -313,6 +314,10 @@ static void tonemapmodifier_apply(ModifierApplyContext &context,
   op.data.igm = (tmmd->gamma == 0.0f) ? 1.0f : (1.0f / tmmd->gamma);
 
   apply_modifier_op(op, context.image, mask, context.transform);
+
+  if (mask != nullptr) {
+    IMB_freeImBuf(mask);
+  }
 }
 
 static void tonemapmodifier_panel_draw(const bContext *C, Panel *panel)

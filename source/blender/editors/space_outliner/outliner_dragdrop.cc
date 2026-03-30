@@ -303,7 +303,7 @@ static int outliner_get_insert_index(TreeElement *drag_te,
 /** \name Parent Drop Operator
  * \{ */
 
-static bool parent_drop_allowed(TreeElement *te, Object *potential_child)
+static bool parent_drop_allowed(const Main &bmain, TreeElement *te, Object *potential_child)
 {
   TreeStoreElem *tselem = TREESTORE(te);
   if ((te->idcode != ID_OB) || (tselem->type != TSE_SOME_ID)) {
@@ -330,7 +330,7 @@ static bool parent_drop_allowed(TreeElement *te, Object *potential_child)
    * active scene and parenting them is allowed (sergey) */
   if (scene) {
     for (ViewLayer &view_layer : scene->view_layers) {
-      BKE_view_layer_synced_ensure(scene, &view_layer);
+      BKE_view_layer_synced_ensure(bmain, scene, &view_layer);
       if (BKE_view_layer_base_find(&view_layer, potential_child)) {
         return true;
       }
@@ -377,7 +377,9 @@ static bool parent_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
     return false;
   }
 
-  if (parent_drop_allowed(te, potential_child)) {
+  const Main *bmain = CTX_data_main(C);
+
+  if (parent_drop_allowed(*bmain, te, potential_child)) {
     TREESTORE(te)->flag |= TSE_DRAG_INTO;
     ED_region_tag_redraw_no_rebuild(CTX_wm_region(C));
     return true;
@@ -605,7 +607,7 @@ static wmOperatorStatus scene_drop_invoke(bContext *C, wmOperator * /*op*/, cons
     return OPERATOR_CANCELLED;
   }
 
-  if (BKE_scene_has_object(scene, ob)) {
+  if (BKE_scene_has_object(*bmain, scene, ob)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -621,7 +623,7 @@ static wmOperatorStatus scene_drop_invoke(bContext *C, wmOperator * /*op*/, cons
   BKE_collection_object_add(bmain, collection, ob);
 
   for (ViewLayer &view_layer : scene->view_layers) {
-    BKE_view_layer_synced_ensure(scene, &view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, &view_layer);
     Base *base = BKE_view_layer_base_find(&view_layer, ob);
     if (base) {
       object::base_select(base, object::BA_SELECT);

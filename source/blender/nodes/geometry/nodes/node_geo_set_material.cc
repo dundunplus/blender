@@ -22,18 +22,18 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh,
                        GeometryComponent::Type::Volume,
                        GeometryComponent::Type::PointCloud,
                        GeometryComponent::Type::Curve,
                        GeometryComponent::Type::GreasePencil});
-  b.add_output<decl::Geometry>("Geometry")
+  b.add_output<decl::Geometry>("Geometry"_ustr)
       .propagate_all()
       .align_with_previous()
       .description("Geometry to assign a material to");
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Material>("Material").optional_label();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Material>("Material"_ustr).optional_label();
 }
 
 static void assign_material_to_id_geometry(ID *id,

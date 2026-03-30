@@ -35,11 +35,11 @@ static void node_declare(NodeDeclarationBuilder &b)
                                   StructureType::Dynamic :
                                   StructureType(storage.structure_type);
 
-  b.add_input(type, "List").structure_type(StructureType::List).hide_value();
+  b.add_input(type, "List"_ustr).structure_type(StructureType::List).hide_value();
 
-  b.add_input<decl::Int>("Index").min(0).structure_type(StructureType::Dynamic);
+  b.add_input<decl::Int>("Index"_ustr).min(0).structure_type(StructureType::Dynamic);
 
-  b.add_output(type, "Value").dependent_field({1}).structure_type(structure_type);
+  b.add_output(type, "Value"_ustr).dependent_field({1}).structure_type(structure_type);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -62,7 +62,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 class SocketSearchOp {
  public:
-  const StringRef socket_name;
+  UString socket_name;
   eNodeSocketDatatype socket_type;
   void operator()(LinkSearchOpParams &params)
   {
@@ -80,12 +80,12 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   const eNodeSocketDatatype socket_type = eNodeSocketDatatype(params.other_socket().type);
   if (params.in_out() == SOCK_IN) {
     if (params.node_tree().typeinfo->validate_link(socket_type, SOCK_INT)) {
-      params.add_item(IFACE_("Index"), SocketSearchOp{"Index", SOCK_INT});
+      params.add_item(IFACE_("Index"), SocketSearchOp{"Index"_ustr, SOCK_INT});
     }
-    params.add_item(IFACE_("List"), SocketSearchOp{"List", socket_type});
+    params.add_item(IFACE_("List"), SocketSearchOp{"List"_ustr, socket_type});
   }
   else {
-    params.add_item(IFACE_("Value"), SocketSearchOp{"Value", socket_type});
+    params.add_item(IFACE_("Value"), SocketSearchOp{"Value"_ustr, socket_type});
   }
 }
 

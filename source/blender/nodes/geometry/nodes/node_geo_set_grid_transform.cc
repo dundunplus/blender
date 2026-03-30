@@ -33,14 +33,14 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_output<decl::Bool>("Is Valid")
+  b.add_output<decl::Bool>("Is Valid"_ustr)
       .description("The new transform is valid and was successfully applied to the grid.");
-  b.add_input(data_type, "Grid")
+  b.add_input(data_type, "Grid"_ustr)
       .hide_value()
       .structure_type(StructureType::Grid)
       .is_default_link_socket();
-  b.add_output(data_type, "Grid").structure_type(StructureType::Grid).align_with_previous();
-  b.add_input<decl::Matrix>("Transform")
+  b.add_output(data_type, "Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
+  b.add_input<decl::Matrix>("Transform"_ustr)
       .description("The new transform from grid index space to object space.");
 }
 
@@ -83,14 +83,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
         params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeSetGridTransform");
           node.custom1 = *data_type;
-          params.update_and_connect_available_socket(node, "Grid");
+          params.update_and_connect_available_socket(node, "Grid"_ustr);
         });
       }
     }
     if (!is_grid && params.node_tree().typeinfo->validate_link(other_type, SOCK_MATRIX)) {
       params.add_item(IFACE_("Transform"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeSetGridTransform");
-        params.update_and_connect_available_socket(node, "Transform");
+        params.update_and_connect_available_socket(node, "Transform"_ustr);
       });
     }
   }
@@ -100,13 +100,13 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeSetGridTransform");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Grid");
+        params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
     }
     if (params.node_tree().typeinfo->validate_link(SOCK_BOOLEAN, other_type)) {
       params.add_item(IFACE_("Is Valid"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeSetGridTransform");
-        params.update_and_connect_available_socket(node, "Is Valid");
+        params.update_and_connect_available_socket(node, "Is Valid"_ustr);
       });
     }
   }

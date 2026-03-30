@@ -512,9 +512,10 @@ bool ED_space_image_maskedit_poll(bContext *C)
   SpaceImage *sima = CTX_wm_space_image(C);
 
   if (sima) {
+    const Main *bmain = CTX_data_main(C);
     Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *obedit = BKE_view_layer_edit_object_get(view_layer);
     return ED_space_image_check_show_maskedit(sima, obedit);
   }

@@ -28,12 +28,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Grease Pencil")
+  b.add_input<decl::Geometry>("Grease Pencil"_ustr)
       .supported_type(GeometryComponent::Type::GreasePencil)
       .description("Grease Pencil data to merge layers of");
-  b.add_output<decl::Geometry>("Grease Pencil").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  auto &group_id = b.add_input<decl::Int>("Group ID")
+  b.add_output<decl::Geometry>("Grease Pencil"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  auto &group_id = b.add_input<decl::Int>("Group ID"_ustr)
                        .hide_value()
                        .field_on_all()
                        .make_available([](bNode &node) {

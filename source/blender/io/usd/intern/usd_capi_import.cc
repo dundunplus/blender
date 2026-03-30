@@ -330,12 +330,12 @@ static void import_endjob(void *customdata)
         DEG_id_tag_update(&import_collection->id, ID_RECALC_SYNC_TO_EVAL);
         DEG_relations_tag_update(data->bmain);
 
-        BKE_view_layer_synced_ensure(data->scene, view_layer);
+        BKE_view_layer_synced_ensure(*data->bmain, data->scene, view_layer);
         view_layer->active_collection = BKE_layer_collection_first_from_scene_collection(
             view_layer, import_collection);
       }
 
-      BKE_view_layer_base_deselect_all(data->scene, view_layer);
+      BKE_view_layer_base_deselect_all(*data->bmain, data->scene, view_layer);
 
       LayerCollection *lc = BKE_layer_collection_get_active_editable(view_layer);
       if (!ID_IS_EDITABLE(lc->collection)) {
@@ -368,7 +368,7 @@ static void import_endjob(void *customdata)
     /* Sync and do the view layer operations. */
     if (data->scene) {
       ViewLayer *view_layer = CTX_data_view_layer(data->C);
-      BKE_view_layer_synced_ensure(data->scene, view_layer);
+      BKE_view_layer_synced_ensure(*data->bmain, data->scene, view_layer);
 
       bool has_instantiated_object = false;
       bool has_uninstantiated_object = false;

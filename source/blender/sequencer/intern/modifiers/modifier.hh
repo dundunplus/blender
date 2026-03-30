@@ -68,6 +68,10 @@ struct ModifierApplyContext {
 
 void modifier_apply_stack(ModifierApplyContext &context, int timeline_frame);
 
+ImBuf *modifier_render_mask_input(const ModifierApplyContext &context,
+                                  const StripModifierData &smd,
+                                  int timeline_frame);
+
 bool modifier_persistent_uids_are_valid(const Strip &strip);
 
 void draw_mask_input_type_settings(const bContext *C, ui::Layout &layout, PointerRNA *ptr);

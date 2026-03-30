@@ -13,15 +13,18 @@ namespace blender::nodes::node_geo_points_to_sdf_grid_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Points").description(
-      "Points whose volume is converted to a signed distance field grid");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Geometry>("Points"_ustr)
+      .description("Points whose volume is converted to a signed distance field grid");
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .field_on_all();
-  b.add_input<decl::Float>("Voxel Size").default_value(0.3f).min(0.01f).subtype(PROP_DISTANCE);
-  b.add_output<decl::Float>("SDF Grid").structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Voxel Size"_ustr)
+      .default_value(0.3f)
+      .min(0.01f)
+      .subtype(PROP_DISTANCE);
+  b.add_output<decl::Float>("SDF Grid"_ustr).structure_type(StructureType::Grid);
 }
 
 #ifdef WITH_OPENVDB

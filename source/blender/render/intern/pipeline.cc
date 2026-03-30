@@ -1531,7 +1531,8 @@ static void do_render_full_pipeline(Render *re)
   }
 }
 
-static bool check_valid_compositing_camera(Scene *scene,
+static bool check_valid_compositing_camera(const Main &bmain,
+                                           Scene *scene,
                                            Object *camera_override,
                                            ReportList *reports)
 {
@@ -1540,7 +1541,7 @@ static bool check_valid_compositing_camera(Scene *scene,
       if (node->type_legacy == CMP_NODE_R_LAYERS && !node->is_muted()) {
         Scene *sce = node->id ? id_cast<Scene *>(node->id) : scene;
         if (sce->camera == nullptr) {
-          sce->camera = BKE_view_layer_camera_find(sce, BKE_view_layer_default_render(sce));
+          sce->camera = BKE_view_layer_camera_find(bmain, sce, BKE_view_layer_default_render(sce));
         }
         if (sce->camera == nullptr) {
           /* all render layers nodes need camera */
@@ -1565,7 +1566,10 @@ static bool check_valid_compositing_camera(Scene *scene,
   return ok;
 }
 
-static bool check_valid_camera_multiview(Scene *scene, Object *camera, ReportList *reports)
+static bool check_valid_camera_multiview(const Main &bmain,
+                                         Scene *scene,
+                                         Object *camera,
+                                         ReportList *reports)
 {
   bool active_view = false;
 
@@ -1579,7 +1583,7 @@ static bool check_valid_camera_multiview(Scene *scene, Object *camera, ReportLis
 
       if (scene->r.views_format == SCE_VIEWS_FORMAT_MULTIVIEW) {
         Object *view_camera;
-        view_camera = BKE_camera_multiview_render(scene, camera, srv.name);
+        view_camera = BKE_camera_multiview_render(bmain, scene, camera, srv.name);
 
         if (view_camera == camera) {
           /* if the suffix is not in the camera, means we are using the fallback camera */
@@ -1603,13 +1607,16 @@ static bool check_valid_camera_multiview(Scene *scene, Object *camera, ReportLis
   return true;
 }
 
-static int check_valid_camera(Scene *scene, Object *camera_override, ReportList *reports)
+static int check_valid_camera(const Main &bmain,
+                              Scene *scene,
+                              Object *camera_override,
+                              ReportList *reports)
 {
   if (camera_override == nullptr && scene->camera == nullptr) {
-    scene->camera = BKE_view_layer_camera_find(scene, BKE_view_layer_default_render(scene));
+    scene->camera = BKE_view_layer_camera_find(bmain, scene, BKE_view_layer_default_render(scene));
   }
 
-  if (!check_valid_camera_multiview(scene, scene->camera, reports)) {
+  if (!check_valid_camera_multiview(bmain, scene, scene->camera, reports)) {
     return false;
   }
 
@@ -1621,25 +1628,26 @@ static int check_valid_camera(Scene *scene, Object *camera_override, ReportList 
         {
           if (!strip.scene_camera) {
             if (!strip.scene->camera &&
-                !BKE_view_layer_camera_find(strip.scene,
-                                            BKE_view_layer_default_render(strip.scene)))
+                !BKE_view_layer_camera_find(
+                    bmain, strip.scene, BKE_view_layer_default_render(strip.scene)))
             {
               /* camera could be unneeded due to composite nodes */
               Object *override = (strip.scene == scene) ? camera_override : nullptr;
 
-              if (!check_valid_compositing_camera(strip.scene, override, reports)) {
+              if (!check_valid_compositing_camera(bmain, strip.scene, override, reports)) {
                 return false;
               }
             }
           }
-          else if (!check_valid_camera_multiview(strip.scene, strip.scene_camera, reports)) {
+          else if (!check_valid_camera_multiview(bmain, strip.scene, strip.scene_camera, reports))
+          {
             return false;
           }
         }
       }
     }
   }
-  else if (!check_valid_compositing_camera(scene, camera_override, reports)) {
+  else if (!check_valid_compositing_camera(bmain, scene, camera_override, reports)) {
     return false;
   }
 
@@ -1678,7 +1686,8 @@ static bool is_compositing_possible_on_gpu(Scene *scene, ReportList *reports)
   return true;
 }
 
-bool RE_is_rendering_allowed(Scene *scene,
+bool RE_is_rendering_allowed(const Main &bmain,
+                             Scene *scene,
                              ViewLayer *single_layer,
                              Object *camera_override,
                              ReportList *reports)
@@ -1721,7 +1730,7 @@ bool RE_is_rendering_allowed(Scene *scene,
   }
 
   /* check valid camera, without camera render is OK (compo, seq) */
-  if (!check_valid_camera(scene, camera_override, reports)) {
+  if (!check_valid_camera(bmain, scene, camera_override, reports)) {
     return false;
   }
 

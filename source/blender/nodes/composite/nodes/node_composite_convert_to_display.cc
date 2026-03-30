@@ -29,14 +29,16 @@ NODE_STORAGE_FUNCS(NodeConvertToDisplay)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Bool>("Invert").default_value(false).description(
-      "Convert from display to scene linear instead. Not all view transforms can be inverted "
-      "exactly, and the result may not match the original scene linear image");
+  b.add_input<decl::Bool>("Invert"_ustr)
+      .default_value(false)
+      .description(
+          "Convert from display to scene linear instead. Not all view transforms can be inverted "
+          "exactly, and the result may not match the original scene linear image");
 
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
 }
 
 static void node_init(bNodeTree * /*ntree*/, bNode *node)

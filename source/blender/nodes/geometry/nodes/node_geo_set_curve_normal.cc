@@ -17,16 +17,16 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curves to change the normals on");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Menu>("Mode")
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(rna_enum_curve_normal_mode_items)
       .optional_label()
       .description("Mode for curve normal evaluation");
-  b.add_input<decl::Vector>("Normal")
+  b.add_input<decl::Vector>("Normal"_ustr)
       .default_value({0.0f, 0.0f, 1.0f})
       .subtype(PROP_XYZ)
       .field_on_all()

@@ -8,7 +8,7 @@ namespace blender::nodes::node_geo_input_id_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("ID").field_source().description(
+  b.add_output<decl::Int>("ID"_ustr).field_source().description(
       "The values from the \"id\" attribute on points, or the index if that attribute does not "
       "exist");
 }

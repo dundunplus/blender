@@ -207,8 +207,8 @@ std::optional<Bounds<float3>> GeometrySet::compute_boundbox_without_instances(
 std::ostream &operator<<(std::ostream &stream, const GeometrySet &geometry_set)
 {
   Vector<std::string> parts;
-  if (!geometry_set.name.empty()) {
-    parts.append(fmt::format("\"{}\"", geometry_set.name));
+  if (!geometry_set.name().is_empty()) {
+    parts.append(fmt::format("\"{}\"", geometry_set.name()));
   }
   if (const Mesh *mesh = geometry_set.get_mesh()) {
     parts.append(std::to_string(mesh->verts_num) + " verts");
@@ -796,6 +796,16 @@ void GeometrySet::merge_bundle_from(const GeometrySet &other)
   else {
     this->copy_bundle_from(other);
   }
+}
+
+void GeometrySet::set_name(std::string name)
+{
+  name_ = std::move(name);
+}
+
+StringRefNull GeometrySet::name() const
+{
+  return name_;
 }
 
 bool object_has_geometry_set_instances(const Object &object)

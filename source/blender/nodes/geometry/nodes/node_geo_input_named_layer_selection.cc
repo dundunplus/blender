@@ -10,8 +10,8 @@ namespace blender::nodes::node_geo_input_named_layer_selection__cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Name").is_layer_name().optional_label();
-  b.add_output<decl::Bool>("Selection").field_source_reference_all();
+  b.add_input<decl::String>("Name"_ustr).is_layer_name().optional_label();
+  b.add_output<decl::Bool>("Selection"_ustr).field_source_reference_all();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

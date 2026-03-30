@@ -37,29 +37,30 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   b.add_default_layout();
 
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .description(
           "Geometry to evaluate the given fields and store the resulting attributes on. All "
           "geometry types except volumes are supported");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
   if (node != nullptr) {
     const NodeGeometryAttributeCapture &storage = node_storage(*node);
     for (const NodeGeometryAttributeCaptureItem &item :
          Span(storage.capture_items, storage.capture_items_num))
     {
+      const UString name(item.name);
       const eCustomDataType data_type = eCustomDataType(item.data_type);
-      const std::string input_identifier =
-          CaptureAttributeItemsAccessor::input_socket_identifier_for_item(item);
-      const std::string output_identifier =
-          CaptureAttributeItemsAccessor::output_socket_identifier_for_item(item);
-      b.add_input(data_type, item.name, input_identifier)
+      const UString input_identifier(
+          CaptureAttributeItemsAccessor::input_socket_identifier_for_item(item));
+      const UString output_identifier(
+          CaptureAttributeItemsAccessor::output_socket_identifier_for_item(item));
+      b.add_input(data_type, name, input_identifier)
           .field_on_all()
           .socket_name_ptr(&tree->id, *CaptureAttributeItemsAccessor::item_srna, &item, "name");
-      b.add_output(data_type, item.name, output_identifier).field_on_all().align_with_previous();
+      b.add_output(data_type, name, output_identifier).field_on_all().align_with_previous();
     }
   }
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Field);
-  b.add_output<decl::Extend>("", "__extend__")
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr).structure_type(StructureType::Field);
+  b.add_output<decl::Extend>(""_ustr, "__extend__"_ustr)
       .structure_type(StructureType::Field)
       .align_with_previous();
 }
@@ -240,7 +241,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   if (type == SOCK_GEOMETRY) {
     params.add_item(IFACE_("Geometry"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeCaptureAttribute");
-      params.connect_available_socket(node, "Geometry");
+      params.connect_available_socket(node, "Geometry"_ustr);
     });
   }
   if (!CaptureAttributeItemsAccessor::supports_socket_type(type, params.node_tree().type)) {
@@ -251,7 +252,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     bNode &node = params.add_node("GeometryNodeCaptureAttribute");
     socket_items::add_item_with_socket_type_and_name<CaptureAttributeItemsAccessor>(
         params.node_tree, node, type, params.socket.name);
-    params.update_and_connect_available_socket(node, params.socket.name);
+    params.update_and_connect_available_socket(node, UString(params.socket.name));
   });
 }
 

@@ -497,7 +497,7 @@ void BlenderSync::sync_objects(blender::Depsgraph &b_depsgraph,
 
   blender::ViewLayer &b_view_layer = *DEG_get_evaluated_view_layer(&b_depsgraph);
 
-  BKE_view_layer_synced_ensure(b_scene, &b_view_layer);
+  BKE_view_layer_synced_ensure(*b_data, b_scene, &b_view_layer);
 
   blender::DEGObjectIterSettings deg_iter_settings{};
   deg_iter_settings.depsgraph = &b_depsgraph;

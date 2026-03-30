@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'ec8c60553753')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 09:55+0000\n"
+"POT-Creation-Date: 2026-03-30 09:56+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -1535,6 +1535,10 @@ msgstr "Потез"
 
 msgid "Fill"
 msgstr "Испуна"
+
+
+msgid "Both"
+msgstr "Обе"
 
 
 msgid "Background Image"
@@ -8485,12 +8489,32 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
-msgid "Mirror"
-msgstr "Огледало"
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "Names"
+msgstr "Имена"
+
+
+msgid "Bone Roll"
+msgstr "Ролна костију"
+
+
+msgid "Show/Hide"
+msgstr "Прикажи/сакриј"
 
 
 msgid "Snap"
 msgstr "Лепљење"
+
+
+msgid "Import"
+msgstr "Увоз"
+
+
+msgid "Mirror"
+msgstr "Огледало"
 
 
 msgid "UV Mapping"
@@ -8509,12 +8533,12 @@ msgid "Align View"
 msgstr "Поравнај поглед"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Linked"
 msgstr "Изабери повезано"
-
-
-msgid "Import"
-msgstr "Увоз"
 
 
 msgid "Metaball"
@@ -8523,14 +8547,6 @@ msgstr "Мета лопта"
 
 msgid "Light"
 msgstr "Светлост"
-
-
-msgid "Math"
-msgstr "Математика"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Relations"
@@ -8553,10 +8569,6 @@ msgid "Quick Effects"
 msgstr "Брзи ефекти"
 
 
-msgid "Show/Hide"
-msgstr "Прикажи/сакриј"
-
-
 msgid "Hooks"
 msgstr "Удице"
 
@@ -8573,8 +8585,12 @@ msgid "Propagate"
 msgstr "Пренеси"
 
 
-msgid "Names"
-msgstr "Имена"
+msgid "Keying"
+msgstr "Збирка тастера"
+
+
+msgid "Tracking"
+msgstr "Праћење"
 
 
 msgid "Toggle Bone Options"
@@ -8597,20 +8613,8 @@ msgid "Merge"
 msgstr "Сједини"
 
 
-msgid "Keying"
-msgstr "Збирка тастера"
-
-
 msgid "Special Characters"
 msgstr "Специјални знаци"
-
-
-msgid "Tracking"
-msgstr "Праћење"
-
-
-msgid "Bone Roll"
-msgstr "Ролна костију"
 
 
 msgid "Basic"
@@ -13814,10 +13818,6 @@ msgid "Side"
 msgstr "Са стране"
 
 
-msgid "Both"
-msgstr "Обе"
-
-
 msgctxt "Operator"
 msgid "Add F-Curve Modifier"
 msgstr "Додај модификатор Ф-криве"
@@ -14795,22 +14795,6 @@ msgstr "Споји изабрана темена"
 
 msgid "Merge method to use"
 msgstr "Избор метода спајања."
-
-
-msgid "At Center"
-msgstr "У центар"
-
-
-msgid "At Cursor"
-msgstr "За курсор"
-
-
-msgid "At First"
-msgstr "За прво"
-
-
-msgid "At Last"
-msgstr "За последње"
 
 
 msgid "Median"
@@ -21409,10 +21393,6 @@ msgid "Sound"
 msgstr "Звук"
 
 
-msgid "Use Linear Modifiers"
-msgstr "Користи линеарни модификатор"
-
-
 msgid "Multiply Colors"
 msgstr "Умножене боје"
 
@@ -22586,6 +22566,10 @@ msgstr "Све"
 msgctxt "Operator"
 msgid "Report a Bug"
 msgstr "Пријава грешке"
+
+
+msgid "Object Index"
+msgstr "Индекс објекта"
 
 
 msgid "No output node"
@@ -25258,10 +25242,6 @@ msgstr "Боја1"
 
 msgid "Color2"
 msgstr "Боја2"
-
-
-msgid "Object Index"
-msgstr "Индекс објекта"
 
 
 msgid "Color Fac"

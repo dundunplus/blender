@@ -1588,6 +1588,23 @@ static void test_preprocess_namespace()
 
   {
     string input = R"(
+struct C {};
+void fn(C b) {}
+namespace B {
+struct D {};
+void fn(D b) {}
+void fn2()
+{
+  fn(C{});
+}
+}
+)";
+    string error;
+    string output = process_test_string(input, error);
+    EXPECT_EQ(error, "Call to function is ambiguous. Specify namespace to remove ambiguity.");
+  }
+  {
+    string input = R"(
 namespace A {
 int func(int a) { return 0; }
 int func2(int a)

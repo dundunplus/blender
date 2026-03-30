@@ -25,7 +25,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  auto &first_geometry = b.add_input<decl::Geometry>("Mesh 1")
+  auto &first_geometry = b.add_input<decl::Geometry>("Mesh 1"_ustr)
                              .only_realized_data()
                              .supported_type(GeometryComponent::Type::Mesh)
                              .description("Base mesh to subtract geometry from");
@@ -34,13 +34,13 @@ static void node_declare(NodeDeclarationBuilder &b)
     switch (geometry::boolean::Operation(node->custom1)) {
       case geometry::boolean::Operation::Intersect:
       case geometry::boolean::Operation::Union:
-        b.add_input<decl::Geometry>("Mesh", "Mesh 2")
+        b.add_input<decl::Geometry>("Mesh"_ustr, "Mesh 2"_ustr)
             .supported_type(GeometryComponent::Type::Mesh)
             .multi_input()
             .description("Meshes to union or intersect");
         break;
       case geometry::boolean::Operation::Difference:
-        b.add_input<decl::Geometry>("Mesh 2")
+        b.add_input<decl::Geometry>("Mesh 2"_ustr)
             .supported_type(GeometryComponent::Type::Mesh)
             .multi_input()
             .description("Mesh that is subtracted from the first mesh");
@@ -52,11 +52,13 @@ static void node_declare(NodeDeclarationBuilder &b)
     node.custom2 = int16_t(geometry::boolean::Solver::MeshArr);
   };
   auto &self_intersect =
-      b.add_input<decl::Bool>("Self Intersection").make_available(make_mesh_arr);
-  auto &hole_tolerant = b.add_input<decl::Bool>("Hole Tolerant").make_available(make_mesh_arr);
-  b.add_output<decl::Geometry>("Mesh").propagate_all();
-  auto &output_edges =
-      b.add_output<decl::Bool>("Intersecting Edges").field_on_all().make_available(make_mesh_arr);
+      b.add_input<decl::Bool>("Self Intersection"_ustr).make_available(make_mesh_arr);
+  auto &hole_tolerant =
+      b.add_input<decl::Bool>("Hole Tolerant"_ustr).make_available(make_mesh_arr);
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all();
+  auto &output_edges = b.add_output<decl::Bool>("Intersecting Edges"_ustr)
+                           .field_on_all()
+                           .make_available(make_mesh_arr);
 
   if (node != nullptr) {
     const auto operation = geometry::boolean::Operation(node->custom1);
@@ -263,7 +265,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   GeometrySet result_geometry = geometry::join_geometries(
       all_geometries, {}, std::make_optional(types_to_join));
   result_geometry.replace_mesh(result);
-  result_geometry.name = set_a.name;
+  result_geometry.set_name(set_a.name());
   for (const GeometrySet &geometry : all_geometries) {
     result_geometry.merge_bundle_from(geometry);
   }

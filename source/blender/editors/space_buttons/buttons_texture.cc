@@ -271,6 +271,7 @@ static void buttons_texture_users_from_context(ListBaseT<ButsTextureUser> *users
   if (!scene) {
     scene = CTX_data_scene(C);
   }
+  const Main *bmain = CTX_data_main(C);
 
   const ID_Type id_type = ID_Type(pinid != nullptr ? GS(pinid->name) : -1);
   if (!pinid || id_type == ID_SCE) {
@@ -280,7 +281,7 @@ static void buttons_texture_users_from_context(ListBaseT<ButsTextureUser> *users
 
     brush = BKE_paint_brush(BKE_paint_get_active_from_context(C));
     linestyle = BKE_linestyle_active_from_view_layer(view_layer);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     ob = BKE_view_layer_active_object_get(view_layer);
   }
 

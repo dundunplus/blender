@@ -95,7 +95,7 @@ FieldInfoLog::FieldInfoLog(const GField &field) : type(field.cpp_type())
 
 GeometryInfoLog::GeometryInfoLog(const bke::GeometrySet &geometry_set)
 {
-  this->name = geometry_set.name;
+  this->name = geometry_set.name();
 
   static std::array all_component_types = {bke::GeometryComponent::Type::Curve,
                                            bke::GeometryComponent::Type::Instance,

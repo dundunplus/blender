@@ -138,7 +138,7 @@ int main(int argc, char **argv)
 
   /* Open the output file for writing */
   std::ofstream metadata_file(metadata_file_name, std::ofstream::out | std::ofstream::binary);
-  if (!output_file) {
+  if (!metadata_file) {
     std::cerr << "Error: Could not open output file " << metadata_file_name << std::endl;
     input_file.close();
     exit(1);
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 
   /* Open the output file for writing */
   std::ofstream infos_file(infos_file_name, std::ofstream::out | std::ofstream::binary);
-  if (!output_file) {
+  if (!infos_file) {
     std::cerr << "Error: Could not open output file " << infos_file_name << std::endl;
     input_file.close();
     exit(1);

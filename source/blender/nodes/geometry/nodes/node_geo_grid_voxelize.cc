@@ -27,8 +27,8 @@ static void node_declare(NodeDeclarationBuilder &b)
     return;
   }
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
-  b.add_input(data_type, "Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output(data_type, "Grid").structure_type(StructureType::Grid).align_with_previous();
+  b.add_input(data_type, "Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output(data_type, "Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -63,7 +63,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
     bNode &node = params.add_node("GeometryNodeGridVoxelize");
     node.custom1 = *data_type;
-    params.update_and_connect_available_socket(node, "Grid");
+    params.update_and_connect_available_socket(node, "Grid"_ustr);
   });
 }
 

@@ -9,25 +9,25 @@ namespace blender::nodes::node_geo_curve_primitive_quadratic_bezier_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Resolution")
+  b.add_input<decl::Int>("Resolution"_ustr)
       .default_value(16)
       .min(3)
       .max(256)
       .subtype(PROP_UNSIGNED)
       .description("The number of edges on the curve");
-  b.add_input<decl::Vector>("Start")
+  b.add_input<decl::Vector>("Start"_ustr)
       .default_value({-1.0f, 0.0f, 0.0f})
       .subtype(PROP_TRANSLATION)
       .description("Position of the first control point");
-  b.add_input<decl::Vector>("Middle")
+  b.add_input<decl::Vector>("Middle"_ustr)
       .default_value({0.0f, 2.0f, 0.0f})
       .subtype(PROP_TRANSLATION)
       .description("Position of the middle control point");
-  b.add_input<decl::Vector>("End")
+  b.add_input<decl::Vector>("End"_ustr)
       .default_value({1.0f, 0.0f, 0.0f})
       .subtype(PROP_TRANSLATION)
       .description("Position of the last control point");
-  b.add_output<decl::Geometry>("Curve");
+  b.add_output<decl::Geometry>("Curve"_ustr);
 }
 
 static Curves *create_quadratic_bezier_curve(const float3 p1,

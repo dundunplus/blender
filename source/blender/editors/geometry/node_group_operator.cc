@@ -871,12 +871,13 @@ static Vector<Object *> gather_supported_objects(const bContext &C,
     CTX_DATA_END;
   }
   else {
+    const Main *bmain = CTX_data_main(&C);
     Scene *scene = CTX_data_scene(&C);
     ViewLayer *view_layer = CTX_data_view_layer(&C);
     View3D *v3d = CTX_wm_view3d(&C);
     Object *active_object = CTX_data_active_object(&C);
     if (v3d && active_object) {
-      FOREACH_OBJECT_IN_MODE_BEGIN (scene, view_layer, v3d, active_object->type, mode, ob) {
+      FOREACH_OBJECT_IN_MODE_BEGIN (bmain, scene, view_layer, v3d, active_object->type, mode, ob) {
         handle_object(ob);
       }
       FOREACH_OBJECT_IN_MODE_END;

@@ -33,23 +33,23 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curves to generate rounded corners on");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Float>("Radius")
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Float>("Radius"_ustr)
       .min(0.0f)
       .max(FLT_MAX)
       .subtype(PropertySubType::PROP_DISTANCE)
       .default_value(0.25f)
       .field_on_all();
-  b.add_input<decl::Bool>("Limit Radius")
+  b.add_input<decl::Bool>("Limit Radius"_ustr)
       .description("Limit the maximum value of the radius in order to avoid overlapping fillets");
-  b.add_input<decl::Menu>("Mode")
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(mode_items)
       .optional_label()
       .description("How to choose number of vertices on fillet");
-  b.add_input<decl::Int>("Count")
+  b.add_input<decl::Int>("Count"_ustr)
       .default_value(1)
       .min(1)
       .max(1000)

@@ -214,7 +214,7 @@ static bool copy_dupli_context(DupliContext *r_ctx,
 
   if (r_ctx->level == MAX_DUPLI_RECUR - 1) {
     const StringRef object_name = ob ? ob->id.name + 2 : "";
-    const StringRef geometry_name = geometry ? geometry->name : "";
+    const StringRef geometry_name = geometry ? geometry->name() : "";
 
     if (geometry_name.is_empty() && !object_name.is_empty()) {
       std::cerr << fmt::format(

@@ -8,14 +8,15 @@ namespace blender::nodes::node_geo_viewport_transform_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Matrix>("Projection")
+  b.add_output<decl::Matrix>("Projection"_ustr)
       .description(
           "Transforms points in view space to region space (\"clip space\" or \"normalized device "
           "coordinates\")");
-  b.add_output<decl::Matrix>("View").description(
-      "Transforms points from object space to view space using the viewport's location and "
-      "rotation");
-  b.add_output<decl::Bool>("Is Orthographic")
+  b.add_output<decl::Matrix>("View"_ustr)
+      .description(
+          "Transforms points from object space to view space using the viewport's location and "
+          "rotation");
+  b.add_output<decl::Bool>("Is Orthographic"_ustr)
       .description("Whether the viewport is using orthographic projection");
 }
 

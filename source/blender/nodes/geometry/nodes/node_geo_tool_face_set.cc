@@ -10,8 +10,8 @@ namespace blender::nodes::node_geo_tool_face_set_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Face Set").field_source();
-  b.add_output<decl::Bool>("Exists").field_source();
+  b.add_output<decl::Int>("Face Set"_ustr).field_source();
+  b.add_output<decl::Bool>("Exists"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)

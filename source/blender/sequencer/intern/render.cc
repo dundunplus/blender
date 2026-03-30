@@ -1231,80 +1231,61 @@ ImBuf *seq_render_mask(Depsgraph *depsgraph,
                        float frame_index,
                        bool make_float)
 {
-  /* TODO: add option to rasterize to alpha imbuf? */
-  ImBuf *ibuf = nullptr;
-  float *maskbuf;
-  int i;
-
   if (!mask) {
     return nullptr;
   }
 
-  AnimData *adt;
-  Mask *mask_temp;
-  MaskRasterHandle *mr_handle;
-
-  mask_temp = id_cast<Mask *>(
+  Mask *mask_temp = id_cast<Mask *>(
       BKE_id_copy_ex(nullptr, &mask->id, nullptr, LIB_ID_COPY_LOCALIZE | LIB_ID_COPY_NO_ANIMDATA));
 
   BKE_mask_evaluate(mask_temp, mask->sfra + frame_index, true);
 
   /* anim-data */
-  adt = BKE_animdata_from_id(&mask->id);
+  AnimData *adt = BKE_animdata_from_id(&mask->id);
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       depsgraph, mask->sfra + frame_index);
   BKE_animsys_evaluate_animdata(&mask_temp->id, adt, &anim_eval_context, ADT_RECALC_ANIM, false);
 
-  maskbuf = MEM_new_array_uninitialized<float>(size_t(width) * size_t(height), __func__);
-
-  mr_handle = BKE_maskrasterize_handle_new();
+  MaskRasterHandle *mr_handle = BKE_maskrasterize_handle_new();
 
   BKE_maskrasterize_handle_init(mr_handle, mask_temp, width, height, true, true, true);
 
   BKE_id_free(nullptr, &mask_temp->id);
 
-  BKE_maskrasterize_buffer(mr_handle, width, height, maskbuf);
+  /* Evaluate mask over the resulting image. */
+  ImBuf *ibuf = IMB_allocImBuf(
+      width, height, 32, (make_float ? IB_float_data : IB_byte_data) | IB_uninitialized_pixels);
+  const float x_inv = 1.0f / float(width);
+  const float y_inv = 1.0f / float(height);
+  const float x_px_ofs = x_inv * 0.5f;
+  const float y_px_ofs = y_inv * 0.5f;
+  float *dst_float = ibuf->float_buffer.data;
+  uchar *dst_byte = ibuf->byte_buffer.data;
+  threading::parallel_for(IndexRange(height), 16, [&](const IndexRange y_range) {
+    const int64_t pixel_offset = y_range.first() * width * 4;
+    float *ptr_float = dst_float + pixel_offset;
+    uchar *ptr_byte = dst_byte + pixel_offset;
+    for (int64_t y : y_range) {
+      float2 coord;
+      coord.y = y * y_inv + y_px_ofs;
+      for (int x = 0; x < width; x++) {
+        coord.x = x * x_inv + x_px_ofs;
+        float value = BKE_maskrasterize_handle_sample(mr_handle, coord);
+        if (make_float) {
+          ptr_float[0] = ptr_float[1] = ptr_float[2] = value;
+          ptr_float[3] = 1.0f;
+        }
+        else {
+          ptr_byte[0] = ptr_byte[1] = ptr_byte[2] = uchar(value * 255.0f);
+          ptr_byte[3] = 255;
+        }
+        ptr_float += 4;
+        ptr_byte += 4;
+      }
+    }
+  });
 
   BKE_maskrasterize_handle_free(mr_handle);
-
-  if (make_float) {
-    /* pixels */
-    const float *fp_src;
-    float *fp_dst;
-
-    ibuf = IMB_allocImBuf(width, height, 32, IB_float_data | IB_uninitialized_pixels);
-
-    fp_src = maskbuf;
-    fp_dst = ibuf->float_buffer.data;
-    i = width * height;
-    while (--i) {
-      fp_dst[0] = fp_dst[1] = fp_dst[2] = *fp_src;
-      fp_dst[3] = 1.0f;
-
-      fp_src += 1;
-      fp_dst += 4;
-    }
-  }
-  else {
-    /* pixels */
-    const float *fp_src;
-    uchar *ub_dst;
-
-    ibuf = IMB_allocImBuf(width, height, 32, IB_byte_data | IB_uninitialized_pixels);
-
-    fp_src = maskbuf;
-    ub_dst = ibuf->byte_buffer.data;
-    i = width * height;
-    while (--i) {
-      ub_dst[0] = ub_dst[1] = ub_dst[2] = uchar(*fp_src * 255.0f); /* already clamped */
-      ub_dst[3] = 255;
-
-      fp_src += 1;
-      ub_dst += 4;
-    }
-  }
-
-  MEM_delete(maskbuf);
 
   return ibuf;
 }

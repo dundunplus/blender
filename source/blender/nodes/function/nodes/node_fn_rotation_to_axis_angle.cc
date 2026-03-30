@@ -15,9 +15,9 @@ namespace blender::nodes::node_fn_rotation_to_axis_angle_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Rotation>("Rotation");
-  b.add_output<decl::Vector>("Axis");
-  b.add_output<decl::Float>("Angle").subtype(PROP_ANGLE);
+  b.add_input<decl::Rotation>("Rotation"_ustr);
+  b.add_output<decl::Vector>("Axis"_ustr);
+  b.add_output<decl::Float>("Angle"_ustr).subtype(PROP_ANGLE);
 };
 
 class QuaterniontoAxisAngleFunction : public mf::MultiFunction {

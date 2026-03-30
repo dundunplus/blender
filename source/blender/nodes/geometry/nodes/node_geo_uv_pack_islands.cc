@@ -55,27 +55,32 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Vector>("UV").hide_value().supports_field();
-  b.add_output<decl::Vector>("UV").field_source_reference_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Vector>("UV"_ustr).hide_value().supports_field();
+  b.add_output<decl::Vector>("UV"_ustr).field_source_reference_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .supports_field()
       .description("Faces to consider when packing islands");
-  b.add_input<decl::Float>("Margin").default_value(0.001f).min(0.0f).max(1.0f).description(
-      "Space between islands");
-  b.add_input<decl::Bool>("Rotate").default_value(true).description("Rotate islands for best fit");
-  b.add_input<decl::Menu>("Method")
+  b.add_input<decl::Float>("Margin"_ustr)
+      .default_value(0.001f)
+      .min(0.0f)
+      .max(1.0f)
+      .description("Space between islands");
+  b.add_input<decl::Bool>("Rotate"_ustr)
+      .default_value(true)
+      .description("Rotate islands for best fit");
+  b.add_input<decl::Menu>("Method"_ustr)
       .static_items(shape_method_items)
       .default_value(ShapeMethod::Aabb)
       .optional_label()
       .description("Method used for packing UV islands");
-  b.add_input<decl::Vector>("Bottom Left")
+  b.add_input<decl::Vector>("Bottom Left"_ustr)
       .default_value({0.0f, 0.0f})
       .dimensions(2)
       .subtype(PROP_XYZ)
       .description("Bottom-left corner of packing bounds");
-  b.add_input<decl::Vector>("Top Right")
+  b.add_input<decl::Vector>("Top Right"_ustr)
       .default_value({1.0f, 1.0f})
       .dimensions(2)
       .subtype(PROP_XYZ)

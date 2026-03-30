@@ -31,16 +31,17 @@ static void node_declare(NodeDeclarationBuilder &b)
     BaseSocketDeclarationBuilder *value_declaration = nullptr;
     switch (data_type) {
       case CD_PROP_FLOAT3:
-        value_declaration = &b.add_input<decl::Vector>("Value").default_value({1.0f, 1.0f, 1.0f});
+        value_declaration =
+            &b.add_input<decl::Vector>("Value"_ustr).default_value({1.0f, 1.0f, 1.0f});
         break;
       case CD_PROP_FLOAT:
-        value_declaration = &b.add_input<decl::Float>("Value").default_value(1.0f);
+        value_declaration = &b.add_input<decl::Float>("Value"_ustr).default_value(1.0f);
         break;
       case CD_PROP_INT32:
-        value_declaration = &b.add_input<decl::Int>("Value").default_value(1);
+        value_declaration = &b.add_input<decl::Int>("Value"_ustr).default_value(1);
         break;
       case CD_PROP_FLOAT4X4:
-        value_declaration = &b.add_input<decl::Matrix>("Value");
+        value_declaration = &b.add_input<decl::Matrix>("Value"_ustr);
         break;
       default:
         BLI_assert_unreachable();
@@ -49,21 +50,21 @@ static void node_declare(NodeDeclarationBuilder &b)
     value_declaration->supports_field().description("The values to be accumulated");
   }
 
-  b.add_input<decl::Int>("Group ID", "Group Index")
+  b.add_input<decl::Int>("Group ID"_ustr, "Group Index"_ustr)
       .supports_field()
       .hide_value()
       .description("An index used to group values together for multiple separate accumulations");
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node_storage(*node).data_type);
-    b.add_output(data_type, "Leading")
+    b.add_output(data_type, "Leading"_ustr)
         .field_source_reference_all()
         .description(
             "The running total of values in the corresponding group, starting at the first value");
-    b.add_output(data_type, "Trailing")
+    b.add_output(data_type, "Trailing"_ustr)
         .field_source_reference_all()
         .description("The running total of values in the corresponding group, starting at zero");
-    b.add_output(data_type, "Total")
+    b.add_output(data_type, "Total"_ustr)
         .field_source_reference_all()
         .description("The total of all of the values in the corresponding group");
   }
@@ -119,7 +120,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeAccumulateField");
           node_storage(node).data_type = *type;
-          params.update_and_connect_available_socket(node, "Leading");
+          params.update_and_connect_available_socket(node, "Leading"_ustr);
         },
         0);
     params.add_item(
@@ -127,7 +128,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeAccumulateField");
           node_storage(node).data_type = *type;
-          params.update_and_connect_available_socket(node, "Trailing");
+          params.update_and_connect_available_socket(node, "Trailing"_ustr);
         },
         -1);
     params.add_item(
@@ -135,7 +136,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeAccumulateField");
           node_storage(node).data_type = *type;
-          params.update_and_connect_available_socket(node, "Total");
+          params.update_and_connect_available_socket(node, "Total"_ustr);
         },
         -2);
   }
@@ -145,7 +146,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeAccumulateField");
           node_storage(node).data_type = *type;
-          params.update_and_connect_available_socket(node, "Value");
+          params.update_and_connect_available_socket(node, "Value"_ustr);
         },
         0);
   }

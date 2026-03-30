@@ -17,9 +17,9 @@ namespace blender::nodes::node_fn_axes_to_rotation_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>(N_("Primary Axis")).default_value(float3(0, 0, 1));
-  b.add_input<decl::Vector>(N_("Secondary Axis")).default_value(float3(1, 0, 0));
-  b.add_output<decl::Rotation>(N_("Rotation"));
+  b.add_input<decl::Vector>("Primary Axis"_ustr).default_value(float3(0, 0, 1));
+  b.add_input<decl::Vector>("Secondary Axis"_ustr).default_value(float3(1, 0, 0));
+  b.add_output<decl::Rotation>("Rotation"_ustr);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)

@@ -472,7 +472,7 @@ bool node_socket_not_black(const GPUNodeStack &socket)
 
 void search_link_ops_for_shader_bsdf_node(nodes::GatherLinkSearchOpParams &params)
 {
-  static Set<std::string> skip_socket_identifiers = {"Weight"};
+  static Set<UString> skip_socket_identifiers = {"Weight"_ustr};
   nodes::search_filtered_link_ops_for_basic_node(params, skip_socket_identifiers);
 }
 

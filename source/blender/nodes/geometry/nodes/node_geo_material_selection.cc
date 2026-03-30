@@ -15,8 +15,8 @@ namespace blender::nodes::node_geo_material_selection_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Material>("Material").optional_label(true);
-  b.add_output<decl::Bool>("Selection").field_source();
+  b.add_input<decl::Material>("Material"_ustr).optional_label(true);
+  b.add_output<decl::Bool>("Selection"_ustr).field_source();
 }
 
 static VArray<bool> select_by_material(const Span<Material *> materials,
