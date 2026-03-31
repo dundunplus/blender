@@ -494,6 +494,27 @@ struct GHOST_InstanceVK {
       device.extensions.disable(VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME);
     }
 
+#ifdef _WIN32
+    /* Intel 7th to 10th Gen Processor iGPUs show a black screen at application startup when using
+     * VK_EXT_vertex_input_dynamic_state. The used driver version for these iGPUs is 101.2xxx or
+     * older.
+     *
+     * Ref: #147721
+     */
+    if (device.properties_12.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS &&
+        device.properties.properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+    {
+      const uint32_t driver_version = device.properties.properties.driverVersion;
+      uint32_t driver_version_major = driver_version >> 14u;
+      uint32_t driver_version_minor = driver_version & 0x3fffu;
+      if (driver_version_major < 101 ||
+          (driver_version_major == 101 && driver_version_minor < 3000))
+      {
+        device.extensions.disable(VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME);
+      }
+    }
+#endif
+
     device.init_generic_queue_family();
 
     float queue_priorities[] = {1.0f};

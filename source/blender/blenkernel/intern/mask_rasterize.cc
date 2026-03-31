@@ -88,8 +88,11 @@ namespace blender {
 #define SPLINE_RESOL_CAP_MIN 8
 #define SPLINE_RESOL_CAP_MAX 64
 
-/* found this gives best performance for high detail masks, values between 2 and 8 work best */
-#define BUCKET_PIXELS_PER_CELL 4
+/* Bucket size in pixels: smaller values are more granular (less work for raster loop),
+ * but more memory and more work in single threaded initialization time. Found that 8
+ * seems to be optimal for both simple (150 faces) & complex (16000 faces) masks at
+ * HD / 4K resolutions. */
+static constexpr int BUCKET_PIXELS_PER_CELL = 8;
 
 #define SF_EDGE_IS_BOUNDARY 0xff
 #define SF_KEYINDEX_TEMP_ID uint(-1)
@@ -639,8 +642,6 @@ static void layer_bucket_init(MaskRasterLayer *layer, const float pixel_size)
           for (yi = yi_min; yi <= yi_max; yi++) {
             uint bucket_index = (layer->buckets_x * yi) + xi_min;
             for (xi = xi_min; xi <= xi_max; xi++, bucket_index++) {
-              /* correct but do in outer loop */
-              // uint bucket_index = (layer->buckets_x * yi) + xi;
 
               BLI_assert(xi < layer->buckets_x);
               BLI_assert(yi < layer->buckets_y);
