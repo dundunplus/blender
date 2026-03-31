@@ -310,6 +310,7 @@ MaskLayer *BKE_mask_layer_new(Mask *mask, const char *name)
   masklay->blend = MASK_BLEND_MERGE_ADD;
   masklay->alpha = 1.0f;
   masklay->flag = MASK_LAYERFLAG_FILL_DISCRETE | MASK_LAYERFLAG_FILL_OVERLAP;
+  masklay->fill_solver = MASK_FILL_SOLVER_CDT;
 
   return masklay;
 }
@@ -380,6 +381,7 @@ MaskLayer *BKE_mask_layer_copy(const MaskLayer *masklay)
   masklay_new->blend_flag = masklay->blend_flag;
   masklay_new->flag = masklay->flag;
   masklay_new->falloff = masklay->falloff;
+  masklay_new->fill_solver = masklay->fill_solver;
   masklay_new->visibility_flag = masklay->visibility_flag;
 
   for (MaskSpline &spline : masklay->splines) {

@@ -13,10 +13,96 @@
 
 namespace blender::fn::multi_function {
 
+/**
+ * An multi-function for the powf operation that more optimally handles simple and
+ * common cases like raising to the power of 2.
+ */
+class PowFunction : public MultiFunction {
+ private:
+  static inline const MultiFunction *pow_generic = nullptr;
+  static inline const MultiFunction *pow_2 = nullptr;
+  static inline const MultiFunction *pow_3 = nullptr;
+
+ public:
+  PowFunction()
+  {
+    static Signature signature = []() {
+      pow_2 = &registry::lookup("float ^ 2"_ustr);
+      pow_3 = &registry::lookup("float ^ 3"_ustr);
+      static auto pow_generic_fn = build::SI2_SO<float, float, float>(
+          "float ^ float",
+          [](const float a, const float b) { return safe_powf(a, b); },
+          build::exec_presets::Materialized());
+      pow_generic = &pow_generic_fn;
+
+      Signature signature;
+      SignatureBuilder builder("float ^ float", signature);
+      builder.single_input<float>("Base");
+      builder.single_input<float>("Exponent");
+      builder.single_output<float>("Result");
+      return signature;
+    }();
+    this->set_signature(&signature);
+  }
+
+  void call(const IndexMask &mask, Params params, Context context) const override
+  {
+    /* Use GVArray here to avoid unnecessary conversions to typed virtual arrays. */
+    const GVArray &base = params.readonly_single_input<float>(0, "Base");
+    const GVArray &exponent = params.readonly_single_input<float>(1, "Exponent");
+    MutableSpan<float> result = params.uninitialized_single_output<float>(2, "Result");
+
+    if (exponent.is_single()) {
+      float exponent_single;
+      exponent.get_internal_single(&exponent_single);
+      const int exponent_int = int(exponent_single);
+      /* Handle some exponents without invoking the general powf function. */
+      if (float(exponent_int) == exponent_single) {
+        switch (exponent_int) {
+          case 0: {
+            index_mask::masked_fill(result, 1.0f, mask);
+            return;
+          }
+          case 1: {
+            base.materialize_to_uninitialized(mask, result.data());
+            return;
+          }
+          case 2: {
+            ParamsBuilder sub_params{*pow_2, &mask};
+            sub_params.add_readonly_single_input(base);
+            sub_params.add_uninitialized_single_output(result);
+            pow_2->call(mask, sub_params, context);
+            return;
+          }
+          case 3: {
+            ParamsBuilder sub_params{*pow_3, &mask};
+            sub_params.add_readonly_single_input(base);
+            sub_params.add_uninitialized_single_output(result);
+            pow_3->call(mask, sub_params, context);
+            return;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    }
+    pow_generic->call(mask, params, context);
+  }
+};
+
 void register_common_functions()
 {
   static constexpr auto exec_fast = build::exec_presets::AllSpanOrSingle();
 
+  registry::add_new_cb([]() {
+    return build::SI1_SO<float, float>(
+        "float ^ 2", [](const float a) { return a * a; }, exec_fast);
+  });
+  registry::add_new_cb([]() {
+    return build::SI1_SO<float, float>(
+        "float ^ 3", [](const float a) { return a * a * a; }, exec_fast);
+  });
   registry::add_new_cb([] {
     return build::SI1_SO<float, float>("exp(float)", [](const float a) { return expf(a); });
   });
@@ -109,10 +195,7 @@ void register_common_functions()
         [](const float a, const float b) { return safe_divide(a, b); },
         exec_fast);
   });
-  registry::add_new_cb([] {
-    return build::SI2_SO<float, float, float>(
-        "float ^ float", [](const float a, const float b) { return safe_powf(a, b); }, exec_fast);
-  });
+  registry::add_new_cb([] { return PowFunction(); });
   registry::add_new_cb([] {
     return build::SI2_SO<float, float, float>(
         "log(float, float)",

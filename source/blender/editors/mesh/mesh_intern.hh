@@ -204,6 +204,7 @@ void MESH_OT_select_similar_region(wmOperatorType *ot);
 void MESH_OT_select_mode(wmOperatorType *ot);
 void MESH_OT_select_edge_loop_multi(wmOperatorType *ot);
 void MESH_OT_select_edge_ring_multi(wmOperatorType *ot);
+void MESH_OT_select_boundary_loop_multi(wmOperatorType *ot);
 void MESH_OT_loop_select(wmOperatorType *ot);
 void MESH_OT_edgering_select(wmOperatorType *ot);
 void MESH_OT_select_all(wmOperatorType *ot);

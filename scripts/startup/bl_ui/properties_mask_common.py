@@ -120,7 +120,13 @@ class MASK_PT_layers:
             layout.prop(active_layer, "falloff")
 
             col = layout.column()
-            col.prop(active_layer, "use_fill_overlap", text="Overlap")
+            col.prop(active_layer, "fill_solver")
+            if active_layer.fill_solver != 'SWEEP_LINE':
+                sub = col.column()
+                sub.active = False
+            else:
+                sub = col
+            sub.prop(active_layer, "use_fill_overlap", text="Overlap")
             col.prop(active_layer, "use_fill_holes", text="Holes")
 
 
