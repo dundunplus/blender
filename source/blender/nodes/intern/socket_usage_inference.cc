@@ -1030,14 +1030,14 @@ void infer_group_interface_inputs_usage(const bNodeTree &group,
   infer_group_interface_usage(group, input_values, r_input_usages, {});  // TODO
 }
 
-void infer_group_interface_usage(const bNodeTree &group,
-                                 const IDProperty *properties,
-                                 MutableSpan<SocketUsage> r_input_usages,
-                                 std::optional<MutableSpan<SocketUsage>> r_output_usages)
+void infer_group_interface_inputs_usage(const bNodeTree &group,
+                                        const PointerRNA &properties_ptr,
+                                        MutableSpan<SocketUsage> r_input_usages,
+                                        std::optional<MutableSpan<SocketUsage>> r_output_usages)
 {
   ResourceScope scope;
   const Vector<InferenceValue> group_input_values =
-      nodes::get_geometry_nodes_input_inference_values(group, properties, scope);
+      nodes::get_geometry_nodes_input_inference_values(group, properties_ptr, scope);
   nodes::socket_usage_inference::infer_group_interface_usage(
       group, group_input_values, r_input_usages, r_output_usages);
 }

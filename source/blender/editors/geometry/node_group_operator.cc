@@ -30,7 +30,9 @@
 #include "BKE_customdata.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_geometry_set.hh"
+#include "BKE_global.hh"
 #include "BKE_grease_pencil.hh"
+#include "BKE_idprop_hash.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
@@ -57,6 +59,8 @@
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
+#include "RNA_enum_types.hh"
+#include "RNA_prototypes.hh"
 
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
@@ -73,6 +77,7 @@
 #include "NOD_geometry_nodes_caller_ui.hh"
 #include "NOD_geometry_nodes_execute.hh"
 #include "NOD_geometry_nodes_lazy_function.hh"
+#include "NOD_geometry_nodes_srna.hh"
 
 #include "AS_asset_catalog.hh"
 #include "AS_asset_catalog_path.hh"
@@ -119,6 +124,9 @@ struct OperatorTypeData : public wmOperatorType::TypeData {
   StringRefNull custom_idname;
   std::string description;
   GeometryNodeAssetTraitFlag flag;
+
+  std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter> asset_meta_data_properties;
+  Vector<StructRNA *> generated_structs;
 
   struct LocalRef {
     uint32_t session_uid;
@@ -167,6 +175,7 @@ void OperatorTypeData::ensure_hash()
         }
       },
       this->group_ref);
+  bke::idprop::hash(*this->asset_meta_data_properties, hash_state);
   static_assert(sizeof(this->hash) == sizeof(XXH128_hash_t));
   const XXH128_hash_t xxh3_hash = XXH3_128bits_digest(hash_state);
   this->hash[0] = xxh3_hash.low64;
@@ -237,6 +246,14 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
   }
   type_data.flag = GeometryNodeAssetTraitFlag(IDP_int_get(traits_flag));
   type_data.group_ref = asset.make_weak_reference();
+
+  const IDProperty *inputs = BKE_asset_metadata_idprop_find(&metadata, "inputs");
+  if (!inputs || inputs->type != IDP_GROUP) {
+    return std::nullopt;
+  }
+  type_data.asset_meta_data_properties =
+      std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter>(IDP_CopyProperty(inputs));
+
   type_data.ensure_hash();
   return type_data;
 }
@@ -277,6 +294,11 @@ std::optional<OperatorTypeData> OperatorTypeData::from_group(const bNodeTree &gr
   type_data.description = group.description ? group.description : "";
   type_data.flag = GeometryNodeAssetTraitFlag(group.geometry_node_asset_traits->flag);
   type_data.group_ref = OperatorTypeData::LocalRef{group.id.session_uid};
+
+  type_data.asset_meta_data_properties =
+      std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter>(
+          bke::node_create_asset_meta_data_properties(group));
+
   type_data.ensure_hash();
   return type_data;
 }
@@ -990,8 +1012,14 @@ static wmOperatorStatus run_node_group_exec(bContext *C, wmOperator *op)
     bke::GeometrySet geometry_orig = get_original_geometry_eval_copy(
         *depsgraph_active, *object, operator_eval_data, orig_mesh_states);
 
+    IDProperty *properties_idprops = IDP_GetPropertyFromGroup(op->properties, "properties");
+    if (!properties_idprops) {
+      properties_idprops = bke::idprop::create_group("properties", IDP_FLAG_STATIC_TYPE).release();
+      IDP_AddToGroup(op->properties, properties_idprops);
+    }
+
     bke::GeometrySet new_geometry = nodes::execute_geometry_nodes_on_geometry(
-        *node_tree, properties, compute_context, call_data, std::move(geometry_orig));
+        *node_tree, *op->ptr, compute_context, call_data, std::move(geometry_orig));
 
     store_result_geometry(
         *C, *op, *depsgraph_active, *bmain, *scene, *object, rv3d, std::move(new_geometry));
@@ -1064,9 +1092,6 @@ static wmOperatorStatus run_node_group_invoke(bContext *C, wmOperator *op, const
 
   store_input_node_values_rna_props(*C, *op, *event);
 
-  nodes::update_input_properties_from_node_tree(*node_tree, op->properties, *op->properties, true);
-  nodes::update_output_properties_from_node_tree(*node_tree, op->properties, *op->properties);
-
   return run_node_group_exec(C, op);
 }
 
@@ -1121,6 +1146,280 @@ static bool run_node_group_poll(bContext *C, wmOperatorType *ot)
   return true;
 }
 
+static const EnumPropertyItem *enum_input_items_fn(bContext * /*C*/,
+                                                   PointerRNA *ptr,
+                                                   PropertyRNA *prop,
+                                                   bool *r_free)
+{
+  const wmOperator *op = ptr->data_as<wmOperator>();
+  const OperatorTypeData &type_data = *static_cast<const OperatorTypeData *>(op->customdata);
+  const IDProperty &inputs_props = *IDP_GetPropertyFromGroup(
+      type_data.asset_meta_data_properties.get(), "inputs");
+  const IDProperty &input_idprop = *IDP_GetPropertyFromGroup(&inputs_props,
+                                                             RNA_property_identifier(prop));
+
+  const IDProperty *items_idprop = IDP_GetPropertyFromGroup(&input_idprop, "items");
+  if (!items_idprop || items_idprop->type != IDP_GROUP) {
+    return rna_enum_dummy_NULL_items;
+  }
+
+  int totitem = 0;
+  EnumPropertyItem *items = nullptr;
+  for (IDProperty &item_idprop : items_idprop->data.group) {
+    EnumPropertyItem item;
+    item.identifier = item_idprop.name;
+    item.name = IDP_group_lookup_string(item_idprop, "name").value_or("").c_str();
+    item.description = IDP_group_lookup_string(item_idprop, "description").value_or("").c_str();
+    item.value = std::stoi(item_idprop.name);
+    RNA_enum_item_add(&items, &totitem, &item);
+  }
+
+  *r_free = true;
+  return items;
+}
+
+static void make_common_type_prop(StructRNA &srna,
+                                  const EnumPropertyItem *items,
+                                  const nodes::GeometryNodesInputType default_type)
+{
+  PropertyRNA *prop = RNA_def_enum(&srna, "type", items, int(default_type), "Input Type", "");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+}
+
+static void make_common_attribute_name_prop(StructRNA &srna,
+                                            const StringRefNull name,
+                                            const StringRefNull description,
+                                            const IDProperty &input_idprop)
+{
+  const std::optional<StringRefNull> default_name = IDP_group_lookup_string(
+      input_idprop, "default_attribute_name");
+  RNA_def_string(&srna,
+                 "attribute_name",
+                 default_name.has_value() ? default_name->c_str() : nullptr,
+                 0,
+                 name.c_str(),
+                 description.c_str());
+}
+
+static void make_common_value_and_attribute_props(StructRNA &srna,
+                                                  const StringRefNull name,
+                                                  const StringRefNull description,
+                                                  const IDProperty &input_idprop)
+{
+  make_common_type_prop(srna,
+                        nodes::geometry_nodes_input_type_items_value_or_attribute,
+                        nodes::GeometryNodesInputType::Value);
+  make_common_attribute_name_prop(srna, name, description, input_idprop);
+}
+
+static void make_common_value_props(StructRNA &srna)
+{
+  make_common_type_prop(
+      srna, nodes::geometry_nodes_input_type_items_value, nodes::GeometryNodesInputType::Value);
+}
+
+static StructRNA *get_input_socket_struct_rna(IDProperty &input_idprop,
+                                              Vector<StructRNA *> &r_generated)
+{
+
+  const StringRefNull identifier = input_idprop.name;
+  const std::optional<int> type = IDP_group_lookup_int(input_idprop, "type");
+  if (!type) {
+    return nullptr;
+  }
+  StructRNA *srna = RNA_def_struct_ptr(
+      &RNA_blender_rna_get(), identifier.c_str(), RNA_PropertyGroup);
+  BLI_assert(!RNA_struct_in_public_namespace(srna));
+  r_generated.append(srna);
+  // RNA_def_struct_path_func_runtime(srna, rna_NodesModifierPropertyInput_path);
+  const StringRefNull name = IDP_group_lookup_string(input_idprop, "name").value_or(identifier);
+  const StringRefNull description =
+      IDP_group_lookup_string(input_idprop, "description").value_or("");
+  RNA_def_struct_ui_text(srna, name.c_str(), description.c_str());
+
+  switch (eNodeSocketDatatype(*type)) {
+    case SOCK_FLOAT: {
+      PropertyRNA *prop = RNA_def_float(
+          srna,
+          "value",
+          IDP_group_lookup_float(input_idprop, "default_value").value_or(0.0f),
+          -FLT_MAX,
+          FLT_MAX,
+          name.c_str(),
+          description.c_str(),
+          IDP_group_lookup_float(input_idprop, "min").value_or(-FLT_MAX),
+          IDP_group_lookup_float(input_idprop, "max").value_or(FLT_MAX));
+      RNA_def_property_subtype(
+          prop,
+          PropertySubType(IDP_group_lookup_int(input_idprop, "subtype").value_or(PROP_NONE)));
+      make_common_value_and_attribute_props(*srna, name, description, input_idprop);
+      break;
+    }
+    case SOCK_VECTOR: {
+      const int dimensions = IDP_group_lookup_int(input_idprop, "dimensions").value_or(3);
+      std::optional<Span<float>> defaults = IDP_group_lookup_float_array(
+          input_idprop, "default_value", dimensions);
+      PropertyRNA *prop = RNA_def_float_array(
+          srna,
+          "value",
+          dimensions,
+          defaults ? defaults->data() : nullptr,
+          -FLT_MAX,
+          FLT_MAX,
+          name.c_str(),
+          description.c_str(),
+          IDP_group_lookup_float(input_idprop, "min").value_or(-FLT_MAX),
+          IDP_group_lookup_float(input_idprop, "max").value_or(FLT_MAX));
+      RNA_def_property_subtype(
+          prop,
+          PropertySubType(IDP_group_lookup_int(input_idprop, "subtype").value_or(PROP_NONE)));
+      make_common_value_and_attribute_props(*srna, name, description, input_idprop);
+      break;
+    }
+    case SOCK_RGBA: {
+      std::optional<Span<float>> defaults = IDP_group_lookup_float_array(
+          input_idprop, "default_value", 4);
+      PropertyRNA *prop = RNA_def_float_color(srna,
+                                              "value",
+                                              4,
+                                              defaults ? defaults->data() : nullptr,
+                                              -FLT_MAX,
+                                              FLT_MAX,
+                                              name.c_str(),
+                                              description.c_str(),
+                                              0.0f,
+                                              1.0f);
+      RNA_def_property_subtype(prop, PROP_COLOR);
+      make_common_value_and_attribute_props(*srna, name, description, input_idprop);
+      break;
+    }
+    case SOCK_BOOLEAN: {
+      RNA_def_boolean(srna,
+                      "value",
+                      IDP_group_lookup_bool(input_idprop, "default_value").value_or(false),
+                      name.c_str(),
+                      description.c_str());
+      make_common_type_prop(*srna,
+                            nodes::geometry_nodes_input_type_items_value_or_attribute_or_layer,
+                            nodes::GeometryNodesInputType::Value);
+      make_common_attribute_name_prop(*srna, name, description, input_idprop);
+      break;
+    }
+    case SOCK_INT: {
+      PropertyRNA *prop = RNA_def_int(
+          srna,
+          "value",
+          IDP_group_lookup_int(input_idprop, "default_value").value_or(0),
+          INT_MIN,
+          INT_MAX,
+          name.c_str(),
+          description.c_str(),
+          IDP_group_lookup_int(input_idprop, "min").value_or(INT_MIN),
+          IDP_group_lookup_int(input_idprop, "max").value_or(INT_MIN));
+      RNA_def_property_subtype(
+          prop,
+          PropertySubType(IDP_group_lookup_int(input_idprop, "subtype").value_or(PROP_NONE)));
+      make_common_value_and_attribute_props(*srna, name, description, input_idprop);
+      break;
+    }
+    case SOCK_STRING: {
+      PropertyRNA *prop = RNA_def_string(
+          srna,
+          "value",
+          IDP_group_lookup_string(input_idprop, "default_value").value_or("").c_str(),
+          0,
+          name.c_str(),
+          description.c_str());
+      RNA_def_property_subtype(
+          prop,
+          PropertySubType(IDP_group_lookup_int(input_idprop, "subtype").value_or(PROP_NONE)));
+      make_common_value_props(*srna);
+      break;
+    }
+    case SOCK_IMAGE:
+    case SOCK_COLLECTION:
+    case SOCK_MATERIAL:
+    case SOCK_OBJECT: {
+      RNA_def_string(srna, "value", nullptr, 0, name.c_str(), description.c_str());
+      make_common_value_props(*srna);
+      break;
+    }
+    case SOCK_ROTATION: {
+      std::optional<Span<float>> defaults = IDP_group_lookup_float_array(
+          input_idprop, "default_value", 3);
+      RNA_def_float_rotation(srna,
+                             "value",
+                             3,
+                             defaults ? defaults->data() : nullptr,
+                             -FLT_MAX,
+                             FLT_MAX,
+                             name.c_str(),
+                             description.c_str(),
+                             -FLT_MAX,
+                             FLT_MAX);
+      make_common_value_and_attribute_props(*srna, name, description, input_idprop);
+      break;
+    }
+    case SOCK_MENU: {
+      PropertyRNA *prop = RNA_def_enum(
+          srna, "value", rna_enum_dummy_NULL_items, 0, name.c_str(), description.c_str());
+      RNA_def_enum_funcs(prop, enum_input_items_fn);
+      make_common_value_props(*srna);
+      break;
+    }
+    default:
+      break;
+  }
+
+  return srna;
+}
+
+static StructRNA *create_inputs_srna(const IDProperty &properties,
+                                     Vector<StructRNA *> &r_generated)
+{
+  StructRNA *srna = RNA_def_struct_ptr(
+      &RNA_blender_rna_get(), "GeometryNodesInterfaceInputs", RNA_PropertyGroup);
+  BLI_assert(!RNA_struct_in_public_namespace(srna));
+  r_generated.append(srna);
+
+  const IDProperty &inputs_props = *IDP_GetPropertyFromGroup(&properties, "inputs");
+
+  for (IDProperty &input_idprop : inputs_props.data.group) {
+    if (input_idprop.type != IDP_GROUP) {
+      continue;
+    }
+    StructRNA *input_srna = get_input_socket_struct_rna(input_idprop, r_generated);
+    if (!input_srna) {
+      continue;
+    }
+    BLI_assert(!RNA_struct_in_public_namespace(srna));
+    RNA_def_pointer_runtime(srna,
+                            input_idprop.name,
+                            input_srna,
+                            RNA_struct_ui_name(input_srna),
+                            RNA_struct_ui_description(input_srna));
+  }
+  return srna;
+}
+
+static StructRNA *create_panels_srna(const IDProperty &properties,
+                                     Vector<StructRNA *> &r_generated)
+{
+  StructRNA *srna = RNA_def_struct_ptr(
+      &RNA_blender_rna_get(), "GeometryNodesInterfacePanels", RNA_PropertyGroup);
+  BLI_assert(!RNA_struct_in_public_namespace(srna));
+  r_generated.append(srna);
+
+  const IDProperty &panels_props = *IDP_GetPropertyFromGroup(&properties, "panels");
+
+  for (IDProperty &panel_prop : panels_props.data.group) {
+    printf("panel prop: %s\n", panel_prop.name);
+    RNA_def_boolean(srna, panel_prop.name, IDP_bool_get(&panel_prop), "Is Open", "");
+  }
+
+  return srna;
+}
+
 static void register_node_tool(wmOperatorType *ot,
                                std::unique_ptr<OperatorTypeData> &type_data_ptr)
 {
@@ -1142,6 +1441,13 @@ static void register_node_tool(wmOperatorType *ot,
   if (type_data.flag & GEO_NODE_ASSET_WAIT_FOR_CURSOR) {
     ot->flag |= OPTYPE_DEPENDS_ON_CURSOR;
   }
+
+  StructRNA *inputs_srna = create_inputs_srna(*type_data.asset_meta_data_properties,
+                                              type_data.generated_structs);
+  StructRNA *panels_srna = create_panels_srna(*type_data.asset_meta_data_properties,
+                                              type_data.generated_structs);
+  RNA_def_pointer_runtime(ot->srna, "inputs", inputs_srna, "Inputs", "Settings for input sockets");
+  RNA_def_pointer_runtime(ot->srna, "panels", panels_srna, "Panels", "Settings for panels");
 
   /* See comment for #store_input_node_values_rna_props. */
   prop = RNA_def_int_array(ot->srna,
@@ -1336,6 +1642,14 @@ void register_node_group_operators(const bContext &C)
     WM_operator_stack_clear(&wm, types_to_remove);
     WM_operator_handlers_clear(&wm, types_to_remove);
     for (wmOperatorType *ot : types_to_remove) {
+      OperatorTypeData &type_data = static_cast<OperatorTypeData &>(*ot->custom_data);
+
+      for (StructRNA *srna : type_data.generated_structs) {
+        /* Avoids warning when freeing the #StructRNA. */
+        RNA_struct_py_type_set(srna, nullptr);
+        RNA_struct_free(&RNA_blender_rna_get(), srna);
+      }
+
       WM_operatortype_remove_ptr(ot);
     }
   }

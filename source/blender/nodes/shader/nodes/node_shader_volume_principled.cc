@@ -69,16 +69,14 @@ static int node_shader_gpu_volume_principled(GPUMaterial *mat,
                                              GPUNodeStack *out)
 {
   /* Test if blackbody intensity is enabled. */
-  bool use_blackbody = node_socket_not_zero(in[SOCK_BLACKBODY_INTENSITY_ID]);
+  bool use_blackbody = in[SOCK_BLACKBODY_INTENSITY_ID].socket_not_zero();
 
-  if (node_socket_not_zero(in[SOCK_DENSITY_ID]) && node_socket_not_black(in[SOCK_COLOR_ID])) {
+  if (in[SOCK_DENSITY_ID].socket_not_zero() && in[SOCK_COLOR_ID].socket_not_black()) {
     /* Consider there is absorption phenomenon when there is scattering since
      * `extinction = scattering + absorption`. */
     GPU_material_flag_set(mat, GPU_MATFLAG_VOLUME_SCATTER | GPU_MATFLAG_VOLUME_ABSORPTION);
   }
-  if (node_socket_not_zero(in[SOCK_DENSITY_ID]) &&
-      node_socket_not_white(in[SOCK_ABSORPTION_COLOR_ID]))
-  {
+  if (in[SOCK_DENSITY_ID].socket_not_zero() && in[SOCK_ABSORPTION_COLOR_ID].socket_not_white()) {
     GPU_material_flag_set(mat, GPU_MATFLAG_VOLUME_ABSORPTION);
   }
 

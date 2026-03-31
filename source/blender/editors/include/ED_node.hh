@@ -105,8 +105,8 @@ std::optional<nodes::FoundNestedNodeID> find_nested_node_id_in_root(
     const bNodeTree &root_tree, const ComputeContext *compute_context, const int node_id);
 
 struct ObjectAndModifier {
-  const Object *object;
-  const NodesModifierData *nmd;
+  const Object *object = nullptr;
+  const NodesModifierData *nmd = nullptr;
 };
 /**
  * Finds the context-modifier for the node editor.

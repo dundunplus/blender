@@ -245,32 +245,19 @@ static void build_sources_timeline_retiming(const Scene *scene, TransSeqSnapData
 
 static void build_sources_preview(const Scene *scene,
                                   TransSeqSnapData *snap_data,
-                                  const Span<Strip *> strip_sources)
+                                  const Span<Strip *> strip_sources,
+                                  bool translate_origin)
 {
   for (Strip *strip : strip_sources) {
-    const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
-    for (const float2 &point : strip_image_quad) {
-      snap_data->sources.append(point);
+    if (!translate_origin) {
+      const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
+      for (const float2 &point : strip_image_quad) {
+        snap_data->sources.append(point);
+      }
     }
 
     /* Add origins last */
     const float2 image_origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
-    snap_data->sources.append(image_origin);
-  }
-}
-
-static void build_sources_preview_origin(const Scene *scene,
-                                         TransSeqSnapData *snap_data,
-                                         const Span<Strip *> strip_sources)
-{
-  const size_t point_count_source = strip_sources.size();
-
-  if (point_count_source == 0) {
-    return;
-  }
-
-  for (Strip *strip : strip_sources) {
-    float2 image_origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
     snap_data->sources.append(image_origin);
   }
 }
@@ -343,7 +330,9 @@ static void build_targets_preview(const Scene *scene,
                                   const View2D *v2d,
                                   const short snap_mode,
                                   TransSeqSnapData *snap_data,
-                                  const Span<Strip *> snap_targets)
+                                  const Span<Strip *> strip_targets,
+                                  const Span<Strip *> strip_sources,
+                                  bool translate_origin)
 {
   if (snap_mode & SEQ_SNAP_TO_PREVIEW_BORDERS) {
     snap_data->targets.append(float2(v2d->tot.xmin, v2d->tot.ymin));
@@ -356,52 +345,28 @@ static void build_targets_preview(const Scene *scene,
     snap_data->targets.append(float2(0, 0));
   }
 
-  if (snap_mode & SEQ_SNAP_TO_STRIPS_PREVIEW) {
-    for (Strip *strip : snap_targets) {
-      const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
-      for (const float2 &point : strip_image_quad) {
-        snap_data->targets.append(point);
-      }
+  auto build_corners = [&](Strip *strip) {
+    const Array<float2> corners = seq::image_transform_final_quad_get(scene, strip);
+    for (const float2 &point : corners) {
+      snap_data->targets.append(point);
+    }
+    return corners;
+  };
 
+  if (snap_mode & SEQ_SNAP_TO_STRIPS_PREVIEW) {
+    for (Strip *strip : strip_targets) {
+      build_corners(strip);
       const float2 image_origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
       snap_data->targets.append(image_origin);
     }
   }
-}
 
-static void build_3x3_grid_points(const Scene *scene, TransSeqSnapData *snap_data, Strip *strip)
-{
-  const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
-
-  /* Corners. */
-  for (const float2 &point : strip_image_quad) {
-    snap_data->targets.append(point);
-  }
-
-  /* Middle top, bottom and center of the image. */
-  const float2 tm = math::interpolate(strip_image_quad[0], strip_image_quad[3], 0.5f);
-  const float2 bm = math::interpolate(strip_image_quad[1], strip_image_quad[2], 0.5f);
-  const float2 mm = math::interpolate(bm, tm, 0.5f);
-  snap_data->targets.append(tm);
-  snap_data->targets.append(mm);
-  snap_data->targets.append(bm);
-
-  /* Left and right. */
-  snap_data->targets.append(math::interpolate(strip_image_quad[2], strip_image_quad[3], 0.5f));
-  snap_data->targets.append(math::interpolate(strip_image_quad[0], strip_image_quad[1], 0.5f));
-}
-
-static void build_targets_preview_origin(const Scene *scene,
-                                         TransSeqSnapData *snap_data,
-                                         const Span<Strip *> snap_sources,
-                                         const Span<Strip *> snap_targets)
-{
-  for (Strip *strip : snap_sources) {
-    build_3x3_grid_points(scene, snap_data, strip);
-  }
-
-  for (Strip *strip : snap_targets) {
-    build_3x3_grid_points(scene, snap_data, strip);
+  if (translate_origin) {
+    for (Strip *strip : strip_sources) {
+      const Array<float2> corners = build_corners(strip);
+      const float2 center = (corners[0] + corners[1] + corners[2] + corners[3]) * 0.25f;
+      snap_data->targets.append(center);
+    }
   }
 }
 
@@ -441,19 +406,15 @@ static void build_snap_data_preview(const TransInfo *t, TransSeqSnapData *snap_d
 
   /* Build arrays of snap points. */
   if (t->data_type == &TransConvertType_SequencerImage) {
-    if (t->flag & T_ORIGIN) {
-      build_sources_preview_origin(scene, snap_data, strip_sources);
-      build_targets_preview_origin(scene, snap_data, strip_sources, strip_targets);
-    }
-    else {
-      build_sources_preview(scene, snap_data, strip_sources);
-      build_targets_preview(scene, v2d, snap_mode, snap_data, strip_targets);
-    }
+    const bool translate_origin = (t->flag & T_ORIGIN);
+    build_sources_preview(scene, snap_data, strip_sources, translate_origin);
+    build_targets_preview(
+        scene, v2d, snap_mode, snap_data, strip_targets, strip_sources, translate_origin);
   }
   else if (t->data_type == &TransConvertType_CursorSequencer) {
     float2 cursor_view = float2(sseq->cursor) * float2(t->aspect);
     snap_data->sources.append(cursor_view);
-    build_targets_preview(scene, v2d, snap_mode, snap_data, strip_targets);
+    build_targets_preview(scene, v2d, snap_mode, snap_data, strip_targets, {}, false);
   }
 }
 
@@ -536,38 +497,7 @@ static bool snap_calc_timeline(TransInfo *t, const TransSeqSnapData *snap_data)
   return true;
 }
 
-static bool snap_calc_preview_origin(TransInfo *t, const TransSeqSnapData *snap_data)
-{
-  /* Store best snap candidates in x and y directions separately. */
-  float best_dist(std::numeric_limits<float>::max());
-  float2 best_target(0.0f);
-  float2 best_source(0.0f);
-
-  for (const float2 source : snap_data->sources) {
-    for (const float2 target : snap_data->targets) {
-      /* First update snaps in x direction, then y direction. */
-      const float2 point = source + t->values;
-      const float dist = math::distance(target, point);
-      if (dist > best_dist) {
-        continue;
-      }
-
-      best_dist = dist;
-      best_target = target;
-      best_source = source;
-    }
-  }
-
-  if (best_dist <= snap_distance_view_threshold_get(t)) {
-    copy_v2_v2(t->tsnap.snap_target, best_target);
-    copy_v2_v2(t->tsnap.snap_source, best_source);
-    t->tsnap.direction |= DIR_GLOBAL_X | DIR_GLOBAL_Y;
-    return true;
-  }
-  return false;
-}
-
-static bool snap_calc_preview_image(TransInfo *t, const TransSeqSnapData *snap_data)
+static bool snap_calc_preview(TransInfo *t, const TransSeqSnapData *snap_data)
 {
   /* Store best snap candidates in x and y directions separately. */
   float2 best_dist(std::numeric_limits<float>::max());
@@ -577,7 +507,8 @@ static bool snap_calc_preview_image(TransInfo *t, const TransSeqSnapData *snap_d
   for (const float2 source : snap_data->sources) {
     for (const float2 target : snap_data->targets) {
       /* First update snaps in x direction, then y direction. */
-      for (int i = 0; i < 2; i++) {
+      constexpr int num_axes = 2;
+      for (const int i : IndexRange(num_axes)) {
         int dist = abs(target[i] - (source[i] + t->values[i]));
         if (dist > best_dist[i]) {
           continue;
@@ -618,10 +549,7 @@ bool snap_sequencer_calc(TransInfo *t)
   if (ELEM(t->data_type, &TransConvertType_Sequencer, &TransConvertType_SequencerRetiming)) {
     return snap_calc_timeline(t, snap_data);
   }
-  if (t->flag & T_ORIGIN) {
-    return snap_calc_preview_origin(t, snap_data);
-  }
-  return snap_calc_preview_image(t, snap_data);
+  return snap_calc_preview(t, snap_data);
 }
 
 void snap_sequencer_apply_seqslide(TransInfo *t, float *vec)

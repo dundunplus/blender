@@ -41,8 +41,6 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Shader>("BSDF"_ustr);
 }
 
-#define socket_not_zero(sock) (in[sock].link || (clamp_f(in[sock].vec[0], 0.0f, 1.0f) > 1e-5f))
-
 static int node_shader_gpu_eevee_specular(GPUMaterial *mat,
                                           bNode *node,
                                           bNodeExecData * /*execdata*/,
@@ -59,8 +57,8 @@ static int node_shader_gpu_eevee_specular(GPUMaterial *mat,
     GPU_link(mat, "world_normals_get", &in[8].link);
   }
 
-  bool use_transparency = socket_not_zero(4);
-  bool use_coat = socket_not_zero(6);
+  bool use_transparency = in[4].socket_not_zero();
+  bool use_coat = in[6].socket_not_zero();
 
   eGPUMaterialFlag flag = GPU_MATFLAG_DIFFUSE | GPU_MATFLAG_GLOSSY;
 

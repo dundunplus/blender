@@ -8,20 +8,29 @@
 
 #define DNA_DEPRECATED_ALLOW
 
+#include "NOD_geometry_nodes_srna.hh"
+
 #include "DNA_ID.h"
 #include "DNA_brush_types.h"
 #include "DNA_curve_types.h"
+#include "DNA_modifier_types.h"
+#include "DNA_node_tree_interface_types.h"
+#include "DNA_node_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 
 #include "BLI_listbase_iterator.hh"
+#include "BLI_string.h"
 #include "BLI_sys_types.h"
 
+#include "BKE_animsys.h"
 #include "BKE_curves.hh"
+#include "BKE_idprop.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_node.hh"
 #include "BKE_node_legacy_types.hh"
+#include "BKE_node_runtime.hh"
 
 #include "SEQ_iterator.hh"
 #include "SEQ_sequencer.hh"
@@ -35,6 +44,137 @@
 namespace blender {
 
 // static CLG_LogRef LOG = {"blend.doversion"};
+
+static void version_geometry_nodes_properties(Main &bmain, Object &object, NodesModifierData &nmd)
+{
+  const IDProperty *old_props = nmd.settings.properties;
+  if (!old_props) {
+    /* Versioning has already been done, this check makes the function idempotent. */
+    return;
+  }
+  if (!nmd.node_group) {
+    IDP_FreeProperty(nmd.settings.properties);
+    nmd.settings.properties = nullptr;
+    return;
+  }
+  if (ID_MISSING(&nmd.node_group->id)) {
+    return;
+  }
+  const bNodeTree &ntree = *nmd.node_group;
+  ntree.ensure_interface_cache();
+
+  IDProperty *system_props = bke::idprop::create_group("NodesModifierProperties").release();
+
+  IDProperty *inputs = bke::idprop::create_group("inputs").release();
+  IDP_AddToGroup(system_props, inputs);
+
+  const std::string inputs_path_prefix = fmt::format("modifiers[\"{}\"]", nmd.modifier.name);
+  for (const bNodeTreeInterfaceSocket *input : ntree.interface_inputs()) {
+    const StringRefNull identifier = input->identifier;
+    IDProperty *old_value_prop = IDP_GetPropertyFromGroup(old_props, identifier);
+    if (!old_value_prop) {
+      continue;
+    }
+
+    IDProperty *group = bke::idprop::create_group(identifier).release();
+    IDP_AddToGroup(inputs, group);
+
+    if (input->flag & NODE_INTERFACE_SOCKET_LAYER_SELECTION) {
+      IDP_AddToGroup(
+          group, bke::idprop::create("type", int(nodes::GeometryNodesInputType::Layer)).release());
+      const StringRefNull layer_name = [&]() {
+        const IDProperty *layer_name = IDP_GetPropertyFromGroup(old_props, identifier);
+        if (layer_name) {
+          return StringRefNull(IDP_string_get(layer_name));
+        }
+        return StringRefNull();
+      }();
+      IDP_AddToGroup(group, bke::idprop::create("layer_name", layer_name).release());
+      continue;
+    }
+
+    IDProperty *new_value_prop = IDP_CopyProperty(old_value_prop);
+    STRNCPY(new_value_prop->name, "value");
+    IDP_AddToGroup(group, new_value_prop);
+
+    const std::string old_value_path = fmt::format("[\"{}\"]", identifier);
+    const std::string new_value_path = fmt::format(".properties.inputs.{}.value", identifier);
+    BKE_animdata_fix_paths_rename_all_ex(&bmain,
+                                         &object.id,
+                                         inputs_path_prefix.c_str(),
+                                         old_value_path.c_str(),
+                                         new_value_path.c_str(),
+                                         0,
+                                         0,
+                                         false,
+                                         false);
+
+    if (IDOverrideLibrary *override_library = object.id.override_library) {
+      for (IDOverrideLibraryProperty &prop : override_library->properties) {
+        const StringRef path = prop.rna_path;
+        const int64_t i = path.find(inputs_path_prefix);
+        if (i == StringRef::not_found) {
+          continue;
+        }
+        if (path.drop_known_prefix(inputs_path_prefix) != old_value_path) {
+          continue;
+        }
+        MEM_delete(prop.rna_path);
+        prop.rna_path = BLI_sprintfN("%s%s", inputs_path_prefix.c_str(), new_value_path.c_str());
+      }
+    }
+
+    bool use_attribute = false;
+    if (const IDProperty *use_attribute_prop = IDP_GetPropertyFromGroup(
+            old_props, identifier + "_use_attribute"))
+    {
+      /* This property changed to an enum property and animation is not versioned. */
+      if (use_attribute_prop->type == IDP_INT) {
+        use_attribute = bool(IDP_int_get(use_attribute_prop));
+      }
+      else {
+        use_attribute = bool(IDP_bool_get(use_attribute_prop));
+      }
+    }
+
+    const auto input_type = use_attribute ? nodes::GeometryNodesInputType::Attribute :
+                                            nodes::GeometryNodesInputType::Value;
+    IDP_AddToGroup(group, bke::idprop::create("type", int(input_type)).release());
+    const StringRefNull attribute_name = [&]() {
+      const IDProperty *attribute_name = IDP_GetPropertyFromGroup(old_props,
+                                                                  identifier + "_attribute_name");
+      if (attribute_name) {
+        return StringRefNull(IDP_string_get(attribute_name));
+      }
+      return StringRefNull();
+    }();
+    IDP_AddToGroup(group, bke::idprop::create("attribute_name", attribute_name).release());
+  }
+
+  IDProperty *outputs = bke::idprop::create_group("outputs").release();
+  IDP_AddToGroup(system_props, outputs);
+  for (const bNodeTreeInterfaceSocket *output : ntree.interface_outputs()) {
+    const StringRef identifier = output->identifier;
+    IDProperty *old_name_prop = IDP_GetPropertyFromGroup(old_props,
+                                                         identifier + "_attribute_name");
+    if (!old_name_prop) {
+      continue;
+    }
+    IDProperty *group = bke::idprop::create_group(identifier).release();
+    IDP_AddToGroup(outputs, group);
+
+    IDProperty *new_value_prop = IDP_CopyProperty(old_name_prop);
+    STRNCPY(new_value_prop->name, "attribute_name");
+    IDP_AddToGroup(group, new_value_prop);
+  }
+
+  if (nmd.modifier.system_properties) {
+    IDP_FreeProperty(nmd.modifier.system_properties);
+  }
+  nmd.modifier.system_properties = system_props;
+  IDP_FreeProperty(nmd.settings.properties);
+  nmd.settings.properties = nullptr;
+}
 
 /* Saving file extension is now a property of the File Output node. So inherit this
  * setting from the active scene to restore the old behavior.
@@ -98,6 +238,17 @@ void do_versions_after_linking_520(FileData * /*fd*/, Main *bmain)
         continue;
       }
       do_version_file_output_use_file_extension_recursive(*node_tree, scene);
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 16)) {
+    for (Object &object : bmain->objects) {
+      for (ModifierData &md : object.modifiers) {
+        if (md.type == eModifierType_Nodes) {
+          version_geometry_nodes_properties(
+              *bmain, object, reinterpret_cast<NodesModifierData &>(md));
+        }
+      }
     }
   }
 

@@ -1973,14 +1973,11 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
         BKE_modifier_unique_name(&object->modifiers, &smooth_by_angle_nmd->modifier);
       }
 
-      IDProperty *angle_prop = IDP_GetPropertyFromGroup(smooth_by_angle_nmd->settings.properties,
-                                                        angle_identifier.c_str());
-      if (angle_prop->type == IDP_FLOAT) {
-        IDP_float_set(angle_prop, angle);
-      }
-      else if (angle_prop->type == IDP_DOUBLE) {
-        IDP_double_set(angle_prop, angle);
-      }
+      PointerRNA nmd_ptr = RNA_pointer_create_discrete(
+          &object->id, RNA_NodesModifier, smooth_by_angle_nmd);
+      PointerRNA properties_ptr = RNA_pointer_get(&nmd_ptr, "properties");
+
+      RNA_float_set(&properties_ptr, angle_identifier.c_str(), angle);
 
       DEG_id_tag_update(&object->id, ID_RECALC_GEOMETRY);
       WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, object);
