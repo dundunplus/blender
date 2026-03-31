@@ -140,7 +140,7 @@ static const mf::MultiFunction *get_multi_function(const bNode &bnode)
     case NODE_INTEGER_MATH_DIVIDE_ROUND:
       return &fn::multi_function::registry::lookup("divide_round(int, int)"_ustr);
     case NODE_INTEGER_MATH_POWER:
-      return &fn::multi_function::registry::lookup("int ^ int"_ustr);
+      return &fn::multi_function::registry::lookup("int ** int"_ustr);
     case NODE_INTEGER_MATH_MULTIPLY_ADD:
       return &fn::multi_function::registry::lookup("int * int + int"_ustr);
     case NODE_INTEGER_MATH_FLOORED_MODULO:

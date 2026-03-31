@@ -37,7 +37,6 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
         start_size_(start_size),
         end_size_(end_size)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,

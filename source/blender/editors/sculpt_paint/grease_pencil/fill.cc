@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BLI_bounds.hh"
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_enum_flags.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_math_base.hh"

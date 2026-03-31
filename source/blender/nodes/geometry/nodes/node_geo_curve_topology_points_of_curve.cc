@@ -62,7 +62,6 @@ class PointsOfCurveInput final : public bke::GeometryFieldInput {
         sort_index_(std::move(sort_index)),
         sort_weight_(std::move(sort_weight))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -168,10 +167,7 @@ class PointsOfCurveInput final : public bke::GeometryFieldInput {
 
 class CurvePointCountInput final : public bke::CurvesFieldInput {
  public:
-  CurvePointCountInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Curve Point Count")
-  {
-    category_ = Category::Generated;
-  }
+  CurvePointCountInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Curve Point Count") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,

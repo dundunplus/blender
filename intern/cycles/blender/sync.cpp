@@ -560,6 +560,7 @@ void BlenderSync::sync_integrator(blender::ViewLayer &b_view_layer,
     integrator->set_use_denoise_pass_motion(denoise_params.temporally_stable);
     integrator->set_denoiser_prefilter(denoise_params.prefilter);
     integrator->set_denoiser_quality(denoise_params.quality);
+    integrator->set_denoiser_upscale_factor(denoise_params.upscale_factor);
   }
 
   /* UPDATE_NONE as we don't want to tag the integrator as modified (this was done by the

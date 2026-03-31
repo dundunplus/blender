@@ -60,6 +60,7 @@ class NODE_MT_compositor_node_input_scene_base(node_add_menu.NodeMenu):
         layout = self.layout
         self.node_operator(layout, "GeometryNodeInputActiveCamera")
         self.node_operator(layout, "GeometryNodeCameraInfo")
+        self.node_operator(layout, "GeometryNodeObjectInfo")
         if context.space_data.node_tree_sub_type == 'SCENE':
             self.node_operator(layout, "CompositorNodeRLayers")
         self.node_operator_with_outputs(context, layout, "CompositorNodeSceneTime", ["Frame", "Seconds"])

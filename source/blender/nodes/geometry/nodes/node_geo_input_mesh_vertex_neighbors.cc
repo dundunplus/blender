@@ -24,10 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 class VertexCountFieldInput final : public bke::MeshFieldInput {
  public:
-  VertexCountFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Count Field")
-  {
-    category_ = Category::Generated;
-  }
+  VertexCountFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Count Field") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,
@@ -62,7 +59,6 @@ class VertexFaceCountFieldInput final : public bke::MeshFieldInput {
  public:
   VertexFaceCountFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Face Count Field")
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

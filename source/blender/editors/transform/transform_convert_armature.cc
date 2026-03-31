@@ -278,8 +278,8 @@ static short pose_grab_with_ik(Main *bmain, Object *ob)
           continue;
         }
 
-        /* Rule: if selected Bone is not a root bone, it gets a temporal IK. */
-        if (pchan.parent) {
+        /* Rule: if selected Bone is not the root of a connected chain, it gets temporary IK. */
+        if (pchan.parent && (pchan.bone->flag & BONE_CONNECTED)) {
           /* Only adds if there's no IK yet (and no parent bone was selected). */
           bPoseChannel *parent;
           for (parent = pchan.parent; parent; parent = parent->parent) {

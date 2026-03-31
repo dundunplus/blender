@@ -15,10 +15,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 class ResolutionFieldInput final : public bke::CurvesFieldInput {
  public:
-  ResolutionFieldInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Resolution")
-  {
-    category_ = Category::NamedAttribute;
-  }
+  ResolutionFieldInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Resolution") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,

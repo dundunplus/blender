@@ -18,7 +18,7 @@
 #include "NOD_geometry_nodes_list.hh"
 #include "NOD_menu_value.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_math_rotation_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_memory_counter.hh"

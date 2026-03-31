@@ -138,7 +138,6 @@ class TangentFieldInput final : public bke::MeshFieldInput {
         method_(method),
         uv_field_(std::move(uv))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

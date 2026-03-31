@@ -35,7 +35,7 @@
 #include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"

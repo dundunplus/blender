@@ -13,9 +13,10 @@
 #include "BKE_blender_version.h"
 #include "BKE_mesh.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_fileops.h"
+#include "BLI_math_color.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_rotation.h"

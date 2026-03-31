@@ -6,6 +6,10 @@
 
 #include "FN_multi_function_registry.hh"
 
+#include "CLG_log.h"
+
+static CLG_LogRef LOG = {"functions.mf_registry"};
+
 namespace blender::fn::multi_function::registry {
 
 using RegistryMap = ConcurrentMap<UString, const MultiFunction *>;
@@ -30,6 +34,7 @@ void add_new(const MultiFunction &fn)
   }
   else {
     /* A function can only be registered once. */
+    CLOG_ERROR(&LOG, "Multi-function already registered: '%s'", id.c_str());
     BLI_assert_unreachable();
   }
 }
@@ -42,6 +47,7 @@ const MultiFunction &lookup(UString id)
     return *accessor->second;
   }
   /* The function is expected to exist when using the #lookup function. */
+  CLOG_ERROR(&LOG, "Multi-function does not exist: '%s'", id.c_str());
   BLI_assert_unreachable();
   return *accessor->second;
 }

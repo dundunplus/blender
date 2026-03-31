@@ -64,7 +64,6 @@ class PathToEdgeSelectionFieldInput final : public bke::MeshFieldInput {
         start_vertices_(start_verts),
         next_vertex_(next_vertex)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

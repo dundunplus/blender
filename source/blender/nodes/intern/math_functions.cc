@@ -88,7 +88,7 @@ const FloatMathOperationInfo *get_float_math_operation_info(const int operation)
     case NODE_MATH_ARCTANGENT:
       RETURN_OPERATION_INFO("Arc Tangent", "math_arctangent", "atan(float)"_ustr);
     case NODE_MATH_POWER:
-      RETURN_OPERATION_INFO("Power", "math_power", "float ^ float"_ustr);
+      RETURN_OPERATION_INFO("Power", "math_power", "float ** float"_ustr);
     case NODE_MATH_LOGARITHM:
       RETURN_OPERATION_INFO("Logarithm", "math_logarithm", "log(float, float)"_ustr);
     case NODE_MATH_MINIMUM:
@@ -261,7 +261,7 @@ const FloatMathOperationInfo *get_float3_math_operation_info(const int operation
       RETURN_OPERATION_INFO(
           "Multiply Add", "vector_math_multiply_add", "float3 * float3 + float3"_ustr);
     case NODE_VECTOR_MATH_POWER:
-      RETURN_OPERATION_INFO("Power", "vector_math_power", "float3 ^ float3"_ustr);
+      RETURN_OPERATION_INFO("Power", "vector_math_power", "float3 ** float3"_ustr);
     case NODE_VECTOR_MATH_SIGN:
       RETURN_OPERATION_INFO("Sign", "vector_math_sign", "sign(float3)"_ustr);
   }

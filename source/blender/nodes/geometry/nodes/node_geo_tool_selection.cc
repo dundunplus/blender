@@ -75,7 +75,6 @@ class EditSelectionFieldInput final : public bke::GeometryFieldInput {
   EditSelectionFieldInput(bke::AttrType data_type)
       : bke::GeometryFieldInput(bke::attribute_type_to_cpp_type(data_type), "Edit Selection")
   {
-    category_ = Category::NamedAttribute;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -104,7 +103,6 @@ class SculptSelectionFieldInput final : public bke::GeometryFieldInput {
   SculptSelectionFieldInput(bke::AttrType data_type)
       : bke::GeometryFieldInput(bke::attribute_type_to_cpp_type(data_type), "Sculpt Selection")
   {
-    category_ = Category::NamedAttribute;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,

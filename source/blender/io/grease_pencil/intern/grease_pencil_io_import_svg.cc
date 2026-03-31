@@ -6,7 +6,7 @@
 #include "BKE_main.hh"
 #include "BLI_assert.h"
 #include "BLI_bounds.hh"
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_math_color.h"
 #include "BLI_math_euler_types.hh"
 #include "BLI_math_matrix.hh"

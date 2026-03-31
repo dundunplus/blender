@@ -33,7 +33,7 @@
 #include "DNA_vfont_types.h"
 #include "DNA_world_types.h"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"

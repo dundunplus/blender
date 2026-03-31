@@ -2035,6 +2035,15 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_post_processing(View3DPanel, Panel)
         row2.enabled = gp_settings.use_settings_outline
         row2.prop(gp_settings, "outline_thickness_factor")
 
+        col.separator()
+
+        col1 = col.column(align=True)
+        col1.prop(gp_settings, "curve_type")
+
+        col1 = col.row(align=True)
+        col1.prop(gp_settings, "conversion_threshold")
+        col1.enabled = gp_settings.curve_type != "POLY"
+
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_random(View3DPanel, Panel):
     bl_context = ".grease_pencil_paint"

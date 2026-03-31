@@ -9,6 +9,7 @@
 
 #include "BLI_listbase.h"
 #include "BLI_stack.hh"
+#include "BLI_string.h"
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8.h"
 
@@ -79,18 +80,13 @@ FieldInfoLog::FieldInfoLog(const GField &field) : type(field.cpp_type())
                         field_input_nodes->deduplicated_nodes.end());
   }
 
-  std::ranges::sort(field_inputs, [](const FieldInput &a, const FieldInput &b) {
-    const int index_a = int(a.category());
-    const int index_b = int(b.category());
-    if (index_a == index_b) {
-      return a.socket_inspection_name().size() < b.socket_inspection_name().size();
-    }
-    return index_a < index_b;
-  });
-
+  this->input_tooltips.reserve(field_inputs.size());
   for (const FieldInput &field_input : field_inputs) {
-    this->input_tooltips.append(field_input.socket_inspection_name());
+    input_tooltips.append(field_input.socket_inspection_name());
   }
+  std::ranges::sort(input_tooltips, [](const std::string &a, const std::string &b) {
+    return BLI_strcasecmp_natural(a.c_str(), b.c_str()) < 0;
+  });
 }
 
 GeometryInfoLog::GeometryInfoLog(const bke::GeometrySet &geometry_set)

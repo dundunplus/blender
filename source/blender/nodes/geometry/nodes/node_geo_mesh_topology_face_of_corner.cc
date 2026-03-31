@@ -24,10 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 class CornerFaceIndexInput final : public bke::MeshFieldInput {
  public:
-  CornerFaceIndexInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Face Index")
-  {
-    category_ = Category::Generated;
-  }
+  CornerFaceIndexInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Face Index") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,
@@ -52,10 +49,7 @@ class CornerFaceIndexInput final : public bke::MeshFieldInput {
 
 class CornerIndexInFaceInput final : public bke::MeshFieldInput {
  public:
-  CornerIndexInFaceInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Index In Face")
-  {
-    category_ = Category::Generated;
-  }
+  CornerIndexInFaceInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Index In Face") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,

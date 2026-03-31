@@ -196,7 +196,6 @@ class UnwrapFieldInput final : public bke::MeshFieldInput {
         iterations_(iterations),
         no_flip_(no_flip)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

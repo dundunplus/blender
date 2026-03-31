@@ -216,6 +216,10 @@ static void ed_undo_step_post(bContext *C,
     }
   }
 
+  /* Undo/redo may have invalidated a lot of data, ensure UI has also been fully updated before
+   * handling next events. */
+  WM_event_handling_break(*C);
+
   WM_event_add_notifier(C, NC_WINDOW, nullptr);
   WM_event_add_notifier(C, NC_WM | ND_UNDO, nullptr);
 

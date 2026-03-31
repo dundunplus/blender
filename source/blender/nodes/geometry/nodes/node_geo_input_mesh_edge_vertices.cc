@@ -48,7 +48,6 @@ class EdgeVertsInput final : public bke::MeshFieldInput {
   EdgeVertsInput(VertNumber vertex)
       : bke::MeshFieldInput(CPPType::get<int>(), "Edge Vertices Field"), vertex_(vertex)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -106,7 +105,6 @@ class EdgePositionFieldInput final : public bke::MeshFieldInput {
   EdgePositionFieldInput(VertNumber vertex)
       : bke::MeshFieldInput(CPPType::get<float3>(), "Edge Position Field"), vertex_(vertex)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

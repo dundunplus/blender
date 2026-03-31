@@ -47,7 +47,6 @@ class CornersOfEdgeInput final : public bke::MeshFieldInput {
         sort_index_(std::move(sort_index)),
         sort_weight_(std::move(sort_weight))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -142,10 +141,7 @@ class CornersOfEdgeInput final : public bke::MeshFieldInput {
 
 class CornersOfEdgeCountInput final : public bke::MeshFieldInput {
  public:
-  CornersOfEdgeCountInput() : bke::MeshFieldInput(CPPType::get<int>(), "Edge Corner Count")
-  {
-    category_ = Category::Generated;
-  }
+  CornersOfEdgeCountInput() : bke::MeshFieldInput(CPPType::get<int>(), "Edge Corner Count") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,

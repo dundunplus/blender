@@ -20,6 +20,7 @@ class NODE_MT_gn_attribute_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "GeometryNodeBlurAttribute")
         self.node_operator(layout, "GeometryNodeCaptureAttribute")
         self.node_operator(layout, "GeometryNodeRemoveAttribute")
+        self.node_operator(layout, "GeometryNodeRenameAttribute")
         self.node_operator(layout, "GeometryNodeStoreNamedAttribute", search_weight=1.0)
 
         self.draw_assets_for_catalog(layout, self.bl_label)

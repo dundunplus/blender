@@ -10,7 +10,7 @@
 
 #include "BKE_colorband.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 
 #include "NOD_multi_function.hh"
 

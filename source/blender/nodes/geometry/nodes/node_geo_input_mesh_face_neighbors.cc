@@ -76,7 +76,6 @@ class FaceNeighborCountFieldInput final : public bke::MeshFieldInput {
   FaceNeighborCountFieldInput()
       : bke::MeshFieldInput(CPPType::get<int>(), "Face Neighbor Count Field")
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -115,10 +114,7 @@ static VArray<int> construct_vertex_count_varray(const Mesh &mesh, const AttrDom
 
 class FaceVertexCountFieldInput final : public bke::MeshFieldInput {
  public:
-  FaceVertexCountFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Count Field")
-  {
-    category_ = Category::Generated;
-  }
+  FaceVertexCountFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Count Field") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,

@@ -6,7 +6,7 @@
 #include "NOD_multi_function.hh"
 #include "node_shader_util.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "IMB_colormanagement.hh"
 
 namespace blender {

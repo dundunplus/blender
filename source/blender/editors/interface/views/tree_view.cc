@@ -414,24 +414,21 @@ void AbstractTreeView::scroll_active_into_view()
     return;
   }
 
-  if (scroll_active_into_view_on_draw_) {
-    if (!scroll_value_) {
-      scroll_value_ = std::make_unique<int>(0);
-    }
-    foreach_item(
-        [&, this](AbstractTreeViewItem &item) {
-          if (item.is_active_) {
-            /* Don't scroll the list when active item is already in view. */
-            if ((index < *scroll_value_) || (index >= *scroll_value_ + *visible_row_count)) {
-              *scroll_value_ = std::max(0, index - *visible_row_count + 1);
-            }
-            return;
-          }
-          index++;
-        },
-        AbstractTreeView::IterOptions::SkipCollapsed |
-            AbstractTreeView::IterOptions::SkipFiltered);
+  if (!scroll_value_) {
+    scroll_value_ = std::make_unique<int>(0);
   }
+  foreach_item(
+      [&, this](AbstractTreeViewItem &item) {
+        if (item.is_active_) {
+          /* Don't scroll the list when active item is already in view. */
+          if ((index < *scroll_value_) || (index >= *scroll_value_ + *visible_row_count)) {
+            *scroll_value_ = std::max(0, index - *visible_row_count + 1);
+          }
+          return;
+        }
+        index++;
+      },
+      AbstractTreeView::IterOptions::SkipCollapsed | AbstractTreeView::IterOptions::SkipFiltered);
 }
 
 /* ---------------------------------------------------------------------- */

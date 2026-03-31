@@ -180,7 +180,6 @@ class CurveParameterFieldInput final : public bke::CurvesFieldInput {
   CurveParameterFieldInput()
       : bke::CurvesFieldInput(CPPType::get<float>(), "Spline Parameter node")
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
@@ -214,7 +213,6 @@ class CurveLengthParameterFieldInput final : public bke::CurvesFieldInput {
   CurveLengthParameterFieldInput()
       : bke::CurvesFieldInput(CPPType::get<float>(), "Curve Length node")
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
@@ -246,10 +244,7 @@ class CurveLengthParameterFieldInput final : public bke::CurvesFieldInput {
 
 class IndexOnSplineFieldInput final : public bke::CurvesFieldInput {
  public:
-  IndexOnSplineFieldInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Spline Index")
-  {
-    category_ = Category::Generated;
-  }
+  IndexOnSplineFieldInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Spline Index") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,

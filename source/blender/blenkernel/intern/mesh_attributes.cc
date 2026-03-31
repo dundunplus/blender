@@ -768,29 +768,6 @@ static GAttributeWriter try_get_vertex_group_for_write(void *owner, const String
   return {varray_for_mutable_deform_verts(dverts, vertex_group_index), AttrDomain::Point};
 }
 
-static bool try_delete_vertex_group(void *owner, const StringRef name)
-{
-  Mesh *mesh = static_cast<Mesh *>(owner);
-  if (mesh == nullptr) {
-    return true;
-  }
-
-  int index;
-  bDeformGroup *group;
-  if (!BKE_id_defgroup_name_find(&mesh->id, name, &index, &group)) {
-    return false;
-  }
-  BLI_remlink(&mesh->vertex_group_names, group);
-  MEM_delete(group);
-  if (mesh->deform_verts().is_empty()) {
-    return true;
-  }
-
-  MutableSpan<MDeformVert> dverts = mesh->deform_verts_for_write();
-  remove_defgroup_index(dverts, index);
-  return true;
-}
-
 static bool foreach_vertex_group(const void *owner, FunctionRef<void(const AttributeIter &)> fn)
 {
   const Mesh *mesh = static_cast<const Mesh *>(owner);
@@ -971,7 +948,9 @@ static AttributeAccessorFunctions get_mesh_accessor_functions()
   fn.remove = [](void *owner, const StringRef name) -> bool {
     Mesh &mesh = *static_cast<Mesh *>(owner);
 
-    if (try_delete_vertex_group(owner, name)) {
+    if (try_delete_vertex_group(
+            mesh.vertex_group_names, name, [&]() { return mesh.deform_verts_for_write(); }))
+    {
       return true;
     }
 
@@ -1016,6 +995,18 @@ static AttributeAccessorFunctions get_mesh_accessor_functions()
       }
     }
     return true;
+  };
+  fn.rename = [](void *owner, const Map<StringRef, StringRef> &name_map, bool overwrite) {
+    Mesh &mesh = *static_cast<Mesh *>(owner);
+    return rename_attributes(
+        mesh.attribute_storage.wrap(),
+        name_map,
+        overwrite,
+        builtin_attributes(),
+        array_storage_required(),
+        [&](const bke::AttrDomain domain) { return get_domain_size(owner, domain); },
+        &mesh.vertex_group_names,
+        [&]() { return mesh.deform_verts_for_write(); });
   };
   fn.assign_data = [](void *owner, StringRef name, const AttributeInit &initializer) {
     Mesh &mesh = *static_cast<Mesh *>(owner);

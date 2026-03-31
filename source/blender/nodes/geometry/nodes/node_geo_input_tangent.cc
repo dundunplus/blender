@@ -92,10 +92,7 @@ static VArray<float3> construct_curve_tangent_gvarray(const bke::CurvesGeometry 
 
 class TangentFieldInput final : public bke::CurvesFieldInput {
  public:
-  TangentFieldInput() : bke::CurvesFieldInput(CPPType::get<float3>(), "Tangent node")
-  {
-    category_ = Category::Generated;
-  }
+  TangentFieldInput() : bke::CurvesFieldInput(CPPType::get<float3>(), "Tangent node") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,

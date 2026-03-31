@@ -32,7 +32,6 @@ class BoundaryFieldInput final : public bke::MeshFieldInput {
   BoundaryFieldInput(const Field<int> face_set)
       : bke::MeshFieldInput(CPPType::get<bool>(), "Face Group Boundaries"), face_set_(face_set)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

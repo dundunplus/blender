@@ -40,7 +40,6 @@ class ControlPointNeighborFieldInput final : public bke::GeometryFieldInput {
         index_(std::move(index)),
         offset_(std::move(offset))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -103,7 +102,6 @@ class OffsetValidFieldInput final : public bke::GeometryFieldInput {
         index_(std::move(index)),
         offset_(std::move(offset))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,

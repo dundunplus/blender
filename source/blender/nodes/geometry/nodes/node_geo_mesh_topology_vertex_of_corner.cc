@@ -21,10 +21,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 class CornerVertFieldInput final : public bke::MeshFieldInput {
  public:
-  CornerVertFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Vertex")
-  {
-    category_ = Category::Generated;
-  }
+  CornerVertFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Vertex") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,

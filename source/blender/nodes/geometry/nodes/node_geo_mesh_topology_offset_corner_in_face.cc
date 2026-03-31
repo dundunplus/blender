@@ -34,7 +34,6 @@ class OffsetCornerInFaceFieldInput final : public bke::MeshFieldInput {
         corner_index_(std::move(corner_index)),
         offset_(std::move(offset))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

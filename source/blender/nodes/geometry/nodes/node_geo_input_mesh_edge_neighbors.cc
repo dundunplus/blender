@@ -22,7 +22,6 @@ class EdgeNeighborCountFieldInput final : public bke::MeshFieldInput {
   EdgeNeighborCountFieldInput()
       : bke::MeshFieldInput(CPPType::get<int>(), "Edge Neighbor Count Field")
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

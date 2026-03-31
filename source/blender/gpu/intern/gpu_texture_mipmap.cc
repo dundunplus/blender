@@ -10,8 +10,6 @@
 
 #include "GPU_compute.hh"
 #include "GPU_debug.hh"
-#include "GPU_platform.hh"
-#include "GPU_platform_backend_enum.h"
 #include "GPU_shader.hh"
 #include "GPU_shader_builtin.hh"
 #include "GPU_state.hh"
@@ -29,8 +27,25 @@ namespace blender {
 
 namespace gpu {
 
-static Shader *get_update_mipmap_shader(TextureFormat texture_format)
+static Shader *get_update_mipmap_shader(TextureFormat texture_format, bool is_layered)
 {
+  if (is_layered) {
+    switch (texture_format) {
+      case TextureFormat::UNORM_8_8_8_8:
+        return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_UNORM_8_8_8_8_LAYERED);
+      case TextureFormat::SFLOAT_16:
+        return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16_LAYERED);
+      case TextureFormat::SFLOAT_16_16_16_16:
+        return GPU_shader_get_builtin_shader(
+            GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16_16_16_16_LAYERED);
+      case TextureFormat::SRGBA_8_8_8_8:
+        return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SRGBA_8_8_8_8_LAYERED);
+      default:
+        break;
+    }
+    return nullptr;
+  }
+
   switch (texture_format) {
     case TextureFormat::UNORM_8_8_8_8:
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_UNORM_8_8_8_8);
@@ -38,30 +53,18 @@ static Shader *get_update_mipmap_shader(TextureFormat texture_format)
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16);
     case TextureFormat::SFLOAT_16_16_16_16:
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16_16_16_16);
-
+    case TextureFormat::SRGBA_8_8_8_8:
+      return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SRGBA_8_8_8_8);
     default:
       break;
   }
   return nullptr;
 }
 
-static TextureFormat get_view_format(TextureFormat texture_format)
-{
-  switch (texture_format) {
-    case TextureFormat::SRGBA_8_8_8_8:
-      return TextureFormat::UNORM_8_8_8_8;
-
-    default:
-      return texture_format;
-  }
-
-  return texture_format;
-}
-
 static void update_mipmaps(Texture &texture, Shader &shader, int layer)
 {
   const int num_mipmaps = texture.mip_count();
-  const TextureFormat view_format = get_view_format(texture.format_get());
+  const TextureFormat view_format = texture.format_get();
   Vector<Texture *, 16> views;
   for (int mipmap : IndexRange(num_mipmaps)) {
     views.append(GPU_texture_create_view(
@@ -82,7 +85,7 @@ static void update_mipmaps(Texture &texture, Shader &shader, int layer)
     int3 mip_size(1, 1, 1);
     texture.mip_size_get(mip_start + num_levels, mip_size);
 
-    if (num_levels == 1U) {
+    if (num_levels == 1u) {
       /* Each thread writes one sample. */
       constexpr uint32_t warps = 4;
       const uint32_t samples = mip_size.x * mip_size.y;
@@ -109,13 +112,50 @@ static void update_mipmaps(Texture &texture, Shader &shader, int layer)
 
 static void update_mipmaps(Texture &texture, Shader &shader)
 {
-
   Context &context = *Context::get();
   Shader *prev_shader = context.shader;
 
+  Texture *texture_ptr = &texture;
+  int layer_count = texture.layer_count();
+  int mip_count = texture.mip_count();
+  const bool is_srgb = texture.format_flag_get() & GPU_FORMAT_SRGB;
+  const bool is_layered = texture.type_get() & GPU_TEXTURE_ARRAY;
+  /* SRGB textures cannot be used with image load/store. Create a temp texture with mip0 in an
+   * non-srgb texture. */
+  if (is_srgb) {
+    if (is_layered) {
+      texture_ptr = GPU_texture_create_2d_array(__func__,
+                                                texture.width_get(),
+                                                texture.height_get(),
+                                                layer_count,
+                                                texture.mip_count(),
+                                                TextureFormat::UNORM_8_8_8_8,
+                                                GPU_TEXTURE_USAGE_SHADER_WRITE,
+                                                nullptr);
+    }
+    else {
+      texture_ptr = GPU_texture_create_2d(__func__,
+                                          texture.width_get(),
+                                          texture.height_get(),
+                                          texture.mip_count(),
+                                          TextureFormat::UNORM_8_8_8_8,
+                                          GPU_TEXTURE_USAGE_SHADER_READ |
+                                              GPU_TEXTURE_USAGE_SHADER_WRITE,
+                                          nullptr);
+    }
+    texture.copy_to(texture_ptr, IndexRange(1));
+  }
+
   GPU_shader_bind(&shader);
-  for (int layer : IndexRange(texture.layer_count())) {
-    update_mipmaps(texture, shader, layer);
+  for (int layer : IndexRange(layer_count)) {
+    update_mipmaps(*texture_ptr, shader, layer);
+  }
+
+  if (is_srgb) {
+    /* Copy result (mip1 and higher) to original texture and free temporary resources. */
+    texture_ptr->copy_to(&texture, IndexRange::from_begin_end(1, mip_count));
+    GPU_texture_free(texture_ptr);
+    texture_ptr = nullptr;
   }
 
   /* Clear all bound images.
@@ -159,7 +199,8 @@ void GPU_texture_update_mipmap_chain(Texture *tex)
 
   if (use_compute_shaders) {
     const TextureFormat texture_format = tex->format_get();
-    Shader *shader = get_update_mipmap_shader(texture_format);
+    const bool is_layered = tex->type_get() & GPU_TEXTURE_ARRAY;
+    Shader *shader = get_update_mipmap_shader(texture_format, is_layered);
     if (shader) {
       GPU_debug_group_begin("Update Mipmaps");
       update_mipmaps(*tex, *shader);

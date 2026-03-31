@@ -10,7 +10,7 @@
 
 #include "DNA_node_types.h"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_euler.hh"
 #include "BLI_math_quaternion_types.hh"

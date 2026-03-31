@@ -17,7 +17,7 @@
 namespace blender::asset_system {
 
 PreferencesOnDiskAssetLibrary::PreferencesOnDiskAssetLibrary(StringRef name, StringRef root_path)
-    : OnDiskAssetLibrary(ASSET_LIBRARY_CUSTOM, name, root_path)
+    : OnDiskAssetLibrary(ASSET_LIBRARY_CUSTOM, name, root_path, /*is_read_only=*/false)
 {
 }
 

@@ -90,7 +90,6 @@ class ShortestEdgePathsNextVertFieldInput final : public bke::MeshFieldInput {
         end_selection_(end_selection),
         cost_(cost)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -174,7 +173,6 @@ class ShortestEdgePathsCostFieldInput final : public bke::MeshFieldInput {
         end_selection_(end_selection),
         cost_(cost)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

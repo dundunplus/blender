@@ -798,6 +798,16 @@ void WM_event_add_mousemove(wmWindow *win);
 /* 3D mouse. */
 void WM_ndof_deadzone_set(float deadzone);
 #endif
+
+/**
+ * Mark the current event queue to break its current processing, and delay handling of remaining
+ * events to the next main event loop iteration in `WM_main()`.
+ *
+ * Used e.g. by undo/redo code to ensure that a redraw has been done before processing further
+ * events.
+ */
+void WM_event_handling_break(const bContext &C);
+
 /* Notifiers. */
 void WM_event_add_notifier_ex(wmWindowManager *wm,
                               const wmWindow *win,

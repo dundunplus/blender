@@ -91,7 +91,6 @@ void main()
   constexpr uint group_size = gl_WorkGroupSize.x * gl_WorkGroupSize.y;
 
   SphereProbeUvArea world_coord = reinterpret_as_atlas_coord(world_coord_packed);
-  SphereProbeUvArea sample_coord = reinterpret_as_atlas_coord(probe_coord_packed);
   SphereProbePixelArea write_coord = reinterpret_as_write_coord(write_coord_packed);
 
   /* Texel in probe. */

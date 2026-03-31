@@ -61,7 +61,6 @@ class MaterialSelectionFieldInput final : public bke::GeometryFieldInput {
       : bke::GeometryFieldInput(CPPType::get<bool>(), "Material Selection node"),
         material_(material)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,

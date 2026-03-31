@@ -35,7 +35,6 @@ class PlanarFieldInput final : public bke::MeshFieldInput {
   PlanarFieldInput(Field<float> threshold)
       : bke::MeshFieldInput(CPPType::get<bool>(), "Planar"), threshold_(threshold)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

@@ -24,10 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 class CurveOfPointInput final : public bke::CurvesFieldInput {
  public:
-  CurveOfPointInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Point Curve Index")
-  {
-    category_ = Category::Generated;
-  }
+  CurveOfPointInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Point Curve Index") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,
@@ -57,10 +54,7 @@ class CurveOfPointInput final : public bke::CurvesFieldInput {
 
 class PointIndexInCurveInput final : public bke::CurvesFieldInput {
  public:
-  PointIndexInCurveInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Point Index in Curve")
-  {
-    category_ = Category::Generated;
-  }
+  PointIndexInCurveInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Point Index in Curve") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,

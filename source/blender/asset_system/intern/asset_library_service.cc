@@ -179,14 +179,17 @@ AssetLibrary *AssetLibraryService::get_asset_library_on_disk(
         lib_uptr = std::make_unique<PreferencesOnDiskAssetLibrary>(name, normalized_root_path);
       }
       else {
-        lib_uptr = std::make_unique<OnDiskAssetLibrary>(library_type, name, normalized_root_path);
+        /* Only used by unit tests. */
+        lib_uptr = std::make_unique<OnDiskAssetLibrary>(
+            library_type, name, normalized_root_path, /*is_read_only=*/false);
       }
       break;
     case ASSET_LIBRARY_ESSENTIALS:
       lib_uptr = std::make_unique<EssentialsAssetLibrary>();
       break;
     default:
-      lib_uptr = std::make_unique<OnDiskAssetLibrary>(library_type, name, normalized_root_path);
+      lib_uptr = std::make_unique<OnDiskAssetLibrary>(
+          library_type, name, normalized_root_path, /*is_read_only=*/true);
       break;
   }
 

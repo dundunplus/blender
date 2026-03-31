@@ -190,7 +190,6 @@ class PackIslandsFieldInput final : public bke::MeshFieldInput {
         bottom_(bottom),
         top_(top)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

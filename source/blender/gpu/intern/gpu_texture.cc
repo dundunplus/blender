@@ -644,7 +644,7 @@ void GPU_texture_copy(gpu::Texture *dst_, gpu::Texture *src_)
 {
   Texture *src = src_;
   Texture *dst = dst_;
-  src->copy_to(dst);
+  src->copy_to(dst, IndexRange(1));
 }
 
 void GPU_texture_compare_mode(gpu::Texture *texture, bool use_compare)

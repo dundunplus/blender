@@ -26,10 +26,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 class CornerNextEdgeFieldInput final : public bke::MeshFieldInput {
  public:
-  CornerNextEdgeFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Next Edge")
-  {
-    category_ = Category::Generated;
-  }
+  CornerNextEdgeFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Next Edge") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,
@@ -61,7 +58,6 @@ class CornerPreviousEdgeFieldInput final : public bke::MeshFieldInput {
  public:
   CornerPreviousEdgeFieldInput() : bke::MeshFieldInput(CPPType::get<int>(), "Corner Previous Edge")
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,

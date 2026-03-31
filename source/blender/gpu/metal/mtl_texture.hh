@@ -292,7 +292,7 @@ class MTLTexture : public Texture {
                   GPUPixelBuffer *pixbuf) override;
 
   void generate_mipmap() override;
-  void copy_to(Texture *dst) override;
+  void copy_to(Texture *dst, IndexRange mip_levels) override;
   void clear(const double4 data) override;
   void swizzle_set(const char swizzle_mask[4]) override;
   void mip_range_set(int min, int max) override;

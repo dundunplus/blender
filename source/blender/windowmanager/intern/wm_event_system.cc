@@ -345,6 +345,11 @@ bool wmNotifierEqForQueue::operator()(const wmNotifier *a, const wmNotifier *b) 
 }
 }  // namespace bke
 
+void WM_event_handling_break(const bContext &C)
+{
+  CTX_wm_manager(&C)->runtime->break_events_handling = true;
+}
+
 static void wm_event_add_notifier_intern(wmWindowManager *wm,
                                          const wmWindow *win,
                                          uint type,
@@ -4206,6 +4211,8 @@ void wm_event_do_handlers(bContext *C)
   wmWindowManager *wm = CTX_wm_manager(C);
   BLI_assert(ED_undo_is_state_valid(C));
 
+  wm->runtime->break_events_handling = false;
+
   /* Begin GPU render boundary - Certain event handlers require GPU usage. */
   GPU_render_begin();
 
@@ -4214,6 +4221,12 @@ void wm_event_do_handlers(bContext *C)
   WM_gizmoconfig_update(CTX_data_main(C));
 
   for (wmWindow &win : wm->windows) {
+    /* Do the check at the start of the next iteration, to avoid by-passing it in case the
+     * previous iteration has been early-terminated (using `continue;` e.g.). */
+    if (wm->runtime->break_events_handling) {
+      break;
+    }
+
     bScreen *screen = WM_window_get_active_screen(&win);
 
     /* Some safety checks - these should always be set! */
@@ -4227,6 +4240,12 @@ void wm_event_do_handlers(bContext *C)
 
     wmEvent *event;
     while ((event = static_cast<wmEvent *>(win.runtime->event_queue.first))) {
+      /* Do the check at the start of the next iteration, to avoid by-passing it in case the
+       * previous iteration has been early-terminated (using `continue;` e.g.). */
+      if (wm->runtime->break_events_handling) {
+        break;
+      }
+
       eHandlerActionFlag action = WM_HANDLER_CONTINUE;
 
       /* Force handling drag if a key is pressed even if the drag threshold has not been met.
