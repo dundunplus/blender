@@ -85,6 +85,9 @@ struct ImageRuntime {
 
   /* The image's current update count. See deg::set_id_update_count for more information. */
   uint64_t update_count = 0;
+
+  float view_offset[2] = {};
+  float view_zoom = 1.0f;
 };
 
 }  // namespace bke

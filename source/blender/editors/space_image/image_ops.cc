@@ -140,6 +140,11 @@ static void sima_zoom_set(
     sima->xof += ((location[0] - 0.5f) * w - sima->xof) * (sima->zoom - oldzoom) / sima->zoom;
     sima->yof += ((location[1] - 0.5f) * h - sima->yof) * (sima->zoom - oldzoom) / sima->zoom;
   }
+
+  Image *ima = ED_space_image(sima);
+  if (ima) {
+    ima->runtime->view_zoom = sima->zoom;
+  }
 }
 
 static void sima_zoom_set_factor(SpaceImage *sima,
@@ -428,6 +433,12 @@ static wmOperatorStatus image_view_pan_exec(bContext *C, wmOperator *op)
   sima->yof += offset[1];
 
   ED_region_tag_redraw(CTX_wm_region(C));
+
+  Image *ima = ED_space_image(sima);
+  if (ima) {
+    ima->runtime->view_offset[0] = sima->xof;
+    ima->runtime->view_offset[1] = sima->yof;
+  }
 
   return OPERATOR_FINISHED;
 }

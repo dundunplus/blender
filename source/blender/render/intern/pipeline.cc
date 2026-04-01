@@ -1416,8 +1416,8 @@ static void do_render_sequencer(Render *re)
       bool make_float = seq_result_needs_float(re->r.im_format);
       out = IMB_makeSingleUser(out);
       seq::ensure_ibuf_is_linear_space(out, make_float);
-      ibuf_arr[view_id] = out;
     }
+    ibuf_arr[view_id] = out;
   }
 
   rr = re->result;
