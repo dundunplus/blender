@@ -9929,8 +9929,9 @@ void GHOST_SystemWayland::ime_begin(const GHOST_WindowWayland *win,
     seat->ime.has_preedit = false;
     seat->ime.is_enabled = true;
 
+    /* Don't commit here, bundle enable + cursor rectangle into a single commit below.
+     * Otherwise the proper location wont be used. */
     zwp_text_input_v3_enable(seat->wp.text_input);
-    zwp_text_input_v3_commit(seat->wp.text_input);
 
     /* Now that it's enabled, set the input properties. */
     zwp_text_input_v3_set_content_type(seat->wp.text_input,

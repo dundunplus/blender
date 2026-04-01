@@ -51,7 +51,7 @@ bool BlenderSync::BKE_object_is_modified(blender::Object &b_ob)
   }
 
   /* Object level material links. Note the geometry material slot array may not match
-   * the object matbits array, so we need to guard against out of bouds. */
+   * the object matbits array, so we need to guard against out of bounds. */
   for (const int i : blender::IndexRange(BKE_object_material_count_eval(&b_ob))) {
     if (i < b_ob.totcol && b_ob.matbits && b_ob.matbits[i] != 0) {
       return true;

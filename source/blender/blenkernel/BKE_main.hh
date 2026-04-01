@@ -432,15 +432,17 @@ struct Main : NonCopyable, NonMovable {
 
   MainLock *lock = nullptr;
 
-  /* Simple re-entrant 'lock' to prevent viewlayers resync during heavy operations that could lead
-   * to needlessly resync the viewlayers many many times.
+  /**
+   * Simple re-entrant 'lock' to prevent view-layers re-synchronize during heavy
+   * operations that could lead to needlessly re-synchronize the view-layers *many* times.
    *
    * Stored in Main to avoid a global lock, which can cause issues with asynchronous jobs using
    * their own local temp Main to manage their data, e.g. the preview rending tasks. See also
    * #156117.
    *
    * NOTE: This can also be modified from several threads (e.g. during depsgraph evaluation),
-   * leading to transitional big numbers. */
+   * leading to transitional big numbers.
+   */
   std::atomic<int32_t> no_resync = 0;
 
   /* Constructors and destructors. */

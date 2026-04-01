@@ -447,8 +447,8 @@ struct PaintOperationExecutor {
     if (use_fill) {
       bke::SpanAttributeWriter<int> fill_id = attributes.lookup_or_add_for_write_span<int>(
           "fill_id", bke::AttrDomain::Curve);
-      /* Set new fill id to zero, because it will have uninitialized memory otherwise. Then get the
-       * varray of all fill ids to compute a new one. */
+      /* Set new fill id to zero, because it will have uninitialized memory otherwise.
+       * Then get the #VArray of all fill ids to compute a new one. */
       fill_id.span[active_curve] = 0;
       const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
       fill_id.span[active_curve] = new_fill_id;

@@ -502,8 +502,8 @@ add_library(bf::blenlib ALIAS bf_blenlib)
 
 if(WITH_GTESTS)
   set(TEST_SRC
-    tests/BLI_any_test.cc
     tests/BLI_any_derived_test.cc
+    tests/BLI_any_test.cc
     tests/BLI_array_state_test.cc
     tests/BLI_array_store_test.cc
     tests/BLI_array_test.cc

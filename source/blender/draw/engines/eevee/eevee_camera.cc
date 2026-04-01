@@ -77,8 +77,8 @@ void Camera::init()
   if ((inst_.scene->eevee.flag & SCE_EEVEE_OVERSCAN) && (inst_.drw_view || inst_.render)) {
     overscan = inst_.scene->eevee.overscan / 100.0f;
     if (inst_.is_custom_matrix()) {
-      /* If using a custom matrix (XR and some offscreen render paths)
-       * we need to use the v3d winmat as-is. */
+      /* If using a custom matrix (XR and some off-screen render paths)
+       * we need to use the v3d `winmat` as-is. */
       overscan = 0.0f;
     }
   }
@@ -139,8 +139,8 @@ void Camera::sync()
     data.viewinv = inst_.drw_view->viewinv();
 
     if (inst_.is_custom_matrix()) {
-      /* If using a custom matrix (XR and some offscreen render paths)
-       * we need to use the v3d winmat as-is. */
+      /* If using a custom matrix (XR and some off-screen render paths)
+       * we need to use the v3d `winmat` as-is. */
       data.winmat = inst_.drw_view->winmat();
       data.wininv = inst_.drw_view->wininv();
     }

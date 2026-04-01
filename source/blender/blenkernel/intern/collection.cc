@@ -1526,7 +1526,7 @@ bool BKE_collection_is_content_editable(const Collection *collection, std::strin
 {
   if (ID_IS_OVERRIDE_LIBRARY(collection)) {
     if (r_reason) {
-      *r_reason = fmt::format(fmt::runtime(RPT_("Collection '{}' is overriden.")),
+      *r_reason = fmt::format(fmt::runtime(RPT_("Collection '{}' is overridden.")),
                               collection->id.name + 2);
     }
     return false;

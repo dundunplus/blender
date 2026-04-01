@@ -209,7 +209,7 @@ std::optional<Bounds<float3>> view3d_calc_minmax_visible(Depsgraph *depsgraph,
                             /* any one of the regions may be locked */
                             (use_all_regions && v3d->flag2 & V3D_LOCK_CAMERA));
 
-  /* Evaluated view layers should allways be in sync with the evaluated scene and its collections.
+  /* Evaluated view layers should always be in sync with the evaluated scene and its collections.
    */
   BLI_assert(BKE_view_layer_is_synced(*view_layer_eval));
   for (Base &base_eval : *BKE_view_layer_object_bases_get(view_layer_eval)) {
@@ -256,7 +256,7 @@ std::optional<Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
   const Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
 
-  /* NOTE: evaluated data is _always_ expected to have up-to-date viewlayers/collections data. */
+  /* NOTE: evaluated data is _always_ expected to have up-to-date view-layers/collections data. */
   BLI_assert(BKE_view_layer_is_synced(*view_layer_eval));
   Object *ob_eval = BKE_view_layer_active_object_get(view_layer_eval);
   Object *obedit = OBEDIT_FROM_OBACT(ob_eval);
@@ -312,8 +312,8 @@ std::optional<Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
     FOREACH_OBJECT_IN_MODE_END;
   }
   else if (ob_eval && (ob_eval->mode & OB_MODE_POSE)) {
-    /* NOTE: Passing `bmain` here because this iterator ensures that viewlayers are in sync. We
-     * already assert about it in code above. */
+    /* NOTE: Passing `bmain` here because this iterator ensures that view-layers are in sync.
+     * We already assert about it in code above. */
     FOREACH_OBJECT_IN_MODE_BEGIN (
         null_bmain, scene_eval, view_layer_eval, v3d, ob_eval->type, ob_eval->mode, ob_eval_iter)
     {
@@ -335,8 +335,8 @@ std::optional<Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
     changed = PE_minmax(depsgraph, scene, view_layer, min, max);
   }
   else if (ob_eval && (ob_eval->mode & OB_MODE_SCULPT_CURVES)) {
-    /* NOTE: Passing `bmain` here because this iterator ensures that viewlayers are in sync. We
-     * already assert about it in code above. */
+    /* NOTE: Passing `bmain` here because this iterator ensures that view-layers are in sync.
+     * We already assert about it in code above. */
     FOREACH_OBJECT_IN_MODE_BEGIN (
         null_bmain, scene_eval, view_layer_eval, v3d, ob_eval->type, ob_eval->mode, ob_eval_iter)
     {

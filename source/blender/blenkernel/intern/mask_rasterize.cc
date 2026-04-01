@@ -110,6 +110,7 @@ static constexpr int BUCKET_PIXELS_PER_CELL = 8;
       BLI_assert(_t[1] < vert_max); \
       BLI_assert(_t[2] < vert_max); \
       BLI_assert(_t[3] < vert_max || _t[3] == TRI_VERT); \
+      UNUSED_VARS_NDEBUG(vert_max); \
     } \
     (void)0
 #else
@@ -1647,6 +1648,7 @@ static void maskrasterize_layer_init_cdt(MaskRasterHandle *mr_handle,
     MEM_delete(open_spline_ranges);
 
     BLI_assert(face_index == face_num);
+    UNUSED_VARS_NDEBUG(face_index);
 
     if (BLI_rctf_isect(&default_bounds, &bounds, &bounds)) {
       layer->face_tot = face_num;

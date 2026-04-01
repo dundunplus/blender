@@ -22,7 +22,7 @@ struct VKCopyImageData {
   VkImage dst_image;
   VkImageCopy region;
   /**
-   * \brief The number of miplevels to copy.
+   * \brief The number of mip-levels to copy.
    *
    * Additional regions are added just before sending to the command buffer.
    */

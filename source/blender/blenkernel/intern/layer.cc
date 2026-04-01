@@ -191,7 +191,7 @@ ViewLayer *BKE_view_layer_add(const Main *bmain,
                               const int type)
 {
   BLI_assert_msg(bmain || type != VIEWLAYER_ADD_EMPTY,
-                 "A valid Main is required with `VIEWLAYER_ADD_EMPTY` type of prcoess");
+                 "A valid Main is required with `VIEWLAYER_ADD_EMPTY` type of process");
 
   ViewLayer *view_layer_new;
 

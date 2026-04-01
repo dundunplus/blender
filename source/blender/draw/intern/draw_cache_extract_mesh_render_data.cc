@@ -42,7 +42,7 @@ static void mesh_render_data_loose_geom_build(const MeshRenderData &mr, MeshBuff
   }
   else {
     BMesh &bm = *mr.bm;
-    /* Use LinearAllocator instead of IndexMaskMemory to avoid overallocation. */
+    /* Use LinearAllocator instead of IndexMaskMemory to avoid over-allocation. */
     cache.loose_geom.allocator = std::make_unique<LinearAllocator<>>();
     cache.loose_geom.verts = IndexMask::from_predicate(
         IndexRange(bm.totvert), *cache.loose_geom.allocator, [&](const int i) {

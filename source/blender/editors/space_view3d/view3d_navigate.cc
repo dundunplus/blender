@@ -820,7 +820,7 @@ bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
   Paint *paint = BKE_paint_get_active_from_context(C);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
   View3D *v3d = CTX_wm_view3d(C);
-  /* Evaluated view layers should allways be in sync with the evaluated scene and its collections.
+  /* Evaluated view layers should always be in sync with the evaluated scene and its collections.
    */
   BLI_assert(BKE_view_layer_is_synced(*view_layer_eval));
   Object *ob_act_eval = BKE_view_layer_active_object_get(view_layer_eval);

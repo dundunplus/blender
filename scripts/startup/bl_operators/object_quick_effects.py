@@ -449,7 +449,6 @@ class QuickSmoke(ObjectModeOperator, Operator):
             self.report({'ERROR'}, "Built without Fluid modifier")
             return {'CANCELLED'}
 
-        context_override = context.copy()
         mesh_objects = [
             obj for obj in context.selected_objects
             if obj.type == 'MESH'
@@ -552,7 +551,6 @@ class QuickLiquid(Operator):
             self.report({'ERROR'}, "Built without Fluid modifier")
             return {'CANCELLED'}
 
-        context_override = context.copy()
         mesh_objects = [
             obj for obj in context.selected_objects
             if obj.type == 'MESH'

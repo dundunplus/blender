@@ -139,7 +139,7 @@ class AssetLibrary {
   virtual std::optional<AssetLibraryReference> library_reference() const = 0;
 
   /**
-   * Return the URL of the remote asset library, or std::nullopt if this is not a remote library.
+   * Return the URL of the remote asset library, or #std::nullopt if this is not a remote library.
    *
    * Note: don't use this as a way to distinguish remote vs. local libraries. Either query the
    * asset itself, or use #is_or_contains_remote_libraries(). The Essentials and All libraries may

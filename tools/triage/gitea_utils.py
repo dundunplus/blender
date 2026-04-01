@@ -32,7 +32,7 @@ BASE_API_URL = "https://projects.blender.org/api/v1"
 
 def url_json_get(url: str, quiet: bool = False) -> dict[str, Any] | list[dict[str, Any]] | None:
     request = urllib.request.Request(url)
-    # If the token evironment variable is set, add the `Authorization` header to the request
+    # If the token environment variable is set, add the `Authorization` header to the request
     token = os.environ.get(API_TOKEN_ENV)
     if token:
         request.add_header('Authorization', "token " + token)
@@ -233,7 +233,6 @@ def gitea_json_issue_events_filter(
 # However, it provides an option to fetch the configured username from the local Git,
 # in case the user does not explicitly supply the username.
 def git_username_detect() -> str | None:
-    import os
     import subprocess
 
     # Get the repository directory

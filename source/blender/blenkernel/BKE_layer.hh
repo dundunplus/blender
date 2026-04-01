@@ -54,8 +54,8 @@ ViewLayer *BKE_view_layer_find(const Scene *scene, const char *layer_name);
 /**
  * Add a new view layer by default, a view layer has the master collection.
  *
- * \params bmain Main data-base conatining the affect scene. May be null, in which case no
- * viewlayer/collection resync will happen.
+ * \params bmain Main data-base containing the affect scene. May be null, in which case no
+ * view-layer/collection re-synchronize will happen.
  */
 ViewLayer *BKE_view_layer_add(
     const Main *bmain, Scene *scene, const char *name, ViewLayer *view_layer_source, int type);

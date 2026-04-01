@@ -71,6 +71,7 @@ class COLLECTION_PT_importer(CollectionButtonsPanel, Panel):
         return prefs.experimental.use_collection_importer
 
     def draw(self, context):
+        del context
         layout = self.layout
 
         layout.template_collection_importer()
