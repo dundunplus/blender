@@ -91,7 +91,7 @@ static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
   float matrix_unit[4][4];
   unit_m4(matrix_unit);
 
-  WM_GizmoMatrixParams params{};
+  wmGizmoMatrixParams params{};
   params.matrix_offset = matrix_unit;
   WM_gizmo_calc_matrix_final_params(gz, &params, matrix_screen);
   GPU_matrix_push();

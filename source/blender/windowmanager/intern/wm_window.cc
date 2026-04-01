@@ -132,7 +132,7 @@ ENUM_OPERATORS(eWinOverrideFlag)
  * Override defaults or startup file when #eWinOverrideFlag is set.
  * These values are typically set by command line arguments.
  */
-static struct WMInitStruct {
+static struct wmInitStruct {
   /**
    * Window geometry:
    * - Defaults to the main screen-size.

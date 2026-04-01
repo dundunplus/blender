@@ -124,7 +124,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       remove_with_wrong_domain(attributes, ".select_poly", AttrDomain::Face);
       switch (mode) {
         case OB_MODE_EDIT: {
-          const Field<bool> field = conversions.try_convert(selection, CPPType::get<bool>());
+          const Field<bool> field = conversions.try_convert<bool>(selection);
           switch (domain) {
             case AttrDomain::Point:
               bke::try_capture_field_on_geometry(geometry.get_component_for_write<MeshComponent>(),
@@ -157,8 +157,8 @@ static void node_geo_exec(GeoNodeExecParams params)
           GField on_domain = GField(
               std::make_shared<bke::EvaluateOnDomainInput>(selection, domain));
           GField clamped_and_inverted = invert_selection(clamp_selection(std::move(on_domain)));
-          const Field<float> field = conversions.try_convert(std::move(clamped_and_inverted),
-                                                             CPPType::get<float>());
+          const Field<float> field = conversions.try_convert<float>(
+              std::move(clamped_and_inverted));
           bke::try_capture_field_on_geometry(geometry.get_component_for_write<MeshComponent>(),
                                              ".sculpt_mask",
                                              AttrDomain::Point,
@@ -186,7 +186,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
     if (geometry.has_grease_pencil()) {
       /* Grease Pencil only supports boolean selection. */
-      const Field<bool> field = conversions.try_convert(selection, CPPType::get<bool>());
+      const Field<bool> field = conversions.try_convert<bool>(selection);
       if (ELEM(domain, AttrDomain::Point, AttrDomain::Curve)) {
         bke::try_capture_field_on_geometry(
             geometry.get_component_for_write<GreasePencilComponent>(),

@@ -17,6 +17,7 @@ set(SRC
   device.cpp
   display_driver.cpp
   image.cpp
+  implicit_sharing.cpp
   geometry.cpp
   light.cpp
   light_linking.cpp

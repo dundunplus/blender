@@ -12,6 +12,7 @@ struct Image;
 void *CCL_python_module_init(void);
 
 void CCL_log_init(void);
+void CCL_implicit_sharing_init(void);
 
 /* Texture cache generation. */
 

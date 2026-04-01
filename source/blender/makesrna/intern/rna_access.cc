@@ -4479,6 +4479,11 @@ int RNA_property_enum_step(
   int step_tot = 0;
 
   RNA_property_enum_items(const_cast<bContext *>(C), ptr, prop, &item_array, &totitem, &free);
+
+  if (!totitem) {
+    return result_value;
+  }
+
   i = RNA_enum_from_value(item_array, from_value);
   i_init = i;
 

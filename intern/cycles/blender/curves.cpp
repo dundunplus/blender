@@ -807,15 +807,29 @@ static void attr_create_generic(Scene *scene,
       using CyclesT = typename Converter::CyclesT;
       if constexpr (!std::is_void_v<CyclesT>) {
         const blender::VArray<BlenderT> src_varray = b_attr.varray.typed<BlenderT>();
+        const blender::CommonVArrayInfo info = b_attr.varray.common_info();
 
-        if (const std::optional<BlenderT> single_value = src_varray.get_if_single()) {
+        if (info.type == blender::CommonVArrayInfo::Type::Single) {
+          const auto &single_value = *static_cast<const BlenderT *>(info.data);
           Attribute *attr = attributes.add(name, Converter::type_desc, ATTR_ELEMENT_MESH);
           CyclesT *data = reinterpret_cast<CyclesT *>(attr->data_for_write());
-          *data = Converter::convert(*single_value);
+          *data = Converter::convert(single_value);
           return;
         }
 
         const AttributeElement element = blender_domain_to_attr_element(b_attr.domain);
+        if constexpr (Converter::layout_compatible) {
+          if (src_varray.is_span() && b_attr.sharing_info) {
+            attributes.add_shared(name,
+                                  Converter::type_desc,
+                                  element,
+                                  info.data,
+                                  src_varray.size(),
+                                  b_attr.sharing_info);
+            return;
+          }
+        }
+
         Attribute *attr = attributes.add(name, Converter::type_desc, element);
         CyclesT *data = reinterpret_cast<CyclesT *>(attr->data_for_write());
 

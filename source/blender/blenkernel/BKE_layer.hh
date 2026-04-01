@@ -406,6 +406,14 @@ void BKE_view_layer_visible_bases_iterator_end(BLI_Iterator *iter);
   ((void)0)
 
 /**
+ * This function exists to avoid `-Wnonnull-compare` warnings in macros that accept
+ * a potentially-null Main pointer.
+ */
+void _BKE_view_layer_synced_ensure_or_assert(const Main *bmain,
+                                             const Scene *scene,
+                                             ViewLayer *view_layer);
+
+/**
  * \param _bmain a pointer to Main, may be null, in which case the view layer is assumed in sync.
  */
 #define FOREACH_BASE_IN_MODE_BEGIN( \
@@ -417,12 +425,7 @@ void BKE_view_layer_visible_bases_iterator_end(BLI_Iterator *iter);
     data_.object_type = _object_type; \
     data_.view_layer = _view_layer; \
     data_.v3d = _v3d; \
-    if (_bmain) { \
-      BKE_view_layer_synced_ensure(*(_bmain), _scene, _view_layer); \
-    } \
-    else { \
-      BLI_assert(BKE_view_layer_is_synced(*(_view_layer))); \
-    } \
+    _BKE_view_layer_synced_ensure_or_assert(_bmain, _scene, _view_layer); \
     data_.base_active = BKE_view_layer_active_base_get(_view_layer); \
     ITER_BEGIN (BKE_view_layer_bases_in_mode_iterator_begin, \
                 BKE_view_layer_bases_in_mode_iterator_next, \
@@ -487,12 +490,7 @@ void BKE_view_layer_visible_bases_iterator_end(BLI_Iterator *iter);
     ObjectsVisibleIteratorData data_ = {NULL}; \
     data_.view_layer = _view_layer; \
     data_.v3d = _v3d; \
-    if (_bmain) { \
-      BKE_view_layer_synced_ensure(*(_bmain), _scene, _view_layer); \
-    } \
-    else { \
-      BLI_assert(BKE_view_layer_is_synced(*(_view_layer))); \
-    } \
+    _BKE_view_layer_synced_ensure_or_assert(_bmain, _scene, _view_layer); \
     ITER_BEGIN (BKE_view_layer_visible_bases_iterator_begin, \
                 BKE_view_layer_visible_bases_iterator_next, \
                 BKE_view_layer_visible_bases_iterator_end, \
@@ -509,12 +507,7 @@ void BKE_view_layer_visible_bases_iterator_end(BLI_Iterator *iter);
   { \
     Object *_instance; \
     Base *_base; \
-    if (_bmain) { \
-      BKE_view_layer_synced_ensure(*(_bmain), _scene, _view_layer); \
-    } \
-    else { \
-      BLI_assert(BKE_view_layer_is_synced(*(_view_layer))); \
-    } \
+    _BKE_view_layer_synced_ensure_or_assert(_bmain, _scene, _view_layer); \
     for (_base = (Base *)BKE_view_layer_object_bases_get(_view_layer)->first; _base; \
          _base = _base->next) \
     { \
@@ -565,13 +558,8 @@ void BKE_view_layer_visible_bases_iterator_end(BLI_Iterator *iter);
       } \
     } \
     if (data_select_.view_layer) { \
-      if (data_flag_.bmain) { \
-        BKE_view_layer_synced_ensure( \
-            *data_flag_.bmain, data_flag_.scene, data_select_.view_layer); \
-      } \
-      else { \
-        BLI_assert(BKE_view_layer_is_synced(*data_select_.view_layer)); \
-      } \
+      _BKE_view_layer_synced_ensure_or_assert( \
+          data_flag_.bmain, data_flag_.scene, data_select_.view_layer); \
     } \
     ITER_BEGIN (func_begin, func_next, func_end, data_in, Object *, _instance)
 

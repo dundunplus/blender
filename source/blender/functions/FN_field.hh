@@ -46,6 +46,7 @@ namespace blender::fn {
 
 class FieldInput;
 struct FieldInputs;
+template<typename T> class Field;
 
 /**
  * Have a fixed set of base node types, because all code that works with field nodes has to
@@ -154,6 +155,9 @@ class GField : public GFieldBase<std::shared_ptr<FieldNode>> {
       : GFieldBase<std::shared_ptr<FieldNode>>(std::move(node), node_output_index)
   {
   }
+
+  template<typename T> Field<T> typed() const &;
+  template<typename T> Field<T> typed() &&;
 };
 
 /**
@@ -184,15 +188,18 @@ struct TypedFieldBase {};
  * A typed version of #GField. It has the same memory layout as #GField.
  */
 template<typename T> class Field : public GField, detail::TypedFieldBase {
- public:
-  using base_type = T;
-
-  Field() = default;
-
+ private:
   Field(GField field) : GField(std::move(field))
   {
     BLI_assert(this->cpp_type().template is<T>());
   }
+
+  friend GField;
+
+ public:
+  using base_type = T;
+
+  Field() = default;
 
   /**
    * Generally, the constructor above would be sufficient, but this additional constructor ensures
@@ -209,6 +216,16 @@ template<typename T> class Field : public GField, detail::TypedFieldBase {
   {
   }
 };
+
+template<typename T> inline Field<T> GField::typed() const &
+{
+  return Field<T>(*this);
+}
+
+template<typename T> inline Field<T> GField::typed() &&
+{
+  return Field<T>(std::move(*this));
+}
 
 /** True when T is any Field<...> type. */
 template<typename T>
@@ -518,7 +535,7 @@ GField make_constant_field(const CPPType &type, const void *value);
 
 template<typename T> Field<T> make_constant_field(T value)
 {
-  return make_constant_field(CPPType::get<T>(), &value);
+  return make_constant_field(CPPType::get<T>(), &value).template typed<T>();
 }
 
 /**

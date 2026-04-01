@@ -195,8 +195,9 @@ template<typename T> T SocketValueVariant::extract()
     }
   }
   else if constexpr (fn::is_field_v<T>) {
-    BLI_assert(static_type_is_base_socket_type<typename T::base_type>(socket_type_));
-    return T(this->extract<fn::GField>());
+    using base_type = typename T::base_type;
+    BLI_assert(static_type_is_base_socket_type<base_type>(socket_type_));
+    return T(this->extract<fn::GField>().typed<base_type>());
   }
   else if constexpr (std::is_same_v<T, nodes::ListPtr>) {
     if (kind_ != Kind::List) {

@@ -549,6 +549,7 @@ int main(int argc,
 
 #ifdef WITH_CYCLES
   CCL_log_init();
+  CCL_implicit_sharing_init();
 #endif
 
   /* Must be initialized after #BKE_appdir_init to account for color-management paths. */

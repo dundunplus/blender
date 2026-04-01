@@ -298,8 +298,8 @@ class AttributeFieldInput : public GeometryFieldInput {
   static fn::Field<T> from(std::string name,
                            std::optional<std::string> socket_inspection_name = std::nullopt)
   {
-    return fn::Field<T>(
-        from(std::move(name), CPPType::get<T>(), std::move(socket_inspection_name)));
+    return from(std::move(name), CPPType::get<T>(), std::move(socket_inspection_name))
+        .template typed<T>();
   }
 
   StringRefNull attribute_name() const

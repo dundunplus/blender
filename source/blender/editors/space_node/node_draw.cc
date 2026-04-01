@@ -4845,8 +4845,7 @@ void node_draw_space(const bContext &C, ARegion &region)
         GPU_matrix_push_projection();
         wmOrtho2_region_pixelspace(&region);
 
-        const bool is_compositor = ntree->type == NTREE_COMPOSIT;
-        const bool show_render_region = is_compositor &&
+        const bool show_render_region = ED_node_is_compositor(&snode) &&
                                         snode.overlay.flag & SN_OVERLAY_SHOW_OVERLAYS &&
                                         snode.overlay.flag & SN_OVERLAY_SHOW_RENDER_REGION &&
                                         snode.flag & SNODE_BACKDRAW;
