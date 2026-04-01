@@ -2378,7 +2378,7 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
   }
 
   /* get a filename for menu */
-  BLI_path_split_dir_part(first_ibuf->filepath, di, sizeof(di));
+  BLI_path_split_dir_part(first_ibuf->filepath.c_str(), di, sizeof(di));
   BKE_reportf(op->reports, RPT_INFO, "%d image(s) will be saved in %s", tot, di);
 
   iter = IMB_moviecacheIter_new(image->runtime->cache);
@@ -2386,12 +2386,12 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
     ibuf = IMB_moviecacheIter_getImBuf(iter);
 
     if (ibuf != nullptr && ibuf->userflags & IB_BITMAPDIRTY) {
-      if (0 == IMB_save_image(ibuf, ibuf->filepath, IB_byte_data)) {
+      if (0 == IMB_save_image(ibuf, ibuf->filepath.c_str(), IB_byte_data)) {
         BKE_reportf(op->reports, RPT_ERROR, "Could not write image: %s", strerror(errno));
         break;
       }
 
-      BKE_reportf(op->reports, RPT_INFO, "Saved %s", ibuf->filepath);
+      BKE_reportf(op->reports, RPT_INFO, "Saved %s", ibuf->filepath.c_str());
       ibuf->userflags &= ~IB_BITMAPDIRTY;
     }
 

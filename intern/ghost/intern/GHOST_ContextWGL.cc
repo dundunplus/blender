@@ -253,11 +253,11 @@ static HWND clone_window(HWND hWnd, LPVOID lpParam)
   WIN32_CHK(GetLastError() == NO_ERROR);
 
   WCHAR lpClassName[100] = L"";
-  count = GetClassNameW(hWnd, lpClassName, sizeof(lpClassName));
+  count = GetClassNameW(hWnd, lpClassName, sizeof(lpClassName) / sizeof(WCHAR));
   WIN32_CHK(count != 0);
 
   WCHAR lpWindowName[100] = L"";
-  count = GetWindowTextW(hWnd, lpWindowName, sizeof(lpWindowName));
+  count = GetWindowTextW(hWnd, lpWindowName, sizeof(lpWindowName) / sizeof(WCHAR));
   WIN32_CHK(count != 0);
 
   DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);

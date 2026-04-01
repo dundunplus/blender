@@ -1475,7 +1475,7 @@ ImBuf *MOV_decode_frame(MovieReader *anim,
 #endif
 
   if (ibuf) {
-    STRNCPY(ibuf->filepath, anim->filepath);
+    ibuf->filepath = anim->filepath;
     ibuf->fileframe = anim->cur_position + 1;
   }
   return ibuf;

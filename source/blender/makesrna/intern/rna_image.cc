@@ -372,7 +372,7 @@ static void rna_Image_file_format_set(PointerRNA *ptr, int value)
   Image *image = static_cast<Image *>(ptr->data);
   if (BKE_imtype_is_movie(value) == 0) { /* should be able to throw an error here */
     ImbFormatOptions options;
-    int ftype = BKE_imtype_to_ftype(value, &options);
+    eImbFileType ftype = BKE_imtype_to_ftype(value, &options);
     BKE_image_file_format_set(image, ftype, &options);
   }
 }

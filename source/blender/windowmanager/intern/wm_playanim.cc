@@ -1487,7 +1487,7 @@ static bool ghost_event_proc(const GHOST_IEvent *ghost_event, GHOST_TUserDataPtr
             if (ps.ghost_data.qual & WS_QUAL_SHIFT) {
               if (ps.picture && ps.picture->ibuf) {
                 printf(" Name: %s | Speed: %.2f frames/s\n",
-                       ps.picture->ibuf->filepath,
+                       ps.picture->ibuf->filepath.c_str(),
                        ps.frame_step / g_playanim.swap_time);
               }
             }
@@ -2217,7 +2217,7 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
           frame_cache_limit_apply(ibuf);
 #endif /* USE_FRAME_CACHE_LIMIT */
 
-          STRNCPY(ibuf->filepath, ps.picture->filepath);
+          ibuf->filepath = ps.picture->filepath;
           ibuf->fileframe = ps.picture->frame;
         }
 

@@ -253,7 +253,7 @@ static void image_save_post(ReportList *reports,
   }
 
   if (opts->do_newpath) {
-    STRNCPY(ibuf->filepath, filepath);
+    ibuf->filepath = filepath;
   }
 
   /* The tiled image code-path must call this on its own. */

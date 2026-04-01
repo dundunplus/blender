@@ -45,6 +45,10 @@ bool CCL_generate_texture_cache(const Image *image,
     return true;
   }
 
+  if (tx_filepath.empty()) {
+    return false;
+  }
+
   return make_tx(filepath,
                  tx_filepath,
                  ccl::ustring(image->colorspace_settings.name),

@@ -51,6 +51,8 @@ BLOCKLIST_OSL_ALL = BLOCKLIST_OSL_LIMITED + [
     'render_passes_.*.blend',
     # OSL can not specify parameters when reading attribute, which we need for stochastic sampling
     'volume_tricubic_interpolation.blend',
+    # Test specifically for how SVM deals with missing derivatives, which OSL has.
+    "image_mipmap_incomplete_derivs.blend"
 ]
 
 BLOCKLIST_OPTIX = [

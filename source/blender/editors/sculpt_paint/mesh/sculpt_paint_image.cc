@@ -245,10 +245,9 @@ template<typename ImageBuffer> class PaintingKernel {
 
     const char *from_colorspace = IMB_colormanagement_role_colorspace_name_get(
         COLOR_ROLE_SCENE_LINEAR);
-    ColormanageProcessor *cm_processor = IMB_colormanagement_colorspace_processor_new(
+    ColormanageProcessor cm_processor = ColormanageProcessor::colorspace_processor_new(
         from_colorspace, to_colorspace);
-    IMB_colormanagement_processor_apply_v4(cm_processor, brush_color_);
-    IMB_colormanagement_processor_free(cm_processor);
+    cm_processor.apply_v4(brush_color_);
     last_used_color_space_ = to_colorspace;
   }
 };

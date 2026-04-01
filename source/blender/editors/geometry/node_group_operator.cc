@@ -103,6 +103,7 @@ struct ErrorsForType {
   int duplicate_count = 0;
   bool is_builtin_operator = false;
   Vector<std::string> idname_validation_errors;
+  Vector<std::string> invalid_metadata_errors;
 
   friend bool operator==(const ErrorsForType &a, const ErrorsForType &b) = default;
 };
@@ -251,8 +252,18 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
   if (!inputs || inputs->type != IDP_GROUP) {
     return std::nullopt;
   }
+  for (const IDProperty &input_prop : inputs->data.group) {
+    if (input_prop.type != IDP_GROUP ||
+        !IDP_GetPropertyTypeFromGroup(&input_prop, "type", IDP_INT))
+    {
+      ErrorsForType &errors_for_type = errors.lookup_or_add_default_as(*custom_idname);
+      errors_for_type.invalid_metadata_errors.append(input_prop.name);
+      return std::nullopt;
+    }
+  }
   type_data.asset_meta_data_properties =
-      std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter>(IDP_CopyProperty(inputs));
+      std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter>(
+          IDP_CopyProperty(metadata.properties));
 
   type_data.ensure_hash();
   return type_data;
@@ -1405,18 +1416,17 @@ static StructRNA *create_inputs_srna(const IDProperty &properties,
 static StructRNA *create_panels_srna(const IDProperty &properties,
                                      Vector<StructRNA *> &r_generated)
 {
+  const IDProperty *panels_props = IDP_GetPropertyFromGroup(&properties, "panels");
+  if (!panels_props) {
+    return nullptr;
+  }
   StructRNA *srna = RNA_def_struct_ptr(
       &RNA_blender_rna_get(), "GeometryNodesInterfacePanels", RNA_PropertyGroup);
   BLI_assert(!RNA_struct_in_public_namespace(srna));
   r_generated.append(srna);
-
-  const IDProperty &panels_props = *IDP_GetPropertyFromGroup(&properties, "panels");
-
-  for (IDProperty &panel_prop : panels_props.data.group) {
-    printf("panel prop: %s\n", panel_prop.name);
+  for (IDProperty &panel_prop : panels_props->data.group) {
     RNA_def_boolean(srna, panel_prop.name, IDP_bool_get(&panel_prop), "Is Open", "");
   }
-
   return srna;
 }
 
@@ -1444,10 +1454,12 @@ static void register_node_tool(wmOperatorType *ot,
 
   StructRNA *inputs_srna = create_inputs_srna(*type_data.asset_meta_data_properties,
                                               type_data.generated_structs);
-  StructRNA *panels_srna = create_panels_srna(*type_data.asset_meta_data_properties,
-                                              type_data.generated_structs);
   RNA_def_pointer_runtime(ot->srna, "inputs", inputs_srna, "Inputs", "Settings for input sockets");
-  RNA_def_pointer_runtime(ot->srna, "panels", panels_srna, "Panels", "Settings for panels");
+  if (StructRNA *panels_srna = create_panels_srna(*type_data.asset_meta_data_properties,
+                                                  type_data.generated_structs))
+  {
+    RNA_def_pointer_runtime(ot->srna, "panels", panels_srna, "Panels", "Settings for panels");
+  }
 
   /* See comment for #store_input_node_values_rna_props. */
   prop = RNA_def_int_array(ot->srna,
@@ -1684,6 +1696,14 @@ void register_node_group_operators(const bContext &C)
         BKE_reportf(reports,
                     RPT_ERROR,
                     "Error registering node tool \"%s\", %s",
+                    item.key.c_str(),
+                    error.c_str());
+      }
+      for (const std::string &error : item.value.invalid_metadata_errors) {
+        BKE_reportf(reports,
+                    RPT_ERROR,
+                    "Error registering node tool \"%s\". Invalid metadata for input \"%s\". "
+                    "Asset meta-data is may be out of date",
                     item.key.c_str(),
                     error.c_str());
       }

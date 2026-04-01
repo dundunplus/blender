@@ -1011,7 +1011,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         name="Render Texture Resolution",
         default=1.0,
         description="Scale factor for texture resolution used by final rendering",
-        min=0.0, max=1.0,
+        min=0.00001, max=1.0,
         subtype='FACTOR',
     )
 

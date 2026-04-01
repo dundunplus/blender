@@ -1203,8 +1203,10 @@ static ImBuf *add_ibuf_for_tile(Image *ima, ImageTile *tile)
     return nullptr;
   }
 
-  STRNCPY(ibuf->filepath, ima->filepath);
-  BLI_path_abs(ibuf->filepath, ID_BLEND_PATH_FROM_GLOBAL(&ima->id));
+  char filepath[FILE_MAX];
+  STRNCPY(filepath, ima->filepath);
+  BLI_path_abs(filepath, ID_BLEND_PATH_FROM_GLOBAL(&ima->id));
+  ibuf->filepath = filepath;
 
   /* Mark the tile itself as having been generated. */
   tile->gen_flag |= IMA_GEN_TILE;
@@ -1317,7 +1319,7 @@ static void image_colorspace_from_imbuf(Image *image, const ImBuf *ibuf)
 Image *BKE_image_add_from_imbuf(Main *bmain, ImBuf *ibuf, const char *name)
 {
   if (name == nullptr) {
-    name = BLI_path_basename(ibuf->filepath);
+    name = BLI_path_basename(ibuf->filepath.c_str());
   }
 
   /* When the image buffer has valid path create a new image with "file" source and copy the path
@@ -1419,7 +1421,7 @@ bool BKE_image_memorypack(Image *ima)
         break;
       }
 
-      const char *filepath = ibuf->filepath;
+      const char *filepath = ibuf->filepath.c_str();
       if (is_tiled) {
         iuser.tile = tile.tile_number;
         BKE_image_user_file_path(&iuser, ima, tiled_filepath);
@@ -5469,7 +5471,7 @@ bool BKE_image_buffer_format_writable(ImBuf *ibuf)
   return (BKE_imtype_to_ftype(im_format.imtype, &options_dummy) == ibuf->ftype);
 }
 
-void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *options)
+void BKE_image_file_format_set(Image *image, eImbFileType ftype, const ImbFormatOptions *options)
 {
   std::scoped_lock lock(image->runtime->cache_mutex);
   if (image->runtime->cache != nullptr) {
@@ -5478,7 +5480,7 @@ void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *
     while (!IMB_moviecacheIter_done(iter)) {
       ImBuf *ibuf = IMB_moviecacheIter_getImBuf(iter);
       if (ibuf != nullptr) {
-        ibuf->ftype = static_cast<eImbFileType>(ftype);
+        ibuf->ftype = ftype;
         ibuf->foptions = *options;
       }
       IMB_moviecacheIter_step(iter);
@@ -5520,7 +5522,7 @@ ImBuf *BKE_image_get_ibuf_with_name(Image *image, const char *filepath)
 
     while (!IMB_moviecacheIter_done(iter)) {
       ImBuf *current_ibuf = IMB_moviecacheIter_getImBuf(iter);
-      if (current_ibuf != nullptr && STREQ(current_ibuf->filepath, filepath)) {
+      if (current_ibuf != nullptr && current_ibuf->filepath == filepath) {
         ibuf = current_ibuf;
         IMB_refImBuf(ibuf);
         break;

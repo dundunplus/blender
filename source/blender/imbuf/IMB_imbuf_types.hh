@@ -15,6 +15,8 @@
 
 #include "IMB_imbuf_enums.h"
 
+#include <string>
+
 namespace blender {
 
 struct ColormanageCache;
@@ -28,8 +30,6 @@ namespace ocio {
 class ColorSpace;
 }
 using ColorSpace = ocio::ColorSpace;
-
-#define IMB_FILEPATH_SIZE 1024
 
 /**
  * \ingroup imbuf
@@ -275,11 +275,11 @@ struct ImBuf {
 
   /* file information */
   /** file type we are going to save as */
-  enum eImbFileType ftype = IMB_FTYPE_NONE;
+  eImbFileType ftype = IMB_FTYPE_NONE;
   /** file format specific flags */
   ImbFormatOptions foptions;
   /** The absolute file path associated with this image. */
-  char filepath[IMB_FILEPATH_SIZE] = "";
+  std::string filepath;
   /** For movie files, the frame number loaded from the file. */
   int fileframe = 0;
 

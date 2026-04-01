@@ -6484,7 +6484,7 @@ static wmOperatorStatus texture_paint_image_from_view_exec(bContext *C, wmOperat
     return OPERATOR_CANCELLED;
   }
 
-  STRNCPY(ibuf->filepath, filepath);
+  ibuf->filepath = filepath;
 
   image = BKE_image_add_from_imbuf(bmain, ibuf, "image_view");
 

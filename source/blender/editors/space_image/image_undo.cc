@@ -464,34 +464,34 @@ static void utile_decref(UndoImageTile *utile)
  * \{ */
 
 struct UndoImageBuf {
-  UndoImageBuf *next, *prev;
+  UndoImageBuf *next = nullptr, *prev = nullptr;
 
   /**
    * The buffer after the undo step has executed.
    */
-  UndoImageBuf *post;
+  UndoImageBuf *post = nullptr;
 
-  char ibuf_filepath[IMB_FILEPATH_SIZE];
-  int ibuf_fileframe;
+  std::string ibuf_filepath;
+  int ibuf_fileframe = 0;
 
-  UndoImageTile **tiles;
+  UndoImageTile **tiles = nullptr;
 
   /** Can calculate these from dims, just for convenience. */
-  uint32_t tiles_len;
-  uint32_t tiles_dims[2];
+  uint32_t tiles_len = 0;
+  uint32_t tiles_dims[2] = {};
 
-  uint32_t image_dims[2];
+  uint32_t image_dims[2] = {};
 
   /** Store variables from the image. */
   struct {
     short source;
     bool use_float;
-  } image_state;
+  } image_state = {};
 };
 
 static UndoImageBuf *ubuf_from_image_no_tiles(Image *image, const ImBuf *ibuf)
 {
-  UndoImageBuf *ubuf = MEM_new_zeroed<UndoImageBuf>(__func__);
+  UndoImageBuf *ubuf = MEM_new<UndoImageBuf>(__func__);
 
   ubuf->image_dims[0] = ibuf->x;
   ubuf->image_dims[1] = ibuf->y;
@@ -502,7 +502,7 @@ static UndoImageBuf *ubuf_from_image_no_tiles(Image *image, const ImBuf *ibuf)
   ubuf->tiles_len = ubuf->tiles_dims[0] * ubuf->tiles_dims[1];
   ubuf->tiles = MEM_new_array_zeroed<UndoImageTile *>(ubuf->tiles_len, __func__);
 
-  STRNCPY(ubuf->ibuf_filepath, ibuf->filepath);
+  ubuf->ibuf_filepath = ibuf->filepath;
   ubuf->ibuf_fileframe = ibuf->fileframe;
   ubuf->image_state.source = image->source;
   ubuf->image_state.use_float = ibuf->float_buffer.data != nullptr;
@@ -670,11 +670,11 @@ static void uhandle_free_list(ListBaseT<UndoImageHandle> *undo_handles)
 
 static UndoImageBuf *uhandle_lookup_ubuf(UndoImageHandle *uh,
                                          const Image * /*image*/,
-                                         const char *ibuf_filepath,
+                                         const StringRef ibuf_filepath,
                                          const int ibuf_fileframe)
 {
   for (UndoImageBuf &ubuf : uh->buffers) {
-    if (STREQ(ubuf.ibuf_filepath, ibuf_filepath) && ubuf.ibuf_fileframe == ibuf_fileframe) {
+    if (ubuf.ibuf_filepath == ibuf_filepath && ubuf.ibuf_fileframe == ibuf_fileframe) {
       return &ubuf;
     }
   }

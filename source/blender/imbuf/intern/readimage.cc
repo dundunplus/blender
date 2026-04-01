@@ -212,7 +212,7 @@ ImBuf *IMB_load_image_from_filepath(const char *filepath,
   ibuf = IMB_load_image_from_file_descriptor(file, flags, filepath, r_colorspace);
 
   if (ibuf) {
-    STRNCPY(ibuf->filepath, filepath);
+    ibuf->filepath = filepath;
   }
 
   close(file);

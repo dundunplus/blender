@@ -626,13 +626,13 @@ void IMB_byte_from_float(ImBuf *ibuf)
                                       COLOR_ROLE_DEFAULT_BYTE) :
                                   ibuf->byte_buffer.colorspace->name().c_str();
   const bool predivide = IMB_alpha_affects_rgb(ibuf);
-  ColormanageProcessor *processor = STREQ(from_colorspace, to_colorspace) ?
-                                        nullptr :
-                                        IMB_colormanagement_colorspace_processor_new(
-                                            from_colorspace, to_colorspace);
-  if (processor && IMB_colormanagement_processor_is_noop(processor)) {
-    IMB_colormanagement_processor_free(processor);
-    processor = nullptr;
+  std::optional<ColormanageProcessor> processor =
+      STREQ(from_colorspace, to_colorspace) ?
+          std::nullopt :
+          std::make_optional<>(
+              ColormanageProcessor::colorspace_processor_new(from_colorspace, to_colorspace));
+  if (processor && processor->is_noop()) {
+    processor.reset();
   }
 
   /* At 4 floats per pixel, this is 32KB of data, and fits into typical CPU L1 cache. */
@@ -649,8 +649,7 @@ void IMB_byte_from_float(ImBuf *ibuf)
         }
         /* Convert to byte color space if needed. */
         if (processor) {
-          IMB_colormanagement_processor_apply(
-              processor, buffer.data(), range.size(), 1, ibuf->channels, false);
+          processor->apply(buffer.data(), range.size(), 1, ibuf->channels, false);
         }
         /* Convert to bytes. */
         IMB_buffer_byte_from_float(ibuf->byte_buffer.data + range.first() * 4,
@@ -665,9 +664,6 @@ void IMB_byte_from_float(ImBuf *ibuf)
                                    ibuf->x,
                                    ibuf->x);
       });
-  if (processor != nullptr) {
-    IMB_colormanagement_processor_free(processor);
-  }
 
   /* ensure user flag is reset */
   ibuf->userflags &= ~IB_RECT_INVALID;

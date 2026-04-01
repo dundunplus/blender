@@ -179,7 +179,7 @@ void BKE_image_format_set(ImageFormatData *imf, ID *owner_id, const char imtype)
 
 /* File Types */
 
-int BKE_imtype_to_ftype(const char imtype, ImbFormatOptions *r_options)
+eImbFileType BKE_imtype_to_ftype(const char imtype, ImbFormatOptions *r_options)
 {
   *r_options = ImbFormatOptions();
 
@@ -238,7 +238,7 @@ int BKE_imtype_to_ftype(const char imtype, ImbFormatOptions *r_options)
   return IMB_FTYPE_JPG;
 }
 
-char BKE_ftype_to_imtype(const int ftype, const ImbFormatOptions *options)
+char BKE_ftype_to_imtype(const eImbFileType ftype, const ImbFormatOptions *options)
 {
   if (ftype == IMB_FTYPE_NONE) {
     return R_IMF_IMTYPE_TARGA;
@@ -957,7 +957,7 @@ static char imtype_best_depth(const ImBuf *ibuf, const char imtype)
 void BKE_image_format_from_imbuf(ImageFormatData *im_format, const ImBuf *imbuf)
 {
   /* Read from ImBuf after file read. */
-  int ftype = imbuf->ftype;
+  eImbFileType ftype = imbuf->ftype;
   int custom_flags = imbuf->foptions.flag;
   char quality = imbuf->foptions.quality;
   char compress = imbuf->foptions.compress;
