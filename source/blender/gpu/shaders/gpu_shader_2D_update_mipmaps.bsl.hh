@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "gpu_shader_compat.hh"
+#include "gpu_shader_utildefines_lib.glsl"
 
 namespace builtin::mipmaps {
 
@@ -83,6 +83,27 @@ template<typename T> struct Shared {
   T load_sample(int2 src_coord)
   {
     return intermediate_level[src_coord.y][src_coord.x];
+  }
+};
+
+/** Shared storage that can store intermediate results encoded as uint. */
+struct SharedUnorm {
+  /**
+   * When generating 2 levels, the results the first level are cached here; this is the input tile
+   * needed to generate the 8x8 tile of the second level.
+   */
+  [[shared]] uint intermediate_level[MAX_SHARED_SAMPLES][MAX_SHARED_SAMPLES];
+
+  void store_sample(int2 dst_coord, float color)
+  {
+    uint encoded = uint(clamp(color, 0.0f, 1.0f) * UINT_MAX);
+    intermediate_level[dst_coord.y][dst_coord.x] = encoded;
+  }
+
+  float load_sample(int2 src_coord)
+  {
+    uint encoded = intermediate_level[src_coord.y][src_coord.x];
+    return float(encoded) / UINT_MAX;
   }
 };
 
@@ -557,10 +578,27 @@ void update_mipmaps([[global_invocation_id]] const uint3 global_id,
 template struct Shared<float>;
 template struct Shared<float4>;
 
+template struct Resources<UNORM_8, SharedUnorm, float>;
 template struct Resources<UNORM_8_8_8_8, SharedSRGB, float4>;
 template struct Resources<SFLOAT_16, Shared<float>, float>;
 template struct Resources<SFLOAT_16_16_16_16, Shared<float4>, float4>;
+template struct Resources<SFLOAT_32, Shared<float>, float>;
+template struct Resources<SFLOAT_32_32_32_32, Shared<float4>, float4>;
 
+template float Resources<UNORM_8, SharedUnorm, float>::reduce_store_sample<true>(
+    int2 src_coord,
+    int src_level,
+    int2 kernel_size,
+    int2 dst_image_size,
+    int2 dst_coord,
+    int dst_level);
+template float Resources<UNORM_8, SharedUnorm, float>::reduce_store_sample<false>(
+    int2 src_coord,
+    int src_level,
+    int2 kernel_size,
+    int2 dst_image_size,
+    int2 dst_coord,
+    int dst_level);
 template float4 Resources<UNORM_8_8_8_8, SharedSRGB, float4>::reduce_store_sample<true>(
     int2 src_coord,
     int src_level,
@@ -603,7 +641,40 @@ template float4 Resources<SFLOAT_16_16_16_16, Shared<float4>, float4>::reduce_st
     int2 dst_image_size,
     int2 dst_coord,
     int dst_level);
+template float Resources<SFLOAT_32, Shared<float>, float>::reduce_store_sample<true>(
+    int2 src_coord,
+    int src_level,
+    int2 kernel_size,
+    int2 dst_image_size,
+    int2 dst_coord,
+    int dst_level);
+template float Resources<SFLOAT_32, Shared<float>, float>::reduce_store_sample<false>(
+    int2 src_coord,
+    int src_level,
+    int2 kernel_size,
+    int2 dst_image_size,
+    int2 dst_coord,
+    int dst_level);
+template float4 Resources<SFLOAT_32_32_32_32, Shared<float4>, float4>::reduce_store_sample<true>(
+    int2 src_coord,
+    int src_level,
+    int2 kernel_size,
+    int2 dst_image_size,
+    int2 dst_coord,
+    int dst_level);
+template float4 Resources<SFLOAT_32_32_32_32, Shared<float4>, float4>::reduce_store_sample<false>(
+    int2 src_coord,
+    int src_level,
+    int2 kernel_size,
+    int2 dst_image_size,
+    int2 dst_coord,
+    int dst_level);
 
+template void update_mipmaps<Resources<UNORM_8, SharedUnorm, float>>(
+    const uint3 global_id,
+    const uint3 group_id,
+    const uint3 local_index,
+    Resources<UNORM_8, SharedUnorm, float> &srt);
 template void update_mipmaps<Resources<UNORM_8_8_8_8, SharedSRGB, float4>>(
     const uint3 global_id,
     const uint3 group_id,
@@ -619,9 +690,29 @@ template void update_mipmaps<Resources<SFLOAT_16_16_16_16, Shared<float4>, float
     const uint3 group_id,
     const uint3 local_index,
     Resources<SFLOAT_16_16_16_16, Shared<float4>, float4> &srt);
+template void update_mipmaps<Resources<SFLOAT_32, Shared<float>, float>>(
+    const uint3 global_id,
+    const uint3 group_id,
+    const uint3 local_index,
+    Resources<SFLOAT_32, Shared<float>, float> &srt);
+template void update_mipmaps<Resources<SFLOAT_32_32_32_32, Shared<float4>, float4>>(
+    const uint3 global_id,
+    const uint3 group_id,
+    const uint3 local_index,
+    Resources<SFLOAT_32_32_32_32, Shared<float4>, float4> &srt);
 
 }  // namespace builtin::mipmaps
 
+PipelineCompute gpu_shader_2D_update_mipmaps_unorm_8(
+    builtin::mipmaps::update_mipmaps<
+        builtin::mipmaps::Resources<UNORM_8, builtin::mipmaps::SharedUnorm, float>>,
+    builtin::mipmaps::Resources<UNORM_8, builtin::mipmaps::SharedUnorm, float>{
+        .is_srgb_texture = false, .is_layered = false});
+PipelineCompute gpu_shader_2D_update_mipmaps_unorm_8_layered(
+    builtin::mipmaps::update_mipmaps<
+        builtin::mipmaps::Resources<UNORM_8, builtin::mipmaps::SharedUnorm, float>>,
+    builtin::mipmaps::Resources<UNORM_8, builtin::mipmaps::SharedUnorm, float>{
+        .is_srgb_texture = false, .is_layered = true});
 PipelineCompute gpu_shader_2D_update_mipmaps_unorm_8_8_8_8(
     builtin::mipmaps::update_mipmaps<
         builtin::mipmaps::Resources<UNORM_8_8_8_8, builtin::mipmaps::SharedSRGB, float4>>,
@@ -651,6 +742,26 @@ PipelineCompute gpu_shader_2D_update_mipmaps_sfloat_16_16_16_16_layered(
     builtin::mipmaps::update_mipmaps<
         builtin::mipmaps::Resources<SFLOAT_16_16_16_16, builtin::mipmaps::Shared<float4>, float4>>,
     builtin::mipmaps::Resources<SFLOAT_16_16_16_16, builtin::mipmaps::Shared<float4>, float4>{
+        .is_srgb_texture = false, .is_layered = true});
+PipelineCompute gpu_shader_2D_update_mipmaps_sfloat_32(
+    builtin::mipmaps::update_mipmaps<
+        builtin::mipmaps::Resources<SFLOAT_32, builtin::mipmaps::Shared<float>, float>>,
+    builtin::mipmaps::Resources<SFLOAT_32, builtin::mipmaps::Shared<float>, float>{
+        .is_srgb_texture = false, .is_layered = false});
+PipelineCompute gpu_shader_2D_update_mipmaps_sfloat_32_layered(
+    builtin::mipmaps::update_mipmaps<
+        builtin::mipmaps::Resources<SFLOAT_32, builtin::mipmaps::Shared<float>, float>>,
+    builtin::mipmaps::Resources<SFLOAT_32, builtin::mipmaps::Shared<float>, float>{
+        .is_srgb_texture = false, .is_layered = true});
+PipelineCompute gpu_shader_2D_update_mipmaps_sfloat_32_32_32_32(
+    builtin::mipmaps::update_mipmaps<
+        builtin::mipmaps::Resources<SFLOAT_32_32_32_32, builtin::mipmaps::Shared<float4>, float4>>,
+    builtin::mipmaps::Resources<SFLOAT_32_32_32_32, builtin::mipmaps::Shared<float4>, float4>{
+        .is_srgb_texture = false, .is_layered = false});
+PipelineCompute gpu_shader_2D_update_mipmaps_sfloat_32_32_32_32_layered(
+    builtin::mipmaps::update_mipmaps<
+        builtin::mipmaps::Resources<SFLOAT_32_32_32_32, builtin::mipmaps::Shared<float4>, float4>>,
+    builtin::mipmaps::Resources<SFLOAT_32_32_32_32, builtin::mipmaps::Shared<float4>, float4>{
         .is_srgb_texture = false, .is_layered = true});
 PipelineCompute gpu_shader_2D_update_mipmaps_srgba_8_8_8_8(
     builtin::mipmaps::update_mipmaps<

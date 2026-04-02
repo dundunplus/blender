@@ -31,6 +31,8 @@ static Shader *get_update_mipmap_shader(TextureFormat texture_format, bool is_la
 {
   if (is_layered) {
     switch (texture_format) {
+      case TextureFormat::UNORM_8:
+        return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_UNORM_8_LAYERED);
       case TextureFormat::UNORM_8_8_8_8:
         return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_UNORM_8_8_8_8_LAYERED);
       case TextureFormat::SFLOAT_16:
@@ -38,6 +40,11 @@ static Shader *get_update_mipmap_shader(TextureFormat texture_format, bool is_la
       case TextureFormat::SFLOAT_16_16_16_16:
         return GPU_shader_get_builtin_shader(
             GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16_16_16_16_LAYERED);
+      case TextureFormat::SFLOAT_32:
+        return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_32_LAYERED);
+      case TextureFormat::SFLOAT_32_32_32_32:
+        return GPU_shader_get_builtin_shader(
+            GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_32_32_32_32_LAYERED);
       case TextureFormat::SRGBA_8_8_8_8:
         return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SRGBA_8_8_8_8_LAYERED);
       default:
@@ -47,12 +54,18 @@ static Shader *get_update_mipmap_shader(TextureFormat texture_format, bool is_la
   }
 
   switch (texture_format) {
+    case TextureFormat::UNORM_8:
+      return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_UNORM_8);
     case TextureFormat::UNORM_8_8_8_8:
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_UNORM_8_8_8_8);
     case TextureFormat::SFLOAT_16:
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16);
     case TextureFormat::SFLOAT_16_16_16_16:
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_16_16_16_16);
+    case TextureFormat::SFLOAT_32:
+      return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_32);
+    case TextureFormat::SFLOAT_32_32_32_32:
+      return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SFLOAT_32_32_32_32);
     case TextureFormat::SRGBA_8_8_8_8:
       return GPU_shader_get_builtin_shader(GPU_SHADER_2D_UPDATE_MIPMAPS_SRGBA_8_8_8_8);
     default:

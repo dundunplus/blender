@@ -1428,19 +1428,19 @@ if(TEST_SRC_DIR_EXISTS)
 
   foreach(render_test ${render_tests})
     add_render_test(
-      sequencer_render_${render_test}
+      sequencer_cpu_${render_test}
       ${CMAKE_CURRENT_LIST_DIR}/sequencer_render_tests.py
       --testdir "${TEST_SRC_DIR}/sequence_editing/${render_test}"
-      --outdir "${TEST_OUT_DIR}/sequence_editing"
+      --outdir "${TEST_OUT_DIR}/sequencer_cpu"
     )
   endforeach()
 
   foreach(video_output_test ${video_output_tests})
     add_render_test(
-      sequencer_render_${video_output_test}
+      sequencer_cpu_${video_output_test}
       ${CMAKE_CURRENT_LIST_DIR}/sequencer_video_output_tests.py
       --testdir "${TEST_SRC_DIR}/sequence_editing/${video_output_test}"
-      --outdir "${TEST_OUT_DIR}/sequence_editing"
+      --outdir "${TEST_OUT_DIR}/sequencer_cpu"
     )
   endforeach()
 
@@ -1456,6 +1456,42 @@ if(TEST_SRC_DIR_EXISTS)
     ${TEST_SRC_DIR}/sequence_editing/vse_load_meta_stack.blend
     --python ${TEST_PYTHON_DIR}/sequencer_load_meta_stack.py
   )
+
+  if(WITH_GPU_COMPOSITOR_TESTS)
+    if(WITH_OPENGL_BACKEND)
+      foreach(render_test ${render_tests})
+        add_render_test(
+                sequencer_opengl_${render_test}
+                ${CMAKE_CURRENT_LIST_DIR}/sequencer_render_tests.py
+                --testdir "${TEST_SRC_DIR}/sequence_editing/${render_test}"
+                --outdir "${TEST_OUT_DIR}/sequencer_opengl"
+                --gpu-backend opengl
+        )
+      endforeach()
+    endif()
+    if(WITH_METAL_BACKEND)
+      foreach(render_test ${render_tests})
+        add_render_test(
+                sequencer_metal_${render_test}
+                ${CMAKE_CURRENT_LIST_DIR}/sequencer_render_tests.py
+                --testdir "${TEST_SRC_DIR}/sequence_editing/${render_test}"
+                --outdir "${TEST_OUT_DIR}/sequencer_metal"
+                --gpu-backend metal
+        )
+      endforeach()
+    endif()
+    if(WITH_VULKAN_BACKEND AND WITH_GPU_RENDER_TESTS_VULKAN)
+      foreach(render_test ${render_tests})
+        add_render_test(
+                sequencer_vulkan_${render_test}
+                ${CMAKE_CURRENT_LIST_DIR}/sequencer_render_tests.py
+                --testdir "${TEST_SRC_DIR}/sequence_editing/${render_test}"
+                --outdir "${TEST_OUT_DIR}/sequencer_vulkan"
+                --gpu-backend vulkan
+        )
+      endforeach()
+    endif()
+  endif()
 endif()
 
 # ------------------------------------------------------------------------------

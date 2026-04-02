@@ -112,7 +112,7 @@ def main():
     parser = create_argparse()
     args = parser.parse_args()
 
-    report = VideoOutputReport("Sequencer", args.outdir, args.oiiotool)
+    report = VideoOutputReport("Sequencer CPU", args.outdir, args.oiiotool)
     report.set_pixelated(True)
     report.set_fail_threshold(10.0 / 255.0)
     report.set_fail_percent(1.0)
