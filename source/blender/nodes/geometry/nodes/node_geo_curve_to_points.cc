@@ -225,7 +225,7 @@ static void node_geo_exec(GeoNodeExecParams params)
           bke::CurvesGeometry dst_curves = geometry::resample_to_count(
               src_curves_id->geometry.wrap(),
               bke::CurvesFieldContext(*src_curves_id, AttrDomain::Curve),
-              fn::make_constant_field<bool>(true),
+              fn::Field<bool>(true),
               count,
               resample_attributes);
           PointCloud *pointcloud = curves_to_points(
@@ -243,7 +243,7 @@ static void node_geo_exec(GeoNodeExecParams params)
             bke::CurvesGeometry dst_curves = geometry::resample_to_count(
                 drawing->strokes(),
                 bke::GreasePencilLayerFieldContext(*grease_pencil, AttrDomain::Curve, layer_index),
-                fn::make_constant_field<bool>(true),
+                fn::Field<bool>(true),
                 count,
                 resample_attributes);
             pointcloud_by_layer[layer_index] = curves_to_points(
@@ -264,7 +264,7 @@ static void node_geo_exec(GeoNodeExecParams params)
           bke::CurvesGeometry dst_curves = geometry::resample_to_length(
               src_curves_id->geometry.wrap(),
               bke::CurvesFieldContext(*src_curves_id, AttrDomain::Curve),
-              fn::make_constant_field<bool>(true),
+              fn::Field<bool>(true),
               length,
               resample_attributes);
           PointCloud *pointcloud = curves_to_points(
@@ -282,7 +282,7 @@ static void node_geo_exec(GeoNodeExecParams params)
             bke::CurvesGeometry dst_curves = geometry::resample_to_length(
                 drawing->strokes(),
                 bke::GreasePencilLayerFieldContext(*grease_pencil, AttrDomain::Curve, layer_index),
-                fn::make_constant_field<bool>(true),
+                fn::Field<bool>(true),
                 length,
                 resample_attributes);
             pointcloud_by_layer[layer_index] = curves_to_points(
@@ -302,7 +302,7 @@ static void node_geo_exec(GeoNodeExecParams params)
           bke::CurvesGeometry dst_curves = geometry::resample_to_evaluated(
               src_curves_id->geometry.wrap(),
               bke::CurvesFieldContext(*src_curves_id, AttrDomain::Curve),
-              fn::make_constant_field<bool>(true),
+              fn::Field<bool>(true),
               resample_attributes);
           PointCloud *pointcloud = curves_to_points(
               dst_curves, attribute_filter, resample_attributes, rotation_anonymous_id);
@@ -320,7 +320,7 @@ static void node_geo_exec(GeoNodeExecParams params)
             bke::CurvesGeometry dst_curves = geometry::resample_to_evaluated(
                 drawing->strokes(),
                 bke::GreasePencilLayerFieldContext(*grease_pencil, AttrDomain::Curve, layer_index),
-                fn::make_constant_field<bool>(true),
+                fn::Field<bool>(true),
                 resample_attributes);
             pointcloud_by_layer[layer_index] = curves_to_points(
                 dst_curves, attribute_filter, resample_attributes, rotation_anonymous_id);

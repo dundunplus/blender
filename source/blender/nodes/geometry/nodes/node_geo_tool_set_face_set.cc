@@ -24,7 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static bool is_constant_zero(const Field<int> &face_set)
 {
-  if (face_set.node().depends_on_input()) {
+  if (face_set.depends_on_input()) {
     return false;
   }
   return fn::evaluate_constant_field<int>(face_set) == 0;

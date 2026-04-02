@@ -118,11 +118,11 @@ class CornersOfVertInput final : public bke::MeshFieldInput {
     return VArray<int>::from_container(std::move(corner_of_vertex));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    vert_index_.node().for_each_field_input_recursive(fn);
-    sort_index_.node().for_each_field_input_recursive(fn);
-    sort_weight_.node().for_each_field_input_recursive(fn);
+    fn(vert_index_);
+    fn(sort_index_);
+    fn(sort_weight_);
   }
 
   uint64_t hash() const final
@@ -130,7 +130,7 @@ class CornersOfVertInput final : public bke::MeshFieldInput {
     return 3541871368173645;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const auto *typed = dynamic_cast<const CornersOfVertInput *>(&other)) {
       return typed->vert_index_ == vert_index_ && typed->sort_index_ == sort_index_ &&
@@ -166,7 +166,7 @@ class CornersOfVertCountInput final : public bke::MeshFieldInput {
     return 253098745374645;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const CornersOfVertCountInput *>(&other) != nullptr;
   }
@@ -181,18 +181,17 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   const Field<int> vert_index = params.extract_input<Field<int>>("Vertex Index"_ustr);
   if (params.output_is_required("Total"_ustr)) {
-    params.set_output("Total"_ustr,
-                      Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-                          vert_index,
-                          Field<int>(std::make_shared<CornersOfVertCountInput>()),
-                          AttrDomain::Point)));
+    params.set_output(
+        "Total"_ustr,
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            vert_index, Field<int>::from_input<CornersOfVertCountInput>(), AttrDomain::Point));
   }
   if (params.output_is_required("Corner Index"_ustr)) {
     params.set_output("Corner Index"_ustr,
-                      Field<int>(std::make_shared<CornersOfVertInput>(
+                      Field<int>::from_input<CornersOfVertInput>(
                           vert_index,
                           params.extract_input<Field<int>>("Sort Index"_ustr),
-                          params.extract_input<Field<float>>("Weights"_ustr))));
+                          params.extract_input<Field<float>>("Weights"_ustr)));
   }
 }
 

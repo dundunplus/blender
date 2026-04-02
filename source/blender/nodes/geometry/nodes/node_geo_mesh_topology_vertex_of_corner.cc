@@ -38,7 +38,7 @@ class CornerVertFieldInput final : public bke::MeshFieldInput {
     return 30495867093876;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const CornerVertFieldInput *>(&other) != nullptr;
   }
@@ -52,10 +52,10 @@ class CornerVertFieldInput final : public bke::MeshFieldInput {
 static void node_geo_exec(GeoNodeExecParams params)
 {
   params.set_output("Vertex Index"_ustr,
-                    Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
+                    Field<int>::from_input<bke::EvaluateAtIndexInput>(
                         params.extract_input<Field<int>>("Corner Index"_ustr),
-                        Field<int>(std::make_shared<CornerVertFieldInput>()),
-                        AttrDomain::Corner)));
+                        Field<int>::from_input<CornerVertFieldInput>(),
+                        AttrDomain::Corner));
 }
 
 static void node_register()

@@ -300,11 +300,12 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   }
 
-  Vector<fn::GField> fields(required_items.size());
+  Vector<fn::GField> fields;
+  fields.reserve(required_items.size());
   for (const int i : required_items.index_range()) {
     const int item_i = required_items[i];
     const std::string identifier = ItemsAccessor::input_socket_identifier_for_item(items[item_i]);
-    fields[i] = params.extract_input<fn::GField>(UString(identifier));
+    fields.append(params.extract_input<fn::GField>(UString(identifier)));
   }
 
   openvdb::MaskTree mask_tree;

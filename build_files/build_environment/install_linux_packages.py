@@ -29,6 +29,7 @@ def find_privilege_escalation_tool():
     for cmd in ("sudo", "doas"):
         if subprocess.run(
             ["command", "-v", cmd],
+            shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
         ).returncode == 0:

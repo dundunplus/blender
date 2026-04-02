@@ -206,10 +206,10 @@ class UnwrapFieldInput final : public bke::MeshFieldInput {
         mesh, selection_, seam_, fill_holes_, margin_, method_, iterations_, no_flip_, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    selection_.node().for_each_field_input_recursive(fn);
-    seam_.node().for_each_field_input_recursive(fn);
+    fn(selection_);
+    fn(seam_);
   }
 
   std::optional<AttrDomain> preferred_domain(const Mesh & /*mesh*/) const override
@@ -233,8 +233,8 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
   params.set_output(
       "UV"_ustr,
-      Field<float3>(std::make_shared<UnwrapFieldInput>(
-          selection_field, seam_field, fill_holes, margin, method, iterations, no_flip)));
+      Field<float3>::from_input<UnwrapFieldInput>(
+          selection_field, seam_field, fill_holes, margin, method, iterations, no_flip));
 }
 
 static void node_register()

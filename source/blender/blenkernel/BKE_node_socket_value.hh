@@ -79,7 +79,7 @@ class SocketValueVariant {
    *
    * Small types are embedded directly, while larger types are separately allocated.
    */
-  Any<void, 24> value_;
+  Any<void, 32> value_;
 
  public:
   /**

@@ -135,10 +135,10 @@ class ShortestEdgePathsNextVertFieldInput final : public bke::MeshFieldInput {
         VArray<int>::from_container(std::move(next_index)), AttrDomain::Point, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    end_selection_.node().for_each_field_input_recursive(fn);
-    cost_.node().for_each_field_input_recursive(fn);
+    fn(end_selection_);
+    fn(cost_);
   }
 
   uint64_t hash() const override
@@ -146,7 +146,7 @@ class ShortestEdgePathsNextVertFieldInput final : public bke::MeshFieldInput {
     return get_default_hash(end_selection_, cost_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const ShortestEdgePathsNextVertFieldInput *other_field =
             dynamic_cast<const ShortestEdgePathsNextVertFieldInput *>(&other))
@@ -217,10 +217,10 @@ class ShortestEdgePathsCostFieldInput final : public bke::MeshFieldInput {
         VArray<float>::from_container(std::move(cost)), AttrDomain::Point, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    end_selection_.node().for_each_field_input_recursive(fn);
-    cost_.node().for_each_field_input_recursive(fn);
+    fn(end_selection_);
+    fn(cost_);
   }
 
   uint64_t hash() const override
@@ -228,7 +228,7 @@ class ShortestEdgePathsCostFieldInput final : public bke::MeshFieldInput {
     return get_default_hash(end_selection_, cost_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const ShortestEdgePathsCostFieldInput *other_field =
             dynamic_cast<const ShortestEdgePathsCostFieldInput *>(&other))
@@ -249,11 +249,12 @@ static void node_geo_exec(GeoNodeExecParams params)
   Field<bool> end_selection = params.extract_input<Field<bool>>("End Vertex"_ustr);
   Field<float> cost = params.extract_input<Field<float>>("Edge Cost"_ustr);
 
-  Field<int> next_vert_field{
-      std::make_shared<ShortestEdgePathsNextVertFieldInput>(end_selection, cost)};
-  Field<float> cost_field{std::make_shared<ShortestEdgePathsCostFieldInput>(end_selection, cost)};
-  params.set_output("Next Vertex Index"_ustr, std::move(next_vert_field));
-  params.set_output("Total Cost"_ustr, std::move(cost_field));
+  params.set_output(
+      "Next Vertex Index"_ustr,
+      Field<int>::from_input<ShortestEdgePathsNextVertFieldInput>(end_selection, cost));
+  params.set_output(
+      "Total Cost"_ustr,
+      Field<float>::from_input<ShortestEdgePathsCostFieldInput>(end_selection, cost));
 }
 
 static void node_register()

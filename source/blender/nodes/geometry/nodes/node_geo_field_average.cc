@@ -240,10 +240,10 @@ class FieldAverageInput final : public bke::GeometryFieldInput {
     return attributes.adapt_domain(std::move(g_outputs), source_domain_, context.domain());
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    input_.node().for_each_field_input_recursive(fn);
-    group_index_.node().for_each_field_input_recursive(fn);
+    fn(input_);
+    fn(group_index_);
   }
 
   uint64_t hash() const override
@@ -251,7 +251,7 @@ class FieldAverageInput final : public bke::GeometryFieldInput {
     return get_default_hash(input_, group_index_, source_domain_, operation_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const FieldAverageInput *other_field = dynamic_cast<const FieldAverageInput *>(&other)) {
       return input_ == other_field->input_ && group_index_ == other_field->group_index_ &&
@@ -275,16 +275,15 @@ static void node_geo_exec(GeoNodeExecParams params)
   const Field<int> group_index_field = params.extract_input<Field<int>>("Group Index"_ustr);
   const GField input_field = params.extract_input<GField>("Value"_ustr);
   if (params.output_is_required("Mean"_ustr)) {
-    params.set_output<GField>(
-        "Mean"_ustr,
-        GField{std::make_shared<FieldAverageInput>(
-            source_domain, input_field, group_index_field, Operation::Mean)});
+    params.set_output<GField>("Mean"_ustr,
+                              GField::from_input<FieldAverageInput>(
+                                  source_domain, input_field, group_index_field, Operation::Mean));
   }
   if (params.output_is_required("Median"_ustr)) {
     params.set_output<GField>(
         "Median"_ustr,
-        GField{std::make_shared<FieldAverageInput>(
-            source_domain, input_field, group_index_field, Operation::Median)});
+        GField::from_input<FieldAverageInput>(
+            source_domain, input_field, group_index_field, Operation::Median));
   }
 }
 

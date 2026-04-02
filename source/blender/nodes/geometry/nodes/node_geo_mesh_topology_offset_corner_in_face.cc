@@ -73,10 +73,10 @@ class OffsetCornerInFaceFieldInput final : public bke::MeshFieldInput {
     return VArray<int>::from_container(std::move(offset_corners));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    corner_index_.node().for_each_field_input_recursive(fn);
-    offset_.node().for_each_field_input_recursive(fn);
+    fn(corner_index_);
+    fn(offset_);
   }
 
   uint64_t hash() const final
@@ -84,7 +84,7 @@ class OffsetCornerInFaceFieldInput final : public bke::MeshFieldInput {
     return get_default_hash(offset_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const OffsetCornerInFaceFieldInput *other_field =
             dynamic_cast<const OffsetCornerInFaceFieldInput *>(&other))
@@ -103,9 +103,9 @@ class OffsetCornerInFaceFieldInput final : public bke::MeshFieldInput {
 static void node_geo_exec(GeoNodeExecParams params)
 {
   params.set_output("Corner Index"_ustr,
-                    Field<int>(std::make_shared<OffsetCornerInFaceFieldInput>(
+                    Field<int>::from_input<OffsetCornerInFaceFieldInput>(
                         params.extract_input<Field<int>>("Corner Index"_ustr),
-                        params.extract_input<Field<int>>("Offset"_ustr))));
+                        params.extract_input<Field<int>>("Offset"_ustr)));
 }
 
 static void node_register()

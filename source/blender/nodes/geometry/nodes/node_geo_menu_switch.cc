@@ -388,15 +388,16 @@ class LazyFunctionForMenuSwitchNode : public LazyFunction {
       return;
     }
 
-    Vector<GField> item_fields(enum_def_.items_num + 1);
-    item_fields[0] = std::move(condition);
+    Vector<GField> item_fields;
+    item_fields.reserve(enum_def_.items_num + 1);
+    item_fields.append(std::move(condition));
     for (const int i : IndexRange(enum_def_.items_num)) {
-      item_fields[i + 1] = input_values[i]->extract<GField>();
+      item_fields.append(input_values[i]->extract<GField>());
     }
     std::unique_ptr<MultiFunction> multi_function = std::make_unique<MenuSwitchFn>(
         enum_def_, *field_base_type_);
-    std::shared_ptr<fn::FieldOperation> operation = FieldOperation::from(std::move(multi_function),
-                                                                         std::move(item_fields));
+    fn::FieldOperationPtr operation = FieldOperation::from(std::move(multi_function),
+                                                           std::move(item_fields));
 
     params.set_output(0, SocketValueVariant::From(GField(operation, 0)));
     for (const int item_i : IndexRange(enum_def_.items_num)) {

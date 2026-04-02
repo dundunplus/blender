@@ -71,13 +71,12 @@ StringLog::StringLog(StringRef string, LinearAllocator<> &allocator)
 
 FieldInfoLog::FieldInfoLog(const GField &field) : type(field.cpp_type())
 {
-  const std::shared_ptr<const fn::FieldInputs> &field_input_nodes = field.node().field_inputs();
+  const fn::FieldInputsPtr &field_inputs_ptr = field.field_inputs();
 
   /* Put the deduplicated field inputs into a vector so that they can be sorted below. */
   Vector<std::reference_wrapper<const FieldInput>> field_inputs;
-  if (field_input_nodes) {
-    field_inputs.extend(field_input_nodes->deduplicated_nodes.begin(),
-                        field_input_nodes->deduplicated_nodes.end());
+  if (field_inputs_ptr) {
+    field_inputs.extend(field_inputs_ptr->inputs.begin(), field_inputs_ptr->inputs.end());
   }
 
   this->input_tooltips.reserve(field_inputs.size());

@@ -121,7 +121,7 @@ static void node_geo_exec(GeoNodeExecParams params)
            bke::AttrType::ColorByte,
            bke::AttrType::Int8))
   {
-    field = bke::get_implicit_type_conversions().try_convert(
+    field = *bke::get_implicit_type_conversions().try_convert(
         std::move(field), bke::attribute_type_to_cpp_type(data_type));
   }
 

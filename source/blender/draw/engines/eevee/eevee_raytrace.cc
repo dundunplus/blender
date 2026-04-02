@@ -713,6 +713,10 @@ RayTraceResultTexture RayTraceModule::trace(
     /* Not referenced by result anymore. */
     denoise_buf->denoised_temporal_tx.release();
   }
+  else if (use_temporal_denoise) {
+    /* Not referenced by result anymore. */
+    denoise_buf->variance_history_tx.retain();
+  }
 
   denoise_variance_tx_.release();
 

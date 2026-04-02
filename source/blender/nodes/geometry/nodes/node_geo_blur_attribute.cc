@@ -421,10 +421,10 @@ class BlurAttributeFieldInput final : public bke::GeometryFieldInput {
     return GVArray::from_garray(std::move(buffer_b));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    weight_field_.node().for_each_field_input_recursive(fn);
-    value_field_.node().for_each_field_input_recursive(fn);
+    fn(weight_field_);
+    fn(value_field_);
   }
 
   uint64_t hash() const override
@@ -432,7 +432,7 @@ class BlurAttributeFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(iterations_, weight_field_, value_field_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const BlurAttributeFieldInput *other_blur = dynamic_cast<const BlurAttributeFieldInput *>(
             &other))
@@ -459,9 +459,9 @@ static void node_geo_exec(GeoNodeExecParams params)
   Field<float> weight_field = params.extract_input<Field<float>>("Weight"_ustr);
 
   GField value_field = params.extract_input<GField>("Value"_ustr);
-  GField output_field{std::make_shared<BlurAttributeFieldInput>(
-      std::move(weight_field), std::move(value_field), iterations)};
-  params.set_output<GField>("Value"_ustr, std::move(output_field));
+  params.set_output<GField>("Value"_ustr,
+                            GField::from_input<BlurAttributeFieldInput>(
+                                std::move(weight_field), std::move(value_field), iterations));
 }
 
 static void node_rna(StructRNA *srna)

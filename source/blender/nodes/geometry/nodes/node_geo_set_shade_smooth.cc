@@ -50,7 +50,7 @@ static bool try_removing_sharp_attribute(Mesh &mesh,
                                          const Field<bool> &selection,
                                          const Field<bool> &sharpness)
 {
-  if (selection.node().depends_on_input() || sharpness.node().depends_on_input()) {
+  if (selection.depends_on_input() || sharpness.depends_on_input()) {
     return false;
   }
   if (!fn::evaluate_constant_field(selection)) {

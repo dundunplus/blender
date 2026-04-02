@@ -33,7 +33,7 @@ class InstanceScaleFieldInput final : public bke::InstancesFieldInput {
     return 8346343;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const InstanceScaleFieldInput *>(&other) != nullptr;
   }
@@ -41,8 +41,7 @@ class InstanceScaleFieldInput final : public bke::InstancesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<float3> scale{std::make_shared<InstanceScaleFieldInput>()};
-  params.set_output("Scale"_ustr, std::move(scale));
+  params.set_output("Scale"_ustr, Field<float3>::from_input<InstanceScaleFieldInput>());
 }
 
 static void node_register()

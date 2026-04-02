@@ -170,7 +170,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   static const auto &max_zero_fn = fn::multi_function::registry::lookup("max(float, float)"_ustr);
   const Field<float> positive_radius(
-      FieldOperation::from(max_zero_fn, {std::move(radius), fn::make_constant_field(0.0f)}), 0);
+      FieldOperation::from(max_zero_fn, {std::move(radius), fn::Field<float>(0.0f)}), 0);
 
   const NodeGeometryMeshToPoints &storage = node_storage(params.node());
   const GeometryNodeMeshToPointsMode mode = GeometryNodeMeshToPointsMode(storage.mode);

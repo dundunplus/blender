@@ -66,7 +66,7 @@ static void set_curves_position(bke::CurvesGeometry &curves,
 
   if (attributes.contains("handle_right") && attributes.contains("handle_left")) {
     fn::Field<float3> delta(fn::FieldOperation::from(
-        get_sub_fn(), {position_field, bke::AttributeFieldInput::from<float3>("position")}));
+        get_sub_fn(), {position_field, bke::AttributeFieldInput::position_field()}));
     for (const StringRef name : {"handle_left", "handle_right"}) {
       attribute_names.append(name);
       fields.append(Field<float3>(fn::FieldOperation::from(

@@ -29,7 +29,7 @@ class ResolutionFieldInput final : public bke::CurvesFieldInput {
     return 82713465872345682;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const ResolutionFieldInput *>(&other) != nullptr;
   }
@@ -42,7 +42,7 @@ class ResolutionFieldInput final : public bke::CurvesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  params.set_output("Resolution"_ustr, Field<int>(std::make_shared<ResolutionFieldInput>()));
+  params.set_output("Resolution"_ustr, Field<int>::from_input<ResolutionFieldInput>());
 }
 
 static void node_register()

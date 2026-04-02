@@ -81,10 +81,10 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
     return VArray<bool>::from_container(std::move(selection));
   };
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    start_size_.node().for_each_field_input_recursive(fn);
-    end_size_.node().for_each_field_input_recursive(fn);
+    fn(start_size_);
+    fn(end_size_);
   }
 
   uint64_t hash() const final
@@ -92,7 +92,7 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(start_size_, end_size_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const EndpointFieldInput *other_endpoint = dynamic_cast<const EndpointFieldInput *>(
             &other))
@@ -112,7 +112,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   Field<int> start_size = params.extract_input<Field<int>>("Start Size"_ustr);
   Field<int> end_size = params.extract_input<Field<int>>("End Size"_ustr);
-  Field<bool> selection_field{std::make_shared<EndpointFieldInput>(start_size, end_size)};
+  Field<bool> selection_field = Field<bool>::from_input<EndpointFieldInput>(start_size, end_size);
   params.set_output("Selection"_ustr, std::move(selection_field));
 }
 

@@ -196,12 +196,12 @@ class TangentFieldInput final : public bke::MeshFieldInput {
                                    domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    uv_field_.node().for_each_field_input_recursive(fn);
+    fn(uv_field_);
   }
 
-  bool is_equal_to(const FieldNode &other) const override
+  bool is_equal_to(const FieldInput &other) const override
   {
     if (const TangentFieldInput *other_endpoint = dynamic_cast<const TangentFieldInput *>(&other))
     {
@@ -226,7 +226,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const Method method = params.extract_input<Method>("Method"_ustr);
   Field<float3> uv_field = params.extract_input<Field<float3>>("UV"_ustr);
   params.set_output("Tangent"_ustr,
-                    Field<float3>(std::make_shared<TangentFieldInput>(method, uv_field)));
+                    Field<float3>::from_input<TangentFieldInput>(method, uv_field));
 }
 
 static void node_register()

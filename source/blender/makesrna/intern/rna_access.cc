@@ -1388,7 +1388,8 @@ char RNA_property_array_item_char(PropertyRNA *prop, int index)
                           PROP_EULER,
                           PROP_VELOCITY,
                           PROP_ACCELERATION,
-                          PROP_COORDS))
+                          PROP_COORDS,
+                          PROP_PIXEL))
   {
     return vectoritem[index];
   }
@@ -1425,7 +1426,8 @@ int RNA_property_array_item_index(PropertyRNA *prop, char name)
                 PROP_XYZ_LENGTH,
                 PROP_EULER,
                 PROP_VELOCITY,
-                PROP_ACCELERATION))
+                PROP_ACCELERATION,
+                PROP_PIXEL))
   {
     switch (name) {
       case 'x':

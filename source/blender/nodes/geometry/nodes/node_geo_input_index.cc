@@ -13,8 +13,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<int> index_field{std::make_shared<fn::IndexFieldInput>()};
-  params.set_output("Index"_ustr, std::move(index_field));
+  params.set_output("Index"_ustr, Field<int>::from_input<fn::IndexFieldInput>());
 }
 
 static void node_register()

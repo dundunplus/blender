@@ -91,7 +91,7 @@ class FaceNeighborCountFieldInput final : public bke::MeshFieldInput {
     return 823543774;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const FaceNeighborCountFieldInput *>(&other) != nullptr;
   }
@@ -129,7 +129,7 @@ class FaceVertexCountFieldInput final : public bke::MeshFieldInput {
     return 236235463634;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const FaceVertexCountFieldInput *>(&other) != nullptr;
   }
@@ -142,10 +142,8 @@ class FaceVertexCountFieldInput final : public bke::MeshFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<int> vertex_count_field{std::make_shared<FaceVertexCountFieldInput>()};
-  Field<int> neighbor_count_field{std::make_shared<FaceNeighborCountFieldInput>()};
-  params.set_output("Vertex Count"_ustr, std::move(vertex_count_field));
-  params.set_output("Face Count"_ustr, std::move(neighbor_count_field));
+  params.set_output("Vertex Count"_ustr, Field<int>::from_input<FaceVertexCountFieldInput>());
+  params.set_output("Face Count"_ustr, Field<int>::from_input<FaceNeighborCountFieldInput>());
 }
 
 static void node_register()

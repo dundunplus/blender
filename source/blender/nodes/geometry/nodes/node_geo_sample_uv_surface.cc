@@ -163,7 +163,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   /* Do reverse sampling of the UV map first. */
   const bke::DataTypeConversions &conversions = bke::get_implicit_type_conversions();
-  Field<float2> source_uv_map = conversions.try_convert<float2>(
+  Field<float2> source_uv_map = *conversions.try_convert<float2>(
       params.extract_input<Field<float3>>("Source UV Map"_ustr));
 
   auto sample_uv_value = params.extract_input<bke::SocketValueVariant>("Sample UV"_ustr);
@@ -175,7 +175,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(NodeWarningType::Error,
                              "Volume grids are not supported for \"Sample UV\" input");
   }
-  Field<float2> sample_uvs = conversions.try_convert<float2>(
+  Field<float2> sample_uvs = *conversions.try_convert<float2>(
       sample_uv_value.extract<Field<float3>>());
 
   auto uv_op = FieldOperation::from(

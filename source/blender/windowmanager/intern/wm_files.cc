@@ -2718,6 +2718,14 @@ static wmOperatorStatus wm_userpref_read_exec(bContext *C, wmOperator *op)
 
   if (use_factory_settings) {
     U.runtime.is_dirty = true;
+
+    /* Default to Interface if Developer Tools section is active before Load Factory Preferences.
+     */
+    if (U.space_data.section_active == USER_SECTION_DEVELOPER_TOOLS &&
+        !(U.flag & USER_DEVELOPER_UI))
+    {
+      U.space_data.section_active = USER_SECTION_INTERFACE;
+    }
   }
 
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
@@ -2924,6 +2932,13 @@ static wmOperatorStatus wm_homefile_read_exec(bContext *C, wmOperator *op)
 
     if (use_factory_settings) {
       U.runtime.is_dirty = true;
+
+      /* Default to Interface if Developer Tools section is active before Load Factory Settings. */
+      if (U.space_data.section_active == USER_SECTION_DEVELOPER_TOOLS &&
+          !(U.flag & USER_DEVELOPER_UI))
+      {
+        U.space_data.section_active = USER_SECTION_INTERFACE;
+      }
     }
   }
 

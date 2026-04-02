@@ -257,10 +257,10 @@ class AccumulateFieldInput final : public bke::GeometryFieldInput {
     return attributes.adapt_domain(std::move(g_output), source_domain_, context.domain());
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    input_.node().for_each_field_input_recursive(fn);
-    group_index_.node().for_each_field_input_recursive(fn);
+    fn(input_);
+    fn(group_index_);
   }
 
   uint64_t hash() const override
@@ -268,7 +268,7 @@ class AccumulateFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(input_, group_index_, source_domain_, accumulation_mode_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const AccumulateFieldInput *other_accumulate = dynamic_cast<const AccumulateFieldInput *>(
             &other))
@@ -349,10 +349,10 @@ class TotalFieldInput final : public bke::GeometryFieldInput {
     return attributes.adapt_domain(std::move(g_outputs), source_domain_, context.domain());
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    input_.node().for_each_field_input_recursive(fn);
-    group_index_.node().for_each_field_input_recursive(fn);
+    fn(input_);
+    fn(group_index_);
   }
 
   uint64_t hash() const override
@@ -360,7 +360,7 @@ class TotalFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(input_, group_index_, source_domain_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const TotalFieldInput *other_field = dynamic_cast<const TotalFieldInput *>(&other)) {
       return input_ == other_field->input_ && group_index_ == other_field->group_index_ &&
@@ -386,19 +386,19 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (params.output_is_required("Leading"_ustr)) {
     params.set_output<GField>(
         "Leading"_ustr,
-        GField{std::make_shared<AccumulateFieldInput>(
-            source_domain, input_field, group_index_field, AccumulationMode::Leading)});
+        GField::from_input<AccumulateFieldInput>(
+            source_domain, input_field, group_index_field, AccumulationMode::Leading));
   }
   if (params.output_is_required("Trailing"_ustr)) {
     params.set_output<GField>(
         "Trailing"_ustr,
-        GField{std::make_shared<AccumulateFieldInput>(
-            source_domain, input_field, group_index_field, AccumulationMode::Trailing)});
+        GField::from_input<AccumulateFieldInput>(
+            source_domain, input_field, group_index_field, AccumulationMode::Trailing));
   }
   if (params.output_is_required("Total"_ustr)) {
     params.set_output<GField>(
         "Total"_ustr,
-        GField{std::make_shared<TotalFieldInput>(source_domain, input_field, group_index_field)});
+        GField::from_input<TotalFieldInput>(source_domain, input_field, group_index_field));
   }
 }
 

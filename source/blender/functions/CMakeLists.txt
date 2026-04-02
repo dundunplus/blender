@@ -11,6 +11,7 @@ set(INC_SYS
 
 set(SRC
   intern/field.cc
+  intern/field_evaluation.cc
   intern/lazy_function.cc
   intern/lazy_function_execute.cc
   intern/lazy_function_graph.cc
@@ -28,6 +29,7 @@ set(SRC
   intern/user_data.cc
 
   FN_field.hh
+  FN_field_evaluation.hh
   FN_init.hh
   FN_lazy_function.hh
   FN_lazy_function_execute.hh

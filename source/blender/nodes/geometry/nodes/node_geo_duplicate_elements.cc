@@ -1209,9 +1209,9 @@ static void node_geo_exec(GeoNodeExecParams params)
   const NodeGeometryDuplicateElements &storage = node_storage(params.node());
   const AttrDomain duplicate_domain = AttrDomain(storage.domain);
 
-  const Field<int> count_field(FieldOperation::from(
-      fn::multi_function::registry::lookup("max(int, int)"_ustr),
-      {fn::make_constant_field<int>(0), params.extract_input<Field<int>>("Amount"_ustr)}));
+  const Field<int> count_field(
+      FieldOperation::from(fn::multi_function::registry::lookup("max(int, int)"_ustr),
+                           {fn::Field<int>(0), params.extract_input<Field<int>>("Amount"_ustr)}));
 
   Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
   IndexAttributes attribute_outputs;

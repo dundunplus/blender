@@ -21,10 +21,8 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.set_default_remaining_outputs();
     return;
   }
-
-  Field<bool> selection_field{
-      std::make_shared<bke::NamedLayerSelectionFieldInput>(std::move(name))};
-  params.set_output("Selection"_ustr, std::move(selection_field));
+  params.set_output("Selection"_ustr,
+                    Field<bool>::from_input<bke::NamedLayerSelectionFieldInput>(std::move(name)));
 }
 
 static void node_register()

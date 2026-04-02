@@ -160,7 +160,7 @@ static bke::SocketValueVariant init_socket_cpp_value(PointerRNA *input_props_ptr
       if (type == GeometryNodesInputType::Layer) {
         const std::string layer_name = RNA_string_get(input_props_ptr, "layer_name");
         return bke::SocketValueVariant::From(
-            fn::GField(std::make_shared<bke::NamedLayerSelectionFieldInput>(layer_name), 0));
+            fn::GField::from_input<bke::NamedLayerSelectionFieldInput>(layer_name));
       }
       break;
     }
@@ -343,9 +343,7 @@ static MultiValueMap<bke::AttrDomain, OutputAttributeInfo> find_output_attribute
 
     const bNodeTreeInterfaceSocket *interface_socket = tree.interface_outputs()[index];
     const bke::AttrDomain domain = bke::AttrDomain(interface_socket->attribute_domain);
-    OutputAttributeInfo output_info;
-    output_info.field = std::move(field);
-    output_info.name = attribute_name;
+    OutputAttributeInfo output_info{.field = std::move(field), .name = attribute_name};
     outputs_by_domain.add(domain, std::move(output_info));
   }
   return outputs_by_domain;

@@ -241,10 +241,10 @@ class FieldVarianceInput final : public bke::GeometryFieldInput {
     return attributes.adapt_domain(std::move(g_outputs), source_domain_, context.domain());
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    input_.node().for_each_field_input_recursive(fn);
-    group_index_.node().for_each_field_input_recursive(fn);
+    fn(input_);
+    fn(group_index_);
   }
 
   uint64_t hash() const override
@@ -252,7 +252,7 @@ class FieldVarianceInput final : public bke::GeometryFieldInput {
     return get_default_hash(input_, group_index_, source_domain_, operation_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const FieldVarianceInput *other_field = dynamic_cast<const FieldVarianceInput *>(&other)) {
       return input_ == other_field->input_ && group_index_ == other_field->group_index_ &&
@@ -278,14 +278,14 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (params.output_is_required("Standard Deviation"_ustr)) {
     params.set_output<GField>(
         "Standard Deviation"_ustr,
-        GField{std::make_shared<FieldVarianceInput>(
-            source_domain, input_field, group_index_field, Operation::StdDev)});
+        GField::from_input<FieldVarianceInput>(
+            source_domain, input_field, group_index_field, Operation::StdDev));
   }
   if (params.output_is_required("Variance"_ustr)) {
     params.set_output<GField>(
         "Variance"_ustr,
-        GField{std::make_shared<FieldVarianceInput>(
-            source_domain, input_field, group_index_field, Operation::Variance)});
+        GField::from_input<FieldVarianceInput>(
+            source_domain, input_field, group_index_field, Operation::Variance));
   }
 }
 

@@ -289,7 +289,7 @@ uint64_t CurveLengthFieldInput::hash() const
   return 3549623580;
 }
 
-bool CurveLengthFieldInput::is_equal_to(const fn::FieldNode &other) const
+bool CurveLengthFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   return dynamic_cast<const CurveLengthFieldInput *>(&other) != nullptr;
 }

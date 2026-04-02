@@ -46,30 +46,30 @@ static void node_geo_exec(GeoNodeExecParams params)
 #ifdef WITH_OPENVDB
   if (params.output_is_required("X"_ustr)) {
     params.set_output("X"_ustr,
-                      fn::GField(std::make_shared<bke::VoxelCoordinateFieldInput>(math::Axis::X)));
+                      fn::GField::from_input<bke::VoxelCoordinateFieldInput>(math::Axis::X));
   }
   if (params.output_is_required("Y"_ustr)) {
     params.set_output("Y"_ustr,
-                      fn::GField(std::make_shared<bke::VoxelCoordinateFieldInput>(math::Axis::Y)));
+                      fn::GField::from_input<bke::VoxelCoordinateFieldInput>(math::Axis::Y));
   }
   if (params.output_is_required("Z"_ustr)) {
     params.set_output("Z"_ustr,
-                      fn::GField(std::make_shared<bke::VoxelCoordinateFieldInput>(math::Axis::Z)));
+                      fn::GField::from_input<bke::VoxelCoordinateFieldInput>(math::Axis::Z));
   }
   if (params.output_is_required("Is Tile"_ustr)) {
-    params.set_output("Is Tile"_ustr, fn::GField(std::make_shared<bke::IsTileFieldInput>()));
+    params.set_output("Is Tile"_ustr, fn::GField::from_input<bke::IsTileFieldInput>());
   }
   if (params.output_is_required("Extent X"_ustr)) {
     params.set_output("Extent X"_ustr,
-                      fn::GField(std::make_shared<bke::VoxelExtentFieldInput>(math::Axis::X)));
+                      fn::GField::from_input<bke::VoxelExtentFieldInput>(math::Axis::X));
   }
   if (params.output_is_required("Extent Y"_ustr)) {
     params.set_output("Extent Y"_ustr,
-                      fn::GField(std::make_shared<bke::VoxelExtentFieldInput>(math::Axis::Y)));
+                      fn::GField::from_input<bke::VoxelExtentFieldInput>(math::Axis::Y));
   }
   if (params.output_is_required("Extent Z"_ustr)) {
     params.set_output("Extent Z"_ustr,
-                      fn::GField(std::make_shared<bke::VoxelExtentFieldInput>(math::Axis::Z)));
+                      fn::GField::from_input<bke::VoxelExtentFieldInput>(math::Axis::Z));
   }
 #else
   node_geo_exec_with_missing_openvdb(params);

@@ -133,10 +133,10 @@ class IndexOfNearestFieldInput final : public bke::GeometryFieldInput {
     return VArray<int>::from_container(std::move(result));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    positions_field_.node().for_each_field_input_recursive(fn);
-    group_field_.node().for_each_field_input_recursive(fn);
+    fn(positions_field_);
+    fn(group_field_);
   }
 
   uint64_t hash() const final
@@ -144,7 +144,7 @@ class IndexOfNearestFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(positions_field_, group_field_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const auto *other_field = dynamic_cast<const IndexOfNearestFieldInput *>(&other)) {
       return positions_field_ == other_field->positions_field_ &&
@@ -201,9 +201,9 @@ class HasNeighborFieldInput final : public bke::GeometryFieldInput {
     return VArray<bool>::from_container(std::move(result));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    group_field_.node().for_each_field_input_recursive(fn);
+    fn(group_field_);
   }
 
   uint64_t hash() const final
@@ -211,7 +211,7 @@ class HasNeighborFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(39847876, group_field_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const auto *other_field = dynamic_cast<const HasNeighborFieldInput *>(&other)) {
       return group_field_ == other_field->group_field_;
@@ -231,15 +231,14 @@ static void node_geo_exec(GeoNodeExecParams params)
   Field<int> group_field = params.extract_input<Field<int>>("Group ID"_ustr);
 
   if (params.output_is_required("Index"_ustr)) {
-    params.set_output("Index"_ustr,
-                      Field<int>(std::make_shared<IndexOfNearestFieldInput>(
-                          std::move(position_field), group_field)));
+    params.set_output(
+        "Index"_ustr,
+        Field<int>::from_input<IndexOfNearestFieldInput>(std::move(position_field), group_field));
   }
 
   if (params.output_is_required("Has Neighbor"_ustr)) {
-    params.set_output(
-        "Has Neighbor"_ustr,
-        Field<bool>(std::make_shared<HasNeighborFieldInput>(std::move(group_field))));
+    params.set_output("Has Neighbor"_ustr,
+                      Field<bool>::from_input<HasNeighborFieldInput>(std::move(group_field)));
   }
 }
 

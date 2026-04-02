@@ -87,7 +87,7 @@ class AngleFieldInput final : public bke::MeshFieldInput {
     return 32426725235;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const AngleFieldInput *>(&other) != nullptr;
   }
@@ -185,7 +185,7 @@ class SignedAngleFieldInput final : public bke::MeshFieldInput {
     return 68465416863;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const SignedAngleFieldInput *>(&other) != nullptr;
   }
@@ -199,12 +199,10 @@ class SignedAngleFieldInput final : public bke::MeshFieldInput {
 static void node_geo_exec(GeoNodeExecParams params)
 {
   if (params.output_is_required("Unsigned Angle"_ustr)) {
-    Field<float> angle_field{std::make_shared<AngleFieldInput>()};
-    params.set_output("Unsigned Angle"_ustr, std::move(angle_field));
+    params.set_output("Unsigned Angle"_ustr, Field<float>::from_input<AngleFieldInput>());
   }
   if (params.output_is_required("Signed Angle"_ustr)) {
-    Field<float> angle_field{std::make_shared<SignedAngleFieldInput>()};
-    params.set_output("Signed Angle"_ustr, std::move(angle_field));
+    params.set_output("Signed Angle"_ustr, Field<float>::from_input<SignedAngleFieldInput>());
   }
 }
 

@@ -336,7 +336,7 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
   Vector<CustomDataLayer, 16> edge_layers;
   Vector<CustomDataLayer, 16> loop_layers;
   Vector<CustomDataLayer, 16> face_layers;
-  bke::AttributeStorage::BlendWriteData attribute_data{scope};
+  bke::AttributeStorage::BlendWriteData attribute_data{writer, scope};
 
   /* Cache only - don't write. */
   mesh->mface = nullptr;
@@ -386,7 +386,7 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
   const bke::MeshRuntime *mesh_runtime = mesh->runtime;
   mesh->runtime = nullptr;
 
-  BLO_write_shared_tag(writer, mesh->face_offset_indices);
+  BLO_write_generated_pointer_tag(writer, mesh->attribute_storage.dna_attributes);
 
   writer->write_id_struct(id_address, mesh);
   BKE_id_blend_write(writer, &mesh->id);

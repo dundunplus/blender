@@ -36,7 +36,7 @@ class InstanceRotationFieldInput final : public bke::InstancesFieldInput {
     return 22374372;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const InstanceRotationFieldInput *>(&other) != nullptr;
   }
@@ -44,8 +44,8 @@ class InstanceRotationFieldInput final : public bke::InstancesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<math::Quaternion> rotation{std::make_shared<InstanceRotationFieldInput>()};
-  params.set_output("Rotation"_ustr, std::move(rotation));
+  params.set_output("Rotation"_ustr,
+                    Field<math::Quaternion>::from_input<InstanceRotationFieldInput>());
 }
 
 static void node_register()

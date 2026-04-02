@@ -41,7 +41,7 @@ class CurveOfPointInput final : public bke::CurvesFieldInput {
     return 413209687345908697;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const CurveOfPointInput *>(&other) != nullptr;
   }
@@ -78,7 +78,7 @@ class PointIndexInCurveInput final : public bke::CurvesFieldInput {
     return 9834765987345677;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const PointIndexInCurveInput *>(&other) != nullptr;
   }
@@ -95,15 +95,14 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (params.output_is_required("Curve Index"_ustr)) {
     params.set_output(
         "Curve Index"_ustr,
-        Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-            point_index, Field<int>(std::make_shared<CurveOfPointInput>()), AttrDomain::Point)));
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            point_index, Field<int>::from_input<CurveOfPointInput>(), AttrDomain::Point));
   }
   if (params.output_is_required("Index in Curve"_ustr)) {
-    params.set_output("Index in Curve"_ustr,
-                      Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-                          point_index,
-                          Field<int>(std::make_shared<PointIndexInCurveInput>()),
-                          AttrDomain::Point)));
+    params.set_output(
+        "Index in Curve"_ustr,
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            point_index, Field<int>::from_input<PointIndexInCurveInput>(), AttrDomain::Point));
   }
 }
 

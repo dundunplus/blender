@@ -102,7 +102,7 @@ class HandleTypeFieldInput final : public bke::CurvesFieldInput {
     return get_default_hash(int(mode_), int(type_));
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const HandleTypeFieldInput *other_handle_selection =
             dynamic_cast<const HandleTypeFieldInput *>(&other))
@@ -125,7 +125,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       (GeometryNodeCurveHandleType)storage.handle_type);
   const GeometryNodeCurveHandleMode mode = (GeometryNodeCurveHandleMode)storage.mode;
 
-  Field<bool> selection_field{std::make_shared<HandleTypeFieldInput>(handle_type, mode)};
+  Field<bool> selection_field = Field<bool>::from_input<HandleTypeFieldInput>(handle_type, mode);
   params.set_output("Selection"_ustr, std::move(selection_field));
 }
 

@@ -118,19 +118,19 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
     if (Volume *volume = geometry_set.get_volume_for_write()) {
       BKE_id_material_eval_assign(&volume->id, 1, material);
-      if (selection_field.node().depends_on_input()) {
+      if (selection_field.depends_on_input()) {
         volume_selection_warning = true;
       }
     }
     if (PointCloud *pointcloud = geometry_set.get_pointcloud_for_write()) {
       BKE_id_material_eval_assign(&pointcloud->id, 1, material);
-      if (selection_field.node().depends_on_input()) {
+      if (selection_field.depends_on_input()) {
         point_selection_warning = true;
       }
     }
     if (Curves *curves = geometry_set.get_curves_for_write()) {
       BKE_id_material_eval_assign(&curves->id, 1, material);
-      if (selection_field.node().depends_on_input()) {
+      if (selection_field.depends_on_input()) {
         curves_selection_warning = true;
       }
     }

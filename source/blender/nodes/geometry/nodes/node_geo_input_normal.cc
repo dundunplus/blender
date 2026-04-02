@@ -29,11 +29,11 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (params.output_is_required("Normal"_ustr)) {
     params.set_output(
         "Normal"_ustr,
-        Field<float3>{std::make_shared<bke::NormalFieldInput>(legacy_corner_normals, false)});
+        Field<float3>::from_input<bke::NormalFieldInput>(legacy_corner_normals, false));
   }
   if (params.output_is_required("True Normal"_ustr)) {
     params.set_output("True Normal"_ustr,
-                      Field<float3>{std::make_shared<bke::NormalFieldInput>(false, true)});
+                      Field<float3>::from_input<bke::NormalFieldInput>(false, true));
   }
 }
 

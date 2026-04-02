@@ -112,11 +112,11 @@ class CornersOfFaceInput final : public bke::MeshFieldInput {
     return VArray<int>::from_container(std::move(corner_of_face));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    face_index_.node().for_each_field_input_recursive(fn);
-    sort_index_.node().for_each_field_input_recursive(fn);
-    sort_weight_.node().for_each_field_input_recursive(fn);
+    fn(face_index_);
+    fn(sort_index_);
+    fn(sort_weight_);
   }
 
   uint64_t hash() const final
@@ -124,7 +124,7 @@ class CornersOfFaceInput final : public bke::MeshFieldInput {
     return 6927982716657;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const auto *typed = dynamic_cast<const CornersOfFaceInput *>(&other)) {
       return typed->face_index_ == face_index_ && typed->sort_index_ == sort_index_ &&
@@ -160,7 +160,7 @@ class CornersOfFaceCountInput final : public bke::MeshFieldInput {
     return 8345908765432698;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const CornersOfFaceCountInput *>(&other) != nullptr;
   }
@@ -175,18 +175,17 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   const Field<int> face_index = params.extract_input<Field<int>>("Face Index"_ustr);
   if (params.output_is_required("Total"_ustr)) {
-    params.set_output("Total"_ustr,
-                      Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-                          face_index,
-                          Field<int>(std::make_shared<CornersOfFaceCountInput>()),
-                          AttrDomain::Face)));
+    params.set_output(
+        "Total"_ustr,
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            face_index, Field<int>::from_input<CornersOfFaceCountInput>(), AttrDomain::Face));
   }
   if (params.output_is_required("Corner Index"_ustr)) {
     params.set_output("Corner Index"_ustr,
-                      Field<int>(std::make_shared<CornersOfFaceInput>(
+                      Field<int>::from_input<CornersOfFaceInput>(
                           face_index,
                           params.extract_input<Field<int>>("Sort Index"_ustr),
-                          params.extract_input<Field<float>>("Weights"_ustr))));
+                          params.extract_input<Field<float>>("Weights"_ustr)));
   }
 }
 

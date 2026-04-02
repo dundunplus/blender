@@ -198,9 +198,10 @@ class AttributeStorage : public blender::AttributeStorage {
    * #attribute_storage_blend_write_prepare for more information.
    */
   struct BlendWriteData {
+    BlendWriter *writer;
     ResourceScope &scope;
     Vector<blender::Attribute, 16> &attributes;
-    explicit BlendWriteData(ResourceScope &scope);
+    explicit BlendWriteData(BlendWriter *writer, ResourceScope &scope);
   };
   /**
    * Write the prepared data and the data stored in the DNA fields in

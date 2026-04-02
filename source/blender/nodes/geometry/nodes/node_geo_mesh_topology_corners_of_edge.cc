@@ -126,11 +126,11 @@ class CornersOfEdgeInput final : public bke::MeshFieldInput {
     return VArray<int>::from_container(std::move(corner_of_edge));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    edge_index_.node().for_each_field_input_recursive(fn);
-    sort_index_.node().for_each_field_input_recursive(fn);
-    sort_weight_.node().for_each_field_input_recursive(fn);
+    fn(edge_index_);
+    fn(sort_index_);
+    fn(sort_weight_);
   }
 
   std::optional<AttrDomain> preferred_domain(const Mesh & /*mesh*/) const final
@@ -160,7 +160,7 @@ class CornersOfEdgeCountInput final : public bke::MeshFieldInput {
     return 2345897985577;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const CornersOfEdgeCountInput *>(&other) != nullptr;
   }
@@ -175,18 +175,17 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   const Field<int> edge_index = params.extract_input<Field<int>>("Edge Index"_ustr);
   if (params.output_is_required("Total"_ustr)) {
-    params.set_output("Total"_ustr,
-                      Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-                          edge_index,
-                          Field<int>(std::make_shared<CornersOfEdgeCountInput>()),
-                          AttrDomain::Edge)));
+    params.set_output(
+        "Total"_ustr,
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            edge_index, Field<int>::from_input<CornersOfEdgeCountInput>(), AttrDomain::Edge));
   }
   if (params.output_is_required("Corner Index"_ustr)) {
     params.set_output("Corner Index"_ustr,
-                      Field<int>(std::make_shared<CornersOfEdgeInput>(
+                      Field<int>::from_input<CornersOfEdgeInput>(
                           edge_index,
                           params.extract_input<Field<int>>("Sort Index"_ustr),
-                          params.extract_input<Field<float>>("Weights"_ustr))));
+                          params.extract_input<Field<float>>("Weights"_ustr)));
   }
 }
 

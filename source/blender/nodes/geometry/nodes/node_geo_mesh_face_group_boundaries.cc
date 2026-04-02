@@ -103,9 +103,9 @@ class BoundaryFieldInput final : public bke::MeshFieldInput {
         VArray<bool>::from_container(std::move(boundary)), AttrDomain::Edge, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    face_set_.node().for_each_field_input_recursive(fn);
+    fn(face_set_);
   }
 
   std::optional<AttrDomain> preferred_domain(const Mesh & /*mesh*/) const override
@@ -117,8 +117,8 @@ class BoundaryFieldInput final : public bke::MeshFieldInput {
 static void node_geo_exec(GeoNodeExecParams params)
 {
   const Field<int> face_set_field = params.extract_input<Field<int>>("Face Set"_ustr);
-  Field<bool> face_set_boundaries{std::make_shared<BoundaryFieldInput>(face_set_field)};
-  params.set_output("Boundary Edges"_ustr, std::move(face_set_boundaries));
+  params.set_output("Boundary Edges"_ustr,
+                    Field<bool>::from_input<BoundaryFieldInput>(face_set_field));
 }
 
 static void node_register()

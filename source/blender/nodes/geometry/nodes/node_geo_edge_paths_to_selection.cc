@@ -88,10 +88,10 @@ class PathToEdgeSelectionFieldInput final : public bke::MeshFieldInput {
         VArray<bool>::from_container(std::move(selection)), AttrDomain::Edge, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    start_vertices_.node().for_each_field_input_recursive(fn);
-    next_vertex_.node().for_each_field_input_recursive(fn);
+    fn(start_vertices_);
+    fn(next_vertex_);
   }
 
   uint64_t hash() const override
@@ -99,7 +99,7 @@ class PathToEdgeSelectionFieldInput final : public bke::MeshFieldInput {
     return get_default_hash(start_vertices_, next_vertex_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const PathToEdgeSelectionFieldInput *other_field =
             dynamic_cast<const PathToEdgeSelectionFieldInput *>(&other))
@@ -120,9 +120,9 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   Field<bool> start_verts = params.extract_input<Field<bool>>("Start Vertices"_ustr);
   Field<int> next_vertex = params.extract_input<Field<int>>("Next Vertex Index"_ustr);
-  Field<bool> selection_field{
-      std::make_shared<PathToEdgeSelectionFieldInput>(start_verts, next_vertex)};
-  params.set_output("Selection"_ustr, std::move(selection_field));
+  params.set_output(
+      "Selection"_ustr,
+      Field<bool>::from_input<PathToEdgeSelectionFieldInput>(start_verts, next_vertex));
 }
 
 static void node_register()

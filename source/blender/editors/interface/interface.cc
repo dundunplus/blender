@@ -7087,6 +7087,8 @@ std::string button_get_link(const Button *button, bContext *C)
     MEM_delete(expr_result);
   }
   return link;
+#else
+  return "";
 #endif
 }
 
