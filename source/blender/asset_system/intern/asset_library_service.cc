@@ -143,10 +143,7 @@ AssetLibrary *AssetLibraryService::get_remote_asset_library(
   }
 
   std::unique_ptr<RemoteAssetLibrary> lib_uptr = std::make_unique<RemoteAssetLibrary>(
-      remote_url,
-      custom_library.name,
-      /* Constructor normalizes the path. */
-      custom_library.dirpath);
+      custom_library);
   AssetLibrary *lib = lib_uptr.get();
   lib->load_or_reload_catalogs();
 
@@ -176,7 +173,7 @@ AssetLibrary *AssetLibraryService::get_asset_library_on_disk(
   switch (library_type) {
     case ASSET_LIBRARY_CUSTOM:
       if (preferences_library) {
-        lib_uptr = std::make_unique<PreferencesOnDiskAssetLibrary>(name, normalized_root_path);
+        lib_uptr = std::make_unique<PreferencesOnDiskAssetLibrary>(*preferences_library);
       }
       else {
         /* Only used by unit tests. */

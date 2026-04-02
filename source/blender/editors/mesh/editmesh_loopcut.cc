@@ -718,28 +718,6 @@ static wmOperatorStatus loopcut_modal(bContext *C, wmOperator *op, const wmEvent
   return OPERATOR_RUNNING_MODAL;
 }
 
-/* for bmesh this tool is in bmesh_select.c */
-#if 0
-
-void MESH_OT_edgering_select(wmOperatorType *ot)
-{
-  /* description */
-  ot->name = "Edge Ring Select";
-  ot->idname = "MESH_OT_edgering_select";
-  ot->description = "Select an edge ring";
-
-  /* callbacks */
-  ot->invoke = ringsel_invoke;
-  ot->poll = ED_operator_editmesh_region_view3d;
-
-  /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-
-  RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
-}
-
-#endif
-
 void MESH_OT_loopcut(wmOperatorType *ot)
 {
   PropertyRNA *prop;

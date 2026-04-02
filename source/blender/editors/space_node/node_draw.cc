@@ -4659,9 +4659,15 @@ static void draw_tree_path(const bContext &C, ARegion &region)
   GPU_matrix_pop_projection();
 }
 
-static void snode_setup_v2d(SpaceNode &snode, ARegion &region, const float2 &center)
+static void snode_setup_v2d(SpaceNode &snode,
+                            ARegion &region,
+                            const float2 &center,
+                            const float size_x)
 {
   View2D &v2d = region.v2d;
+  BLI_assert(!BLI_rctf_is_empty(&v2d.cur));
+  const float aspect = BLI_rctf_size_x(&v2d.cur) / BLI_rctf_size_y(&v2d.cur);
+  BLI_rctf_resize(&v2d.cur, size_x, size_x / aspect);
 
   /* Shift view to node tree center. */
   ui::view2d_center_set(&v2d, center[0], center[1]);
@@ -4788,7 +4794,6 @@ void node_draw_space(const bContext &C, ARegion &region)
   ui::view2d_view_ortho(&v2d);
   draw_background_color();
   GPU_depth_test(GPU_DEPTH_NONE);
-  GPU_scissor_test(true);
 
   /* XXX `snode->runtime->cursor` set in coordinate-space for placing new nodes,
    * used for drawing noodles too. */
@@ -4826,17 +4831,20 @@ void node_draw_space(const bContext &C, ARegion &region)
     /* Current View2D center, will be set temporarily for parent node trees. */
     float2 center;
     ui::view2d_center_get(&v2d, &center.x, &center.y);
+    const float size_x = BLI_rctf_size_x(&v2d.cur);
 
     /* Store new view center in path and current edit tree. */
     copy_v2_v2(path->view_center, center);
+    path->view_width = size_x;
     if (snode.edittree) {
       copy_v2_v2(snode.edittree->view_center, center);
+      snode.edittree->view_width = size_x;
     }
 
     /* Top-level edit tree. */
     bNodeTree *ntree = path->nodetree;
     if (ntree) {
-      snode_setup_v2d(snode, region, center);
+      snode_setup_v2d(snode, region, center, size_x);
 
       /* Backdrop. */
       draw_nodespace_back_pix(C, region, snode, path->parent_key);

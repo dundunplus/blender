@@ -371,7 +371,7 @@ void OBJECT_OT_voxel_remesh(wmOperatorType *ot);
 void OBJECT_OT_voxel_size_edit(wmOperatorType *ot);
 void OBJECT_OT_quadriflow_remesh(wmOperatorType *ot);
 
-/* object_transfer_data.c */
+/* object_data_transfer.cc */
 
 /**
  * Transfer mesh data from active to selected objects.

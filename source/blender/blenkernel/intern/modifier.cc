@@ -92,7 +92,7 @@ void BKE_modifier_init()
   ModifierData *md;
 
   /* Initialize modifier types */
-  modifier_type_init(modifier_types); /* MOD_utils.c */
+  modifier_type_init(modifier_types); /* MOD_util.cc */
 
   /* Initialize global common storage used for virtual modifier list. */
   md = BKE_modifier_new(eModifierType_Armature);

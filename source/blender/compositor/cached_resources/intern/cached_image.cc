@@ -363,6 +363,7 @@ CachedImage::CachedImage(Context &context,
             });
           });
     }
+    buffer_result.release();
   }
 
   if (image_buffer->flags & IB_has_display_window) {

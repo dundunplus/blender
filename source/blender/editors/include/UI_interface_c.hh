@@ -3050,7 +3050,7 @@ void butstore_register(ButStore *bs_handle, Button **but_p);
 bool butstore_register_update(Block *block, Button *but_dst, const Button *but_src);
 void butstore_unregister(ButStore *bs_handle, Button **but_p);
 
-/* ui_interface_region_tooltip.c */
+/* interface_region_tooltip.cc */
 
 /**
  * \param is_quick_tip: See #button_func_quick_tooltip_set for what a quick tooltip is.

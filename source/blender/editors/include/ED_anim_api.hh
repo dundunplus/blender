@@ -629,7 +629,7 @@ bAction *ANIM_active_action_from_area(const Main &bmain,
 
 /* ************************************************ */
 /* ANIMATION CHANNELS LIST */
-/* anim_channels_*.c */
+/* anim_channels_*.cc */
 
 /** \} */
 

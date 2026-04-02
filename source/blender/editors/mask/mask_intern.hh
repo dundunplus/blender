@@ -94,7 +94,7 @@ void ED_mask_layer_select_set(MaskLayer *mask_layer, bool do_select);
 void ED_mask_select_toggle_all(Mask *mask, int action);
 void ED_mask_select_flush_all(Mask *mask);
 
-/* mask_editor.c */
+/* mask_edit.cc */
 
 /* Generalized solution for preserving editor viewport when making changes while lock-to-selection
  * is enabled.

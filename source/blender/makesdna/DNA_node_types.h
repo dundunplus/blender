@@ -1872,6 +1872,10 @@ struct bNodeTree {
   struct bGPdata *gpd = nullptr;
   /** Node tree stores its own offset for consistent editor view. */
   float view_center[2] = {};
+  /** Width of the current view. Used to store and set zoom level. */
+  float view_width = 0.0f;
+
+  char _pad[4];
 
   ListBaseT<bNode> nodes;
   ListBaseT<bNodeLink> links;

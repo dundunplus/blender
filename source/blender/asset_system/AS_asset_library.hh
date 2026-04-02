@@ -89,11 +89,13 @@ class AssetLibrary {
   std::unique_ptr<AssetCatalogService> catalog_service_;
   Mutex catalog_service_mutex_;
 
+  /* TODO: Add virtual getter. */
   std::optional<eAssetImportMethod> import_method_;
   /** Assets owned by this library may be imported with a different method than set in
    * #import_method_ above, it's just a default. */
   bool may_override_import_method_ = false;
 
+  /* TODO: Add virtual getter. */
   bool use_relative_path_ = true;
 
   bCallbackFuncStore on_save_callback_store_{};

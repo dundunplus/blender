@@ -27,7 +27,7 @@ struct wmOperator;
 struct wmOperatorType;
 struct wmWindowManager;
 
-/* undo.c */
+/* ed_undo.cc */
 
 /**
  * Run from the main event loop, basic checks that undo is left in a correct state.
