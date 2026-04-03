@@ -44,6 +44,8 @@ BLOCKLIST = [
     "principled_bsdf_transmission.blend",
     # Blocked due to platform-dependent noise differences (likely floating-point/fast-math differences).
     "raycast_bump.blend",
+    # Blocked due to platform-dependent uninitialized pixels.
+    "image_mapping_udim.blend",
 ]
 
 BLOCKLIST_METAL = [
@@ -128,6 +130,9 @@ def setup():
         ray_tracing.resolution_scale = "1"
         ray_tracing.screen_trace_quality = 1.0
         ray_tracing.screen_trace_thickness = 1.0
+
+        # Fast GI
+        eevee.fast_gi_quality = 0.8
 
         # Light-probes
         eevee.gi_cubemap_resolution = '256'

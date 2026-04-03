@@ -85,7 +85,14 @@ template<typename T> struct BandL0 {
     return result;
   }
 
-  static BandL0<T> mul(BandL0<T> a, float b)
+  static BandL0<T> mul_scalar(BandL0<T> a, float b)
+  {
+    BandL0<T> result;
+    result.M0 = a.M0 * b;
+    return result;
+  }
+
+  static BandL0<T> mul(BandL0<T> a, T b)
   {
     BandL0<T> result;
     result.M0 = a.M0 * b;
@@ -125,7 +132,16 @@ template<typename T> struct BandL1 {
     return result;
   }
 
-  static BandL1<T> mul(BandL1<T> a, float b)
+  static BandL1<T> mul_scalar(BandL1<T> a, float b)
+  {
+    BandL1<T> result;
+    result.Mn1 = a.Mn1 * b;
+    result.M0 = a.M0 * b;
+    result.Mp1 = a.Mp1 * b;
+    return result;
+  }
+
+  static BandL1<T> mul(BandL1<T> a, T b)
   {
     BandL1<T> result;
     result.Mn1 = a.Mn1 * b;
@@ -364,6 +380,14 @@ SphericalHarmonicL1<float4> madd(SphericalHarmonicL1<float4> a,
 SphericalHarmonicL1<float4> mul(SphericalHarmonicL1<float4> a, float b)
 {
   SphericalHarmonicL1<float4> result;
+  result.L0 = BandL0<float4>::mul_scalar(a.L0, b);
+  result.L1 = BandL1<float4>::mul_scalar(a.L1, b);
+  return result;
+}
+
+SphericalHarmonicL1<float4> mul(SphericalHarmonicL1<float4> a, float4 b)
+{
+  SphericalHarmonicL1<float4> result;
   result.L0 = BandL0<float4>::mul(a.L0, b);
   result.L1 = BandL1<float4>::mul(a.L1, b);
   return result;
@@ -479,7 +503,7 @@ SphericalHarmonicL1<float4> dering(SphericalHarmonicL1<float4> sh)
    * Otherwise this can result in color drifting. */
   float fac = reduce_min(float3(fac_r, fac_g, fac_b));
   if (fac < 1.0f) {
-    sh.L1 = BandL1<float4>::mul(sh.L1, fac);
+    sh.L1 = BandL1<float4>::mul(sh.L1, float4(fac));
   }
   return sh;
 }

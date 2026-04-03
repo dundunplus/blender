@@ -170,25 +170,25 @@ class QuickFur(ObjectModeOperator, Operator):
 
             generate_modifier = curves_object.modifiers.new(name=data_("Generate"), type='NODES')
             generate_modifier.node_group = node_groups.generate
-            generate_modifier["Input_2"] = mesh_object
-            generate_modifier["Input_18_attribute_name"] = curves.surface_uv_map
-            generate_modifier["Input_12"] = True
-            generate_modifier["Input_20"] = self.length
-            generate_modifier["Input_22"] = material
-            generate_modifier["Input_15"] = density * 0.01
+            generate_modifier.properties.inputs.Input_2.value = mesh_object
+            generate_modifier.properties.inputs.Input_18.attribute_name = curves.surface_uv_map
+            generate_modifier.properties.inputs.Input_12.value = True
+            generate_modifier.properties.inputs.Input_20.value = self.length
+            generate_modifier.properties.inputs.Input_22.value = material
+            generate_modifier.properties.inputs.Input_15.value = density * 0.01
 
             radius_modifier = curves_object.modifiers.new(name=data_("Set Hair Curve Profile"), type='NODES')
             radius_modifier.node_group = node_groups.radius
-            radius_modifier["Input_3"] = self.radius
+            radius_modifier.properties.inputs.Input_3.value = self.radius
 
             interpolate_modifier = curves_object.modifiers.new(name=data_("Interpolate Hair Curves"), type='NODES')
             interpolate_modifier.node_group = node_groups.interpolate
-            interpolate_modifier["Input_2"] = mesh_object
-            interpolate_modifier["Input_18_attribute_name"] = curves.surface_uv_map
-            interpolate_modifier["Input_12"] = True
-            interpolate_modifier["Input_15"] = density
-            interpolate_modifier["Input_17"] = self.view_percentage
-            interpolate_modifier["Input_24"] = True
+            interpolate_modifier.properties.inputs.Input_2.value = mesh_object
+            interpolate_modifier.properties.inputs.Input_18.attribute_name = curves.surface_uv_map
+            interpolate_modifier.properties.inputs.Input_12.value = True
+            interpolate_modifier.properties.inputs.Input_15.value = density
+            interpolate_modifier.properties.inputs.Input_17.value = self.view_percentage
+            interpolate_modifier.properties.inputs.Input_24.value = True
 
             if self.use_noise:
                 noise_modifier = curves_object.modifiers.new(name=data_("Hair Curves Noise"), type='NODES')
