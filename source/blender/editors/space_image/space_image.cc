@@ -296,7 +296,8 @@ static void image_refresh(const bContext *C, ScrArea *area)
     if (scene->compositing_node_group) {
       Mask *mask = ED_space_image_get_mask(sima);
       if (mask) {
-        ED_node_compositor_job(C);
+        ED_node_compositor_job(
+            CTX_data_main(C), CTX_wm_window(C), CTX_data_scene(C), CTX_data_view_layer(C));
       }
     }
   }

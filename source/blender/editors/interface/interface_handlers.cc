@@ -11092,7 +11092,9 @@ static int handle_menu_event(bContext *C,
     }
   }
 #endif
-  retval = handle_menu_mmb_event(C, event, menu, level, is_parent_menu);
+  if (retval == WM_UI_HANDLER_CONTINUE) {
+    retval = handle_menu_mmb_event(C, event, menu, level, is_parent_menu);
+  }
   if (retval != WM_UI_HANDLER_CONTINUE) {
   }
   else if (but && button_modal_state(but->active->state)) {

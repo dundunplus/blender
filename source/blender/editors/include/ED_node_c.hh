@@ -15,8 +15,10 @@ struct ID;
 struct Main;
 struct Scene;
 struct SpaceNode;
+struct wmWindow;
 struct Tex;
 struct View2D;
+struct ViewLayer;
 struct bContext;
 struct bNode;
 struct bNodeTree;
@@ -84,9 +86,9 @@ void ED_node_set_active(
 /* `node_compositor_job.cc` */
 
 /**
- * Launch a compositor job for the scene of the given context.
+ * Launch a compositor job in the given window for the given scene and view layer.
  */
-void ED_node_compositor_job(const bContext *C);
+void ED_node_compositor_job(Main *bmain, wmWindow *window, Scene *scene, ViewLayer *view_layer);
 
 /* `node_ops.cc` */
 

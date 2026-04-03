@@ -2079,13 +2079,6 @@ static bool rna_NodesModifier_is_input_used(PointerRNA nmd_ptr,
   return false;
 }
 
-static IDProperty **rna_NodesModifier_settings_properties(PointerRNA *ptr)
-{
-  NodesModifierData *nmd = static_cast<NodesModifierData *>(ptr->data);
-  NodesModifierSettings *settings = &nmd->settings;
-  return &settings->properties;
-}
-
 static void rna_Lineart_start_level_set(PointerRNA *ptr, int value)
 {
   GreasePencilLineartModifierData *lmd = static_cast<GreasePencilLineartModifierData *>(ptr->data);
@@ -8165,7 +8158,6 @@ static void rna_def_modifier_nodes(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "NodesModifier", "Modifier");
   RNA_def_struct_ui_text(srna, "Nodes Modifier", "");
   RNA_def_struct_sdna(srna, "NodesModifierData");
-  RNA_def_struct_idprops_func(srna, "rna_NodesModifier_settings_properties");
   RNA_def_struct_ui_icon(srna, ICON_GEOMETRY_NODES);
 
   RNA_define_lib_overridable(true);

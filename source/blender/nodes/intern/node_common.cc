@@ -55,6 +55,8 @@
 
 #include "ED_node.hh"
 
+#include "DEG_depsgraph_query.hh"
+
 #include "node_common.h"
 #include "node_util.hh"
 
@@ -505,9 +507,18 @@ void node_group_declare(NodeDeclarationBuilder &b)
   if (!group) {
     return;
   }
-  if (ID_IS_LINKED(&group->id) && (group->id.tag & ID_TAG_MISSING)) {
-    r_declaration.skip_updating_sockets = true;
-    return;
+  if (ID_IS_LINKED(&group->id)) {
+    if (ID_MISSING(&group->id)) {
+      r_declaration.skip_updating_sockets = true;
+      return;
+    }
+    /* Currently the missing flag is only set on original data. */
+    if (const ID *orig_group = DEG_get_original_id(&group->id)) {
+      if (ID_MISSING(orig_group)) {
+        r_declaration.skip_updating_sockets = true;
+        return;
+      }
+    }
   }
   r_declaration.skip_updating_sockets = false;
 

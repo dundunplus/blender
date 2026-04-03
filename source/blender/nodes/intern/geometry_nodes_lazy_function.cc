@@ -4274,6 +4274,9 @@ ensure_geometry_nodes_lazy_function_graph_impl(const bNodeTree &btree)
       [](bNodeTree *btree) { BKE_id_free(nullptr, &btree->id); }};
   lf_graph_info->tree = btree_copy;
 
+  btree_copy->ensure_topology_cache();
+  BLI_assert(btree.all_sockets().size() == btree_copy->all_sockets().size());
+
   btree_copy->runtime->self_geometry_nodes_lazy_function_graph_info = lf_graph_info.get();
 
   GeometryNodesLazyFunctionBuilder builder{lf_graph_info};
