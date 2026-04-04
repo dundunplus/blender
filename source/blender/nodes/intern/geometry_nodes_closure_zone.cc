@@ -357,18 +357,6 @@ class LazyFunctionForEvaluateClosureNode : public LazyFunction {
     auto local_user_data = *static_cast<GeoNodesLocalUserData *>(context.local_user_data);
 
     if (!eval_storage.graph_executor) {
-      if (this->is_recursive_call(user_data)) {
-        if (geo_eval_log::GeoTreeLogger *tree_logger = local_user_data.try_get_tree_logger(
-                user_data))
-        {
-          tree_logger->node_warnings.append(
-              *tree_logger->allocator,
-              {bnode_.identifier,
-               {NodeWarningType::Error, TIP_("Recursive closure is not allowed")}});
-        }
-        this->set_default_outputs(params);
-        return;
-      }
       eval_storage.closure = params.extract_input<bke::SocketValueVariant>(indices_.inputs.main[0])
                                  .extract<ClosurePtr>();
       if (eval_storage.closure) {
