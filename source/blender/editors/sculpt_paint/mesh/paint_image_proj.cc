@@ -6786,7 +6786,7 @@ static void default_paint_slot_color_get(int layer_type, Material *ma, float col
         /* An existing material or Principled BSDF node could not be found.
          * Copy default color values from a default Principled BSDF instead. */
         ntree = bke::node_tree_add_tree(
-            nullptr, "Temporary Shader Nodetree", ntreeType_Shader->idname);
+            nullptr, "Temporary Shader Nodetree", ntreeType_Shader->idname.ref());
         in_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_BSDF_PRINCIPLED);
       }
       bNodeSocket *in_sock = bke::node_find_socket(

@@ -59,9 +59,10 @@ static void move_bundle_socket_value_to_bake_item(
       if (std::unique_ptr<BakeItem> bake_item = move_common_socket_value_to_bake_item(
               *item_socket_value->type, value_variant, std::nullopt, r_geometry_bake_items))
       {
-        bundle_bake_item.items.append(BundleBakeItem::Item{
-            UString(bundle_item.key),
-            BundleBakeItem::SocketValue{item_socket_value->type->idname, std::move(bake_item)}});
+        bundle_bake_item.items.append(
+            BundleBakeItem::Item{UString(bundle_item.key),
+                                 BundleBakeItem::SocketValue{item_socket_value->type->idname.ref(),
+                                                             std::move(bake_item)}});
       }
     }
     else if (const auto *internal_value = std::get_if<nodes::BundleItemInternalValue>(

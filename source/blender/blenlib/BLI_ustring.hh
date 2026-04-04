@@ -81,6 +81,13 @@ class UString {
   {
     return ustr_.empty();
   }
+
+  char operator[](const int64_t i) const
+  {
+    /* Accessing null char at end is allowed too. */
+    BLI_assert(i >= 0 && i <= this->size());
+    return ustr_[i];
+  }
 };
 
 /**

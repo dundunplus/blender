@@ -163,7 +163,7 @@ using SocketMakeGeometryNodesInputSrnaFunction =
  */
 struct bNodeSocketType {
   /** Identifier name. */
-  std::string idname;
+  UString idname;
   /** Type label. */
   std::string label;
   /** Sub-type label. */
@@ -244,7 +244,7 @@ struct NodeInsertLinkParams {
  * implementing the node behavior.
  */
 struct bNodeType {
-  std::string idname;
+  UString idname;
   /** See bNode::type_legacy. */
   int type_legacy;
 
@@ -500,8 +500,8 @@ enum class NodeColorTag {
 using bNodeClassCallback = void (*)(void *calldata, int nclass, StringRefNull name);
 
 struct bNodeTreeType {
-  int type = 0;       /* type identifier */
-  std::string idname; /* identifier name */
+  int type = 0;   /* type identifier */
+  UString idname; /* identifier name */
 
   /* The ID name of group nodes for this type. */
   std::string group_idname;
@@ -636,10 +636,10 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree);
  * \{ */
 
 bNodeType *node_type_find(StringRef idname);
-StringRefNull node_type_find_alias(StringRefNull alias);
+UString node_type_find_alias(UString alias);
 void node_register_type(bNodeType &ntype);
 void node_unregister_type(bNodeType &ntype);
-void node_register_alias(bNodeType &nt, StringRef alias);
+void node_register_alias(bNodeType &nt, UString alias);
 
 /**
  * Set the node type \a idname and \a type_legacy to "undefined" to prevent future access to broken

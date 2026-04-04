@@ -136,8 +136,11 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
   }
 
   block_layout_resolve(block);
-  const int direction = (pup->panel_type && (pup->panel_type->popup_draw_direction ==
-                                             PopupAttachDirection::Horizontal)) ?
+  const ButtonMenu *popover_button = pup->but && pup->but->type == ButtonType::Popover ?
+                                         static_cast<ButtonMenu *>(pup->but) :
+                                         nullptr;
+  const int direction = (popover_button && (popover_button->popup_attach_direction ==
+                                            PopupAttachDirection::Horizontal)) ?
                             UI_DIR_LEFT :
                             UI_DIR_DOWN | UI_DIR_CENTER_X;
   block_direction_set(block, direction);

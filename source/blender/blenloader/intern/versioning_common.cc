@@ -282,7 +282,7 @@ bNode &version_node_add_unknown(bNodeTree &ntree,
 {
   using namespace blender::bke;
 
-  ntype.idname = idname;
+  ntype.idname = UString(idname);
   ntype.type_legacy = legacy_type;
   ntype.height = height;
   ntype.width = width;

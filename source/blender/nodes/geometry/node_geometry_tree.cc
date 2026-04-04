@@ -146,7 +146,7 @@ void register_node_tree_type_geo()
 {
   bke::bNodeTreeType *tt = ntreeType_Geometry = MEM_new<bke::bNodeTreeType>(__func__);
   tt->type = NTREE_GEOMETRY;
-  tt->idname = "GeometryNodeTree";
+  tt->idname = "GeometryNodeTree"_ustr;
   tt->group_idname = "GeometryNodeGroup";
   tt->ui_name = N_("Geometry Node Editor");
   tt->ui_icon = ICON_GEOMETRY_NODES;

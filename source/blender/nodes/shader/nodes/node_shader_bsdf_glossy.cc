@@ -120,7 +120,7 @@ void register_node_type_sh_bsdf_glossy()
 
   /* Needed to preserve API compatibility with older versions which had separate
    * Glossy and Anisotropic nodes. */
-  bke::node_register_alias(ntype, "ShaderNodeBsdfGlossy");
+  bke::node_register_alias(ntype, "ShaderNodeBsdfGlossy"_ustr);
 }
 
 }  // namespace blender

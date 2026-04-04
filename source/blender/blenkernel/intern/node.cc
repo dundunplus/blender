@@ -2562,9 +2562,9 @@ void node_tree_set_type(bNodeTree &ntree)
 }
 
 template<typename T> struct NodeStructIDNameGetter {
-  StringRef operator()(const T *value) const
+  UString operator()(const T *value) const
   {
-    return StringRef(value->idname);
+    return value->idname;
   }
 };
 
@@ -2582,7 +2582,7 @@ static auto &get_node_type_map()
 
 static auto &get_node_type_alias_map()
 {
-  static Map<std::string, std::string> map;
+  static Map<UString, UString> map;
   return map;
 }
 
@@ -2594,7 +2594,7 @@ static auto &get_socket_type_map()
 
 bNodeTreeType *node_tree_type_find(const StringRef idname)
 {
-  bNodeTreeType *const *value = get_node_tree_type_map().lookup_key_ptr_as(idname);
+  bNodeTreeType *const *value = get_node_tree_type_map().lookup_key_ptr_as(UString(idname));
   if (!value) {
     return nullptr;
   }
@@ -2680,16 +2680,16 @@ Span<bNodeTreeType *> node_tree_types_get()
 
 bNodeType *node_type_find(const StringRef idname)
 {
-  bNodeType *const *value = get_node_type_map().lookup_key_ptr_as(idname);
+  bNodeType *const *value = get_node_type_map().lookup_key_ptr_as(UString(idname));
   if (!value) {
     return nullptr;
   }
   return *value;
 }
 
-StringRefNull node_type_find_alias(const StringRefNull alias)
+UString node_type_find_alias(const UString alias)
 {
-  const std::string *idname = get_node_type_alias_map().lookup_ptr_as(alias);
+  const UString *idname = get_node_type_alias_map().lookup_ptr_as(alias);
   if (!idname) {
     return alias;
   }
@@ -2718,7 +2718,7 @@ static void node_free_type(void *nodetype_v)
 void node_register_type(bNodeType &nt)
 {
   /* debug only: basic verification of registered types */
-  BLI_assert(!nt.idname.empty());
+  BLI_assert(!nt.idname.is_empty());
   BLI_assert(nt.poll != nullptr);
 
   RNA_def_struct_ui_text(nt.rna_ext.srna, nt.ui_name.c_str(), nt.ui_description.c_str());
@@ -2751,7 +2751,7 @@ Span<bNodeType *> node_types_get()
   return get_node_type_map().as_span();
 }
 
-void node_register_alias(bNodeType &nt, const StringRef alias)
+void node_register_alias(bNodeType &nt, const UString alias)
 {
   get_node_type_alias_map().add_new(alias, nt.idname);
 }
@@ -2763,7 +2763,7 @@ Span<bNodeSocketType *> node_socket_types_get()
 
 bNodeSocketType *node_socket_type_find(const StringRef idname)
 {
-  bNodeSocketType *const *value = get_socket_type_map().lookup_key_ptr_as(idname);
+  bNodeSocketType *const *value = get_socket_type_map().lookup_key_ptr_as(UString(idname));
   if (!value) {
     return nullptr;
   }
@@ -4045,7 +4045,7 @@ bNode *node_add_node(const bContext *C,
 
 bNode *node_add_static_node(const bContext *C, bNodeTree &ntree, const int type)
 {
-  std::optional<StringRefNull> idname;
+  std::optional<UString> idname;
 
   for (bNodeType *ntype : node_types_get()) {
     /* Do an extra poll here, because some int types are used
@@ -4064,7 +4064,7 @@ bNode *node_add_static_node(const bContext *C, bNodeTree &ntree, const int type)
     CLOG_ERROR(&LOG, "static node type %d undefined", type);
     return nullptr;
   }
-  return node_add_node(C, ntree, *idname);
+  return node_add_node(C, ntree, idname->ref());
 }
 
 static void node_socket_copy(bNodeSocket *sock_dst, const bNodeSocket *sock_src, const int flag)
@@ -5659,7 +5659,7 @@ static int16_t get_next_auto_legacy_type()
 
 void node_type_base(bNodeType &ntype, std::string idname, std::optional<int16_t> legacy_type)
 {
-  ntype.idname = std::move(idname);
+  ntype.idname = UString(idname);
 
   if (!legacy_type.has_value()) {
     /* Still auto-generate a legacy type for this node type if none was specified. This is
@@ -5693,7 +5693,7 @@ void node_type_base_custom(bNodeType &ntype,
                            const StringRefNull enum_name,
                            const short nclass)
 {
-  ntype.idname = idname;
+  ntype.idname = UString(idname);
   ntype.type_legacy = NODE_CUSTOM;
   ntype.ui_name = name;
   ntype.nclass = nclass;

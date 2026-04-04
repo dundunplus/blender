@@ -107,7 +107,7 @@ bNode &LinkSearchOpParams::add_node(StringRef idname)
 
 bNode &LinkSearchOpParams::add_node(const bke::bNodeType &node_type)
 {
-  return this->add_node(node_type.idname);
+  return this->add_node(node_type.idname.ref());
 }
 
 void LinkSearchOpParams::update_and_connect_available_socket(bNode &new_node, UString socket_name)

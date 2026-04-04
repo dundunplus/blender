@@ -995,7 +995,7 @@ static bke::bNodeSocketType *make_standard_socket_type(
 
   stype = MEM_new<bke::bNodeSocketType>(__func__);
   stype->free_self = [](bke::bNodeSocketType *type) { MEM_delete(type); };
-  stype->idname = socket_idname;
+  stype->idname = UString(socket_idname);
   stype->label = socket_label;
   stype->subtype_label = socket_subtype_label;
 
@@ -1039,7 +1039,7 @@ static bke::bNodeSocketType *make_socket_type_virtual()
 
   stype = MEM_new<bke::bNodeSocketType>(__func__);
   stype->free_self = [](bke::bNodeSocketType *type) { MEM_delete(type); };
-  stype->idname = socket_idname;
+  stype->idname = UString(socket_idname);
 
   /* set the RNA type
    * uses the exact same identifier as the socket type idname */

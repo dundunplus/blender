@@ -38,7 +38,6 @@ class AssetRepresentation;
 namespace ui {
 struct Layout;
 struct Block;
-enum class PopupAttachDirection : int8_t;
 }  // namespace ui
 
 struct ARegion;
@@ -412,7 +411,6 @@ struct PanelType {
   /** Sub panels. */
   PanelType *parent;
   ListBaseT<LinkData> children;
-  ui::PopupAttachDirection popup_draw_direction;
   /** RNA integration. */
   ExtensionRNA rna_ext;
 };

@@ -500,6 +500,14 @@ struct ButtonHotkeyEvent : public Button {
 };
 
 /**
+ * Derived struct for #ButtonType::Menu, #ButtonType::Block, #ButtonType::Popover or
+ * ButtonType::Pulldown.
+ */
+struct ButtonMenu : public Button {
+  PopupAttachDirection popup_attach_direction = PopupAttachDirection::Vertical;
+};
+
+/**
  * Additional, superimposed icon for a button, invoking an operator.
  */
 struct ButtonExtraOpIcon {
