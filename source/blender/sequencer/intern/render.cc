@@ -109,7 +109,7 @@ void seq_imbuf_assign_spaces(const Scene *scene, ImBuf *ibuf)
     IMB_colormanagement_assign_byte_colorspace(ibuf, scene->sequencer_colorspace_settings.name);
   }
 #endif
-  if (ibuf->float_buffer.data != nullptr) {
+  if (ibuf->float_data() != nullptr) {
     IMB_colormanagement_assign_float_colorspace(ibuf, scene->sequencer_colorspace_settings.name);
   }
 }
@@ -118,11 +118,11 @@ static void ensure_ibuf_is_color_space(ImBuf *ibuf, bool make_float, const char 
 {
   BLI_assert(ibuf != nullptr);
   /* No pixels: nothing to do. */
-  if (ibuf->float_buffer.data == nullptr && ibuf->byte_buffer.data == nullptr) {
+  if (ibuf->float_data() == nullptr && ibuf->byte_data() == nullptr) {
     return;
   }
 
-  if (ibuf->float_buffer.data == nullptr) {
+  if (ibuf->float_data() == nullptr) {
     /* Input image contains byte pixels. */
     /* Not requested to become float and already in the needed colorspace: nothing to do. */
     const char *from_colorspace = IMB_colormanagement_get_byte_colorspace(ibuf);
@@ -132,8 +132,8 @@ static void ensure_ibuf_is_color_space(ImBuf *ibuf, bool make_float, const char 
 
     /* Turn into a float and convert colorspace. */
     IMB_alloc_float_pixels(ibuf, 4, false);
-    IMB_colormanagement_transform_byte_to_float(ibuf->float_buffer.data,
-                                                ibuf->byte_buffer.data,
+    IMB_colormanagement_transform_byte_to_float(ibuf->float_data_for_write(),
+                                                ibuf->byte_data_for_write(),
                                                 ibuf->x,
                                                 ibuf->y,
                                                 ibuf->channels,
@@ -151,10 +151,10 @@ static void ensure_ibuf_is_color_space(ImBuf *ibuf, bool make_float, const char 
     }
 
     /* Discard byte pixels if there are any. */
-    if (ibuf->byte_buffer.data != nullptr) {
+    if (ibuf->byte_data() != nullptr) {
       IMB_free_byte_pixels(ibuf);
     }
-    IMB_colormanagement_transform_float(ibuf->float_buffer.data,
+    IMB_colormanagement_transform_float(ibuf->float_data_for_write(),
                                         ibuf->x,
                                         ibuf->y,
                                         ibuf->channels,
@@ -174,7 +174,7 @@ void ensure_ibuf_is_sequencer_space(const Scene *scene, ImBuf *ibuf, bool make_f
 void ensure_ibuf_is_linear_space(ImBuf *ibuf, bool make_float)
 {
   /* Not requested to make float, and only have byte pixels: do nothing. */
-  if (!make_float && !ibuf->float_buffer.data) {
+  if (!make_float && !ibuf->float_data()) {
     return;
   }
 
@@ -543,9 +543,9 @@ static void multiply_ibuf(ImBuf *ibuf, const float fmul, const bool multiply_alp
   BLI_assert_msg(ibuf->channels == 0 || ibuf->channels == 4,
                  "Sequencer only supports 4 channel images");
   const size_t pixel_count = IMB_get_pixel_count(ibuf);
-  if (ibuf->byte_buffer.data != nullptr) {
+  if (uchar *byte_data = ibuf->byte_data_for_write()) {
     threading::parallel_for(IndexRange(pixel_count), 64 * 1024, [&](IndexRange range) {
-      uchar *ptr = ibuf->byte_buffer.data + range.first() * 4;
+      uchar *ptr = byte_data + range.first() * 4;
       const int imul = int(256.0f * fmul);
       for ([[maybe_unused]] const int64_t i : range) {
         ptr[0] = min_ii((imul * ptr[0]) >> 8, 255);
@@ -559,9 +559,9 @@ static void multiply_ibuf(ImBuf *ibuf, const float fmul, const bool multiply_alp
     });
   }
 
-  if (ibuf->float_buffer.data != nullptr) {
+  if (float *float_data = ibuf->float_data_for_write()) {
     threading::parallel_for(IndexRange(pixel_count), 64 * 1024, [&](IndexRange range) {
-      float *ptr = ibuf->float_buffer.data + range.first() * 4;
+      float *ptr = float_data + range.first() * 4;
       for ([[maybe_unused]] const int64_t i : range) {
         ptr[0] *= fmul;
         ptr[1] *= fmul;
@@ -601,11 +601,11 @@ static ImBuf *input_preprocess(const RenderData *context,
   }
 
   if (make_float) {
-    if (!ibuf->float_buffer.data) {
+    if (!ibuf->float_data()) {
       ibuf = IMB_makeSingleUser(ibuf);
       ensure_ibuf_is_sequencer_space(scene, ibuf, true);
     }
-    if (ibuf->byte_buffer.data) {
+    if (ibuf->byte_data()) {
       IMB_free_byte_pixels(ibuf);
     }
   }
@@ -648,7 +648,7 @@ static ImBuf *input_preprocess(const RenderData *context,
     const int x = context->rectx;
     const int y = context->recty;
     ImBuf *transformed_ibuf = IMB_allocImBuf(
-        x, y, 32, ibuf->float_buffer.data ? IB_float_data : IB_byte_data);
+        x, y, 32, ibuf->float_data() ? IB_float_data : IB_byte_data);
 
     /* Note: calculate matrix again; modifiers can actually change the image size. */
     float3x3 matrix = calc_strip_transform_matrix(scene,
@@ -812,11 +812,11 @@ void convert_multilayer_ibuf(ImBuf *ibuf)
 
   /* Combined layer might be non-4 channels, however the rest
    * of sequencer assumes RGBA everywhere. Convert to 4 channel if needed. */
-  if (ibuf->float_buffer.data != nullptr && ibuf->channels != 4) {
+  if (ibuf->float_data() != nullptr && ibuf->channels != 4) {
     float *dst = MEM_new_array_uninitialized<float>(4 * size_t(ibuf->x) * size_t(ibuf->y),
                                                     __func__);
     IMB_buffer_float_from_float_threaded(dst,
-                                         ibuf->float_buffer.data,
+                                         ibuf->float_data(),
                                          ibuf->channels,
                                          IB_PROFILE_LINEAR_RGB,
                                          IB_PROFILE_LINEAR_RGB,
@@ -864,7 +864,7 @@ static ImBuf *seq_render_image_strip_view(const RenderData *context,
   convert_multilayer_ibuf(ibuf);
 
   /* We don't need both (speed reasons)! */
-  if (ibuf->float_buffer.data != nullptr && ibuf->byte_buffer.data != nullptr) {
+  if (ibuf->float_data() != nullptr && ibuf->byte_data() != nullptr) {
     IMB_free_byte_pixels(ibuf);
   }
 
@@ -1068,7 +1068,7 @@ static ImBuf *seq_render_movie_strip_view(const RenderData *context,
   }
 
   /* We don't need both (speed reasons)! */
-  if (ibuf->float_buffer.data != nullptr && ibuf->byte_buffer.data != nullptr) {
+  if (ibuf->float_data() != nullptr && ibuf->byte_data() != nullptr) {
     IMB_free_byte_pixels(ibuf);
   }
 
@@ -1259,8 +1259,8 @@ ImBuf *seq_render_mask(Depsgraph *depsgraph,
   const float y_inv = 1.0f / float(height);
   const float x_px_ofs = x_inv * 0.5f;
   const float y_px_ofs = y_inv * 0.5f;
-  float *dst_float = ibuf->float_buffer.data;
-  uchar *dst_byte = ibuf->byte_buffer.data;
+  float *dst_float = ibuf->float_data_for_write();
+  uchar *dst_byte = ibuf->byte_data_for_write();
   threading::parallel_for(IndexRange(height), 16, [&](const IndexRange y_range) {
     const int64_t pixel_offset = y_range.first() * width * 4;
     float *ptr_float = dst_float + pixel_offset;
@@ -1508,18 +1508,18 @@ static ImBuf *seq_render_scene_strip_ex(const RenderData *context,
 
       /* TODO: Share the pixel data with the original image buffer from the render result using
        * implicit sharing. */
-      if (rres.ibuf && rres.ibuf->float_buffer.data) {
+      if (rres.ibuf && rres.ibuf->float_data()) {
         ibufs_arr[view_id] = IMB_allocImBuf(
             rres.rectx, rres.recty, 32, IB_float_data | IB_uninitialized_pixels);
-        memcpy(ibufs_arr[view_id]->float_buffer.data,
-               rres.ibuf->float_buffer.data,
+        memcpy(ibufs_arr[view_id]->float_data_for_write(),
+               rres.ibuf->float_data(),
                sizeof(float[4]) * rres.rectx * rres.recty);
       }
-      else if (rres.ibuf && rres.ibuf->byte_buffer.data) {
+      else if (rres.ibuf && rres.ibuf->byte_data()) {
         ibufs_arr[view_id] = IMB_allocImBuf(
             rres.rectx, rres.recty, 32, IB_byte_data | IB_uninitialized_pixels);
-        memcpy(ibufs_arr[view_id]->byte_buffer.data,
-               rres.ibuf->byte_buffer.data,
+        memcpy(ibufs_arr[view_id]->byte_data_for_write(),
+               rres.ibuf->byte_data(),
                4 * rres.rectx * rres.recty);
       }
       else {
@@ -1890,7 +1890,7 @@ static ImBuf *seq_render_strip_stack(const RenderData *context,
            * create one that is transparent black. Extra optimization for an alpha over strip at
            * the bottom, we can just return it instead of blending with black. */
           ImBuf *ibuf2 = seq_render_strip(context, state, strip, timeline_frame);
-          const bool use_float = ibuf2 && ibuf2->float_buffer.data;
+          const bool use_float = ibuf2 && ibuf2->float_data();
           ImBuf *ibuf1 = IMB_allocImBuf(
               context->rectx, context->recty, 32, use_float ? IB_float_data : IB_byte_data);
           seq_imbuf_assign_spaces(context->scene, ibuf1);

@@ -58,8 +58,7 @@ static void maskmodifier_apply(ModifierApplyContext &context,
                                int timeline_frame)
 {
   ImBuf *mask = modifier_render_mask_input(context, *smd, timeline_frame);
-  if (mask != nullptr && (mask->byte_buffer.data != nullptr || mask->float_buffer.data != nullptr))
-  {
+  if (mask != nullptr && (mask->byte_data() != nullptr || mask->float_data() != nullptr)) {
     ensure_ibuf_is_sequencer_space(context.render_data.scene, context.image, false);
 
     MaskApplyOp op;

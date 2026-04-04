@@ -31,7 +31,7 @@ static bool imb_is_grayscale_texture_format_compatible(const ImBuf *ibuf)
     return false;
   }
 
-  if (ibuf->byte_buffer.data && !ibuf->float_buffer.data) {
+  if (ibuf->byte_data() && !ibuf->float_data()) {
 
     if (IMB_colormanagement_space_is_srgb(ibuf->byte_buffer.colorspace) ||
         IMB_colormanagement_space_is_scene_linear(ibuf->byte_buffer.colorspace))
@@ -61,7 +61,7 @@ static void imb_gpu_get_format(const ImBuf *ibuf,
                                bool use_grayscale,
                                gpu::TextureFormat *r_texture_format)
 {
-  const bool float_rect = (ibuf->float_buffer.data != nullptr);
+  const bool float_rect = (ibuf->float_data() != nullptr);
   const bool is_grayscale = use_grayscale && imb_is_grayscale_texture_format_compatible(ibuf);
 
   if (float_rect) {
@@ -129,7 +129,7 @@ bool IMB_gpu_get_compressed_format(const ImBuf *ibuf, gpu::TextureFormat *r_text
  * Apply colormanagement and scale buffer if needed.
  * `*r_freedata` is set to true if the returned buffer need to be manually freed.
  */
-static void *imb_gpu_get_data(const ImBuf *ibuf,
+static void *imb_gpu_get_data(ImBuf *ibuf,
                               const bool do_rescale,
                               const int rescale_size[2],
                               const bool store_premultiplied,
@@ -137,10 +137,10 @@ static void *imb_gpu_get_data(const ImBuf *ibuf,
                               bool *r_freedata,
                               eGPUDataFormat *r_data_format)
 {
-  bool is_float_rect = (ibuf->float_buffer.data != nullptr);
+  bool is_float_rect = (ibuf->float_data() != nullptr);
   const bool is_grayscale = allow_grayscale && imb_is_grayscale_texture_format_compatible(ibuf);
-  void *data_rect = (is_float_rect) ? static_cast<void *>(ibuf->float_buffer.data) :
-                                      static_cast<void *>(ibuf->byte_buffer.data);
+  void *data_rect = (is_float_rect) ? static_cast<void *>(ibuf->float_data_for_write()) :
+                                      static_cast<void *>(ibuf->byte_data_for_write());
   bool freedata = false;
 
   if (is_float_rect) {
@@ -229,8 +229,8 @@ static void *imb_gpu_get_data(const ImBuf *ibuf,
       MEM_delete_void(data_rect);
     }
 
-    data_rect = (is_float_rect) ? static_cast<void *>(scale_ibuf->float_buffer.data) :
-                                  static_cast<void *>(scale_ibuf->byte_buffer.data);
+    data_rect = (is_float_rect) ? static_cast<void *>(scale_ibuf->float_data_for_write()) :
+                                  static_cast<void *>(scale_ibuf->byte_data_for_write());
     *r_freedata = freedata = true;
     /* Steal the rescaled buffer to avoid double free. */
     (void)IMB_steal_byte_buffer(scale_ibuf);
@@ -438,11 +438,11 @@ void IMB_gpu_clamp_half_float(ImBuf *image_buffer)
 {
   const float half_min = -65504;
   const float half_max = 65504;
-  if (!image_buffer->float_buffer.data) {
+  if (!image_buffer->float_data()) {
     return;
   }
 
-  float *rect_float = image_buffer->float_buffer.data;
+  float *rect_float = image_buffer->float_data_for_write();
 
   int rect_float_len = image_buffer->x * image_buffer->y *
                        (image_buffer->channels == 0 ? 4 : image_buffer->channels);

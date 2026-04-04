@@ -353,7 +353,7 @@ static void do_versions_idproperty_ui_data(Main *bmain)
     for (ModifierData &md : ob.modifiers) {
       if (md.type == eModifierType_Nodes) {
         NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(&md);
-        version_idproperty_ui_data(nmd->settings.properties);
+        version_idproperty_ui_data(nmd->settings_legacy.properties);
       }
     }
 
@@ -1550,17 +1550,17 @@ static void do_version_subsurface_methods(bNode *node)
 
 static void version_geometry_nodes_add_attribute_input_settings(NodesModifierData *nmd)
 {
-  if (nmd->settings.properties == nullptr) {
+  if (nmd->settings_legacy.properties == nullptr) {
     return;
   }
   /* Before versioning the properties, make sure it hasn't been done already. */
-  for (const IDProperty &property : nmd->settings.properties->data.group) {
+  for (const IDProperty &property : nmd->settings_legacy.properties->data.group) {
     if (strstr(property.name, "_use_attribute") || strstr(property.name, "_attribute_name")) {
       return;
     }
   }
 
-  for (IDProperty &property : nmd->settings.properties->data.group.items_mutable()) {
+  for (IDProperty &property : nmd->settings_legacy.properties->data.group.items_mutable()) {
     if (!ELEM(property.type, IDP_FLOAT, IDP_INT, IDP_ARRAY)) {
       continue;
     }
@@ -1573,13 +1573,13 @@ static void version_geometry_nodes_add_attribute_input_settings(NodesModifierDat
     SNPRINTF(use_attribute_prop_name, "%s%s", property.name, "_use_attribute");
 
     IDProperty *use_attribute_prop = bke::idprop::create(use_attribute_prop_name, 0).release();
-    IDP_AddToGroup(nmd->settings.properties, use_attribute_prop);
+    IDP_AddToGroup(nmd->settings_legacy.properties, use_attribute_prop);
 
     char attribute_name_prop_name[MAX_IDPROP_NAME];
     SNPRINTF(attribute_name_prop_name, "%s%s", property.name, "_attribute_name");
 
     IDProperty *attribute_prop = bke::idprop::create(attribute_name_prop_name, "").release();
-    IDP_AddToGroup(nmd->settings.properties, attribute_prop);
+    IDP_AddToGroup(nmd->settings_legacy.properties, attribute_prop);
   }
 }
 

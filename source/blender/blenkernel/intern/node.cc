@@ -4739,7 +4739,7 @@ bNodePreview *node_ensure_preview(Map<bNodeInstanceKey, bNodePreview> &previews,
 
   const uint size[2] = {uint(xsize), uint(ysize)};
   IMB_rect_size_set(preview->ibuf, size);
-  if (preview->ibuf->byte_buffer.data == nullptr) {
+  if (!preview->ibuf->byte_data()) {
     IMB_alloc_byte_pixels(preview->ibuf);
   }
 

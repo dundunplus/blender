@@ -47,14 +47,14 @@ namespace blender {
 
 static void version_geometry_nodes_properties(Main &bmain, Object &object, NodesModifierData &nmd)
 {
-  const IDProperty *old_props = nmd.settings.properties;
+  const IDProperty *old_props = nmd.settings_legacy.properties;
   if (!old_props) {
     /* Versioning has already been done, this check makes the function idempotent. */
     return;
   }
   if (!nmd.node_group) {
-    IDP_FreeProperty(nmd.settings.properties);
-    nmd.settings.properties = nullptr;
+    IDP_FreeProperty(nmd.settings_legacy.properties);
+    nmd.settings_legacy.properties = nullptr;
     return;
   }
   if (ID_MISSING(&nmd.node_group->id)) {
@@ -172,8 +172,8 @@ static void version_geometry_nodes_properties(Main &bmain, Object &object, Nodes
     IDP_FreeProperty(nmd.modifier.system_properties);
   }
   nmd.modifier.system_properties = system_props;
-  IDP_FreeProperty(nmd.settings.properties);
-  nmd.settings.properties = nullptr;
+  IDP_FreeProperty(nmd.settings_legacy.properties);
+  nmd.settings_legacy.properties = nullptr;
 }
 
 /* Saving file extension is now a property of the File Output node. So inherit this

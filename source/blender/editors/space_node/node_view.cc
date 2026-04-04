@@ -589,20 +589,20 @@ bool ED_space_node_color_sample(
 
   if (fx >= 0.0f && fy >= 0.0f && fx < 1.0f && fy < 1.0f) {
     const float *fp;
-    uchar *cp;
+    const uchar *cp;
     int x = int(fx * ibuf->x), y = int(fy * ibuf->y);
 
     CLAMP(x, 0, ibuf->x - 1);
     CLAMP(y, 0, ibuf->y - 1);
 
-    if (ibuf->float_buffer.data) {
-      fp = (ibuf->float_buffer.data + (ibuf->channels) * (y * ibuf->x + x));
+    if (const float *float_data = ibuf->float_data()) {
+      fp = (float_data + (ibuf->channels) * (y * ibuf->x + x));
       /* #IB_PROFILE_NONE is default but in fact its linear. */
       copy_v3_v3(r_col, fp);
       ret = true;
     }
-    else if (ibuf->byte_buffer.data) {
-      cp = ibuf->byte_buffer.data + 4 * (y * ibuf->x + x);
+    else if (const uchar *byte_data = ibuf->byte_data()) {
+      cp = byte_data + 4 * (y * ibuf->x + x);
       rgb_uchar_to_float(r_col, cp);
       IMB_colormanagement_colorspace_to_scene_linear_v3(r_col, ibuf->byte_buffer.colorspace);
       ret = true;
@@ -634,7 +634,7 @@ static void sample_apply(bContext *C, wmOperator *op, const wmEvent *event)
     return;
   }
 
-  if (!ibuf->byte_buffer.data) {
+  if (!ibuf->byte_data()) {
     IMB_byte_from_float(ibuf);
   }
 
@@ -648,7 +648,7 @@ static void sample_apply(bContext *C, wmOperator *op, const wmEvent *event)
 
   if (fx >= 0.0f && fy >= 0.0f && fx < 1.0f && fy < 1.0f) {
     const float *fp;
-    uchar *cp;
+    const uchar *cp;
     int x = int(fx * ibuf->x), y = int(fy * ibuf->y);
 
     CLAMP(x, 0, ibuf->x - 1);
@@ -659,8 +659,8 @@ static void sample_apply(bContext *C, wmOperator *op, const wmEvent *event)
     info->draw = 1;
     info->channels = ibuf->channels;
 
-    if (ibuf->byte_buffer.data) {
-      cp = ibuf->byte_buffer.data + 4 * (y * ibuf->x + x);
+    if (const uchar *byte_data = ibuf->byte_data()) {
+      cp = byte_data + 4 * (y * ibuf->x + x);
 
       info->col[0] = cp[0];
       info->col[1] = cp[1];
@@ -678,8 +678,8 @@ static void sample_apply(bContext *C, wmOperator *op, const wmEvent *event)
 
       info->color_manage = true;
     }
-    if (ibuf->float_buffer.data) {
-      fp = (ibuf->float_buffer.data + (ibuf->channels) * (y * ibuf->x + x));
+    if (const float *float_data = ibuf->float_data()) {
+      fp = float_data + (ibuf->channels) * (y * ibuf->x + x);
 
       info->colf[0] = fp[0];
       info->colf[1] = fp[1];

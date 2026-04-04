@@ -314,7 +314,7 @@ static void tooltip_region_draw_cb(const bContext * /*C*/, ARegion *region)
                                      field->image->ibuf->y,
                                      gpu::TextureFormat::UNORM_8_8_8_8,
                                      true,
-                                     field->image->ibuf->byte_buffer.data,
+                                     field->image->ibuf->byte_data(),
                                      1.0f,
                                      1.0f,
                                      float(field->image->width) / float(field->image->ibuf->x),

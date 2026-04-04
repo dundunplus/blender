@@ -273,7 +273,7 @@ static wmOperatorStatus palette_extract_img_exec(bContext *C, wmOperator *op)
 
   ibuf = BKE_image_acquire_ibuf(image, &iuser, &lock);
 
-  if (ibuf && ibuf->byte_buffer.data) {
+  if (ibuf && ibuf->byte_data()) {
     /* Extract all colors. */
     const int range = int(pow(10.0f, threshold));
     for (int row = 0; row < ibuf->y; row++) {

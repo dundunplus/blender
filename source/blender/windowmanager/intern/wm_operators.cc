@@ -2676,7 +2676,7 @@ static void radial_control_set_tex(RadialControl *rc)
                                             1,
                                             gpu::TextureFormat::UNORM_8,
                                             GPU_TEXTURE_USAGE_SHADER_READ,
-                                            ibuf->float_buffer.data);
+                                            ibuf->float_data());
 
         GPU_texture_filter_mode(rc->texture, true);
         GPU_texture_swizzle_set(rc->texture, "111r");

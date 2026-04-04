@@ -238,8 +238,8 @@ ImBuf *RE_RenderLayerGetPassImBuf(RenderLayer *rl, const char *name, const char 
 
 float *RE_RenderLayerGetPass(RenderLayer *rl, const char *name, const char *viewname)
 {
-  const ImBuf *ibuf = RE_RenderLayerGetPassImBuf(rl, name, viewname);
-  return ibuf ? ibuf->float_buffer.data : nullptr;
+  ImBuf *ibuf = RE_RenderLayerGetPassImBuf(rl, name, viewname);
+  return ibuf ? ibuf->float_data_for_write() : nullptr;
 }
 
 RenderLayer *RE_GetRenderLayer(RenderResult *rr, const char *name)
@@ -2692,21 +2692,21 @@ void RE_layer_load_from_file(
                 filepath);
   }
 
-  if (ibuf && (ibuf->byte_buffer.data || ibuf->float_buffer.data)) {
+  if (ibuf && (ibuf->byte_data() || ibuf->float_data())) {
     if (ibuf->x == layer->rectx && ibuf->y == layer->recty) {
-      if (ibuf->float_buffer.data == nullptr) {
+      if (ibuf->float_data() == nullptr) {
         IMB_float_from_byte(ibuf);
       }
 
-      memcpy(rpass->ibuf->float_buffer.data,
-             ibuf->float_buffer.data,
+      memcpy(rpass->ibuf->float_data_for_write(),
+             ibuf->float_data(),
              sizeof(float[4]) * layer->rectx * layer->recty);
     }
     else {
       if ((ibuf->x - x >= layer->rectx) && (ibuf->y - y >= layer->recty)) {
         ImBuf *ibuf_clip;
 
-        if (ibuf->float_buffer.data == nullptr) {
+        if (ibuf->float_data() == nullptr) {
           IMB_float_from_byte(ibuf);
         }
 
@@ -2714,8 +2714,8 @@ void RE_layer_load_from_file(
         if (ibuf_clip) {
           IMB_rectcpy(ibuf_clip, ibuf, 0, 0, x, y, layer->rectx, layer->recty);
 
-          memcpy(rpass->ibuf->float_buffer.data,
-                 ibuf_clip->float_buffer.data,
+          memcpy(rpass->ibuf->float_data_for_write(),
+                 ibuf_clip->float_data(),
                  sizeof(float[4]) * layer->rectx * layer->recty);
           IMB_freeImBuf(ibuf_clip);
         }

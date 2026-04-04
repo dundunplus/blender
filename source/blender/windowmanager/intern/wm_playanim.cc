@@ -614,8 +614,8 @@ static void *ocio_transform_ibuf(const PlayDisplayContext &display_ctx,
     *r_glsl_used = false;
     display_buffer = nullptr;
   }
-  else if (ibuf->float_buffer.data) {
-    display_buffer = ibuf->float_buffer.data;
+  else if (ibuf->float_data()) {
+    display_buffer = ibuf->float_data_for_write();
 
     *r_data = GPU_DATA_FLOAT;
     if (ibuf->channels == 4) {
@@ -639,8 +639,8 @@ static void *ocio_transform_ibuf(const PlayDisplayContext &display_ctx,
           &display_ctx.view_settings, &display_ctx.display_settings, ibuf->dither, false);
     }
   }
-  else if (ibuf->byte_buffer.data) {
-    display_buffer = ibuf->byte_buffer.data;
+  else if (ibuf->byte_data()) {
+    display_buffer = ibuf->byte_data_for_write();
     *r_glsl_used = IMB_colormanagement_setup_glsl_draw_from_space(&display_ctx.view_settings,
                                                                   &display_ctx.display_settings,
                                                                   ibuf->byte_buffer.colorspace,
@@ -654,7 +654,7 @@ static void *ocio_transform_ibuf(const PlayDisplayContext &display_ctx,
 
   /* There is data to be displayed, but GLSL is not initialized
    * properly, in this case we fallback to CPU-based display transform. */
-  if ((ibuf->byte_buffer.data || ibuf->float_buffer.data) && !*r_glsl_used) {
+  if ((ibuf->byte_data() || ibuf->float_data()) && !*r_glsl_used) {
     display_buffer = IMB_display_buffer_acquire(
         ibuf, &display_ctx.view_settings, &display_ctx.display_settings, r_buffer_cache_handle);
     *r_format = gpu::TextureFormat::UNORM_8_8_8_8;

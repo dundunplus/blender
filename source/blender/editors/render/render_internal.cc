@@ -210,11 +210,11 @@ static void image_buffer_rect_update(RenderJob *rj,
     }
 
     /* find current float rect for display, first case is after composite... still weak */
-    if (rv->ibuf->float_buffer.data) {
-      rectf = rv->ibuf->float_buffer.data;
+    if (rv->ibuf->float_data()) {
+      rectf = rv->ibuf->float_data();
     }
     else {
-      if (rv->ibuf->byte_buffer.data) {
+      if (rv->ibuf->byte_data()) {
         /* special case, currently only happens with sequencer rendering,
          * which updates the whole frame, so we can only mark display buffer
          * as invalid here (sergey)
@@ -237,7 +237,7 @@ static void image_buffer_rect_update(RenderJob *rj,
     linear_offset_y = offset_y;
   }
   else {
-    rectf = ibuf->float_buffer.data;
+    rectf = ibuf->float_data();
     linear_stride = ibuf->x;
     linear_offset_x = 0;
     linear_offset_y = 0;

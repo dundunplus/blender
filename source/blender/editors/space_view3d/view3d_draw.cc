@@ -2227,7 +2227,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
    * When using workbench the color differences haven't been reported as a bug. But users also use
    * the viewport rendering to render Eevee scenes. In the later situation the saved colors are
    * totally wrong. */
-  const bool do_color_management = (ibuf->float_buffer.data == nullptr);
+  const bool do_color_management = (ibuf->float_data() == nullptr);
   ED_view3d_draw_offscreen(depsgraph,
                            scene,
                            drawtype,
@@ -2246,11 +2246,11 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
                            ofs,
                            viewport);
 
-  if (ibuf->float_buffer.data) {
-    GPU_offscreen_read_color(ofs, GPU_DATA_FLOAT, ibuf->float_buffer.data);
+  if (ibuf->float_data()) {
+    GPU_offscreen_read_color(ofs, GPU_DATA_FLOAT, ibuf->float_data_for_write());
   }
-  else if (ibuf->byte_buffer.data) {
-    GPU_offscreen_read_color(ofs, GPU_DATA_UBYTE, ibuf->byte_buffer.data);
+  else if (ibuf->byte_data()) {
+    GPU_offscreen_read_color(ofs, GPU_DATA_UBYTE, ibuf->byte_data_for_write());
   }
 
   /* unbind */
@@ -2266,7 +2266,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
     GPU_framebuffer_bind(old_fb);
   }
 
-  if (ibuf->float_buffer.data && ibuf->byte_buffer.data) {
+  if (ibuf->float_data() && ibuf->byte_data()) {
     IMB_byte_from_float(ibuf);
   }
 

@@ -333,7 +333,7 @@ void AttributeStorage::rename(Attribute &attr, std::string new_name)
   attr.name_ = std::move(new_name);
   this->runtime->attributes.reserve(old_vector.size());
   for (std::unique_ptr<Attribute> &attribute : old_vector) {
-    if (attribute->name() == attr.name_) {
+    if (attribute->name() == attr.name_ && attribute.get() != &attr) {
       continue;
     }
     this->runtime->attributes.add_new(std::move(attribute));

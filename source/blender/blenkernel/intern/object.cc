@@ -738,8 +738,8 @@ static void create_legacy_geometry_nodes_properties(Object &ob)
       }
     }
 
-    BLI_assert(!nmd.settings.properties);
-    nmd.settings.properties = legacy_props;
+    BLI_assert(!nmd.settings_legacy.properties);
+    nmd.settings_legacy.properties = legacy_props;
   }
 }
 
@@ -750,11 +750,11 @@ static void free_legacy_geometry_nodes_properties(Object &ob)
       continue;
     }
     NodesModifierData &nmd = reinterpret_cast<NodesModifierData &>(md);
-    if (!nmd.settings.properties) {
+    if (!nmd.settings_legacy.properties) {
       continue;
     }
-    IDP_FreeProperty_ex(nmd.settings.properties, false);
-    nmd.settings.properties = nullptr;
+    IDP_FreeProperty_ex(nmd.settings_legacy.properties, false);
+    nmd.settings_legacy.properties = nullptr;
   }
 }
 

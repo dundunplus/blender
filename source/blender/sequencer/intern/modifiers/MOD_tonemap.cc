@@ -82,7 +82,7 @@ static void scene_linear_to_image_chunk_byte(float4 *src, ImBuf *ibuf, IndexRang
   IMB_colormanagement_scene_linear_to_colorspace(
       reinterpret_cast<float *>(src), int(range.size()), 1, 4, colorspace);
   const float4 *src_ptr = src;
-  uchar *bptr = ibuf->byte_buffer.data;
+  uchar *bptr = ibuf->byte_data_for_write();
   for (const int64_t idx : range) {
     premul_float_to_straight_uchar(bptr + idx * 4, *src_ptr);
     src_ptr++;
@@ -101,7 +101,7 @@ struct AreaLuminance {
 static void scene_linear_to_image_chunk_float(ImBuf *ibuf, IndexRange range)
 {
   const ColorSpace *colorspace = ibuf->float_buffer.colorspace;
-  float4 *fptr = reinterpret_cast<float4 *>(ibuf->float_buffer.data);
+  float4 *fptr = reinterpret_cast<float4 *>(ibuf->float_data_for_write());
   IMB_colormanagement_scene_linear_to_colorspace(
       reinterpret_cast<float *>(fptr + range.first()), int(range.size()), 1, 4, colorspace);
 }
@@ -203,7 +203,7 @@ struct TonemapApplyOp {
       /* Byte pixels: temporary storage for scene linear pixel values. */
       Array<float4> scene_linear(pixel_range.size());
       pixels_to_scene_linear_byte(ibuf->byte_buffer.colorspace,
-                                  ibuf->byte_buffer.data + pixel_range.first() * 4,
+                                  ibuf->byte_data() + pixel_range.first() * 4,
                                   scene_linear.data(),
                                   pixel_range.size());
       if (this->type == SEQ_TONEMAP_RD_PHOTORECEPTOR) {
@@ -242,6 +242,7 @@ static void tonemap_calc_chunk_luminance(const int width,
 
 static AreaLuminance tonemap_calc_input_luminance(const ImBuf *ibuf)
 {
+  float *float_data = ibuf->float_buffer.data;
   AreaLuminance lum;
   lum = threading::parallel_reduce(
       IndexRange(ibuf->y),
@@ -253,14 +254,14 @@ static AreaLuminance tonemap_calc_input_luminance(const ImBuf *ibuf)
         const int64_t chunk_size = y_range.size() * ibuf->x;
         /* For float images, convert to scene-linear in place. The rest
          * of tone-mapper can then continue with scene-linear values. */
-        if (ibuf->float_buffer.data != nullptr) {
-          float4 *fptr = reinterpret_cast<float4 *>(ibuf->float_buffer.data);
+        if (float_data != nullptr) {
+          float4 *fptr = reinterpret_cast<float4 *>(float_data);
           fptr += y_range.first() * ibuf->x;
           pixels_to_scene_linear_float(ibuf->float_buffer.colorspace, fptr, chunk_size);
           tonemap_calc_chunk_luminance(ibuf->x, y_range, fptr, lum);
         }
         else {
-          const uchar *bptr = ibuf->byte_buffer.data + y_range.first() * ibuf->x * 4;
+          const uchar *bptr = ibuf->byte_data() + y_range.first() * ibuf->x * 4;
           Array<float4> scene_linear(chunk_size);
           pixels_to_scene_linear_byte(
               ibuf->byte_buffer.colorspace, bptr, scene_linear.data(), chunk_size);

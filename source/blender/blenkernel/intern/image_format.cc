@@ -920,7 +920,7 @@ static char imtype_best_depth(const ImBuf *ibuf, const char imtype)
 {
   const char depth_ok = BKE_imtype_valid_depths(imtype);
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     if (depth_ok & R_IMF_CHAN_DEPTH_32) {
       return R_IMF_CHAN_DEPTH_32;
     }

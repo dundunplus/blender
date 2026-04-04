@@ -581,7 +581,7 @@ static int rna_Image_depth_get(PointerRNA *ptr)
   if (!ibuf) {
     planes = 0;
   }
-  else if (ibuf->float_buffer.data) {
+  else if (ibuf->float_data()) {
     planes = ibuf->planes * 4;
   }
   else {
@@ -646,12 +646,13 @@ static void rna_Image_pixels_get(PointerRNA *ptr, float *values)
   if (ibuf) {
     const size_t size = IMB_get_pixel_count(ibuf) * size_t(ibuf->channels);
 
-    if (ibuf->float_buffer.data) {
-      memcpy(values, ibuf->float_buffer.data, sizeof(float) * size);
+    if (ibuf->float_data()) {
+      memcpy(values, ibuf->float_data(), sizeof(float) * size);
     }
     else {
+      const uchar *byte_data = ibuf->byte_data();
       for (size_t i = 0; i < size; i++) {
-        values[i] = ibuf->byte_buffer.data[i] * (1.0f / 255.0f);
+        values[i] = byte_data[i] * (1.0f / 255.0f);
       }
     }
   }
@@ -670,12 +671,13 @@ static void rna_Image_pixels_set(PointerRNA *ptr, const float *values)
   if (ibuf) {
     const size_t size = IMB_get_pixel_count(ibuf) * size_t(ibuf->channels);
 
-    if (ibuf->float_buffer.data) {
-      memcpy(ibuf->float_buffer.data, values, sizeof(float) * size);
+    if (float *float_data = ibuf->float_data_for_write()) {
+      memcpy(float_data, values, sizeof(float) * size);
     }
     else {
+      uchar *byte_data = ibuf->byte_data_for_write();
       for (size_t i = 0; i < size; i++) {
-        ibuf->byte_buffer.data[i] = unit_float_to_uchar_clamp(values[i]);
+        byte_data[i] = unit_float_to_uchar_clamp(values[i]);
       }
     }
 
@@ -721,7 +723,7 @@ static bool rna_Image_is_float_get(PointerRNA *ptr)
 
   ibuf = BKE_image_acquire_ibuf(im, nullptr, &lock);
   if (ibuf) {
-    is_float = ibuf->float_buffer.data != nullptr;
+    is_float = ibuf->float_data() != nullptr;
   }
 
   BKE_image_release_ibuf(im, ibuf, lock);

@@ -276,11 +276,11 @@ static void apply_watertight_check(Tree &pbvh, Image &image, ImageUser &image_us
         int pixel_offset = pixel_row.start_image_coordinate.y * image_buffer->x +
                            pixel_row.start_image_coordinate.x;
         for (int x = 0; x < pixel_row.num_pixels; x++) {
-          if (image_buffer->float_buffer.data) {
-            copy_v4_fl(&image_buffer->float_buffer.data[pixel_offset * 4], 1.0);
+          if (float *data = image_buffer->float_data_for_write()) {
+            copy_v4_fl(&data[pixel_offset * 4], 1.0);
           }
-          if (image_buffer->byte_buffer.data) {
-            uint8_t *dest = &image_buffer->byte_buffer.data[pixel_offset * 4];
+          if (uint8_t *data = image_buffer->byte_data_for_write()) {
+            uint8_t *dest = &data[pixel_offset * 4];
             dest[0] = dest[1] = dest[2] = dest[3] = 255;
           }
           pixel_offset += 1;

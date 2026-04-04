@@ -79,16 +79,16 @@ class ImageFieldsFunction : public mf::MultiFunction {
       throw std::runtime_error("cannot acquire image buffer");
     }
 
-    if (image_buffer_->float_buffer.data == nullptr) {
+    if (image_buffer_->float_data() == nullptr) {
       BLI_thread_lock(LOCK_IMAGE);
       /* Isolate because we are holding a lock. */
-      if (!image_buffer_->float_buffer.data) {
+      if (!image_buffer_->float_data()) {
         threading::isolate_task([&]() { IMB_float_from_byte(image_buffer_); });
       }
       BLI_thread_unlock(LOCK_IMAGE);
     }
 
-    if (image_buffer_->float_buffer.data == nullptr) {
+    if (image_buffer_->float_data() == nullptr) {
       BKE_image_release_ibuf(&image_, image_buffer_, image_lock_);
       throw std::runtime_error("cannot get float buffer");
     }
@@ -127,7 +127,7 @@ class ImageFieldsFunction : public mf::MultiFunction {
     if (px < 0 || py < 0 || px >= ibuf.x || py >= ibuf.y) {
       return float4(0.0f, 0.0f, 0.0f, 0.0f);
     }
-    return ((const float4 *)ibuf.float_buffer.data)[size_t(px) + size_t(py) * size_t(ibuf.x)];
+    return ((const float4 *)ibuf.float_data())[size_t(px) + size_t(py) * size_t(ibuf.x)];
   }
 
   static float frac(const float x, int *ix)

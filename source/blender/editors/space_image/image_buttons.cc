@@ -141,10 +141,10 @@ static const char *ui_imageuser_layer_fake_name(RenderResult *rr)
   if (!ibuf) {
     return nullptr;
   }
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     return IFACE_("Composite");
   }
-  if (ibuf->byte_buffer.data) {
+  if (ibuf->byte_data()) {
     return IFACE_("Sequence");
   }
   return nullptr;
@@ -943,7 +943,7 @@ void uiTemplateImage(ui::Layout *layout,
           void *lock;
           ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
 
-          if (ibuf && ibuf->float_buffer.data && (ibuf->foptions.flag & OPENEXR_HALF) == 0) {
+          if (ibuf && ibuf->float_data() && (ibuf->foptions.flag & OPENEXR_HALF) == 0) {
             col.prop(&imaptr, "use_half_precision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
           }
           BKE_image_release_ibuf(ima, ibuf, lock);
@@ -1218,7 +1218,7 @@ void uiTemplateImageInfo(ui::Layout *layout, bContext *C, Image *ima, ImageUser 
 
     ofs += BLI_snprintf_utf8_rlen(str + ofs, len - ofs, RPT_("%d \u00D7 %d, "), ibuf->x, ibuf->y);
 
-    if (ibuf->float_buffer.data || ibuf->gpu.texture) {
+    if (ibuf->float_data() || ibuf->gpu.texture) {
       if (ibuf->channels != 4) {
         ofs += BLI_snprintf_utf8_rlen(
             str + ofs, len - ofs, RPT_("%d float channel(s)"), ibuf->channels);

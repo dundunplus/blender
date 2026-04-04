@@ -206,7 +206,7 @@ static ImBuf *compute_linear_buffer(ImBuf *image_buffer)
 
   /* If no float buffer exists, assign it then compute a float buffer from it. This is the main
    * call of this function. */
-  if (!linear_image_buffer->float_buffer.data) {
+  if (!linear_image_buffer->float_data()) {
     IMB_assign_byte_buffer(
         linear_image_buffer, image_buffer->byte_buffer, IB_DO_NOT_TAKE_OWNERSHIP);
     IMB_float_from_byte(linear_image_buffer);
@@ -340,7 +340,7 @@ CachedImage::CachedImage(Context &context,
   else {
     const int2 size = int2(image_buffer->x, image_buffer->y);
     Result buffer_result(context, float_type(image_buffer->channels), ResultPrecision::Full);
-    buffer_result.wrap_external(linear_image_buffer->float_buffer.data, size);
+    buffer_result.wrap_external(linear_image_buffer->float_data_for_write(), size);
     this->result.allocate_texture(size, false);
 
     if (buffer_result.type() == ResultType::Color && result.type() == ResultType::Float4) {

@@ -287,7 +287,7 @@ static void screen_opengl_render_doit(OGLRender *oglrender, RenderResult *rr)
        * TODO(sergey): In the case of output to float container (EXR)
        * it actually makes sense to keep float buffer instead.
        */
-      if (ibuf_result->float_buffer.data != nullptr) {
+      if (ibuf_result->float_data() != nullptr) {
         IMB_byte_from_float(ibuf_result);
         IMB_free_float_pixels(ibuf_result);
       }
@@ -301,7 +301,7 @@ static void screen_opengl_render_doit(OGLRender *oglrender, RenderResult *rr)
     if (gpd) {
       int i;
       uchar *gp_rect;
-      uchar *render_rect = ibuf_result->byte_buffer.data;
+      uchar *render_rect = ibuf_result->byte_data_for_write();
 
       DRW_gpu_context_enable();
       GPU_offscreen_bind(oglrender->ofs, true);

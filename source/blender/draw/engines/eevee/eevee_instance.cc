@@ -636,7 +636,7 @@ void Instance::render_read_result(RenderLayer *render_layer, const char *view_na
       RenderPass *vector_rp = RE_pass_find_by_name(
           render_layer, vector_pass_name.c_str(), view_name);
       if (vector_rp) {
-        memset(vector_rp->ibuf->float_buffer.data,
+        memset(vector_rp->ibuf->float_data_for_write(),
                0,
                sizeof(float) * 4 * vector_rp->rectx * vector_rp->recty);
       }

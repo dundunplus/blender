@@ -928,7 +928,7 @@ BlendThumbnail *BKE_main_thumbnail_from_imbuf(Main *bmain, ImBuf *img)
     IMB_byte_from_float(img); /* Just in case... */
     data->width = img->x;
     data->height = img->y;
-    memcpy(data->rect, img->byte_buffer.data, data_size - sizeof(*data));
+    memcpy(data->rect, img->byte_data(), data_size - sizeof(*data));
   }
 
   if (bmain) {

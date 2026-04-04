@@ -1586,8 +1586,6 @@ void BKE_histogram_update_sample_line(Histogram *hist,
                                       const ColorManagedDisplaySettings *display_settings)
 {
   int i, x, y;
-  const float *fp;
-  uchar *cp;
 
   int x1 = roundf(hist->co[0][0] * ibuf->x);
   int x2 = roundf(hist->co[1][0] * ibuf->x);
@@ -1601,11 +1599,11 @@ void BKE_histogram_update_sample_line(Histogram *hist,
   hist->xmax = 1.0f;
   // hist->ymax = 1.0f; /* now do this on the operator _only_ */
 
-  if (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr) {
+  if (ibuf->byte_data() == nullptr && ibuf->float_data() == nullptr) {
     return;
   }
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     cm_processor = ColormanageProcessor::display_processor_new(view_settings, display_settings);
   }
 
@@ -1618,9 +1616,9 @@ void BKE_histogram_update_sample_line(Histogram *hist,
           0.0f;
     }
     else {
-      if (ibuf->float_buffer.data) {
+      if (float *fp = ibuf->float_data_for_write()) {
         float rgba[4];
-        fp = (ibuf->float_buffer.data + (ibuf->channels) * (y * ibuf->x + x));
+        fp = (fp + (ibuf->channels) * (y * ibuf->x + x));
 
         switch (ibuf->channels) {
           case 4:
@@ -1650,8 +1648,8 @@ void BKE_histogram_update_sample_line(Histogram *hist,
         hist->data_b[i] = rgba[2];
         hist->data_a[i] = rgba[3];
       }
-      else if (ibuf->byte_buffer.data) {
-        cp = ibuf->byte_buffer.data + 4 * (y * ibuf->x + x);
+      else if (uchar *cp = ibuf->byte_data_for_write()) {
+        cp = cp + 4 * (y * ibuf->x + x);
         hist->data_luma[i] = float(IMB_colormanagement_get_luminance_byte(cp)) / 255.0f;
         hist->data_r[i] = float(cp[0]) / 255.0f;
         hist->data_g[i] = float(cp[1]) / 255.0f;
@@ -1707,10 +1705,10 @@ static void scopes_update_cb(void *__restrict userdata,
   const int savedlines = y / rows_per_sample_line;
   const bool do_sample_line = (savedlines < scopes->sample_lines) &&
                               (y % rows_per_sample_line) == 0;
-  const bool is_float = (ibuf->float_buffer.data != nullptr);
+  const bool is_float = (ibuf->float_data() != nullptr);
 
   if (is_float) {
-    rf = ibuf->float_buffer.data + size_t(y) * ibuf->x * ibuf->channels;
+    rf = ibuf->float_data() + size_t(y) * ibuf->x * ibuf->channels;
   }
   else {
     rc = display_buffer + size_t(y) * ibuf->x * ibuf->channels;
@@ -1827,7 +1825,7 @@ void BKE_scopes_update(Scopes *scopes,
   void *cache_handle = nullptr;
   std::optional<ColormanageProcessor> cm_processor;
 
-  if (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr) {
+  if (!ibuf->byte_data() && !ibuf->float_data()) {
     return;
   }
 
@@ -1908,7 +1906,7 @@ void BKE_scopes_update(Scopes *scopes,
   scopes->vecscope_rgb = MEM_new_array_zeroed<float>(3 * size_t(scopes->waveform_tot),
                                                      "vectorscope color channel");
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     cm_processor = ColormanageProcessor::display_processor_new(view_settings, display_settings);
   }
   else {

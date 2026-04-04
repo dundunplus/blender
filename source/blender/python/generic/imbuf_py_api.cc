@@ -381,13 +381,13 @@ static PyObject *py_imbuf_with_buffer(Py_ImBuf *self, PyObject *args, PyObject *
   const int mode = type.value_found;
 
   if (mode == IB_byte_data) {
-    if (ibuf->byte_buffer.data == nullptr) {
+    if (ibuf->byte_data() == nullptr) {
       PyErr_SetString(PyExc_RuntimeError, "ImBuf has no byte pixel data");
       return nullptr;
     }
   }
   else {
-    if (ibuf->float_buffer.data == nullptr) {
+    if (ibuf->float_data() == nullptr) {
       PyErr_SetString(PyExc_RuntimeError, "ImBuf has no float pixel data");
       return nullptr;
     }
@@ -440,28 +440,28 @@ static PyObject *py_imbuf_ensure_buffer(Py_ImBuf *self, PyObject *args, PyObject
   ImBuf *ibuf = self->ibuf;
 
   if (type.value_found == IB_byte_data) {
-    if (ibuf->byte_buffer.data == nullptr) {
-      if (ibuf->float_buffer.data != nullptr) {
+    if (ibuf->byte_data() == nullptr) {
+      if (ibuf->float_data() != nullptr) {
         IMB_byte_from_float(ibuf);
       }
       else {
         IMB_alloc_byte_pixels(ibuf);
       }
-      if (UNLIKELY(ibuf->byte_buffer.data == nullptr)) {
+      if (UNLIKELY(ibuf->byte_data() == nullptr)) {
         PyErr_SetString(PyExc_MemoryError, "failed to allocate byte buffer");
         return nullptr;
       }
     }
   }
   else {
-    if (ibuf->float_buffer.data == nullptr) {
-      if (ibuf->byte_buffer.data != nullptr) {
+    if (ibuf->float_data() == nullptr) {
+      if (ibuf->byte_data() != nullptr) {
         IMB_float_from_byte(ibuf);
       }
       else {
         IMB_alloc_float_pixels(ibuf, 4);
       }
-      if (UNLIKELY(ibuf->float_buffer.data == nullptr)) {
+      if (UNLIKELY(ibuf->float_data() == nullptr)) {
         PyErr_SetString(PyExc_MemoryError, "failed to allocate float buffer");
         return nullptr;
       }
@@ -498,9 +498,9 @@ static PyObject *py_imbuf_has_buffer(Py_ImBuf *self, PyObject *args, PyObject *k
 
   ImBuf *ibuf = self->ibuf;
   if (type.value_found == IB_byte_data) {
-    return PyBool_FromLong(ibuf->byte_buffer.data != nullptr);
+    return PyBool_FromLong(ibuf->byte_data() != nullptr);
   }
-  return PyBool_FromLong(ibuf->float_buffer.data != nullptr);
+  return PyBool_FromLong(ibuf->float_data() != nullptr);
 }
 
 PyDoc_STRVAR(
@@ -997,13 +997,13 @@ static PyObject *py_imbuf_buffer_enter(Py_ImBufBuffer *self)
   const bool is_byte = (self->mode == IB_byte_data);
 
   if (is_byte) {
-    if (UNLIKELY(ibuf->byte_buffer.data == nullptr)) {
+    if (UNLIKELY(ibuf->byte_data() == nullptr)) {
       PyErr_SetString(PyExc_RuntimeError, "ImBuf has no byte pixel data");
       return nullptr;
     }
   }
   else {
-    if (UNLIKELY(ibuf->float_buffer.data == nullptr)) {
+    if (UNLIKELY(ibuf->float_data() == nullptr)) {
       PyErr_SetString(PyExc_RuntimeError, "ImBuf has no float pixel data");
       return nullptr;
     }
@@ -1020,8 +1020,8 @@ static PyObject *py_imbuf_buffer_enter(Py_ImBufBuffer *self)
 
     Py_buffer pybuf;
     memset(&pybuf, 0, sizeof(pybuf));
-    pybuf.buf = is_byte ? static_cast<void *>(ibuf->byte_buffer.data) :
-                          static_cast<void *>(ibuf->float_buffer.data);
+    pybuf.buf = is_byte ? static_cast<void *>(ibuf->byte_data_for_write()) :
+                          static_cast<void *>(ibuf->float_data_for_write());
     pybuf.len = num_items * itemsize;
     pybuf.itemsize = itemsize;
     pybuf.readonly = !self->writable;
@@ -1046,9 +1046,9 @@ static PyObject *py_imbuf_buffer_enter(Py_ImBufBuffer *self)
 
     Py_buffer pybuf;
     memset(&pybuf, 0, sizeof(pybuf));
-    pybuf.buf = is_byte ? static_cast<void *>(ibuf->byte_buffer.data + offset) :
-                          static_cast<void *>(reinterpret_cast<char *>(ibuf->float_buffer.data) +
-                                              offset);
+    pybuf.buf = is_byte ? static_cast<void *>(ibuf->byte_data_for_write() + offset) :
+                          static_cast<void *>(
+                              reinterpret_cast<char *>(ibuf->float_data_for_write()) + offset);
     pybuf.len = shape[0] * shape[1] * itemsize;
     pybuf.itemsize = itemsize;
     pybuf.readonly = !self->writable;
@@ -1079,12 +1079,12 @@ static PyObject *py_imbuf_buffer_exit(Py_ImBufBuffer *self, PyObject * /*args*/)
       ImBuf *ibuf = self->py_ibuf->ibuf;
       if (ibuf != nullptr) {
         if (self->mode == IB_byte_data) {
-          if (ibuf->float_buffer.data != nullptr) {
+          if (ibuf->float_data() != nullptr) {
             IMB_float_from_byte(ibuf);
           }
         }
         else {
-          if (ibuf->byte_buffer.data != nullptr) {
+          if (ibuf->byte_data() != nullptr) {
             IMB_byte_from_float(ibuf);
           }
         }
@@ -1556,7 +1556,7 @@ static PyObject *M_imbuf_write(PyObject * /*self*/, PyObject *args, PyObject *kw
  */
 static PyObject *imbuf_write_to_buffer_impl(ImBuf *ibuf, PyObject *file)
 {
-  const bool is_float = ibuf->float_buffer.data != nullptr;
+  const bool is_float = ibuf->float_data() != nullptr;
   if (ibuf->ftype == IMB_FTYPE_NONE) {
     ibuf->ftype = IMB_FTYPE_DEFAULT;
   }

@@ -100,12 +100,12 @@ class ImageBufferFloat4 {
 
   float4 read_pixel(ImBuf *image_buffer) const
   {
-    return &image_buffer->float_buffer.data[pixel_offset * 4];
+    return &image_buffer->float_data()[pixel_offset * 4];
   }
 
   void write_pixel(ImBuf *image_buffer, const float4 pixel_data) const
   {
-    copy_v4_v4(&image_buffer->float_buffer.data[pixel_offset * 4], pixel_data);
+    copy_v4_v4(&image_buffer->float_data_for_write()[pixel_offset * 4], pixel_data);
   }
 
   const char *get_colorspace_name(ImBuf *image_buffer)
@@ -135,14 +135,14 @@ class ImageBufferByte4 {
     float4 result;
     rgba_uchar_to_float(result,
                         static_cast<const uchar *>(static_cast<const void *>(
-                            &(image_buffer->byte_buffer.data[4 * pixel_offset]))));
+                            &(image_buffer->byte_data()[4 * pixel_offset]))));
     return result;
   }
 
   void write_pixel(ImBuf *image_buffer, const float4 pixel_data) const
   {
     rgba_float_to_uchar(static_cast<uchar *>(static_cast<void *>(
-                            &image_buffer->byte_buffer.data[4 * pixel_offset])),
+                            &image_buffer->byte_data_for_write()[4 * pixel_offset])),
                         pixel_data);
   }
 
@@ -322,7 +322,7 @@ static void do_paint_pixels(const Depsgraph &depsgraph,
       continue;
     }
 
-    if (image_buffer->float_buffer.data != nullptr) {
+    if (image_buffer->float_data() != nullptr) {
       kernel_float4.init_brush_color(image_buffer, brush_color);
     }
     else {
@@ -355,7 +355,7 @@ static void do_paint_pixels(const Depsgraph &depsgraph,
       scale_factors(factors, cache.bstrength);
 
       bool pixels_painted = false;
-      if (image_buffer->float_buffer.data != nullptr) {
+      if (image_buffer->float_data() != nullptr) {
         pixels_painted = kernel_float4.paint(brush, pixel_row, factors, image_buffer);
       }
       else {

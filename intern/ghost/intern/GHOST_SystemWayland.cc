@@ -8750,7 +8750,7 @@ uint *GHOST_SystemWayland::getClipboardImage(int *r_width, int *r_height) const
       *r_height = ibuf->y;
       const size_t byte_count = size_t(ibuf->x) * size_t(ibuf->y) * 4;
       rgba = (uint *)malloc(byte_count);
-      std::memcpy(rgba, ibuf->byte_buffer.data, byte_count);
+      std::memcpy(rgba, ibuf->byte_data(), byte_count);
       blender::IMB_freeImBuf(ibuf);
     }
   }

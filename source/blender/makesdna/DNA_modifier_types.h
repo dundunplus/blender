@@ -2569,7 +2569,7 @@ struct NodesModifierPanel {
 struct NodesModifierData {
   ModifierData modifier;
   struct bNodeTree *node_group = nullptr;
-  struct NodesModifierSettings settings;
+  struct NodesModifierSettings settings_legacy;
   /**
    * Directory where baked simulation states are stored. This may be relative to the .blend file.
    */

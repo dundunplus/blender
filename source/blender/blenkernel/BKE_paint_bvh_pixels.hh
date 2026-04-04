@@ -273,7 +273,7 @@ struct CopyPixelTile {
 
   void copy_pixels(ImBuf &tile_buffer, IndexRange group_range) const
   {
-    if (tile_buffer.float_buffer.data) {
+    if (tile_buffer.float_data()) {
       image::ImageBufferAccessor<float4> accessor(tile_buffer);
       copy_pixels<float4>(accessor, group_range);
     }

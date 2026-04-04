@@ -265,7 +265,7 @@ static void colorBalance_apply(ModifierApplyContext &context,
   const ColorBalanceModifierData *cbmd = reinterpret_cast<const ColorBalanceModifierData *>(smd);
 
   ColorBalanceApplyOp op;
-  op.init(*cbmd, context.image->byte_buffer.data != nullptr);
+  op.init(*cbmd, context.image->byte_data() != nullptr);
   apply_modifier_op(op, context.image, mask, context.transform);
   if (mask != nullptr) {
     IMB_freeImBuf(mask);

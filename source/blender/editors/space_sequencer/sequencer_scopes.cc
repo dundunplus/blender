@@ -75,7 +75,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
   std::optional<ColormanageProcessor> cm_processor =
       ColormanageProcessor::display_processor_for_imbuf(ibuf, &view_settings, &display_settings);
 
-  const bool is_float = ibuf->float_buffer.data != nullptr;
+  const bool is_float = ibuf->float_data() != nullptr;
   const int hist_size = is_float ? BINS_HDR : BINS_01;
 
   /* Calculate histogram of input image with parallel reduction:
@@ -89,7 +89,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
         Array<uint3> res = init;
 
         if (is_float) {
-          const float *src = ibuf->float_buffer.data + range.first() * 4;
+          const float *src = ibuf->float_data() + range.first() * 4;
           if (!cm_processor) {
             /* Float image, no color space conversions needed. */
             for ([[maybe_unused]] const int64_t index : range) {
@@ -114,7 +114,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
         }
         else {
           /* Byte images just use 256 histogram bins, directly indexed by value. */
-          const uchar *src = ibuf->byte_buffer.data + range.first() * 4;
+          const uchar *src = ibuf->byte_data() + range.first() * 4;
           if (!cm_processor) {
             /* Byte image, no color space conversions needed. */
             for ([[maybe_unused]] const int64_t index : range) {

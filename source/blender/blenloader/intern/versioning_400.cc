@@ -538,7 +538,9 @@ static void version_mesh_crease_generic(Main &bmain)
       if (md.type != eModifierType_Nodes) {
         continue;
       }
-      if (IDProperty *settings = reinterpret_cast<NodesModifierData *>(&md)->settings.properties) {
+      if (IDProperty *settings =
+              reinterpret_cast<NodesModifierData *>(&md)->settings_legacy.properties)
+      {
         for (IDProperty &prop : settings->data.group) {
           if (StringRef(prop.name).endswith("_attribute_name")) {
             if (STREQ(IDP_string_get(&prop), "crease")) {

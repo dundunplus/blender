@@ -98,7 +98,7 @@ class ImageBufferAccessor {
     ibuf_ = BKE_image_acquire_ibuf(&ima, nullptr, &lock_);
     size_ = {ibuf_->x, ibuf_->y};
     data_ = MutableSpan<ColorGeometry4b>(
-        reinterpret_cast<ColorGeometry4b *>(ibuf_->byte_buffer.data), ibuf_->x * ibuf_->y);
+        reinterpret_cast<ColorGeometry4b *>(ibuf_->byte_data_for_write()), ibuf_->x * ibuf_->y);
   }
 
   void release()

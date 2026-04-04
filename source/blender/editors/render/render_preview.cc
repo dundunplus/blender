@@ -1172,7 +1172,7 @@ static void shader_preview_texture(ShaderPreview *sp, Tex *tex, Scene *sce, Rend
   BKE_texture_fetch_images_for_pool(tex, img_pool);
 
   /* Fill in image buffer. */
-  float *rect_float = rv_ibuf->float_buffer.data;
+  float *rect_float = rv_ibuf->float_data_for_write();
   float tex_coord[3] = {0.0f, 0.0f, 0.0f};
 
   for (int y = 0; y < height; y++) {
@@ -1388,8 +1388,8 @@ static void shader_preview_free(void *customdata)
 
 static void icon_copy_rect(const ImBuf *ibuf, uint w, uint h, uint *rect)
 {
-  if (ibuf == nullptr ||
-      (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr) || rect == nullptr)
+  if (ibuf == nullptr || (ibuf->byte_data() == nullptr && ibuf->float_data() == nullptr) ||
+      rect == nullptr)
   {
     return;
   }
@@ -1417,11 +1417,11 @@ static void icon_copy_rect(const ImBuf *ibuf, uint w, uint h, uint *rect)
   }
 
   /* if needed, convert to 32 bits */
-  if (ima->byte_buffer.data == nullptr) {
+  if (ima->byte_data() == nullptr) {
     IMB_byte_from_float(ima);
   }
 
-  const uint *srect = reinterpret_cast<const uint *>(ima->byte_buffer.data);
+  const uint *srect = reinterpret_cast<const uint *>(ima->byte_data());
   uint *drect = rect;
 
   drect += dy * w + dx;
@@ -1475,9 +1475,7 @@ static void icon_preview_startjob(void *customdata, bool *stop, bool *do_update)
      * already there. Very expensive for large images. Need to find a way to
      * only get existing `ibuf`. */
     ibuf = BKE_image_acquire_ibuf(ima, &iuser, nullptr);
-    if (ibuf == nullptr ||
-        (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr))
-    {
+    if (ibuf == nullptr || (ibuf->byte_data() == nullptr && ibuf->float_data() == nullptr)) {
       BKE_image_release_ibuf(ima, ibuf, nullptr);
       return;
     }
@@ -2055,7 +2053,7 @@ void PreviewLoadJob::run_fn(void *customdata, wmJobWorkerStatus *worker_status)
         preview->h[request->icon_size] = thumb->y;
         BLI_assert(preview->rect[request->icon_size] == nullptr);
         preview->rect[request->icon_size] = reinterpret_cast<uint *>(
-            MEM_dupalloc(thumb->byte_buffer.data));
+            MEM_dupalloc(thumb->byte_data()));
       }
       else {
         icon_copy_rect(thumb,

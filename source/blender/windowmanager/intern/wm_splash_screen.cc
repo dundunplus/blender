@@ -85,7 +85,7 @@ static void wm_block_splash_add_label(ui::Block *block, const char *label, int x
 #ifndef WITH_HEADLESS
 static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
 {
-  uchar *rct = ibuf->byte_buffer.data;
+  uchar *rct = ibuf->byte_data_for_write();
   if (!rct) {
     return;
   }
