@@ -1214,7 +1214,7 @@ inline void fill_segment(T *__restrict data, const T &value, const SegmentT segm
 }
 
 template<typename T>
-inline void copy_assign(const T *__restrict src, const IndexMask &mask, T *__restrict dst)
+BLI_NOINLINE void copy_assign(const T *__restrict src, const IndexMask &mask, T *__restrict dst)
 {
   mask.foreach_segment_optimized(
       [src, dst](const auto segment) { copy_assign_segment(src, segment, dst); },
@@ -1222,7 +1222,9 @@ inline void copy_assign(const T *__restrict src, const IndexMask &mask, T *__res
 }
 
 template<typename T>
-inline void gather_assign(const T *__restrict src, const IndexMask &indices, T *__restrict dst)
+BLI_NOINLINE void gather_assign(const T *__restrict src,
+                                const IndexMask &indices,
+                                T *__restrict dst)
 {
   indices.foreach_segment_optimized(
       [src, dst](const auto segment, const int64_t segment_pos) {
@@ -1231,7 +1233,8 @@ inline void gather_assign(const T *__restrict src, const IndexMask &indices, T *
       exec_mode::serial);
 }
 
-template<typename T> inline void fill(T *__restrict data, const T &value, const IndexMask &mask)
+template<typename T>
+BLI_NOINLINE void fill(T *__restrict data, const T &value, const IndexMask &mask)
 {
   mask.foreach_segment_optimized(
       [data, value](const auto segment) { fill_segment(data, value, segment); },

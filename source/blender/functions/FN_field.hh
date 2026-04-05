@@ -193,6 +193,7 @@ class GField {
 template<typename T> class Field {
  public:
   using base_type = T;
+  using generic_type = GField;
 
  private:
   /**
