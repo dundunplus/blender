@@ -13,6 +13,8 @@
 #include "BKE_anonymous_attribute_id.hh"
 #include "BKE_geometry_set.hh"
 
+#include "BLI_fixed_string.hh"
+
 #include "FN_field_evaluation.hh"
 
 namespace blender {
@@ -315,8 +317,14 @@ class AttributeFieldInput : public GeometryFieldInput {
   bool is_equal_to(const fn::FieldInput &other) const override;
   std::optional<AttrDomain> preferred_domain(const GeometryComponent &component) const override;
 
-  /** Cached position field to avoid allocating a new one every time. */
-  static const fn::GField &position_field();
+  template<typename T, FixedString FStr> static const fn::Field<T> &get_field()
+  {
+    static const auto field = fn::Field<T>::template from_input<AttributeFieldInput>(
+        FStr.data, CPPType::get<T>());
+    /* Use a non-owning wrapper to avoid unnecessary reference counting of a static field. */
+    static const auto field_ref = fn::Field<T>::from_non_owning_ref(field);
+    return field_ref;
+  }
 };
 
 class AttributeExistsFieldInput final : public bke::GeometryFieldInput {
@@ -368,6 +376,9 @@ class IDAttributeFieldInput : public GeometryFieldInput {
 
   uint64_t hash() const override;
   bool is_equal_to(const fn::FieldInput &other) const override;
+
+  /** Cached  field to avoid allocating a new one every time. */
+  static const fn::Field<int> &get_field();
 };
 
 VArray<float3> curve_normals_varray(const CurvesGeometry &curves, AttrDomain domain);
@@ -397,6 +408,9 @@ class NormalFieldInput : public GeometryFieldInput {
 
   uint64_t hash() const override;
   bool is_equal_to(const fn::FieldInput &other) const override;
+
+  /** Cached normal field to avoid allocating a new one every time. */
+  static const fn::Field<float3> &get_field();
 };
 
 class CurveLengthFieldInput final : public CurvesFieldInput {

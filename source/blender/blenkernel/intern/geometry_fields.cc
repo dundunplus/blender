@@ -485,13 +485,6 @@ std::optional<AttrDomain> AttributeFieldInput::preferred_domain(
   return meta_data->domain;
 }
 
-const fn::GField &AttributeFieldInput::position_field()
-{
-  static const fn::GField position_field = AttributeFieldInput::from<float3>("position");
-  static const fn::GField position_field_ref = fn::GField::from_non_owning_ref(position_field);
-  return position_field_ref;
-}
-
 static StringRef get_random_id_attribute_name(const AttrDomain domain)
 {
   switch (domain) {
@@ -533,6 +526,13 @@ bool IDAttributeFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   /* All random ID attribute inputs are the same within the same evaluation context. */
   return dynamic_cast<const IDAttributeFieldInput *>(&other) != nullptr;
+}
+
+const fn::Field<int> &IDAttributeFieldInput::get_field()
+{
+  static const fn::Field<int> field = fn::Field<int>::from_input<IDAttributeFieldInput>();
+  static const fn::Field<int> field_ref = fn::Field<int>::from_non_owning_ref(field);
+  return field_ref;
 }
 
 GVArray NamedLayerSelectionFieldInput::get_varray_for_context(
@@ -805,6 +805,13 @@ bool NormalFieldInput::is_equal_to(const fn::FieldInput &other) const
            true_normals_ == other_typed->true_normals_;
   }
   return false;
+}
+
+const fn::Field<float3> &NormalFieldInput::get_field()
+{
+  static const fn::Field<float3> field = fn::Field<float3>::from_input<NormalFieldInput>();
+  static const fn::Field<float3> field_ref = fn::Field<float3>::from_non_owning_ref(field);
+  return field_ref;
 }
 
 static std::optional<StringRefNull> try_get_field_direct_attribute_id(const fn::GField &any_field)

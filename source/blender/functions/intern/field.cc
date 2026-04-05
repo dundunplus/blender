@@ -414,6 +414,13 @@ bool IndexFieldInput::is_equal_to(const fn::FieldInput &other) const
   return dynamic_cast<const IndexFieldInput *>(&other) != nullptr;
 }
 
+const Field<int> &IndexFieldInput::get_field()
+{
+  static const Field<int> field = Field<int>::from_input<IndexFieldInput>();
+  static const Field<int> field_ref = Field<int>::from_non_owning_ref(field);
+  return field_ref;
+}
+
 Field<bool> invert_boolean_field(const Field<bool> &field)
 {
   const mf::MultiFunction &not_fn = fn::multi_function::registry::lookup("!bool"_ustr);

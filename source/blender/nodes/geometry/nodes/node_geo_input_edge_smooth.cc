@@ -15,7 +15,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<bool> sharp = AttributeFieldInput::from<bool>("sharp_edge");
+  Field<bool> sharp = AttributeFieldInput::get_field<bool, "sharp_edge">();
   params.set_output("Smooth"_ustr, fn::invert_boolean_field(std::move(sharp)));
 }
 

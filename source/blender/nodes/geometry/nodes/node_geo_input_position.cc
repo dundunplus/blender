@@ -13,7 +13,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  params.set_output("Position"_ustr, AttributeFieldInput::position_field());
+  params.set_output("Position"_ustr, AttributeFieldInput::get_field<float3, "position">());
 }
 
 static void node_register()

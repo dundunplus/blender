@@ -224,6 +224,7 @@ template<typename T> class Field {
   template<typename InputT, typename... Args> static Field from_input(Args &&...args);
   template<typename InputT> const InputT *get_input_if() const;
   uint64_t hash() const;
+  static Field from_non_owning_ref(const Field &field);
 };
 
 /**
@@ -402,6 +403,9 @@ class IndexFieldInput final : public FieldInput {
 
   uint64_t hash() const override;
   bool is_equal_to(const fn::FieldInput &other) const override;
+
+  /** Cached index field to avoid allocating a new one every time. */
+  static const Field<int> &get_field();
 };
 
 /* -------------------------------------------------------------------- */
@@ -433,6 +437,11 @@ inline bool GField::TrivialInlineConstant::cpp_type_supported(const CPPType &typ
 inline GField GField::from_non_owning_constant(const CPPType &type, const void *value)
 {
   return GField(ConstantRef{&type, value});
+}
+
+template<typename T> inline Field<T> Field<T>::from_non_owning_ref(const Field &field)
+{
+  return GField::from_non_owning_ref(field).template typed<T>();
 }
 
 template<typename InputT, typename... Args> inline GField GField::from_input(Args &&...args)

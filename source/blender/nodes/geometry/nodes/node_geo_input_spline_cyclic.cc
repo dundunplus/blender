@@ -13,7 +13,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<bool> cyclic_field = AttributeFieldInput::from<bool>("cyclic");
+  Field<bool> cyclic_field = AttributeFieldInput::get_field<bool, "cyclic">();
   params.set_output("Cyclic"_ustr, std::move(cyclic_field));
 }
 

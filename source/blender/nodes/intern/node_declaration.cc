@@ -1057,42 +1057,41 @@ namespace implicit_field_inputs {
 
 static void position(const bNode & /*node*/, void *r_value)
 {
-  bke::SocketValueVariant::ConstructIn(r_value, bke::AttributeFieldInput::position_field());
+  bke::SocketValueVariant::ConstructIn(r_value,
+                                       bke::AttributeFieldInput::get_field<float3, "position">());
 }
 
 static void normal(const bNode & /*node*/, void *r_value)
 {
-  bke::SocketValueVariant::ConstructIn(r_value,
-                                       fn::Field<float3>::from_input<bke::NormalFieldInput>());
+  bke::SocketValueVariant::ConstructIn(r_value, bke::NormalFieldInput::get_field());
 }
 
 static void index(const bNode & /*node*/, void *r_value)
 {
-  bke::SocketValueVariant::ConstructIn(r_value, fn::Field<int>::from_input<fn::IndexFieldInput>());
+  bke::SocketValueVariant::ConstructIn(r_value, fn::IndexFieldInput::get_field());
 }
 
 static void id_or_index(const bNode & /*node*/, void *r_value)
 {
-  bke::SocketValueVariant::ConstructIn(r_value,
-                                       fn::Field<int>::from_input<bke::IDAttributeFieldInput>());
+  bke::SocketValueVariant::ConstructIn(r_value, bke::IDAttributeFieldInput::get_field());
 }
 
 static void instance_transform(const bNode & /*node*/, void *r_value)
 {
   bke::SocketValueVariant::ConstructIn(
-      r_value, bke::AttributeFieldInput::from<float4x4>("instance_transform"));
+      r_value, bke::AttributeFieldInput::get_field<float4x4, "instance_transform">());
 }
 
 static void handle_left(const bNode & /*node*/, void *r_value)
 {
-  bke::SocketValueVariant::ConstructIn(r_value,
-                                       bke::AttributeFieldInput::from<float3>("handle_left"));
+  bke::SocketValueVariant::ConstructIn(
+      r_value, bke::AttributeFieldInput::get_field<float3, "handle_left">());
 }
 
 static void handle_right(const bNode & /*node*/, void *r_value)
 {
-  bke::SocketValueVariant::ConstructIn(r_value,
-                                       bke::AttributeFieldInput::from<float3>("handle_right"));
+  bke::SocketValueVariant::ConstructIn(
+      r_value, bke::AttributeFieldInput::get_field<float3, "handle_right">());
 }
 
 }  // namespace implicit_field_inputs

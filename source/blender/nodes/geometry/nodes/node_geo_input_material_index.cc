@@ -13,7 +13,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<int> material_index_field = AttributeFieldInput::from<int>("material_index");
+  Field<int> material_index_field = AttributeFieldInput::get_field<int, "material_index">();
   params.set_output("Material Index"_ustr, std::move(material_index_field));
 }
 
