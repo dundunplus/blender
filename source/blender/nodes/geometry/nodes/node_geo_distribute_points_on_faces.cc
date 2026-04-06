@@ -17,6 +17,8 @@
 #include "BKE_mesh_sample.hh"
 #include "BKE_pointcloud.hh"
 
+#include "FN_multi_function_registry.hh"
+
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
@@ -128,9 +130,9 @@ static void sample_mesh_surface(const Mesh &mesh,
 
     float corner_tri_density_factor = 1.0f;
     if (!density_factors.is_empty()) {
-      const float v0_density_factor = std::max(0.0f, density_factors[v0_loop]);
-      const float v1_density_factor = std::max(0.0f, density_factors[v1_loop]);
-      const float v2_density_factor = std::max(0.0f, density_factors[v2_loop]);
+      const float v0_density_factor = density_factors[v0_loop];
+      const float v1_density_factor = density_factors[v1_loop];
+      const float v2_density_factor = density_factors[v2_loop];
       corner_tri_density_factor = (v0_density_factor + v1_density_factor + v2_density_factor) /
                                   3.0f;
     }
@@ -218,9 +220,9 @@ BLI_NOINLINE static void update_elimination_mask_based_on_density_factors(
     const int3 &tri = corner_tris[tri_indices[i]];
     const float3 bary_coord = bary_coords[i];
 
-    const float v0_density_factor = std::max(0.0f, density_factors[tri[0]]);
-    const float v1_density_factor = std::max(0.0f, density_factors[tri[1]]);
-    const float v2_density_factor = std::max(0.0f, density_factors[tri[2]]);
+    const float v0_density_factor = density_factors[tri[0]];
+    const float v1_density_factor = density_factors[tri[1]];
+    const float v2_density_factor = density_factors[tri[2]];
 
     const float probability = v0_density_factor * bary_coord.x + v1_density_factor * bary_coord.y +
                               v2_density_factor * bary_coord.z;
@@ -314,6 +316,13 @@ BLI_NOINLINE static void propagate_existing_attributes(const Mesh &mesh,
     GAttributeReader src = iter.get();
     if (!src) {
       return;
+    }
+    const CommonVArrayInfo info = src.varray.common_info();
+    if (info.type == CommonVArrayInfo::Type::Single) {
+      const bke::AttributeInitValue init(GPointer(src.varray.type(), info.data));
+      if (point_attributes.add(iter.name, AttrDomain::Point, iter.data_type, init)) {
+        return;
+      }
     }
     GSpanAttributeWriter dst = point_attributes.lookup_or_add_for_write_only_span(
         name, AttrDomain::Point, iter.data_type);
@@ -525,22 +534,28 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
   Vector<float3> bary_coords;
   Vector<int> tri_indices;
 
+  const static mf::MultiFunction &max_fn = fn::multi_function::registry::lookup(
+      "max(float, float)"_ustr);
   switch (method) {
     case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_RANDOM: {
-      const Field<float> density_field = params.get_input<Field<float>>("Density"_ustr);
+      const Field<float> density(FieldOperation::from(
+          max_fn, {params.get_input<Field<float>>("Density"_ustr), fn::Field<float>(0.0f)}));
       distribute_points_random(
-          mesh, density_field, selection_field, seed, positions, bary_coords, tri_indices);
+          mesh, density, selection_field, seed, positions, bary_coords, tri_indices);
       break;
     }
     case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_POISSON: {
       const float minimum_distance = params.get_input<float>("Distance Min"_ustr);
       const float density_max = params.get_input<float>("Density Max"_ustr);
-      const Field<float> density_factors_field = params.get_input<Field<float>>(
-          "Density Factor"_ustr);
+      const static mf::MultiFunction &max_fn = fn::multi_function::registry::lookup(
+          "max(float, float)"_ustr);
+      const Field<float> density_factors(FieldOperation::from(
+          max_fn,
+          {params.get_input<Field<float>>("Density Factor"_ustr), fn::Field<float>(0.0f)}));
       distribute_points_poisson_disk(mesh,
                                      minimum_distance,
                                      density_max,
-                                     density_factors_field,
+                                     density_factors,
                                      selection_field,
                                      seed,
                                      positions,
@@ -556,11 +571,8 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
 
   PointCloud *pointcloud = BKE_pointcloud_new_nomain(positions.size());
   bke::MutableAttributeAccessor point_attributes = pointcloud->attributes_for_write();
-  bke::SpanAttributeWriter<float> point_radii =
-      point_attributes.lookup_or_add_for_write_only_span<float>("radius", AttrDomain::Point);
   pointcloud->positions_for_write().copy_from(positions);
-  point_radii.span.fill(0.05f);
-  point_radii.finish();
+  point_attributes.add<float>("radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.05f));
 
   geometry_set.replace_pointcloud(pointcloud);
 
