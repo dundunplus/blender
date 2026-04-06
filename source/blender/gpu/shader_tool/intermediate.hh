@@ -192,6 +192,7 @@ struct MutableString {
   {
     bool result = erase_try(from, to);
     assert(result);
+    (void)result;
   }
   /* Replace the content from `from` to `to` (inclusive) by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
@@ -207,6 +208,7 @@ struct MutableString {
   {
     bool result = erase_try(from, to);
     assert(result);
+    (void)result;
   }
   /* Replace the content from `from` to `to` (inclusive) by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
@@ -221,6 +223,7 @@ struct MutableString {
   {
     bool result = erase_try(tok);
     assert(result);
+    (void)result;
   }
   /* Replace the content of the scope by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
@@ -232,6 +235,7 @@ struct MutableString {
   {
     bool result = erase_try(scope);
     assert(result);
+    (void)result;
   }
 
   /* If prepend is true, will prepend the new content to the list of modifications.

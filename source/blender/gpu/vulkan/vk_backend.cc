@@ -762,10 +762,7 @@ void VKBackend::capabilities_init(VKDevice &device)
   GCaps.max_texture_3d_size = min_uu(limits.maxImageDimension3D, INT_MAX);
   GCaps.max_buffer_texture_size = min_uu(limits.maxTexelBufferElements, UINT_MAX);
   GCaps.max_texture_layers = min_uu(limits.maxImageArrayLayers, INT_MAX);
-  GCaps.max_textures = min_uu(limits.maxDescriptorSetSampledImages, INT_MAX);
-  GCaps.max_textures_vert = GCaps.max_textures_geom = GCaps.max_textures_frag = min_uu(
-      limits.maxPerStageDescriptorSampledImages, INT_MAX);
-  GCaps.max_samplers = min_uu(limits.maxSamplerAllocationCount, INT_MAX);
+  GCaps.max_textures = min_uu(limits.maxPerStageDescriptorSampledImages, INT_MAX);
   GCaps.max_images = min_uu(limits.maxPerStageDescriptorStorageImages, INT_MAX);
   for (int i = 0; i < 3; i++) {
     GCaps.max_work_group_count[i] = min_uu(limits.maxComputeWorkGroupCount[i], INT_MAX);

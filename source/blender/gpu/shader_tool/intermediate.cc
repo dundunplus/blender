@@ -145,8 +145,10 @@ void ErrorHandler::report(Token tok, std::string_view message)
   if (tok.is_valid()) {
     full_report += "\n";
     full_report += tok.line_str() + "\n";
-    full_report += std::string(tok.char_number(), ' ') + "^" +
-                   std::string(tok.str().size() - 1, '~');
+    if (tok.str().size() > 0) {
+      full_report += std::string(tok.char_number(), ' ') + "^" +
+                     std::string(tok.str().size() - 1, '~');
+    }
   }
   err = {std::string(message), full_report};
 }

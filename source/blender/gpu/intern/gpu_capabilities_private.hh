@@ -25,10 +25,6 @@ struct GPUCapabilities {
   uint32_t max_buffer_texture_size = 0;
   int max_texture_layers = 0;
   int max_textures = 0;
-  int max_textures_vert = 0;
-  int max_textures_geom = 0;
-  int max_textures_frag = 0;
-  int max_samplers = 0;
   int max_images = 0;
   int max_work_group_count[3] = {0, 0, 0};
   int max_work_group_size[3] = {0, 0, 0};

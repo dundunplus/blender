@@ -209,7 +209,14 @@ static void root_catalogs_draw(const bContext *C, Menu *menu)
     if (ELEM(object->type, OB_MESH, OB_CURVES_LEGACY, OB_FONT, OB_SURF, OB_LATTICE)) {
       menus.add_new("Edit");
     }
-    if (ELEM(object->type, OB_MESH, OB_CURVES_LEGACY, OB_FONT, OB_SURF, OB_VOLUME)) {
+    if (ELEM(object->type,
+             OB_MESH,
+             OB_CURVES_LEGACY,
+             OB_FONT,
+             OB_SURF,
+             OB_VOLUME,
+             OB_GREASE_PENCIL))
+    {
       menus.add_new("Generate");
     }
     if (ELEM(object->type, OB_MESH, OB_CURVES_LEGACY, OB_FONT, OB_SURF, OB_LATTICE, OB_VOLUME)) {

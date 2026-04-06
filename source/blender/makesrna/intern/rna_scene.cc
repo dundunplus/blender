@@ -7589,7 +7589,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "seq_flag", R_SEQ_OVERRIDE_SCENE_SETTINGS);
   RNA_def_property_ui_text(prop,
                            "Override Scene Settings",
-                           "Use workbench render and world settings from the sequencer scene, "
+                           "Use Workbench render and world settings from the sequencer scene, "
                            "instead of each strip's scene");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_SceneSequencer_update");
 

@@ -107,45 +107,67 @@ static math::Quaternion normal_to_rotation(const float3 normal)
   return math::normalize(math::Quaternion(quat));
 }
 
-static void sample_mesh_surface(const Mesh &mesh,
-                                const float base_density,
-                                const Span<float> density_factors,
-                                const int seed,
-                                Vector<float3> &r_positions,
-                                Vector<float3> &r_bary_coords,
-                                Vector<int> &r_tri_indices)
+static OffsetIndices<int> calc_tri_point_offsets(const Mesh &mesh,
+                                                 const Span<float> densities,
+                                                 const int seed,
+                                                 Array<int> &r_count_data)
 {
   const Span<float3> positions = mesh.vert_positions();
   const Span<int> corner_verts = mesh.corner_verts();
   const Span<int3> corner_tris = mesh.corner_tris();
 
-  Array<int> count_data(corner_tris.size() + 1);
+  r_count_data = Array<int>(corner_tris.size() + 1);
   threading::parallel_for(corner_tris.index_range(), 1024, [&](const IndexRange range) {
     for (const int64_t tri_i : range) {
       const int3 &tri = corner_tris[tri_i];
-      const float3 &v0_pos = positions[corner_verts[tri[0]]];
-      const float3 &v1_pos = positions[corner_verts[tri[1]]];
-      const float3 &v2_pos = positions[corner_verts[tri[2]]];
-
-      float corner_tri_density_factor = 1.0f;
-      if (!density_factors.is_empty()) {
-        const float v0_density_factor = density_factors[tri[0]];
-        const float v1_density_factor = density_factors[tri[1]];
-        const float v2_density_factor = density_factors[tri[2]];
-        corner_tri_density_factor = (v0_density_factor + v1_density_factor + v2_density_factor) /
-                                    3.0f;
-      }
-      const float area = area_tri_v3(v0_pos, v1_pos, v2_pos);
-
+      const float density = (densities[tri[0]] + densities[tri[1]] + densities[tri[2]]) / 3.0f;
+      const float area = area_tri_v3(positions[corner_verts[tri[0]]],
+                                     positions[corner_verts[tri[1]]],
+                                     positions[corner_verts[tri[2]]]);
       const int corner_tri_seed = noise::hash(tri_i, seed);
       RandomNumberGenerator corner_tri_rng(corner_tri_seed);
-      count_data[tri_i] = corner_tri_rng.round_probabilistic(area * base_density *
-                                                             corner_tri_density_factor);
+      r_count_data[tri_i] = corner_tri_rng.round_probabilistic(area * density);
     }
   });
 
-  const OffsetIndices<int> points_by_tri = offset_indices::accumulate_counts_to_offsets(
-      count_data);
+  return offset_indices::accumulate_counts_to_offsets(r_count_data);
+}
+
+static OffsetIndices<int> calc_tri_point_offsets(const Mesh &mesh,
+                                                 const float density,
+                                                 const int seed,
+                                                 Array<int> &r_count_data)
+{
+  const Span<float3> positions = mesh.vert_positions();
+  const Span<int> corner_verts = mesh.corner_verts();
+  const Span<int3> corner_tris = mesh.corner_tris();
+
+  r_count_data = Array<int>(corner_tris.size() + 1);
+  threading::parallel_for(corner_tris.index_range(), 1024, [&](const IndexRange range) {
+    for (const int64_t tri_i : range) {
+      const int3 &tri = corner_tris[tri_i];
+      const float area = area_tri_v3(positions[corner_verts[tri[0]]],
+                                     positions[corner_verts[tri[1]]],
+                                     positions[corner_verts[tri[2]]]);
+      const int corner_tri_seed = noise::hash(tri_i, seed);
+      RandomNumberGenerator corner_tri_rng(corner_tri_seed);
+      r_count_data[tri_i] = corner_tri_rng.round_probabilistic(area * density);
+    }
+  });
+
+  return offset_indices::accumulate_counts_to_offsets(r_count_data);
+}
+
+static void sample_bary_coords(const Mesh &mesh,
+                               const int seed,
+                               const OffsetIndices<int> points_by_tri,
+                               Vector<float3> &r_positions,
+                               Vector<float3> &r_bary_coords,
+                               Vector<int> &r_tri_indices)
+{
+  const Span<float3> positions = mesh.vert_positions();
+  const Span<int> corner_verts = mesh.corner_verts();
+  const Span<int3> corner_tris = mesh.corner_tris();
 
   r_positions.resize(points_by_tri.total_size());
   r_bary_coords.resize(points_by_tri.total_size());
@@ -169,9 +191,7 @@ static void sample_mesh_surface(const Mesh &mesh,
 
           for (const int i : points_by_tri[tri_i]) {
             const float3 bary_coord = corner_tri_rng.get_barycentric_coordinates();
-            float3 point_pos;
-            interp_v3_v3v3v3(point_pos, v0_pos, v1_pos, v2_pos, bary_coord);
-            r_positions[i] = point_pos;
+            r_positions[i] = bke::attribute_math::mix3(bary_coord, v0_pos, v1_pos, v2_pos);
             r_bary_coords[i] = bary_coord;
             r_tri_indices[i] = tri_i;
           }
@@ -316,11 +336,11 @@ BLI_NOINLINE static void interpolate_attribute(const Mesh &mesh,
   }
 }
 
-BLI_NOINLINE static void propagate_existing_attributes(const Mesh &mesh,
-                                                       const bke::AttributeFilter &filter,
-                                                       PointCloud &points,
-                                                       const Span<float3> bary_coords,
-                                                       const Span<int> tri_indices)
+BLI_NOINLINE static void propagate_attributes(const Mesh &mesh,
+                                              const bke::AttributeFilter &filter,
+                                              PointCloud &points,
+                                              const Span<float3> bary_coords,
+                                              const Span<int> tri_indices)
 {
   const AttributeAccessor mesh_attributes = mesh.attributes();
   MutableAttributeAccessor point_attributes = points.attributes_for_write();
@@ -506,30 +526,75 @@ static Array<float> calc_full_density_factors_with_selection(const Mesh &mesh,
   return densities;
 }
 
-static void distribute_points_random(const Mesh &mesh,
-                                     const Field<float> &density_field,
-                                     const Field<bool> &selection_field,
-                                     const int seed,
-                                     Vector<float3> &positions,
-                                     Vector<float3> &bary_coords,
-                                     Vector<int> &tri_indices)
+static PointCloud *create_points_random(const Mesh &mesh,
+                                        const Field<bool> &selection_field,
+                                        const Field<float> &density_field,
+                                        const int seed,
+                                        const AttributeOutputs &attribute_outputs,
+                                        const bke::AttributeFilter &attribute_filter,
+                                        const bool use_legacy_normal)
 {
-  const Array<float> densities = calc_full_density_factors_with_selection(
-      mesh, density_field, selection_field);
-  sample_mesh_surface(mesh, 1.0f, densities, seed, positions, bary_coords, tri_indices);
+  Array<int> count_data;
+  OffsetIndices<int> points_by_tri;
+  if (selection_field.depends_on_input() || density_field.depends_on_input()) {
+    const Array<float> densities = calc_full_density_factors_with_selection(
+        mesh, density_field, selection_field);
+    points_by_tri = calc_tri_point_offsets(mesh, densities, seed, count_data);
+  }
+  else {
+    const float density = fn::evaluate_constant_field<float>(density_field);
+    points_by_tri = calc_tri_point_offsets(mesh, density, seed, count_data);
+  }
+  if (points_by_tri.total_size() == 0) {
+    return nullptr;
+  }
+
+  Vector<float3> positions;
+  Vector<float3> bary_coords;
+  Vector<int> tri_indices;
+  sample_bary_coords(mesh, seed, points_by_tri, positions, bary_coords, tri_indices);
+
+  PointCloud *pointcloud = bke::pointcloud_new_no_attributes(positions.size());
+  bke::MutableAttributeAccessor point_attributes = pointcloud->attributes_for_write();
+  VectorData<float3, GuardedAllocator> positions_data = positions.release();
+  const auto *attr_data = implicit_sharing::info_for_mem_free(positions_data.data);
+  point_attributes.add<float3>("position",
+                               bke::AttrDomain::Point,
+                               bke::AttributeInitShared(positions_data.data, *attr_data));
+  attr_data->remove_user_and_delete_if_last();
+  point_attributes.add<float>("radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.05f));
+
+  propagate_attributes(mesh, attribute_filter, *pointcloud, bary_coords, tri_indices);
+
+  compute_attribute_outputs(
+      mesh, *pointcloud, bary_coords, tri_indices, attribute_outputs, use_legacy_normal);
+
+  geometry::debug_randomize_point_order(pointcloud);
+
+  return pointcloud;
 }
 
-static void distribute_points_poisson_disk(const Mesh &mesh,
-                                           const float minimum_distance,
-                                           const float max_density,
-                                           const Field<float> &density_factor_field,
-                                           const Field<bool> &selection_field,
-                                           const int seed,
-                                           Vector<float3> &positions,
-                                           Vector<float3> &bary_coords,
-                                           Vector<int> &tri_indices)
+static PointCloud *create_points_poisson_disk(const Mesh &mesh,
+                                              const Field<bool> &selection_field,
+                                              const Field<float> &density_factor_field,
+                                              const float minimum_distance,
+                                              const float density_max,
+                                              const int seed,
+                                              const AttributeOutputs &attribute_outputs,
+                                              const bke::AttributeFilter &attribute_filter,
+                                              const bool use_legacy_normal)
 {
-  sample_mesh_surface(mesh, max_density, {}, seed, positions, bary_coords, tri_indices);
+  Array<int> count_data;
+  const OffsetIndices<int> points_by_tri = calc_tri_point_offsets(
+      mesh, density_max, seed, count_data);
+  if (points_by_tri.total_size() == 0) {
+    return nullptr;
+  }
+
+  Vector<float3> positions;
+  Vector<float3> bary_coords;
+  Vector<int> tri_indices;
+  sample_bary_coords(mesh, seed, points_by_tri, positions, bary_coords, tri_indices);
 
   Array<bool> elimination_mask(positions.size(), false);
   update_elimination_mask_for_close_points(positions, minimum_distance, elimination_mask);
@@ -541,98 +606,42 @@ static void distribute_points_poisson_disk(const Mesh &mesh,
       mesh, density_factors, bary_coords, tri_indices, elimination_mask.as_mutable_span());
 
   eliminate_points_based_on_mask(elimination_mask.as_span(), positions, bary_coords, tri_indices);
-}
-
-static void point_distribution_calculate(GeometrySet &geometry_set,
-                                         const Field<bool> selection_field,
-                                         const GeometryNodeDistributePointsOnFacesMode method,
-                                         const int seed,
-                                         const AttributeOutputs &attribute_outputs,
-                                         const GeoNodeExecParams &params)
-{
-  if (!geometry_set.has_mesh()) {
-    return;
-  }
-
-  const Mesh &mesh = *geometry_set.get_mesh();
-
-  Vector<float3> positions;
-  Vector<float3> bary_coords;
-  Vector<int> tri_indices;
-
-  const static mf::MultiFunction &max_fn = fn::multi_function::registry::lookup(
-      "max(float, float)"_ustr);
-  switch (method) {
-    case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_RANDOM: {
-      const Field<float> density(FieldOperation::from(
-          max_fn, {params.get_input<Field<float>>("Density"_ustr), fn::Field<float>(0.0f)}));
-      distribute_points_random(
-          mesh, density, selection_field, seed, positions, bary_coords, tri_indices);
-      break;
-    }
-    case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_POISSON: {
-      const float minimum_distance = params.get_input<float>("Distance Min"_ustr);
-      const float density_max = params.get_input<float>("Density Max"_ustr);
-      const static mf::MultiFunction &max_fn = fn::multi_function::registry::lookup(
-          "max(float, float)"_ustr);
-      const Field<float> density_factors(FieldOperation::from(
-          max_fn,
-          {params.get_input<Field<float>>("Density Factor"_ustr), fn::Field<float>(0.0f)}));
-      distribute_points_poisson_disk(mesh,
-                                     minimum_distance,
-                                     density_max,
-                                     density_factors,
-                                     selection_field,
-                                     seed,
-                                     positions,
-                                     bary_coords,
-                                     tri_indices);
-      break;
-    }
-  }
 
   if (positions.is_empty()) {
-    return;
+    return nullptr;
   }
 
   PointCloud *pointcloud = bke::pointcloud_new_no_attributes(positions.size());
   bke::MutableAttributeAccessor point_attributes = pointcloud->attributes_for_write();
-  if (positions.capacity() == positions.size()) {
-    /* Add the existing Vector allocation as shared attribute data as long as it doesn't waste any
-     * memory due to vector over-allocation (being less conservative would be reasonable too). */
-    VectorData<float3, GuardedAllocator> positions_data = positions.release();
-    const auto *attr_data = implicit_sharing::info_for_mem_free(positions_data.data);
-    point_attributes.add<float3>("position",
-                                 bke::AttrDomain::Point,
-                                 bke::AttributeInitShared(positions_data.data, *attr_data));
-    attr_data->remove_user_and_delete_if_last();
-  }
-  else {
-    pointcloud->positions_for_write().copy_from(positions);
-  }
+  pointcloud->positions_for_write().copy_from(positions);
   point_attributes.add<float>("radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.05f));
 
-  geometry_set.replace_pointcloud(pointcloud);
+  propagate_attributes(mesh, attribute_filter, *pointcloud, bary_coords, tri_indices);
 
-  propagate_existing_attributes(
-      mesh, params.get_attribute_filter("Points"_ustr), *pointcloud, bary_coords, tri_indices);
-
-  const bool use_legacy_normal = params.node().custom2 != 0;
   compute_attribute_outputs(
       mesh, *pointcloud, bary_coords, tri_indices, attribute_outputs, use_legacy_normal);
 
   geometry::debug_randomize_point_order(pointcloud);
+
+  return pointcloud;
+}
+
+static Field<float> extract_non_negative_density(GeoNodeExecParams &params, const UString input)
+{
+  const static mf::MultiFunction &max_fn = fn::multi_function::registry::lookup(
+      "max(float, float)"_ustr);
+  return Field<float>(FieldOperation::from(
+      max_fn, {params.extract_input<Field<float>>(input), fn::Field<float>(0.0f)}));
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh"_ustr);
 
-  const GeometryNodeDistributePointsOnFacesMode method = GeometryNodeDistributePointsOnFacesMode(
-      params.node().custom1);
-
+  const Field<bool> selection = params.extract_input<Field<bool>>("Selection"_ustr);
   const int seed = params.extract_input<int>("Seed"_ustr) * 5383843;
-  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
+  const NodeAttributeFilter attribute_filter = params.get_attribute_filter("Points"_ustr);
+  const bool use_legacy_normal = params.node().custom2 != 0;
 
   AttributeOutputs attribute_outputs;
   attribute_outputs.rotation_id = params.get_output_anonymous_attribute_id_if_needed(
@@ -642,13 +651,48 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   lazy_threading::send_hint();
 
-  geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
-    point_distribution_calculate(
-        geometry_set, selection_field, method, seed, attribute_outputs, params);
-    /* Keep instances because the original geometry set may contain instances that are processed as
-     * well. */
-    geometry_set.keep_only({GeometryComponent::Type::PointCloud, GeometryComponent::Type::Edit});
-  });
+  switch (GeometryNodeDistributePointsOnFacesMode(params.node().custom1)) {
+    case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_RANDOM: {
+      const Field<float> density = extract_non_negative_density(params, "Density"_ustr);
+      geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
+        if (const Mesh *mesh = geometry_set.get_mesh()) {
+          PointCloud *pointcloud = create_points_random(*mesh,
+                                                        selection,
+                                                        density,
+                                                        seed,
+                                                        attribute_outputs,
+                                                        attribute_filter,
+                                                        use_legacy_normal);
+          geometry_set.replace_pointcloud(pointcloud);
+        }
+        geometry_set.keep_only(
+            {GeometryComponent::Type::PointCloud, GeometryComponent::Type::Edit});
+      });
+      break;
+    }
+    case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_POISSON: {
+      const Field<float> factors = extract_non_negative_density(params, "Density Factor"_ustr);
+      const float minimum_distance = params.extract_input<float>("Distance Min"_ustr);
+      const float density_max = params.extract_input<float>("Density Max"_ustr);
+      geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
+        if (const Mesh *mesh = geometry_set.get_mesh()) {
+          PointCloud *pointcloud = create_points_poisson_disk(*mesh,
+                                                              selection,
+                                                              factors,
+                                                              minimum_distance,
+                                                              density_max,
+                                                              seed,
+                                                              attribute_outputs,
+                                                              attribute_filter,
+                                                              use_legacy_normal);
+          geometry_set.replace_pointcloud(pointcloud);
+          geometry_set.keep_only(
+              {GeometryComponent::Type::PointCloud, GeometryComponent::Type::Edit});
+        }
+      });
+      break;
+    }
+  }
 
   params.set_output("Points"_ustr, std::move(geometry_set));
 }

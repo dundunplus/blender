@@ -26,15 +26,18 @@
 #include "BKE_animsys.h"
 #include "BKE_curves.hh"
 #include "BKE_idprop.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_node.hh"
 #include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
+#include "BKE_report.hh"
 
 #include "SEQ_iterator.hh"
 #include "SEQ_sequencer.hh"
 
+#include "BLO_read_write.hh"
 #include "readfile.hh"
 
 #include "versioning_common.hh"
@@ -45,7 +48,10 @@ namespace blender {
 
 // static CLG_LogRef LOG = {"blend.doversion"};
 
-static void version_geometry_nodes_properties(Main &bmain, Object &object, NodesModifierData &nmd)
+static void version_geometry_nodes_properties(FileData &fd,
+                                              Main &bmain,
+                                              Object &object,
+                                              NodesModifierData &nmd)
 {
   const IDProperty *old_props = nmd.settings_legacy.properties;
   if (!old_props) {
@@ -55,9 +61,34 @@ static void version_geometry_nodes_properties(Main &bmain, Object &object, Nodes
   if (!nmd.node_group) {
     IDP_FreeProperty(nmd.settings_legacy.properties);
     nmd.settings_legacy.properties = nullptr;
+    BLO_reportf_wrap(fd.reports,
+                     RPT_WARNING,
+                     "Modifier '%s' from Object '%s' is missing its Geometry Node Group, its "
+                     "settings will be lost (reset to default).",
+                     nmd.modifier.name,
+                     BKE_id_name(object.id));
     return;
   }
   if (ID_MISSING(&nmd.node_group->id)) {
+    /* Keeping the old idproperties is not an option, and not really usefull, since if the
+     * blendfile is saved in this current state, it won't be re-versionned here later anyway.
+     *
+     * Furthermore, the whole remaining part of the code expects this to be nullptr, and keeping it
+     * at runtime actually causes weird issues in depsgraph nodes building phase.
+     *
+     * So all in all, it's simpler and safer to also just lose these values here - if file is not
+     * saved in this state, next loading will do the versionning if the nodegroup is available
+     * again, otherwise that data is lost.
+     */
+    IDP_FreeProperty(nmd.settings_legacy.properties);
+    nmd.settings_legacy.properties = nullptr;
+    BLO_reportf_wrap(
+        fd.reports,
+        RPT_WARNING,
+        "Modifier '%s' from Object '%s' is using a missing linked Geometry Node Group, its "
+        "settings will be lost (reset to default) if the file is saved in this state.",
+        nmd.modifier.name,
+        BKE_id_name(object.id));
     return;
   }
   const bNodeTree &ntree = *nmd.node_group;
@@ -229,7 +260,7 @@ static void fix_single_point_curves_custom_knots(Main *bmain)
   }
 }
 
-void do_versions_after_linking_520(FileData * /*fd*/, Main *bmain)
+void do_versions_after_linking_520(FileData *fd, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 2)) {
     for (Scene &scene : bmain->scenes) {
@@ -246,7 +277,7 @@ void do_versions_after_linking_520(FileData * /*fd*/, Main *bmain)
       for (ModifierData &md : object.modifiers) {
         if (md.type == eModifierType_Nodes) {
           version_geometry_nodes_properties(
-              *bmain, object, reinterpret_cast<NodesModifierData &>(md));
+              *fd, *bmain, object, reinterpret_cast<NodesModifierData &>(md));
         }
       }
     }

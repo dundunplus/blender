@@ -503,14 +503,8 @@ void MTLBackend::capabilities_init(MTLContext *ctx)
   GCaps.max_textures = (MTLBackend::capabilities.supports_family_mac1) ?
                            128 :
                            (([device supportsFamily:MTLGPUFamilyApple4]) ? 96 : 31);
-  if (GCaps.max_textures <= 32) {
-    BLI_assert(false);
-  }
-  GCaps.max_samplers = (MTLBackend::capabilities.supports_argument_buffers_tier2) ? 1024 : 16;
-
-  GCaps.max_textures_vert = GCaps.max_textures;
-  GCaps.max_textures_geom = 0; /* N/A geometry shaders not supported. */
-  GCaps.max_textures_frag = GCaps.max_textures;
+  /* Hardcoded limit due to ShaderInterface::enabled_tex_mask_. */
+  GCaps.max_textures = std::min(GCaps.max_textures, 64);
 
   GCaps.max_images = GCaps.max_textures;
 

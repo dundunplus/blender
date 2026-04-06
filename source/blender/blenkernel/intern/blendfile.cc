@@ -1095,11 +1095,16 @@ static void setup_app_data(bContext *C,
      * in file reading code itself, so there should never be any remapping to do here. */
     BLI_assert(mode != LOAD_UNDO);
 
-    /* Handle all pending remapping from swapping old and new IDs around. */
+    /* Handle all pending remapping from swapping old and new IDs around.
+     *
+     * Note that since some data has been freed from the old Main, access to the ID pointers while
+     * handling them in the foreach_id callback should be forbidden, to prevent read-after-free
+     * errors. See `UFO_Rig_OldVersion.blend` from #156601 for a reproducible case. */
     BKE_libblock_remap_multiple_raw(bfd->main,
                                     *reuse_data.remapper,
                                     (ID_REMAP_FORCE_UI_POINTERS | ID_REMAP_SKIP_USER_REFCOUNT |
-                                     ID_REMAP_SKIP_UPDATE_TAGGING | ID_REMAP_SKIP_USER_CLEAR));
+                                     ID_REMAP_SKIP_UPDATE_TAGGING | ID_REMAP_SKIP_USER_CLEAR |
+                                     ID_REMAP_NO_ORIG_POINTERS_ACCESS));
 
     /* Fix potential invalid usages of now-locale-data created by remapping above. Should never
      * be needed in undo case, this is to address cases like:
