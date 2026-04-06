@@ -119,40 +119,66 @@ static void sample_mesh_surface(const Mesh &mesh,
   const Span<int> corner_verts = mesh.corner_verts();
   const Span<int3> corner_tris = mesh.corner_tris();
 
-  for (const int tri_i : corner_tris.index_range()) {
-    const int3 &tri = corner_tris[tri_i];
-    const int v0_loop = tri[0];
-    const int v1_loop = tri[1];
-    const int v2_loop = tri[2];
-    const float3 &v0_pos = positions[corner_verts[v0_loop]];
-    const float3 &v1_pos = positions[corner_verts[v1_loop]];
-    const float3 &v2_pos = positions[corner_verts[v2_loop]];
+  Array<int> count_data(corner_tris.size() + 1);
+  threading::parallel_for(corner_tris.index_range(), 1024, [&](const IndexRange range) {
+    for (const int64_t tri_i : range) {
+      const int3 &tri = corner_tris[tri_i];
+      const float3 &v0_pos = positions[corner_verts[tri[0]]];
+      const float3 &v1_pos = positions[corner_verts[tri[1]]];
+      const float3 &v2_pos = positions[corner_verts[tri[2]]];
 
-    float corner_tri_density_factor = 1.0f;
-    if (!density_factors.is_empty()) {
-      const float v0_density_factor = density_factors[v0_loop];
-      const float v1_density_factor = density_factors[v1_loop];
-      const float v2_density_factor = density_factors[v2_loop];
-      corner_tri_density_factor = (v0_density_factor + v1_density_factor + v2_density_factor) /
-                                  3.0f;
+      float corner_tri_density_factor = 1.0f;
+      if (!density_factors.is_empty()) {
+        const float v0_density_factor = density_factors[tri[0]];
+        const float v1_density_factor = density_factors[tri[1]];
+        const float v2_density_factor = density_factors[tri[2]];
+        corner_tri_density_factor = (v0_density_factor + v1_density_factor + v2_density_factor) /
+                                    3.0f;
+      }
+      const float area = area_tri_v3(v0_pos, v1_pos, v2_pos);
+
+      const int corner_tri_seed = noise::hash(tri_i, seed);
+      RandomNumberGenerator corner_tri_rng(corner_tri_seed);
+      count_data[tri_i] = corner_tri_rng.round_probabilistic(area * base_density *
+                                                             corner_tri_density_factor);
     }
-    const float area = area_tri_v3(v0_pos, v1_pos, v2_pos);
+  });
 
-    const int corner_tri_seed = noise::hash(tri_i, seed);
-    RandomNumberGenerator corner_tri_rng(corner_tri_seed);
+  const OffsetIndices<int> points_by_tri = offset_indices::accumulate_counts_to_offsets(
+      count_data);
 
-    const int point_amount = corner_tri_rng.round_probabilistic(area * base_density *
-                                                                corner_tri_density_factor);
+  r_positions.resize(points_by_tri.total_size());
+  r_bary_coords.resize(points_by_tri.total_size());
+  r_tri_indices.resize(points_by_tri.total_size());
 
-    for (int i = 0; i < point_amount; i++) {
-      const float3 bary_coord = corner_tri_rng.get_barycentric_coordinates();
-      float3 point_pos;
-      interp_v3_v3v3v3(point_pos, v0_pos, v1_pos, v2_pos, bary_coord);
-      r_positions.append(point_pos);
-      r_bary_coords.append(bary_coord);
-      r_tri_indices.append(tri_i);
-    }
-  }
+  threading::parallel_for(
+      corner_tris.index_range(),
+      4096,
+      [&](const IndexRange range) {
+        for (const int64_t tri_i : range) {
+          const int3 &tri = corner_tris[tri_i];
+          const float3 &v0_pos = positions[corner_verts[tri[0]]];
+          const float3 &v1_pos = positions[corner_verts[tri[1]]];
+          const float3 &v2_pos = positions[corner_verts[tri[2]]];
+
+          const int corner_tri_seed = noise::hash(tri_i, seed);
+          RandomNumberGenerator corner_tri_rng(corner_tri_seed);
+
+          /* Retain legacy behavior. */
+          corner_tri_rng.skip(1);
+
+          for (const int i : points_by_tri[tri_i]) {
+            const float3 bary_coord = corner_tri_rng.get_barycentric_coordinates();
+            float3 point_pos;
+            interp_v3_v3v3v3(point_pos, v0_pos, v1_pos, v2_pos, bary_coord);
+            r_positions[i] = point_pos;
+            r_bary_coords[i] = bary_coord;
+            r_tri_indices[i] = tri_i;
+          }
+        }
+      },
+      threading::accumulated_task_sizes(
+          [&](const IndexRange range) { return points_by_tri[range].size(); }));
 }
 
 BLI_NOINLINE static KDTree_3d *build_kdtree(Span<float3> positions)
@@ -569,9 +595,21 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
     return;
   }
 
-  PointCloud *pointcloud = BKE_pointcloud_new_nomain(positions.size());
+  PointCloud *pointcloud = bke::pointcloud_new_no_attributes(positions.size());
   bke::MutableAttributeAccessor point_attributes = pointcloud->attributes_for_write();
-  pointcloud->positions_for_write().copy_from(positions);
+  if (positions.capacity() == positions.size()) {
+    /* Add the existing Vector allocation as shared attribute data as long as it doesn't waste any
+     * memory due to vector over-allocation (being less conservative would be reasonable too). */
+    VectorData<float3, GuardedAllocator> positions_data = positions.release();
+    const auto *attr_data = implicit_sharing::info_for_mem_free(positions_data.data);
+    point_attributes.add<float3>("position",
+                                 bke::AttrDomain::Point,
+                                 bke::AttributeInitShared(positions_data.data, *attr_data));
+    attr_data->remove_user_and_delete_if_last();
+  }
+  else {
+    pointcloud->positions_for_write().copy_from(positions);
+  }
   point_attributes.add<float>("radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.05f));
 
   geometry_set.replace_pointcloud(pointcloud);

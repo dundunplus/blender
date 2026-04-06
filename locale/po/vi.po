@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2026-02-06 22:29+0000\n"
 "Last-Translator: Hoang Duy Tran <hoangduytran1960@googlemail.com>\n"
 "Language-Team: Vietnamese <https://translate.blender.org/projects/blender-ui/ui/vi/>\n"
@@ -814,14 +814,6 @@ msgstr "Đáy"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "Đặt nút Hòa Trộn ở cùng độ cao với nút thấp nhất"
-
-
-msgid "Show Hotkey List"
-msgstr "Hiển Thị Danh Sách Phím Nóng"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "Mở rộng hộp này ra thành danh sách liệt kê tất cả các phím tắt cho các chức năng trong trình bổ sung này"
 
 
 msgid "Fribidi Library"
@@ -5642,6 +5634,10 @@ msgid "Flat"
 msgstr "Phẳng"
 
 
+msgid "Threshold"
+msgstr "Ngưỡng"
+
+
 msgid "Curve Jitter"
 msgstr "Đường Cong Rung Nhẹ"
 
@@ -5672,6 +5668,16 @@ msgstr "Đường Cong về Cường Độ"
 
 msgid "Curve used for the strength"
 msgstr "Đường cong dùng cho cường độ"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "Đa Giác"
+
+
+msgctxt "Operator"
+msgid "Bézier"
+msgstr "Bezier"
 
 
 msgid "Dilate/Contract"
@@ -5882,10 +5888,6 @@ msgstr "Đơn Giản Hóa"
 
 msgid "Number of simplify steps (large values reduce fill accuracy)"
 msgstr "Số bước đơn giản hóa (giá trị lớn làm giảm độ chuẩn xác trong việc tô kín)"
-
-
-msgid "Threshold"
-msgstr "Ngưỡng"
 
 
 msgid "Threshold to consider color transparent for filling"
@@ -29481,6 +29483,10 @@ msgid "Name for new preset"
 msgstr "Tên cho sắp đặt sẵn trước"
 
 
+msgid "Reports"
+msgstr "Báo Cáo"
+
+
 msgid "Rigify Active Type"
 msgstr "Rigify Thể Loại Đang Hoạt Động"
 
@@ -33822,10 +33828,6 @@ msgid "Calculate Overlap"
 msgstr "Tính Toán Mức Đè Gối Lên Nhau"
 
 
-msgid "Calculate self intersections and overlap before filling"
-msgstr "Tính toán những chỗ tự bản thân giao cắt và đè gối lên nhau trước khi tô kín"
-
-
 msgid "Mask Layers"
 msgstr "Tầng Màn Chắn Lọc"
 
@@ -34339,84 +34341,16 @@ msgid "Math"
 msgstr "Toán"
 
 
-msgid "Names"
-msgstr "Tên"
-
-
 msgid "Utilities"
 msgstr "Thường Trình"
 
 
-msgid "Bone Roll"
-msgstr "Lăn Xương"
-
-
-msgid "Show/Hide"
-msgstr "Hiện/Ẩn Giấu"
-
-
-msgid "Clean Up"
-msgstr "Dọn Dẹp"
-
-
-msgid "Pivot Point"
-msgstr "Điểm Tựa"
+msgid "Mirror"
+msgstr "Phản Chiếu Đối Xứng"
 
 
 msgid "Snap"
 msgstr "Bám Dính"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Suy Giảm Dần trong Biên Soạn Cân Đối"
-
-
-msgid "Read"
-msgstr "Đọc"
-
-
-msgid "Mask Edit"
-msgstr "Biên Soạn Màn Chắn Lọc"
-
-
-msgid "Sample"
-msgstr "Lấy Mẫu Vật"
-
-
-msgid "Automasking"
-msgstr "Tự Động Chắn Lọc"
-
-
-msgid "Write"
-msgstr "Viết"
-
-
-msgid "Face Sets Edit"
-msgstr "Biên Soạn các Mặt Ấn Định"
-
-
-msgid "Primitives"
-msgstr "Hình Cơ Bản"
-
-
-msgid "Vertex Group Locks"
-msgstr "Khóa của Nhóm Điểm Đỉnh"
-
-
-msgid "Gizmo"
-msgstr "Dụng Cụ"
-
-
-msgid "Instances"
-msgstr "Thực Thể"
-
-
-msgid "Import"
-msgstr "Nhập Khẩu"
-
-
-msgid "Mirror"
-msgstr "Phản Chiếu Đối Xứng"
 
 
 msgid "UV Mapping"
@@ -34435,10 +34369,6 @@ msgid "Navigation"
 msgstr "Điều Hướng"
 
 
-msgid "Deprecated"
-msgstr "Lỗi Thời"
-
-
 msgid "Align View"
 msgstr "Căn Chỉnh Góc Nhìn"
 
@@ -34455,20 +34385,24 @@ msgid "Select More/Less"
 msgstr "Tăng/Giảm Lựa Chọn"
 
 
-msgid "List"
-msgstr "Nâng"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "Chọn Tương Tự"
 
 
+msgid "Read"
+msgstr "Đọc"
+
+
 msgid "Select All by Trait"
 msgstr "Chọn Toàn Bộ theo Đặc Điểm"
+
+
+msgid "Sample"
+msgstr "Lấy Mẫu Vật"
+
+
+msgid "Write"
+msgstr "Viết"
 
 
 msgid "Select Linked"
@@ -34479,12 +34413,28 @@ msgid "Select Loops"
 msgstr "Chọn Vòng Mạch"
 
 
+msgid "Primitives"
+msgstr "Hình Cơ Bản"
+
+
 msgid "Assign Material"
 msgstr "Ấn Định Nguyên Vật Liệu"
 
 
+msgid "Gizmo"
+msgstr "Dụng Cụ"
+
+
+msgid "Instances"
+msgstr "Thực Thể"
+
+
 msgid "Metaball"
 msgstr "Siêu Cầu"
+
+
+msgid "Import"
+msgstr "Nhập Khẩu"
 
 
 msgid "Light"
@@ -34495,6 +34445,10 @@ msgid "Light Probe"
 msgstr "Đầu Dò Ánh Sáng"
 
 
+msgid "Deprecated"
+msgstr "Lỗi Thời"
+
+
 msgid "Add Image"
 msgstr "Thêm Hình Ảnh"
 
@@ -34503,8 +34457,16 @@ msgid "Relations"
 msgstr "Mối Quan Hệ"
 
 
+msgid "List"
+msgstr "Nâng"
+
+
 msgid "Rigid Body"
 msgstr "Thân Cứng"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Apply"
@@ -34517,6 +34479,14 @@ msgstr "Giám Sát"
 
 msgid "Quick Effects"
 msgstr "Hiệu Ứng Nhanh"
+
+
+msgid "Show/Hide"
+msgstr "Hiện/Ẩn Giấu"
+
+
+msgid "Clean Up"
+msgstr "Dọn Dẹp"
 
 
 msgid "Asset"
@@ -34539,12 +34509,12 @@ msgid "Hooks"
 msgstr "Móc"
 
 
+msgid "Vertex Group Locks"
+msgstr "Khóa của Nhóm Điểm Đỉnh"
+
+
 msgid "Trim/Add"
 msgstr "Cắt Xén/Thêm"
-
-
-msgid "Layout"
-msgstr "Bố Trí"
 
 
 msgid "Sculpt Set Pivot"
@@ -34575,24 +34545,12 @@ msgid "Bone Collections"
 msgstr "Bộ Sưu Tập Xương"
 
 
-msgid "Adjust"
-msgstr "Điều Chỉnh"
-
-
-msgid "Keying"
-msgstr "Khóa Hóa"
-
-
-msgid "Tracking"
-msgstr "Giám Sát"
+msgid "Names"
+msgstr "Tên"
 
 
 msgid "Toggle Bone Options"
 msgstr "Bật/Tắt Tùy Chọn về Xương"
-
-
-msgid "Render Preview"
-msgstr "Góc Nhìn Kết Xuất"
 
 
 msgid "Enable Bone Options"
@@ -34605,10 +34563,6 @@ msgstr "Tắt các Tùy Chọn về Xương"
 
 msgid "Mesh Select Mode"
 msgstr "Chế Độ Chọn Khung Lưới"
-
-
-msgid "Creative"
-msgstr "Kiến Tạo"
 
 
 msgid "Face Data"
@@ -34627,12 +34581,60 @@ msgid "Merge"
 msgstr "Hợp Nhất"
 
 
+msgid "Layout"
+msgstr "Bố Trí"
+
+
 msgid "Special Characters"
 msgstr "Các Ký Tự Đặc Biệt"
 
 
 msgid "Kerning"
 msgstr "Tinh Chỉnh Khoảng Cách Ký Tự"
+
+
+msgid "Adjust"
+msgstr "Điều Chỉnh"
+
+
+msgid "Keying"
+msgstr "Khóa Hóa"
+
+
+msgid "Bone Roll"
+msgstr "Lăn Xương"
+
+
+msgid "Tracking"
+msgstr "Giám Sát"
+
+
+msgid "Render Preview"
+msgstr "Góc Nhìn Kết Xuất"
+
+
+msgid "Creative"
+msgstr "Kiến Tạo"
+
+
+msgid "Pivot Point"
+msgstr "Điểm Tựa"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Suy Giảm Dần trong Biên Soạn Cân Đối"
+
+
+msgid "Mask Edit"
+msgstr "Biên Soạn Màn Chắn Lọc"
+
+
+msgid "Automasking"
+msgstr "Tự Động Chắn Lọc"
+
+
+msgid "Face Sets Edit"
+msgstr "Biên Soạn các Mặt Ấn Định"
 
 
 msgid "Keyframe Insert Pie"
@@ -52510,15 +52512,6 @@ msgid "Add Node Color Preset"
 msgstr "Thêm Sắp Đặt Sẵn về Màu Sắc của Nút"
 
 
-msgid "Add an Attribute node with this name"
-msgstr "Thêm một nút Thuộc Tính với cái tên này"
-
-
-msgctxt "Operator"
-msgid "Add Attribute"
-msgstr "Thêm Thuộc Tính"
-
-
 msgctxt "Operator"
 msgid "Add Reroutes"
 msgstr "Thêm Đổi Tuyến"
@@ -62100,6 +62093,11 @@ msgid "Unlink active font data-block"
 msgstr "Ngắt kết nối của khối dữ liệu phông đang hoạt động"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "Thêm Thuộc Tính"
+
+
 msgid "Add attribute to geometry"
 msgstr "Thêm thuộc tính vào hình học"
 
@@ -68437,11 +68435,6 @@ msgid "Triangulate selected faces"
 msgstr "Biến các mặt đã chọn thành tam giác"
 
 
-msgctxt "Operator"
-msgid "Select Boundary Loop"
-msgstr "Chọn Vòng Mạch Ranh Giới"
-
-
 msgid "Select boundary edges around the selected faces"
 msgstr "Chọn các cạnh ranh giới vòng quanh các mặt được chọn"
 
@@ -70607,70 +70600,6 @@ msgid "Batch change blend type and math operation"
 msgstr "Thay đổi hàng loạt kiểu pha trộn và phép toán"
 
 
-msgid "Add Mode"
-msgstr "Chế Độ Cộng"
-
-
-msgid "Multiply Mode"
-msgstr "Chế Độ Nhân"
-
-
-msgid "Subtract Mode"
-msgstr "Chế Độ Trừ"
-
-
-msgid "Screen Mode"
-msgstr "Chế Độ Màn Hình"
-
-
-msgid "Divide Mode"
-msgstr "Chế Độ Chia"
-
-
-msgid "Difference Mode"
-msgstr "Chế Độ Khác Biệt"
-
-
-msgid "Darken Mode"
-msgstr "Chế Độ Làm Tối"
-
-
-msgid "Lighten Mode"
-msgstr "Chế Độ Làm Sáng"
-
-
-msgid "Overlay Mode"
-msgstr "Chế Độ Vẽ Lồng"
-
-
-msgid "Dodge Mode"
-msgstr "Chế Độ Né Tránh"
-
-
-msgid "Burn Mode"
-msgstr "Chế Độ Đốt Cháy"
-
-
-msgid "Hue Mode"
-msgstr "Chế Độ Sắc Màu"
-
-
-msgid "Saturation Mode"
-msgstr "Chế Độ Bão Hòa"
-
-
-msgid "Value Mode"
-msgstr "Chế Độ Giá Trị"
-
-
-msgid "Soft Light Mode"
-msgstr "Chế Độ Ánh Sáng Mềm Mại"
-
-
-msgid "Linear Light Mode"
-msgstr "Chế Độ Ánh Sáng Tuyến Tính"
-
-
 msgid "Leave at current state"
 msgstr "Để nguyên ở trạng thái hiện tại"
 
@@ -70681,151 +70610,6 @@ msgstr "Kiểu/thao tác pha trộn tiếp theo"
 
 msgid "Previous blend type/operation"
 msgstr "Kiểu/thao tác pha trộn trước"
-
-
-msgid "Multiply Add Mode"
-msgstr "Chế Độ Nhân Cộng"
-
-
-msgid "Sine Mode"
-msgstr "Chế độ Sin"
-
-
-msgid "Cosine Mode"
-msgstr "Chế độ Cosin"
-
-
-msgid "Tangent Mode"
-msgstr "Chế Độ Tang"
-
-
-msgid "Arcsine Mode"
-msgstr "Chế Độ Arcsine"
-
-
-msgid "Arccosine Mode"
-msgstr "Chế Độ Arccosine"
-
-
-msgid "Arctangent Mode"
-msgstr "Chế Độ Arctangent"
-
-
-msgid "Arctan2 Mode"
-msgstr "Chế Độ Arctan2"
-
-
-msgid "Hyperbolic Sine Mode"
-msgstr "Chế độ Sin Hyperbolic"
-
-
-msgid "Hyperbolic Cosine Mode"
-msgstr "Chế độ Cosin Hyperbolic"
-
-
-msgid "Hyperbolic Tangent Mode"
-msgstr "Chế độ Tangent Hyperbolic"
-
-
-msgid "Power Mode"
-msgstr "Chế Độ Lũy Thừa"
-
-
-msgid "Logarithm Mode"
-msgstr "Chế Độ Logarit"
-
-
-msgid "Square Root Mode"
-msgstr "Chế Độ Căn Bậc Hai"
-
-
-msgid "Inverse Square Root Mode"
-msgstr "Chế Độ Căn Bậc Hai Nghịch Đảo"
-
-
-msgid "Exponent Mode"
-msgstr "Chế Độ Mũ"
-
-
-msgid "Minimum Mode"
-msgstr "Chế Độ Tối Thiểu"
-
-
-msgid "Maximum Mode"
-msgstr "Chế Độ Tối Đa"
-
-
-msgid "Less Than Mode"
-msgstr "Chế Độ Nhỏ Hơn"
-
-
-msgid "Greater Than Mode"
-msgstr "Chế Độ Lớn Hơn"
-
-
-msgid "Sign Mode"
-msgstr "Chế Độ Dấu"
-
-
-msgid "Compare Mode"
-msgstr "Chế Độ So Sánh"
-
-
-msgid "Smooth Minimum Mode"
-msgstr "Chế Độ Làm Mịn Tối Thiểu"
-
-
-msgid "Smooth Maximum Mode"
-msgstr "Chế Độ Làm Mịn Tối Đa"
-
-
-msgid "Fraction Mode"
-msgstr "Chế Độ Phân Số"
-
-
-msgid "Modulo Mode"
-msgstr "Chế Độ Đồng Dư Thức"
-
-
-msgid "Wrap Mode"
-msgstr "Chế Độ Hàm Bao Bọc"
-
-
-msgctxt "NodeTree"
-msgid "Pingpong"
-msgstr "Bóng Bàn"
-
-
-msgid "Pingpong Mode"
-msgstr "Chế Độ Bật Nẩy Bóng Bàn"
-
-
-msgid "Absolute Mode"
-msgstr "Chế Độ Tuyệt Đối"
-
-
-msgid "Round Mode"
-msgstr "Chế Độ Làm Tròn"
-
-
-msgid "Floor Mode"
-msgstr "Chế Độ Floor"
-
-
-msgid "Ceil Mode"
-msgstr "Chế Độ Ceil"
-
-
-msgid "Truncate Mode"
-msgstr "Chế Độ Truncate"
-
-
-msgid "To Radians Mode"
-msgstr "Chế Độ Sang Rad"
-
-
-msgid "To Degrees Mode"
-msgstr "Chế Độ Sang Độ"
 
 
 msgctxt "NodeTree"
@@ -70958,18 +70742,13 @@ msgstr "Hòa Trộn"
 
 
 msgctxt "NodeTree"
-msgid "Screen"
-msgstr "Màn Hình"
-
-
-msgctxt "NodeTree"
-msgid "Difference"
-msgstr "Hiệu"
-
-
-msgctxt "NodeTree"
 msgid "Darken"
 msgstr "Làm Tối"
+
+
+msgctxt "NodeTree"
+msgid "Color Burn"
+msgstr "Đốt Cháy Màu"
 
 
 msgctxt "NodeTree"
@@ -70978,8 +70757,8 @@ msgstr "Làm Sáng"
 
 
 msgctxt "NodeTree"
-msgid "Overlay"
-msgstr "Lồng"
+msgid "Screen"
+msgstr "Màn Hình"
 
 
 msgctxt "NodeTree"
@@ -70988,8 +70767,23 @@ msgstr "Tránh Né Màu"
 
 
 msgctxt "NodeTree"
-msgid "Color Burn"
-msgstr "Đốt Cháy Màu"
+msgid "Overlay"
+msgstr "Lồng"
+
+
+msgctxt "NodeTree"
+msgid "Soft Light"
+msgstr "Ánh Sáng Mềm Mại"
+
+
+msgctxt "NodeTree"
+msgid "Linear Light"
+msgstr "Ánh Sáng Tuyến Tính"
+
+
+msgctxt "NodeTree"
+msgid "Difference"
+msgstr "Hiệu"
 
 
 msgctxt "NodeTree"
@@ -71003,23 +70797,13 @@ msgstr "Độ Bão Hòa"
 
 
 msgctxt "NodeTree"
-msgid "Value"
-msgstr "Giá Trị"
-
-
-msgctxt "NodeTree"
 msgid "Color"
 msgstr "Màu"
 
 
 msgctxt "NodeTree"
-msgid "Soft Light"
-msgstr "Ánh Sáng Mềm Mại"
-
-
-msgctxt "NodeTree"
-msgid "Linear Light"
-msgstr "Ánh Sáng Tuyến Tính"
+msgid "Value"
+msgstr "Giá Trị"
 
 
 msgctxt "NodeTree"
@@ -71047,6 +70831,10 @@ msgstr "Hợp Nhất"
 
 msgid "Union Mode"
 msgstr "Chế Độ Hợp Nhất"
+
+
+msgid "Difference Mode"
+msgstr "Chế Độ Khác Biệt"
 
 
 msgid "Add to End"
@@ -88756,22 +88544,6 @@ msgid "Panel containing UI elements"
 msgstr "Bảng có chứa các phần tử Giao Diện Người Dùng (UI)"
 
 
-msgid "glTF Animations"
-msgstr "Hoạt Họa glTF"
-
-
-msgid "Active Tool"
-msgstr "Công Cụ đang Hoạt Động"
-
-
-msgid "View Lock"
-msgstr "Khóa Góc Nhìn"
-
-
-msgid "Selectability & Visibility"
-msgstr "Khả Năng Lựa Chọn & Tính Hữu Hình"
-
-
 msgid "Shadow Settings"
 msgstr "Sắp Đặt về Bóng Tối"
 
@@ -88782,6 +88554,10 @@ msgstr "Sắp Đặt về SSAO"
 
 msgid "Cavity"
 msgstr "Khe Hốc"
+
+
+msgid "glTF Material Variants"
+msgstr "Biến Thể Nguyên Vật Liệu glTF"
 
 
 msgid "Render Pass"
@@ -88798,6 +88574,10 @@ msgstr "Lớp Vẽ Lồng"
 
 msgid "Guides"
 msgstr "Hướng Dẫn"
+
+
+msgid "glTF Animations"
+msgstr "Hoạt Họa glTF"
 
 
 msgid "Viewer Node"
@@ -88884,12 +88664,20 @@ msgid "VR Info"
 msgstr "Thông Tin VR"
 
 
+msgid "Active Tool"
+msgstr "Công Cụ đang Hoạt Động"
+
+
 msgid "glTF Variants"
 msgstr "Biến Thể glTF"
 
 
-msgid "glTF Material Variants"
-msgstr "Biến Thể Nguyên Vật Liệu glTF"
+msgid "View Lock"
+msgstr "Khóa Góc Nhìn"
+
+
+msgid "Selectability & Visibility"
+msgstr "Khả Năng Lựa Chọn & Tính Hữu Hình"
 
 
 msgid "Import Settings"
@@ -101407,6 +101195,10 @@ msgstr "Hiển thị cạnh màu đen"
 
 msgid "Display white edges"
 msgstr "Hiển thị cạnh màu trắng"
+
+
+msgid "Overlay Mode"
+msgstr "Chế Độ Vẽ Lồng"
 
 
 msgid "Overlay mode of rasterized mask"
@@ -115577,16 +115369,6 @@ msgid "Replace Links"
 msgstr "Thay Thế Liên Kết"
 
 
-msgctxt "Operator"
-msgid "Reset Nodes in Frame"
-msgstr "Hoàn Lại các Nút trong Khung Hình"
-
-
-msgctxt "Operator"
-msgid "Reset Node"
-msgstr "Hoàn Lại Nút"
-
-
 msgid "Use Shaders"
 msgstr "Sử Dụng các Bộ Tô Bóng"
 
@@ -115710,10 +115492,6 @@ msgid "No images found to reload in this node tree"
 msgstr "Không tìm thấy hình ảnh nào để tải lại trong cây nút này cả"
 
 
-msgid "Please select only 1 frame to reset"
-msgstr "Xin vui lòng chỉ chọn 1 khung hình để hoàn lại mà thôi"
-
-
 msgid "No valid node(s) in selection"
 msgstr "Không có nút nào hợp lệ trong lựa chọn cả"
 
@@ -115754,10 +115532,6 @@ msgid "Some connections have been lost due to differing numbers of output socket
 msgstr "Một số kết nối đã bị mất do số lượng ổ cắm đầu ra khác nhau"
 
 
-msgid "Edit tags for auto texture detection in Principled BSDF setup"
-msgstr "Chỉnh sửa thẻ để tự động phát hiện chất liệu trong thiết lập BSDF Nguyên tắc"
-
-
 msgid "Merge Nodes (Add)"
 msgstr "Hợp Nhất các Nút"
 
@@ -115776,10 +115550,6 @@ msgstr "Hoán Đổi Kết Nối"
 
 msgid "Lazy Connect"
 msgstr "Kết Nối Lười Biếng"
-
-
-msgid "Hide Hotkey List"
-msgstr "Hiển Thị Danh Sách Phím Nóng"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -118513,11 +118283,6 @@ msgstr "Con Trỏ về Tọa Độ Gốc Thế Giới"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Con Trỏ về Khung Lưới Đồ Thị"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Đa Giác"
 
 
 msgid "Display Cursor"
@@ -122340,10 +122105,6 @@ msgid "Translate"
 msgstr "Phiên Dịch"
 
 
-msgid "Reports"
-msgstr "Báo Cáo"
-
-
 msgid "New Data"
 msgstr "Dữ Liệu Mới"
 
@@ -123067,11 +122828,6 @@ msgstr "Hình Xuyến"
 msgctxt "Operator"
 msgid "Grid"
 msgstr "Khung Lưới Đồ Thị"
-
-
-msgctxt "Operator"
-msgid "Bézier"
-msgstr "Bezier"
 
 
 msgctxt "Operator"
@@ -126918,10 +126674,6 @@ msgstr "Xóa các dấu mốc đã chọn?"
 
 msgid "Rename Selected Time Marker"
 msgstr "Đổi Tên Mốc Thời Gian Lựa Chọn"
-
-
-msgid "Selecting the camera is only supported in object mode"
-msgstr "Việc chọn máy quay phim chỉ được hỗ trợ trong chế độ đối tượng mà thôi"
 
 
 msgid "Scene not found"
@@ -138972,18 +138724,6 @@ msgid "Cannot load the baked data"
 msgstr "Không thể nạp dữ liệu đã nướng rồi được"
 
 
-msgid "Missing property for input socket \"%s\""
-msgstr "Thiếu tính chất cho ổ cắm đầu vào \"%s\""
-
-
-msgid "Property type does not match input socket \"(%s)\""
-msgstr "Thể loại tính chất không khớp với ổ cắm đầu vào \"(%s)\""
-
-
-msgid "Node group's geometry input must be the first"
-msgstr "Đầu vào hình học của nhóm nút phải là đầu vào trước tiên"
-
-
 msgid "Node group must have an output socket"
 msgstr "Nhóm nút phải có ổ cắm đầu ra"
 
@@ -140618,17 +140358,17 @@ msgid "Layer Count"
 msgstr "Số Tầng Lớp"
 
 
+msgctxt "NodeTree"
+msgid "Median"
+msgstr "Trung Vị"
+
+
 msgid "Sum"
 msgstr "Tổng"
 
 
 msgid "Variance"
 msgstr "Phương Sai"
-
-
-msgctxt "NodeTree"
-msgid "Median"
-msgstr "Trung Vị"
 
 
 msgid "Bake Items"
@@ -142881,10 +142621,6 @@ msgid "No named attributes used"
 msgstr "Không có thuộc tính được đặt tên nào được sử dụng"
 
 
-msgid "Recursive closure is not allowed"
-msgstr "Đóng kín đệ quy là một điều không cho phép"
-
-
 msgid "Closure does not have input: \"{}\""
 msgstr "Đóng kín không có đầu vào: \"{}\""
 
@@ -144252,10 +143988,6 @@ msgstr "Tô Màu"
 
 msgid "Glow"
 msgstr "Hừng Sáng"
-
-
-msgid "Blur X"
-msgstr "Làm Nhòe Mờ X"
 
 
 msgid "Rim"

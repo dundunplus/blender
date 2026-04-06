@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -1497,6 +1497,15 @@ msgid "Vertex Color"
 msgstr "Боја темена"
 
 
+msgid "Threshold"
+msgstr "Праг"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "Полигон"
+
+
 msgid "All"
 msgstr "Све"
 
@@ -1507,10 +1516,6 @@ msgstr "Прецизност"
 
 msgid "Simplify"
 msgstr "Поједностављивање"
-
-
-msgid "Threshold"
-msgstr "Праг"
 
 
 msgid "Input Samples"
@@ -8493,28 +8498,12 @@ msgid "Math"
 msgstr "Математика"
 
 
-msgid "Names"
-msgstr "Имена"
-
-
-msgid "Bone Roll"
-msgstr "Ролна костију"
-
-
-msgid "Show/Hide"
-msgstr "Прикажи/сакриј"
+msgid "Mirror"
+msgstr "Огледало"
 
 
 msgid "Snap"
 msgstr "Лепљење"
-
-
-msgid "Import"
-msgstr "Увоз"
-
-
-msgid "Mirror"
-msgstr "Огледало"
 
 
 msgid "UV Mapping"
@@ -8533,16 +8522,16 @@ msgid "Align View"
 msgstr "Поравнај поглед"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Linked"
 msgstr "Изабери повезано"
 
 
 msgid "Metaball"
 msgstr "Мета лопта"
+
+
+msgid "Import"
+msgstr "Увоз"
 
 
 msgid "Light"
@@ -8557,6 +8546,10 @@ msgid "Rigid Body"
 msgstr "Круто тело"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Apply"
 msgstr "Примени"
 
@@ -8567,6 +8560,10 @@ msgstr "Стаза"
 
 msgid "Quick Effects"
 msgstr "Брзи ефекти"
+
+
+msgid "Show/Hide"
+msgstr "Прикажи/сакриј"
 
 
 msgid "Hooks"
@@ -8585,12 +8582,8 @@ msgid "Propagate"
 msgstr "Пренеси"
 
 
-msgid "Keying"
-msgstr "Збирка тастера"
-
-
-msgid "Tracking"
-msgstr "Праћење"
+msgid "Names"
+msgstr "Имена"
 
 
 msgid "Toggle Bone Options"
@@ -8615,6 +8608,18 @@ msgstr "Сједини"
 
 msgid "Special Characters"
 msgstr "Специјални знаци"
+
+
+msgid "Keying"
+msgstr "Збирка тастера"
+
+
+msgid "Bone Roll"
+msgstr "Ролна костију"
+
+
+msgid "Tracking"
+msgstr "Праћење"
 
 
 msgid "Basic"
@@ -22780,11 +22785,6 @@ msgstr "Курсор на избор"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Курсор на вођице"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Полигон"
 
 
 msgid "Data Source:"

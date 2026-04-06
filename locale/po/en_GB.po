@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2026-02-16 18:12+0000\n"
 "Last-Translator: Deniz Jones <sdfoakes@gmail.com>\n"
 "Language-Team: English (United Kingdom) <https://translate.blender.org/projects/blender-ui/ui/en_GB/>\n"
@@ -830,22 +830,6 @@ msgstr "Bottom"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "Place the Mix node at the same height as the lowest node"
-
-
-msgid "Show Hotkey List"
-msgstr "Show Hotkey List"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "Expand this box into a list of all the hotkeys for functions in this addon"
-
-
-msgid "Show Principled Naming Tags"
-msgstr "Show Principled Naming tags"
-
-
-msgid "Expand this box into a list of all naming tags for Principled Texture setup"
-msgstr "Expand this box into a list of all naming tags for Principled Texture setup"
 
 
 msgid "Fribidi Library"
@@ -5670,6 +5654,10 @@ msgid "Flat"
 msgstr "Flat"
 
 
+msgid "Threshold"
+msgstr "Threshold"
+
+
 msgid "Curve Jitter"
 msgstr "Curve Jitter"
 
@@ -5700,6 +5688,16 @@ msgstr "Curve Strength"
 
 msgid "Curve used for the strength"
 msgstr "Curve used for the strength"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "Poly"
+
+
+msgctxt "Operator"
+msgid "Bézier"
+msgstr "Bézier"
 
 
 msgid "Dilate/Contract"
@@ -5910,10 +5908,6 @@ msgstr "Simplify"
 
 msgid "Number of simplify steps (large values reduce fill accuracy)"
 msgstr "Number of simplify steps (large values reduce fill accuracy)"
-
-
-msgid "Threshold"
-msgstr "Threshold"
 
 
 msgid "Threshold to consider color transparent for filling"
@@ -30060,6 +30054,10 @@ msgid "Name for new preset"
 msgstr "Name for new preset"
 
 
+msgid "Reports"
+msgstr "Reports"
+
+
 msgid "Rigify Active Type"
 msgstr "Rigify Active Type"
 
@@ -34543,10 +34541,6 @@ msgid "Calculate Overlap"
 msgstr "Calculate Overlap"
 
 
-msgid "Calculate self intersections and overlap before filling"
-msgstr "Calculate self intersections and overlap before filling"
-
-
 msgid "Mask Layers"
 msgstr "Mask Layers"
 
@@ -35060,84 +35054,16 @@ msgid "Math"
 msgstr "Maths"
 
 
-msgid "Names"
-msgstr "Names"
-
-
 msgid "Utilities"
 msgstr "Utilities"
 
 
-msgid "Bone Roll"
-msgstr "Bone Roll"
-
-
-msgid "Show/Hide"
-msgstr "Show/Hide"
-
-
-msgid "Clean Up"
-msgstr "Clean Up"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Point"
+msgid "Mirror"
+msgstr "Mirror"
 
 
 msgid "Snap"
 msgstr "Snap"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportional Editing Falloff"
-
-
-msgid "Read"
-msgstr "Read"
-
-
-msgid "Mask Edit"
-msgstr "Mask Edit"
-
-
-msgid "Sample"
-msgstr "Sample"
-
-
-msgid "Automasking"
-msgstr "Automasking"
-
-
-msgid "Write"
-msgstr "Write"
-
-
-msgid "Face Sets Edit"
-msgstr "Face Sets Edit"
-
-
-msgid "Primitives"
-msgstr "Primitives"
-
-
-msgid "Vertex Group Locks"
-msgstr "Vertex Group Locks"
-
-
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Instances"
-
-
-msgid "Import"
-msgstr "Import"
-
-
-msgid "Mirror"
-msgstr "Mirror"
 
 
 msgid "UV Mapping"
@@ -35156,10 +35082,6 @@ msgid "Navigation"
 msgstr "Navigation"
 
 
-msgid "Deprecated"
-msgstr "Deprecated"
-
-
 msgid "Align View"
 msgstr "Align View"
 
@@ -35176,20 +35098,24 @@ msgid "Select More/Less"
 msgstr "Select More/Less"
 
 
-msgid "List"
-msgstr "List"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "Select Similar"
 
 
+msgid "Read"
+msgstr "Read"
+
+
 msgid "Select All by Trait"
 msgstr "Select All by Trait"
+
+
+msgid "Sample"
+msgstr "Sample"
+
+
+msgid "Write"
+msgstr "Write"
 
 
 msgid "Select Linked"
@@ -35200,12 +35126,28 @@ msgid "Select Loops"
 msgstr "Select Loops"
 
 
+msgid "Primitives"
+msgstr "Primitives"
+
+
 msgid "Assign Material"
 msgstr "Assign Material"
 
 
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instances"
+
+
 msgid "Metaball"
 msgstr "Metaball"
+
+
+msgid "Import"
+msgstr "Import"
 
 
 msgid "Light"
@@ -35216,6 +35158,10 @@ msgid "Light Probe"
 msgstr "Light Probe"
 
 
+msgid "Deprecated"
+msgstr "Deprecated"
+
+
 msgid "Add Image"
 msgstr "Add Image"
 
@@ -35224,8 +35170,16 @@ msgid "Relations"
 msgstr "Relations"
 
 
+msgid "List"
+msgstr "List"
+
+
 msgid "Rigid Body"
 msgstr "Rigid Body"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Apply"
@@ -35238,6 +35192,14 @@ msgstr "Track"
 
 msgid "Quick Effects"
 msgstr "Quick Effects"
+
+
+msgid "Show/Hide"
+msgstr "Show/Hide"
+
+
+msgid "Clean Up"
+msgstr "Clean Up"
 
 
 msgid "Asset"
@@ -35260,12 +35222,12 @@ msgid "Hooks"
 msgstr "Hooks"
 
 
+msgid "Vertex Group Locks"
+msgstr "Vertex Group Locks"
+
+
 msgid "Trim/Add"
 msgstr "Trim/Add"
-
-
-msgid "Layout"
-msgstr "Layout"
 
 
 msgid "Sculpt Set Pivot"
@@ -35296,24 +35258,12 @@ msgid "Bone Collections"
 msgstr "Bone Collections"
 
 
-msgid "Adjust"
-msgstr "Adjust"
-
-
-msgid "Keying"
-msgstr "Keying"
-
-
-msgid "Tracking"
-msgstr "Tracking"
+msgid "Names"
+msgstr "Names"
 
 
 msgid "Toggle Bone Options"
 msgstr "Toggle Bone Options"
-
-
-msgid "Render Preview"
-msgstr "Render Preview"
 
 
 msgid "Enable Bone Options"
@@ -35326,10 +35276,6 @@ msgstr "Disable Bone Options"
 
 msgid "Mesh Select Mode"
 msgstr "Mesh Select Mode"
-
-
-msgid "Creative"
-msgstr "Creative"
 
 
 msgid "Face Data"
@@ -35348,12 +35294,60 @@ msgid "Merge"
 msgstr "Merge"
 
 
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Special Characters"
 msgstr "Special Characters"
 
 
 msgid "Kerning"
 msgstr "Kerning"
+
+
+msgid "Adjust"
+msgstr "Adjust"
+
+
+msgid "Keying"
+msgstr "Keying"
+
+
+msgid "Bone Roll"
+msgstr "Bone Roll"
+
+
+msgid "Tracking"
+msgstr "Tracking"
+
+
+msgid "Render Preview"
+msgstr "Render Preview"
+
+
+msgid "Creative"
+msgstr "Creative"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Point"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proportional Editing Falloff"
+
+
+msgid "Mask Edit"
+msgstr "Mask Edit"
+
+
+msgid "Automasking"
+msgstr "Automasking"
+
+
+msgid "Face Sets Edit"
+msgstr "Face Sets Edit"
 
 
 msgid "Keyframe Insert Pie"
@@ -54102,15 +54096,6 @@ msgid "Add Node Color Preset"
 msgstr "Add Node Colour Preset"
 
 
-msgid "Add an Attribute node with this name"
-msgstr "Add an Attribute node with this name"
-
-
-msgctxt "Operator"
-msgid "Add Attribute"
-msgstr "Add Attribute"
-
-
 msgid "Add Reroute nodes and link them to outputs of selected nodes"
 msgstr "Add Reroute nodes and link them to outputs of selected nodes"
 
@@ -63866,6 +63851,11 @@ msgid "Unlink active font data-block"
 msgstr "Unlink active font data-block"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "Add Attribute"
+
+
 msgid "Add attribute to geometry"
 msgstr "Add attribute to geometry"
 
@@ -70390,11 +70380,6 @@ msgid "Triangulate selected faces"
 msgstr "Triangulate selected faces"
 
 
-msgctxt "Operator"
-msgid "Select Boundary Loop"
-msgstr "Select Boundary Loop"
-
-
 msgid "Select boundary edges around the selected faces"
 msgstr "Select boundary edges around the selected faces"
 
@@ -72695,70 +72680,6 @@ msgid "Batch change blend type and math operation"
 msgstr "Batch change blend type and maths operation"
 
 
-msgid "Add Mode"
-msgstr "Add Mode"
-
-
-msgid "Multiply Mode"
-msgstr "Multiply Mode"
-
-
-msgid "Subtract Mode"
-msgstr "Subtract Mode"
-
-
-msgid "Screen Mode"
-msgstr "Screen Mode"
-
-
-msgid "Divide Mode"
-msgstr "Divide Mode"
-
-
-msgid "Difference Mode"
-msgstr "Difference Mode"
-
-
-msgid "Darken Mode"
-msgstr "Darken Mode"
-
-
-msgid "Lighten Mode"
-msgstr "Lighten Mode"
-
-
-msgid "Overlay Mode"
-msgstr "Overlay Mode"
-
-
-msgid "Dodge Mode"
-msgstr "Dodge Mode"
-
-
-msgid "Burn Mode"
-msgstr "Burn Mode"
-
-
-msgid "Hue Mode"
-msgstr "Hue Mode"
-
-
-msgid "Saturation Mode"
-msgstr "Saturation Mode"
-
-
-msgid "Value Mode"
-msgstr "Value Mode"
-
-
-msgid "Soft Light Mode"
-msgstr "Soft Light Mode"
-
-
-msgid "Linear Light Mode"
-msgstr "Linear Light Mode"
-
-
 msgid "Leave at current state"
 msgstr "Leave at current state"
 
@@ -72769,151 +72690,6 @@ msgstr "Next blend type/operation"
 
 msgid "Previous blend type/operation"
 msgstr "Previous blend type/operation"
-
-
-msgid "Multiply Add Mode"
-msgstr "Multiply Add Mode"
-
-
-msgid "Sine Mode"
-msgstr "Sine Mode"
-
-
-msgid "Cosine Mode"
-msgstr "Cosine Mode"
-
-
-msgid "Tangent Mode"
-msgstr "Tangent Mode"
-
-
-msgid "Arcsine Mode"
-msgstr "Arcsine Mode"
-
-
-msgid "Arccosine Mode"
-msgstr "Arccosine Mode"
-
-
-msgid "Arctangent Mode"
-msgstr "Arctangent Mode"
-
-
-msgid "Arctan2 Mode"
-msgstr "Arctan2 Mode"
-
-
-msgid "Hyperbolic Sine Mode"
-msgstr "Hyperbolic Sine Mode"
-
-
-msgid "Hyperbolic Cosine Mode"
-msgstr "Hyperbolic Cosine Mode"
-
-
-msgid "Hyperbolic Tangent Mode"
-msgstr "Hyperbolic Tangent Mode"
-
-
-msgid "Power Mode"
-msgstr "Power Mode"
-
-
-msgid "Logarithm Mode"
-msgstr "Logarithm Mode"
-
-
-msgid "Square Root Mode"
-msgstr "Square Root Mode"
-
-
-msgid "Inverse Square Root Mode"
-msgstr "Inverse Square Root Mode"
-
-
-msgid "Exponent Mode"
-msgstr "Exponent Mode"
-
-
-msgid "Minimum Mode"
-msgstr "Minimum Mode"
-
-
-msgid "Maximum Mode"
-msgstr "Maximum Mode"
-
-
-msgid "Less Than Mode"
-msgstr "Less Than Mode"
-
-
-msgid "Greater Than Mode"
-msgstr "Greater Than Mode"
-
-
-msgid "Sign Mode"
-msgstr "Sign Mode"
-
-
-msgid "Compare Mode"
-msgstr "Compare Mode"
-
-
-msgid "Smooth Minimum Mode"
-msgstr "Smooth Minimum Mode"
-
-
-msgid "Smooth Maximum Mode"
-msgstr "Smooth Maximum Mode"
-
-
-msgid "Fraction Mode"
-msgstr "Fraction Mode"
-
-
-msgid "Modulo Mode"
-msgstr "Modulo Mode"
-
-
-msgid "Wrap Mode"
-msgstr "Wrap Mode"
-
-
-msgctxt "NodeTree"
-msgid "Pingpong"
-msgstr "Pingpong"
-
-
-msgid "Pingpong Mode"
-msgstr "Pingpong Mode"
-
-
-msgid "Absolute Mode"
-msgstr "Absolute Mode"
-
-
-msgid "Round Mode"
-msgstr "Round Mode"
-
-
-msgid "Floor Mode"
-msgstr "Floor Mode"
-
-
-msgid "Ceil Mode"
-msgstr "Ceil Mode"
-
-
-msgid "Truncate Mode"
-msgstr "Truncate Mode"
-
-
-msgid "To Radians Mode"
-msgstr "To Radians Mode"
-
-
-msgid "To Degrees Mode"
-msgstr "To Degrees Mode"
 
 
 msgctxt "NodeTree"
@@ -73062,18 +72838,13 @@ msgstr "Mix"
 
 
 msgctxt "NodeTree"
-msgid "Screen"
-msgstr "Screen"
-
-
-msgctxt "NodeTree"
-msgid "Difference"
-msgstr "Difference"
-
-
-msgctxt "NodeTree"
 msgid "Darken"
 msgstr "Darken"
+
+
+msgctxt "NodeTree"
+msgid "Color Burn"
+msgstr "Colour Burn"
 
 
 msgctxt "NodeTree"
@@ -73082,8 +72853,8 @@ msgstr "Lighten"
 
 
 msgctxt "NodeTree"
-msgid "Overlay"
-msgstr "Overlay"
+msgid "Screen"
+msgstr "Screen"
 
 
 msgctxt "NodeTree"
@@ -73092,8 +72863,23 @@ msgstr "Colour Dodge"
 
 
 msgctxt "NodeTree"
-msgid "Color Burn"
-msgstr "Colour Burn"
+msgid "Overlay"
+msgstr "Overlay"
+
+
+msgctxt "NodeTree"
+msgid "Soft Light"
+msgstr "Soft Light"
+
+
+msgctxt "NodeTree"
+msgid "Linear Light"
+msgstr "Linear Light"
+
+
+msgctxt "NodeTree"
+msgid "Difference"
+msgstr "Difference"
 
 
 msgctxt "NodeTree"
@@ -73107,23 +72893,13 @@ msgstr "Saturation"
 
 
 msgctxt "NodeTree"
-msgid "Value"
-msgstr "Value"
-
-
-msgctxt "NodeTree"
 msgid "Color"
 msgstr "Colour"
 
 
 msgctxt "NodeTree"
-msgid "Soft Light"
-msgstr "Soft Light"
-
-
-msgctxt "NodeTree"
-msgid "Linear Light"
-msgstr "Linear Light"
+msgid "Value"
+msgstr "Value"
 
 
 msgctxt "NodeTree"
@@ -73151,6 +72927,10 @@ msgstr "Union"
 
 msgid "Union Mode"
 msgstr "Union Mode"
+
+
+msgid "Difference Mode"
+msgstr "Difference Mode"
 
 
 msgid "Add to End"
@@ -91677,26 +91457,6 @@ msgid "Panel containing UI elements"
 msgstr "Panel containing UI elements"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF Animations"
-
-
-msgid "Active Tool"
-msgstr "Active Tool"
-
-
-msgid "View Lock"
-msgstr "View Lock"
-
-
-msgid "Selectability & Visibility"
-msgstr "Selectability & Visibility"
-
-
 msgid "Shadow Settings"
 msgstr "Shadow Settings"
 
@@ -91707,6 +91467,10 @@ msgstr "SSAO Settings"
 
 msgid "Cavity"
 msgstr "Cavity"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF Material Variants"
 
 
 msgid "Render Pass"
@@ -91723,6 +91487,14 @@ msgstr "Overlays"
 
 msgid "Guides"
 msgstr "Guides"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF Animations"
 
 
 msgid "Viewer Node"
@@ -91809,12 +91581,20 @@ msgid "VR Info"
 msgstr "VR Info"
 
 
+msgid "Active Tool"
+msgstr "Active Tool"
+
+
 msgid "glTF Variants"
 msgstr "glTF Variants"
 
 
-msgid "glTF Material Variants"
-msgstr "glTF Material Variants"
+msgid "View Lock"
+msgstr "View Lock"
+
+
+msgid "Selectability & Visibility"
+msgstr "Selectability & Visibility"
 
 
 msgid "Import Settings"
@@ -104973,6 +104753,10 @@ msgstr "Display black edges"
 
 msgid "Display white edges"
 msgstr "Display white edges"
+
+
+msgid "Overlay Mode"
+msgstr "Overlay Mode"
 
 
 msgid "Overlay mode of rasterized mask"
@@ -119865,16 +119649,6 @@ msgid "Select Parent Frame"
 msgstr "Select Parent Frame"
 
 
-msgctxt "Operator"
-msgid "Reset Nodes in Frame"
-msgstr "Reset Nodes in Frame"
-
-
-msgctxt "Operator"
-msgid "Reset Node"
-msgstr "Reset Node"
-
-
 msgid "Use Shaders"
 msgstr "Use Shaders"
 
@@ -120011,10 +119785,6 @@ msgid "No images found to reload in this node tree"
 msgstr "No images found to reload in this node tree"
 
 
-msgid "Please select only 1 frame to reset"
-msgstr "Please select only 1 frame to reset"
-
-
 msgid "No valid node(s) in selection"
 msgstr "No valid node(s) in selection"
 
@@ -120053,10 +119823,6 @@ msgstr "This node has no input connections to swap"
 
 msgid "Some connections have been lost due to differing numbers of output sockets"
 msgstr "Some connections have been lost due to differing numbers of output sockets"
-
-
-msgid "Edit tags for auto texture detection in Principled BSDF setup"
-msgstr "Edit tags for auto texture detection in Principled BSDF setup"
 
 
 msgid "Merge Nodes (Automatic)"
@@ -120301,10 +120067,6 @@ msgstr "Link Active to Selected (Menu)"
 
 msgid "Copy to Selected (Menu)"
 msgstr "Copy to Selected (Menu)"
-
-
-msgid "Hide Hotkey List"
-msgstr "Hide Hotkey List"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -123223,11 +122985,6 @@ msgstr "Cursor to World Origin"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Cursor to Grid"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Poly"
 
 
 msgid "Display Cursor"
@@ -127176,10 +126933,6 @@ msgid "Translate"
 msgstr "Translate"
 
 
-msgid "Reports"
-msgstr "Reports"
-
-
 msgid "New Data"
 msgstr "New Data"
 
@@ -127920,11 +127673,6 @@ msgstr "Torus"
 msgctxt "Operator"
 msgid "Grid"
 msgstr "Grid"
-
-
-msgctxt "Operator"
-msgid "Bézier"
-msgstr "Bézier"
 
 
 msgctxt "Operator"
@@ -131996,10 +131744,6 @@ msgstr "Delete selected markers?"
 
 msgid "Rename Selected Time Marker"
 msgstr "Rename Selected Time Marker"
-
-
-msgid "Selecting the camera is only supported in object mode"
-msgstr "Selecting the camera is only supported in object mode"
 
 
 msgid "Scene not found"
@@ -145362,18 +145106,6 @@ msgid "Cannot load the baked data"
 msgstr "Cannot load the baked data"
 
 
-msgid "Missing property for input socket \"%s\""
-msgstr "Missing property for input socket \"%s\""
-
-
-msgid "Property type does not match input socket \"(%s)\""
-msgstr "Property type does not match input socket \"(%s)\""
-
-
-msgid "Node group's geometry input must be the first"
-msgstr "Node group's geometry input must be the first"
-
-
 msgid "Node group must have an output socket"
 msgstr "Node group must have an output socket"
 
@@ -147400,17 +147132,17 @@ msgid "Geometry to get the domain sizes of. Only the root geometry is considered
 msgstr "Geometry to get the domain sizes of. Only the root geometry is considered, not nested instances"
 
 
+msgctxt "NodeTree"
+msgid "Median"
+msgstr "Median"
+
+
 msgid "Sum"
 msgstr "Sum"
 
 
 msgid "Variance"
 msgstr "Variance"
-
-
-msgctxt "NodeTree"
-msgid "Median"
-msgstr "Median"
 
 
 msgid "Geometry to get the statistics from"
@@ -150498,10 +150230,6 @@ msgid "No named attributes used"
 msgstr "No named attributes used"
 
 
-msgid "Recursive closure is not allowed"
-msgstr "Recursive closure is not allowed"
-
-
 msgid "Conversion not supported when evaluating closure"
 msgstr "Conversion not supported when evaluating closure"
 
@@ -151977,10 +151705,6 @@ msgstr "Colourise"
 
 msgid "Glow"
 msgstr "Glow"
-
-
-msgid "Blur X"
-msgstr "Blur X"
 
 
 msgid "Rim"

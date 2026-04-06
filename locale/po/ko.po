@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2026-03-27 12:12+0000\n"
 "Last-Translator: kim nahyeong <weiing0123@ajou.ac.kr>\n"
 "Language-Team: Korean <https://translate.blender.org/projects/blender-ui/ui/ko/>\n"
@@ -830,18 +830,6 @@ msgstr "아래"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "믹스 노드를 가장 낮은 노드와 같은 높이에 두기"
-
-
-msgid "Show Hotkey List"
-msgstr "단축기 목록 표시"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "이 상자를 해당 애드온의 모든 기능에 대한 단축키 목록으로 펼침"
-
-
-msgid "Expand this box into a list of all naming tags for Principled Texture setup"
-msgstr "이 박스를 Principled Texture 설정을 위한 모든 명명 태그 목록으로 확장함"
 
 
 msgid "Fribidi Library"
@@ -5674,6 +5662,10 @@ msgid "Flat"
 msgstr "플랫"
 
 
+msgid "Threshold"
+msgstr "임계 값"
+
+
 msgid "Curve Jitter"
 msgstr "커브 지터"
 
@@ -5704,6 +5696,16 @@ msgstr "커브 강도"
 
 msgid "Curve used for the strength"
 msgstr "강도를 위해 사용되는 커브"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "폴리"
+
+
+msgctxt "Operator"
+msgid "Bézier"
+msgstr "베지어"
 
 
 msgid "Dilate/Contract"
@@ -5914,10 +5916,6 @@ msgstr "단순화"
 
 msgid "Number of simplify steps (large values reduce fill accuracy)"
 msgstr "단순화 스텝 수 (큰 값은 채우기 정확도 감소)"
-
-
-msgid "Threshold"
-msgstr "임계 값"
 
 
 msgid "Threshold to consider color transparent for filling"
@@ -29932,6 +29930,10 @@ msgid "Name for new preset"
 msgstr "새 프리셋의 이름"
 
 
+msgid "Reports"
+msgstr "보고서"
+
+
 msgid "Rigify Active Type"
 msgstr "Rigify 활성 유형"
 
@@ -34390,10 +34392,6 @@ msgid "Calculate Overlap"
 msgstr "겹침을 계산"
 
 
-msgid "Calculate self intersections and overlap before filling"
-msgstr "채우기 이전에 자체 교차와 오버레이를 계산"
-
-
 msgid "Mask Layers"
 msgstr "마스크 레이어"
 
@@ -34907,84 +34905,16 @@ msgid "Math"
 msgstr "수학"
 
 
-msgid "Names"
-msgstr "이름"
-
-
 msgid "Utilities"
 msgstr "유틸리티"
 
 
-msgid "Bone Roll"
-msgstr "뼈대 롤"
-
-
-msgid "Show/Hide"
-msgstr "표시/숨기기"
-
-
-msgid "Clean Up"
-msgstr "정리"
-
-
-msgid "Pivot Point"
-msgstr "피벗 포인트"
+msgid "Mirror"
+msgstr "미러"
 
 
 msgid "Snap"
 msgstr "스냅"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "비례 편집 감소"
-
-
-msgid "Read"
-msgstr "읽기"
-
-
-msgid "Mask Edit"
-msgstr "마스크 편집"
-
-
-msgid "Sample"
-msgstr "샘플"
-
-
-msgid "Automasking"
-msgstr "오토마스킹"
-
-
-msgid "Write"
-msgstr "쓰기"
-
-
-msgid "Face Sets Edit"
-msgstr "페이스 세트 편집"
-
-
-msgid "Primitives"
-msgstr "프리미티브"
-
-
-msgid "Vertex Group Locks"
-msgstr "버텍스 그룹 잠금"
-
-
-msgid "Gizmo"
-msgstr "기즈모"
-
-
-msgid "Instances"
-msgstr "인스턴스"
-
-
-msgid "Import"
-msgstr "가져오기"
-
-
-msgid "Mirror"
-msgstr "미러"
 
 
 msgid "UV Mapping"
@@ -35003,10 +34933,6 @@ msgid "Navigation"
 msgstr "네비게이션"
 
 
-msgid "Deprecated"
-msgstr "사용 중단"
-
-
 msgid "Align View"
 msgstr "뷰를 정렬"
 
@@ -35023,20 +34949,24 @@ msgid "Select More/Less"
 msgstr "선택 증가/감소"
 
 
-msgid "List"
-msgstr "목록"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "유사한 선택"
 
 
+msgid "Read"
+msgstr "읽기"
+
+
 msgid "Select All by Trait"
 msgstr "형질로 모두 선택"
+
+
+msgid "Sample"
+msgstr "샘플"
+
+
+msgid "Write"
+msgstr "쓰기"
 
 
 msgid "Select Linked"
@@ -35047,12 +34977,28 @@ msgid "Select Loops"
 msgstr "루프를 선택"
 
 
+msgid "Primitives"
+msgstr "프리미티브"
+
+
 msgid "Assign Material"
 msgstr "머티리얼을 할당"
 
 
+msgid "Gizmo"
+msgstr "기즈모"
+
+
+msgid "Instances"
+msgstr "인스턴스"
+
+
 msgid "Metaball"
 msgstr "메타볼"
+
+
+msgid "Import"
+msgstr "가져오기"
 
 
 msgid "Light"
@@ -35063,6 +35009,10 @@ msgid "Light Probe"
 msgstr "라이트 프로브"
 
 
+msgid "Deprecated"
+msgstr "사용 중단"
+
+
 msgid "Add Image"
 msgstr "이미지를 추가"
 
@@ -35071,8 +35021,16 @@ msgid "Relations"
 msgstr "관계"
 
 
+msgid "List"
+msgstr "목록"
+
+
 msgid "Rigid Body"
 msgstr "리지드 바디"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Apply"
@@ -35085,6 +35043,14 @@ msgstr "트랙"
 
 msgid "Quick Effects"
 msgstr "빠른 이펙트"
+
+
+msgid "Show/Hide"
+msgstr "표시/숨기기"
+
+
+msgid "Clean Up"
+msgstr "정리"
 
 
 msgid "Asset"
@@ -35107,12 +35073,12 @@ msgid "Hooks"
 msgstr "후크"
 
 
+msgid "Vertex Group Locks"
+msgstr "버텍스 그룹 잠금"
+
+
 msgid "Trim/Add"
 msgstr "트림/추가"
-
-
-msgid "Layout"
-msgstr "레이아웃"
 
 
 msgid "Sculpt Set Pivot"
@@ -35143,24 +35109,12 @@ msgid "Bone Collections"
 msgstr "뼈대 컬렉션"
 
 
-msgid "Adjust"
-msgstr "조정"
-
-
-msgid "Keying"
-msgstr "키잉"
-
-
-msgid "Tracking"
-msgstr "트래킹"
+msgid "Names"
+msgstr "이름"
 
 
 msgid "Toggle Bone Options"
 msgstr "뼈대 옵션을 토글"
-
-
-msgid "Render Preview"
-msgstr "렌더링 미리보기"
 
 
 msgid "Enable Bone Options"
@@ -35173,10 +35127,6 @@ msgstr "뼈대 옵션을 사용 중지"
 
 msgid "Mesh Select Mode"
 msgstr "메시 선택 모드"
-
-
-msgid "Creative"
-msgstr "크리에이티브"
 
 
 msgid "Face Data"
@@ -35195,12 +35145,60 @@ msgid "Merge"
 msgstr "병합"
 
 
+msgid "Layout"
+msgstr "레이아웃"
+
+
 msgid "Special Characters"
 msgstr "특수 문자"
 
 
 msgid "Kerning"
 msgstr "자간"
+
+
+msgid "Adjust"
+msgstr "조정"
+
+
+msgid "Keying"
+msgstr "키잉"
+
+
+msgid "Bone Roll"
+msgstr "뼈대 롤"
+
+
+msgid "Tracking"
+msgstr "트래킹"
+
+
+msgid "Render Preview"
+msgstr "렌더링 미리보기"
+
+
+msgid "Creative"
+msgstr "크리에이티브"
+
+
+msgid "Pivot Point"
+msgstr "피벗 포인트"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "비례 편집 감소"
+
+
+msgid "Mask Edit"
+msgstr "마스크 편집"
+
+
+msgid "Automasking"
+msgstr "오토마스킹"
+
+
+msgid "Face Sets Edit"
+msgstr "페이스 세트 편집"
 
 
 msgid "Keyframe Insert Pie"
@@ -53761,15 +53759,6 @@ msgid "Add Node Color Preset"
 msgstr "노드 색상 프리셋을 추가"
 
 
-msgid "Add an Attribute node with this name"
-msgstr "이 이름으로 속성 노드 추가"
-
-
-msgctxt "Operator"
-msgid "Add Attribute"
-msgstr "속성 추가"
-
-
 msgctxt "Operator"
 msgid "Add Reroutes"
 msgstr "경로 추가"
@@ -63419,6 +63408,11 @@ msgid "Unlink active font data-block"
 msgstr "활성 데이터 블록을 연결 해제"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "속성 추가"
+
+
 msgid "Add attribute to geometry"
 msgstr "지오메트리에 속성 추가"
 
@@ -69808,11 +69802,6 @@ msgid "Triangulate selected faces"
 msgstr "선택된 페이스를 삼각분할"
 
 
-msgctxt "Operator"
-msgid "Select Boundary Loop"
-msgstr "경계 루프를 선택"
-
-
 msgid "Select boundary edges around the selected faces"
 msgstr "선택한 페이스 주위의 경계 에지를 선택"
 
@@ -72043,70 +72032,6 @@ msgid "Batch change blend type and math operation"
 msgstr "일괄 변경 블렌딩 유형 및 수학 연산"
 
 
-msgid "Add Mode"
-msgstr "모드 추가"
-
-
-msgid "Multiply Mode"
-msgstr "곱하기 모드"
-
-
-msgid "Subtract Mode"
-msgstr "빼기 모드"
-
-
-msgid "Screen Mode"
-msgstr "화면 모드"
-
-
-msgid "Divide Mode"
-msgstr "분할 모드"
-
-
-msgid "Difference Mode"
-msgstr "차이 모드"
-
-
-msgid "Darken Mode"
-msgstr "어둡게 모드"
-
-
-msgid "Lighten Mode"
-msgstr "밝게 모드"
-
-
-msgid "Overlay Mode"
-msgstr "오버레이 모드"
-
-
-msgid "Dodge Mode"
-msgstr "닷지 모드"
-
-
-msgid "Burn Mode"
-msgstr "굽기 모드"
-
-
-msgid "Hue Mode"
-msgstr "색조 모드"
-
-
-msgid "Saturation Mode"
-msgstr "채도 모드"
-
-
-msgid "Value Mode"
-msgstr "값 모드"
-
-
-msgid "Soft Light Mode"
-msgstr "소프트 라이트 모드"
-
-
-msgid "Linear Light Mode"
-msgstr "선형 조명 모드"
-
-
 msgid "Leave at current state"
 msgstr "현재 상태로 두기"
 
@@ -72117,151 +72042,6 @@ msgstr "다음 블렌딩 유형/운영"
 
 msgid "Previous blend type/operation"
 msgstr "이전 블렌딩 유형/운영"
-
-
-msgid "Multiply Add Mode"
-msgstr "곱하기 추가 모드"
-
-
-msgid "Sine Mode"
-msgstr "사인 모드"
-
-
-msgid "Cosine Mode"
-msgstr "코사인 모드"
-
-
-msgid "Tangent Mode"
-msgstr "탄젠트 모드"
-
-
-msgid "Arcsine Mode"
-msgstr "아크신 모드"
-
-
-msgid "Arccosine Mode"
-msgstr "아코신 모드"
-
-
-msgid "Arctangent Mode"
-msgstr "아크탄젠트 모드"
-
-
-msgid "Arctan2 Mode"
-msgstr "아크탄2 모드"
-
-
-msgid "Hyperbolic Sine Mode"
-msgstr "쌍곡선 사인 모드"
-
-
-msgid "Hyperbolic Cosine Mode"
-msgstr "쌍곡선 코사인 모드"
-
-
-msgid "Hyperbolic Tangent Mode"
-msgstr "쌍곡선 탄젠트 모드"
-
-
-msgid "Power Mode"
-msgstr "전원 모드"
-
-
-msgid "Logarithm Mode"
-msgstr "로그 모드"
-
-
-msgid "Square Root Mode"
-msgstr "사각 루트 모드"
-
-
-msgid "Inverse Square Root Mode"
-msgstr "역사각 루트 모드"
-
-
-msgid "Exponent Mode"
-msgstr "지수 모드"
-
-
-msgid "Minimum Mode"
-msgstr "최소 모드"
-
-
-msgid "Maximum Mode"
-msgstr "최대 모드"
-
-
-msgid "Less Than Mode"
-msgstr "미만 모드"
-
-
-msgid "Greater Than Mode"
-msgstr "모드보다 큰 모드"
-
-
-msgid "Sign Mode"
-msgstr "서명 모드"
-
-
-msgid "Compare Mode"
-msgstr "비교 모드"
-
-
-msgid "Smooth Minimum Mode"
-msgstr "스무스 최소 모드"
-
-
-msgid "Smooth Maximum Mode"
-msgstr "스무스 최대 모드"
-
-
-msgid "Fraction Mode"
-msgstr "분수 모드"
-
-
-msgid "Modulo Mode"
-msgstr "모듈로 모드"
-
-
-msgid "Wrap Mode"
-msgstr "랩 모드"
-
-
-msgctxt "NodeTree"
-msgid "Pingpong"
-msgstr "탁구"
-
-
-msgid "Pingpong Mode"
-msgstr "탁구 모드"
-
-
-msgid "Absolute Mode"
-msgstr "절대적 모드"
-
-
-msgid "Round Mode"
-msgstr "라운드 모드"
-
-
-msgid "Floor Mode"
-msgstr "바닥 모드"
-
-
-msgid "Ceil Mode"
-msgstr "천장 모드"
-
-
-msgid "Truncate Mode"
-msgstr "잘라내기 모드"
-
-
-msgid "To Radians Mode"
-msgstr "라디안 모드"
-
-
-msgid "To Degrees Mode"
-msgstr "학위 모드"
 
 
 msgctxt "NodeTree"
@@ -72394,18 +72174,13 @@ msgstr "믹스"
 
 
 msgctxt "NodeTree"
-msgid "Screen"
-msgstr "화면"
-
-
-msgctxt "NodeTree"
-msgid "Difference"
-msgstr "차이점"
-
-
-msgctxt "NodeTree"
 msgid "Darken"
 msgstr "어둡게"
+
+
+msgctxt "NodeTree"
+msgid "Color Burn"
+msgstr "색상 번"
 
 
 msgctxt "NodeTree"
@@ -72414,8 +72189,8 @@ msgstr "밝게"
 
 
 msgctxt "NodeTree"
-msgid "Overlay"
-msgstr "오버레이"
+msgid "Screen"
+msgstr "화면"
 
 
 msgctxt "NodeTree"
@@ -72424,8 +72199,23 @@ msgstr "색상 닷지"
 
 
 msgctxt "NodeTree"
-msgid "Color Burn"
-msgstr "색상 번"
+msgid "Overlay"
+msgstr "오버레이"
+
+
+msgctxt "NodeTree"
+msgid "Soft Light"
+msgstr "소프트 라이트"
+
+
+msgctxt "NodeTree"
+msgid "Linear Light"
+msgstr "리니어 라이트"
+
+
+msgctxt "NodeTree"
+msgid "Difference"
+msgstr "차이점"
 
 
 msgctxt "NodeTree"
@@ -72439,23 +72229,13 @@ msgstr "채도"
 
 
 msgctxt "NodeTree"
-msgid "Value"
-msgstr "값"
-
-
-msgctxt "NodeTree"
 msgid "Color"
 msgstr "색상"
 
 
 msgctxt "NodeTree"
-msgid "Soft Light"
-msgstr "소프트 라이트"
-
-
-msgctxt "NodeTree"
-msgid "Linear Light"
-msgstr "리니어 라이트"
+msgid "Value"
+msgstr "값"
 
 
 msgctxt "NodeTree"
@@ -72483,6 +72263,10 @@ msgstr "Union"
 
 msgid "Union Mode"
 msgstr "유니온 모드"
+
+
+msgid "Difference Mode"
+msgstr "차이 모드"
 
 
 msgid "Add to End"
@@ -90742,26 +90526,6 @@ msgid "Panel containing UI elements"
 msgstr "UI 요소가 포함된 패널"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 애니메이션"
-
-
-msgid "Active Tool"
-msgstr "활성 도구"
-
-
-msgid "View Lock"
-msgstr "뷰 잠금"
-
-
-msgid "Selectability & Visibility"
-msgstr "선택성 및 가시성"
-
-
 msgid "Shadow Settings"
 msgstr "섀도우 설정"
 
@@ -90772,6 +90536,10 @@ msgstr "SSAO 설정"
 
 msgid "Cavity"
 msgstr "캐비티"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF 머티리얼 배리언트"
 
 
 msgid "Render Pass"
@@ -90788,6 +90556,14 @@ msgstr "오버레이"
 
 msgid "Guides"
 msgstr "가이드"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 애니메이션"
 
 
 msgid "Viewer Node"
@@ -90874,12 +90650,20 @@ msgid "VR Info"
 msgstr "VR 정보"
 
 
+msgid "Active Tool"
+msgstr "활성 도구"
+
+
 msgid "glTF Variants"
 msgstr "glTF 변형"
 
 
-msgid "glTF Material Variants"
-msgstr "glTF 머티리얼 배리언트"
+msgid "View Lock"
+msgstr "뷰 잠금"
+
+
+msgid "Selectability & Visibility"
+msgstr "선택성 및 가시성"
 
 
 msgid "Import Settings"
@@ -96133,10 +95917,6 @@ msgstr "인도네시아어 - 바하사 인도네시아어"
 
 msgid "Italian - Italiano"
 msgstr "이탈리아어 - Italiano"
-
-
-msgid "Locale code: it_IT. Translation progress: 44%"
-msgstr "로캘 코드: it_IT. 번역 진행률: 44%"
 
 
 msgid "Japanese - 日本語"
@@ -103910,6 +103690,10 @@ msgstr "블랙 에지를 표시"
 
 msgid "Display white edges"
 msgstr "화이트 에지 표시"
+
+
+msgid "Overlay Mode"
+msgstr "오버레이 모드"
 
 
 msgid "Overlay mode of rasterized mask"
@@ -118502,16 +118286,6 @@ msgid "Select Parent Frame"
 msgstr "상위 프레임 선택"
 
 
-msgctxt "Operator"
-msgid "Reset Nodes in Frame"
-msgstr "프레임 내 노드 재설정"
-
-
-msgctxt "Operator"
-msgid "Reset Node"
-msgstr "노드 재설정"
-
-
 msgid "Use Shaders"
 msgstr "셰이더 사용"
 
@@ -118635,10 +118409,6 @@ msgid "No images found to reload in this node tree"
 msgstr "이 노드 트리에서 다시 로드할 이미지가 없음"
 
 
-msgid "Please select only 1 frame to reset"
-msgstr "재설정할 프레임은 1개만 선택함"
-
-
 msgid "No valid node(s) in selection"
 msgstr "선택 항목에 유효한 노드가 없음"
 
@@ -118677,10 +118447,6 @@ msgstr "이 노드에는 스왑할 입력 연결이 없음"
 
 msgid "Some connections have been lost due to differing numbers of output sockets"
 msgstr "출력 소켓 수가 달라서 일부 연결이 끊어졌음"
-
-
-msgid "Edit tags for auto texture detection in Principled BSDF setup"
-msgstr "원칙적인 BSDF 설정에서 자동 텍스처 감지를 위한 태그 편집"
 
 
 msgid "Merge Nodes (Automatic)"
@@ -118793,10 +118559,6 @@ msgstr "레이지 커넥트"
 
 msgid "Lazy Connect with Socket Menu"
 msgstr "소켓 메뉴로 지연 연결"
-
-
-msgid "Hide Hotkey List"
-msgstr "단축키 목록 숨기기"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -121699,11 +121461,6 @@ msgstr "커서를 월드 오리진에 스냅"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "커서를 격자에 스냅"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "폴리"
 
 
 msgid "Display Cursor"
@@ -125589,10 +125346,6 @@ msgid "Translate"
 msgstr "번역"
 
 
-msgid "Reports"
-msgstr "보고서"
-
-
 msgid "New Data"
 msgstr "새로운 데이터"
 
@@ -126333,11 +126086,6 @@ msgstr "토러스"
 msgctxt "Operator"
 msgid "Grid"
 msgstr "격자"
-
-
-msgctxt "Operator"
-msgid "Bézier"
-msgstr "베지어"
 
 
 msgctxt "Operator"
@@ -130339,10 +130087,6 @@ msgstr "선택한 마커를 삭제하시겠습니까?"
 
 msgid "Rename Selected Time Marker"
 msgstr "선택한 타임마커 이름 바꾸기"
-
-
-msgid "Selecting the camera is only supported in object mode"
-msgstr "카메라 선택은 오브젝트 모드에서만 지원함"
 
 
 msgid "Scene not found"
@@ -143325,18 +143069,6 @@ msgid "Cannot load the baked data"
 msgstr "베이크된 데이터 로드 실패"
 
 
-msgid "Missing property for input socket \"%s\""
-msgstr "입력 소켓 \"%s\"에 대한 속성 누락됨"
-
-
-msgid "Property type does not match input socket \"(%s)\""
-msgstr "입력 소켓 \"(%s)\" 타입과 속성 불일치"
-
-
-msgid "Node group's geometry input must be the first"
-msgstr "노드 그룹의 기하 입력은 첫 번째여야 함"
-
-
 msgid "Node group must have an output socket"
 msgstr "노드 그룹은 출력 소켓을 가져야 함"
 
@@ -145327,17 +145059,17 @@ msgid "Geometry to get the domain sizes of. Only the root geometry is considered
 msgstr "도메인 크기를 얻을 지오메트리임. 중첩된 인스턴스가 아닌 루트 지오메트리만 고려됨"
 
 
+msgctxt "NodeTree"
+msgid "Median"
+msgstr "중앙값"
+
+
 msgid "Sum"
 msgstr "합계함"
 
 
 msgid "Variance"
 msgstr "변이성"
-
-
-msgctxt "NodeTree"
-msgid "Median"
-msgstr "중앙값"
 
 
 msgid "Geometry to get the statistics from"
@@ -148249,10 +147981,6 @@ msgid "No named attributes used"
 msgstr "이름 지정된 속성 미사용"
 
 
-msgid "Recursive closure is not allowed"
-msgstr "재귀적 폐쇄 허용되지 않음"
-
-
 msgid "Conversion not supported when evaluating closure"
 msgstr "폐쇄 평가 시 변환 지원되지 않음"
 
@@ -149720,10 +149448,6 @@ msgstr "색상화함"
 
 msgid "Glow"
 msgstr "글로우함"
-
-
-msgid "Blur X"
-msgstr "블러 X 함"
 
 
 msgid "Rim"

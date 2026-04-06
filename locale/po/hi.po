@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-12-04 22:18+0000\n"
 "Last-Translator: Jackson Zheng <business.jackson.zheng@gmail.com>\n"
 "Language-Team: Hindi <https://translate.blender.org/projects/blender-ui/ui/hi/>\n"
@@ -696,6 +696,11 @@ msgstr "पदार्थ"
 
 msgid "Vertex Color"
 msgstr "शिरोबिन्दु रंग"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "बहु"
 
 
 msgid "All"
@@ -2581,16 +2586,8 @@ msgid "Math"
 msgstr "गणित"
 
 
-msgid "Names"
-msgstr "नाम"
-
-
-msgid "Bone Roll"
-msgstr "हड्डी पंजी"
-
-
-msgid "Show/Hide"
-msgstr "छुपाएँ / दिखाएँ"
+msgid "Mirror"
+msgstr "दर्पण"
 
 
 msgid "Snap"
@@ -2601,20 +2598,16 @@ msgid "Import"
 msgstr "आयात करें"
 
 
-msgid "Mirror"
-msgstr "दर्पण"
-
-
-msgid "UV"
-msgstr "यूवी"
-
-
 msgid "Light"
 msgstr "प्रकाश"
 
 
 msgid "Rigid Body"
 msgstr "कठोर-पदार्थ"
+
+
+msgid "UV"
+msgstr "यूवी"
 
 
 msgid "Apply"
@@ -2629,6 +2622,10 @@ msgid "Quick Effects"
 msgstr "त्वरित प्रभाव"
 
 
+msgid "Show/Hide"
+msgstr "छुपाएँ / दिखाएँ"
+
+
 msgid "Make Single User"
 msgstr "एकल प्रयोक्ता बनाएँ"
 
@@ -2637,8 +2634,8 @@ msgid "Hooks"
 msgstr "खूँटी"
 
 
-msgid "Keying"
-msgstr "कुंजीयन"
+msgid "Names"
+msgstr "नाम"
 
 
 msgid "Toggle Bone Options"
@@ -2651,6 +2648,14 @@ msgstr "हड्डी विकल्प को सक्षम करें"
 
 msgid "Merge"
 msgstr "विलय करें"
+
+
+msgid "Keying"
+msgstr "कुंजीयन"
+
+
+msgid "Bone Roll"
+msgstr "हड्डी पंजी"
 
 
 msgid "Basic"
@@ -5188,11 +5193,6 @@ msgstr "प्राथमिकता"
 
 msgid "Draw:"
 msgstr "चित्रण:"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "बहु"
 
 
 msgctxt "Operator"

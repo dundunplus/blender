@@ -62,6 +62,9 @@ void SourceProcessor::lower_assert(Parser &parser, [[maybe_unused]] const string
 void SourceProcessor::lower_strings(Parser &parser)
 {
   parser().foreach_token(String, [&](const Token &token) {
+    if (token.scope().type() == ScopeType::Preprocessor) {
+      return;
+    }
     uint32_t hash = hash_string(string(token.str()));
     metadata::PrintfFormat format = {hash, string(token.str())};
     metadata_.printf_formats.emplace_back(format);

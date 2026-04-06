@@ -67,7 +67,7 @@ void SourceProcessor::lint_attributes(Parser &parser)
           attr_str == "nodiscard" || attr_str == "node")
       {
         if (attr_scope.is_valid()) {
-          report_error_(ERROR_TOK(attr), "This attribute requires no argument");
+          report_error(attr, "This attribute requires no argument");
           invalid = true;
         }
       }
@@ -77,40 +77,39 @@ void SourceProcessor::lint_attributes(Parser &parser)
                attr_str == "specialization_constant")
       {
         if (attr_scope.is_invalid()) {
-          report_error_(ERROR_TOK(attr), "This attribute requires 1 argument");
+          report_error(attr, "This attribute requires 1 argument");
           invalid = true;
         }
       }
       else if (attr_str == "storage") {
         if (attr_scope.is_invalid()) {
-          report_error_(ERROR_TOK(attr), "This attribute requires 2 arguments");
+          report_error(attr, "This attribute requires 2 arguments");
           invalid = true;
         }
       }
       else if (attr_str == "image") {
         if (attr_scope.is_invalid()) {
-          report_error_(ERROR_TOK(attr), "This attribute requires 3 arguments");
+          report_error(attr, "This attribute requires 3 arguments");
           invalid = true;
         }
       }
       else if (attr_str == "local_size") {
         if (attr_scope.is_invalid()) {
-          report_error_(ERROR_TOK(attr), "This attribute requires at least 1 argument");
+          report_error(attr, "This attribute requires at least 1 argument");
           invalid = true;
         }
       }
       else if (attr_str == "metal_max_total_threads_per_threadgroup") {
         if (attr_scope.is_invalid()) {
-          report_error_(ERROR_TOK(attr), "This attribute requires at least 1 argument");
+          report_error(attr, "This attribute requires at least 1 argument");
           invalid = true;
         }
       }
       else if (attr_str == "host_shared") {
         if (attributes.front().prev().prev() != Struct && attributes.front().prev().prev() != Enum)
         {
-          report_error_(
-              ERROR_TOK(attr),
-              "host_shared attributes must be placed after a struct or an enum definition");
+          report_error(
+              attr, "host_shared attributes must be placed after a struct or an enum definition");
           invalid = true;
         }
         /* Placement already checked. */
@@ -118,8 +117,7 @@ void SourceProcessor::lint_attributes(Parser &parser)
       }
       else if (attr_str == "unroll" || attr_str == "unroll_n") {
         if (attributes.front().prev().prev().scope().front().prev() != For) {
-          report_error_(ERROR_TOK(attr),
-                        "[[unroll]] attribute must be declared after a 'for' statement");
+          report_error(attr, "[[unroll]] attribute must be declared after a 'for' statement");
           invalid = true;
         }
         /* Placement already checked. */
@@ -127,15 +125,15 @@ void SourceProcessor::lint_attributes(Parser &parser)
       }
       else if (attr_str == "static_branch") {
         if (attributes.front().prev().prev().scope().front().prev() != If) {
-          report_error_(ERROR_TOK(attr),
-                        "[[static_branch]] attribute must be declared after a 'if' condition");
+          report_error(attr,
+                       "[[static_branch]] attribute must be declared after a 'if' condition");
           invalid = true;
         }
         /* Placement already checked. */
         return;
       }
       else {
-        report_error_(ERROR_TOK(attr), "Unrecognized attribute");
+        report_error(attr, "Unrecognized attribute");
         invalid = true;
         /* Attribute already invalid, don't check placement. */
         return;
@@ -155,7 +153,7 @@ void SourceProcessor::lint_attributes(Parser &parser)
         /* Placement is maybe correct. Could refine a bit more. */
       }
       else {
-        report_error_(ERROR_TOK(attr), "attribute must be declared at a start of a declaration");
+        report_error(attr, "attribute must be declared at a start of a declaration");
         invalid = true;
       }
     });

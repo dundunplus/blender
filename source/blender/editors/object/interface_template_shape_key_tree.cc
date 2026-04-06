@@ -213,6 +213,7 @@ class ShapeKeyItem : public ui::AbstractTreeViewItem {
   {
     uiItemL_ex(&row, this->label_, ICON_SHAPEKEY_DATA, false, false);
     ui::Layout &sub = row.row(true);
+    sub.alignment_set(ui::LayoutAlign::Right);
     sub.use_property_decorate_set(false);
     PointerRNA shapekey_ptr = RNA_pointer_create_discrete(
         &shape_key_.key->id, RNA_ShapeKey, shape_key_.kb);

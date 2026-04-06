@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2026-01-30 13:12+0000\n"
 "Last-Translator: Martin Hansen <martini-141@users.noreply.translate.blender.org>\n"
 "Language-Team: Norwegian Bokmål <https://translate.blender.org/projects/blender-ui/ui/nb_NO/>\n"
@@ -830,22 +830,6 @@ msgstr "Nederst"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "Plasser blandingsnoden på samme høyde som den nederste node"
-
-
-msgid "Show Hotkey List"
-msgstr "Vis hurtigtastliste"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "Utvid denne boksen til en liste over alle hurtigtaster for funksjoner i dette tillegget"
-
-
-msgid "Show Principled Naming Tags"
-msgstr "Vis prinsipielle navnemerker"
-
-
-msgid "Expand this box into a list of all naming tags for Principled Texture setup"
-msgstr "Utvid denne boksen til en liste over alle prinsipielle navnemerker for prinsipielt teksturoppsett"
 
 
 msgid "Fribidi Library"
@@ -5510,10 +5494,6 @@ msgstr "Polsk – Polski"
 
 msgid "Portuguese (Brazil) - Português brasileiro"
 msgstr "Portugisisk (Brasil) – Português brasileiro"
-
-
-msgid "Locale code: pt_BR. Translation progress: 43%"
-msgstr "Lokalkode: pt_BR. Status på oversettelse: 43 %"
 
 
 msgid "Portuguese (Portugal) - Português europeu"

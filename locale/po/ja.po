@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2026-03-30 03:12+0000\n"
 "Last-Translator: Satoshi Yamasaki <yamyam@yo.rim.or.jp>\n"
 "Language-Team: Japanese <https://translate.blender.org/projects/blender-ui/ui/ja/>\n"
@@ -834,22 +834,6 @@ msgstr "下"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "ミックノードを一番低いノードと同じ高さに配置します"
-
-
-msgid "Show Hotkey List"
-msgstr "ホットキーリストを表示"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "このアドオンの機能のホットキーのリストでこのボックスを拡張します"
-
-
-msgid "Show Principled Naming Tags"
-msgstr "プリンシプルネーミングタグを表示"
-
-
-msgid "Expand this box into a list of all naming tags for Principled Texture setup"
-msgstr "プリンシプルテクスチャセットアップ用の全ネーミングタグのリストにこのボックスを展開します"
 
 
 msgid "Fribidi Library"
@@ -5763,6 +5747,10 @@ msgid "Flat"
 msgstr "フラット"
 
 
+msgid "Threshold"
+msgstr "しきい値"
+
+
 msgid "Curve Jitter"
 msgstr "ジッターカーブ"
 
@@ -5793,6 +5781,16 @@ msgstr "強さカーブ"
 
 msgid "Curve used for the strength"
 msgstr "強さに使用されるカーブ"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "多角形"
+
+
+msgctxt "Operator"
+msgid "Bézier"
+msgstr "ベジエ"
 
 
 msgid "Dilate/Contract"
@@ -6003,10 +6001,6 @@ msgstr "簡略化"
 
 msgid "Number of simplify steps (large values reduce fill accuracy)"
 msgstr "簡略化のステップ数 (大きいほどフィル精度が下がります)"
-
-
-msgid "Threshold"
-msgstr "しきい値"
 
 
 msgid "Threshold to consider color transparent for filling"
@@ -30853,6 +30847,10 @@ msgid "Name for new preset"
 msgstr "新規プリセットの名前"
 
 
+msgid "Reports"
+msgstr "報告"
+
+
 msgid "Rigify Active Type"
 msgstr "Rigifyアクティブタイプ"
 
@@ -35374,10 +35372,6 @@ msgid "Calculate Overlap"
 msgstr "重なりを計算"
 
 
-msgid "Calculate self intersections and overlap before filling"
-msgstr "フィルする前に，自分自身との交差と重なりを計算します"
-
-
 msgid "Mask Layers"
 msgstr "マスクレイヤー"
 
@@ -35891,84 +35885,16 @@ msgid "Math"
 msgstr "数式"
 
 
-msgid "Names"
-msgstr "名前"
-
-
 msgid "Utilities"
 msgstr "ユーティリティ"
 
 
-msgid "Bone Roll"
-msgstr "ボーンロール"
-
-
-msgid "Show/Hide"
-msgstr "表示/隠す"
-
-
-msgid "Clean Up"
-msgstr "クリーンアップ"
-
-
-msgid "Pivot Point"
-msgstr "ピボットポイント"
+msgid "Mirror"
+msgstr "ミラー"
 
 
 msgid "Snap"
 msgstr "スナップ"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "プロポーショナル編集の減衰タイプ"
-
-
-msgid "Read"
-msgstr "読込"
-
-
-msgid "Mask Edit"
-msgstr "マスク編集"
-
-
-msgid "Sample"
-msgstr "サンプル"
-
-
-msgid "Automasking"
-msgstr "自動マスク"
-
-
-msgid "Write"
-msgstr "書込"
-
-
-msgid "Face Sets Edit"
-msgstr "面セット編集"
-
-
-msgid "Primitives"
-msgstr "プリミティブ"
-
-
-msgid "Vertex Group Locks"
-msgstr "頂点グループのロック"
-
-
-msgid "Gizmo"
-msgstr "ギズモ"
-
-
-msgid "Instances"
-msgstr "インスタンス"
-
-
-msgid "Import"
-msgstr "インポート"
-
-
-msgid "Mirror"
-msgstr "ミラー"
 
 
 msgid "UV Mapping"
@@ -35987,10 +35913,6 @@ msgid "Navigation"
 msgstr "視点の操作"
 
 
-msgid "Deprecated"
-msgstr "廃止予定"
-
-
 msgid "Align View"
 msgstr "視点を揃える"
 
@@ -36007,20 +35929,24 @@ msgid "Select More/Less"
 msgstr "選択の拡大縮小"
 
 
-msgid "List"
-msgstr "リスト"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "類似選択"
 
 
+msgid "Read"
+msgstr "読込"
+
+
 msgid "Select All by Trait"
 msgstr "特徴で全選択"
+
+
+msgid "Sample"
+msgstr "サンプル"
+
+
+msgid "Write"
+msgstr "書込"
 
 
 msgid "Select Linked"
@@ -36031,12 +35957,28 @@ msgid "Select Loops"
 msgstr "ループ選択"
 
 
+msgid "Primitives"
+msgstr "プリミティブ"
+
+
 msgid "Assign Material"
 msgstr "マテリアルを割り当て"
 
 
+msgid "Gizmo"
+msgstr "ギズモ"
+
+
+msgid "Instances"
+msgstr "インスタンス"
+
+
 msgid "Metaball"
 msgstr "メタボール"
+
+
+msgid "Import"
+msgstr "インポート"
 
 
 msgid "Light"
@@ -36047,6 +35989,10 @@ msgid "Light Probe"
 msgstr "ライトプローブ"
 
 
+msgid "Deprecated"
+msgstr "廃止予定"
+
+
 msgid "Add Image"
 msgstr "画像を追加"
 
@@ -36055,8 +36001,16 @@ msgid "Relations"
 msgstr "関係"
 
 
+msgid "List"
+msgstr "リスト"
+
+
 msgid "Rigid Body"
 msgstr "リジッドボディ"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Apply"
@@ -36069,6 +36023,14 @@ msgstr "トラック"
 
 msgid "Quick Effects"
 msgstr "クイックエフェクト"
+
+
+msgid "Show/Hide"
+msgstr "表示/隠す"
+
+
+msgid "Clean Up"
+msgstr "クリーンアップ"
 
 
 msgid "Asset"
@@ -36091,12 +36053,12 @@ msgid "Hooks"
 msgstr "フック"
 
 
+msgid "Vertex Group Locks"
+msgstr "頂点グループのロック"
+
+
 msgid "Trim/Add"
 msgstr "トリム/追加"
-
-
-msgid "Layout"
-msgstr "レイアウト"
 
 
 msgid "Sculpt Set Pivot"
@@ -36127,24 +36089,12 @@ msgid "Bone Collections"
 msgstr "ボーンコレクション"
 
 
-msgid "Adjust"
-msgstr "調整"
-
-
-msgid "Keying"
-msgstr "キーイング"
-
-
-msgid "Tracking"
-msgstr "トラッキング"
+msgid "Names"
+msgstr "名前"
 
 
 msgid "Toggle Bone Options"
 msgstr "ボーンオプションを切り替え"
-
-
-msgid "Render Preview"
-msgstr "レンダープレビュー"
 
 
 msgid "Enable Bone Options"
@@ -36157,10 +36107,6 @@ msgstr "ボーンオプションを無効化"
 
 msgid "Mesh Select Mode"
 msgstr "メッシュ選択モード"
-
-
-msgid "Creative"
-msgstr "クリエイティブ"
 
 
 msgid "Face Data"
@@ -36179,12 +36125,60 @@ msgid "Merge"
 msgstr "マージ"
 
 
+msgid "Layout"
+msgstr "レイアウト"
+
+
 msgid "Special Characters"
 msgstr "特殊文字"
 
 
 msgid "Kerning"
 msgstr "カーニング"
+
+
+msgid "Adjust"
+msgstr "調整"
+
+
+msgid "Keying"
+msgstr "キーイング"
+
+
+msgid "Bone Roll"
+msgstr "ボーンロール"
+
+
+msgid "Tracking"
+msgstr "トラッキング"
+
+
+msgid "Render Preview"
+msgstr "レンダープレビュー"
+
+
+msgid "Creative"
+msgstr "クリエイティブ"
+
+
+msgid "Pivot Point"
+msgstr "ピボットポイント"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "プロポーショナル編集の減衰タイプ"
+
+
+msgid "Mask Edit"
+msgstr "マスク編集"
+
+
+msgid "Automasking"
+msgstr "自動マスク"
+
+
+msgid "Face Sets Edit"
+msgstr "面セット編集"
 
 
 msgid "Keyframe Insert Pie"
@@ -55431,15 +55425,6 @@ msgid "Add Node Color Preset"
 msgstr "ノードのカラープリセットを追加"
 
 
-msgid "Add an Attribute node with this name"
-msgstr "この名前で属性ノードを追加します"
-
-
-msgctxt "Operator"
-msgid "Add Attribute"
-msgstr "属性を追加"
-
-
 msgid "Add Reroute nodes and link them to outputs of selected nodes"
 msgstr "リルートノードを追加し，選択中のノードの出力とつなぎます"
 
@@ -65417,6 +65402,11 @@ msgid "Unlink active font data-block"
 msgstr "アクティブなフォントのデータブロックのリンクを解除します"
 
 
+msgctxt "Operator"
+msgid "Add Attribute"
+msgstr "属性を追加"
+
+
 msgid "Add attribute to geometry"
 msgstr "形状に属性を追加します"
 
@@ -72126,11 +72116,6 @@ msgid "Triangulate selected faces"
 msgstr "選択した面を三角化"
 
 
-msgctxt "Operator"
-msgid "Select Boundary Loop"
-msgstr "境界ループを選択"
-
-
 msgid "Select boundary edges around the selected faces"
 msgstr "選択中の面の周囲の境界部分の辺を選択します"
 
@@ -74465,70 +74450,6 @@ msgid "Batch change blend type and math operation"
 msgstr "ブレンドタイプと演算処理を一括変更します"
 
 
-msgid "Add Mode"
-msgstr "加算モード"
-
-
-msgid "Multiply Mode"
-msgstr "乗算モード"
-
-
-msgid "Subtract Mode"
-msgstr "減算モード"
-
-
-msgid "Screen Mode"
-msgstr "スクリーンモード"
-
-
-msgid "Divide Mode"
-msgstr "除算モード"
-
-
-msgid "Difference Mode"
-msgstr "差分モード"
-
-
-msgid "Darken Mode"
-msgstr "暗い方モード"
-
-
-msgid "Lighten Mode"
-msgstr "明るい方モード"
-
-
-msgid "Overlay Mode"
-msgstr "オーバーレイモード"
-
-
-msgid "Dodge Mode"
-msgstr "覆い焼きモード"
-
-
-msgid "Burn Mode"
-msgstr "焼きこみモード"
-
-
-msgid "Hue Mode"
-msgstr "色相モード"
-
-
-msgid "Saturation Mode"
-msgstr "彩度モード"
-
-
-msgid "Value Mode"
-msgstr "明度モード"
-
-
-msgid "Soft Light Mode"
-msgstr "ソフトライトモード"
-
-
-msgid "Linear Light Mode"
-msgstr "リニアライトモード"
-
-
 msgctxt "Color"
 msgid "Current"
 msgstr "現在"
@@ -74554,151 +74475,6 @@ msgstr "前"
 
 msgid "Previous blend type/operation"
 msgstr "前のブレンドタイプ・処理"
-
-
-msgid "Multiply Add Mode"
-msgstr "積和算モード"
-
-
-msgid "Sine Mode"
-msgstr "サインモード"
-
-
-msgid "Cosine Mode"
-msgstr "コサインモード"
-
-
-msgid "Tangent Mode"
-msgstr "タンジェントモード"
-
-
-msgid "Arcsine Mode"
-msgstr "アークサインモード"
-
-
-msgid "Arccosine Mode"
-msgstr "アークコサインモード"
-
-
-msgid "Arctangent Mode"
-msgstr "アークタンジェントモード"
-
-
-msgid "Arctan2 Mode"
-msgstr "アークタンジェント2モード"
-
-
-msgid "Hyperbolic Sine Mode"
-msgstr "双曲線サインモード"
-
-
-msgid "Hyperbolic Cosine Mode"
-msgstr "双曲線コサインモード"
-
-
-msgid "Hyperbolic Tangent Mode"
-msgstr "双曲線タンジェントモード"
-
-
-msgid "Power Mode"
-msgstr "累乗モード"
-
-
-msgid "Logarithm Mode"
-msgstr "対数モード"
-
-
-msgid "Square Root Mode"
-msgstr "平方根モード"
-
-
-msgid "Inverse Square Root Mode"
-msgstr "逆平方根モード"
-
-
-msgid "Exponent Mode"
-msgstr "指数モード"
-
-
-msgid "Minimum Mode"
-msgstr "最小モード"
-
-
-msgid "Maximum Mode"
-msgstr "最大モード"
-
-
-msgid "Less Than Mode"
-msgstr "比較（小さい）モード"
-
-
-msgid "Greater Than Mode"
-msgstr "比較（大きい）モード"
-
-
-msgid "Sign Mode"
-msgstr "符号モード"
-
-
-msgid "Compare Mode"
-msgstr "比較モード"
-
-
-msgid "Smooth Minimum Mode"
-msgstr "Smooth Minimumモード"
-
-
-msgid "Smooth Maximum Mode"
-msgstr "Smooth Maximumモード"
-
-
-msgid "Fraction Mode"
-msgstr "小数部モード"
-
-
-msgid "Modulo Mode"
-msgstr "剰余モード"
-
-
-msgid "Wrap Mode"
-msgstr "ラップモード"
-
-
-msgctxt "NodeTree"
-msgid "Pingpong"
-msgstr "ピンポン"
-
-
-msgid "Pingpong Mode"
-msgstr "ピンポンモード"
-
-
-msgid "Absolute Mode"
-msgstr "絶対値モード"
-
-
-msgid "Round Mode"
-msgstr "丸めモード"
-
-
-msgid "Floor Mode"
-msgstr "床モード"
-
-
-msgid "Ceil Mode"
-msgstr "天井モード"
-
-
-msgid "Truncate Mode"
-msgstr "剰余（切り捨て）モード"
-
-
-msgid "To Radians Mode"
-msgstr "ラジアン変換モード"
-
-
-msgid "To Degrees Mode"
-msgstr "度変換モード"
 
 
 msgctxt "NodeTree"
@@ -74847,18 +74623,13 @@ msgstr "ミックス"
 
 
 msgctxt "NodeTree"
-msgid "Screen"
-msgstr "スクリーン"
-
-
-msgctxt "NodeTree"
-msgid "Difference"
-msgstr "差分"
-
-
-msgctxt "NodeTree"
 msgid "Darken"
 msgstr "暗い方"
+
+
+msgctxt "NodeTree"
+msgid "Color Burn"
+msgstr "焼き込みカラー"
 
 
 msgctxt "NodeTree"
@@ -74867,8 +74638,8 @@ msgstr "明るい方"
 
 
 msgctxt "NodeTree"
-msgid "Overlay"
-msgstr "オーバーレイ"
+msgid "Screen"
+msgstr "スクリーン"
 
 
 msgctxt "NodeTree"
@@ -74877,8 +74648,23 @@ msgstr "覆い焼きカラー"
 
 
 msgctxt "NodeTree"
-msgid "Color Burn"
-msgstr "焼き込みカラー"
+msgid "Overlay"
+msgstr "オーバーレイ"
+
+
+msgctxt "NodeTree"
+msgid "Soft Light"
+msgstr "ソフトライト"
+
+
+msgctxt "NodeTree"
+msgid "Linear Light"
+msgstr "リニアライト"
+
+
+msgctxt "NodeTree"
+msgid "Difference"
+msgstr "差分"
 
 
 msgctxt "NodeTree"
@@ -74892,23 +74678,13 @@ msgstr "彩度"
 
 
 msgctxt "NodeTree"
-msgid "Value"
-msgstr "明度"
-
-
-msgctxt "NodeTree"
 msgid "Color"
 msgstr "カラー"
 
 
 msgctxt "NodeTree"
-msgid "Soft Light"
-msgstr "ソフトライト"
-
-
-msgctxt "NodeTree"
-msgid "Linear Light"
-msgstr "リニアライト"
+msgid "Value"
+msgstr "明度"
 
 
 msgctxt "NodeTree"
@@ -74936,6 +74712,10 @@ msgstr "合成"
 
 msgid "Union Mode"
 msgstr "合成モード"
+
+
+msgid "Difference Mode"
+msgstr "差分モード"
 
 
 msgid "Add to End"
@@ -93787,26 +93567,6 @@ msgid "Panel containing UI elements"
 msgstr "UIの要素を含むパネル"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTFアニメーション"
-
-
-msgid "Active Tool"
-msgstr "アクティブツール"
-
-
-msgid "View Lock"
-msgstr "ビューのロック"
-
-
-msgid "Selectability & Visibility"
-msgstr "選択可否と可視性"
-
-
 msgid "Shadow Settings"
 msgstr "影の設定"
 
@@ -93817,6 +93577,10 @@ msgstr "SSAO設定"
 
 msgid "Cavity"
 msgstr "キャビティ"
+
+
+msgid "glTF Material Variants"
+msgstr "glTFマテリアルバリアント"
 
 
 msgid "Render Pass"
@@ -93833,6 +93597,14 @@ msgstr "オーバーレイ"
 
 msgid "Guides"
 msgstr "ガイド"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTFアニメーション"
 
 
 msgid "Viewer Node"
@@ -93919,12 +93691,20 @@ msgid "VR Info"
 msgstr "VR情報"
 
 
+msgid "Active Tool"
+msgstr "アクティブツール"
+
+
 msgid "glTF Variants"
 msgstr "glTFバリアント"
 
 
-msgid "glTF Material Variants"
-msgstr "glTFマテリアルバリアント"
+msgid "View Lock"
+msgstr "ビューのロック"
+
+
+msgid "Selectability & Visibility"
+msgstr "選択可否と可視性"
 
 
 msgid "Import Settings"
@@ -99376,10 +99156,6 @@ msgid "Italian - Italiano"
 msgstr "イタリア語 - Italiano"
 
 
-msgid "Locale code: it_IT. Translation progress: 44%"
-msgstr "ロケールコード：it_IT．翻訳の進行状況: 44％"
-
-
 msgid "Japanese - 日本語"
 msgstr "日本語 - Japanese"
 
@@ -99434,10 +99210,6 @@ msgstr "ポーランド語 - Polski"
 
 msgid "Portuguese (Brazil) - Português brasileiro"
 msgstr "ポルトガル（ブラジル）語 - Português brasileiro"
-
-
-msgid "Locale code: pt_BR. Translation progress: 43%"
-msgstr "ロケールコード：pt_BR．翻訳の進行状況: 43％"
 
 
 msgid "Portuguese (Portugal) - Português europeu"
@@ -99518,10 +99290,6 @@ msgstr "ウルドゥー語 - وُدرُا"
 
 msgid "Vietnamese - Tiếng Việt"
 msgstr "ベトナム語 - Tiếng Việt"
-
-
-msgid "Locale code: vi_VN. Translation progress: 93%"
-msgstr "ロケールコード：vi_VN．翻訳の進行状況: 93％"
 
 
 msgid "Reference Sphere Size"
@@ -107508,6 +107276,10 @@ msgstr "黒いエッジを表示します"
 
 msgid "Display white edges"
 msgstr "白いエッジを表示します"
+
+
+msgid "Overlay Mode"
+msgstr "オーバーレイモード"
 
 
 msgid "Overlay mode of rasterized mask"
@@ -122595,16 +122367,6 @@ msgid "Select Parent Frame"
 msgstr "親フレームを選択"
 
 
-msgctxt "Operator"
-msgid "Reset Nodes in Frame"
-msgstr "フレーム内のノードをリセット"
-
-
-msgctxt "Operator"
-msgid "Reset Node"
-msgstr "ノードをリセット"
-
-
 msgid "Use Shaders"
 msgstr "シェーダーを使用"
 
@@ -122741,10 +122503,6 @@ msgid "No images found to reload in this node tree"
 msgstr "このノードツリーに再読み込みする画像がありません"
 
 
-msgid "Please select only 1 frame to reset"
-msgstr "リセットするフレームは一つだけ選択してください"
-
-
 msgid "No valid node(s) in selection"
 msgstr "選択中に有効なノードがありません"
 
@@ -122783,10 +122541,6 @@ msgstr "このノードに交換するリンク中の入力がありません"
 
 msgid "Some connections have been lost due to differing numbers of output sockets"
 msgstr "出力ソケット数が違うため，一部の接続が切れました"
-
-
-msgid "Edit tags for auto texture detection in Principled BSDF setup"
-msgstr "プリンシプルBSDFセットアップ内で自動的にテクスチャを探知するタグを編集"
 
 
 msgid "Merge Nodes (Automatic)"
@@ -123031,10 +122785,6 @@ msgstr "アクティブを選択にリンク（メニュー）"
 
 msgid "Copy to Selected (Menu)"
 msgstr "選択にコピー（メニュー）"
-
-
-msgid "Hide Hotkey List"
-msgstr "ホットキーリストを非表示"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -125960,11 +125710,6 @@ msgstr "カーソル → ワールド原点"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "カーソル → グリッド"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "多角形"
 
 
 msgid "Display Cursor"
@@ -129935,10 +129680,6 @@ msgid "Translate"
 msgstr "翻訳"
 
 
-msgid "Reports"
-msgstr "報告"
-
-
 msgid "New Data"
 msgstr "新規データ"
 
@@ -130684,11 +130425,6 @@ msgstr "トーラス"
 msgctxt "Operator"
 msgid "Grid"
 msgstr "グリッド"
-
-
-msgctxt "Operator"
-msgid "Bézier"
-msgstr "ベジエ"
 
 
 msgctxt "Operator"
@@ -134790,10 +134526,6 @@ msgstr "選択中のマーカーを削除しますか？"
 
 msgid "Rename Selected Time Marker"
 msgstr "選択タイムマーカーをリネーム"
-
-
-msgid "Selecting the camera is only supported in object mode"
-msgstr "カメラの選択はオブジェクトモード中のみ対応しています"
 
 
 msgid "Scene not found"
@@ -148275,18 +148007,6 @@ msgid "Cannot load the baked data"
 msgstr "ベイクデータを読み込みできません"
 
 
-msgid "Missing property for input socket \"%s\""
-msgstr "入力ソケット「%s」のプロパティがありません"
-
-
-msgid "Property type does not match input socket \"(%s)\""
-msgstr "プロパティのタイプが入力ソケット「%s」と違います"
-
-
-msgid "Node group's geometry input must be the first"
-msgstr "ノードグループのジオメトリ入力は最初にしてください"
-
-
 msgid "Node group must have an output socket"
 msgstr "ノードグループに出力ソケットが必要です"
 
@@ -150402,17 +150122,17 @@ msgstr ""
 "入れ子のインスタンスは考慮しません"
 
 
+msgctxt "NodeTree"
+msgid "Median"
+msgstr "中央値"
+
+
 msgid "Sum"
 msgstr "合計"
 
 
 msgid "Variance"
 msgstr "分散"
-
-
-msgctxt "NodeTree"
-msgid "Median"
-msgstr "中央値"
 
 
 msgid "Geometry to get the statistics from"
@@ -153563,10 +153283,6 @@ msgid "No named attributes used"
 msgstr "名前付き属性は未使用です"
 
 
-msgid "Recursive closure is not allowed"
-msgstr "再帰クロージャはできません"
-
-
 msgid "Conversion not supported when evaluating closure"
 msgstr "クロージャ評価時の変換は未対応です"
 
@@ -155128,10 +154844,6 @@ msgstr "カラーライズ"
 
 msgid "Glow"
 msgstr "グロー"
-
-
-msgid "Blur X"
-msgstr "ブラー X"
 
 
 msgid "Rim"

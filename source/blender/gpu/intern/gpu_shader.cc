@@ -237,7 +237,7 @@ std::string GPU_shader_preprocess_source(StringRefNull original,
     return original;
   }
   gpu::shader::SourceProcessor processor(original, "python_shader.glsl", shader::Language::GLSL);
-  auto [processed_str, metadata] = processor.convert();
+  auto [processed_str, metadata, error] = processor.convert();
 
   for (auto builtin : metadata.builtins) {
     info.builtins(gpu::shader::convert_builtin_bit(builtin));

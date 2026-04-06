@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'227100a72567')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-03-30 09:56+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-11-11 12:13+0000\n"
 "Last-Translator: Rafael Teixeira de Avila Soares <rafaeltas@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -743,14 +743,6 @@ msgstr "Base"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "Coloque o nó de Mistura na mesma altura do nó mais baixo"
-
-
-msgid "Show Hotkey List"
-msgstr "Exibir lista de teclas de atalho"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "Expanda essa caixa em uma lista de todas as teclas de atalho para funções neste addon"
 
 
 msgid "Fribidi Library"
@@ -3976,6 +3968,10 @@ msgid "Vertex Color"
 msgstr "Cor dos vértices"
 
 
+msgid "Threshold"
+msgstr "Ajuste"
+
+
 msgid "Curve Jitter"
 msgstr "Curva de tremulação"
 
@@ -4000,6 +3996,11 @@ msgid "Curve used for the strength"
 msgstr "A curva usada para a força."
 
 
+msgctxt "Operator"
+msgid "Poly"
+msgstr "Polígonos"
+
+
 msgid "All"
 msgstr "Todos"
 
@@ -4022,10 +4023,6 @@ msgstr "Tudo Abaixo"
 
 msgid "Simplify"
 msgstr "Simplificar"
-
-
-msgid "Threshold"
-msgstr "Ajuste"
 
 
 msgid "Input Samples"
@@ -20951,10 +20948,6 @@ msgid "Calculate Overlap"
 msgstr "Calcular sobreposições"
 
 
-msgid "Calculate self intersections and overlap before filling"
-msgstr "Calcula as intersecções e sobreposições internas antes do preenchimento."
-
-
 msgid "Mask Layers"
 msgstr "Camadas de máscara"
 
@@ -21207,44 +21200,12 @@ msgid "Math"
 msgstr "Matemática"
 
 
-msgid "Names"
-msgstr "Nomes"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
+msgid "Mirror"
+msgstr "Espelhar"
 
 
 msgid "Snap"
 msgstr "Atrair"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
-
-
-msgid "Instances"
-msgstr "Instâncias"
-
-
-msgid "Import"
-msgstr "Importar"
-
-
-msgid "Mirror"
-msgstr "Espelhar"
 
 
 msgid "UV Mapping"
@@ -21279,10 +21240,6 @@ msgid "Select More/Less"
 msgstr "Selecionar mais ou menos"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "Selecionar por similaridades"
 
@@ -21299,8 +21256,16 @@ msgid "Select Loops"
 msgstr "Selecionar anéis"
 
 
+msgid "Instances"
+msgstr "Instâncias"
+
+
 msgid "Metaball"
 msgstr "Meta-esfera"
+
+
+msgid "Import"
+msgstr "Importar"
 
 
 msgid "Light"
@@ -21323,6 +21288,10 @@ msgid "Rigid Body"
 msgstr "Corpo rígido"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -21335,6 +21304,14 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
 msgid "Make Single User"
 msgstr "Tornar usuário único"
 
@@ -21345,10 +21322,6 @@ msgstr "Converter"
 
 msgid "Hooks"
 msgstr "Ganchos"
-
-
-msgid "Layout"
-msgstr "Organizar"
 
 
 msgid "Random Mask"
@@ -21367,12 +21340,8 @@ msgid "Propagate"
 msgstr "Propagar"
 
 
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
+msgid "Names"
+msgstr "Nomes"
 
 
 msgid "Toggle Bone Options"
@@ -21399,8 +21368,32 @@ msgid "Merge"
 msgstr "Fundir"
 
 
+msgid "Layout"
+msgstr "Organizar"
+
+
 msgid "Special Characters"
 msgstr "Caracteres especiais"
+
+
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Basic"
@@ -37402,11 +37395,6 @@ msgid "Triangulate selected faces"
 msgstr "Torna as faces selecionadas triangulares."
 
 
-msgctxt "Operator"
-msgid "Select Boundary Loop"
-msgstr "Selecionar os anéis das extremidades"
-
-
 msgid "Select boundary edges around the selected faces"
 msgstr "Seleciona as arestas das extremidades em torno das faces selecionadas."
 
@@ -38735,14 +38723,6 @@ msgstr "Tipo de árvore"
 
 msgid "Copy color to all selected nodes"
 msgstr "Copia as cores para todos os nós selecionados"
-
-
-msgid "Overlay Mode"
-msgstr "Modo de sobreposição"
-
-
-msgid "Sign Mode"
-msgstr "Modo Sinal"
 
 
 msgctxt "Operator"
@@ -54158,6 +54138,10 @@ msgid "Mask displayed and edited in this space"
 msgstr "Mascara os mostrados e editados dentro deste espaço."
 
 
+msgid "Overlay Mode"
+msgstr "Modo de sobreposição"
+
+
 msgid "Overlay mode of rasterized mask"
 msgstr "Modo de sobreposição da máscara rasterizada."
 
@@ -59563,11 +59547,6 @@ msgstr "Cursos para a Origem do Mundo"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Cursor para a grade"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Polígonos"
 
 
 msgid "Data Source:"
@@ -67400,10 +67379,6 @@ msgstr "Faixas devem possuir o mesmo número de entradas."
 
 msgid "Glow"
 msgstr "Incandescência"
-
-
-msgid "Blur X"
-msgstr "Desfocar X"
 
 
 msgid "Rim"
