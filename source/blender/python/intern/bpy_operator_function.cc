@@ -205,7 +205,7 @@ static PyObject *bpy_op_fn_poll_impl(const char *opname, const char *context_str
 PyDoc_STRVAR(
     /* Wrap. */
     bpy_op_fn_poll_doc,
-    ".. method:: poll(context='EXEC_DEFAULT')\n"
+    ".. method:: poll(context='EXEC_DEFAULT', /)\n"
     "\n"
     "Test if the operator can be executed in the current context.\n"
     "\n"
