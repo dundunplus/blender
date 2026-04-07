@@ -6110,11 +6110,12 @@ void SCULPT_OT_brush_stroke(wmOperatorType *ot)
       "provided \"mouse_event\" positions");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 
-  RNA_def_boolean(ot->srna,
-                  "ignore_background_click",
-                  false,
-                  "Ignore Background Click",
-                  "Clicks on the background do not start the stroke");
+  prop = RNA_def_boolean(ot->srna,
+                         "ignore_background_click",
+                         false,
+                         "Ignore Background Click",
+                         "Clicks on the background do not start the stroke");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 /* Fake Neighbors. */
