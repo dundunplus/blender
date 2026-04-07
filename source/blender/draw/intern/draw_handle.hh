@@ -89,8 +89,8 @@ struct ResourceIDRange {
   uint32_t count = 1;
 
   ResourceIDRange() = default;
-  ResourceIDRange(ResourceID index) : first(index), count(1) {}
-  ResourceIDRange(ResourceID index, uint len) : first(index), count(len) {}
+  ResourceIDRange(ResourceID id) : first(id) {}
+  ResourceIDRange(ResourceID first_id, uint len) : first(first_id), count(len) {}
 
   bool has_inverted_handedness() const
   {
@@ -156,7 +156,7 @@ class ResourceHandleRange {
 
   ResourceIDRange id_ = {};
 
-  ResourceHandleRange(ResourceHandle handle, uint len) : id_(handle.id_, len) {}
+  ResourceHandleRange(ResourceHandle first_handle, uint len) : id_(first_handle.id_, len) {}
 
  public:
   ResourceHandleRange() = default;

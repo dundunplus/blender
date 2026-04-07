@@ -366,7 +366,7 @@ LightPool *gpencil_light_pool_add(Instance *inst)
   LightPool *lightpool = static_cast<LightPool *>(BLI_memblock_alloc(inst->gp_light_pool));
   lightpool->light_used = 0;
   /* Tag light list end. */
-  lightpool->light_data[0].color[0] = -1.0;
+  lightpool->light_data[0].light_color[0] = -1.0;
   if (lightpool->ubo == nullptr) {
     lightpool->ubo = GPU_uniformbuf_create(sizeof(lightpool->light_data));
   }
@@ -382,12 +382,12 @@ void gpencil_light_ambient_add(LightPool *lightpool, const float color[3])
 
   gpLight *gp_light = &lightpool->light_data[lightpool->light_used];
   gp_light->type = GP_LIGHT_TYPE_AMBIENT;
-  copy_v3_v3(gp_light->color, color);
+  copy_v3_v3(gp_light->light_color, color);
   lightpool->light_used++;
 
   if (lightpool->light_used < GPENCIL_LIGHT_BUFFER_LEN) {
     /* Tag light list end. */
-    gp_light[1].color[0] = -1.0f;
+    gp_light[1].light_color[0] = -1.0f;
   }
 }
 
@@ -436,14 +436,14 @@ void gpencil_light_pool_populate(LightPool *lightpool, Object *ob)
     gp_light->type = GP_LIGHT_TYPE_POINT;
   }
   copy_v4_v4(gp_light->position, ob->object_to_world().location());
-  copy_v3_v3(gp_light->color, &light.r);
-  mul_v3_fl(gp_light->color, light.energy * light_power_get(&light));
+  copy_v3_v3(gp_light->light_color, &light.r);
+  mul_v3_fl(gp_light->light_color, light.energy * light_power_get(&light));
 
   lightpool->light_used++;
 
   if (lightpool->light_used < GPENCIL_LIGHT_BUFFER_LEN) {
     /* Tag light list end. */
-    gp_light[1].color[0] = -1.0f;
+    gp_light[1].light_color[0] = -1.0f;
   }
 }
 

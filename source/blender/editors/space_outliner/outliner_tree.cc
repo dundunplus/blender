@@ -247,7 +247,7 @@ TreeElement *AbstractTreeDisplay::add_element(ListBaseT<TreeElement> *lb,
 {
   /* Pointer to store in #TreeStoreElem.id to identify the element over rebuilds and reconstruct it
    * on file read. */
-  /* FIXME: This is may be an arbitrary void pointer that is cast to an ID pointer. Could be a
+  /* FIXME: This may be an arbitrary void pointer that is cast to an ID pointer. Could be a
    * temporary stack pointer even. Often works reliably enough at runtime, and file reading handles
    * cases where data can't be reconstructed just fine (pointer is null'ed). This is still
    * completely type unsafe and error-prone. */

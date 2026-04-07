@@ -1703,7 +1703,7 @@ void register_node_group_operators(const bContext &C)
         BKE_reportf(reports,
                     RPT_ERROR,
                     "Error registering node tool \"%s\". Invalid metadata for input \"%s\". "
-                    "Asset meta-data is may be out of date",
+                    "Asset meta-data may be out of date",
                     item.key.c_str(),
                     error.c_str());
       }

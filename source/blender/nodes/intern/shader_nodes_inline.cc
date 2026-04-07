@@ -1395,24 +1395,22 @@ class ShaderNodesInliner {
     }
     if (const int *value_int = std::get_if<int>(&value.value)) {
       bNode *node = this->add_node("FunctionNodeInputInt");
-      bNodeSocket *socket = static_cast<bNodeSocket *>(node->outputs.first);
-      socket->default_value_typed<bNodeSocketValueInt>()->value = *value_int;
-      return {node, socket};
+      auto &storage = *static_cast<NodeInputInt *>(node->storage);
+      storage.integer = *value_int;
+      return {node, static_cast<bNodeSocket *>(node->outputs.first)};
     }
     if (const bool *value_bool = std::get_if<bool>(&value.value)) {
       bNode *node = this->add_node("FunctionNodeInputBool");
-      bNodeSocket *socket = static_cast<bNodeSocket *>(node->outputs.first);
-      socket->default_value_typed<bNodeSocketValueBoolean>()->value = *value_bool;
-      return {node, socket};
+      auto &storage = *static_cast<NodeInputBool *>(node->storage);
+      storage.boolean = int(*value_bool);
+      return {node, static_cast<bNodeSocket *>(node->outputs.first)};
     }
     if (const float3 *value_float3 = std::get_if<float3>(&value.value)) {
       bNode *node = this->add_node("FunctionNodeInputVector");
-      bNodeSocket *socket = static_cast<bNodeSocket *>(node->outputs.first);
-      bNodeSocketValueVector *vector_socket =
-          socket->default_value_typed<bNodeSocketValueVector>();
-      copy_v3_v3(vector_socket->value, *value_float3);
-      vector_socket->dimensions = 3;
-      return {node, socket};
+      auto &storage = *static_cast<NodeInputVector *>(node->storage);
+      copy_v3_v3(storage.vector, *value_float3);
+      storage.dimensions = 3;
+      return {node, static_cast<bNodeSocket *>(node->outputs.first)};
     }
     if (const ColorGeometry4f *value_color = std::get_if<ColorGeometry4f>(&value.value)) {
       bNode *node = this->add_node("ShaderNodeRGB");

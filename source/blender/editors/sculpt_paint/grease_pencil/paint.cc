@@ -243,6 +243,9 @@ class PaintOperation : public GreasePencilStrokeOperation {
   /** Set to true when the paint operation is used to draw fill guides. */
   bool do_fill_guides_;
 
+  /* Used when hiding the fill while drawing. (#GP_BRUSH_DISSABLE_LASSO)*/
+  float start_opacity_;
+
   friend struct PaintOperationExecutor;
 
   Brush *saved_active_brush_;
@@ -366,6 +369,7 @@ struct PaintOperationExecutor {
     }
 
     const bool on_back = (scene_->toolsettings->gpencil_flags & GP_TOOL_FLAG_PAINT_ONBACK) != 0;
+    const bool hide_fill_while_drawing = (settings_->flag & GP_BRUSH_DISSABLE_LASSO) != 0;
 
     self.screen_space_coords_orig_.append(start_coords);
     self.screen_space_curve_fitted_coords_.append(Vector<float2>({start_coords}));
@@ -487,12 +491,17 @@ struct PaintOperationExecutor {
       }
     }
 
-    if (use_fill && (start_opacity < 1.0f || attributes.contains("fill_opacity"))) {
+    if (use_fill &&
+        (start_opacity < 1.0f || attributes.contains("fill_opacity") || hide_fill_while_drawing))
+    {
       if (bke::SpanAttributeWriter<float> fill_opacities =
               attributes.lookup_or_add_for_write_span<float>(
                   "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f)))
       {
-        fill_opacities.span[active_curve] = start_opacity;
+        /* Use 10% opacity when using the option to hide the fill while drawing
+         * (#GP_BRUSH_DISSABLE_LASSO). */
+        self.start_opacity_ = start_opacity;
+        fill_opacities.span[active_curve] = !hide_fill_while_drawing ? start_opacity : 0.1f;
         curve_attributes_to_skip.add("fill_opacity");
         fill_opacities.finish();
       }
@@ -1684,6 +1693,8 @@ void PaintOperation::on_stroke_done(const bContext &C)
   const bool do_post_processing = (settings->flag & GP_BRUSH_GROUP_SETTINGS) != 0;
   const bool do_automerge_endpoints = (scene_->toolsettings->gpencil_flags &
                                        GP_TOOL_FLAG_AUTOMERGE_STROKE) != 0;
+  const bool use_fill = (settings->flag2 & GP_BRUSH_USE_FILL) != 0;
+  const bool hide_fill_while_drawing = (settings->flag & GP_BRUSH_DISSABLE_LASSO) != 0;
 
   /* Grease Pencil should have an active layer. */
   BLI_assert(grease_pencil.has_active_layer());
@@ -1704,6 +1715,15 @@ void PaintOperation::on_stroke_done(const bContext &C)
   BLI_assert(screen_space_positions);
   screen_space_positions.span.slice(points).copy_from(this->screen_space_final_coords_);
   screen_space_positions.finish();
+
+  if (use_fill && hide_fill_while_drawing) {
+    /* The opacity was set to 10% while drawing. Reset it to the actual opacity now. */
+    bke::SpanAttributeWriter<float> fill_opacities = attributes.lookup_for_write_span<float>(
+        "fill_opacity");
+    BLI_assert(fill_opacities);
+    fill_opacities.span[active_curve] = start_opacity_;
+    fill_opacities.finish();
+  }
 
   /* Remove trailing points with radii close to zero. */
   trim_end_points(drawing, 1e-5f, on_back, active_curve);

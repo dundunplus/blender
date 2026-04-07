@@ -1426,8 +1426,8 @@ static bke::bNodeSocketType *make_socket_type_rgba()
                                             FLT_MAX,
                                             socket.name,
                                             socket.description,
-                                            -FLT_MAX,
-                                            FLT_MAX);
+                                            0.0f,
+                                            1.0f);
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     make_common_value_and_attribute_props(srna, socket, r_generated);

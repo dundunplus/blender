@@ -10,7 +10,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <regex>
 #include <string>
 
 #include "processor.hh"
@@ -186,10 +185,11 @@ int main(int argc, char **argv)
   output_file << result;
 
   /* TODO(fclem): Don't use regex for that. */
-  std::string metadata_function_name = "metadata_" +
-                                       std::regex_replace(
-                                           filename, std::regex(R"((?:.*)\/(.*))"), "$1");
-  std::replace(metadata_function_name.begin(), metadata_function_name.end(), '.', '_');
+  size_t last_slash = filename.find_last_of('/');
+  std::string name = (last_slash == std::string::npos) ? filename :
+                                                         filename.substr(last_slash + 1);
+  std::string metadata_function_name = "metadata_" + name;
+  std::ranges::replace(metadata_function_name, '.', '_');
 
   metadata_file << metadata.serialize(metadata_function_name);
   if (is_info) {

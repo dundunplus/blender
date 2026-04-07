@@ -361,9 +361,10 @@ static ShaderNode *add_node(Scene *scene,
     node = color;
   }
   else if (b_node.is_type("FunctionNodeInputVector")) {
-    ColorNode *color = graph->create_node<ColorNode>();
-    color->set_value(get_node_output_vector(b_node, "Vector"));
-    node = color;
+    ColorNode *value = graph->create_node<ColorNode>();
+    const auto &storage = *static_cast<const blender::NodeInputVector *>(b_node.storage);
+    value->set_value(make_float3(storage.vector[0], storage.vector[1], storage.vector[2]));
+    node = value;
   }
   else if (b_node.is_type("ShaderNodeValue")) {
     ValueNode *value = graph->create_node<ValueNode>();
@@ -372,12 +373,14 @@ static ShaderNode *add_node(Scene *scene,
   }
   else if (b_node.is_type("FunctionNodeInputBool")) {
     ValueNode *value = graph->create_node<ValueNode>();
-    value->set_value(get_node_output_value(b_node, "Boolean"));
+    const auto &storage = *static_cast<const blender::NodeInputBool *>(b_node.storage);
+    value->set_value(bool(storage.boolean));
     node = value;
   }
   else if (b_node.is_type("FunctionNodeInputInt")) {
     ValueNode *value = graph->create_node<ValueNode>();
-    value->set_value(get_node_output_value(b_node, "Integer"));
+    const auto &storage = *static_cast<const blender::NodeInputInt *>(b_node.storage);
+    value->set_value(storage.integer);
     node = value;
   }
   else if (b_node.is_type("ShaderNodeCameraData")) {
@@ -1228,6 +1231,14 @@ static ShaderOutput *node_find_output_by_name(blender::bNode &b_node,
       }
       else if (string_endswith(name, "Result_Vector")) {
         string_replace(name, "Result_Vector", "Result");
+        output = node->output(name.c_str());
+      }
+    }
+    else if (b_node.is_type("FunctionNodeInputVector")) {
+      /* FunctionNodeInputVector has an output called "Vector", and it uses ColorNode Cycles node
+       * that has an output called "Color". */
+      if (name == "Vector") {
+        name = "Color";
         output = node->output(name.c_str());
       }
     }

@@ -35,6 +35,7 @@ from bl_ui.properties_data_light import (
     DATA_PT_light,
     DATA_PT_EEVEE_light,
 )
+from bl_operators.geometry_nodes import geometry_modifier_poll
 
 
 class NODE_HT_header(Header):
@@ -193,6 +194,8 @@ class NODE_HT_header(Header):
                     row.enabled = False
                     row.template_ID(snode, "node_tree", new="node.new_geometry_node_group_assign")
                 elif ob:
+                    row.enabled = geometry_modifier_poll(context)
+
                     active_modifier = ob.modifiers.active
                     if active_modifier and active_modifier.type == 'NODES':
                         if active_modifier.node_group:

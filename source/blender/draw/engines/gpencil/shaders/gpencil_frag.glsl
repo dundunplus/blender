@@ -14,20 +14,19 @@ float3 gpencil_lighting()
 {
   float3 light_accum = float3(0.0f);
   for (int i = 0; i < GPENCIL_LIGHT_BUFFER_LEN; i++) {
-    if (float3(gp_lights[i]._color).x == -1.0f) {
+    if (float3(gp_lights[i].light_color).x == -1.0f) {
       break;
     }
-    float3 L = gp_lights[i]._position - gp_interp.pos;
+    float3 L = gp_lights[i].position - gp_interp.pos;
     float vis = 1.0f;
-    gpLightType type = gpLightType(floatBitsToUint(gp_lights[i]._type));
+    gpLightType type = gp_lights[i].type;
     /* Spot Attenuation. */
     if (type == GP_LIGHT_TYPE_SPOT) {
-      float3x3 rot_scale = float3x3(gp_lights[i]._right, gp_lights[i]._up, gp_lights[i]._forward);
+      float3x3 rot_scale = float3x3(gp_lights[i].right, gp_lights[i].up, gp_lights[i].forward);
       float3 local_L = rot_scale * L;
       local_L /= abs(local_L.z);
       float ellipse = inversesqrt(length_squared(local_L));
-      vis *= smoothstep(
-          0.0f, 1.0f, (ellipse - gp_lights[i]._spot_size) / gp_lights[i]._spot_blend);
+      vis *= smoothstep(0.0f, 1.0f, (ellipse - gp_lights[i].spot_size) / gp_lights[i].spot_blend);
       /* Also mask +Z cone. */
       vis *= step(0.0f, local_L.z);
     }
@@ -37,7 +36,7 @@ float3 gpencil_lighting()
       vis /= L_len_sqr;
     }
     else {
-      L = gp_lights[i]._forward;
+      L = gp_lights[i].forward;
       L_len_sqr = 1.0f;
     }
     /* Lambertian falloff */
@@ -45,7 +44,7 @@ float3 gpencil_lighting()
       L /= sqrt(L_len_sqr);
       vis *= clamp(dot(gp_normal, L), 0.0f, 1.0f);
     }
-    light_accum += vis * gp_lights[i]._color;
+    light_accum += vis * gp_lights[i].light_color;
   }
   /* Clamp to avoid NaNs. */
   return clamp(light_accum, 0.0f, 1e10f);

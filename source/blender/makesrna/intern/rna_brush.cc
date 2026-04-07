@@ -1791,8 +1791,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "conversion_threshold");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_float_default(prop, 0.001f);
-  RNA_def_property_ui_text(
-      prop, "Threshold", "Threshold distance for between points for conversion");
+  RNA_def_property_ui_text(prop, "Threshold", "Threshold distance between points for conversion");
   RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, ParameterFlag(0));
   RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
 
@@ -2114,8 +2113,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_lasso", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", GP_BRUSH_DISSABLE_LASSO);
-  RNA_def_property_ui_text(
-      prop, "Show Lasso", "Do not display fill color while drawing the stroke");
+  RNA_def_property_ui_text(prop, "Show Lasso", "Display fill color while drawing the stroke");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
 
