@@ -351,8 +351,7 @@ class AddPresetTextStripStyle(AddPresetBase, Operator):
             "strip.alignment_x",
             "strip.anchor_x",
             "strip.anchor_y",
-            "strip.transform.offset_x",
-            "strip.transform.offset_y",
+            "strip.location",
         ]
 
         strip = bpy.context.active_strip

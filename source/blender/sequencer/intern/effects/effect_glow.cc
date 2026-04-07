@@ -147,7 +147,7 @@ static void do_glow_effect_byte(Strip *strip,
                                 float fac,
                                 int x,
                                 int y,
-                                uchar *rect1,
+                                const uchar *rect1,
                                 const uchar * /*rect2*/,
                                 uchar *out)
 {
@@ -234,7 +234,7 @@ static ImBuf *do_glow_effect(const RenderData *context,
                         fac,
                         context->rectx,
                         context->recty,
-                        ibuf1->byte_data_for_write(),
+                        ibuf1->byte_data(),
                         nullptr,
                         out->byte_data_for_write());
   }

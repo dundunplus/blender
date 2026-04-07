@@ -394,6 +394,18 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       }
     }
   }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 17)) {
+    for (Material &materials : bmain->materials) {
+      if (materials.gp_style != nullptr) {
+        materials.gp_style->placement_mode = GP_MATERIAL_PLACEMENT_COUNT;
+        materials.gp_style->placement_count = 1;
+        materials.gp_style->placement_density = 10.0f;
+        materials.gp_style->placement_radius_spacing = 100.0f;
+      }
+    }
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

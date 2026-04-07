@@ -133,7 +133,7 @@ static void ensure_ibuf_is_color_space(ImBuf *ibuf, bool make_float, const char 
     /* Turn into a float and convert colorspace. */
     IMB_alloc_float_pixels(ibuf, 4, false);
     IMB_colormanagement_transform_byte_to_float(ibuf->float_data_for_write(),
-                                                ibuf->byte_data_for_write(),
+                                                ibuf->byte_data(),
                                                 ibuf->x,
                                                 ibuf->y,
                                                 ibuf->channels,

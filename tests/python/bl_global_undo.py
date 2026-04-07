@@ -36,7 +36,7 @@ class IDStaticRepresentation:
         self.session_uid = id_data.session_uid
         self.pointer = id_data.as_pointer()
 
-        self.content = extract_content(id_data) if full else {}
+        self.content = self.extract_content(id_data) if full else {}
 
     @staticmethod
     def extract_content(id_data):

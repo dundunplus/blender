@@ -60,6 +60,7 @@ static void rmat_cache_init(RotateMatrixCache *rmc,
      * either depending on float representation (e.g. `18 * DEG2RAD(5)` vs `M_PI_2`). */
     const float epsilon = DEG2RADF(0.5f) * max_ff(1.0f, fabsf(angle) / 1000.0f);
     const float remainder = fabsf(fmodf(angle, float(M_PI_2)));
+    UNUSED_VARS_NDEBUG(epsilon, remainder);
     BLI_assert(remainder < epsilon || (float(M_PI_2) - remainder) < epsilon);
   }
   axis_angle_normalized_to_mat3_with_quadrant(rmc->mat, axis, angle, quadrant);

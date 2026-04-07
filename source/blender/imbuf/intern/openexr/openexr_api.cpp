@@ -517,9 +517,7 @@ static int openexr_header_get_compression(const Header &header)
   return R_IMF_EXR_CODEC_NONE;
 }
 
-static void openexr_header_metadata_global(Header *header,
-                                           IDProperty *metadata,
-                                           const double ppm[2])
+static void openexr_header_metadata_global(Header *header, IDProperty *metadata)
 {
   header->insert(
       "Software",
@@ -534,7 +532,10 @@ static void openexr_header_metadata_global(Header *header,
       }
     }
   }
+}
 
+static void openexr_header_metadata_pixelinfo(Header *header, const double ppm[2])
+{
   if (ppm[0] > 0.0 && ppm[1] > 0.0) {
     /* Convert meters to inches. */
     addXDensity(*header, ppm[0] * 0.0254);
@@ -605,7 +606,8 @@ static bool imb_save_openexr_half(ImBuf *ibuf, const char *filepath, const int f
 
     const int compression = ibuf->foptions.flag & OPENEXR_CODEC_MASK;
     openexr_header_compression(&header, compression, ibuf->foptions.quality);
-    openexr_header_metadata_global(&header, ibuf->metadata, ibuf->ppm);
+    openexr_header_metadata_global(&header, ibuf->metadata);
+    openexr_header_metadata_pixelinfo(&header, ibuf->ppm);
     openexr_header_metadata_colorspace(&header, ibuf);
 
     const float half_max_val = compression_half_max(compression, ibuf->foptions.quality);
@@ -710,7 +712,8 @@ static bool imb_save_openexr_float(ImBuf *ibuf, const char *filepath, const int 
 
     openexr_header_compression(
         &header, ibuf->foptions.flag & OPENEXR_CODEC_MASK, ibuf->foptions.quality);
-    openexr_header_metadata_global(&header, ibuf->metadata, ibuf->ppm);
+    openexr_header_metadata_global(&header, ibuf->metadata);
+    openexr_header_metadata_pixelinfo(&header, ibuf->ppm);
     openexr_header_metadata_colorspace(&header, ibuf);
 
     /* create channels */
@@ -1005,10 +1008,9 @@ void IMB_exr_add_channels(ExrHandle *handle,
 
 static void openexr_header_metadata_multi(ExrHandle *handle,
                                           Header &header,
-                                          const double ppm[2],
                                           const StampData *stamp)
 {
-  openexr_header_metadata_global(&header, nullptr, ppm);
+  openexr_header_metadata_global(&header, nullptr);
   if (handle->has_layer_pass_names) {
     header.insert("BlenderMultiChannel", StringAttribute("Blender V2.55.1 and newer"));
   }
@@ -1040,6 +1042,8 @@ bool IMB_exr_begin_write(ExrHandle *handle,
 
   openexr_header_compression(&header, compress, quality);
   handle->half_max_val = compression_half_max(compress, quality);
+
+  openexr_header_metadata_pixelinfo(&header, ppm);
 
   if (!handle->write_multipart) {
     /* If we're writing single part, we can only add one colorspace even if there are
@@ -1082,7 +1086,7 @@ bool IMB_exr_begin_write(ExrHandle *handle,
       /* Store global metadata in the first header only. Large metadata like cryptomatte would
        * be bad to duplicate many times. */
       if (part_headers.is_empty()) {
-        openexr_header_metadata_multi(handle, part_header, ppm, stamp);
+        openexr_header_metadata_multi(handle, part_header, stamp);
       }
 
       part_headers.append(std::move(part_header));

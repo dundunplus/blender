@@ -1107,6 +1107,9 @@ static bool modifier_apply_obdata(ReportList *reports,
       /* Remove strings referring to attributes if they no longer exist. */
       bke::mesh_remove_invalid_attribute_strings(*mesh);
 
+      /* Make sure that if teher are uv maps, one is marked as active. */
+      bke::mesh_ensure_active_uv_map(*mesh);
+
       if (md_eval->type == eModifierType_Multires) {
         multires_customdata_delete(mesh);
       }

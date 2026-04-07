@@ -94,13 +94,15 @@ void SourceProcessor::lower_template_instantiation(
     const string &fn_decl,
     const bool all_template_args_in_function_signature)
 {
-  const bool same_file = template_def.filepath == filepath_;
+  /* Note that we do not use the full path as file identifier. So all names are unique. */
+  string instance_filename = filepath_.substr(filepath_.find_last_of('/') + 1);
+  string template_filename = template_def.filepath.substr(template_def.filepath.find_last_of('/') +
+                                                          1);
   /* Avoid adding noise in the source file if instance is inside the same file as declaration. */
-  const string instance_filename = same_file ? string("") :
-                                               filepath_.substr(filepath_.find_last_of('/') + 1);
-  const string template_filename = same_file ? string("") :
-                                               template_def.filepath.substr(
-                                                   template_def.filepath.find_last_of('/') + 1);
+  if (instance_filename == template_filename) {
+    instance_filename = "";
+    template_filename = "";
+  }
 
   /* Parse template values. */
   vector<pair<string, string>> arg_name_value_pairs;
@@ -392,6 +394,10 @@ void SourceProcessor::lower_templates(Parser &parser)
    * They were already parsed by `SourceProcessor::parse_namespace_symbols`. */
   bool error = false;
   parser().foreach_match("t<..>", [&](const vector<Token> &toks) {
+    /* Only process global templates, not methods. */
+    if (toks[0].scope() != parser()) {
+      return;
+    }
     /* Default arguments are not supported. */
     toks[1].scope().foreach_token(Assign, [&](Token tok) {
       report_error(tok, "Default arguments are not supported inside template declaration");
@@ -449,8 +455,14 @@ void SourceProcessor::lower_templates(Parser &parser)
   parser.apply_mutations();
 
   /* Remove template instantiation afterward. */
-  parser().foreach_token(Template,
-                         [&](const Token &tok) { parser.erase(tok, tok.find_next(SemiColon)); });
+  parser().foreach_token(Template, [&](const Token &tok) {
+    if (tok.next() == '<') {
+      report_error(tok, "Invalid template definition");
+    }
+    else {
+      parser.erase(tok, tok.find_next(SemiColon));
+    }
+  });
 
   parser.apply_mutations();
 

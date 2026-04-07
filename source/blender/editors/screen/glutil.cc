@@ -526,10 +526,8 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
 
   /* In case GLSL failed or not usable, fallback to glaDrawPixelsAuto */
   if (need_fallback) {
-    uchar *display_buffer;
     void *cache_handle;
-
-    display_buffer = IMB_display_buffer_acquire(
+    const uchar *display_buffer = IMB_display_buffer_acquire(
         ibuf, view_settings, display_settings, &cache_handle);
 
     if (display_buffer) {

@@ -2261,19 +2261,32 @@ static LibOverrideMissingIDsData lib_override_library_resync_build_missing_ids_d
 }
 
 static ID *lib_override_library_resync_search_missing_ids_data(
-    LibOverrideMissingIDsData &missing_ids, ID *id_override)
+    LibOverrideMissingIDsData &missing_ids, GHash *linkedref_to_old_override, ID *id_override)
 {
   LibOverrideMissingIDsData_Key key = lib_override_library_resync_missing_id_key(id_override);
   const LibOverrideMissingIDsData::iterator value = missing_ids.find(key);
   if (value == missing_ids.end()) {
     return nullptr;
   }
-  if (value->second.empty()) {
-    return nullptr;
+  while (!value->second.empty()) {
+    ID *match_id = value->second.front();
+    value->second.pop_front();
+    /* Never match multiple new liboverrides and their linked reference IDs to a same old one. This
+     * will break many things, including remapping, deletion of old liboverrides, etc.
+     *
+     * This ensures that if the current found 'missing ID match' was a liboverride previously, its
+     * linked reference ID is not already associated to another old liboverride.
+     *
+     * Not a very common situation, but see e.g. #156601 for a reproducible case.
+     */
+    if (ID_IS_OVERRIDE_LIBRARY_REAL(match_id) &&
+        BLI_ghash_haskey(linkedref_to_old_override, match_id->override_library->reference))
+    {
+      continue;
+    }
+    return match_id;
   }
-  ID *match_id = value->second.front();
-  value->second.pop_front();
-  return match_id;
+  return nullptr;
 }
 
 static bool lib_override_library_resync(Main *bmain,
@@ -2532,12 +2545,12 @@ static bool lib_override_library_resync(Main *bmain,
 
       /* The old override may have been created as linked data and then referenced by local data
        * during a previous Blender session, in which case it became directly linked and a reference
-       * to it was stored in the local .blend file. however, since that linked liboverride ID does
+       * to it was stored in the local .blend file. However, since that linked liboverride ID does
        * not actually exist in the original library file, on next file read it is lost and marked
        * as missing ID. */
       if (id_override_old == nullptr && (ID_IS_LINKED(id_override_new) || is_relocate)) {
-        id_override_old = lib_override_library_resync_search_missing_ids_data(missing_ids_data,
-                                                                              id_override_new);
+        id_override_old = lib_override_library_resync_search_missing_ids_data(
+            missing_ids_data, linkedref_to_old_override, id_override_new);
         BLI_assert(id_override_old == nullptr || id_override_old->lib == id_override_new->lib);
         if (id_override_old != nullptr) {
           BLI_ghash_insert(linkedref_to_old_override, id_reference_iter, id_override_old);
@@ -2550,7 +2563,8 @@ static bool lib_override_library_resync(Main *bmain,
           }
 
           CLOG_DEBUG(&LOG_RESYNC,
-                     "Found missing linked old override best-match %s for new linked override %s",
+                     "Found missing linked or versioning-generated old override best-match %s for "
+                     "new linked override %s",
                      id_override_old->name,
                      id_override_new->name);
         }

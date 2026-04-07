@@ -844,6 +844,45 @@ static void rna_Mesh_uv_layer_active_index_set(PointerRNA *ptr, int value)
   BKE_mesh_tessface_clear(mesh);
 }
 
+static PointerRNA rna_Mesh_uv_layer_default_get(PointerRNA *ptr)
+{
+  Mesh *mesh = rna_mesh(ptr);
+  PointerRNA attr_ptr = rna_AttributeGroup_lookup_string(
+      *ptr, mesh->default_uv_map_name(), ATTR_DOMAIN_MASK_CORNER, CD_MASK_PROP_FLOAT2);
+  attr_ptr.type = RNA_MeshUVLoopLayer;
+  return attr_ptr;
+}
+
+static void rna_Mesh_uv_layer_default_set(PointerRNA *ptr, PointerRNA value, ReportList *)
+{
+  Mesh *mesh = rna_mesh(ptr);
+  mesh->uv_maps_default_set(rna_Attribute_name_get(value));
+  BKE_mesh_tessface_clear(mesh);
+}
+
+static int rna_Mesh_uv_layer_default_index_get(PointerRNA *ptr)
+{
+  AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
+  return BKE_attribute_to_index(owner,
+                                rna_mesh(ptr)->default_uv_map_name(),
+                                ATTR_DOMAIN_MASK_CORNER,
+                                CD_MASK_PROP_FLOAT2,
+                                false);
+}
+
+static void rna_Mesh_uv_layer_default_index_set(PointerRNA *ptr, int value)
+{
+  AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
+  const std::optional<StringRef> name = BKE_attribute_from_index(
+      owner, value, ATTR_DOMAIN_MASK_CORNER, CD_MASK_PROP_FLOAT2, false);
+  if (!name) {
+    return;
+  }
+  Mesh *mesh = rna_mesh(ptr);
+  mesh->uv_maps_default_set(*name);
+  BKE_mesh_tessface_clear(mesh);
+}
+
 static PointerRNA rna_Mesh_uv_layer_clone_get(PointerRNA *ptr)
 {
   PointerRNA attr_ptr = rna_AttributeGroup_lookup_string(
@@ -2772,6 +2811,24 @@ static void rna_def_uv_layers(BlenderRNA *brna, PropertyRNA *cprop)
                              "rna_Mesh_uv_layer_index_range");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop, "Active UV Map Index", "Active UV map index");
+  RNA_def_property_update(prop, 0, "rna_Mesh_update_data_legacy_deg_tag_all");
+
+  prop = RNA_def_property(srna, "active_render", PROP_POINTER, PROP_NONE);
+  RNA_def_property_struct_type(prop, "MeshUVLoopLayer");
+  RNA_def_property_pointer_funcs(
+      prop, "rna_Mesh_uv_layer_default_get", "rna_Mesh_uv_layer_default_set", nullptr, nullptr);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_UNLINK);
+  RNA_def_property_ui_text(prop, "Active Render UV Map Layer", "Active Render UV Map layer");
+  RNA_def_property_update(prop, 0, "rna_Mesh_update_data_legacy_deg_tag_all");
+
+  prop = RNA_def_property(srna, "active_render_index", PROP_INT, PROP_UNSIGNED);
+  RNA_def_property_int_funcs(prop,
+                             "rna_Mesh_uv_layer_default_index_get",
+                             "rna_Mesh_uv_layer_default_index_set",
+                             "rna_Mesh_uv_layer_index_range");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(prop, "Active Render UV Map Index", "Active Render UV map index");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_data_legacy_deg_tag_all");
 }
 

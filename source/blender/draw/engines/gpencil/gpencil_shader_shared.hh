@@ -24,8 +24,13 @@ enum [[host_shared]] gpMaterialFlag : uint32_t {
   GP_FILL_TEXTURE_CLIP = (1u << 12u),
   GP_FILL_GRADIENT_USE = (1u << 13u),
   GP_FILL_GRADIENT_RADIAL = (1u << 14u),
+  GP_FILL = (1u << 15u),
   GP_FILL_FLAGS = (GP_FILL_TEXTURE_USE | GP_FILL_TEXTURE_PREMUL | GP_FILL_TEXTURE_CLIP |
-                   GP_FILL_GRADIENT_USE | GP_FILL_GRADIENT_RADIAL | GP_FILL_HOLDOUT),
+                   GP_FILL_GRADIENT_USE | GP_FILL_GRADIENT_RADIAL | GP_FILL_HOLDOUT | GP_FILL),
+  GP_DOTS_PLACEMENT_MODE = ((1u << 16u) | (1u << 17u)),
+  GP_DOTS_PLACEMENT_MODE_COUNT = 0u,
+  GP_DOTS_PLACEMENT_MODE_DENSITY = (1u << 16u),
+  GP_DOTS_PLACEMENT_MODE_RADIUS = (1u << 17u),
 };
 
 enum [[host_shared]] gpLightType : uint32_t {

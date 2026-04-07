@@ -6,6 +6,7 @@
  * \ingroup eevee
  */
 
+#include "BKE_screen.hh"
 #include "BLI_bounds.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_rect.h"
@@ -284,12 +285,29 @@ CameraParams Camera::v3d_camera_params_get() const
   CameraParams params;
   BKE_camera_params_init(&params);
 
-  if (inst_.rv3d->persp == RV3D_CAMOB && inst_.is_viewport_image_render) {
+  const bool is_camera_viewport_image_render = inst_.rv3d->persp == RV3D_CAMOB &&
+                                               inst_.is_viewport_image_render;
+  if (is_camera_viewport_image_render) {
     /* We are rendering camera view, no need for pan/zoom params from viewport. */
     BKE_camera_params_from_object(&params, inst_.camera_eval_object);
   }
   else {
     BKE_camera_params_from_view3d(&params, inst_.depsgraph, inst_.v3d, inst_.rv3d);
+  }
+
+  if (inst_.camera_eval_object) {
+    /* Stereo setup, will be skipped if not needed. */
+    const bool is_right = inst_.v3d->multiview_eye == STEREO_RIGHT_ID;
+    BKE_camera_multiview_params(&inst_.scene->r,
+                                &params,
+                                inst_.camera_eval_object,
+                                is_right ? STEREO_RIGHT_NAME : STEREO_LEFT_NAME);
+    if (!is_camera_viewport_image_render) {
+      /* Duplicate of the shift scaling done inside BKE_camera_params_from_view3d. */
+      float zoom = BKE_screen_view3d_zoom_to_fac(inst_.rv3d->camzoom);
+      params.shiftx *= zoom;
+      params.shifty *= zoom;
+    }
   }
 
   return params;

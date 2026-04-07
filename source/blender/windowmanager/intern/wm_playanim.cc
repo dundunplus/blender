@@ -592,14 +592,14 @@ static int pupdate_time()
   return (g_playanim.total_time < 0.0);
 }
 
-static void *ocio_transform_ibuf(const PlayDisplayContext &display_ctx,
-                                 ImBuf *ibuf,
-                                 bool *r_glsl_used,
-                                 gpu::TextureFormat *r_format,
-                                 eGPUDataFormat *r_data,
-                                 void **r_buffer_cache_handle)
+static const void *ocio_transform_ibuf(const PlayDisplayContext &display_ctx,
+                                       ImBuf *ibuf,
+                                       bool *r_glsl_used,
+                                       gpu::TextureFormat *r_format,
+                                       eGPUDataFormat *r_data,
+                                       void **r_buffer_cache_handle)
 {
-  void *display_buffer;
+  const void *display_buffer;
   bool force_fallback = false;
   *r_glsl_used = false;
   force_fallback |= (ED_draw_imbuf_method(ibuf) != IMAGE_DRAW_METHOD_GLSL);
@@ -679,7 +679,7 @@ static void draw_display_buffer(const PlayDisplayContext &display_ctx,
   uint texCoord = GPU_vertformat_attr_add(imm_format, "texCoord", gpu::VertAttrType::SFLOAT_32_32);
 
   void *buffer_cache_handle = nullptr;
-  void *display_buffer = ocio_transform_ibuf(
+  const void *display_buffer = ocio_transform_ibuf(
       display_ctx, ibuf, &glsl_used, &format, &data, &buffer_cache_handle);
 
   /* NOTE: This may fail, especially for large images that exceed the GPU's texture size limit.
