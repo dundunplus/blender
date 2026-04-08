@@ -8,6 +8,7 @@
 
 #include <fmt/format.h>
 
+#include "AS_asset_representation.hh"
 #include "AS_remote_library.hh"
 
 #include "BKE_context.hh"
@@ -165,6 +166,10 @@ static void prefetch_assets(bContext &C, wmDrag &drag)
 {
   BLI_assert(drag.type == WM_DRAG_ASSET);
   wmDragAsset *asset_drag = static_cast<wmDragAsset *>(drag.poin);
+
+  if (!asset_drag->asset->is_online()) {
+    return;
+  }
 
   blender::asset_system::remote_library_request_asset_download(
       C, *asset_drag->asset, CTX_wm_reports(&C));

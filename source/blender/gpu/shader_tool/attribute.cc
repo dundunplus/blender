@@ -57,14 +57,15 @@ void SourceProcessor::lint_attributes(Parser &parser)
           attr_str == "early_fragment_tests" || attr_str == "flat" || attr_str == "frag_coord" ||
           attr_str == "frag_stencil_ref" || attr_str == "fragment" || attr_str == "front_facing" ||
           attr_str == "global_invocation_id" || attr_str == "in" || attr_str == "instance_id" ||
-          attr_str == "layer" || attr_str == "local_invocation_id" ||
-          attr_str == "local_invocation_index" || attr_str == "no_perspective" ||
-          attr_str == "num_work_groups" || attr_str == "out" || attr_str == "point_coord" ||
-          attr_str == "point_size" || attr_str == "position" || attr_str == "push_constant" ||
-          attr_str == "resource_table" || attr_str == "smooth" || attr_str == "vertex_id" ||
-          attr_str == "legacy_info" || attr_str == "vertex" || attr_str == "viewport_index" ||
-          attr_str == "work_group_id" || attr_str == "maybe_unused" || attr_str == "fallthrough" ||
-          attr_str == "nodiscard" || attr_str == "node")
+          attr_str == "instance_index" || attr_str == "layer" ||
+          attr_str == "local_invocation_id" || attr_str == "local_invocation_index" ||
+          attr_str == "no_perspective" || attr_str == "num_work_groups" || attr_str == "out" ||
+          attr_str == "point_coord" || attr_str == "point_size" || attr_str == "position" ||
+          attr_str == "push_constant" || attr_str == "resource_table" || attr_str == "smooth" ||
+          attr_str == "vertex_id" || attr_str == "legacy_info" || attr_str == "vertex" ||
+          attr_str == "viewport_index" || attr_str == "work_group_id" ||
+          attr_str == "maybe_unused" || attr_str == "fallthrough" || attr_str == "nodiscard" ||
+          attr_str == "node")
       {
         if (attr_scope.is_valid()) {
           report_error(attr, "This attribute requires no argument");

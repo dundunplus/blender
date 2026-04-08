@@ -620,6 +620,8 @@ void BKE_pointcloud_to_mesh(Main *bmain, Depsgraph *depsgraph, Scene * /*scene*/
   ob->data = id_cast<ID *>(mesh);
   ob->type = OB_MESH;
 
+  bke::mesh_ensure_active_uv_map(*mesh);
+
   BKE_object_free_derived_caches(ob);
 }
 

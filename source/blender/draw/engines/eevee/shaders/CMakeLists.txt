@@ -102,7 +102,6 @@ set(SRC_GLSL_COMP
   eevee_lightprobe_volume_ray_comp.glsl
   eevee_lightprobe_volume_world_comp.glsl
   eevee_lookdev_copy_world_comp.glsl
-  eevee_lut_comp.glsl
   eevee_motion_blur_dilate_comp.glsl
   eevee_motion_blur_flatten_comp.glsl
   eevee_motion_blur_gather_comp.glsl

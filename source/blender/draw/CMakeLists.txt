@@ -334,7 +334,6 @@ set(GLSL_SRC
   engines/eevee/shaders/infos/eevee_lightprobe_sphere_infos.hh
   engines/eevee/shaders/infos/eevee_lightprobe_volume_infos.hh
   engines/eevee/shaders/infos/eevee_lookdev_infos.hh
-  engines/eevee/shaders/infos/eevee_lut_infos.hh
   engines/eevee/shaders/infos/eevee_material_infos.hh
   engines/eevee/shaders/infos/eevee_motion_blur_infos.hh
   engines/eevee/shaders/infos/eevee_nodetree_infos.hh
@@ -474,7 +473,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_lookdev_display_frag.glsl
   engines/eevee/shaders/eevee_lookdev_display_vert.glsl
   engines/eevee/shaders/eevee_ltc_lib.glsl
-  engines/eevee/shaders/eevee_lut_comp.glsl
+  engines/eevee/shaders/eevee_lut_comp.bsl.hh
   engines/eevee/shaders/eevee_motion_blur_dilate_comp.glsl
   engines/eevee/shaders/eevee_motion_blur_flatten_comp.glsl
   engines/eevee/shaders/eevee_motion_blur_gather_comp.glsl
@@ -652,12 +651,14 @@ set(GLSL_SRC
   intern/shaders/draw_intersect_lib.glsl
   intern/shaders/draw_math_geom_lib.glsl
   intern/shaders/draw_model_lib.glsl
+  intern/shaders/draw_model.bsl.hh
   intern/shaders/draw_object_infos_lib.glsl
   intern/shaders/draw_pointcloud_lib.glsl
   intern/shaders/draw_resource_finalize_comp.glsl
   intern/shaders/draw_view_clipping_lib.glsl
   intern/shaders/draw_view_finalize_comp.glsl
   intern/shaders/draw_view_lib.glsl
+  intern/shaders/draw_view.bsl.hh
   intern/shaders/draw_view_reconstruction_lib.glsl
   intern/shaders/draw_visibility_comp.glsl
 

@@ -1340,7 +1340,7 @@ static void draw_viewport_name(ARegion *region, View3D *v3d, int xoffset, int *y
   }
 
   /* Indicate that clipping region is enabled. */
-  if (rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     name_array[name_array_len++] = IFACE_(" (Clipped)");
   }
 

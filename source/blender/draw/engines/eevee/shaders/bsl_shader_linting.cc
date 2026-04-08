@@ -10,6 +10,7 @@
 #include "eevee_horizon_scan_lib.bsl.hh"             /* IWYU pragma: export */
 #include "eevee_light_culling.bsl.hh"                /* IWYU pragma: export */
 #include "eevee_light_shadow_setup.bsl.hh"           /* IWYU pragma: export */
+#include "eevee_lut_comp.bsl.hh"                     /* IWYU pragma: export */
 #include "eevee_shadow_page_allocate.bsl.hh"         /* IWYU pragma: export */
 #include "eevee_shadow_page_defrag.bsl.hh"           /* IWYU pragma: export */
 #include "eevee_shadow_page_free.bsl.hh"             /* IWYU pragma: export */
