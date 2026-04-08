@@ -628,11 +628,15 @@ static void blf_glyph_draw_buffer(FontBufInfoBLF *buf_info,
                                   const ft_pix pen_x,
                                   const ft_pix pen_y_basis)
 {
-  const int chx = ft_pix_to_int(pen_x + ft_pix_from_int(g->pos[0]));
-  const int chy = ft_pix_to_int(pen_y_basis + ft_pix_from_int(g->dims[1]));
+  /* Match the GPU path: floor pen_x then add pos[0] in integer space. */
+  const int chx = ft_pix_to_int_floor(pen_x) + g->pos[0];
 
-  ft_pix pen_y = (g->pitch < 0) ? (pen_y_basis + ft_pix_from_int(g->dims[1] - g->pos[1])) :
-                                  (pen_y_basis - ft_pix_from_int(g->dims[1] - g->pos[1]));
+  /* Match the GPU path's Y calculation: baseline + pos[1] gives the top of the glyph
+   * (in bottom-up coordinates). The bitmap rows start from pen_y upward. */
+  const int glyph_y = ft_pix_to_int_floor(pen_y_basis) + g->pos[1] - g->dims[1];
+  const int chy = glyph_y + g->dims[1];
+
+  ft_pix pen_y = ft_pix_from_int(glyph_y);
 
   if ((chx + g->dims[0]) < 0 ||                  /* Out of bounds: left. */
       chx >= buf_info->dims[0] ||                /* Out of bounds: right. */
@@ -1474,6 +1478,13 @@ void blf_font_boundbox__wrap(
                       r_info,
                       blf_font_boundbox_wrap_cb,
                       r_box);
+
+  if (r_box->xmin > r_box->xmax) {
+    r_box->xmin = 0;
+    r_box->ymin = 0;
+    r_box->xmax = 0;
+    r_box->ymax = 0;
+  }
 }
 
 /** Utility for  #blf_font_draw_buffer__wrap. */

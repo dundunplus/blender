@@ -1559,7 +1559,7 @@ static gpu::Texture *create_texture(const ImBuf &ibuf)
  * If there are no buffers at all scene linear space is returned. */
 static const char *get_texture_colorspace_name(const ImBuf &ibuf)
 {
-  if (ibuf.byte_data()) {
+  if (ibuf.float_data()) {
     if (ibuf.float_buffer.colorspace) {
       return IMB_colormanagement_colorspace_get_name(ibuf.float_buffer.colorspace);
     }

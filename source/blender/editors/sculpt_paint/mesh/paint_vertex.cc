@@ -576,10 +576,6 @@ bool vertex_paint_mode_poll(bContext *C)
     return false;
   }
 
-  if (!BKE_id_attributes_color_find(&mesh->id, mesh->active_color_attribute)) {
-    return false;
-  }
-
   return true;
 }
 
@@ -1021,11 +1017,13 @@ bool VertexPaintStroke::test_start(wmOperator *op, const float mouse[2])
     return false;
   }
 
-  ED_mesh_color_ensure(mesh, nullptr);
+  if (!ED_mesh_color_ensure(mesh, nullptr)) {
+    return false;
+  }
 
   const std::optional<bke::AttributeMetaData> meta_data = mesh->attributes().lookup_meta_data(
       mesh->active_color_attribute);
-  if (!BKE_id_attributes_color_find(&mesh->id, mesh->active_color_attribute)) {
+  if (!meta_data) {
     return false;
   }
 
@@ -2311,7 +2309,11 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
   using namespace blender::ed::sculpt_paint;
   Scene &scene = *CTX_data_scene(C);
   Object &obact = *CTX_data_active_object(C);
-  if (!BKE_mesh_from_object(&obact)) {
+  Mesh *mesh = BKE_mesh_from_object(&obact);
+  if (!mesh) {
+    return OPERATOR_CANCELLED;
+  }
+  if (!ED_mesh_color_ensure(mesh, nullptr)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -2326,11 +2328,9 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
   IndexMaskMemory memory;
   const IndexMask node_mask = bke::pbvh::all_leaf_nodes(pbvh, memory);
 
-  Mesh &mesh = *id_cast<Mesh *>(obact.data);
-
   fill_active_color(obact, paintcol, true, affect_alpha);
 
-  pbvh.tag_attribute_changed(node_mask, mesh.active_color_attribute);
+  pbvh.tag_attribute_changed(node_mask, mesh->active_color_attribute);
 
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, &obact);
   return OPERATOR_FINISHED;
