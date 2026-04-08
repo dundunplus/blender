@@ -17,9 +17,9 @@
 #include "draw_view_lib.glsl"
 #include "eevee_bxdf_diffuse_lib.glsl"
 #include "eevee_bxdf_microfacet_lib.glsl"
-#include "eevee_ray_types_lib.glsl"
-#include "eevee_reverse_z_lib.glsl"
-#include "eevee_thickness_lib.glsl"
+#include "eevee_ray_types_lib.bsl.hh"
+#include "eevee_reverse_z_lib.bsl.hh"
+#include "eevee_thickness_lib.bsl.hh"
 #include "gpu_shader_codegen_lib.glsl"
 #include "gpu_shader_math_fast_lib.glsl"
 

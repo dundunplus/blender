@@ -11,7 +11,7 @@
  */
 
 #include "draw_model_lib.glsl"
-#include "eevee_colorspace_lib.glsl"
+#include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_light_eval_lib.glsl"
 #include "eevee_lightprobe_eval_lib.glsl"
 #include "eevee_nodetree_closures_lib.glsl"

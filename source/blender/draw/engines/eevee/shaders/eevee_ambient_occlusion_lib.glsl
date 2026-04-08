@@ -11,7 +11,7 @@ SHADER_LIBRARY_CREATE_INFO(eevee_global_ubo)
 SHADER_LIBRARY_CREATE_INFO(eevee_hiz_data)
 
 #include "draw_view_lib.glsl"
-#include "eevee_ray_types_lib.glsl"
+#include "eevee_ray_types_lib.bsl.hh"
 #include "eevee_sampling_lib.glsl"
 #include "eevee_utility_tx_lib.glsl"
 #include "gpu_shader_math_base_lib.glsl"

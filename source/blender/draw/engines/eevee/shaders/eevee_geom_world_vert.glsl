@@ -14,7 +14,7 @@ VERTEX_SHADER_CREATE_INFO(eevee_nodetree)
 VERTEX_SHADER_CREATE_INFO(eevee_geom_world)
 
 #include "draw_view_lib.glsl"
-#include "eevee_reverse_z_lib.glsl"
+#include "eevee_reverse_z_lib.bsl.hh"
 
 void main()
 {

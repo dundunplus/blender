@@ -25,6 +25,7 @@
 #include "BKE_context.hh"
 #include "BKE_fcurve.hh"
 #include "BKE_nla.hh"
+#include "BKE_scene.hh"
 
 #include "UI_view2d.hh"
 
@@ -59,10 +60,10 @@ static void keyframe_bounds_defaults(bAnimContext &ac, rctf &r_bounds)
 {
   /* Set default range. */
   if (ac.scene) {
-    Scene *scene = ac.scene;
-    r_bounds.xmin = float(PSFRA);
+    const ScenePlaybackRange playback_range = BKE_scene_get_playback_range(ac.scene);
+    r_bounds.xmin = float(playback_range.start_frame);
     /* The scene range can have the same start and end frame. */
-    r_bounds.xmax = max_ff(float(PEFRA), r_bounds.xmin + 1);
+    r_bounds.xmax = max_ff(float(playback_range.end_frame), r_bounds.xmin + 1);
   }
   else {
     /* The hardcoded values for x and y are completely arbitrary. */

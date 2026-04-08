@@ -139,6 +139,8 @@ void BlenderSync::sync_background_light(blender::bScreen *b_screen, blender::Vie
       /* Caustic light. */
       light->set_use_caustics(get_boolean(cworld, "is_caustics_light"));
 
+      light->set_cast_shadow(get_boolean(cworld, "use_shadows"));
+
       light->tag_update(scene);
 
       geometry_map.set_recalc(b_world);

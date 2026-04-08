@@ -50,7 +50,7 @@
 namespace blender {
 
 static wmSurface *g_xr_surface = nullptr;
-static CLG_LogRef LOG = {"xr"};
+static CLG_LogRef LOG = {"wm.xr"};
 
 /* -------------------------------------------------------------------- */
 

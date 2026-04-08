@@ -25,7 +25,7 @@ SHADER_LIBRARY_CREATE_INFO(eevee_light_data)
 #include "eevee_light_lib.glsl"
 #include "eevee_shadow_lib.glsl"
 #include "eevee_shadow_tracing_lib.glsl"
-#include "eevee_thickness_lib.glsl"
+#include "eevee_thickness_lib.bsl.hh"
 #include "gpu_shader_codegen_lib.glsl"
 #include "gpu_shader_utildefines_lib.glsl"
 

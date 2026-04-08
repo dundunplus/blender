@@ -1146,7 +1146,7 @@ RigidBodyWorld *BKE_rigidbody_create_world(Scene *scene)
   /* set default settings */
   rbw->effector_weights = BKE_effector_add_weights(nullptr);
 
-  rbw->ltime = PSFRA;
+  rbw->ltime = scene->playback_start();
 
   rbw->time_scale = 1.0f;
 

@@ -16,7 +16,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_shadow_debug)
 #include "eevee_light_lib.glsl"
 #include "eevee_sampling_lib.glsl"
 #include "eevee_shadow_lib.glsl"
-#include "eevee_shadow_tilemap_lib.glsl"
+#include "eevee_shadow_tilemap_lib.bsl.hh"
 #include "gpu_shader_debug_gradients_lib.glsl"
 
 /** Control the scaling of the tile-map splat. */

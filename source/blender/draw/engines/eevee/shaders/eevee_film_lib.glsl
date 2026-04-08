@@ -14,9 +14,9 @@ SHADER_LIBRARY_CREATE_INFO(eevee_film)
 
 #include "draw_math_geom_lib.glsl"
 #include "draw_view_lib.glsl"
-#include "eevee_colorspace_lib.glsl"
+#include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_cryptomatte_lib.glsl"
-#include "eevee_reverse_z_lib.glsl"
+#include "eevee_reverse_z_lib.bsl.hh"
 #include "eevee_velocity_lib.glsl"
 #include "gpu_shader_math_safe_lib.glsl"
 #include "gpu_shader_math_vector_lib.glsl"

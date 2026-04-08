@@ -1648,8 +1648,6 @@ void BKE_pose_rest(bPose *pose, bool selected_bones_only)
 
     copy_v3_fl(pchan.scale_in, 1.0f);
     copy_v3_fl(pchan.scale_out, 1.0f);
-
-    pchan.flag &= ~(POSE_LOC | POSE_ROT | POSE_SCALE | POSE_BBONE_SHAPE);
   }
 }
 

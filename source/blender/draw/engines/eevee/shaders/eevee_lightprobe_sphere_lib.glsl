@@ -13,7 +13,7 @@ SHADER_LIBRARY_CREATE_INFO(eevee_lightprobe_sphere_data)
 #endif
 
 #include "eevee_lightprobe_sphere_mapping_lib.glsl"
-#include "eevee_octahedron_lib.glsl"
+#include "eevee_octahedron_lib.bsl.hh"
 #include "eevee_spherical_harmonics.bsl.hh"
 #include "gpu_shader_math_vector_lib.glsl"
 

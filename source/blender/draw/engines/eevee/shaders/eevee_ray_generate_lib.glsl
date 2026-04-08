@@ -9,9 +9,9 @@
  */
 
 #include "eevee_bxdf_sampling_lib.glsl"
-#include "eevee_ray_types_lib.glsl"
+#include "eevee_ray_types_lib.bsl.hh"
 #include "eevee_sampling_lib.glsl"
-#include "eevee_thickness_lib.glsl"
+#include "eevee_thickness_lib.bsl.hh"
 #include "gpu_shader_codegen_lib.glsl"
 
 #include "gpu_shader_math_matrix_construct_lib.glsl"

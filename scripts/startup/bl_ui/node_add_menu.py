@@ -13,7 +13,9 @@ __all__ = (
     "add_repeat_zone",
     "add_simulation_zone",
     "draw_node_group_add_menu",
-    "set_math_node_default_props"
+    "set_math_node_default_props",
+    "set_int_math_node_default_props",
+    "set_vector_math_node_defaults"
 )
 
 import bpy
@@ -138,6 +140,36 @@ def set_math_node_default_props(enum_identifier, props):
     elif enum_identifier == 'MULTIPLY_ADD':
         set_socket_default_value(props.settings, "Value_001", "1.0")
         set_socket_default_value(props.settings, "Value_002", "0.0")
+
+
+def set_int_math_node_default_props(enum_identifier, props):
+    if enum_identifier in (
+        'MULTIPLY',
+        'DIVIDE',
+        'DIVIDE_ROUND',
+        'DIVIDE_FLOOR',
+        'DIVIDE_CEIL',
+        'FLOORED_MODULO',
+            'MODULO'):
+        set_socket_default_value(props.settings, "Value", "1")
+        set_socket_default_value(props.settings, "Value_001", "1")
+
+    elif enum_identifier == 'MULTIPLY_ADD':
+        set_socket_default_value(props.settings, "Value", "1")
+        set_socket_default_value(props.settings, "Value_001", "0")
+
+
+def set_vector_math_node_defaults(enum_identifier, props):
+    if enum_identifier in ('MULTIPLY', 'DIVIDE', 'POWER', 'MODULO'):
+        set_socket_default_value(props.settings, "Vector", "(1.0, 1.0, 1.0)")
+        set_socket_default_value(props.settings, "Vector_001", "(1.0, 1.0, 1.0)")
+    elif enum_identifier == 'SUBTRACT':
+        # 1 - x operations are common for subtraction.
+        set_socket_default_value(props.settings, "Vector", "(1.0, 1.0, 1.0)")
+        set_socket_default_value(props.settings, "Vector_001", "(0.0, 0.0, 0.0)")
+    elif enum_identifier == 'MULTIPLY_ADD':
+        set_socket_default_value(props.settings, "Vector_001", "(1.0, 1.0, 1.0)")
+        set_socket_default_value(props.settings, "Vector_002", "(0.0, 0.0, 0.0)")
 
 
 class NodeMenu(Menu):

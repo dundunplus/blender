@@ -27,7 +27,7 @@ COMPUTE_SHADER_CREATE_INFO(draw_resource_id_varying)
 #include "eevee_sampling_lib.glsl"
 #include "eevee_shadow_page_ops.bsl.hh"
 #include "eevee_shadow_shared.hh"
-#include "eevee_shadow_tilemap_lib.glsl"
+#include "eevee_shadow_tilemap_lib.bsl.hh"
 #include "eevee_volume_lib.glsl"
 #include "gpu_shader_math_vector_compare_lib.glsl"
 

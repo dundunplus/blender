@@ -894,7 +894,10 @@ static wmOperatorStatus pose_paste_exec(bContext *C, wmOperator *op)
     }
     object_from = &obj;
   }
-
+  if (!object_from) {
+    BKE_main_free(temp_bmain);
+    return OPERATOR_CANCELLED;
+  }
   bPose *pose_from = object_from->pose;
   if (pose_from == nullptr) {
     BKE_report(op->reports, RPT_ERROR, "Internal clipboard has no pose");

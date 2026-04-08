@@ -12,7 +12,7 @@
 
 COMPUTE_SHADER_CREATE_INFO(eevee_volume_scatter_with_lights)
 
-#include "eevee_colorspace_lib.glsl"
+#include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_light_iter_lib.glsl"
 #include "eevee_light_lib.glsl"
 #include "eevee_lightprobe_volume_eval_lib.glsl"

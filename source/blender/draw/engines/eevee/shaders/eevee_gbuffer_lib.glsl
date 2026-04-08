@@ -23,7 +23,7 @@
 #include "gpu_shader_math_vector_reduce_lib.glsl"
 #include "infos/eevee_common_infos.hh"
 
-#include "eevee_thickness_lib.glsl"
+#include "eevee_thickness_lib.bsl.hh"
 
 #include "gpu_shader_codegen_lib.glsl"
 #include "gpu_shader_math_vector_lib.glsl"

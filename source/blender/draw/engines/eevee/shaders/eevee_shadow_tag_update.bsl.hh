@@ -18,7 +18,7 @@
 #include "eevee_shadow_shared.hh"
 
 #include "eevee_shadow_page_ops.bsl.hh"
-#include "eevee_shadow_tilemap_lib.glsl"
+#include "eevee_shadow_tilemap_lib.bsl.hh"
 #include "gpu_shader_math_matrix_transform_lib.glsl"
 
 namespace eevee::shadow {

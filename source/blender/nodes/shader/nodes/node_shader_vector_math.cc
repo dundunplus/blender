@@ -95,6 +95,41 @@ static void node_shader_buts_vect_math(ui::Layout &layout, bContext * /*C*/, Poi
   layout.prop(ptr, "operation", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 }
 
+static void vector_math_input_defaults(bNode &node, const NodeVectorMathOperation mode)
+{
+  bNodeSocket *socket_2 = bke::node_find_socket(node, SOCK_IN, "Vector_001");
+  BLI_assert(socket_2 != nullptr);
+  bNodeSocketValueVector *in_vector_2 = socket_2->default_value_typed<bNodeSocketValueVector>();
+
+  bNodeSocket *socket_3 = bke::node_find_socket(node, SOCK_IN, "Vector_002");
+  BLI_assert(socket_3 != nullptr);
+  bNodeSocketValueVector *in_vector_3 = socket_3->default_value_typed<bNodeSocketValueVector>();
+
+  switch (mode) {
+    case NODE_VECTOR_MATH_MULTIPLY:
+    case NODE_VECTOR_MATH_DIVIDE:
+    case NODE_VECTOR_MATH_POWER:
+    case NODE_VECTOR_MATH_MODULO: {
+      for (int i = 0; i < in_vector_2->dimensions; i++) {
+        in_vector_2->value[i] = 1.0f;
+      }
+      break;
+    }
+    case NODE_VECTOR_MATH_MULTIPLY_ADD: {
+      BLI_assert(in_vector_2->dimensions == in_vector_3->dimensions);
+      for (int i = 0; i < in_vector_3->dimensions; i++) {
+        in_vector_2->value[i] = 1.0f;
+        in_vector_3->value[i] = 0.0f;
+      }
+      break;
+    }
+
+    default:
+      /* Use the default defined in the node declaration otherwise. */
+      break;
+  }
+}
+
 class SocketSearchOp {
  public:
   UString socket_name;
@@ -103,6 +138,7 @@ class SocketSearchOp {
   {
     bNode &node = params.add_node("ShaderNodeVectorMath");
     node.custom1 = mode;
+    vector_math_input_defaults(node, mode);
     params.update_and_connect_available_socket(node, socket_name);
   }
 };

@@ -258,8 +258,9 @@ void BKE_id_free_us(Main *bmain, void *idv) /* test users */
   }
 }
 
-static size_t id_delete(Main *bmain, Set<ID *> &ids_to_delete, const int extra_remapping_flags)
+static size_t id_delete(Main *bmain, Set<ID *> &ids_to_delete, const BKEIDDeleteOptions &options)
 {
+  const int extra_remapping_flags = options.extra_remapping_flags;
   bool has_deleted_library = false;
 
   /* Used by batch tagged deletion, when we call BKE_id_free then, id is no more in Main database,
@@ -383,21 +384,16 @@ static size_t id_delete(Main *bmain, Set<ID *> &ids_to_delete, const int extra_r
   return size_t(ids_to_delete.size());
 }
 
-void BKE_id_delete_ex(Main *bmain, void *idv, const int extra_remapping_flags)
+void BKE_id_delete(Main *bmain, void *idv, const BKEIDDeleteOptions &options)
 {
   ID *id = static_cast<ID *>(idv);
   BLI_assert_msg((id->tag & ID_TAG_NO_MAIN) == 0, "Cannot be used with IDs outside of Main");
 
   Set<ID *> ids_to_delete = {id};
-  id_delete(bmain, ids_to_delete, extra_remapping_flags);
+  id_delete(bmain, ids_to_delete, options);
 }
 
-void BKE_id_delete(Main *bmain, void *idv)
-{
-  BKE_id_delete_ex(bmain, idv, 0);
-}
-
-size_t BKE_id_multi_tagged_delete(Main *bmain)
+size_t BKE_id_multi_tagged_delete(Main *bmain, const BKEIDDeleteOptions &options)
 {
   Set<ID *> ids_to_delete;
   ID *id_iter;
@@ -407,12 +403,14 @@ size_t BKE_id_multi_tagged_delete(Main *bmain)
     }
   }
   FOREACH_MAIN_ID_END;
-  return id_delete(bmain, ids_to_delete, 0);
+  return id_delete(bmain, ids_to_delete, options);
 }
 
-size_t BKE_id_multi_delete(Main *bmain, Set<ID *> &ids_to_delete)
+size_t BKE_id_multi_delete(Main *bmain,
+                           Set<ID *> &ids_to_delete,
+                           const BKEIDDeleteOptions &options)
 {
-  return id_delete(bmain, ids_to_delete, 0);
+  return id_delete(bmain, ids_to_delete, options);
 }
 
 /* -------------------------------------------------------------------- */

@@ -168,6 +168,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
+      .short_label("Anisotropy")
       .description(
           "Amount of anisotropy for specular reflection. "
           "Higher values give elongated highlights along the tangent direction");

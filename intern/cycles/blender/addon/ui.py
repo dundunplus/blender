@@ -1844,6 +1844,7 @@ class CYCLES_WORLD_PT_settings_surface(CyclesButtonsPanel, Panel):
         subsub.prop(cworld, "sample_map_resolution")
         sub.prop(cworld, "max_bounces")
         sub.prop(cworld, "is_caustics_light", text="Shadow Caustics")
+        sub.prop(cworld, "use_shadows", text="Cast Shadow")
 
 
 class CYCLES_WORLD_PT_settings_volume(CyclesButtonsPanel, Panel):

@@ -195,10 +195,16 @@ float BKE_scene_frame_get(const Scene *scene);
  */
 void BKE_scene_frame_set(Scene *scene, float frame);
 
+struct ScenePlaybackRange {
+  /** The start frame is always less or equal the end frame. */
+  int start_frame;
+  int end_frame;
+};
+
 /**
  * Returns the current playback range, which is either the scene range or the playback range.
  */
-int2 BKE_scene_get_playback_range(const Scene *scene);
+ScenePlaybackRange BKE_scene_get_playback_range(const Scene *scene);
 /**
  * Clamps the current frame to be between the playback bounds which can be the preview range.
  */

@@ -843,10 +843,10 @@ FileList *filelist_new(short type, const bool is_from_global_asset_list)
 
   p->selection_state = BLI_ghash_new(BLI_ghashutil_inthash_p, BLI_ghashutil_intcmp, __func__);
   p->filelist.entries_num = FILEDIR_NBR_ENTRIES_UNSET;
+  filelist_settype(p, type);
   if (is_from_global_asset_list) {
     p->tags |= FILELIST_TAGS_FROM_GLOBAL_ASSET_LIST;
   }
-  filelist_settype(p, type);
 
   return p;
 }

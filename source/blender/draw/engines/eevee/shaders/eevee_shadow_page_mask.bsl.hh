@@ -14,7 +14,7 @@
 #include "infos/eevee_shadow_pipeline_infos.hh"
 
 #include "eevee_shadow_page_ops.bsl.hh"
-#include "eevee_shadow_tilemap_lib.glsl"
+#include "eevee_shadow_tilemap_lib.bsl.hh"
 
 namespace eevee::shadow {
 

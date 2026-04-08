@@ -534,17 +534,6 @@ static void rna_ConstraintTarget_dependency_update(Main *bmain, Scene * /*scene*
       bmain, id_cast<Object *>(ptr->owner_id), rna_constraint_from_target(ptr));
 }
 
-static void rna_Constraint_influence_update(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-  Object *ob = id_cast<Object *>(ptr->owner_id);
-
-  if (ob->pose) {
-    ob->pose->flag |= (POSE_LOCKED | POSE_DO_UNLOCK);
-  }
-
-  rna_Constraint_update(bmain, scene, ptr);
-}
-
 /* Update only needed so this isn't overwritten on first evaluation. */
 static void rna_Constraint_childof_inverse_matrix_update(Main *bmain,
                                                          Scene *scene,
@@ -3879,7 +3868,7 @@ void RNA_def_constraint(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_text(
       prop, "Influence", "Amount of influence constraint will have on the final solution");
-  RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_influence_update");
+  RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_update");
 
   /* readonly values */
   prop = RNA_def_property(srna, "error_location", PROP_FLOAT, PROP_NONE);

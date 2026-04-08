@@ -8,7 +8,7 @@
 
 COMPUTE_SHADER_CREATE_INFO(eevee_lightprobe_sphere_remap)
 
-#include "eevee_colorspace_lib.glsl"
+#include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_lightprobe_sphere_mapping_lib.glsl"
 #include "eevee_spherical_harmonics.bsl.hh"
 

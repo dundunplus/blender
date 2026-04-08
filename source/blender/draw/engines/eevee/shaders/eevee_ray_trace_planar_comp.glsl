@@ -14,12 +14,12 @@
 COMPUTE_SHADER_CREATE_INFO(eevee_ray_trace_planar)
 
 #include "eevee_bxdf_sampling_lib.glsl"
-#include "eevee_colorspace_lib.glsl"
+#include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_gbuffer_read_lib.glsl"
 #include "eevee_lightprobe_eval_lib.glsl"
 #include "eevee_ray_trace_screen_lib.glsl"
-#include "eevee_ray_types_lib.glsl"
-#include "eevee_reverse_z_lib.glsl"
+#include "eevee_ray_types_lib.bsl.hh"
+#include "eevee_reverse_z_lib.bsl.hh"
 #include "eevee_sampling_lib.glsl"
 
 void main()

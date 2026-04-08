@@ -6,7 +6,7 @@
 
 #include "infos/eevee_common_infos.hh"
 
-#include "eevee_octahedron_lib.glsl"
+#include "eevee_octahedron_lib.bsl.hh"
 #include "gpu_shader_math_base_lib.glsl"
 #include "gpu_shader_math_fast_lib.glsl"
 #include "gpu_shader_utildefines_lib.glsl"

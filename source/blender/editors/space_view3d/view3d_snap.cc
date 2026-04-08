@@ -173,7 +173,6 @@ static wmOperatorStatus snap_sel_to_grid_exec(bContext *C, wmOperator *op)
           }
         }
       }
-      ob->pose->flag |= (POSE_LOCKED | POSE_DO_UNLOCK);
 
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
@@ -518,8 +517,6 @@ static bool snap_selected_to_location_rotation(bContext *C,
       for (bPoseChannel &pchan : ob->pose->chanbase) {
         pchan.runtime.flag &= ~POSE_RUNTIME_TRANSFORM;
       }
-
-      ob->pose->flag |= (POSE_LOCKED | POSE_DO_UNLOCK);
 
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }

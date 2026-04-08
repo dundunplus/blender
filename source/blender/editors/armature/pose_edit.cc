@@ -24,6 +24,7 @@
 #include "BKE_lib_id.hh"
 #include "BKE_object.hh"
 #include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -471,9 +472,9 @@ static wmOperatorStatus pose_update_paths_range_exec(bContext *C, wmOperator * /
     return OPERATOR_CANCELLED;
   }
 
-  /* use Preview Range or Full Frame Range - whichever is in use */
-  ob->pose->avs.path_sf = PSFRA;
-  ob->pose->avs.path_ef = PEFRA;
+  /* Use Preview Range or Full Frame Range - whichever is in use. */
+  ob->pose->avs.path_sf = scene->playback_start();
+  ob->pose->avs.path_ef = scene->playback_end();
 
   /* tag for updates */
   DEG_id_tag_update(&ob->id, ID_RECALC_SYNC_TO_EVAL);
