@@ -86,10 +86,10 @@ class FileListWrapper {
 };
 
 class AssetList : NonCopyable {
+ public:
   FileListWrapper filelist_;
   AssetLibraryReference library_ref_;
 
- public:
   AssetList() = delete;
   AssetList(eFileSelectType filesel_type, const AssetLibraryReference &asset_library_ref);
   AssetList(AssetList &&other) = default;
@@ -267,7 +267,7 @@ bool AssetList::listen(const wmNotifier &notifier)
       if (ELEM(notifier.data, ND_ASSET_LIST, ND_ASSET_LIST_READING, ND_ASSET_LIST_PREVIEW)) {
         return true;
       }
-      if (ELEM(notifier.action, NA_ADDED, NA_REMOVED, NA_EDITED)) {
+      if (ELEM(notifier.action, NA_ADDED, NA_REMOVED, NA_EDITED, NA_DOWNLOAD_FINISHED)) {
         return true;
       }
       break;
@@ -539,6 +539,29 @@ void clear_all_library(const bContext *C)
 {
   const AssetLibraryReference all_lib_ref = asset_system::all_library_reference();
   clear(&all_lib_ref, CTX_wm_manager(C));
+}
+
+void on_remote_assets_downloaded(wmWindowManager &wm, const StringRef library_url)
+{
+  for (const wmWindow &win : wm.windows) {
+    const bScreen *screen = WM_window_get_active_screen(&win);
+    for (const ScrArea &area : screen->areabase) {
+      /* Only needs to cover visible file/asset browsers, since others are already cleared through
+       * area exiting. */
+      if (area.spacetype == SPACE_FILE) {
+        SpaceFile *sfile = reinterpret_cast<SpaceFile *>(area.spacedata.first);
+        if (sfile->browse_mode == FILE_BROWSE_MODE_ASSETS) {
+          filelist_remote_asset_library_refresh_online_assets_status(sfile->files, library_url);
+        }
+      }
+    }
+  }
+
+  for (AssetList &list : libraries_map().values()) {
+    filelist_remote_asset_library_refresh_online_assets_status(list.filelist_, library_url);
+  }
+
+  WM_event_add_notifier_ex(&wm, nullptr, NC_ASSET | NA_DOWNLOAD_FINISHED, nullptr);
 }
 
 bool has_list_storage_for_library(const AssetLibraryReference *library_reference)

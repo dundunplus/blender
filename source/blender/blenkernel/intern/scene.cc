@@ -2730,6 +2730,8 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
     BKE_callback_exec_id(bmain, &scene->id, BKE_CB_EVT_DEPSGRAPH_UPDATE_PRE);
   }
 
+  BKE_scene_view_layers_synced_ensure(*bmain, scene);
+
   for (int pass = 0; pass < 2; pass++) {
     /* (Re-)build dependency graph if needed. */
     DEG_graph_relations_update(depsgraph);

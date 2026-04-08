@@ -199,7 +199,10 @@ enum [[host_shared]] eShadowFlag : uint32_t {
   SHADOW_IS_ALLOCATED = (1u << 28u),
   SHADOW_DO_UPDATE = (1u << 29u),
   SHADOW_IS_RENDERED = (1u << 30u),
-  SHADOW_IS_USED = (1u << 31u)
+  SHADOW_IS_USED = (1u << 31u),
+  /* Reuse the same flag for tagging update before LOD propagation.
+   * Assume usage tagging is done afterwards. */
+  SHADOW_TAG_UPDATE = (1u << 31u)
 };
 
 /* NOTE: Trust the input to be in valid range (max is [3,3,255]).

@@ -343,39 +343,25 @@ void IMB_blend_color_float(const MutableSpan<float4> dst,
 /** \name Crop
  * \{ */
 
-static void rect_crop_4bytes(void **buf_p, const int size_src[2], const rcti *crop)
+static void *create_cropped_buffer(const void *src_void,
+                                   const int src_size[2],
+                                   const int stride,
+                                   const rcti *crop)
 {
-  if (*buf_p == nullptr) {
-    return;
-  }
   const int size_dst[2] = {
       BLI_rcti_size_x(crop) + 1,
       BLI_rcti_size_y(crop) + 1,
   };
-  uint *src = static_cast<uint *>(*buf_p);
-  uint *dst = src + crop->ymin * size_src[0] + crop->xmin;
-  for (int y = 0; y < size_dst[1]; y++, src += size_dst[0], dst += size_src[0]) {
-    memmove(src, dst, sizeof(uint) * size_dst[0]);
+  const size_t dst_buffer_size = size_t(size_dst[0]) * size_t(size_dst[1]);
+  auto *dst = MEM_new_array_uninitialized<std::byte>(dst_buffer_size * stride, __func__);
+  const auto *src = static_cast<const std::byte *>(src_void);
+  auto *dst_row = static_cast<std::byte *>(dst);
+  for (const int y : IndexRange(size_dst[1])) {
+    const std::byte *row_src = src + size_t(src_size[0]) * stride * (y + crop->ymin);
+    std::byte *row_dst = dst_row + size_t(size_dst[0]) * stride * y;
+    std::copy_n(row_src + crop->xmin * stride, size_dst[0] * stride, row_dst);
   }
-  *buf_p = MEM_realloc_uninitialized(*buf_p, sizeof(uint) * size_dst[0] * size_dst[1]);
-}
-
-static void rect_crop_16bytes(void **buf_p, const int size_src[2], const rcti *crop)
-{
-  if (*buf_p == nullptr) {
-    return;
-  }
-  const int size_dst[2] = {
-      BLI_rcti_size_x(crop) + 1,
-      BLI_rcti_size_y(crop) + 1,
-  };
-  uint(*src)[4] = static_cast<uint(*)[4]>(*buf_p);
-  uint(*dst)[4] = src + crop->ymin * size_src[0] + crop->xmin;
-  for (int y = 0; y < size_dst[1]; y++, src += size_dst[0], dst += size_src[0]) {
-    memmove(src, dst, sizeof(uint[4]) * size_dst[0]);
-  }
-  *buf_p = static_cast<void *>(
-      MEM_realloc_uninitialized(*buf_p, sizeof(uint[4]) * size_dst[0] * size_dst[1]));
+  return dst;
 }
 
 void IMB_rect_crop(ImBuf *ibuf, const rcti *crop)
@@ -396,9 +382,22 @@ void IMB_rect_crop(ImBuf *ibuf, const rcti *crop)
     return;
   }
 
-  /* TODO(sergey: Validate ownership. */
-  rect_crop_4bytes(reinterpret_cast<void **>(&ibuf->byte_buffer.data), size_src, crop);
-  rect_crop_16bytes(reinterpret_cast<void **>(&ibuf->float_buffer.data), size_src, crop);
+  if (const uchar *byte_data = ibuf->byte_data()) {
+    /* Byte buffers always have 4 channels. */
+    const int stride = 4 * sizeof(uchar);
+    IMB_assign_byte_buffer(
+        ibuf,
+        static_cast<uchar *>(create_cropped_buffer(byte_data, size_src, stride, crop)),
+        IB_TAKE_OWNERSHIP);
+  }
+  if (const float *float_data = ibuf->float_data()) {
+    /* channels == 0 means 4-channel default. */
+    const int stride = (ibuf->channels == 0 ? 4 : ibuf->channels) * sizeof(float);
+    IMB_assign_float_buffer(
+        ibuf,
+        static_cast<float *>(create_cropped_buffer(float_data, size_src, stride, crop)),
+        IB_TAKE_OWNERSHIP);
+  }
 
   ibuf->x = size_dst[0];
   ibuf->y = size_dst[1];

@@ -172,8 +172,15 @@ static void search_link_ops_for_asset_metadata(const bNodeTree &node_tree,
   const bke::bNodeTreeType &node_tree_type = *node_tree.typeinfo;
   const eNodeSocketInOut in_out = socket.in_out == SOCK_OUT ? SOCK_IN : SOCK_OUT;
 
-  const IDProperty *sockets = BKE_asset_metadata_idprop_find(
-      &asset_data, in_out == SOCK_IN ? "inputs" : "outputs");
+  const IDProperty *properties = BKE_asset_metadata_idprop_find(&asset_data, "properties");
+  if (!properties || properties->type != IDP_GROUP) {
+    return;
+  }
+  const IDProperty *sockets = IDP_GetPropertyFromGroup(properties,
+                                                       in_out == SOCK_IN ? "inputs" : "outputs");
+  if (!sockets || sockets->type != IDP_GROUP) {
+    return;
+  }
 
   int weight = -1;
   Set<StringRef> socket_names;

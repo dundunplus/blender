@@ -30,6 +30,7 @@
 #include "DNA_space_enums.h"
 #include "DNA_userdef_types.h"
 
+#include "ED_asset.hh"
 #include "ED_fileselect.hh"
 #include "ED_render.hh"
 
@@ -164,10 +165,11 @@ void RemoteLibraryLoadingStatus::ping_new_preview(const bContext &C,
 
 void RemoteLibraryLoadingStatus::ping_new_assets(const bContext &C, const StringRef url)
 {
-  WM_msg_publish_remote_io(CTX_wm_message_bus(&C), url);
+  wmWindowManager *wm = CTX_wm_manager(&C);
+
+  ed::asset::list::on_remote_assets_downloaded(*wm, url);
 
   /* Redraw drags, they may show some "asset being downloaded" info. */
-  const wmWindowManager *wm = CTX_wm_manager(&C);
   if (!BLI_listbase_is_empty(&wm->runtime->drags)) {
     WM_event_add_mousemove(CTX_wm_window(&C));
   }

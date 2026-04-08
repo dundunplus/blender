@@ -248,7 +248,11 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
   type_data.flag = GeometryNodeAssetTraitFlag(IDP_int_get(traits_flag));
   type_data.group_ref = asset.make_weak_reference();
 
-  const IDProperty *inputs = BKE_asset_metadata_idprop_find(&metadata, "inputs");
+  const IDProperty *properties = BKE_asset_metadata_idprop_find(&metadata, "properties");
+  if (!properties || properties->type != IDP_GROUP) {
+    return std::nullopt;
+  }
+  const IDProperty *inputs = IDP_GetPropertyFromGroup(properties, "inputs");
   if (!inputs || inputs->type != IDP_GROUP) {
     return std::nullopt;
   }
@@ -262,8 +266,7 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
     }
   }
   type_data.asset_meta_data_properties =
-      std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter>(
-          IDP_CopyProperty(metadata.properties));
+      std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter>(IDP_CopyProperty(properties));
 
   type_data.ensure_hash();
   return type_data;
@@ -1022,12 +1025,6 @@ static wmOperatorStatus run_node_group_exec(bContext *C, wmOperator *op)
 
     bke::GeometrySet geometry_orig = get_original_geometry_eval_copy(
         *depsgraph_active, *object, operator_eval_data, orig_mesh_states);
-
-    IDProperty *properties_idprops = IDP_GetPropertyFromGroup(op->properties, "properties");
-    if (!properties_idprops) {
-      properties_idprops = bke::idprop::create_group("properties", IDP_FLAG_STATIC_TYPE).release();
-      IDP_AddToGroup(op->properties, properties_idprops);
-    }
 
     bke::GeometrySet new_geometry = nodes::execute_geometry_nodes_on_geometry(
         *node_tree, *op->ptr, compute_context, call_data, std::move(geometry_orig));

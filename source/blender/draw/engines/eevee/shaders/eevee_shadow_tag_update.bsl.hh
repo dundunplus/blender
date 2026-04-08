@@ -114,7 +114,9 @@ void tag_update_frag([[resource_table]] Tiles &tiles,
   uint2 texel = uint2(frag_coord.xy);
   /* Tag only LOD0. The lower LOD will be written by the tag_propagate pass. */
   int tile_index = shadow_tile_offset(texel, tilemap.tiles_index, 0);
-  atomicOr(tiles.tiles_buf[tile_index], uint(SHADOW_DO_UPDATE));
+  /* Tag using a transient flag that allows to differentiate new updates (to be propagated to LODs)
+   * from the existing persitent flag SHADOW_DO_UPDATE. */
+  atomicOr(tiles.tiles_buf[tile_index], uint(SHADOW_TAG_UPDATE));
 }
 
 /* Propagate the LOD0 update tag to the lower LOD tiles. */
@@ -127,7 +129,15 @@ void tag_propagate([[resource_table]] Tiles &tiles,
 
   uint2 texel = uint2(global_id.xy);
   const int tile_index_lod0 = shadow_tile_offset(texel, tilemap.tiles_index, 0);
-  bool do_update = (tiles.tiles_buf[tile_index_lod0] & uint(SHADOW_DO_UPDATE)) != 0;
+  uint tile_data = tiles.tiles_buf[tile_index_lod0];
+  bool do_update = (tile_data & uint(SHADOW_TAG_UPDATE)) != 0;
+  if (do_update) {
+    /* Remove the transient flag. */
+    tile_data &= ~uint(SHADOW_TAG_UPDATE);
+    /* Assign persistent flag. */
+    tile_data |= uint(SHADOW_DO_UPDATE);
+    tiles.tiles_buf[tile_index_lod0] = tile_data;
+  }
 
   if (do_update) {
     /* TODO(fclem): Recursive downsampling. */

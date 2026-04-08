@@ -17,6 +17,8 @@
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 
+#include "BLT_translation.hh"
+
 #include "DNA_asset_types.h"
 #include "DNA_screen_types.h"
 
@@ -276,8 +278,20 @@ void AssetViewItem::build_context_menu(bContext &C, ui::Layout &column) const
 {
   const AssetView &asset_view = dynamic_cast<const AssetView &>(this->get_view());
   const AssetShelfType &shelf_type = *asset_view.shelf_.type;
+
+  bool has_items = false;
+
+  if (asset_.is_online()) {
+    column.op("asset.assets_download", IFACE_("Download Asset"), ICON_NONE);
+    has_items = true;
+  }
+
   if (shelf_type.draw_context_menu) {
+    if (has_items) {
+      column.separator();
+    }
     shelf_type.draw_context_menu(&C, &shelf_type, &asset_, column);
+    has_items = true;
   }
 }
 
