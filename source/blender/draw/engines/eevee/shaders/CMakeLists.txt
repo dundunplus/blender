@@ -159,7 +159,6 @@ set(SRC_GLSL_LIB
   eevee_lightprobe_sphere_lib.glsl
   eevee_lightprobe_sphere_mapping_lib.glsl
   eevee_lightprobe_volume_eval_lib.glsl
-  eevee_ltc_lib.glsl
   eevee_motion_blur_lib.glsl
   # eevee_nodetree_lib.glsl # Has dependency on draw_model_lib that is hard to resolve
   eevee_ray_generate_lib.glsl

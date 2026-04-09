@@ -173,13 +173,13 @@ OcclusionData ambient_occlusion_search(float3 vP,
 
     ScreenSpaceRay ssray;
 
-    ssray = raytrace_screenspace_ray_create(ray, uniform_buf.ao.pixel_size);
+    ssray = ScreenSpaceRay::create(ray, uniform_buf.ao.pixel_size);
     data.horizons[0 + i * 2] = ambient_ambient_occlusion_search_horizon(
         vI, vP, noise.y, ssray, depth_tx, inverted, radius, dir_sample_count);
 
     ray.direction = -ray.direction;
 
-    ssray = raytrace_screenspace_ray_create(ray, uniform_buf.ao.pixel_size);
+    ssray = ScreenSpaceRay::create(ray, uniform_buf.ao.pixel_size);
     data.horizons[1 + i * 2] = -ambient_ambient_occlusion_search_horizon(
         vI, vP, noise.y, ssray, depth_tx, inverted, radius, dir_sample_count);
 

@@ -546,8 +546,9 @@ class NODE_PT_material_slots(Panel):
         if ob.mode == 'EDIT':
             row = layout.row(align=True)
             row.operator("object.material_slot_assign", text="Assign")
-            row.operator("object.material_slot_select", text="Select")
-            row.operator("object.material_slot_deselect", text="Deselect")
+            if ob.type != 'FONT':
+                row.operator("object.material_slot_select", text="Select")
+                row.operator("object.material_slot_deselect", text="Deselect")
 
 
 class NODE_PT_geometry_node_tool_object_types(Panel):

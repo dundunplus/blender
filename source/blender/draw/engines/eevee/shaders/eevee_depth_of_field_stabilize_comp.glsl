@@ -75,7 +75,7 @@ void dof_cache_init()
         int2 load_texel = clamp(texel + offset - 1, int2(0), textureSize(color_tx, 0) - 1);
 
         float4 color = texelFetch(color_tx, load_texel, 0);
-        color_cache[cache_texel.y][cache_texel.x] = colorspace_YCoCg_from_scene_linear(color);
+        color_cache[cache_texel.y][cache_texel.x] = colorspace::YCoCg_from_scene_linear(color);
         coc_cache[cache_texel.y][cache_texel.x] = texelFetch(coc_tx, load_texel, 0).x;
       }
       /* 2 Pixels border. */
@@ -373,7 +373,7 @@ void main()
   /* Clamp opacity since we don't store it in history. */
   result.color.a = clamp(src.color.a, bbox.min.color.a, bbox.max.color.a);
 
-  result.color = colorspace_scene_linear_from_YCoCg(result.color);
+  result.color = colorspace::scene_linear_from_YCoCg(result.color);
 
   imageStore(out_color_img, src_texel, result.color);
   imageStore(out_coc_img, src_texel, float4(result.coc));

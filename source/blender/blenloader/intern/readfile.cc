@@ -4448,7 +4448,11 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
         }
         FOREACH_MAIN_ID_END;
 #endif
-        BKE_id_delete(bfd->main, &lib);
+        BKE_id_delete(
+            bfd->main,
+            &lib,
+            {.extra_remapping_flags = (ID_REMAP_FORCE_UI_POINTERS | ID_REMAP_SKIP_USER_REFCOUNT |
+                                       ID_REMAP_SKIP_UPDATE_TAGGING | ID_REMAP_SKIP_USER_CLEAR)});
       }
     }
 

@@ -1021,7 +1021,6 @@ static void view3d_header_region_listener(const wmRegionListenerParams *params)
           ED_region_tag_redraw(region);
           break;
         case ND_SPACE_ASSET_PARAMS:
-          ed::geometry::clear_operator_asset_trees();
           ED_region_tag_redraw(region);
           break;
       }
@@ -1031,12 +1030,10 @@ static void view3d_header_region_listener(const wmRegionListenerParams *params)
         case ND_ASSET_CATALOGS:
         case ND_ASSET_LIST:
         case ND_ASSET_LIST_READING:
-          ed::geometry::clear_operator_asset_trees();
           ED_region_tag_redraw(region);
           break;
         default:
           if (ELEM(wmn->action, NA_ADDED, NA_REMOVED)) {
-            ed::geometry::clear_operator_asset_trees();
             ED_region_tag_redraw(region);
           }
       }
@@ -1044,7 +1041,6 @@ static void view3d_header_region_listener(const wmRegionListenerParams *params)
     case NC_NODE:
       switch (wmn->data) {
         case ND_NODE_ASSET_DATA:
-          ed::geometry::clear_operator_asset_trees();
           ED_region_tag_redraw(region);
           break;
       }

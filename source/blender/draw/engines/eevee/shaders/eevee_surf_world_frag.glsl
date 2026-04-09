@@ -43,7 +43,7 @@ void main()
 
   g_holdout = saturate(g_holdout);
 
-  out_background.rgb = colorspace_safe_color(g_emission) * (1.0f - g_holdout);
+  out_background.rgb = colorspace::safe_color(g_emission) * (1.0f - g_holdout);
   out_background.a = saturate(average(g_transmittance)) * g_holdout;
 
   if (g_data.ray_type == RAY_TYPE_CAMERA && world_background_blur != 0.0f) {

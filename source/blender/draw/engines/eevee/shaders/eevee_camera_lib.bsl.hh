@@ -15,20 +15,22 @@
 #include "gpu_shader_math_safe_lib.glsl"
 #include "gpu_shader_math_vector_lib.glsl"
 
+namespace eevee::camera {
+
 /* -------------------------------------------------------------------- */
 /** \name Panoramic Projections
  *
  * Adapted from Cycles to match EEVEE's coordinate system.
  * \{ */
 
-float2 camera_equirectangular_from_direction(CameraData cam, float3 dir)
+float2 equirectangular_from_direction(CameraData cam, float3 dir)
 {
   float phi = atan(-dir.z, dir.x);
   float theta = acos(dir.y / length(dir));
   return (float2(phi, theta) - cam.equirect_bias) * cam.equirect_scale_inv;
 }
 
-float3 camera_equirectangular_to_direction(CameraData cam, float2 uv)
+float3 equirectangular_to_direction(CameraData cam, float2 uv)
 {
   uv = uv * cam.equirect_scale + cam.equirect_bias;
   float phi = uv.x;
@@ -37,7 +39,7 @@ float3 camera_equirectangular_to_direction(CameraData cam, float2 uv)
   return float3(sin_theta * cos(phi), cos(theta), -sin_theta * sin(phi));
 }
 
-float2 camera_fisheye_from_direction(CameraData cam, float3 dir)
+float2 fisheye_from_direction(CameraData cam, float3 dir)
 {
   float r = atan(length(dir.xy), -dir.z) / cam.fisheye_fov;
   float phi = atan(dir.y, dir.x);
@@ -45,7 +47,7 @@ float2 camera_fisheye_from_direction(CameraData cam, float3 dir)
   return (uv - cam.uv_bias) / cam.uv_scale;
 }
 
-float3 camera_fisheye_to_direction(CameraData cam, float2 uv)
+float3 fisheye_to_direction(CameraData cam, float2 uv)
 {
   uv = uv * cam.uv_scale + cam.uv_bias;
   uv = (uv - 0.5f) * 2.0f;
@@ -61,7 +63,7 @@ float3 camera_fisheye_to_direction(CameraData cam, float2 uv)
   return float3(cos(phi) * sin(theta), sin(phi) * sin(theta), -cos(theta));
 }
 
-float2 camera_mirror_ball_from_direction(CameraData cam, float3 dir)
+float2 mirror_ball_from_direction(CameraData cam, float3 dir)
 {
   dir = normalize(dir);
   dir.z -= 1.0f;
@@ -70,7 +72,7 @@ float2 camera_mirror_ball_from_direction(CameraData cam, float3 dir)
   return (uv - cam.uv_bias) / cam.uv_scale;
 }
 
-float3 camera_mirror_ball_to_direction(CameraData cam, float2 uv)
+float3 mirror_ball_to_direction(CameraData cam, float2 uv)
 {
   uv = uv * cam.uv_scale + cam.uv_bias;
   float3 dir;
@@ -89,12 +91,12 @@ float3 camera_mirror_ball_to_direction(CameraData cam, float2 uv)
 /** \name Regular projections
  * \{ */
 
-float3 camera_view_from_uv(float4x4 projmat, float2 uv)
+float3 view_from_uv(float4x4 projmat, float2 uv)
 {
   return project_point(projmat, float3(uv * 2.0f - 1.0f, 0.0f));
 }
 
-float2 camera_uv_from_view(float4x4 projmat, bool is_persp, float3 vV)
+float2 uv_from_view(float4x4 projmat, bool is_persp, float3 vV)
 {
   float4 tmp = projmat * float4(vV, 1.0f);
   if (is_persp && tmp.w <= 0.0f) {
@@ -111,52 +113,54 @@ float2 camera_uv_from_view(float4x4 projmat, bool is_persp, float3 vV)
 /** \name General functions handling all projections
  * \{ */
 
-float3 camera_view_from_uv(CameraData cam, float2 uv)
+float3 view_from_uv(CameraData cam, float2 uv)
 {
   float3 vV;
   switch (cam.type) {
     default:
     case CAMERA_ORTHO:
     case CAMERA_PERSP:
-      return camera_view_from_uv(cam.wininv, uv);
+      return view_from_uv(cam.wininv, uv);
     case CAMERA_PANO_EQUIRECT:
-      vV = camera_equirectangular_to_direction(cam, uv);
+      vV = equirectangular_to_direction(cam, uv);
       break;
     case CAMERA_PANO_EQUIDISTANT:
-      // ATTR_FALLTHROUGH;
+      [[fallthrough]];
     case CAMERA_PANO_EQUISOLID:
-      vV = camera_fisheye_to_direction(cam, uv);
+      vV = fisheye_to_direction(cam, uv);
       break;
     case CAMERA_PANO_MIRROR:
-      vV = camera_mirror_ball_to_direction(cam, uv);
+      vV = mirror_ball_to_direction(cam, uv);
       break;
   }
   return vV;
 }
 
-float2 camera_uv_from_view(CameraData cam, float3 vV)
+float2 uv_from_view(CameraData cam, float3 vV)
 {
   switch (cam.type) {
     default:
     case CAMERA_ORTHO:
-      return camera_uv_from_view(cam.winmat, false, vV);
+      return uv_from_view(cam.winmat, false, vV);
     case CAMERA_PERSP:
-      return camera_uv_from_view(cam.winmat, true, vV);
+      return uv_from_view(cam.winmat, true, vV);
     case CAMERA_PANO_EQUIRECT:
-      return camera_equirectangular_from_direction(cam, vV);
+      return equirectangular_from_direction(cam, vV);
     case CAMERA_PANO_EQUISOLID:
-      // ATTR_FALLTHROUGH;
+      [[fallthrough]];
     case CAMERA_PANO_EQUIDISTANT:
-      return camera_fisheye_from_direction(cam, vV);
+      return fisheye_from_direction(cam, vV);
     case CAMERA_PANO_MIRROR:
-      return camera_mirror_ball_from_direction(cam, vV);
+      return mirror_ball_from_direction(cam, vV);
   }
 }
 
-float2 camera_uv_from_world(CameraData cam, float3 P)
+float2 uv_from_world(CameraData cam, float3 P)
 {
   float3 vV = transform_direction(cam.viewmat, normalize(P));
-  return camera_uv_from_view(cam, vV);
+  return uv_from_view(cam, vV);
 }
 
 /** \} */
+
+}  // namespace eevee::camera

@@ -123,7 +123,8 @@ def run_entry(env: api.TestEnvironment,
               config: api.TestConfig,
               row: list,
               entry: api.TestEntry,
-              update_only: bool):
+              update_only: bool,
+              count: int):
     updated = False
     failed = False
 
@@ -185,21 +186,45 @@ def run_entry(env: api.TestEnvironment,
 
     # Run test and update output and status.
     if executable_ok:
-        entry.status = 'running'
-        print_row(config, row, end='\r')
+        run_outputs = []
+        for run in range(count):
+            entry.status = 'running' if count == 1 else f'run [{run + 1}/{count}]'
+            print_row(config, row, end='\r')
 
-        try:
-            entry.output = test.run(env, device_id, gpu_backend)
-            if not entry.output:
-                raise Exception("Test produced no output")
-            entry.status = 'done'
-        except KeyboardInterrupt as e:
-            raise e
-        except Exception as e:
-            failed = True
-            entry.status = 'failed'
-            entry.error_msg = 'Failed to run'
-            entry.exception_msg = str(e)
+            try:
+                output = test.run(env, device_id, gpu_backend)
+                if not output:
+                    raise Exception("Test produced no output")
+                run_outputs.append(output)
+                entry.status = 'done'
+            except KeyboardInterrupt as e:
+                raise e
+            except Exception as e:
+                failed = True
+                entry.status = 'failed'
+                entry.error_msg = 'Failed to run'
+                entry.exception_msg = str(e)
+                break
+
+        if entry.status == 'done' and run_outputs:
+            # Combine results from runs
+
+            keys = set()
+            for run_output in run_outputs:
+                keys |= run_output.keys()
+
+            output = {}
+            output_all_runs = {}
+            for key in keys:
+                values = []
+                for run_output in run_outputs:
+                    if key not in run_output:
+                        continue
+                    values.append(run_output[key])
+                output[key] = sum(values) / len(values)
+                output_all_runs[key] = values
+            entry.output = output
+            entry.output_all_runs = output_all_runs
 
     print_row(config, row, end='\r')
 
@@ -295,6 +320,7 @@ def cmd_run(env: api.TestEnvironment, argv: list, update_only: bool):
     parser = argparse.ArgumentParser()
     parser.add_argument('config', nargs='?', default=None)
     parser.add_argument('test', nargs='?', default='*')
+    parser.add_argument('--count', default=1, type=int, help="Number of runs to perform (default=1)")
     args = parser.parse_args(argv)
 
     exit_code = 0
@@ -308,7 +334,7 @@ def cmd_run(env: api.TestEnvironment, argv: list, update_only: bool):
             if match_entry(row[0], args):
                 for entry in row:
                     try:
-                        test_updated, test_failed = run_entry(env, config, row, entry, update_only)
+                        test_updated, test_failed = run_entry(env, config, row, entry, update_only, args.count)
                         if test_updated:
                             updated = True
                             # Write queue every time in case running gets interrupted,

@@ -624,7 +624,7 @@ void dof_slight_focus_gather(sampler2DDepth depth_tx,
       float2 sample_uv = (frag_coord + sample_offset) / float2(textureSize(depth_tx, 0));
       float depth = reverse_z::read(textureLod(depth_tx, sample_uv, 0.0f).r);
       pair_data[i].coc = dof_coc_from_depth(dof_buf, sample_uv, depth);
-      pair_data[i].color = colorspace_safe_color(textureLod(color_tx, sample_uv, 0.0f));
+      pair_data[i].color = colorspace::safe_color(textureLod(color_tx, sample_uv, 0.0f));
       pair_data[i].dist = ring_dist;
       if (DOF_BOKEH_TEXTURE) {
         /* Contains sub-pixel distance to bokeh shape. */
@@ -660,7 +660,7 @@ void dof_slight_focus_gather(sampler2DDepth depth_tx,
   /* Center sample. */
   float2 sample_uv = frag_coord / float2(textureSize(depth_tx, 0));
   DofGatherData center_data;
-  center_data.color = colorspace_safe_color(textureLod(color_tx, sample_uv, 0.0f));
+  center_data.color = colorspace::safe_color(textureLod(color_tx, sample_uv, 0.0f));
   center_data.coc = dof_coc_from_depth(
       dof_buf, sample_uv, reverse_z::read(textureLod(depth_tx, sample_uv, 0.0f).r));
   center_data.coc = clamp(center_data.coc, -dof_buf.coc_abs_max, dof_buf.coc_abs_max);

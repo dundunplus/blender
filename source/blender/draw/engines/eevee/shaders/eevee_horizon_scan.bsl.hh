@@ -169,7 +169,7 @@ ResultT eval(sampler2D hiz_tx,
 
       /* TODO(fclem): Could save some computation here by computing entry and exit point on the
        * screen at once and just scan through. */
-      ScreenSpaceRay ssray = raytrace_screenspace_ray_create(ray, pixel_size);
+      ScreenSpaceRay ssray = ScreenSpaceRay::create(ray, pixel_size);
 
 #if defined(GPU_METAL) && defined(GPU_APPLE)
 /* NOTE: Full loop unroll hint increases performance on Apple Silicon. */
@@ -496,7 +496,7 @@ void setup([[global_invocation_id]] const uint3 global_id, [[resource_table]] Se
   float3 ssP_prev = drw_ndc_to_screen(project_point(uniform_buf.raytrace.history_persmat, P));
 
   float4 radiance = textureLod(srt.in_radiance_tx, ssP_prev.xy, 0.0f);
-  radiance = colorspace_brightness_clamp_max(radiance, uniform_buf.clamp.surface_indirect);
+  radiance = colorspace::brightness_clamp_max(radiance, uniform_buf.clamp.surface_indirect);
 
   imageStore(srt.out_radiance_img, texel, radiance);
 }

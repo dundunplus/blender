@@ -271,7 +271,22 @@ void AssetViewItem::build_grid_tile(const bContext &C, ui::Layout &layout) const
     return asset_preview_or_icon(asset_);
   }();
 
-  ui::PreviewGridItem::build_grid_tile_button(layout, preview_id);
+  ui::GridViewStyle grid_style = asset_view.get_style();
+  /* Add overlap layout so indicator icons can be displayed on top of the preview. */
+  ui::Layout &overlap = layout.overlap();
+  overlap.ui_units_x_set(grid_style.tile_width / UI_UNIT_X);
+  overlap.ui_units_y_set(grid_style.tile_height / UI_UNIT_Y);
+
+  ui::PreviewGridItem::build_grid_tile_button(overlap.column(true), preview_id);
+
+  ui::Layout &overlay_row = overlap.row(true);
+  overlay_row.alignment_set(ui::LayoutAlign::Right);
+
+  const bool is_highlighted = this->is_selected() || this->is_active() || this->is_hovered();
+  if (asset_.is_online() && is_highlighted) {
+    ui::Button *online_icon = uiItemL_ex(&overlay_row, "", ICON_INTERNET, false, false);
+    button_label_alpha_factor_set(online_icon, 0.6f);
+  }
 }
 
 void AssetViewItem::build_context_menu(bContext &C, ui::Layout &column) const

@@ -175,7 +175,9 @@ static void node_declare(NodeDeclarationBuilder &b)
         .default_value(0.0f)
         .min(0.0f)
         .subtype(PROP_DISTANCE)
-        .usage_by_menu("Overflow"_ustr, GEO_NODE_STRING_TO_CURVES_MODE_SCALE_TO_FIT);
+        .usage_by_menu("Overflow"_ustr,
+                       {GEO_NODE_STRING_TO_CURVES_MODE_SCALE_TO_FIT,
+                        GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE});
   }
 }
 

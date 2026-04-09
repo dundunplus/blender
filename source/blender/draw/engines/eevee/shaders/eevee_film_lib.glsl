@@ -38,7 +38,7 @@ float4 film_texelfetch_as_YCoCg_opacity(sampler2D tx, int2 texel)
   /* Convert transmittance to opacity. */
   color.a = saturate(1.0f - color.a);
   /* Transform to YCoCg for accumulation. */
-  color.rgb = colorspace_YCoCg_from_scene_linear(color.rgb);
+  color.rgb = colorspace::YCoCg_from_scene_linear(color.rgb);
   return color;
 }
 
@@ -506,7 +506,7 @@ void film_store_combined(
     // dst.weight = film_weight_load(texel_combined);
 
     color_dst = film_sample_catmull_rom(in_combined_tx, history_texel);
-    color_dst.rgb = colorspace_YCoCg_from_scene_linear(color_dst.rgb);
+    color_dst.rgb = colorspace::YCoCg_from_scene_linear(color_dst.rgb);
 
     /* Get local color bounding box of source neighborhood. */
     float4 min_color, max_color;
@@ -524,7 +524,7 @@ void film_store_combined(
   else {
     /* Everything is static. Use render accumulation. */
     color_dst = texelFetch(in_combined_tx, dst.texel, 0);
-    color_dst.rgb = colorspace_YCoCg_from_scene_linear(color_dst.rgb);
+    color_dst.rgb = colorspace::YCoCg_from_scene_linear(color_dst.rgb);
 
     /* Luma weighted blend to avoid flickering. */
     weight_dst = film_luma_weight(color_dst.x) * dst.weight;
@@ -534,7 +534,7 @@ void film_store_combined(
   color = color_dst * weight_dst + color_src * weight_src;
   color /= weight_src + weight_dst;
 
-  color.rgb = colorspace_scene_linear_from_YCoCg(color.rgb);
+  color.rgb = colorspace::scene_linear_from_YCoCg(color.rgb);
 
   /* Fix alpha not accumulating to 1 because of float imprecision. */
   if (color.a > 0.995f) {

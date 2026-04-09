@@ -573,18 +573,6 @@ struct Library {
 };
 
 /**
- * #Library.flag
- *
- * Some of these flags define a 'virtual' library, which may not be an actual blendfile, store
- * 'archived' embedded data, etc. IDs contained in these virtual libraries are _not_ managed by
- * regular linking code.
- */
-enum LibraryFlag {
-  /** The library is an 'archive' that only contains embedded linked data. */
-  LIBRARY_FLAG_IS_ARCHIVE = 1 << 0,
-};
-
-/**
  * A weak library/ID reference for local data that has been appended, to allow re-using that local
  * data instead of creating a new copy of it in future appends.
  *

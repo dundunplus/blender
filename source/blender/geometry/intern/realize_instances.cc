@@ -1850,8 +1850,11 @@ static void copy_vertex_group_names(Mesh &dst_mesh,
 
 static int get_mapped_material_index(const MeshRealizeInfo &info, const int index)
 {
+  if (info.mesh->totcol == 0) {
+    return info.material_index_map.first();
+  }
   const bool valid = IndexRange(info.mesh->totcol).contains(index);
-  return valid ? info.material_index_map[index] : 0;
+  return valid ? info.material_index_map[index] : info.material_index_map.first();
 }
 
 /**

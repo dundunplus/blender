@@ -1,11 +1,6 @@
 /* SPDX-FileCopyrightText: 2017-2023 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
-
-#pragma once
-
-#include "infos/eevee_common_infos.hh"
-
 /**
  * Adapted from :
  * Real-Time Polygonal-Light Shading with Linearly Transformed Cosines.
@@ -14,19 +9,25 @@
  * Project page: https://eheitzresearch.wordpress.com/415-2/
  */
 
+#pragma once
+
 #include "gpu_shader_math_constants_lib.glsl"
 #include "gpu_shader_math_matrix_construct_lib.glsl"
 #include "gpu_shader_utildefines_lib.glsl"
 
+namespace eevee::ltc {
+
+namespace detail {
+
 /* Diffuse *clipped* sphere integral. */
-float ltc_diffuse_sphere_integral(sampler2DArray utility_tx, float avg_dir_z, float form_factor)
+float diffuse_sphere_integral(sampler2DArray util_tx, float avg_dir_z, float form_factor)
 {
 #if 1
   /* use tabulated horizon-clipped sphere */
   float2 uv = float2(avg_dir_z * 0.5f + 0.5f, form_factor);
   uv = uv * UTIL_TEX_UV_SCALE + UTIL_TEX_UV_BIAS;
 
-  return texture(utility_tx, float3(uv, UTIL_DISK_INTEGRAL_LAYER))[UTIL_DISK_INTEGRAL_COMP];
+  return texture(util_tx, float3(uv, UTIL_DISK_INTEGRAL_LAYER))[UTIL_DISK_INTEGRAL_COMP];
 #else
   /* Cheap approximation. Less smooth and have energy issues. */
   return max((form_factor * form_factor + avg_dir_z) / (form_factor + 1.0f), 0.0f);
@@ -34,11 +35,10 @@ float ltc_diffuse_sphere_integral(sampler2DArray utility_tx, float avg_dir_z, fl
 }
 
 /**
- * An extended version of the implementation from
- * "How to solve a cubic equation, revisited"
- * http://momentsingraphics.de/?p=105
+ * An extended version of the implementation from [How to solve a cubic equation,
+ * revisited](http://momentsingraphics.de/?p=105).
  */
-float3 ltc_solve_cubic(float4 coefs)
+float3 solve_cubic(float4 coefs)
 {
   /* Normalize the polynomial */
   coefs.xyz /= coefs.w;
@@ -127,7 +127,7 @@ float3 ltc_solve_cubic(float4 coefs)
 
 /* from Real-Time Area Lighting: a Journey from Research to Production
  * Stephen Hill and Eric Heitz */
-float3 ltc_edge_integral_vec(float3 v1, float3 v2)
+float3 edge_integral_vec(float3 v1, float3 v2)
 {
   float x = dot(v1, v2);
   float y = abs(x);
@@ -141,13 +141,7 @@ float3 ltc_edge_integral_vec(float3 v1, float3 v2)
   return cross(v1, v2) * theta_sintheta;
 }
 
-float3x3 ltc_matrix(float4 lut)
-{
-  /* Load inverse matrix. */
-  return float3x3(float3(lut.x, 0, lut.y), float3(0, 1, 0), float3(lut.z, 0, lut.w));
-}
-
-float3x3 ltc_tangent_basis(float3 N, float3 V)
+float3x3 tangent_basis(float3 N, float3 V)
 {
   float NV = dot(N, V);
   if (NV > 0.999999f) {
@@ -157,15 +151,21 @@ float3x3 ltc_tangent_basis(float3 N, float3 V)
   /* Construct orthonormal basis around N. */
   float3 T1 = normalize(V - N * NV);
   float3 T2 = cross(N, T1);
+
   return float3x3(T1, T2, N);
 }
 
-void ltc_transform_quad(float3 N, float3 V, float3x3 Minv, float3 (&corners)[4])
+}  // namespace detail
+
+/**
+ * Evaluate contribution of rectangle light.
+ */
+float evaluate_quad(sampler2DArray util_tx, float3 corners[4], float3 N, float3 V, float3x3 Minv)
 {
   /* Construct orthonormal basis around N. */
-  float3x3 T = ltc_tangent_basis(N, V);
+  float3x3 T = detail::tangent_basis(N, V);
 
-  /* Rotate area light in (T1, T2, R) basis. */
+  /* Rotate area light into basis. */
   Minv = Minv * transpose(T);
 
   /* Apply LTC inverse matrix. */
@@ -173,40 +173,31 @@ void ltc_transform_quad(float3 N, float3 V, float3x3 Minv, float3 (&corners)[4])
   corners[1] = normalize(Minv * corners[1]);
   corners[2] = normalize(Minv * corners[2]);
   corners[3] = normalize(Minv * corners[3]);
-}
 
-/* If corners have already pass through ltc_transform_quad(),
- * then N **MUST** be float3(0.0f, 0.0f, 1.0f), corresponding to the Up axis of the shading basis.
- */
-float ltc_evaluate_quad(sampler2DArray utility_tx, float3 corners[4], float3 N)
-{
-  /* Approximation using a sphere of the same solid angle than the quad.
+  /* Approximation using a sphere of the same solid angle as the quad.
    * Finding the clipped sphere diffuse integral is easier than clipping the quad. */
   float3 avg_dir;
-  avg_dir = ltc_edge_integral_vec(corners[0], corners[1]);
-  avg_dir += ltc_edge_integral_vec(corners[1], corners[2]);
-  avg_dir += ltc_edge_integral_vec(corners[2], corners[3]);
-  avg_dir += ltc_edge_integral_vec(corners[3], corners[0]);
+  avg_dir = detail::edge_integral_vec(corners[0], corners[1]);
+  avg_dir += detail::edge_integral_vec(corners[1], corners[2]);
+  avg_dir += detail::edge_integral_vec(corners[2], corners[3]);
+  avg_dir += detail::edge_integral_vec(corners[3], corners[0]);
 
   float form_factor = length(avg_dir);
-  float avg_dir_z = dot(N, avg_dir / form_factor);
-  return form_factor * ltc_diffuse_sphere_integral(utility_tx, avg_dir_z, form_factor);
+  float avg_dir_z = (avg_dir / form_factor).z;
+
+  return form_factor * detail::diffuse_sphere_integral(util_tx, avg_dir_z, form_factor);
 }
 
-/* If disk does not need to be transformed and is already front facing. */
-float ltc_evaluate_disk_simple(sampler2DArray utility_tx, float disk_radius, float NL)
-{
-  float r_sqr = disk_radius * disk_radius;
-  float form_factor = r_sqr / (1.0f + r_sqr);
-  return form_factor * ltc_diffuse_sphere_integral(utility_tx, NL, form_factor);
-}
-
-/* disk_points are WS vectors from the shading point to the disk "bounding domain" */
-float ltc_evaluate_disk(
-    sampler2DArray utility_tx, float3 N, float3 V, float3x3 Minv, float3 disk_points[3])
+/**
+ * Evaluate contribution of disk light.
+ *
+ * disk_points are WS vectors from the shading point to the disk "bounding domain".
+ */
+float evaluate_disk(
+    sampler2DArray util_tx, float3 N, float3 V, float3x3 Minv, float3 disk_points[3])
 {
   /* Construct orthonormal basis around N. */
-  float3x3 T = ltc_tangent_basis(N, V);
+  float3x3 T = detail::tangent_basis(N, V);
 
   /* Rotate area light in (T1, T2, R) basis. */
   float3x3 R = transpose(T);
@@ -293,7 +284,7 @@ float ltc_evaluate_disk(
   float c2 = inv_b - ab * t - (1.0f + y0 * y0);
   float c3 = 1.0f;
 
-  float3 roots = ltc_solve_cubic(float4(c0, c1, c2, c3));
+  float3 roots = detail::solve_cubic(float4(c0, c1, c2, c3));
   float e1 = roots.x;
   float e2 = roots.y;
   float e3 = roots.z;
@@ -314,5 +305,7 @@ float ltc_evaluate_disk(
 
   /* Find the sphere and compute lighting. */
   float form_factor = max(0.0f, L1 * L2 * inversesqrt((1.0f + L1 * L1) * (1.0f + L2 * L2)));
-  return form_factor * ltc_diffuse_sphere_integral(utility_tx, avg_dir.z, form_factor);
+  return form_factor * detail::diffuse_sphere_integral(util_tx, avg_dir.z, form_factor);
 }
+
+}  // namespace eevee::ltc

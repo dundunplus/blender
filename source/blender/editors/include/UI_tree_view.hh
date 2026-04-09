@@ -330,13 +330,6 @@ class AbstractTreeViewItem : public AbstractViewItem, public TreeViewItemContain
    */
   virtual bool matches_single(const AbstractTreeViewItem &other) const;
 
-  /**
-   * Can be called from the #AbstractTreeViewItem::build_row() implementation, but not earlier. The
-   * hovered state can't be queried reliably otherwise.
-   * Note that this does a linear lookup in the old block, so isn't too great performance-wise.
-   */
-  bool is_hovered() const;
-
   void ensure_parents_uncollapsed();
 
  private:

@@ -284,7 +284,7 @@ struct DenoiseTemporal {
 
   LocalStatistics local_statistics_get(int2 texel, float3 center_radiance)
   {
-    float3 center_radiance_YCoCg = colorspace_YCoCg_from_scene_linear(center_radiance);
+    float3 center_radiance_YCoCg = colorspace::YCoCg_from_scene_linear(center_radiance);
 
     /* Build Local statistics (slide 46). */
     LocalStatistics result;
@@ -314,7 +314,7 @@ struct DenoiseTemporal {
         /* TODO(@fclem): Evaluate if beneficial. Currently not use to soak more noise? Unsure. */
         // float weight = (abs(x) == abs(y)) ? 0.25f : 1.0f;
         /* Use YCoCg for clamping and accumulation to avoid color shift artifacts. */
-        float3 radiance_YCoCg = colorspace_YCoCg_from_scene_linear(radiance.rgb);
+        float3 radiance_YCoCg = colorspace::YCoCg_from_scene_linear(radiance.rgb);
         result.mean += radiance_YCoCg;
         result.moment += square(radiance_YCoCg);
         weight_accum += 1.0f;
@@ -370,7 +370,7 @@ struct DenoiseTemporal {
 
     /* Use YCoCg for clamping and accumulation to avoid color shift artifacts. */
     float4 history_radiance_YCoCg;
-    history_radiance_YCoCg.rgb = colorspace_YCoCg_from_scene_linear(history_radiance.rgb);
+    history_radiance_YCoCg.rgb = colorspace::YCoCg_from_scene_linear(history_radiance.rgb);
     history_radiance_YCoCg.a = history_radiance.a;
 
     /* Weighted contribution (slide 46). */
@@ -460,13 +460,13 @@ void temporal_main([[resource_table]] DenoiseTemporal &srt,
   /* Clamp resulting history radiance (slide 47). */
   history_radiance.rgb = clamp(history_radiance.rgb, local.clamp_min, local.clamp_max);
   /* Go back from YCoCg for final blend. */
-  history_radiance.rgb = colorspace_scene_linear_from_YCoCg(history_radiance.rgb);
+  history_radiance.rgb = colorspace::scene_linear_from_YCoCg(history_radiance.rgb);
   /* Blend history with new radiance. */
   float mix_fac = (history_radiance.w > 1e-3f) ? 0.97f : 0.0f;
   /* Reduce blend factor to improve low roughness reflections. Use variance instead for speed. */
   mix_fac *= mix(0.75f, 1.0f, saturate(in_variance * 20.0f));
   float3 out_radiance = mix(
-      colorspace_safe_color(in_radiance), colorspace_safe_color(history_radiance.rgb), mix_fac);
+      colorspace::safe_color(in_radiance), colorspace::safe_color(history_radiance.rgb), mix_fac);
   /* This is feedback next frame as radiance_history_tx. */
   imageStoreFast(srt.out_radiance_img, texel_fullres, float4(out_radiance, 0.0f));
 

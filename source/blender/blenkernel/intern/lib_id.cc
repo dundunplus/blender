@@ -2070,18 +2070,11 @@ void BKE_main_id_refcount_recompute(Main *bmain, const bool do_linked_only)
 
   /* Go over whole Main database to re-generate proper user-counts. */
   FOREACH_MAIN_ID_BEGIN (bmain, id) {
-    /* NOTE: This function is called from readfile context, where some IDs in newly read Main may
-     * have been copied over from the old one, and therefore reference old IDs (e.g. UI-related
-     * Outliner space...). See `UFO_Rig_OldVersion.blend` from #156601 for a reproducible case.
-     *
-     * So using `IDWALK_NO_ORIG_POINTERS_ACCESS` here. Currently, access to ID pointers should not
-     * be needed for basic refcounting anyway. */
-    BKE_library_foreach_ID_link(
-        bmain,
-        id,
-        id_refcount_recompute_callback,
-        POINTER_FROM_INT(int(do_linked_only)),
-        (IDWALK_READONLY | IDWALK_INCLUDE_UI | IDWALK_NO_ORIG_POINTERS_ACCESS));
+    BKE_library_foreach_ID_link(bmain,
+                                id,
+                                id_refcount_recompute_callback,
+                                POINTER_FROM_INT(int(do_linked_only)),
+                                IDWALK_READONLY | IDWALK_INCLUDE_UI);
   }
   FOREACH_MAIN_ID_END;
 }

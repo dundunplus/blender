@@ -826,6 +826,7 @@ void Result::free()
       gpu_texture_ = nullptr;
       break;
     case ResultStorageType::CPU:
+      this->cpu_data().type().destruct_n(this->cpu_data().data(), this->cpu_data().size());
       MEM_delete_void(this->cpu_data().data());
       cpu_data_ = GMutableSpan();
       break;

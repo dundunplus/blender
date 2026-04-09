@@ -197,8 +197,8 @@ void main()
 
   float clamp_direct = uniform_buf.clamp.volume_direct;
   float clamp_indirect = uniform_buf.clamp.volume_indirect;
-  direct_radiance = colorspace_brightness_clamp_max(direct_radiance, clamp_direct);
-  indirect_radiance = colorspace_brightness_clamp_max(indirect_radiance, clamp_indirect);
+  direct_radiance = colorspace::brightness_clamp_max(direct_radiance, clamp_direct);
+  indirect_radiance = colorspace::brightness_clamp_max(indirect_radiance, clamp_indirect);
 
   direct_radiance *= uniform_buf.clamp.direct_scale;
   indirect_radiance *= uniform_buf.clamp.indirect_scale;

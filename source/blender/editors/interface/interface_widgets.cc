@@ -4100,12 +4100,7 @@ static void widget_numslider(Button *but,
 
     switch (scale_type) {
       case PROP_SCALE_LINEAR: {
-        if (but->rnaprop && (RNA_property_subtype(but->rnaprop) == PROP_PERCENTAGE)) {
-          factor = value / softmax;
-        }
-        else {
-          factor = (value - softmin) / softrange;
-        }
+        factor = (value - softmin) / softrange;
         break;
       }
       case PROP_SCALE_LOG: {

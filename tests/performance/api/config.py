@@ -37,6 +37,7 @@ class TestEntry:
     # More detailed error info, potentially multi-lines.
     exception_msg: str = ''
     output: dict = field(default_factory=dict)
+    output_all_runs: dict = field(default_factory=dict)
     benchmark_type: str = 'comparison'
 
     def to_json(self) -> dict:
@@ -49,6 +50,12 @@ class TestEntry:
         for field in self.__dataclass_fields__:
             if field in json_dict:
                 setattr(self, field, json_dict[field])
+
+    def migrate(self):
+        if self.output:
+            missing_keys = self.output.keys() - self.output_all_runs.keys()
+            for key in missing_keys:
+                self.output_all_runs[key] = [self.output[key]]
 
 
 class TestQueue:
@@ -66,6 +73,7 @@ class TestQueue:
             for json_entry in json_entries:
                 entry = TestEntry()
                 entry.from_json(json_entry)
+                entry.migrate()
                 self.entries.append(entry)
 
     def rows(self, use_revision_columns: bool) -> list:

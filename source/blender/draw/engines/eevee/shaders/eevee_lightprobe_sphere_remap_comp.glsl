@@ -113,13 +113,13 @@ void main()
   }
 
   float sun_threshold = uniform_buf.clamp.sun_threshold;
-  float3 radiance_clamped = colorspace_brightness_clamp_max(radiance, sun_threshold);
+  float3 radiance_clamped = colorspace::brightness_clamp_max(radiance, sun_threshold);
   float3 radiance_sun = radiance - radiance_clamped;
   radiance = radiance_clamped;
 
   if (do_remap_mip0 && !any(greaterThanEqual(local_texel, int2(write_coord.extent)))) {
     float clamp_indirect = uniform_buf.clamp.surface_indirect;
-    float3 out_radiance = colorspace_brightness_clamp_max(radiance, clamp_indirect);
+    float3 out_radiance = colorspace::brightness_clamp_max(radiance, clamp_indirect);
 
     int3 texel = int3(local_texel + write_coord.offset, write_coord.layer);
     imageStore(atlas_img, texel, float4(out_radiance, 1.0f));

@@ -1792,11 +1792,13 @@ void register_standard_node_socket_types()
   bke::node_register_socket_type(*make_socket_type_float(PROP_WAVELENGTH));
   bke::node_register_socket_type(*make_socket_type_float(PROP_COLOR_TEMPERATURE));
   bke::node_register_socket_type(*make_socket_type_float(PROP_FREQUENCY));
+  bke::node_register_socket_type(*make_socket_type_float(PROP_PIXEL));
 
   bke::node_register_socket_type(*make_socket_type_int(PROP_NONE));
   bke::node_register_socket_type(*make_socket_type_int(PROP_UNSIGNED));
   bke::node_register_socket_type(*make_socket_type_int(PROP_PERCENTAGE));
   bke::node_register_socket_type(*make_socket_type_int(PROP_FACTOR));
+  bke::node_register_socket_type(*make_socket_type_int(PROP_PIXEL));
 
   bke::node_register_socket_type(*make_socket_type_bool());
 
@@ -1809,6 +1811,7 @@ void register_standard_node_socket_types()
   bke::node_register_socket_type(*make_socket_type_vector(PROP_ACCELERATION, 3));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_EULER, 3));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_XYZ, 3));
+  bke::node_register_socket_type(*make_socket_type_vector(PROP_PIXEL, 3));
 
   bke::node_register_socket_type(*make_socket_type_vector(PROP_NONE, 2));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_FACTOR, 2));
@@ -1819,6 +1822,7 @@ void register_standard_node_socket_types()
   bke::node_register_socket_type(*make_socket_type_vector(PROP_ACCELERATION, 2));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_EULER, 2));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_XYZ, 2));
+  bke::node_register_socket_type(*make_socket_type_vector(PROP_PIXEL, 2));
 
   bke::node_register_socket_type(*make_socket_type_vector(PROP_NONE, 4));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_FACTOR, 4));
@@ -1829,16 +1833,19 @@ void register_standard_node_socket_types()
   bke::node_register_socket_type(*make_socket_type_vector(PROP_ACCELERATION, 4));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_EULER, 4));
   bke::node_register_socket_type(*make_socket_type_vector(PROP_XYZ, 4));
+  bke::node_register_socket_type(*make_socket_type_vector(PROP_PIXEL, 4));
 
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_NONE, 2));
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_UNSIGNED, 2));
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_FACTOR, 2));
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_PERCENTAGE, 2));
+  bke::node_register_socket_type(*make_socket_type_int_vector(PROP_PIXEL, 2));
 
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_NONE, 3));
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_UNSIGNED, 3));
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_FACTOR, 3));
   bke::node_register_socket_type(*make_socket_type_int_vector(PROP_PERCENTAGE, 3));
+  bke::node_register_socket_type(*make_socket_type_int_vector(PROP_PIXEL, 3));
 
   bke::node_register_socket_type(*make_socket_type_rgba());
   bke::node_register_socket_type(*make_socket_type_rotation());

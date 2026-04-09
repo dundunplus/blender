@@ -277,7 +277,7 @@ def main() -> None:
         name="bpy",
         version=blender_version_str,
 
-        install_requires=["cython", "numpy>=2.2,<3.0", "requests", "zstandard"],
+        install_requires=["cattrs", "cython", "numpy>=2.2,<3.0", "requests", "zstandard"],
 
         python_requires="==%d.%d.*" % (python_version_number[0], python_version_number[1]),
         packages=["bpy"],

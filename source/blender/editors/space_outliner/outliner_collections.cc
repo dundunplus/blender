@@ -280,7 +280,8 @@ static wmOperatorStatus collection_new_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  BKE_collection_add(bmain, data.collection, nullptr);
+  Collection *new_collection = BKE_collection_add(bmain, data.collection, nullptr);
+  new_collection->color_tag = data.collection->color_tag;
 
   DEG_id_tag_update(&data.collection->id, ID_RECALC_SYNC_TO_EVAL);
   DEG_relations_tag_update(bmain);

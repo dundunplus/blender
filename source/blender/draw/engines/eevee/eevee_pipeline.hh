@@ -718,7 +718,7 @@ class UtilityTexture : public Texture {
 
   static constexpr int lut_size = UTIL_TEX_SIZE;
   static constexpr int lut_size_sqr = lut_size * lut_size;
-  static constexpr int layer_count = UTIL_BTDF_LAYER + UTIL_BTDF_LAYER_COUNT;
+  static constexpr int layer_count = UTIL_BSDF_LAYER + UTIL_BSDF_LAYER_COUNT;
 
  public:
   UtilityTexture()
@@ -752,7 +752,7 @@ class UtilityTexture : public Texture {
       memcpy(layer.data, lut::ltc_mat_ggx, sizeof(layer));
     }
     {
-      Layer &layer = data[UTIL_BSDF_LAYER];
+      Layer &layer = data[UTIL_BRDF_LAYER];
       for (auto x : IndexRange(lut_size)) {
         for (auto y : IndexRange(lut_size)) {
           layer.data[y][x][0] = lut::brdf_ggx[y][x][0];
@@ -764,7 +764,7 @@ class UtilityTexture : public Texture {
     }
     {
       for (auto layer_id : IndexRange(16)) {
-        Layer &layer = data[UTIL_BTDF_LAYER + layer_id];
+        Layer &layer = data[UTIL_BSDF_LAYER + layer_id];
         for (auto x : IndexRange(lut_size)) {
           for (auto y : IndexRange(lut_size)) {
             layer.data[y][x][0] = lut::bsdf_ggx[layer_id][y][x][0];

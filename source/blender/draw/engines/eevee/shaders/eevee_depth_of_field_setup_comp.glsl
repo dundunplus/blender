@@ -36,7 +36,7 @@ void main()
     float2 sample_uv = quad_center + quad_offsets[i] * fullres_texel_size;
     float depth = reverse_z::read(textureLod(depth_tx, sample_uv, 0.0f).r);
     /* NOTE: We use samplers without filtering. */
-    colors[i] = colorspace_safe_color(textureLod(color_tx, sample_uv, 0.0f));
+    colors[i] = colorspace::safe_color(textureLod(color_tx, sample_uv, 0.0f));
     cocs[i] = dof_coc_from_depth(dof_buf, sample_uv, depth);
   }
 

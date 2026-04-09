@@ -120,8 +120,8 @@ struct CurvesDataPanelState {
   char cyclic;
 
   float fill_opacity;
-  int start_cap;
-  int end_cap;
+  int8_t start_cap;
+  int8_t end_cap;
   float softness;
   float u_scale;
   float aspect_ratio;
@@ -540,6 +540,10 @@ struct CurvesSelectionStatus {
   int resolution_max = 0;
 
   StatusValue<float> fill_opacity;
+  /* Use int for start_cap and end_cap, even though the underlying
+   * attribute is int8_t. The statusvalue is used to hold the
+   * summation of the value over all curves, so it needs the headroom.
+   */
   StatusValue<int> start_cap;
   StatusValue<int> end_cap;
   StatusValue<float> softness;
@@ -2553,13 +2557,15 @@ static void handle_curves_end_cap(bContext *C, void *, void *)
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<int> end_cap = attributes.lookup_or_add_for_write_span<int>(
+        bke::SpanAttributeWriter<int8_t> end_cap = attributes.lookup_or_add_for_write_span<int8_t>(
             "end_cap",
             bke::AttrDomain::Curve,
             bke::AttributeInitVArray(
-                VArray<int>::from_single(GP_STROKE_CAP_TYPE_ROUND, curves.curves_num())));
-        index_mask::masked_fill(end_cap.span, modified_state.end_cap, selection);
-        end_cap.finish();
+                VArray<int8_t>::from_single(GP_STROKE_CAP_TYPE_ROUND, curves.curves_num())));
+        if (end_cap) {
+          index_mask::masked_fill(end_cap.span, modified_state.end_cap, selection);
+          end_cap.finish();
+        }
       });
 }
 
@@ -2573,13 +2579,16 @@ static void handle_curves_start_cap(bContext *C, void *, void *)
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<int> start_cap = attributes.lookup_or_add_for_write_span<int>(
-            "start_cap",
-            bke::AttrDomain::Curve,
-            bke::AttributeInitVArray(
-                VArray<int>::from_single(GP_STROKE_CAP_TYPE_ROUND, curves.curves_num())));
-        index_mask::masked_fill(start_cap.span, modified_state.start_cap, selection);
-        start_cap.finish();
+        bke::SpanAttributeWriter<int8_t> start_cap =
+            attributes.lookup_or_add_for_write_span<int8_t>(
+                "start_cap",
+                bke::AttrDomain::Curve,
+                bke::AttributeInitVArray(
+                    VArray<int8_t>::from_single(GP_STROKE_CAP_TYPE_ROUND, curves.curves_num())));
+        if (start_cap) {
+          index_mask::masked_fill(start_cap.span, modified_state.start_cap, selection);
+          start_cap.finish();
+        }
       });
 }
 
