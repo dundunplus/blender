@@ -293,7 +293,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDBlur", CMP_NODE_DBLUR);
+  cmp_node_type_base(&ntype, "CompositorNodeDBlur"_ustr, CMP_NODE_DBLUR);
   ntype.ui_name = "Directional Blur";
   ntype.ui_description = "Blur an image along a direction";
   ntype.enum_name_legacy = "DBLUR";

@@ -123,7 +123,8 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputNamedAttribute", GEO_NODE_INPUT_NAMED_ATTRIBUTE);
+  geo_node_type_base(
+      &ntype, "GeometryNodeInputNamedAttribute"_ustr, GEO_NODE_INPUT_NAMED_ATTRIBUTE);
   ntype.ui_name = "Named Attribute";
   ntype.ui_description = "Retrieve the data of a specified attribute";
   ntype.enum_name_legacy = "INPUT_ATTRIBUTE";

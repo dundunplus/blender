@@ -72,19 +72,19 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   if (params.in_out() == SOCK_IN) {
     if (socket_type == SOCK_INT) {
       params.add_item(IFACE_("Value"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("FunctionNodeValueToString");
+        bNode &node = params.add_node("FunctionNodeValueToString"_ustr);
         node.custom1 = SOCK_INT;
         params.update_and_connect_available_socket(node, "Value"_ustr);
       });
       params.add_item(IFACE_("Decimals"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("FunctionNodeValueToString");
+        bNode &node = params.add_node("FunctionNodeValueToString"_ustr);
         params.update_and_connect_available_socket(node, "Decimals"_ustr);
       });
     }
     else {
       if (params.node_tree().typeinfo->validate_link(socket_type, SOCK_FLOAT)) {
         params.add_item(IFACE_("Value"), [](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("FunctionNodeValueToString");
+          bNode &node = params.add_node("FunctionNodeValueToString"_ustr);
           node.custom1 = SOCK_FLOAT;
           params.update_and_connect_available_socket(node, "Value"_ustr);
         });
@@ -94,7 +94,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   else {
     if (socket_type == SOCK_STRING) {
       params.add_item(IFACE_("String"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("FunctionNodeValueToString");
+        bNode &node = params.add_node("FunctionNodeValueToString"_ustr);
         params.update_and_connect_available_socket(node, "String"_ustr);
       });
     }
@@ -127,7 +127,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeValueToString", FN_NODE_VALUE_TO_STRING);
+  fn_node_type_base(&ntype, "FunctionNodeValueToString"_ustr, FN_NODE_VALUE_TO_STRING);
   ntype.ui_name = "Value to String";
   ntype.ui_description = "Generate a string representation of the given input value";
   ntype.enum_name_legacy = "VALUE_TO_STRING";

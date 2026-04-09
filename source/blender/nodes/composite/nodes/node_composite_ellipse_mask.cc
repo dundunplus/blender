@@ -248,7 +248,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeEllipseMask", CMP_NODE_MASK_ELLIPSE);
+  cmp_node_type_base(&ntype, "CompositorNodeEllipseMask"_ustr, CMP_NODE_MASK_ELLIPSE);
   ntype.ui_name = "Ellipse Mask";
   ntype.ui_description =
       "Create elliptical mask suitable for use as a simple matte or vignette mask";

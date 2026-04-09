@@ -263,7 +263,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeAlignEulerToVector", FN_NODE_ALIGN_EULER_TO_VECTOR);
+  fn_node_type_base(&ntype, "FunctionNodeAlignEulerToVector"_ustr, FN_NODE_ALIGN_EULER_TO_VECTOR);
   ntype.ui_name = "Align Euler to Vector";
   ntype.ui_description = "Orient an Euler rotation along the given direction";
   ntype.enum_name_legacy = "ALIGN_EULER_TO_VECTOR";

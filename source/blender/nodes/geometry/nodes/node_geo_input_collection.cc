@@ -29,7 +29,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputCollection", GEO_NODE_INPUT_COLLECTION);
+  geo_node_type_base(&ntype, "GeometryNodeInputCollection"_ustr, GEO_NODE_INPUT_COLLECTION);
   ntype.ui_name = "Collection";
   ntype.ui_description = "Output a single collection";
   ntype.enum_name_legacy = "INPUT_COLLECTION";

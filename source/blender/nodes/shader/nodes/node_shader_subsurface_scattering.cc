@@ -126,7 +126,7 @@ void register_node_type_sh_subsurface_scattering()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeSubsurfaceScattering", SH_NODE_SUBSURFACE_SCATTERING);
+  sh_node_type_base(&ntype, "ShaderNodeSubsurfaceScattering"_ustr, SH_NODE_SUBSURFACE_SCATTERING);
   ntype.ui_name = "Subsurface Scattering";
   ntype.ui_description =
       "Subsurface multiple scattering shader to simulate light entering the surface and bouncing "

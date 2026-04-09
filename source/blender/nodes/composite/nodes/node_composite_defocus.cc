@@ -517,7 +517,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDefocus", CMP_NODE_DEFOCUS);
+  cmp_node_type_base(&ntype, "CompositorNodeDefocus"_ustr, CMP_NODE_DEFOCUS);
   ntype.ui_name = "Defocus";
   ntype.ui_description = "Apply depth of field in 2D, using a Z depth map or mask";
   ntype.enum_name_legacy = "DEFOCUS";

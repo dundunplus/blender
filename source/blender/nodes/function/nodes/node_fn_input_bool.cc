@@ -62,7 +62,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "FunctionNodeInputBool", FN_NODE_INPUT_BOOL);
+  common_node_type_base(&ntype, "FunctionNodeInputBool"_ustr, FN_NODE_INPUT_BOOL);
   ntype.ui_name = "Boolean";
   ntype.ui_description =
       "Provide a True/False value that can be connected to other nodes in the tree";

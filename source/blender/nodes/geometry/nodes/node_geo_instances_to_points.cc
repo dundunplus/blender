@@ -127,7 +127,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInstancesToPoints", GEO_NODE_INSTANCES_TO_POINTS);
+  geo_node_type_base(&ntype, "GeometryNodeInstancesToPoints"_ustr, GEO_NODE_INSTANCES_TO_POINTS);
   ntype.ui_name = "Instances to Points";
   ntype.ui_description =
       "Generate points at the origins of instances.\nNote: Nested instances are not affected by "

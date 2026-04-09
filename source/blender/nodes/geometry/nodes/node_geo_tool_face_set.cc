@@ -27,7 +27,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeToolFaceSet", GEO_NODE_TOOL_FACE_SET);
+  geo_node_type_base(&ntype, "GeometryNodeToolFaceSet"_ustr, GEO_NODE_TOOL_FACE_SET);
   ntype.ui_name = "Face Set";
   ntype.ui_description = "Each face's sculpt face set value";
   ntype.enum_name_legacy = "TOOL_FACE_SET";

@@ -38,7 +38,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeGridCurl");
+  geo_node_type_base(&ntype, "GeometryNodeGridCurl"_ustr);
   ntype.ui_name = "Grid Curl";
   ntype.ui_description =
       "Calculate the magnitude and direction of circulation of a directional vector grid";

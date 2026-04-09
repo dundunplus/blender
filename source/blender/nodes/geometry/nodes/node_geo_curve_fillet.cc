@@ -174,7 +174,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeFilletCurve", GEO_NODE_FILLET_CURVE);
+  geo_node_type_base(&ntype, "GeometryNodeFilletCurve"_ustr, GEO_NODE_FILLET_CURVE);
   ntype.ui_name = "Fillet Curve";
   ntype.ui_description = "Round corners by generating circular arcs on each control point";
   ntype.enum_name_legacy = "FILLET_CURVE";

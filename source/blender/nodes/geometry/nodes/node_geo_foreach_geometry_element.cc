@@ -214,8 +214,9 @@ static bool node_insert_link(bke::NodeInsertLinkParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(
-      &ntype, "GeometryNodeForeachGeometryElementInput", GEO_NODE_FOREACH_GEOMETRY_ELEMENT_INPUT);
+  geo_node_type_base(&ntype,
+                     "GeometryNodeForeachGeometryElementInput"_ustr,
+                     GEO_NODE_FOREACH_GEOMETRY_ELEMENT_INPUT);
   ntype.ui_name = "For Each Geometry Element Input";
   ntype.enum_name_legacy = "FOREACH_GEOMETRY_ELEMENT_INPUT";
   ntype.nclass = NODE_CLASS_INTERFACE;
@@ -388,8 +389,8 @@ static void node_extra_info(NodeExtraInfoParams &params)
 
 static std::pair<bNode *, bNode *> add_foreach_zone(LinkSearchOpParams &params)
 {
-  bNode &input_node = params.add_node("GeometryNodeForeachGeometryElementInput");
-  bNode &output_node = params.add_node("GeometryNodeForeachGeometryElementOutput");
+  bNode &input_node = params.add_node("GeometryNodeForeachGeometryElementInput"_ustr);
+  bNode &output_node = params.add_node("GeometryNodeForeachGeometryElementOutput"_ustr);
   output_node.location[0] = 300;
 
   auto &input_storage = *static_cast<NodeGeometryForeachGeometryElementInput *>(
@@ -453,7 +454,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(&ntype,
-                     "GeometryNodeForeachGeometryElementOutput",
+                     "GeometryNodeForeachGeometryElementOutput"_ustr,
                      GEO_NODE_FOREACH_GEOMETRY_ELEMENT_OUTPUT);
   ntype.ui_name = "For Each Geometry Element Output";
   ntype.enum_name_legacy = "FOREACH_GEOMETRY_ELEMENT_OUTPUT";

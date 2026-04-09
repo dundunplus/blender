@@ -109,7 +109,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeCurveOfPoint", GEO_NODE_CURVE_TOPOLOGY_CURVE_OF_POINT);
+  geo_node_type_base(
+      &ntype, "GeometryNodeCurveOfPoint"_ustr, GEO_NODE_CURVE_TOPOLOGY_CURVE_OF_POINT);
   ntype.ui_name = "Curve of Point";
   ntype.ui_description = "Retrieve the curve a control point is part of";
   ntype.enum_name_legacy = "CURVE_OF_POINT";

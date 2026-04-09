@@ -77,7 +77,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeRotateRotation", FN_NODE_ROTATE_ROTATION);
+  fn_node_type_base(&ntype, "FunctionNodeRotateRotation"_ustr, FN_NODE_ROTATE_ROTATION);
   ntype.ui_name = "Rotate Rotation";
   ntype.ui_description = "Apply a secondary rotation to a given rotation value";
   ntype.enum_name_legacy = "ROTATE_ROTATION";

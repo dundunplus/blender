@@ -42,7 +42,7 @@ void register_node_type_sh_point_info()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodePointInfo", SH_NODE_POINT_INFO);
+  sh_node_type_base(&ntype, "ShaderNodePointInfo"_ustr, SH_NODE_POINT_INFO);
   ntype.ui_name = "Point Info";
   ntype.ui_description = "Retrieve information about points in a point cloud";
   ntype.enum_name_legacy = "POINT_INFO";

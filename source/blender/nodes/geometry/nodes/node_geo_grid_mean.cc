@@ -85,14 +85,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
 
   if (params.in_out() == SOCK_IN && (is_grid || is_dynamic)) {
     params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeGridMean");
+      bNode &node = params.add_node("GeometryNodeGridMean"_ustr);
       node.custom1 = *data_type;
       params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
   }
   else if (params.in_out() == SOCK_OUT) {
     params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeGridMean");
+      bNode &node = params.add_node("GeometryNodeGridMean"_ustr);
       node.custom1 = *data_type;
       params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
@@ -163,7 +163,7 @@ static void node_register()
 {
   static blender::bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeGridMean");
+  geo_node_type_base(&ntype, "GeometryNodeGridMean"_ustr);
   ntype.ui_name = "Grid Mean";
   ntype.ui_description =
       "Apply mean (box) filter smoothing to a voxel. The mean value from surrounding voxels in a "

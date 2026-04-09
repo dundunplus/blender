@@ -215,7 +215,7 @@ void register_node_type_sh_radial_tiling()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeRadialTiling");
+  common_node_type_base(&ntype, "ShaderNodeRadialTiling"_ustr);
   ntype.ui_name = "Radial Tiling";
   ntype.ui_description = "Transform Coordinate System for Radial Tiling";
   ntype.nclass = NODE_CLASS_OP_VECTOR;

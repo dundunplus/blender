@@ -57,7 +57,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeNormal", CMP_NODE_NORMAL);
+  cmp_node_type_base(&ntype, "CompositorNodeNormal"_ustr, CMP_NODE_NORMAL);
   ntype.ui_name = "Normal";
   ntype.ui_description = "Input normalized normal values to other nodes in the tree";
   ntype.enum_name_legacy = "NORMAL";

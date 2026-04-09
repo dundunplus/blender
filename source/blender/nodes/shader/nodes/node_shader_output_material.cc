@@ -80,7 +80,7 @@ void register_node_type_sh_output_material()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeOutputMaterial", SH_NODE_OUTPUT_MATERIAL);
+  sh_node_type_base(&ntype, "ShaderNodeOutputMaterial"_ustr, SH_NODE_OUTPUT_MATERIAL);
   ntype.ui_name = "Material Output";
   ntype.ui_description = "Output surface material information for use in rendering";
   ntype.enum_name_legacy = "OUTPUT_MATERIAL";

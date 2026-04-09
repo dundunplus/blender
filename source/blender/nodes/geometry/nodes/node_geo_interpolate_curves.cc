@@ -878,7 +878,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInterpolateCurves", GEO_NODE_INTERPOLATE_CURVES);
+  geo_node_type_base(&ntype, "GeometryNodeInterpolateCurves"_ustr, GEO_NODE_INTERPOLATE_CURVES);
   ntype.ui_name = "Interpolate Curves";
   ntype.ui_description = "Generate new curves on points by interpolating between existing curves";
   ntype.enum_name_legacy = "INTERPOLATE_CURVES";

@@ -37,7 +37,7 @@ void register_node_type_sh_squeeze()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeSqueeze", SH_NODE_SQUEEZE);
+  sh_node_type_base(&ntype, "ShaderNodeSqueeze"_ustr, SH_NODE_SQUEEZE);
   ntype.ui_name = "Squeeze Value (Legacy)";
   ntype.ui_description = "Deprecated";
   ntype.enum_name_legacy = "SQUEEZE";

@@ -284,8 +284,8 @@ static void rna_NodeTreeInterfaceSocket_init_socket_custom(
 
   ParameterList list;
   RNA_parameter_list_create(&list, &ptr, func);
-  RNA_parameter_set_lookup(&list, "node", node);
-  RNA_parameter_set_lookup(&list, "socket", socket);
+  RNA_parameter_set_lookup(&list, "node", &node);
+  RNA_parameter_set_lookup(&list, "socket", &socket);
   RNA_parameter_set_lookup(&list, "data_path", &data_path);
   typeinfo->ext_interface.call(nullptr, &ptr, func, &list);
 
@@ -318,8 +318,8 @@ static void rna_NodeTreeInterfaceSocket_from_socket_custom(
 
   ParameterList list;
   RNA_parameter_list_create(&list, &ptr, func);
-  RNA_parameter_set_lookup(&list, "node", node);
-  RNA_parameter_set_lookup(&list, "socket", socket);
+  RNA_parameter_set_lookup(&list, "node", &node);
+  RNA_parameter_set_lookup(&list, "socket", &socket);
   typeinfo->ext_interface.call(nullptr, &ptr, func, &list);
 
   RNA_parameter_list_free(&list);

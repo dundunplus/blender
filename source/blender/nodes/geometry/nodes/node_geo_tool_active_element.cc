@@ -98,7 +98,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeToolActiveElement", GEO_NODE_TOOL_ACTIVE_ELEMENT);
+  geo_node_type_base(&ntype, "GeometryNodeToolActiveElement"_ustr, GEO_NODE_TOOL_ACTIVE_ELEMENT);
   ntype.ui_name = "Active Element";
   ntype.ui_description = "Active element indices of the edited geometry, for tool execution";
   ntype.enum_name_legacy = "TOOL_ACTIVE_ELEMENT";

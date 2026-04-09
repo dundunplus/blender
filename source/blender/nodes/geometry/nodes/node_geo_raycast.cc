@@ -111,7 +111,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   if (type && *type != CD_PROP_STRING) {
     /* The input and output sockets have the same name. */
     params.add_item(IFACE_("Attribute"), [type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeRaycast");
+      bNode &node = params.add_node("GeometryNodeRaycast"_ustr);
       node_storage(node).data_type = *type;
       params.update_and_connect_available_socket(node, "Attribute"_ustr);
     });
@@ -379,7 +379,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeRaycast", GEO_NODE_RAYCAST);
+  geo_node_type_base(&ntype, "GeometryNodeRaycast"_ustr, GEO_NODE_RAYCAST);
   ntype.ui_name = "Raycast";
   ntype.ui_description =
       "Cast rays from the context geometry onto a target geometry, and retrieve information from "

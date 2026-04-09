@@ -27,7 +27,7 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeInvertRotation", FN_NODE_INVERT_ROTATION);
+  fn_node_type_base(&ntype, "FunctionNodeInvertRotation"_ustr, FN_NODE_INVERT_ROTATION);
   ntype.ui_name = "Invert Rotation";
   ntype.ui_description = "Compute the inverse of the given rotation";
   ntype.enum_name_legacy = "INVERT_ROTATION";

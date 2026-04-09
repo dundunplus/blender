@@ -92,7 +92,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeSetAlpha", CMP_NODE_SETALPHA);
+  cmp_node_type_base(&ntype, "CompositorNodeSetAlpha"_ustr, CMP_NODE_SETALPHA);
   ntype.ui_name = "Set Alpha";
   ntype.ui_description = "Add an alpha channel to an image";
   ntype.enum_name_legacy = "SETALPHA";

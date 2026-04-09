@@ -179,7 +179,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeAxesToRotation", FN_NODE_AXES_TO_ROTATION);
+  fn_node_type_base(&ntype, "FunctionNodeAxesToRotation"_ustr, FN_NODE_AXES_TO_ROTATION);
   ntype.ui_name = "Axes to Rotation";
   ntype.ui_description =
       "Create a rotation from a primary and (ideally orthogonal) secondary axis";

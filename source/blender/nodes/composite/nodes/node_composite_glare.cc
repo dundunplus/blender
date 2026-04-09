@@ -278,7 +278,7 @@ class SocketSearchOp {
   CMPNodeGlareType type = CMP_NODE_GLARE_SIMPLE_STAR;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("CompositorNodeGlare");
+    bNode &node = params.add_node("CompositorNodeGlare"_ustr);
     bNodeSocket &type_socket = *bke::node_find_socket(node, SOCK_IN, "Type");
     type_socket.default_value_typed<bNodeSocketValueMenu>()->value = this->type;
     params.update_and_connect_available_socket(node, "Image"_ustr);
@@ -2816,7 +2816,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeGlare", CMP_NODE_GLARE);
+  cmp_node_type_base(&ntype, "CompositorNodeGlare"_ustr, CMP_NODE_GLARE);
   ntype.ui_name = "Glare";
   ntype.ui_description = "Add lens flares, fog and glows around bright parts of the image";
   ntype.enum_name_legacy = "GLARE";

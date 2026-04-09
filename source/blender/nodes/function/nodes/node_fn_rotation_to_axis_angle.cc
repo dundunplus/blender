@@ -89,7 +89,8 @@ static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeRotationToAxisAngle", FN_NODE_ROTATION_TO_AXIS_ANGLE);
+  fn_node_type_base(
+      &ntype, "FunctionNodeRotationToAxisAngle"_ustr, FN_NODE_ROTATION_TO_AXIS_ANGLE);
   ntype.ui_name = "Rotation to Axis Angle";
   ntype.ui_description = "Convert a rotation to axis angle components";
   ntype.enum_name_legacy = "ROTATION_TO_AXIS_ANGLE";

@@ -243,7 +243,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeCrop", CMP_NODE_CROP);
+  cmp_node_type_base(&ntype, "CompositorNodeCrop"_ustr, CMP_NODE_CROP);
   ntype.ui_name = "Crop";
   ntype.ui_description =
       "Crops image to a smaller region, either making the cropped area transparent or resizing "

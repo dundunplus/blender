@@ -103,7 +103,7 @@ class SocketSearchOp {
   NodeIntegerMathOperation operation;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("FunctionNodeIntegerMath");
+    bNode &node = params.add_node("FunctionNodeIntegerMath"_ustr);
     node.custom1 = NodeIntegerMathOperation(operation);
     int_math_input_defaults(node, operation);
     params.update_and_connect_available_socket(node, socket_name);
@@ -286,7 +286,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeIntegerMath", FN_NODE_INTEGER_MATH);
+  fn_node_type_base(&ntype, "FunctionNodeIntegerMath"_ustr, FN_NODE_INTEGER_MATH);
   ntype.ui_name = "Integer Math";
   ntype.ui_description = "Perform various math operations on the given integer inputs";
   ntype.enum_name_legacy = "INTEGER_MATH";

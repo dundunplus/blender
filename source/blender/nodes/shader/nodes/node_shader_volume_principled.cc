@@ -164,7 +164,7 @@ void register_node_type_sh_volume_principled()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeVolumePrincipled", SH_NODE_VOLUME_PRINCIPLED);
+  sh_node_type_base(&ntype, "ShaderNodeVolumePrincipled"_ustr, SH_NODE_VOLUME_PRINCIPLED);
   ntype.ui_name = "Principled Volume";
   ntype.ui_description = "Combine all volume shading components into a single easy to use node";
   ntype.enum_name_legacy = "PRINCIPLED_VOLUME";

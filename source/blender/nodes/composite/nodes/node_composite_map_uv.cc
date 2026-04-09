@@ -362,7 +362,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeMapUV", CMP_NODE_MAP_UV);
+  cmp_node_type_base(&ntype, "CompositorNodeMapUV"_ustr, CMP_NODE_MAP_UV);
   ntype.ui_name = "Map UV";
   ntype.ui_description =
       "Map a texture using UV coordinates, to apply a texture to objects in compositing";

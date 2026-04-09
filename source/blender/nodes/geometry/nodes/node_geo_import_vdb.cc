@@ -59,7 +59,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeImportVDB");
+  geo_node_type_base(&ntype, "GeometryNodeImportVDB"_ustr);
   ntype.ui_name = "Import VDB";
   ntype.ui_description = "Import volume data from a .vdb file";
   ntype.nclass = NODE_CLASS_INPUT;

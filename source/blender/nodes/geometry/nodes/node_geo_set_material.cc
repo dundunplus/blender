@@ -187,7 +187,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetMaterial", GEO_NODE_SET_MATERIAL);
+  geo_node_type_base(&ntype, "GeometryNodeSetMaterial"_ustr, GEO_NODE_SET_MATERIAL);
   ntype.ui_name = "Set Material";
   ntype.ui_description = "Assign a material to geometry elements";
   ntype.enum_name_legacy = "SET_MATERIAL";

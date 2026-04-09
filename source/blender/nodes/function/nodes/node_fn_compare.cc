@@ -118,7 +118,7 @@ class SocketSearchOp {
   NodeCompareMode mode = NODE_COMPARE_MODE_ELEMENT;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("FunctionNodeCompare");
+    bNode &node = params.add_node("FunctionNodeCompare"_ustr);
     node_storage(node).data_type = data_type;
     node_storage(node).operation = operation;
     node_storage(node).mode = mode;
@@ -740,7 +740,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeCompare", FN_NODE_COMPARE);
+  fn_node_type_base(&ntype, "FunctionNodeCompare"_ustr, FN_NODE_COMPARE);
   ntype.ui_name = "Compare";
   ntype.ui_description = "Perform a comparison operation on the two given inputs";
   ntype.enum_name_legacy = "COMPARE";

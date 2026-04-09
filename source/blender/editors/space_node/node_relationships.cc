@@ -711,7 +711,7 @@ static void finalize_viewer_link(const bContext &C,
   }
   else if (snode.edittree->type == NTREE_COMPOSIT) {
     for (bNode *node : snode.nodetree->all_nodes()) {
-      if (node->is_type("CompositorNodeViewer") && node != &viewer_node) {
+      if (node->is_type("CompositorNodeViewer"_ustr) && node != &viewer_node) {
         node->flag &= ~NODE_DO_OUTPUT;
       }
     }

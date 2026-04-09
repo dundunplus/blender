@@ -198,7 +198,7 @@ void eval_downstream(
         forward_output({context, &node.output_socket(0)});
       }
     }
-    if (node.is_type("NodeImplicitConversion")) {
+    if (node.is_type("NodeImplicitConversion"_ustr)) {
       if (propagate_value_fn({context, &node.input_socket(0)}, {context, &node.output_socket(0)}))
       {
         forward_output({context, &node.output_socket(0)});
@@ -386,7 +386,7 @@ UpstreamEvalTargets eval_upstream(
       propagate_value_fn({context, &node.output_socket(0)}, {context, &node.input_socket(0)});
       forward_input({context, &node.input_socket(0)});
     }
-    else if (node.is_type("NodeImplicitConversion")) {
+    else if (node.is_type("NodeImplicitConversion"_ustr)) {
       propagate_value_fn({context, &node.output_socket(0)}, {context, &node.input_socket(0)});
       forward_input({context, &node.input_socket(0)});
     }

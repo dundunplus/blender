@@ -179,7 +179,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeAlphaOver", CMP_NODE_ALPHAOVER);
+  cmp_node_type_base(&ntype, "CompositorNodeAlphaOver"_ustr, CMP_NODE_ALPHAOVER);
   ntype.ui_name = "Alpha Over";
   ntype.ui_description = "Overlay a foreground image onto a background image";
   ntype.enum_name_legacy = "ALPHAOVER";

@@ -134,7 +134,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   geo_node_type_base(
-      &ntype, "GeometryNodeCurveHandleTypeSelection", GEO_NODE_CURVE_HANDLE_TYPE_SELECTION);
+      &ntype, "GeometryNodeCurveHandleTypeSelection"_ustr, GEO_NODE_CURVE_HANDLE_TYPE_SELECTION);
   ntype.ui_name = "Handle Type Selection";
   ntype.ui_description = "Provide a selection based on the handle types of Bézier control points";
   ntype.enum_name_legacy = "CURVE_HANDLE_TYPE_SELECTION";

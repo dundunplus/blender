@@ -41,7 +41,7 @@ void register_node_type_sh_background()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBackground", SH_NODE_BACKGROUND);
+  sh_node_type_base(&ntype, "ShaderNodeBackground"_ustr, SH_NODE_BACKGROUND);
   ntype.ui_name = "Background";
   ntype.ui_description =
       "Add background light emission.\nNote: This node should only be used for the world surface "

@@ -29,7 +29,7 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeRotateVector", FN_NODE_ROTATE_VECTOR);
+  fn_node_type_base(&ntype, "FunctionNodeRotateVector"_ustr, FN_NODE_ROTATE_VECTOR);
   ntype.ui_name = "Rotate Vector";
   ntype.ui_description = "Apply a rotation to a given vector";
   ntype.enum_name_legacy = "ROTATE_VECTOR";

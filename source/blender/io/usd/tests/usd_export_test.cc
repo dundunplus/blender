@@ -45,7 +45,7 @@ const StringRefNull materials_filename = "usd/usd_materials_export.blend";
 const StringRefNull output_filename = "output.usd";
 
 static const bNode *find_node_for_type_in_graph(const bNodeTree *nodetree,
-                                                const StringRefNull type_idname);
+                                                const UString type_idname);
 
 class UsdExportTest : public BlendfileLoadingBaseTest {
  protected:
@@ -236,7 +236,7 @@ TEST_F(UsdExportTest, usd_export_rain_mesh)
 }
 
 static const bNode *find_node_for_type_in_graph(const bNodeTree *nodetree,
-                                                const StringRefNull type_idname)
+                                                const UString type_idname)
 {
   auto found_nodes = nodetree->nodes_by_type(type_idname);
   if (found_nodes.size() == 1) {
@@ -287,7 +287,7 @@ TEST_F(UsdExportTest, usd_export_material)
 
   material->nodetree->ensure_topology_cache();
   const bNode *bsdf_node = find_node_for_type_in_graph(material->nodetree,
-                                                       "ShaderNodeBsdfPrincipled");
+                                                       "ShaderNodeBsdfPrincipled"_ustr);
 
   const std::string prim_name = pxr::TfMakeValidIdentifier(bsdf_node->name);
   const pxr::UsdPrim bsdf_prim = stage->GetPrimAtPath(
@@ -295,7 +295,8 @@ TEST_F(UsdExportTest, usd_export_material)
 
   compare_blender_node_to_usd_prim(bsdf_node, bsdf_prim);
 
-  const bNode *image_node = find_node_for_type_in_graph(material->nodetree, "ShaderNodeTexImage");
+  const bNode *image_node = find_node_for_type_in_graph(material->nodetree,
+                                                        "ShaderNodeTexImage"_ustr);
   ASSERT_NE(image_node, nullptr);
   ASSERT_NE(image_node->storage, nullptr);
 

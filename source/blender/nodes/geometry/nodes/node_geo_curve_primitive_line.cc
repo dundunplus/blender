@@ -139,7 +139,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeCurvePrimitiveLine", GEO_NODE_CURVE_PRIMITIVE_LINE);
+  geo_node_type_base(&ntype, "GeometryNodeCurvePrimitiveLine"_ustr, GEO_NODE_CURVE_PRIMITIVE_LINE);
   ntype.ui_name = "Curve Line";
   ntype.ui_description = "Generate a poly spline line with two points";
   ntype.enum_name_legacy = "CURVE_PRIMITIVE_LINE";

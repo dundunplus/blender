@@ -58,7 +58,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetID", GEO_NODE_SET_ID);
+  geo_node_type_base(&ntype, "GeometryNodeSetID"_ustr, GEO_NODE_SET_ID);
   ntype.ui_name = "Set ID";
   ntype.ui_description =
       "Set the id attribute on the input geometry, mainly used internally for randomizing";

@@ -58,7 +58,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeRGB", CMP_NODE_RGB);
+  cmp_node_type_base(&ntype, "CompositorNodeRGB"_ustr, CMP_NODE_RGB);
   ntype.ui_name = "Color";
   ntype.ui_description = "A color picker";
   ntype.enum_name_legacy = "RGB";

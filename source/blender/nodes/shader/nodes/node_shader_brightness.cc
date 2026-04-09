@@ -63,7 +63,7 @@ void register_node_type_sh_brightcontrast()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBrightContrast", SH_NODE_BRIGHTCONTRAST);
+  sh_node_type_base(&ntype, "ShaderNodeBrightContrast"_ustr, SH_NODE_BRIGHTCONTRAST);
   ntype.ui_name = "Brightness/Contrast";
   ntype.ui_description = "Control the brightness and contrast of the input color";
   ntype.enum_name_legacy = "BRIGHTCONTRAST";

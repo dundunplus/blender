@@ -54,7 +54,7 @@ static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeRotationToEuler", FN_NODE_ROTATION_TO_EULER);
+  fn_node_type_base(&ntype, "FunctionNodeRotationToEuler"_ustr, FN_NODE_ROTATION_TO_EULER);
   ntype.ui_name = "Rotation to Euler";
   ntype.ui_description = "Convert a standard rotation value to an Euler rotation";
   ntype.enum_name_legacy = "ROTATION_TO_EULER";

@@ -120,7 +120,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeRealizeInstances", GEO_NODE_REALIZE_INSTANCES);
+  geo_node_type_base(&ntype, "GeometryNodeRealizeInstances"_ustr, GEO_NODE_REALIZE_INSTANCES);
   ntype.ui_name = "Realize Instances";
   ntype.ui_description = "Convert instances into real geometry data";
   ntype.enum_name_legacy = "REALIZE_INSTANCES";

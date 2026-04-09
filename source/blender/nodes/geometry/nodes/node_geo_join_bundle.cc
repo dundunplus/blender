@@ -78,7 +78,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "NodeJoinBundle");
+  sh_geo_node_type_base(&ntype, "NodeJoinBundle"_ustr);
   ntype.ui_name = "Join Bundle";
   ntype.ui_description = "Join multiple bundles together";
   ntype.nclass = NODE_CLASS_CONVERTER;

@@ -35,7 +35,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeToolMousePosition", GEO_NODE_TOOL_MOUSE_POSITION);
+  geo_node_type_base(&ntype, "GeometryNodeToolMousePosition"_ustr, GEO_NODE_TOOL_MOUSE_POSITION);
   ntype.ui_name = "Mouse Position";
   ntype.ui_description = "Retrieve the position of the mouse cursor";
   ntype.enum_name_legacy = "TOOL_MOUSE_POSITION";

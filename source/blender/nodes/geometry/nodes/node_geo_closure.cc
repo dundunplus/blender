@@ -133,7 +133,7 @@ static bool node_insert_link(bke::NodeInsertLinkParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "NodeClosureInput", NODE_CLOSURE_INPUT);
+  sh_geo_node_type_base(&ntype, "NodeClosureInput"_ustr, NODE_CLOSURE_INPUT);
   ntype.ui_name = "Closure Input";
   ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.declare = node_declare;
@@ -238,8 +238,8 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     return;
   }
   params.add_item_full_name(IFACE_("Closure"), [](LinkSearchOpParams &params) {
-    bNode &input_node = params.add_node("NodeClosureInput");
-    bNode &output_node = params.add_node("NodeClosureOutput");
+    bNode &input_node = params.add_node("NodeClosureInput"_ustr);
+    bNode &output_node = params.add_node("NodeClosureOutput"_ustr);
     output_node.location[0] = 300;
 
     auto &input_storage = *static_cast<NodeClosureInput *>(input_node.storage);
@@ -267,7 +267,7 @@ static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "NodeClosureOutput", NODE_CLOSURE_OUTPUT);
+  sh_geo_node_type_base(&ntype, "NodeClosureOutput"_ustr, NODE_CLOSURE_OUTPUT);
   ntype.ui_name = "Closure Output";
   ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.declare = node_declare;

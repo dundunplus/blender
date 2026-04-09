@@ -50,7 +50,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetPointRadius", GEO_NODE_SET_POINT_RADIUS);
+  geo_node_type_base(&ntype, "GeometryNodeSetPointRadius"_ustr, GEO_NODE_SET_POINT_RADIUS);
   ntype.ui_name = "Set Point Radius";
   ntype.ui_description = "Set the display size of point cloud points";
   ntype.enum_name_legacy = "SET_POINT_RADIUS";

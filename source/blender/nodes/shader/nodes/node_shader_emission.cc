@@ -54,7 +54,7 @@ void register_node_type_sh_emission()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeEmission", SH_NODE_EMISSION);
+  sh_node_type_base(&ntype, "ShaderNodeEmission"_ustr, SH_NODE_EMISSION);
   ntype.ui_name = "Emission";
   ntype.ui_description = "Lambertian emission shader";
   ntype.enum_name_legacy = "EMISSION";

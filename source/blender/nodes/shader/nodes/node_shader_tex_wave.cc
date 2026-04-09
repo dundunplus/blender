@@ -343,7 +343,7 @@ void register_node_type_sh_tex_wave()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeTexWave", SH_NODE_TEX_WAVE);
+  common_node_type_base(&ntype, "ShaderNodeTexWave"_ustr, SH_NODE_TEX_WAVE);
   ntype.ui_name = "Wave Texture";
   ntype.ui_description = "Generate procedural bands or rings with noise";
   ntype.enum_name_legacy = "TEX_WAVE";

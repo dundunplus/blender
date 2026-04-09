@@ -1554,7 +1554,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeExtrudeMesh", GEO_NODE_EXTRUDE_MESH);
+  geo_node_type_base(&ntype, "GeometryNodeExtrudeMesh"_ustr, GEO_NODE_EXTRUDE_MESH);
   ntype.ui_name = "Extrude Mesh";
   ntype.ui_description =
       "Generate new vertices, edges, or faces from selected elements and move them based on an "

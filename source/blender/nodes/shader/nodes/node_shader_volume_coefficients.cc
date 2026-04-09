@@ -153,7 +153,7 @@ void register_node_type_sh_volume_coefficients()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeVolumeCoefficients", SH_NODE_VOLUME_COEFFICIENTS);
+  sh_node_type_base(&ntype, "ShaderNodeVolumeCoefficients"_ustr, SH_NODE_VOLUME_COEFFICIENTS);
   ntype.ui_name = "Volume Coefficients";
   ntype.ui_description =
       "Model all three physical processes in a volume, represented by their coefficients";

@@ -175,7 +175,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeCurveRGB", CMP_NODE_CURVE_RGB);
+  cmp_node_type_base(&ntype, "CompositorNodeCurveRGB"_ustr, CMP_NODE_CURVE_RGB);
   ntype.ui_name = "RGB Curves";
   ntype.ui_description = "Perform level adjustments on each color channel of an image";
   ntype.enum_name_legacy = "CURVE_RGB";

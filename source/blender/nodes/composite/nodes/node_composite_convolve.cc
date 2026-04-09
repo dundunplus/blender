@@ -113,7 +113,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeConvolve");
+  cmp_node_type_base(&ntype, "CompositorNodeConvolve"_ustr);
   ntype.ui_name = "Convolve";
   ntype.ui_description = "Convolves an image with a kernel";
   ntype.nclass = NODE_CLASS_OP_FILTER;

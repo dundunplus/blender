@@ -67,7 +67,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSDFGridMedian");
+  geo_node_type_base(&ntype, "GeometryNodeSDFGridMedian"_ustr);
   ntype.ui_name = "SDF Grid Median";
   ntype.ui_description =
       "Apply median filter to a signed distance field. Reduces noise while preserving sharp "

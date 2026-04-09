@@ -61,7 +61,7 @@ void register_node_type_sh_object_info()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeObjectInfo", SH_NODE_OBJECT_INFO);
+  sh_node_type_base(&ntype, "ShaderNodeObjectInfo"_ustr, SH_NODE_OBJECT_INFO);
   ntype.ui_name = "Object Info";
   ntype.ui_description = "Retrieve information about the object instance";
   ntype.enum_name_legacy = "OBJECT_INFO";

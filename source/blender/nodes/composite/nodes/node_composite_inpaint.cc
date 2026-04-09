@@ -353,7 +353,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeInpaint", CMP_NODE_INPAINT);
+  cmp_node_type_base(&ntype, "CompositorNodeInpaint"_ustr, CMP_NODE_INPAINT);
   ntype.ui_name = "Inpaint";
   ntype.ui_description = "Extend borders of an image into transparent or masked regions";
   ntype.enum_name_legacy = "INPAINT";

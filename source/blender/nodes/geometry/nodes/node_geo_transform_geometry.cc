@@ -108,7 +108,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void register_node()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeTransform", GEO_NODE_TRANSFORM_GEOMETRY);
+  geo_node_type_base(&ntype, "GeometryNodeTransform"_ustr, GEO_NODE_TRANSFORM_GEOMETRY);
   ntype.ui_name = "Transform Geometry";
   ntype.ui_description = "Translate, rotate or scale the geometry";
   ntype.enum_name_legacy = "TRANSFORM_GEOMETRY";

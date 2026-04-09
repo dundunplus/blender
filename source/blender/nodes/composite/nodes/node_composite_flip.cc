@@ -119,7 +119,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeFlip", CMP_NODE_FLIP);
+  cmp_node_type_base(&ntype, "CompositorNodeFlip"_ustr, CMP_NODE_FLIP);
   ntype.ui_name = "Flip";
   ntype.ui_description = "Flip an image along a defined axis";
   ntype.enum_name_legacy = "FLIP";

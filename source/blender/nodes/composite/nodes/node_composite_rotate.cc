@@ -142,7 +142,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeRotate", CMP_NODE_ROTATE);
+  cmp_node_type_base(&ntype, "CompositorNodeRotate"_ustr, CMP_NODE_ROTATE);
   ntype.ui_name = "Rotate";
   ntype.ui_description = "Rotate image by specified angle";
   ntype.enum_name_legacy = "ROTATE";

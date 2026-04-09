@@ -284,7 +284,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInstanceOnPoints", GEO_NODE_INSTANCE_ON_POINTS);
+  geo_node_type_base(&ntype, "GeometryNodeInstanceOnPoints"_ustr, GEO_NODE_INSTANCE_ON_POINTS);
   ntype.ui_name = "Instance on Points";
   ntype.ui_description =
       "Generate a reference to geometry at each of the input points, without duplicating its "

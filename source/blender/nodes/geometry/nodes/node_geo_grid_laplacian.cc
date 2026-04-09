@@ -38,7 +38,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeGridLaplacian");
+  geo_node_type_base(&ntype, "GeometryNodeGridLaplacian"_ustr);
   ntype.ui_name = "Grid Laplacian";
   ntype.ui_description = "Compute the divergence of the gradient of the input grid";
   ntype.nclass = NODE_CLASS_GEOMETRY;

@@ -130,7 +130,7 @@ class SocketSearchOp {
   NodeMathOperation mode = NODE_MATH_ADD;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("ShaderNodeMath");
+    bNode &node = params.add_node("ShaderNodeMath"_ustr);
     node.custom1 = mode;
     math_input_defaults(node, mode);
     params.update_and_connect_available_socket(node, socket_name);
@@ -458,7 +458,7 @@ void register_node_type_sh_math()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeMath", SH_NODE_MATH);
+  common_node_type_base(&ntype, "ShaderNodeMath"_ustr, SH_NODE_MATH);
   ntype.ui_name = "Math";
   ntype.ui_description = "Perform math operations";
   ntype.enum_name_legacy = "MATH";

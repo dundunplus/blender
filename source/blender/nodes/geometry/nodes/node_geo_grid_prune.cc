@@ -121,7 +121,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     return;
   }
   params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-    bNode &node = params.add_node("GeometryNodeGridPrune");
+    bNode &node = params.add_node("GeometryNodeGridPrune"_ustr);
     node.custom1 = *data_type;
     params.update_and_connect_available_socket(node, "Grid"_ustr);
   });
@@ -229,7 +229,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeGridPrune");
+  geo_node_type_base(&ntype, "GeometryNodeGridPrune"_ustr);
   ntype.ui_name = "Prune Grid";
   ntype.ui_description =
       "Make the storage of a volume grid more efficient by collapsing data into tiles or inner "

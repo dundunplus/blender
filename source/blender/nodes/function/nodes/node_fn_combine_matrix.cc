@@ -245,7 +245,7 @@ static int node_gpu_material(GPUMaterial *material,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_cmp_node_type_base(&ntype, "FunctionNodeCombineMatrix", FN_NODE_COMBINE_MATRIX);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeCombineMatrix"_ustr, FN_NODE_COMBINE_MATRIX);
   ntype.ui_name = "Combine Matrix";
   ntype.ui_description = "Construct a 4x4 matrix from its individual values";
   ntype.enum_name_legacy = "COMBINE_MATRIX";

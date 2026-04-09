@@ -135,7 +135,7 @@ class SocketSearchOp {
   GeometryNodeCurvePrimitiveQuadMode quad_mode;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("GeometryNodeCurvePrimitiveQuadrilateral");
+    bNode &node = params.add_node("GeometryNodeCurvePrimitiveQuadrilateral"_ustr);
     node_storage(node).mode = quad_mode;
     params.update_and_connect_available_socket(node, socket_name);
   }
@@ -314,8 +314,9 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(
-      &ntype, "GeometryNodeCurvePrimitiveQuadrilateral", GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL);
+  geo_node_type_base(&ntype,
+                     "GeometryNodeCurvePrimitiveQuadrilateral"_ustr,
+                     GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL);
   ntype.ui_name = "Quadrilateral";
   ntype.ui_description = "Generate a polygon with four points";
   ntype.enum_name_legacy = "CURVE_PRIMITIVE_QUADRILATERAL";

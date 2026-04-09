@@ -203,7 +203,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeResampleCurve", GEO_NODE_RESAMPLE_CURVE);
+  geo_node_type_base(&ntype, "GeometryNodeResampleCurve"_ustr, GEO_NODE_RESAMPLE_CURVE);
   ntype.ui_name = "Resample Curve";
   ntype.ui_description = "Generate a poly spline for each input spline";
   ntype.enum_name_legacy = "RESAMPLE_CURVE";

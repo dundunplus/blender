@@ -216,7 +216,8 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetCurveHandlePositions", GEO_NODE_SET_CURVE_HANDLES);
+  geo_node_type_base(
+      &ntype, "GeometryNodeSetCurveHandlePositions"_ustr, GEO_NODE_SET_CURVE_HANDLES);
   ntype.ui_name = "Set Handle Positions";
   ntype.ui_description = "Set the positions for the handles of Bézier curves";
   ntype.enum_name_legacy = "SET_CURVE_HANDLES";

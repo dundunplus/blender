@@ -78,7 +78,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeImportText");
+  geo_node_type_base(&ntype, "GeometryNodeImportText"_ustr);
   ntype.ui_name = "Import Text";
   ntype.ui_description = "Import a string from a text file";
   ntype.nclass = NODE_CLASS_INPUT;

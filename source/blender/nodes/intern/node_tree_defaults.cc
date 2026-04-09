@@ -132,7 +132,7 @@ void node_tree_composit_default_init(const bContext *C, bNodeTree *ntree)
   ntree->tree_interface.add_socket(
       DATA_("Image"), "", "NodeSocketColor", NODE_INTERFACE_SOCKET_OUTPUT, nullptr);
 
-  bNode *composite = bke::node_add_node(C, *ntree, "NodeGroupOutput");
+  bNode *composite = bke::node_add_node(C, *ntree, "NodeGroupOutput"_ustr);
   composite->location[0] = 200.0f;
   /* The asset shelf is visible by default, so add a small offset to keep nodes centered in the
    * visible area.*/

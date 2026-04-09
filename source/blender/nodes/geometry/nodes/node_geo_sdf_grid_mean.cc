@@ -67,7 +67,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSDFGridMean");
+  geo_node_type_base(&ntype, "GeometryNodeSDFGridMean"_ustr);
   ntype.ui_name = "SDF Grid Mean";
   ntype.ui_description =
       "Apply mean (box) filter smoothing to a signed distance field. Fast separable averaging "

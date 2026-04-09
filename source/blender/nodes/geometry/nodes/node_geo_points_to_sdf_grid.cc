@@ -110,7 +110,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodePointsToSDFGrid", GEO_NODE_POINTS_TO_SDF_GRID);
+  geo_node_type_base(&ntype, "GeometryNodePointsToSDFGrid"_ustr, GEO_NODE_POINTS_TO_SDF_GRID);
   ntype.ui_name = "Points to SDF Grid";
   ntype.ui_description = "Create a signed distance volume grid from points";
   ntype.enum_name_legacy = "POINTS_TO_SDF_GRID";

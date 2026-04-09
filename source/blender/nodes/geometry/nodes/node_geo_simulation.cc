@@ -454,7 +454,7 @@ static bool node_insert_link(bke::NodeInsertLinkParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSimulationInput", GEO_NODE_SIMULATION_INPUT);
+  geo_node_type_base(&ntype, "GeometryNodeSimulationInput"_ustr, GEO_NODE_SIMULATION_INPUT);
   ntype.ui_name = "Simulation Input";
   ntype.ui_description = "Input data for the simulation zone";
   ntype.enum_name_legacy = "SIMULATION_INPUT";
@@ -830,8 +830,8 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     return;
   }
   params.add_item_full_name(IFACE_("Simulation"), [](LinkSearchOpParams &params) {
-    bNode &input_node = params.add_node("GeometryNodeSimulationInput");
-    bNode &output_node = params.add_node("GeometryNodeSimulationOutput");
+    bNode &input_node = params.add_node("GeometryNodeSimulationInput"_ustr);
+    bNode &output_node = params.add_node("GeometryNodeSimulationOutput"_ustr);
     output_node.location[0] = 300;
 
     auto &input_storage = *static_cast<NodeGeometrySimulationInput *>(input_node.storage);
@@ -872,7 +872,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSimulationOutput", GEO_NODE_SIMULATION_OUTPUT);
+  geo_node_type_base(&ntype, "GeometryNodeSimulationOutput"_ustr, GEO_NODE_SIMULATION_OUTPUT);
   ntype.ui_name = "Simulation Output";
   ntype.ui_description = "Output data from the simulation zone";
   ntype.enum_name_legacy = "SIMULATION_OUTPUT";

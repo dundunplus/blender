@@ -96,7 +96,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeImportCSV");
+  geo_node_type_base(&ntype, "GeometryNodeImportCSV"_ustr);
   ntype.ui_name = "Import CSV";
   ntype.ui_description = "Import geometry from an CSV file";
   ntype.nclass = NODE_CLASS_INPUT;

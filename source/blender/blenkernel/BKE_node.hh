@@ -448,7 +448,7 @@ struct bNodeType {
    * to catch typos earlier. One can compare with `bNodeType::idname` directly if the idname might
    * not be registered.
    */
-  bool is_type(StringRef query_idname) const;
+  bool is_type(UString query_idname) const;
 };
 
 /** #bNodeType.nclass (for add-menu and themes). */
@@ -504,7 +504,7 @@ struct bNodeTreeType {
   UString idname; /* identifier name */
 
   /* The ID name of group nodes for this type. */
-  std::string group_idname;
+  UString group_idname;
 
   std::string ui_name;
   std::string ui_description;
@@ -635,7 +635,7 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree);
 /** \name Generic API, Nodes
  * \{ */
 
-bNodeType *node_type_find(StringRef idname);
+bNodeType *node_type_find(UString idname);
 UString node_type_find_alias(UString alias);
 void node_register_type(bNodeType &ntype);
 void node_unregister_type(bNodeType &ntype);
@@ -695,7 +695,7 @@ void node_modify_socket_type_static(
 
 bNode *node_add_node(const bContext *C,
                      bNodeTree &ntree,
-                     StringRef idname,
+                     UString idname,
                      std::optional<int> unique_identifier = std::nullopt);
 bNode *node_add_static_node(const bContext *C, bNodeTree &ntree, int type);
 
@@ -1162,7 +1162,7 @@ NodeColorTag node_color_tag(const bNode &node);
  * Initialize a new node type struct with default values and callbacks.
  */
 void node_type_base(bNodeType &ntype,
-                    std::string idname,
+                    UString idname,
                     std::optional<int16_t> legacy_type = std::nullopt);
 
 void node_type_socket_templates(bNodeType *ntype,
@@ -1210,8 +1210,8 @@ std::optional<eNodeSocketDatatype> grid_type_to_socket_type(VolumeGridType type)
  */
 class bNodeZoneType {
  public:
-  std::string input_idname;
-  std::string output_idname;
+  UString input_idname;
+  UString output_idname;
   int input_type;
   int output_type;
   int theme_id;
@@ -1241,7 +1241,7 @@ Span<int> all_zone_input_node_types();
 Span<int> all_zone_output_node_types();
 const bNodeZoneType *zone_type_by_node_type(const int node_type);
 
-inline bool bNodeType::is_type(const StringRef query_idname) const
+inline bool bNodeType::is_type(const UString query_idname) const
 {
   /* Ensure that the given idname exists to check for typos. */
   BLI_assert(node_type_find(query_idname) != nullptr);

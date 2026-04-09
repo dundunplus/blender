@@ -72,7 +72,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
   if (params.in_out() == SOCK_OUT) {
     params.add_item(IFACE_("Output"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeSwitch");
+      bNode &node = params.add_node("GeometryNodeSwitch"_ustr);
       node_storage(node).input_type = params.socket.type;
       params.update_and_connect_available_socket(node, "Output"_ustr);
     });
@@ -82,7 +82,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     int true_false_weights = 0;
     if (params.other_socket().type == SOCK_BOOLEAN) {
       params.add_item(IFACE_("Switch"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeSwitch");
+        bNode &node = params.add_node("GeometryNodeSwitch"_ustr);
         params.update_and_connect_available_socket(node, "Switch"_ustr);
       });
       true_false_weights--;
@@ -91,7 +91,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("False"),
         [](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeSwitch");
+          bNode &node = params.add_node("GeometryNodeSwitch"_ustr);
           node_storage(node).input_type = params.socket.type;
           params.update_and_connect_available_socket(node, "False"_ustr);
         },
@@ -99,7 +99,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("True"),
         [](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeSwitch");
+          bNode &node = params.add_node("GeometryNodeSwitch"_ustr);
           node_storage(node).input_type = params.socket.type;
           params.update_and_connect_available_socket(node, "True"_ustr);
         },
@@ -266,7 +266,7 @@ static void register_node()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSwitch", GEO_NODE_SWITCH);
+  geo_node_type_base(&ntype, "GeometryNodeSwitch"_ustr, GEO_NODE_SWITCH);
   ntype.ui_name = "Switch";
   ntype.ui_description = "Switch between two inputs";
   ntype.enum_name_legacy = "SWITCH";

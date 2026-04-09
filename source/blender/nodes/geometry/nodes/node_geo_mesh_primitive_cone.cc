@@ -156,7 +156,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshCone", GEO_NODE_MESH_PRIMITIVE_CONE);
+  geo_node_type_base(&ntype, "GeometryNodeMeshCone"_ustr, GEO_NODE_MESH_PRIMITIVE_CONE);
   ntype.ui_name = "Cone";
   ntype.ui_description = "Generate a cone mesh";
   ntype.enum_name_legacy = "MESH_PRIMITIVE_CONE";

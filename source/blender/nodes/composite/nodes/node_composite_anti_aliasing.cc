@@ -94,7 +94,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeAntiAliasing", CMP_NODE_ANTIALIASING);
+  cmp_node_type_base(&ntype, "CompositorNodeAntiAliasing"_ustr, CMP_NODE_ANTIALIASING);
   ntype.ui_name = "Anti-Aliasing";
   ntype.ui_description = "Smooth away jagged edges";
   ntype.enum_name_legacy = "ANTIALIASING";

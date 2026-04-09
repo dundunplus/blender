@@ -65,7 +65,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeCurveQuadraticBezier", GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER);
+      &ntype, "GeometryNodeCurveQuadraticBezier"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER);
   ntype.ui_name = "Quadratic Bézier";
   ntype.ui_description =
       "Generate a poly spline in a parabola shape with control points positions";

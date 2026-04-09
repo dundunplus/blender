@@ -373,8 +373,8 @@ World *ED_preview_prepare_world_simple(Main *pr_main)
   World *world = BKE_world_add(pr_main, "SimpleWorld");
   bNodeTree *ntree = world->nodetree;
 
-  bNode *background = node_add_node(nullptr, *ntree, "ShaderNodeBackground");
-  bNode *output = node_add_node(nullptr, *ntree, "ShaderNodeOutputWorld");
+  bNode *background = node_add_node(nullptr, *ntree, "ShaderNodeBackground"_ustr);
+  bNode *output = node_add_node(nullptr, *ntree, "ShaderNodeOutputWorld"_ustr);
   node_add_link(*world->nodetree,
                 *background,
                 *node_find_socket(*background, SOCK_OUT, "Background"),

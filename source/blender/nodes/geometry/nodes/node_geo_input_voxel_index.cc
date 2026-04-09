@@ -80,7 +80,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputVoxelIndex");
+  geo_node_type_base(&ntype, "GeometryNodeInputVoxelIndex"_ustr);
   ntype.ui_name = "Voxel Index";
   ntype.ui_description =
       "Retrieve the integer coordinates of the voxel that the field is evaluated on";

@@ -56,7 +56,7 @@ void register_node_type_sh_bsdf_translucent()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfTranslucent", SH_NODE_BSDF_TRANSLUCENT);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfTranslucent"_ustr, SH_NODE_BSDF_TRANSLUCENT);
   ntype.ui_name = "Translucent BSDF";
   ntype.ui_description = "Lambertian diffuse transmission";
   ntype.enum_name_legacy = "BSDF_TRANSLUCENT";

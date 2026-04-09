@@ -77,7 +77,7 @@ static int node_gpu_material(GPUMaterial *material,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_cmp_node_type_base(&ntype, "FunctionNodeInvertMatrix", FN_NODE_INVERT_MATRIX);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeInvertMatrix"_ustr, FN_NODE_INVERT_MATRIX);
   ntype.ui_name = "Invert Matrix";
   ntype.ui_description = "Compute the inverse of the given matrix, if one exists";
   ntype.enum_name_legacy = "INVERT_MATRIX";

@@ -448,7 +448,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeTonemap", CMP_NODE_TONEMAP);
+  cmp_node_type_base(&ntype, "CompositorNodeTonemap"_ustr, CMP_NODE_TONEMAP);
   ntype.ui_name = "Tonemap";
   ntype.ui_description =
       "Map one set of colors to another in order to approximate the appearance of high dynamic "

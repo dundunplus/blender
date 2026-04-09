@@ -76,7 +76,7 @@ static void link_drag_search_listen_fn(const wmRegionListenerParams *params, voi
 
 static void add_reroute_node_fn(nodes::LinkSearchOpParams &params)
 {
-  bNode &reroute = params.add_node("NodeReroute");
+  bNode &reroute = params.add_node("NodeReroute"_ustr);
   if (params.socket.in_out == SOCK_IN) {
     bke::node_add_link(params.node_tree,
                        reroute,
@@ -100,7 +100,7 @@ static void add_group_input_node_fn(nodes::LinkSearchOpParams &params)
       params.node_tree, params.node, params.socket, params.socket.name);
   params.node_tree.tree_interface.active_item_set(&socket_iface->item);
 
-  bNode &group_input = params.add_node("NodeGroupInput");
+  bNode &group_input = params.add_node("NodeGroupInput"_ustr);
 
   /* This is necessary to create the new sockets in the other input nodes. */
   BKE_main_ensure_invariants(*CTX_data_main(&params.C), params.node_tree.id);
@@ -140,7 +140,7 @@ static void add_existing_group_input_fn(nodes::LinkSearchOpParams &params,
   SET_FLAG_FROM_TEST(flag, in_out & SOCK_IN, NODE_INTERFACE_SOCKET_INPUT);
   SET_FLAG_FROM_TEST(flag, in_out & SOCK_OUT, NODE_INTERFACE_SOCKET_OUTPUT);
 
-  bNode &group_input = params.add_node("NodeGroupInput");
+  bNode &group_input = params.add_node("NodeGroupInput"_ustr);
 
   for (bNodeSocket &socket : group_input.outputs) {
     socket.flag |= SOCK_HIDDEN;

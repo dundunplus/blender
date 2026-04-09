@@ -97,7 +97,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeImageInfo", CMP_NODE_IMAGE_INFO);
+  cmp_node_type_base(&ntype, "CompositorNodeImageInfo"_ustr, CMP_NODE_IMAGE_INFO);
   ntype.ui_name = "Image Info";
   ntype.ui_description = "Returns information about an image";
   ntype.nclass = NODE_CLASS_INPUT;

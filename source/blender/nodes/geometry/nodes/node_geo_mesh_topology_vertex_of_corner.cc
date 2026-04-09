@@ -62,7 +62,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeVertexOfCorner", GEO_NODE_MESH_TOPOLOGY_VERTEX_OF_CORNER);
+      &ntype, "GeometryNodeVertexOfCorner"_ustr, GEO_NODE_MESH_TOPOLOGY_VERTEX_OF_CORNER);
   ntype.ui_name = "Vertex of Corner";
   ntype.ui_description = "Retrieve the vertex each face corner is attached to";
   ntype.enum_name_legacy = "VERTEX_OF_CORNER";

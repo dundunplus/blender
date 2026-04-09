@@ -194,7 +194,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeCollectionInfo", GEO_NODE_COLLECTION_INFO);
+  geo_node_type_base(&ntype, "GeometryNodeCollectionInfo"_ustr, GEO_NODE_COLLECTION_INFO);
   ntype.ui_name = "Collection Info";
   ntype.ui_description = "Retrieve geometry instances from a collection";
   ntype.enum_name_legacy = "COLLECTION_INFO";

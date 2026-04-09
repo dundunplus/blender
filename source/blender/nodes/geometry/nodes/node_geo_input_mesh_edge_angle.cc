@@ -209,7 +209,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeInputMeshEdgeAngle", GEO_NODE_INPUT_MESH_EDGE_ANGLE);
+  geo_node_type_base(
+      &ntype, "GeometryNodeInputMeshEdgeAngle"_ustr, GEO_NODE_INPUT_MESH_EDGE_ANGLE);
   ntype.ui_name = "Edge Angle";
   ntype.ui_description = "The angle between the normals of connected manifold faces";
   ntype.enum_name_legacy = "MESH_EDGE_ANGLE";

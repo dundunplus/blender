@@ -168,7 +168,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeBilateralblur", CMP_NODE_BILATERALBLUR);
+  cmp_node_type_base(&ntype, "CompositorNodeBilateralblur"_ustr, CMP_NODE_BILATERALBLUR);
   ntype.ui_name = "Bilateral Blur";
   ntype.ui_description = "Adaptively blur image, while retaining sharp edges";
   ntype.enum_name_legacy = "BILATERALBLUR";

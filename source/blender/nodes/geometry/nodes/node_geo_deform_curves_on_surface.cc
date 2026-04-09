@@ -401,7 +401,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeDeformCurvesOnSurface", GEO_NODE_DEFORM_CURVES_ON_SURFACE);
+      &ntype, "GeometryNodeDeformCurvesOnSurface"_ustr, GEO_NODE_DEFORM_CURVES_ON_SURFACE);
   ntype.ui_name = "Deform Curves on Surface";
   ntype.ui_description =
       "Translate and rotate curves based on changes between the object's original and evaluated "

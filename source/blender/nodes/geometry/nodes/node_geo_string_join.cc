@@ -34,7 +34,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeStringJoin", GEO_NODE_STRING_JOIN);
+  geo_node_type_base(&ntype, "GeometryNodeStringJoin"_ustr, GEO_NODE_STRING_JOIN);
   ntype.ui_name = "Join Strings";
   ntype.ui_description = "Combine any number of input strings";
   ntype.enum_name_legacy = "STRING_JOIN";

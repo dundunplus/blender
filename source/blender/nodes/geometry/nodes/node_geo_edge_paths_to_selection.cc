@@ -129,7 +129,8 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeEdgePathsToSelection", GEO_NODE_EDGE_PATHS_TO_SELECTION);
+  geo_node_type_base(
+      &ntype, "GeometryNodeEdgePathsToSelection"_ustr, GEO_NODE_EDGE_PATHS_TO_SELECTION);
   ntype.ui_name = "Edge Paths to Selection";
   ntype.ui_description = "Output a selection of edges by following paths across mesh edges";
   ntype.enum_name_legacy = "EDGE_PATHS_TO_SELECTION";

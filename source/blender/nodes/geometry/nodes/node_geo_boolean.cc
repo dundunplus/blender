@@ -332,7 +332,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeMeshBoolean", GEO_NODE_MESH_BOOLEAN);
+  geo_node_type_base(&ntype, "GeometryNodeMeshBoolean"_ustr, GEO_NODE_MESH_BOOLEAN);
   ntype.ui_name = "Mesh Boolean";
   ntype.ui_description = "Cut, subtract, or join multiple mesh inputs";
   ntype.enum_name_legacy = "MESH_BOOLEAN";

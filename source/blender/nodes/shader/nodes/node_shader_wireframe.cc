@@ -58,7 +58,7 @@ void register_node_type_sh_wireframe()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeWireframe", SH_NODE_WIREFRAME);
+  sh_node_type_base(&ntype, "ShaderNodeWireframe"_ustr, SH_NODE_WIREFRAME);
   ntype.ui_name = "Wireframe";
   ntype.ui_description =
       "Retrieve the edges of an object as it appears to Cycles.\nNote: as meshes are triangulated "

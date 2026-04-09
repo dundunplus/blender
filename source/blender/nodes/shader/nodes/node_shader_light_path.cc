@@ -73,7 +73,7 @@ void register_node_type_sh_light_path()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeLightPath", SH_NODE_LIGHT_PATH);
+  sh_node_type_base(&ntype, "ShaderNodeLightPath"_ustr, SH_NODE_LIGHT_PATH);
   ntype.ui_name = "Light Path";
   ntype.ui_description =
       "Retrieve the type of incoming ray for which the shader is being executed.\nTypically used "

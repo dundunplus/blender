@@ -112,7 +112,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeOffsetCornerInFace", GEO_NODE_MESH_TOPOLOGY_OFFSET_CORNER_IN_FACE);
+      &ntype, "GeometryNodeOffsetCornerInFace"_ustr, GEO_NODE_MESH_TOPOLOGY_OFFSET_CORNER_IN_FACE);
   ntype.ui_name = "Offset Corner in Face";
   ntype.ui_description = "Retrieve corners in the same face as another";
   ntype.enum_name_legacy = "OFFSET_CORNER_IN_FACE";

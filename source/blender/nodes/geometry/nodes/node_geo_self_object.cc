@@ -20,7 +20,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSelfObject", GEO_NODE_SELF_OBJECT);
+  geo_node_type_base(&ntype, "GeometryNodeSelfObject"_ustr, GEO_NODE_SELF_OBJECT);
   ntype.ui_name = "Self Object";
   ntype.ui_description =
       "Retrieve the object that contains the geometry nodes modifier currently being executed";

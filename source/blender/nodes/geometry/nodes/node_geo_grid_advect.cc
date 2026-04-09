@@ -160,7 +160,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
                                                    SOCK_VECTOR))
     {
       params.add_item(IFACE_("Velocity"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeGridAdvect");
+        bNode &node = params.add_node("GeometryNodeGridAdvect"_ustr);
         params.update_and_connect_available_socket(node, "Velocity"_ustr);
       });
     }
@@ -168,13 +168,13 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
                                                    SOCK_FLOAT))
     {
       params.add_item(IFACE_("Time Step"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeGridAdvect");
+        bNode &node = params.add_node("GeometryNodeGridAdvect"_ustr);
         params.update_and_connect_available_socket(node, "Time Step"_ustr);
       });
     }
   }
   params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-    bNode &node = params.add_node("GeometryNodeGridAdvect");
+    bNode &node = params.add_node("GeometryNodeGridAdvect"_ustr);
     node.custom1 = *data_type;
     params.update_and_connect_available_socket(node, "Grid"_ustr);
   });
@@ -331,7 +331,7 @@ static const bNodeSocket *node_internally_linked_input(const bNodeTree & /*tree*
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeGridAdvect");
+  geo_node_type_base(&ntype, "GeometryNodeGridAdvect"_ustr);
   ntype.ui_name = "Advect Grid";
   ntype.ui_description =
       "Move grid values through a velocity field using numerical integration. Supports multiple "

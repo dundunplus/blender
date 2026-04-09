@@ -85,7 +85,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeImageCoordinates");
+  cmp_node_type_base(&ntype, "CompositorNodeImageCoordinates"_ustr);
   ntype.ui_name = "Image Coordinates";
   ntype.ui_description = "Returns the coordinates of the pixels of an image";
   ntype.nclass = NODE_CLASS_INPUT;

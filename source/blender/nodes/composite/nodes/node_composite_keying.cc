@@ -814,7 +814,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeKeying", CMP_NODE_KEYING);
+  cmp_node_type_base(&ntype, "CompositorNodeKeying"_ustr, CMP_NODE_KEYING);
   ntype.ui_name = "Keying";
   ntype.ui_description =
       "Perform both chroma keying (to remove the backdrop) and despill (to correct color cast "

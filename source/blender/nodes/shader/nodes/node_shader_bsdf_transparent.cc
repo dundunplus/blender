@@ -64,7 +64,7 @@ void register_node_type_sh_bsdf_transparent()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfTransparent", SH_NODE_BSDF_TRANSPARENT);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfTransparent"_ustr, SH_NODE_BSDF_TRANSPARENT);
   ntype.ui_name = "Transparent BSDF";
   ntype.ui_description =
       "Transparency without refraction, passing straight through the surface as if there were no "

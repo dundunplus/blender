@@ -81,7 +81,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeBoundBox", GEO_NODE_BOUNDING_BOX);
+  geo_node_type_base(&ntype, "GeometryNodeBoundBox"_ustr, GEO_NODE_BOUNDING_BOX);
   ntype.ui_name = "Bounding Box";
   ntype.ui_description =
       "Calculate the limits of a geometry's positions and generate a box mesh with those "

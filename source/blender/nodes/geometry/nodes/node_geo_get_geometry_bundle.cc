@@ -57,7 +57,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeGetGeometryBundle");
+  geo_node_type_base(&ntype, "GeometryNodeGetGeometryBundle"_ustr);
   ntype.ui_name = "Get Geometry Bundle";
   ntype.ui_description = "Get the bundle of a geometry";
   ntype.nclass = NODE_CLASS_GEOMETRY;

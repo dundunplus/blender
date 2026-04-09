@@ -91,7 +91,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Standard Deviation"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeFieldVariance");
+          bNode &node = params.add_node("GeometryNodeFieldVariance"_ustr);
           node.custom1 = *type;
           params.update_and_connect_available_socket(node, "Standard Deviation"_ustr);
         },
@@ -99,7 +99,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Variance"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeFieldVariance");
+          bNode &node = params.add_node("GeometryNodeFieldVariance"_ustr);
           node.custom1 = *type;
           params.update_and_connect_available_socket(node, "Variance"_ustr);
         },
@@ -109,7 +109,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Value"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeFieldVariance");
+          bNode &node = params.add_node("GeometryNodeFieldVariance"_ustr);
           node.custom1 = *type;
           params.update_and_connect_available_socket(node, "Value"_ustr);
         },
@@ -324,7 +324,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeFieldVariance");
+  geo_node_type_base(&ntype, "GeometryNodeFieldVariance"_ustr);
   ntype.ui_name = "Field Variance";
   ntype.ui_description = "Calculate the standard deviation and variance of a given field";
   ntype.nclass = NODE_CLASS_CONVERTER;

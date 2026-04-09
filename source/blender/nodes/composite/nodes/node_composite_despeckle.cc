@@ -198,7 +198,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDespeckle", CMP_NODE_DESPECKLE);
+  cmp_node_type_base(&ntype, "CompositorNodeDespeckle"_ustr, CMP_NODE_DESPECKLE);
   ntype.ui_name = "Despeckle";
   ntype.ui_description =
       "Smooth areas of an image in which noise is noticeable, while leaving complex areas "

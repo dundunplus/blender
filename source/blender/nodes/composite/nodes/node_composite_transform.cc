@@ -150,7 +150,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeTransform", CMP_NODE_TRANSFORM);
+  cmp_node_type_base(&ntype, "CompositorNodeTransform"_ustr, CMP_NODE_TRANSFORM);
   ntype.ui_name = "Transform";
   ntype.ui_description = "Scale, translate and rotate an image";
   ntype.enum_name_legacy = "TRANSFORM";

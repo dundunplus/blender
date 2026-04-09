@@ -122,7 +122,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeColorMatte", CMP_NODE_COLOR_MATTE);
+  cmp_node_type_base(&ntype, "CompositorNodeColorMatte"_ustr, CMP_NODE_COLOR_MATTE);
   ntype.ui_name = "Color Key";
   ntype.ui_description = "Create matte using a given color, for green or blue screen footage";
   ntype.enum_name_legacy = "COLOR_MATTE";

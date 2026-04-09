@@ -52,7 +52,7 @@ void register_node_type_sh_particle_info()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeParticleInfo", SH_NODE_PARTICLE_INFO);
+  sh_node_type_base(&ntype, "ShaderNodeParticleInfo"_ustr, SH_NODE_PARTICLE_INFO);
   ntype.ui_name = "Particle Info";
   ntype.ui_description =
       "Retrieve the data of the particle that spawned the object instance, for example to give "

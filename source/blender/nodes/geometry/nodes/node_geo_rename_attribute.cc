@@ -135,7 +135,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeRenameAttribute");
+  geo_node_type_base(&ntype, "GeometryNodeRenameAttribute"_ustr);
   ntype.ui_name = "Rename Attribute";
   ntype.ui_description = "Change the name of an attribute";
   ntype.nclass = NODE_CLASS_GEOMETRY;

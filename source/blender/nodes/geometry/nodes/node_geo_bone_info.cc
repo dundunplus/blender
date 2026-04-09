@@ -51,25 +51,25 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   if (params.in_out() == SOCK_OUT) {
     if (ELEM(other_type, SOCK_MATRIX, SOCK_ROTATION)) {
       params.add_item(IFACE_("Pose"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Pose"_ustr);
       });
       params.add_item(IFACE_("Local Pose"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Local Pose"_ustr);
       });
       params.add_item(IFACE_("Transform Pose"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Transform Pose"_ustr);
       });
       params.add_item(IFACE_("Rest Pose"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Rest Pose"_ustr);
       });
     }
     if (params.node_tree().typeinfo->validate_link(other_type, SOCK_FLOAT)) {
       params.add_item(IFACE_("Rest Length"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Rest Length"_ustr);
       });
     }
@@ -77,13 +77,13 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   else {
     if (other_type == SOCK_STRING) {
       params.add_item(IFACE_("Bone Name"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Bone Name"_ustr);
       });
     }
     if (other_type == SOCK_OBJECT) {
       params.add_item(IFACE_("Armature"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBoneInfo");
+        bNode &node = params.add_node("GeometryNodeBoneInfo"_ustr);
         params.update_and_connect_available_socket(node, "Armature"_ustr);
       });
     }
@@ -192,7 +192,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeBoneInfo");
+  geo_node_type_base(&ntype, "GeometryNodeBoneInfo"_ustr);
   ntype.ui_name = "Bone Info";
   ntype.ui_description = "Retrieve information of armature bones";
   ntype.nclass = NODE_CLASS_INPUT;

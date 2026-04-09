@@ -116,7 +116,7 @@ void register_node_type_sh_volume_scatter()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeVolumeScatter", SH_NODE_VOLUME_SCATTER);
+  sh_node_type_base(&ntype, "ShaderNodeVolumeScatter"_ustr, SH_NODE_VOLUME_SCATTER);
   ntype.ui_name = "Volume Scatter";
   ntype.ui_description =
       "Scatter light as it passes through the volume, often used to add fog to a scene";

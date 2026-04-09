@@ -49,7 +49,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_cmp_node_type_base(&ntype, "GeometryNodeInputObject", GEO_NODE_INPUT_OBJECT);
+  geo_cmp_node_type_base(&ntype, "GeometryNodeInputObject"_ustr, GEO_NODE_INPUT_OBJECT);
   ntype.ui_name = "Object";
   ntype.ui_description = "Output a single object";
   ntype.enum_name_legacy = "INPUT_OBJECT";

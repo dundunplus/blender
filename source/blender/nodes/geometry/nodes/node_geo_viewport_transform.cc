@@ -36,7 +36,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeViewportTransform", GEO_NODE_TOOL_VIEWPORT_TRANSFORM);
+  geo_node_type_base(
+      &ntype, "GeometryNodeViewportTransform"_ustr, GEO_NODE_TOOL_VIEWPORT_TRANSFORM);
   ntype.ui_name = "Viewport Transform";
   ntype.ui_description = "Retrieve the view direction and location of the 3D viewport";
   ntype.enum_name_legacy = "VIEWPORT_TRANFORM";

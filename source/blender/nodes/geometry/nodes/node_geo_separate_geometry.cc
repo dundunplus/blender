@@ -109,7 +109,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSeparateGeometry", GEO_NODE_SEPARATE_GEOMETRY);
+  geo_node_type_base(&ntype, "GeometryNodeSeparateGeometry"_ustr, GEO_NODE_SEPARATE_GEOMETRY);
   ntype.ui_name = "Separate Geometry";
   ntype.ui_description = "Split a geometry into two geometry outputs based on a selection";
   ntype.enum_name_legacy = "SEPARATE_GEOMETRY";

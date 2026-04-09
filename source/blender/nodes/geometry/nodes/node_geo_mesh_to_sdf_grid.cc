@@ -59,7 +59,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshToSDFGrid", GEO_NODE_MESH_TO_SDF_GRID);
+  geo_node_type_base(&ntype, "GeometryNodeMeshToSDFGrid"_ustr, GEO_NODE_MESH_TO_SDF_GRID);
   ntype.ui_name = "Mesh to SDF Grid";
   ntype.ui_description = "Create a signed distance volume grid from a mesh";
   ntype.enum_name_legacy = "MESH_TO_SDF_GRID";

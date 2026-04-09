@@ -34,7 +34,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputImage", GEO_NODE_IMAGE);
+  geo_node_type_base(&ntype, "GeometryNodeInputImage"_ustr, GEO_NODE_IMAGE);
   ntype.ui_name = "Image";
   ntype.ui_description = "Input an image data-block";
   ntype.enum_name_legacy = "IMAGE";

@@ -62,7 +62,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeCurveLength", GEO_NODE_CURVE_LENGTH);
+  geo_node_type_base(&ntype, "GeometryNodeCurveLength"_ustr, GEO_NODE_CURVE_LENGTH);
   ntype.ui_name = "Curve Length";
   ntype.ui_description = "Retrieve the length of all splines added together";
   ntype.enum_name_legacy = "CURVE_LENGTH";

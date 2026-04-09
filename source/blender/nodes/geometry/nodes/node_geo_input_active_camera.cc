@@ -45,7 +45,8 @@ static NodeOperation *get_compositor_operation(Context &context, const bNode &no
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_cmp_node_type_base(&ntype, "GeometryNodeInputActiveCamera", GEO_NODE_INPUT_ACTIVE_CAMERA);
+  geo_cmp_node_type_base(
+      &ntype, "GeometryNodeInputActiveCamera"_ustr, GEO_NODE_INPUT_ACTIVE_CAMERA);
   ntype.ui_name = "Active Camera";
   ntype.ui_description = "Retrieve the scene's active camera";
   ntype.enum_name_legacy = "INPUT_ACTIVE_CAMERA";

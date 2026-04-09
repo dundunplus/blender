@@ -138,7 +138,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeTranslate", CMP_NODE_TRANSLATE);
+  cmp_node_type_base(&ntype, "CompositorNodeTranslate"_ustr, CMP_NODE_TRANSLATE);
   ntype.ui_name = "Translate";
   ntype.ui_description = "Offset an image";
   ntype.enum_name_legacy = "TRANSLATE";

@@ -159,15 +159,15 @@ AssetLibrary *AssetLibraryService::get_asset_library_on_disk(
     const bool load_catalogs,
     bUserAssetLibrary *preferences_library)
 {
-  if (OnDiskAssetLibrary *lib = this->lookup_on_disk_library(library_type, root_path)) {
-    CLOG_DEBUG(&LOG, "get \"%s\" (cached)", root_path.c_str());
+  const std::string normalized_root_path = utils::normalize_directory_path(root_path);
+
+  if (OnDiskAssetLibrary *lib = this->lookup_on_disk_library(library_type, normalized_root_path)) {
+    CLOG_DEBUG(&LOG, "get \"%s\" (cached)", normalized_root_path.c_str());
     if (load_catalogs) {
       lib->load_or_reload_catalogs();
     }
     return lib;
   }
-
-  const std::string normalized_root_path = utils::normalize_directory_path(root_path);
 
   std::unique_ptr<OnDiskAssetLibrary> lib_uptr;
   switch (library_type) {
@@ -190,14 +190,15 @@ AssetLibrary *AssetLibraryService::get_asset_library_on_disk(
       break;
   }
 
-  if (load_catalogs) {
-    lib_uptr->load_or_reload_catalogs();
-  }
-
   /* Get underlying pointer before moving. */
   AssetLibrary *lib = lib_uptr.get();
   on_disk_libraries_.add_new({library_type, normalized_root_path}, std::move(lib_uptr));
   CLOG_DEBUG(&LOG, "get \"%s\" (loaded)", normalized_root_path.c_str());
+
+  if (load_catalogs) {
+    lib->load_or_reload_catalogs();
+  }
+
   return lib;
 }
 

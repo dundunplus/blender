@@ -76,7 +76,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       const std::optional<eNodeSocketDatatype> data_type = node_type_for_socket_type(other_socket);
       if (data_type) {
         params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeGridInfo");
+          bNode &node = params.add_node("GeometryNodeGridInfo"_ustr);
           node.custom1 = *data_type;
           params.update_and_connect_available_socket(node, "Grid"_ustr);
         });
@@ -86,14 +86,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   else {
     if (params.node_tree().typeinfo->validate_link(SOCK_MATRIX, other_type)) {
       params.add_item(IFACE_("Transform"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeGridInfo");
+        bNode &node = params.add_node("GeometryNodeGridInfo"_ustr);
         params.update_and_connect_available_socket(node, "Transform"_ustr);
       });
     }
     const std::optional<eNodeSocketDatatype> data_type = node_type_for_socket_type(other_socket);
     if (data_type) {
       params.add_item(IFACE_("Background Value"), [data_type](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeGridInfo");
+        bNode &node = params.add_node("GeometryNodeGridInfo"_ustr);
         node.custom1 = *data_type;
         params.update_and_connect_available_socket(node, "Background Value"_ustr);
       });
@@ -155,7 +155,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeGridInfo");
+  geo_node_type_base(&ntype, "GeometryNodeGridInfo"_ustr);
   ntype.ui_name = "Grid Info";
   ntype.ui_description = "Retrieve information about a volume grid";
   ntype.nclass = NODE_CLASS_INPUT;

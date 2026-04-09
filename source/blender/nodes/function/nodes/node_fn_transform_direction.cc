@@ -41,7 +41,8 @@ static int node_gpu_material(GPUMaterial *material,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_cmp_node_type_base(&ntype, "FunctionNodeTransformDirection", FN_NODE_TRANSFORM_DIRECTION);
+  fn_cmp_node_type_base(
+      &ntype, "FunctionNodeTransformDirection"_ustr, FN_NODE_TRANSFORM_DIRECTION);
   ntype.ui_name = "Transform Direction";
   ntype.ui_description =
       "Apply a transformation matrix (excluding translation) to the given vector";

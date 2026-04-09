@@ -70,7 +70,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     if (item->name != nullptr && item->identifier[0] != '\0') {
       NodeBooleanMathOperation operation = static_cast<NodeBooleanMathOperation>(item->value);
       params.add_item(IFACE_(item->name), [operation](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("FunctionNodeBooleanMath");
+        bNode &node = params.add_node("FunctionNodeBooleanMath"_ustr);
         node.custom1 = operation;
         params.update_and_connect_available_socket(node, "Boolean"_ustr);
       });
@@ -171,7 +171,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeBooleanMath", FN_NODE_BOOLEAN_MATH);
+  fn_node_type_base(&ntype, "FunctionNodeBooleanMath"_ustr, FN_NODE_BOOLEAN_MATH);
   ntype.ui_name = "Boolean Math";
   ntype.ui_description = "Perform a logical operation on the given boolean inputs";
   ntype.enum_name_legacy = "BOOLEAN_MATH";

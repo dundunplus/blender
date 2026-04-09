@@ -455,7 +455,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeCornerPin", CMP_NODE_CORNERPIN);
+  cmp_node_type_base(&ntype, "CompositorNodeCornerPin"_ustr, CMP_NODE_CORNERPIN);
   ntype.ui_name = "Corner Pin";
   ntype.ui_description = "Plane warp transformation using explicit corner values";
   ntype.enum_name_legacy = "CORNERPIN";

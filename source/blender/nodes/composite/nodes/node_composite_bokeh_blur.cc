@@ -380,7 +380,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeBokehBlur", CMP_NODE_BOKEHBLUR);
+  cmp_node_type_base(&ntype, "CompositorNodeBokehBlur"_ustr, CMP_NODE_BOKEHBLUR);
   ntype.ui_name = "Bokeh Blur";
   ntype.ui_description =
       "Generate a bokeh type blur similar to Defocus. Unlike defocus an in-focus region is "

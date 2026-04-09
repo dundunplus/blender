@@ -373,7 +373,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeCurveToPoints", GEO_NODE_CURVE_TO_POINTS);
+  geo_node_type_base(&ntype, "GeometryNodeCurveToPoints"_ustr, GEO_NODE_CURVE_TO_POINTS);
   ntype.ui_name = "Curve to Points";
   ntype.ui_description = "Generate a point cloud by sampling positions along curves";
   ntype.enum_name_legacy = "CURVE_TO_POINTS";

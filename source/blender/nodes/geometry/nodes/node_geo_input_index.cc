@@ -20,7 +20,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputIndex", GEO_NODE_INPUT_INDEX);
+  geo_node_type_base(&ntype, "GeometryNodeInputIndex"_ustr, GEO_NODE_INPUT_INDEX);
   ntype.ui_name = "Index";
   ntype.ui_description =
       "Retrieve an integer value indicating the position of each element in the list, starting at "

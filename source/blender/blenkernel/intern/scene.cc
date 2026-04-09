@@ -1063,7 +1063,7 @@ static void scene_blend_write_compositor_forward_compat(Scene &scene,
   bNodeSocket *composite_input = nullptr;
   bke::bNodeType ntype;
   for (bNode &node : temp_nodetree_copy->nodes.items_mutable()) {
-    if (node.is_type("NodeGroupOutput") && (node.flag & NODE_DO_OUTPUT)) {
+    if (node.is_type("NodeGroupOutput"_ustr) && (node.flag & NODE_DO_OUTPUT)) {
       composite_node = &version_node_add_unknown(*temp_nodetree_copy,
                                                  ntype,
                                                  "CompositorNodeComposite",

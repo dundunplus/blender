@@ -115,7 +115,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeInputMeshIsland", GEO_NODE_INPUT_MESH_ISLAND);
+  geo_node_type_base(&ntype, "GeometryNodeInputMeshIsland"_ustr, GEO_NODE_INPUT_MESH_ISLAND);
   ntype.ui_name = "Mesh Island";
   ntype.ui_description = "Retrieve information about separate connected regions in a mesh";
   ntype.enum_name_legacy = "MESH_ISLAND";

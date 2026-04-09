@@ -262,7 +262,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   geo_node_type_base(
-      &ntype, "GeometryNodeInputShortestEdgePaths", GEO_NODE_INPUT_SHORTEST_EDGE_PATHS);
+      &ntype, "GeometryNodeInputShortestEdgePaths"_ustr, GEO_NODE_INPUT_SHORTEST_EDGE_PATHS);
   ntype.ui_name = "Shortest Edge Paths";
   ntype.ui_description =
       "Find the shortest paths along mesh edges to selected end vertices, with customizable cost "

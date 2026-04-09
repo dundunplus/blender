@@ -192,7 +192,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeColorSpill", CMP_NODE_COLOR_SPILL);
+  cmp_node_type_base(&ntype, "CompositorNodeColorSpill"_ustr, CMP_NODE_COLOR_SPILL);
   ntype.ui_name = "Color Spill";
   ntype.ui_description =
       "Remove colors from a blue or green screen, by reducing one RGB channel compared to the "

@@ -256,7 +256,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeDistributePointsInGrid", GEO_NODE_DISTRIBUTE_POINTS_IN_GRID);
+      &ntype, "GeometryNodeDistributePointsInGrid"_ustr, GEO_NODE_DISTRIBUTE_POINTS_IN_GRID);
   ntype.ui_name = "Distribute Points in Grid";
   ntype.ui_description = "Generate points inside a volume grid";
   ntype.enum_name_legacy = "DISTRIBUTE_POINTS_IN_GRID";

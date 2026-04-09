@@ -194,7 +194,7 @@ class SocketSearchOp {
   int type = MA_RAMP_BLEND;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("ShaderNodeMix");
+    bNode &node = params.add_node("ShaderNodeMix"_ustr);
     node_storage(node).data_type = SOCK_RGBA;
     node_storage(node).blend_type = type;
     params.update_and_connect_available_socket(node, socket_name);
@@ -227,7 +227,7 @@ static void node_mix_gather_link_searches(GatherLinkSearchOpParams &params)
   int weight = type == SOCK_RGBA ? 4 : 0;
   if (params.in_out() == SOCK_OUT) {
     params.add_item(IFACE_("Result"), [type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("ShaderNodeMix");
+      bNode &node = params.add_node("ShaderNodeMix"_ustr);
       node_storage(node).data_type = type;
       params.update_and_connect_available_socket(node, "Result"_ustr);
     });
@@ -236,7 +236,7 @@ static void node_mix_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "A"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("ShaderNodeMix");
+          bNode &node = params.add_node("ShaderNodeMix"_ustr);
           node_storage(node).data_type = type;
           params.update_and_connect_available_socket(node, "A"_ustr);
         },
@@ -245,7 +245,7 @@ static void node_mix_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "B"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("ShaderNodeMix");
+          bNode &node = params.add_node("ShaderNodeMix"_ustr);
           node_storage(node).data_type = type;
           params.update_and_connect_available_socket(node, "B"_ustr);
         },
@@ -255,7 +255,7 @@ static void node_mix_gather_link_searches(GatherLinkSearchOpParams &params)
       params.add_item(
           IFACE_("Factor (Non-Uniform)"),
           [](LinkSearchOpParams &params) {
-            bNode &node = params.add_node("ShaderNodeMix");
+            bNode &node = params.add_node("ShaderNodeMix"_ustr);
             node_storage(node).data_type = SOCK_VECTOR;
             node_storage(node).factor_mode = NODE_MIX_MODE_NON_UNIFORM;
             params.update_and_connect_available_socket(node, "Factor"_ustr);
@@ -267,7 +267,7 @@ static void node_mix_gather_link_searches(GatherLinkSearchOpParams &params)
       params.add_item(
           IFACE_("Factor"),
           [type](LinkSearchOpParams &params) {
-            bNode &node = params.add_node("ShaderNodeMix");
+            bNode &node = params.add_node("ShaderNodeMix"_ustr);
             node_storage(node).data_type = type;
             params.update_and_connect_available_socket(node, "Factor"_ustr);
           },
@@ -617,7 +617,7 @@ void register_node_type_sh_mix()
   namespace file_ns = nodes::node_sh_mix_cc;
 
   static bke::bNodeType ntype;
-  common_node_type_base(&ntype, "ShaderNodeMix", SH_NODE_MIX);
+  common_node_type_base(&ntype, "ShaderNodeMix"_ustr, SH_NODE_MIX);
   ntype.ui_name = "Mix";
   ntype.ui_description = "Mix values by a factor";
   ntype.enum_name_legacy = "MIX";

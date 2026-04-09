@@ -246,7 +246,7 @@ StringRef legacy_socket_idname_to_socket_type(StringRef idname)
 
 bNode &version_node_add_empty(bNodeTree &ntree, const char *idname)
 {
-  bke::bNodeType *ntype = bke::node_type_find(idname);
+  bke::bNodeType *ntype = bke::node_type_find(UString(idname));
 
   bNode *node = MEM_new<bNode>(__func__);
   node->runtime = MEM_new<bke::bNodeRuntime>(__func__);

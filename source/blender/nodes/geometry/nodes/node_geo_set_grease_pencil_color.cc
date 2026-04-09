@@ -121,7 +121,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetGreasePencilColor");
+  geo_node_type_base(&ntype, "GeometryNodeSetGreasePencilColor"_ustr);
   ntype.ui_name = "Set Grease Pencil Color";
   ntype.ui_description = "Set color and opacity attributes on Grease Pencil geometry";
   ntype.nclass = NODE_CLASS_GEOMETRY;

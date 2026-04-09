@@ -51,7 +51,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSplitEdges", GEO_NODE_SPLIT_EDGES);
+  geo_node_type_base(&ntype, "GeometryNodeSplitEdges"_ustr, GEO_NODE_SPLIT_EDGES);
   ntype.ui_name = "Split Edges";
   ntype.ui_description = "Duplicate mesh edges and break connections with the surrounding faces";
   ntype.enum_name_legacy = "SPLIT_EDGES";

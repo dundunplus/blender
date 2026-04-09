@@ -402,7 +402,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeColorCorrection", CMP_NODE_COLORCORRECTION);
+  cmp_node_type_base(&ntype, "CompositorNodeColorCorrection"_ustr, CMP_NODE_COLORCORRECTION);
   ntype.ui_name = "Color Correction";
   ntype.ui_description =
       "Adjust the color of an image, separately in several tonal ranges (highlights, midtones and "

@@ -678,7 +678,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeVecBlur", CMP_NODE_VECBLUR);
+  cmp_node_type_base(&ntype, "CompositorNodeVecBlur"_ustr, CMP_NODE_VECBLUR);
   ntype.ui_name = "Vector Blur";
   ntype.ui_description = "Uses the vector speed render pass to blur the image pixels in 2D";
   ntype.enum_name_legacy = "VECBLUR";

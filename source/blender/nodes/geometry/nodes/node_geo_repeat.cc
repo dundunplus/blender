@@ -147,7 +147,7 @@ static int node_shader_fn(GPUMaterial *mat,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "GeometryNodeRepeatInput", GEO_NODE_REPEAT_INPUT);
+  sh_geo_node_type_base(&ntype, "GeometryNodeRepeatInput"_ustr, GEO_NODE_REPEAT_INPUT);
   ntype.ui_name = "Repeat Input";
   ntype.enum_name_legacy = "REPEAT_INPUT";
   ntype.nclass = NODE_CLASS_INTERFACE;
@@ -254,8 +254,8 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     return;
   }
   params.add_item_full_name(IFACE_("Repeat"), [](LinkSearchOpParams &params) {
-    bNode &input_node = params.add_node("GeometryNodeRepeatInput");
-    bNode &output_node = params.add_node("GeometryNodeRepeatOutput");
+    bNode &input_node = params.add_node("GeometryNodeRepeatInput"_ustr);
+    bNode &output_node = params.add_node("GeometryNodeRepeatOutput"_ustr);
     output_node.location[0] = 300;
 
     auto &input_storage = *static_cast<NodeGeometryRepeatInput *>(input_node.storage);
@@ -305,7 +305,7 @@ static int node_shader_fn(GPUMaterial *mat,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "GeometryNodeRepeatOutput", GEO_NODE_REPEAT_OUTPUT);
+  sh_geo_node_type_base(&ntype, "GeometryNodeRepeatOutput"_ustr, GEO_NODE_REPEAT_OUTPUT);
   ntype.ui_name = "Repeat Output";
   ntype.enum_name_legacy = "REPEAT_OUTPUT";
   ntype.nclass = NODE_CLASS_INTERFACE;

@@ -353,7 +353,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeImage", CMP_NODE_IMAGE);
+  cmp_node_type_base(&ntype, "CompositorNodeImage"_ustr, CMP_NODE_IMAGE);
   ntype.ui_name = "Image";
   ntype.ui_description = "Input image or movie file";
   ntype.enum_name_legacy = "IMAGE";

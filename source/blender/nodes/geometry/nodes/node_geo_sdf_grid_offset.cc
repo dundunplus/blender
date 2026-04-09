@@ -56,7 +56,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSDFGridOffset");
+  geo_node_type_base(&ntype, "GeometryNodeSDFGridOffset"_ustr);
   ntype.ui_name = "SDF Grid Offset";
   ntype.ui_description =
       "Offset a signed distance field surface by a world-space distance. Dilates (positive) or "

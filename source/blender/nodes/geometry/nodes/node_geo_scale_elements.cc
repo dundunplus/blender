@@ -539,7 +539,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeScaleElements", GEO_NODE_SCALE_ELEMENTS);
+  geo_node_type_base(&ntype, "GeometryNodeScaleElements"_ustr, GEO_NODE_SCALE_ELEMENTS);
   ntype.ui_name = "Scale Elements";
   ntype.ui_description = "Scale groups of connected edges and faces";
   ntype.enum_name_legacy = "SCALE_ELEMENTS";

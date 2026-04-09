@@ -76,7 +76,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeInvert", CMP_NODE_INVERT);
+  cmp_node_type_base(&ntype, "CompositorNodeInvert"_ustr, CMP_NODE_INVERT);
   ntype.ui_name = "Invert Color";
   ntype.ui_description = "Invert colors, producing a negative";
   ntype.enum_name_legacy = "INVERT";

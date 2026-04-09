@@ -485,7 +485,7 @@ void register_node_type_sh_tex_noise()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeTexNoise", SH_NODE_TEX_NOISE);
+  common_node_type_base(&ntype, "ShaderNodeTexNoise"_ustr, SH_NODE_TEX_NOISE);
   ntype.ui_name = "Noise Texture";
   ntype.ui_description = "Generate fractal Perlin noise";
   ntype.enum_name_legacy = "TEX_NOISE";

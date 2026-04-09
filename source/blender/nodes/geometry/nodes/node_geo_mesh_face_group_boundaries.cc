@@ -125,7 +125,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeMeshFaceSetBoundaries", GEO_NODE_MESH_FACE_GROUP_BOUNDARIES);
+      &ntype, "GeometryNodeMeshFaceSetBoundaries"_ustr, GEO_NODE_MESH_FACE_GROUP_BOUNDARIES);
   ntype.ui_name = "Face Group Boundaries";
   ntype.ui_description =
       "Find edges on the boundaries between groups of faces with the same ID value";

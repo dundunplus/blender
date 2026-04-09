@@ -31,7 +31,8 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeQuaternionToRotation", FN_NODE_QUATERNION_TO_ROTATION);
+  fn_node_type_base(
+      &ntype, "FunctionNodeQuaternionToRotation"_ustr, FN_NODE_QUATERNION_TO_ROTATION);
   ntype.ui_name = "Quaternion to Rotation";
   ntype.ui_description = "Build a rotation from quaternion components";
   ntype.enum_name_legacy = "QUATERNION_TO_ROTATION";

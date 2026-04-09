@@ -183,7 +183,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeToolSelection", GEO_NODE_TOOL_SELECTION);
+  geo_node_type_base(&ntype, "GeometryNodeToolSelection"_ustr, GEO_NODE_TOOL_SELECTION);
   ntype.ui_name = "Selection";
   ntype.ui_description = "User selection of the edited geometry, for tool execution";
   ntype.enum_name_legacy = "TOOL_SELECTION";

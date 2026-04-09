@@ -50,7 +50,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   geo_node_type_base(
-      &ntype, "GeometryNodeInputSplineResolution", GEO_NODE_INPUT_SPLINE_RESOLUTION);
+      &ntype, "GeometryNodeInputSplineResolution"_ustr, GEO_NODE_INPUT_SPLINE_RESOLUTION);
   ntype.ui_name = "Spline Resolution";
   ntype.ui_description =
       "Retrieve the number of evaluated points that will be generated for every control point on "

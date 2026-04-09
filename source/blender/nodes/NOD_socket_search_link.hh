@@ -52,7 +52,7 @@ class LinkSearchOpParams {
   {
   }
 
-  bNode &add_node(StringRef idname);
+  bNode &add_node(UString idname);
   bNode &add_node(const bke::bNodeType &node_type);
   /**
    * Find a socket with the given name (correctly checks for inputs and outputs)

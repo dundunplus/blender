@@ -68,7 +68,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSDFGridFillet");
+  geo_node_type_base(&ntype, "GeometryNodeSDFGridFillet"_ustr);
   ntype.ui_name = "SDF Grid Fillet";
   ntype.ui_description =
       "Round off concave internal corners in a signed distance field. Only affects areas with "

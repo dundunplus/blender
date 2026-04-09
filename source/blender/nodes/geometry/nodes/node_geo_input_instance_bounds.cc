@@ -120,7 +120,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputInstanceBounds");
+  geo_node_type_base(&ntype, "GeometryNodeInputInstanceBounds"_ustr);
   ntype.ui_name = "Instance Bounds";
   ntype.ui_description = "Calculate position bounds of each instance's geometry set";
   ntype.nclass = NODE_CLASS_INPUT;

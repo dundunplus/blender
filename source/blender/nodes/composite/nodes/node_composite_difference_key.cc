@@ -97,7 +97,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDiffMatte", CMP_NODE_DIFF_MATTE);
+  cmp_node_type_base(&ntype, "CompositorNodeDiffMatte"_ustr, CMP_NODE_DIFF_MATTE);
   ntype.ui_name = "Difference Key";
   ntype.ui_description =
       "Produce a matte that isolates foreground content by comparing it with a reference "

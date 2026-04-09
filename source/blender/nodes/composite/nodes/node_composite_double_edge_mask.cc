@@ -299,7 +299,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDoubleEdgeMask", CMP_NODE_DOUBLEEDGEMASK);
+  cmp_node_type_base(&ntype, "CompositorNodeDoubleEdgeMask"_ustr, CMP_NODE_DOUBLEEDGEMASK);
   ntype.ui_name = "Double Edge Mask";
   ntype.ui_description = "Create a gradient between two masks";
   ntype.enum_name_legacy = "DOUBLEEDGEMASK";

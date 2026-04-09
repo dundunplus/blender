@@ -246,7 +246,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeIndexOfNearest", GEO_NODE_INDEX_OF_NEAREST);
+  geo_node_type_base(&ntype, "GeometryNodeIndexOfNearest"_ustr, GEO_NODE_INDEX_OF_NEAREST);
   ntype.ui_name = "Index of Nearest";
   ntype.ui_description =
       "Find the nearest element in a group. Similar to the \"Sample Nearest\" node";

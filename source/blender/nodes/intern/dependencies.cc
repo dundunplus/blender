@@ -141,13 +141,13 @@ static void add_eval_dependencies_from_socket(const bNodeSocket &socket, EvalDep
 
 static void add_eval_dependencies_from_node_data(const bNodeTree &tree, EvalDependencies &deps)
 {
-  for (const bNode *node : tree.nodes_by_type("GeometryNodeInputObject")) {
+  for (const bNode *node : tree.nodes_by_type("GeometryNodeInputObject"_ustr)) {
     if (node->is_muted()) {
       continue;
     }
     deps.add_object(reinterpret_cast<Object *>(node->id));
   }
-  for (const bNode *node : tree.nodes_by_type("GeometryNodeInputCollection")) {
+  for (const bNode *node : tree.nodes_by_type("GeometryNodeInputCollection"_ustr)) {
     if (node->is_muted()) {
       continue;
     }
@@ -155,7 +155,7 @@ static void add_eval_dependencies_from_node_data(const bNodeTree &tree, EvalDepe
   }
 }
 
-static bool has_enabled_nodes_of_type(const bNodeTree &tree, const StringRefNull type_idname)
+static bool has_enabled_nodes_of_type(const bNodeTree &tree, const UString type_idname)
 {
   for (const bNode *node : tree.nodes_by_type(type_idname)) {
     if (!node->is_muted()) {
@@ -169,10 +169,10 @@ static void add_own_transform_dependencies(const bNodeTree &tree, EvalDependenci
 {
   bool needs_own_transform = false;
 
-  needs_own_transform |= has_enabled_nodes_of_type(tree, "GeometryNodeSelfObject");
-  needs_own_transform |= has_enabled_nodes_of_type(tree, "GeometryNodeDeformCurvesOnSurface");
+  needs_own_transform |= has_enabled_nodes_of_type(tree, "GeometryNodeSelfObject"_ustr);
+  needs_own_transform |= has_enabled_nodes_of_type(tree, "GeometryNodeDeformCurvesOnSurface"_ustr);
 
-  for (const bNode *node : tree.nodes_by_type("GeometryNodeCollectionInfo")) {
+  for (const bNode *node : tree.nodes_by_type("GeometryNodeCollectionInfo"_ustr)) {
     if (node->is_muted()) {
       continue;
     }
@@ -181,7 +181,7 @@ static void add_own_transform_dependencies(const bNodeTree &tree, EvalDependenci
     needs_own_transform |= storage.transform_space == GEO_NODE_TRANSFORM_SPACE_RELATIVE;
   }
 
-  for (const bNode *node : tree.nodes_by_type("GeometryNodeObjectInfo")) {
+  for (const bNode *node : tree.nodes_by_type("GeometryNodeObjectInfo"_ustr)) {
     if (node->is_muted()) {
       continue;
     }
@@ -195,7 +195,7 @@ static void add_own_transform_dependencies(const bNodeTree &tree, EvalDependenci
 
 static bool needs_scene_render_params(const bNodeTree &ntree)
 {
-  for (const bNode *node : ntree.nodes_by_type("GeometryNodeCameraInfo")) {
+  for (const bNode *node : ntree.nodes_by_type("GeometryNodeCameraInfo"_ustr)) {
     if (node->is_muted()) {
       continue;
     }
@@ -217,10 +217,11 @@ static void gather_geometry_nodes_eval_dependencies(
   for (const bNodeSocket *socket : ntree.all_sockets()) {
     add_eval_dependencies_from_socket(*socket, deps);
   }
-  deps.needs_active_camera |= has_enabled_nodes_of_type(ntree, "GeometryNodeInputActiveCamera");
+  deps.needs_active_camera |= has_enabled_nodes_of_type(ntree,
+                                                        "GeometryNodeInputActiveCamera"_ustr);
   deps.needs_scene_render_params |= needs_scene_render_params(ntree);
-  deps.time_dependent |= has_enabled_nodes_of_type(ntree, "GeometryNodeSimulationInput") ||
-                         has_enabled_nodes_of_type(ntree, "GeometryNodeInputSceneTime");
+  deps.time_dependent |= has_enabled_nodes_of_type(ntree, "GeometryNodeSimulationInput"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "GeometryNodeInputSceneTime"_ustr);
 
   add_eval_dependencies_from_node_data(ntree, deps);
   add_own_transform_dependencies(ntree, deps);

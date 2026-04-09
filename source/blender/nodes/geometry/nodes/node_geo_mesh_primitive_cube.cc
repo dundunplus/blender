@@ -117,7 +117,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshCube", GEO_NODE_MESH_PRIMITIVE_CUBE);
+  geo_node_type_base(&ntype, "GeometryNodeMeshCube"_ustr, GEO_NODE_MESH_PRIMITIVE_CUBE);
   ntype.ui_name = "Cube";
   ntype.ui_description = "Generate a cuboid mesh with variable side lengths and subdivisions";
   ntype.enum_name_legacy = "MESH_PRIMITIVE_CUBE";

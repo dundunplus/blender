@@ -127,7 +127,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputTangent", GEO_NODE_INPUT_TANGENT);
+  geo_node_type_base(&ntype, "GeometryNodeInputTangent"_ustr, GEO_NODE_INPUT_TANGENT);
   ntype.ui_name = "Curve Tangent";
   ntype.ui_description = "Retrieve the direction of curves at each control point";
   ntype.enum_name_legacy = "INPUT_TANGENT";

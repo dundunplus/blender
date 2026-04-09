@@ -49,7 +49,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   fn_node_type_base(
-      &ntype, "FunctionNodeInputSpecialCharacters", FN_NODE_INPUT_SPECIAL_CHARACTERS);
+      &ntype, "FunctionNodeInputSpecialCharacters"_ustr, FN_NODE_INPUT_SPECIAL_CHARACTERS);
   ntype.ui_name = "Special Characters";
   ntype.ui_description =
       "Output string characters that cannot be typed directly with the keyboard";

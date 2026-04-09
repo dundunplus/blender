@@ -88,7 +88,7 @@ void register_node_type_sh_hue_sat()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeHueSaturation", SH_NODE_HUE_SAT);
+  sh_node_type_base(&ntype, "ShaderNodeHueSaturation"_ustr, SH_NODE_HUE_SAT);
   ntype.ui_name = "Hue/Saturation/Value";
   ntype.ui_description = "Apply a color transformation in the HSV color model";
   ntype.enum_name_legacy = "HUE_SAT";

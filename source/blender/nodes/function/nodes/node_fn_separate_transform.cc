@@ -107,7 +107,7 @@ static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeSeparateTransform", FN_NODE_SEPARATE_TRANSFORM);
+  fn_node_type_base(&ntype, "FunctionNodeSeparateTransform"_ustr, FN_NODE_SEPARATE_TRANSFORM);
   ntype.ui_name = "Separate Transform";
   ntype.ui_description =
       "Split a transformation matrix into a translation vector, a rotation, and a scale vector";

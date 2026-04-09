@@ -199,7 +199,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeCornersOfVertex", GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_VERTEX);
+      &ntype, "GeometryNodeCornersOfVertex"_ustr, GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_VERTEX);
   ntype.ui_name = "Corners of Vertex";
   ntype.ui_description = "Retrieve face corners connected to vertices";
   ntype.enum_name_legacy = "CORNERS_OF_VERTEX";

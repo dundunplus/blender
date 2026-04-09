@@ -360,7 +360,7 @@ void BundleSignature::add(std::string key, const eNodeSocketDatatype socket_type
 BundleSignature BundleSignature::from_combine_bundle_node(const bNode &node,
                                                           const bool allow_auto_structure_type)
 {
-  BLI_assert(node.is_type("NodeCombineBundle"));
+  BLI_assert(node.is_type("NodeCombineBundle"_ustr));
   const auto &storage = *static_cast<const NodeCombineBundle *>(node.storage);
   BundleSignature signature;
   for (const int i : IndexRange(storage.items_num)) {
@@ -381,7 +381,7 @@ BundleSignature BundleSignature::from_combine_bundle_node(const bNode &node,
 BundleSignature BundleSignature::from_separate_bundle_node(const bNode &node,
                                                            const bool allow_auto_structure_type)
 {
-  BLI_assert(node.is_type("NodeSeparateBundle"));
+  BLI_assert(node.is_type("NodeSeparateBundle"_ustr));
   const auto &storage = *static_cast<const NodeSeparateBundle *>(node.storage);
   BundleSignature signature;
   for (const int i : IndexRange(storage.items_num)) {

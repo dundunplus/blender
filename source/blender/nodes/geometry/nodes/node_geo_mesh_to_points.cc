@@ -258,7 +258,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshToPoints", GEO_NODE_MESH_TO_POINTS);
+  geo_node_type_base(&ntype, "GeometryNodeMeshToPoints"_ustr, GEO_NODE_MESH_TO_POINTS);
   ntype.ui_name = "Mesh to Points";
   ntype.ui_description = "Generate a point cloud from a mesh's vertices";
   ntype.enum_name_legacy = "MESH_TO_POINTS";

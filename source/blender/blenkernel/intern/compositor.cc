@@ -226,7 +226,7 @@ bool node_tree_has_linked_file_output(const bNodeTree *node_tree)
   }
 
   node_tree->ensure_topology_cache();
-  for (const bNode *node : node_tree->nodes_by_type("CompositorNodeOutputFile")) {
+  for (const bNode *node : node_tree->nodes_by_type("CompositorNodeOutputFile"_ustr)) {
     if (!node->is_muted()) {
       for (const bNodeSocket &input : node->inputs) {
         if (input.is_directly_linked()) {

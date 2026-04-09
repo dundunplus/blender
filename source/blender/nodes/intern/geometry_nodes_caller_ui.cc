@@ -302,7 +302,7 @@ static void attribute_search_update_fn(
 
   Vector<const bNodeSocket *> sockets_to_check;
   if (data.is_output) {
-    for (const bNode *node : info.tree->nodes_by_type("NodeGroupOutput")) {
+    for (const bNode *node : info.tree->nodes_by_type("NodeGroupOutput"_ustr)) {
       for (const bNodeSocket *socket : node->input_sockets()) {
         if (socket->type == SOCK_GEOMETRY) {
           sockets_to_check.append(socket);

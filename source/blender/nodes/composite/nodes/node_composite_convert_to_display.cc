@@ -199,7 +199,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeConvertToDisplay", CMP_NODE_CONVERT_TO_DISPLAY);
+  cmp_node_type_base(&ntype, "CompositorNodeConvertToDisplay"_ustr, CMP_NODE_CONVERT_TO_DISPLAY);
   ntype.ui_name = "Convert to Display";
   ntype.ui_description =
       "Convert from scene linear to display color space, with a view transform and look for tone "

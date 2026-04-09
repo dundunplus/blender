@@ -150,7 +150,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeInputMeshFaceNeighbors", GEO_NODE_INPUT_MESH_FACE_NEIGHBORS);
+      &ntype, "GeometryNodeInputMeshFaceNeighbors"_ustr, GEO_NODE_INPUT_MESH_FACE_NEIGHBORS);
   ntype.ui_name = "Face Neighbors";
   ntype.ui_description = "Retrieve topology information relating to each face of a mesh";
   ntype.enum_name_legacy = "MESH_FACE_NEIGHBORS";

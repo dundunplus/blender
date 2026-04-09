@@ -60,7 +60,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshUVSphere", GEO_NODE_MESH_PRIMITIVE_UV_SPHERE);
+  geo_node_type_base(&ntype, "GeometryNodeMeshUVSphere"_ustr, GEO_NODE_MESH_PRIMITIVE_UV_SPHERE);
   ntype.ui_name = "UV Sphere";
   ntype.ui_description =
       "Generate a spherical mesh with quads, except for triangles at the top and bottom";

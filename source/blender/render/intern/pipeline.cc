@@ -1158,7 +1158,7 @@ static bool node_tree_has_group_output(const bNodeTree *node_tree)
   }
 
   node_tree->ensure_topology_cache();
-  for (const bNode *node : node_tree->nodes_by_type("NodeGroupOutput")) {
+  for (const bNode *node : node_tree->nodes_by_type("NodeGroupOutput"_ustr)) {
     if (node->flag & NODE_DO_OUTPUT && !node->is_muted()) {
       return true;
     }

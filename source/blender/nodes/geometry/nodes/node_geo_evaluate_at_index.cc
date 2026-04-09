@@ -101,7 +101,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeFieldAtIndex", GEO_NODE_EVALUATE_AT_INDEX);
+  geo_node_type_base(&ntype, "GeometryNodeFieldAtIndex"_ustr, GEO_NODE_EVALUATE_AT_INDEX);
   ntype.ui_name = "Evaluate at Index";
   ntype.ui_description = "Retrieve data of other elements in the context's geometry";
   ntype.enum_name_legacy = "FIELD_AT_INDEX";

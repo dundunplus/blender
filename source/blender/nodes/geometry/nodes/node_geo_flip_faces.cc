@@ -49,7 +49,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeFlipFaces", GEO_NODE_FLIP_FACES);
+  geo_node_type_base(&ntype, "GeometryNodeFlipFaces"_ustr, GEO_NODE_FLIP_FACES);
   ntype.ui_name = "Flip Faces";
   ntype.ui_description =
       "Reverse the order of the vertices and edges of selected faces, flipping their normal "

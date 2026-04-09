@@ -149,7 +149,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeInputMeshEdgeVertices", GEO_NODE_INPUT_MESH_EDGE_VERTICES);
+      &ntype, "GeometryNodeInputMeshEdgeVertices"_ustr, GEO_NODE_INPUT_MESH_EDGE_VERTICES);
   ntype.ui_name = "Edge Vertices";
   ntype.ui_description = "Retrieve topology information relating to each edge of a mesh";
   ntype.enum_name_legacy = "MESH_EDGE_VERTICES";

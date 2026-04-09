@@ -104,7 +104,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeEdgesToFaceGroups", GEO_NODE_EDGES_TO_FACE_GROUPS);
+  geo_node_type_base(&ntype, "GeometryNodeEdgesToFaceGroups"_ustr, GEO_NODE_EDGES_TO_FACE_GROUPS);
   ntype.ui_name = "Edges to Face Groups";
   ntype.ui_description = "Group faces into regions surrounded by the selected boundary edges";
   ntype.enum_name_legacy = "EDGES_TO_FACE_GROUPS";

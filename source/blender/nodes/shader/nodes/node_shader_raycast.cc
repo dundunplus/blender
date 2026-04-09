@@ -75,7 +75,7 @@ void register_node_type_sh_raycast()
 
   static blender::bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeRaycast", SH_NODE_RAYCAST);
+  sh_node_type_base(&ntype, "ShaderNodeRaycast"_ustr, SH_NODE_RAYCAST);
   ntype.ui_name = "Raycast";
   ntype.ui_description = "Cast rays and retrieve information from the hit point";
   ntype.enum_name_legacy = "MATERIAL_RAYCAST";

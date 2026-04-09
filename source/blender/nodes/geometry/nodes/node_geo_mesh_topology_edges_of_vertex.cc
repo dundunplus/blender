@@ -206,7 +206,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeEdgesOfVertex", GEO_NODE_MESH_TOPOLOGY_EDGES_OF_VERTEX);
+  geo_node_type_base(
+      &ntype, "GeometryNodeEdgesOfVertex"_ustr, GEO_NODE_MESH_TOPOLOGY_EDGES_OF_VERTEX);
   ntype.ui_name = "Edges of Vertex";
   ntype.ui_description = "Retrieve the edges connected to each vertex";
   ntype.enum_name_legacy = "EDGES_OF_VERTEX";

@@ -1192,30 +1192,30 @@ static bNodeTree *offset_radius_node_tree_add(ConversionData &conversion_data, L
   group->tree_interface.add_socket(
       DATA_("Layer"), "", "NodeSocketString", NODE_INTERFACE_SOCKET_INPUT, nullptr);
 
-  bNode *group_output = bke::node_add_node(nullptr, *group, "NodeGroupOutput");
+  bNode *group_output = bke::node_add_node(nullptr, *group, "NodeGroupOutput"_ustr);
   group_output->location[0] = 800;
   group_output->location[1] = 160;
-  bNode *group_input = bke::node_add_node(nullptr, *group, "NodeGroupInput");
+  bNode *group_input = bke::node_add_node(nullptr, *group, "NodeGroupInput"_ustr);
   group_input->location[0] = 0;
   group_input->location[1] = 160;
 
-  bNode *set_curve_radius = bke::node_add_node(nullptr, *group, "GeometryNodeSetCurveRadius");
+  bNode *set_curve_radius = bke::node_add_node(nullptr, *group, "GeometryNodeSetCurveRadius"_ustr);
   set_curve_radius->location[0] = 600;
   set_curve_radius->location[1] = 160;
   bNode *named_layer_selection = bke::node_add_node(
-      nullptr, *group, "GeometryNodeInputNamedLayerSelection");
+      nullptr, *group, "GeometryNodeInputNamedLayerSelection"_ustr);
   named_layer_selection->location[0] = 200;
   named_layer_selection->location[1] = 100;
-  bNode *input_radius = bke::node_add_node(nullptr, *group, "GeometryNodeInputRadius");
+  bNode *input_radius = bke::node_add_node(nullptr, *group, "GeometryNodeInputRadius"_ustr);
   input_radius->location[0] = 0;
   input_radius->location[1] = 0;
 
-  bNode *add = bke::node_add_node(nullptr, *group, "ShaderNodeMath");
+  bNode *add = bke::node_add_node(nullptr, *group, "ShaderNodeMath"_ustr);
   add->custom1 = NODE_MATH_ADD;
   add->location[0] = 200;
   add->location[1] = 0;
 
-  bNode *clamp_radius = bke::node_add_node(nullptr, *group, "ShaderNodeClamp");
+  bNode *clamp_radius = bke::node_add_node(nullptr, *group, "ShaderNodeClamp"_ustr);
   clamp_radius->location[0] = 400;
   clamp_radius->location[1] = 0;
   bNodeSocket *sock_max = bke::node_find_socket(*clamp_radius, SOCK_IN, "Max");

@@ -41,14 +41,14 @@ static void search_link_ops(GatherLinkSearchOpParams &params)
 {
   if (params.other_socket().type == SOCK_GEOMETRY) {
     params.add_item(IFACE_("Volume"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
+      bNode &node = params.add_node("GeometryNodeStoreNamedGrid"_ustr);
       params.update_and_connect_available_socket(node, "Volume"_ustr);
     });
   }
   if (params.in_out() == SOCK_IN) {
     if (params.other_socket().type == SOCK_STRING) {
       params.add_item(IFACE_("Name"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
+        bNode &node = params.add_node("GeometryNodeStoreNamedGrid"_ustr);
         params.update_and_connect_available_socket(node, "Name"_ustr);
       });
     }
@@ -56,7 +56,7 @@ static void search_link_ops(GatherLinkSearchOpParams &params)
             eNodeSocketDatatype(params.other_socket().type)))
     {
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
+        bNode &node = params.add_node("GeometryNodeStoreNamedGrid"_ustr);
         node.custom1 = *data_type;
         params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
@@ -134,7 +134,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeStoreNamedGrid", GEO_NODE_STORE_NAMED_GRID);
+  geo_node_type_base(&ntype, "GeometryNodeStoreNamedGrid"_ustr, GEO_NODE_STORE_NAMED_GRID);
   ntype.ui_name = "Store Named Grid";
   ntype.ui_description = "Store grid data in a volume geometry with the specified name";
   ntype.enum_name_legacy = "STORE_NAMED_GRID";

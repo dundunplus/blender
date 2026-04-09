@@ -534,7 +534,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeColorBalance", CMP_NODE_COLORBALANCE);
+  cmp_node_type_base(&ntype, "CompositorNodeColorBalance"_ustr, CMP_NODE_COLORBALANCE);
   ntype.ui_name = "Color Balance";
   ntype.ui_description = "Adjust color and values";
   ntype.enum_name_legacy = "COLORBALANCE";

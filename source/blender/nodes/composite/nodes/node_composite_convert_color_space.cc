@@ -186,7 +186,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeConvertColorSpace", CMP_NODE_CONVERT_COLOR_SPACE);
+  cmp_node_type_base(&ntype, "CompositorNodeConvertColorSpace"_ustr, CMP_NODE_CONVERT_COLOR_SPACE);
   ntype.ui_name = "Convert Colorspace";
   ntype.ui_description = "Convert between color spaces";
   ntype.enum_name_legacy = "CONVERT_COLORSPACE";

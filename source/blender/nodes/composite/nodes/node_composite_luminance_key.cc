@@ -103,7 +103,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeLumaMatte", CMP_NODE_LUMA_MATTE);
+  cmp_node_type_base(&ntype, "CompositorNodeLumaMatte"_ustr, CMP_NODE_LUMA_MATTE);
   ntype.ui_name = "Luminance Key";
   ntype.ui_description = "Create a matte based on luminance (brightness) difference";
   ntype.enum_name_legacy = "LUMA_MATTE";

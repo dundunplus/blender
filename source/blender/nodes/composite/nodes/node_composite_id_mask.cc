@@ -127,7 +127,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeIDMask", CMP_NODE_ID_MASK);
+  cmp_node_type_base(&ntype, "CompositorNodeIDMask"_ustr, CMP_NODE_ID_MASK);
   ntype.ui_name = "ID Mask";
   ntype.ui_description = "Create a matte from an object or material index pass";
   ntype.enum_name_legacy = "ID_MASK";

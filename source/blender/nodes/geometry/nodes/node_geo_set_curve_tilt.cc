@@ -78,7 +78,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetCurveTilt", GEO_NODE_SET_CURVE_TILT);
+  geo_node_type_base(&ntype, "GeometryNodeSetCurveTilt"_ustr, GEO_NODE_SET_CURVE_TILT);
   ntype.ui_name = "Set Curve Tilt";
   ntype.ui_description = "Set the tilt angle at each curve control point";
   ntype.enum_name_legacy = "SET_CURVE_TILT";

@@ -136,7 +136,7 @@ class SocketSearchOp {
   NodeVectorMathOperation mode = NODE_VECTOR_MATH_ADD;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("ShaderNodeVectorMath");
+    bNode &node = params.add_node("ShaderNodeVectorMath"_ustr);
     node.custom1 = mode;
     vector_math_input_defaults(node, mode);
     params.update_and_connect_available_socket(node, socket_name);
@@ -564,7 +564,7 @@ void register_node_type_sh_vect_math()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeVectorMath", SH_NODE_VECTOR_MATH);
+  common_node_type_base(&ntype, "ShaderNodeVectorMath"_ustr, SH_NODE_VECTOR_MATH);
   ntype.ui_name = "Vector Math";
   ntype.ui_description = "Perform vector math operation";
   ntype.enum_name_legacy = "VECT_MATH";

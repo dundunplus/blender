@@ -833,7 +833,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeKuwahara", CMP_NODE_KUWAHARA);
+  cmp_node_type_base(&ntype, "CompositorNodeKuwahara"_ustr, CMP_NODE_KUWAHARA);
   ntype.ui_name = "Kuwahara";
   ntype.ui_description =
       "Apply smoothing filter that preserves edges, for stylized and painterly effects";

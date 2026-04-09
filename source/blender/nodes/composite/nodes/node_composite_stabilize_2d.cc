@@ -184,7 +184,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeStabilize", CMP_NODE_STABILIZE2D);
+  cmp_node_type_base(&ntype, "CompositorNodeStabilize"_ustr, CMP_NODE_STABILIZE2D);
   ntype.ui_name = "Stabilize 2D";
   ntype.ui_description = "Stabilize footage using 2D stabilization motion tracking settings";
   ntype.enum_name_legacy = "STABILIZE2D";

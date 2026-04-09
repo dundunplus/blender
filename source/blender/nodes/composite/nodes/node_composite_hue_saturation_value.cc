@@ -102,7 +102,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeHueSat", CMP_NODE_HUE_SAT);
+  cmp_node_type_base(&ntype, "CompositorNodeHueSat"_ustr, CMP_NODE_HUE_SAT);
   ntype.ui_name = "Hue/Saturation/Value";
   ntype.ui_description = "Apply a color transformation in the HSV color model";
   ntype.enum_name_legacy = "HUE_SAT";

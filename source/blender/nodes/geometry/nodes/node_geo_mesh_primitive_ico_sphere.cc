@@ -136,7 +136,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshIcoSphere", GEO_NODE_MESH_PRIMITIVE_ICO_SPHERE);
+  geo_node_type_base(&ntype, "GeometryNodeMeshIcoSphere"_ustr, GEO_NODE_MESH_PRIMITIVE_ICO_SPHERE);
   ntype.ui_name = "Ico Sphere";
   ntype.ui_description = "Generate a spherical mesh that consists of equally sized triangles";
   ntype.enum_name_legacy = "MESH_PRIMITIVE_ICO_SPHERE";

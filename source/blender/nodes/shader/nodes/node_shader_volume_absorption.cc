@@ -42,7 +42,7 @@ void register_node_type_sh_volume_absorption()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeVolumeAbsorption", SH_NODE_VOLUME_ABSORPTION);
+  sh_node_type_base(&ntype, "ShaderNodeVolumeAbsorption"_ustr, SH_NODE_VOLUME_ABSORPTION);
   ntype.ui_name = "Volume Absorption";
   ntype.ui_description = "Absorb light as it passes through the volume";
   ntype.enum_name_legacy = "VOLUME_ABSORPTION";

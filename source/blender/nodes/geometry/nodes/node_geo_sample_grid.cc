@@ -82,21 +82,21 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   }
   if (params.in_out() == SOCK_IN) {
     params.add_item(IFACE_("Grid"), [node_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeSampleGrid");
+      bNode &node = params.add_node("GeometryNodeSampleGrid"_ustr);
       node.custom1 = *node_type;
       params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
     const eNodeSocketDatatype other_type = eNodeSocketDatatype(params.other_socket().type);
     if (params.node_tree().typeinfo->validate_link(other_type, SOCK_VECTOR)) {
       params.add_item(IFACE_("Position"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeSampleGrid");
+        bNode &node = params.add_node("GeometryNodeSampleGrid"_ustr);
         params.update_and_connect_available_socket(node, "Position"_ustr);
       });
     }
   }
   else {
     params.add_item(IFACE_("Value"), [node_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeSampleGrid");
+      bNode &node = params.add_node("GeometryNodeSampleGrid"_ustr);
       node.custom1 = *node_type;
       params.update_and_connect_available_socket(node, "Value"_ustr);
     });
@@ -255,7 +255,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSampleGrid", GEO_NODE_SAMPLE_GRID);
+  geo_node_type_base(&ntype, "GeometryNodeSampleGrid"_ustr, GEO_NODE_SAMPLE_GRID);
   ntype.ui_name = "Sample Grid";
   ntype.ui_description = "Retrieve values from the specified volume grid";
   ntype.enum_name_legacy = "SAMPLE_GRID";

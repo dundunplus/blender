@@ -100,7 +100,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeRotateInstances", GEO_NODE_ROTATE_INSTANCES);
+  geo_node_type_base(&ntype, "GeometryNodeRotateInstances"_ustr, GEO_NODE_ROTATE_INSTANCES);
   ntype.ui_name = "Rotate Instances";
   ntype.ui_description = "Rotate geometry instances in local or global space";
   ntype.enum_name_legacy = "ROTATE_INSTANCES";

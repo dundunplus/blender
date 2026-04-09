@@ -66,7 +66,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeInputMeshFaceArea", GEO_NODE_INPUT_MESH_FACE_AREA);
+  geo_node_type_base(&ntype, "GeometryNodeInputMeshFaceArea"_ustr, GEO_NODE_INPUT_MESH_FACE_AREA);
   ntype.ui_name = "Face Area";
   ntype.ui_description = "Calculate the surface area of a mesh's faces";
   ntype.enum_name_legacy = "MESH_FACE_AREA";

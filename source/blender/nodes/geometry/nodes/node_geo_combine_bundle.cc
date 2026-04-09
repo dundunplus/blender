@@ -157,7 +157,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       return;
     }
     params.add_item(IFACE_("Item"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("NodeCombineBundle");
+      bNode &node = params.add_node("NodeCombineBundle"_ustr);
       const auto *item =
           socket_items::add_item_with_socket_type_and_name<CombineBundleItemsAccessor>(
               params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
@@ -169,7 +169,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       return;
     }
     params.add_item(IFACE_("Bundle"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("NodeCombineBundle");
+      bNode &node = params.add_node("NodeCombineBundle"_ustr);
       params.connect_available_socket(node, "Bundle"_ustr);
 
       SpaceNode &snode = *CTX_wm_space_node(&params.C);
@@ -192,7 +192,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  sh_geo_node_type_base(&ntype, "NodeCombineBundle", NODE_COMBINE_BUNDLE);
+  sh_geo_node_type_base(&ntype, "NodeCombineBundle"_ustr, NODE_COMBINE_BUNDLE);
   ntype.ui_name = "Combine Bundle";
   ntype.ui_description = "Combine multiple socket values into one.";
   ntype.nclass = NODE_CLASS_CONVERTER;

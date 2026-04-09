@@ -250,7 +250,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeCombineColor", CMP_NODE_COMBINE_COLOR);
+  cmp_node_type_base(&ntype, "CompositorNodeCombineColor"_ustr, CMP_NODE_COMBINE_COLOR);
   ntype.ui_name = "Combine Color";
   ntype.ui_description = "Combine an image from its composite color channels";
   ntype.enum_name_legacy = "COMBINE_COLOR";

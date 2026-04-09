@@ -172,7 +172,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeKeyingScreen", CMP_NODE_KEYINGSCREEN);
+  cmp_node_type_base(&ntype, "CompositorNodeKeyingScreen"_ustr, CMP_NODE_KEYINGSCREEN);
   ntype.ui_name = "Keying Screen";
   ntype.ui_description = "Create plates for use as a color reference for keying nodes";
   ntype.enum_name_legacy = "KEYINGSCREEN";

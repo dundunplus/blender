@@ -702,7 +702,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   geo_node_type_base(
-      &ntype, "GeometryNodeDistributePointsOnFaces", GEO_NODE_DISTRIBUTE_POINTS_ON_FACES);
+      &ntype, "GeometryNodeDistributePointsOnFaces"_ustr, GEO_NODE_DISTRIBUTE_POINTS_ON_FACES);
   ntype.ui_name = "Distribute Points on Faces";
   ntype.ui_description = "Generate points spread out on the surface of a mesh";
   ntype.enum_name_legacy = "DISTRIBUTE_POINTS_ON_FACES";

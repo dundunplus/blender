@@ -72,7 +72,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetMaterialIndex", GEO_NODE_SET_MATERIAL_INDEX);
+  geo_node_type_base(&ntype, "GeometryNodeSetMaterialIndex"_ustr, GEO_NODE_SET_MATERIAL_INDEX);
   ntype.ui_name = "Set Material Index";
   ntype.ui_description = "Set the material index for each selected geometry element";
   ntype.enum_name_legacy = "SET_MATERIAL_INDEX";

@@ -575,7 +575,7 @@ static void do_version_normal_node_dot_product(bNodeTree *node_tree, bNode *node
   }
 
   /* Take the dot product with negative the node normal. */
-  bNode *dot_product_node = bke::node_add_node(nullptr, *node_tree, "ShaderNodeVectorMath");
+  bNode *dot_product_node = bke::node_add_node(nullptr, *node_tree, "ShaderNodeVectorMath"_ustr);
   dot_product_node->custom1 = NODE_VECTOR_MATH_DOT_PRODUCT;
   dot_product_node->flag |= NODE_COLLAPSED;
   dot_product_node->parent = node->parent;
@@ -1519,7 +1519,7 @@ static void do_version_sun_beams(bNodeTree &node_tree, bNode &node)
   bNodeSocket *old_length_input = bke::node_find_socket(node, SOCK_IN, "Length");
   bNodeSocket *old_image_output = bke::node_find_socket(node, SOCK_OUT, "Image");
 
-  bNode *glare_node = bke::node_add_node(nullptr, node_tree, "CompositorNodeGlare");
+  bNode *glare_node = bke::node_add_node(nullptr, node_tree, "CompositorNodeGlare"_ustr);
   glare_node->parent = node.parent;
   glare_node->location[0] = node.location[0];
   glare_node->location[1] = node.location[1];
@@ -1596,7 +1596,7 @@ static bNode *do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNod
     }
   }
 
-  bNode *group_output_node = bke::node_add_node(nullptr, node_tree, "NodeGroupOutput");
+  bNode *group_output_node = bke::node_add_node(nullptr, node_tree, "NodeGroupOutput"_ustr);
   group_output_node->parent = node.parent;
   group_output_node->location[0] = node.location[0];
   group_output_node->location[1] = node.location[1];
@@ -2455,7 +2455,7 @@ static void do_version_displace_node_remove_xy_scale(bNodeTree &node_tree, bNode
     }
   }
 
-  bNode *multiply_node = bke::node_add_node(nullptr, node_tree, "ShaderNodeVectorMath");
+  bNode *multiply_node = bke::node_add_node(nullptr, node_tree, "ShaderNodeVectorMath"_ustr);
   multiply_node->parent = node.parent;
   multiply_node->location[0] = node.location[0] - node.width - 20.0f;
   multiply_node->location[1] = node.location[1];
@@ -2478,7 +2478,7 @@ static void do_version_displace_node_remove_xy_scale(bNodeTree &node_tree, bNode
 
   version_node_add_link(node_tree, *multiply_node, *multiply_output, node, *displacement_input);
 
-  bNode *combine_node = bke::node_add_node(nullptr, node_tree, "ShaderNodeCombineXYZ");
+  bNode *combine_node = bke::node_add_node(nullptr, node_tree, "ShaderNodeCombineXYZ"_ustr);
   combine_node->parent = node.parent;
   combine_node->location[0] = multiply_node->location[0] - multiply_node->width - 20.0f;
   combine_node->location[1] = multiply_node->location[1];
@@ -2558,7 +2558,7 @@ static void do_version_bokeh_blur_pixel_size(bNodeTree &node_tree, bNode &node)
   version_node_add_link(node_tree, multiply_node, multiply_output, node, *size_input);
 
   bNode *relative_to_pixel_node = bke::node_add_node(
-      nullptr, node_tree, "CompositorNodeRelativeToPixel");
+      nullptr, node_tree, "CompositorNodeRelativeToPixel"_ustr);
   relative_to_pixel_node->parent = node.parent;
   relative_to_pixel_node->location[0] = multiply_node.location[0] - multiply_node.width - 20.0f;
   relative_to_pixel_node->location[1] = multiply_node.location[1];

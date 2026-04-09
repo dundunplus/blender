@@ -699,7 +699,7 @@ static void change_input_socket_to_rotation_type(bNodeTree &ntree,
       /* Make versioning idempotent. */
       continue;
     }
-    bNode *convert = bke::node_add_node(nullptr, ntree, "FunctionNodeEulerToRotation");
+    bNode *convert = bke::node_add_node(nullptr, ntree, "FunctionNodeEulerToRotation"_ustr);
     convert->parent = node.parent;
     convert->locx_legacy = node.locx_legacy - 40;
     convert->locy_legacy = node.locy_legacy;
@@ -728,7 +728,7 @@ static void change_output_socket_to_rotation_type(bNodeTree &ntree,
     { /* Make versioning idempotent. */
       continue;
     }
-    bNode *convert = bke::node_add_node(nullptr, ntree, "FunctionNodeRotationToEuler");
+    bNode *convert = bke::node_add_node(nullptr, ntree, "FunctionNodeRotationToEuler"_ustr);
     convert->parent = node.parent;
     convert->locx_legacy = node.locx_legacy + 40;
     convert->locy_legacy = node.locy_legacy;
@@ -780,7 +780,7 @@ static void fix_geometry_nodes_object_info_scale(bNodeTree &ntree)
     if (links.is_empty()) {
       continue;
     }
-    bNode *absolute_value = bke::node_add_node(nullptr, ntree, "ShaderNodeVectorMath");
+    bNode *absolute_value = bke::node_add_node(nullptr, ntree, "ShaderNodeVectorMath"_ustr);
     absolute_value->custom1 = NODE_VECTOR_MATH_ABSOLUTE;
     absolute_value->parent = node.parent;
     absolute_value->locx_legacy = node.locx_legacy + 100;

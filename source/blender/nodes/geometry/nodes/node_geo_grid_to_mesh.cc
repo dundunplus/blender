@@ -48,7 +48,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeGridToMesh", GEO_NODE_GRID_TO_MESH);
+  geo_node_type_base(&ntype, "GeometryNodeGridToMesh"_ustr, GEO_NODE_GRID_TO_MESH);
   ntype.ui_name = "Grid to Mesh";
   ntype.ui_description = "Generate a mesh on the \"surface\" of a volume grid";
   ntype.enum_name_legacy = "GRID_TO_MESH";

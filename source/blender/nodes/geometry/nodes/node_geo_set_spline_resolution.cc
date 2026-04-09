@@ -81,7 +81,8 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetSplineResolution", GEO_NODE_SET_SPLINE_RESOLUTION);
+  geo_node_type_base(
+      &ntype, "GeometryNodeSetSplineResolution"_ustr, GEO_NODE_SET_SPLINE_RESOLUTION);
   ntype.ui_name = "Set Spline Resolution";
   ntype.ui_description =
       "Control how many evaluated points should be generated on every curve segment";

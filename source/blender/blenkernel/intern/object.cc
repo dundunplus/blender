@@ -619,6 +619,25 @@ static void object_foreach_path(ID *id, BPathForeachPathData *bpath_data)
         BKE_bpath_foreach_path_fixed_process(bpath_data, mcmd->filepath, sizeof(mcmd->filepath));
         break;
       }
+      case eModifierType_Nodes: {
+        auto &nmd = reinterpret_cast<NodesModifierData &>(md);
+        for (NodesModifierBake &bake : MutableSpan(nmd.bakes, nmd.bakes_num)) {
+          if (bake.packed && (bpath_data->flag & BKE_BPATH_FOREACH_PATH_SKIP_PACKED) != 0) {
+            continue;
+          }
+          if (bake.flag & NODES_MODIFIER_BAKE_CUSTOM_PATH) {
+            if (bake.directory && bake.directory[0]) {
+              BKE_bpath_foreach_path_allocated_process(bpath_data, &bake.directory);
+            }
+          }
+          else {
+            if (nmd.bake_directory && nmd.bake_directory[0]) {
+              BKE_bpath_foreach_path_allocated_process(bpath_data, &nmd.bake_directory);
+            }
+          }
+        }
+        break;
+      }
       default:
         break;
     }

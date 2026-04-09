@@ -87,7 +87,7 @@ void register_node_type_sh_ambient_occlusion()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeAmbientOcclusion", SH_NODE_AMBIENT_OCCLUSION);
+  sh_node_type_base(&ntype, "ShaderNodeAmbientOcclusion"_ustr, SH_NODE_AMBIENT_OCCLUSION);
   ntype.ui_name = "Ambient Occlusion";
   ntype.ui_description =
       "Compute how much the hemisphere above the shading point is occluded, for example to add "

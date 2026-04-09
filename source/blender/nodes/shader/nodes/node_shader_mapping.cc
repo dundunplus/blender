@@ -123,7 +123,7 @@ void register_node_type_sh_mapping()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeMapping", SH_NODE_MAPPING);
+  sh_node_type_base(&ntype, "ShaderNodeMapping"_ustr, SH_NODE_MAPPING);
   ntype.ui_name = "Mapping";
   ntype.ui_description = "Transform the input vector by applying translation, rotation, and scale";
   ntype.enum_name_legacy = "MAPPING";

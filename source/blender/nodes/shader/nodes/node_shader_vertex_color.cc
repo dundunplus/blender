@@ -91,7 +91,7 @@ void register_node_type_sh_vertex_color()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeVertexColor", SH_NODE_VERTEX_COLOR);
+  sh_node_type_base(&ntype, "ShaderNodeVertexColor"_ustr, SH_NODE_VERTEX_COLOR);
   ntype.ui_name = "Color Attribute";
   ntype.ui_description =
       "Retrieve a color attribute, or the default fallback if none is specified";

@@ -166,7 +166,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "NodeGetBundleItem");
+  geo_node_type_base(&ntype, "NodeGetBundleItem"_ustr);
   ntype.ui_name = "Get Bundle Item";
   ntype.ui_description = "Retrieve a bundle item by path.";
   ntype.nclass = NODE_CLASS_CONVERTER;

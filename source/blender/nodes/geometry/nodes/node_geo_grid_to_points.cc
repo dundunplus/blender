@@ -103,7 +103,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       const std::optional<eNodeSocketDatatype> data_type = node_type_for_socket_type(other_socket);
       if (data_type) {
         params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeGridToPoints");
+          bNode &node = params.add_node("GeometryNodeGridToPoints"_ustr);
           node.custom1 = *data_type;
           params.update_and_connect_available_socket(node, "Grid"_ustr);
         });
@@ -113,14 +113,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   else {
     if (params.node_tree().typeinfo->validate_link(SOCK_GEOMETRY, other_type)) {
       params.add_item(IFACE_("Points"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeGridToPoints");
+        bNode &node = params.add_node("GeometryNodeGridToPoints"_ustr);
         params.update_and_connect_available_socket(node, "Points"_ustr);
       });
     }
     const std::optional<eNodeSocketDatatype> data_type = node_type_for_socket_type(other_socket);
     if (data_type) {
       params.add_item(IFACE_("Value"), [data_type](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeGridToPoints");
+        bNode &node = params.add_node("GeometryNodeGridToPoints"_ustr);
         node.custom1 = *data_type;
         params.update_and_connect_available_socket(node, "Value"_ustr);
       });
@@ -497,7 +497,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeGridToPoints");
+  geo_node_type_base(&ntype, "GeometryNodeGridToPoints"_ustr);
   ntype.ui_name = "Grid to Points";
   ntype.ui_description = "Generate a point cloud from a volume grid's active voxels";
   ntype.nclass = NODE_CLASS_GEOMETRY;

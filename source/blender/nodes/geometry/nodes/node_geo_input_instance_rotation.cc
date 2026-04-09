@@ -52,7 +52,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeInputInstanceRotation", GEO_NODE_INPUT_INSTANCE_ROTATION);
+      &ntype, "GeometryNodeInputInstanceRotation"_ustr, GEO_NODE_INPUT_INSTANCE_ROTATION);
   ntype.ui_name = "Instance Rotation";
   ntype.ui_description = "Retrieve the rotation of each instance in the geometry";
   ntype.enum_name_legacy = "INPUT_INSTANCE_ROTATION";

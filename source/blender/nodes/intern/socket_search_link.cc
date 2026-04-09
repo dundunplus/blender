@@ -97,7 +97,7 @@ void LinkSearchOpParams::connect_socket(bNode &new_node, bNodeSocket &new_socket
   }
 }
 
-bNode &LinkSearchOpParams::add_node(StringRef idname)
+bNode &LinkSearchOpParams::add_node(UString idname)
 {
   bNode *node = bke::node_add_node(&C, node_tree, idname);
   BLI_assert(node != nullptr);
@@ -107,7 +107,7 @@ bNode &LinkSearchOpParams::add_node(StringRef idname)
 
 bNode &LinkSearchOpParams::add_node(const bke::bNodeType &node_type)
 {
-  return this->add_node(node_type.idname.ref());
+  return this->add_node(node_type.idname);
 }
 
 void LinkSearchOpParams::update_and_connect_available_socket(bNode &new_node, UString socket_name)

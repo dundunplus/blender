@@ -63,7 +63,7 @@ void register_node_type_sh_bsdf_diffuse()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfDiffuse", SH_NODE_BSDF_DIFFUSE);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfDiffuse"_ustr, SH_NODE_BSDF_DIFFUSE);
   ntype.ui_name = "Diffuse BSDF";
   ntype.ui_description = "Lambertian and Oren-Nayar diffuse reflection";
   ntype.enum_name_legacy = "BSDF_DIFFUSE";

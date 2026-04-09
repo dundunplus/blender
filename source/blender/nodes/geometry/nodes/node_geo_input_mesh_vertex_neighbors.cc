@@ -100,7 +100,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeInputMeshVertexNeighbors", GEO_NODE_INPUT_MESH_VERTEX_NEIGHBORS);
+      &ntype, "GeometryNodeInputMeshVertexNeighbors"_ustr, GEO_NODE_INPUT_MESH_VERTEX_NEIGHBORS);
   ntype.ui_name = "Vertex Neighbors";
   ntype.ui_description = "Retrieve topology information relating to each vertex of a mesh";
   ntype.enum_name_legacy = "MESH_VERTEX_NEIGHBORS";

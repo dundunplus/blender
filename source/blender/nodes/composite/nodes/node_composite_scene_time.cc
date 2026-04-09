@@ -58,7 +58,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeSceneTime", CMP_NODE_SCENE_TIME);
+  cmp_node_type_base(&ntype, "CompositorNodeSceneTime"_ustr, CMP_NODE_SCENE_TIME);
   ntype.ui_name = "Scene Time";
   ntype.ui_description = "Input the current scene time in seconds or frames";
   ntype.enum_name_legacy = "SCENE_TIME";

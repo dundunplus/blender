@@ -233,7 +233,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeUVTangent");
+  geo_node_type_base(&ntype, "GeometryNodeUVTangent"_ustr);
   ntype.ui_name = "UV Tangent";
   ntype.ui_description = "Generate tangent directions based on a UV map";
   ntype.nclass = NODE_CLASS_INPUT;

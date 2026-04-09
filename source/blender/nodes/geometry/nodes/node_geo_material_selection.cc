@@ -162,7 +162,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMaterialSelection", GEO_NODE_MATERIAL_SELECTION);
+  geo_node_type_base(&ntype, "GeometryNodeMaterialSelection"_ustr, GEO_NODE_MATERIAL_SELECTION);
   ntype.ui_name = "Material Selection";
   ntype.ui_description = "Provide a selection of faces that use the specified material";
   ntype.enum_name_legacy = "MATERIAL_SELECTION";

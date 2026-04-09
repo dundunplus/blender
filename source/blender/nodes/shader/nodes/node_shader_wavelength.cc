@@ -45,7 +45,7 @@ void register_node_type_sh_wavelength()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeWavelength", SH_NODE_WAVELENGTH);
+  sh_node_type_base(&ntype, "ShaderNodeWavelength"_ustr, SH_NODE_WAVELENGTH);
   ntype.ui_name = "Wavelength";
   ntype.ui_description = "Convert a wavelength value to an RGB value";
   ntype.enum_name_legacy = "WAVELENGTH";

@@ -521,7 +521,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   params.add_item(
       IFACE_("Value"),
       [type](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeBake");
+        bNode &node = params.add_node("GeometryNodeBake"_ustr);
         socket_items::add_item_with_socket_type_and_name<BakeItemsAccessor>(
             params.node_tree, node, type, params.socket.name);
         params.update_and_connect_available_socket(node, UString(params.socket.name));
@@ -550,7 +550,7 @@ static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeBake", GEO_NODE_BAKE);
+  geo_node_type_base(&ntype, "GeometryNodeBake"_ustr, GEO_NODE_BAKE);
   ntype.ui_name = "Bake";
   ntype.ui_description = "Cache the incoming data so that it can be used without recomputation";
   ntype.enum_name_legacy = "BAKE";

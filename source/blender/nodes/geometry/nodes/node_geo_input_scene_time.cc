@@ -28,7 +28,7 @@ static void node_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeInputSceneTime", GEO_NODE_INPUT_SCENE_TIME);
+  geo_node_type_base(&ntype, "GeometryNodeInputSceneTime"_ustr, GEO_NODE_INPUT_SCENE_TIME);
   ntype.ui_name = "Scene Time";
   ntype.ui_description =
       "Retrieve the current time in the scene's animation in units of seconds or frames";

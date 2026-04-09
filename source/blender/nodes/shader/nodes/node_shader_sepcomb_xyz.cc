@@ -141,7 +141,7 @@ void register_node_type_sh_sepxyz()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeSeparateXYZ", SH_NODE_SEPXYZ);
+  common_node_type_base(&ntype, "ShaderNodeSeparateXYZ"_ustr, SH_NODE_SEPXYZ);
   ntype.ui_name = "Separate XYZ";
   ntype.ui_description = "Split a vector into its X, Y, and Z components";
   ntype.enum_name_legacy = "SEPXYZ";
@@ -233,7 +233,7 @@ void register_node_type_sh_combxyz()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeCombineXYZ", SH_NODE_COMBXYZ);
+  common_node_type_base(&ntype, "ShaderNodeCombineXYZ"_ustr, SH_NODE_COMBXYZ);
   ntype.ui_name = "Combine XYZ";
   ntype.ui_description = "Create a vector from X, Y, and Z components";
   ntype.enum_name_legacy = "COMBXYZ";

@@ -21,7 +21,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputCurveTilt", GEO_NODE_INPUT_CURVE_TILT);
+  geo_node_type_base(&ntype, "GeometryNodeInputCurveTilt"_ustr, GEO_NODE_INPUT_CURVE_TILT);
   ntype.ui_name = "Curve Tilt";
   ntype.ui_description =
       "Retrieve the angle at each control point used to twist the curve's normal around its "

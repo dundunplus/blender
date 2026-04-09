@@ -45,7 +45,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeViewer", CMP_NODE_VIEWER);
+  cmp_node_type_base(&ntype, "CompositorNodeViewer"_ustr, CMP_NODE_VIEWER);
   ntype.ui_name = "Viewer";
   ntype.ui_description =
       "Visualize data from inside a node graph, in the image editor or as a backdrop";

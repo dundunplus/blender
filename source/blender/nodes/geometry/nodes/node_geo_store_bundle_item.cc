@@ -140,7 +140,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "NodeStoreBundleItem");
+  geo_node_type_base(&ntype, "NodeStoreBundleItem"_ustr);
   ntype.ui_name = "Store Bundle Item";
   ntype.ui_description = "Store a bundle item by path and data type.";
   ntype.nclass = NODE_CLASS_CONVERTER;

@@ -48,7 +48,7 @@ void register_node_type_sh_layer_weight()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeLayerWeight", SH_NODE_LAYER_WEIGHT);
+  sh_node_type_base(&ntype, "ShaderNodeLayerWeight"_ustr, SH_NODE_LAYER_WEIGHT);
   ntype.ui_name = "Layer Weight";
   ntype.ui_description =
       "Produce a blending factor depending on the angle between the surface normal and the view "

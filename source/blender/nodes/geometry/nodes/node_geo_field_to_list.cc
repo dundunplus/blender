@@ -82,12 +82,12 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   if (params.in_out() == SOCK_IN) {
     if (params.node_tree().typeinfo->validate_link(data_type, SOCK_INT)) {
       params.add_item(IFACE_("Count"), [](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("GeometryNodeFieldToList");
+        bNode &node = params.add_node("GeometryNodeFieldToList"_ustr);
         params.update_and_connect_available_socket(node, "Count"_ustr);
       });
     }
     params.add_item(IFACE_("Field"), [data_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeFieldToList");
+      bNode &node = params.add_node("GeometryNodeFieldToList"_ustr);
       socket_items::add_item_with_socket_type_and_name<ItemsAccessor>(
           params.node_tree, node, data_type, params.socket.name);
       params.update_and_connect_available_socket(node, UString(params.socket.name));
@@ -95,7 +95,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   }
   else {
     params.add_item(IFACE_("List"), [data_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeFieldToList");
+      bNode &node = params.add_node("GeometryNodeFieldToList"_ustr);
       socket_items::add_item_with_socket_type_and_name<ItemsAccessor>(
           params.node_tree, node, data_type, params.socket.name);
       params.update_and_connect_available_socket(node, UString(params.socket.name));
@@ -215,7 +215,7 @@ static const bNodeSocket *node_internally_linked_input(const bNodeTree & /*tree*
 static void node_register()
 {
   static blender::bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeFieldToList");
+  geo_node_type_base(&ntype, "GeometryNodeFieldToList"_ustr);
   ntype.ui_name = "Field to List";
   ntype.ui_description = "Create a list of values";
   ntype.nclass = NODE_CLASS_CONVERTER;

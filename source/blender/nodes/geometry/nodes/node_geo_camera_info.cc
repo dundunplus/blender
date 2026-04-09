@@ -171,7 +171,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_cmp_node_type_base(&ntype, "GeometryNodeCameraInfo");
+  geo_cmp_node_type_base(&ntype, "GeometryNodeCameraInfo"_ustr);
   ntype.ui_name = "Camera Info";
   ntype.ui_description = "Retrieve information from a camera object";
   ntype.nclass = NODE_CLASS_INPUT;

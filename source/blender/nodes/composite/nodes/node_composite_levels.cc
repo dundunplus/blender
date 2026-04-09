@@ -172,7 +172,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeLevels", CMP_NODE_VIEW_LEVELS);
+  cmp_node_type_base(&ntype, "CompositorNodeLevels"_ustr, CMP_NODE_VIEW_LEVELS);
   ntype.ui_name = "Levels";
   ntype.ui_description = "Compute average and standard deviation of pixel values";
   ntype.enum_name_legacy = "LEVELS";

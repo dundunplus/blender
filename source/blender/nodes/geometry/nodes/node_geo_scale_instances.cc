@@ -81,7 +81,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeScaleInstances", GEO_NODE_SCALE_INSTANCES);
+  geo_node_type_base(&ntype, "GeometryNodeScaleInstances"_ustr, GEO_NODE_SCALE_INSTANCES);
   ntype.ui_name = "Scale Instances";
   ntype.ui_description = "Scale geometry instances in local or global space";
   ntype.enum_name_legacy = "SCALE_INSTANCES";

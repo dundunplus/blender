@@ -143,7 +143,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeMovieDistortion", CMP_NODE_MOVIEDISTORTION);
+  cmp_node_type_base(&ntype, "CompositorNodeMovieDistortion"_ustr, CMP_NODE_MOVIEDISTORTION);
   ntype.ui_name = "Movie Distortion";
   ntype.ui_description =
       "Remove lens distortion from footage, using motion tracking camera lens settings";

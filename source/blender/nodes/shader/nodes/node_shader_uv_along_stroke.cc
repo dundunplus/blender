@@ -30,7 +30,7 @@ void register_node_type_sh_uvalongstroke()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeUVAlongStroke", SH_NODE_UVALONGSTROKE);
+  sh_node_type_base(&ntype, "ShaderNodeUVAlongStroke"_ustr, SH_NODE_UVALONGSTROKE);
   ntype.ui_name = "UV Along Stroke";
   ntype.ui_description = "UV coordinates that map a texture along the stroke length";
   ntype.enum_name_legacy = "UVALONGSTROKE";

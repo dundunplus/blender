@@ -1259,7 +1259,7 @@ static bNode *rna_NodeTree_node_new(bNodeTree *ntree,
   /* If the given idname is an alias, translate it to the proper idname. */
   type = bke::node_type_find_alias(UString(type)).ref();
 
-  ntype = bke::node_type_find(type);
+  ntype = bke::node_type_find(UString(type));
   if (!ntype) {
     BKE_reportf(reports, RPT_ERROR, "Node type %s undefined", type.c_str());
     return nullptr;
@@ -1286,7 +1286,7 @@ static bNode *rna_NodeTree_node_new(bNodeTree *ntree,
     }
   }
 
-  node = bke::node_add_node(C, *ntree, type);
+  node = bke::node_add_node(C, *ntree, UString(type));
   BLI_assert(node && node->typeinfo);
 
   if (ntree->type == NTREE_TEXTURE) {
@@ -1384,8 +1384,8 @@ static void node_viewer_set_shortcut_fn(bNode *node, bNodeTree &ntree, int value
 {
   /* Avoid having two nodes with the same shortcut. */
   for (bNode *other_node : ntree.all_nodes()) {
-    if ((other_node->is_type("CompositorNodeViewer") ||
-         other_node->is_type("GeometryNodeViewer")) &&
+    if ((other_node->is_type("CompositorNodeViewer"_ustr) ||
+         other_node->is_type("GeometryNodeViewer"_ustr)) &&
         other_node->custom1 == value)
     {
       other_node->custom1 = NODE_VIEWER_SHORTCUT_NONE;
@@ -2046,7 +2046,7 @@ static bke::bNodeType *rna_Node_register_base(Main *bmain,
   }
 
   /* check if we have registered this node type before, and remove it */
-  nt = bke::node_type_find(dummy_nt.idname.ref());
+  nt = bke::node_type_find(dummy_nt.idname);
   if (nt) {
     /* If it's an internal node, we cannot proceed. */
     if (rna_Node_is_builtin(nt)) {

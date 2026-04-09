@@ -60,7 +60,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeMeshGrid", GEO_NODE_MESH_PRIMITIVE_GRID);
+  geo_node_type_base(&ntype, "GeometryNodeMeshGrid"_ustr, GEO_NODE_MESH_PRIMITIVE_GRID);
   ntype.ui_name = "Grid";
   ntype.ui_description = "Generate a planar mesh on the XY plane";
   ntype.enum_name_legacy = "MESH_PRIMITIVE_GRID";

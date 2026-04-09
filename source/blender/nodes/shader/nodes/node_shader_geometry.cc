@@ -92,7 +92,7 @@ void register_node_type_sh_geometry()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeNewGeometry", SH_NODE_NEW_GEOMETRY);
+  sh_node_type_base(&ntype, "ShaderNodeNewGeometry"_ustr, SH_NODE_NEW_GEOMETRY);
   ntype.ui_name = "Geometry";
   ntype.ui_description = "Retrieve geometric information about the current shading point";
   ntype.enum_name_legacy = "NEW_GEOMETRY";

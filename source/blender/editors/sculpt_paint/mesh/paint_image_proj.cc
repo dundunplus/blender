@@ -6772,7 +6772,7 @@ static void default_paint_slot_color_get(int layer_type, Material *ma, float col
       bNode *in_node = nullptr;
       if (ma && ma->nodetree) {
         ma->nodetree->ensure_topology_cache();
-        const Span<bNode *> nodes = ma->nodetree->nodes_by_type("ShaderNodeBsdfPrincipled");
+        const Span<bNode *> nodes = ma->nodetree->nodes_by_type("ShaderNodeBsdfPrincipled"_ustr);
         in_node = nodes.is_empty() ? nullptr : nodes.first();
       }
       if (!in_node) {
@@ -6879,7 +6879,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
 
     /* Connect to first available principled BSDF node. */
     ntree->ensure_topology_cache();
-    const Span<bNode *> bsdf_nodes = ntree->nodes_by_type("ShaderNodeBsdfPrincipled");
+    const Span<bNode *> bsdf_nodes = ntree->nodes_by_type("ShaderNodeBsdfPrincipled"_ustr);
     bNode *in_node = bsdf_nodes.is_empty() ? nullptr : bsdf_nodes.first();
     bNode *out_node = new_node;
 
@@ -6916,7 +6916,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
       }
       else if (type == LAYER_DISPLACEMENT) {
         /* Connect to the displacement output socket */
-        const Span<bNode *> output_nodes = ntree->nodes_by_type("ShaderNodeOutputMaterial");
+        const Span<bNode *> output_nodes = ntree->nodes_by_type("ShaderNodeOutputMaterial"_ustr);
         in_node = output_nodes.is_empty() ? nullptr : output_nodes.first();
 
         if (in_node != nullptr) {

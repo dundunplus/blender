@@ -193,11 +193,11 @@ class SocketValueInferencerImpl {
         return;
       }
       default: {
-        if (node->is_type("NodeEnableOutput")) {
+        if (node->is_type("NodeEnableOutput"_ustr)) {
           this->value_task__output__enable_output(socket);
           return;
         }
-        if (node->is_type("NodeImplicitConversion")) {
+        if (node->is_type("NodeImplicitConversion"_ustr)) {
           this->value_task__output__implicit_conversion_node(socket);
           return;
         }

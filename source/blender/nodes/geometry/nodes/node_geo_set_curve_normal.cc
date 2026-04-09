@@ -114,7 +114,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSetCurveNormal", GEO_NODE_SET_CURVE_NORMAL);
+  geo_node_type_base(&ntype, "GeometryNodeSetCurveNormal"_ustr, GEO_NODE_SET_CURVE_NORMAL);
   ntype.ui_name = "Set Curve Normal";
   ntype.ui_description = "Set the evaluation mode for curve normals";
   ntype.enum_name_legacy = "SET_CURVE_NORMAL";

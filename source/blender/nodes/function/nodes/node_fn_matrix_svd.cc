@@ -56,7 +56,7 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeMatrixSVD");
+  fn_node_type_base(&ntype, "FunctionNodeMatrixSVD"_ustr);
   ntype.ui_name = "Matrix SVD";
   ntype.ui_description = "Compute the singular value decomposition of the 3x3 part of a matrix";
   ntype.nclass = NODE_CLASS_CONVERTER;

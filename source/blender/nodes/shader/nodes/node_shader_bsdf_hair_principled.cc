@@ -251,7 +251,7 @@ void register_node_type_sh_bsdf_hair_principled()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfHairPrincipled", SH_NODE_BSDF_HAIR_PRINCIPLED);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfHairPrincipled"_ustr, SH_NODE_BSDF_HAIR_PRINCIPLED);
   ntype.ui_name = "Principled Hair BSDF";
   ntype.ui_description = "Physically-based, easy-to-use shader for rendering hair and fur";
   ntype.enum_name_legacy = "BSDF_HAIR_PRINCIPLED";

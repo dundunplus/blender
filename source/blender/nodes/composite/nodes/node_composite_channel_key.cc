@@ -432,7 +432,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeChannelMatte", CMP_NODE_CHANNEL_MATTE);
+  cmp_node_type_base(&ntype, "CompositorNodeChannelMatte"_ustr, CMP_NODE_CHANNEL_MATTE);
   ntype.ui_name = "Channel Key";
   ntype.ui_description = "Create matte based on differences in color channels";
   ntype.enum_name_legacy = "CHANNEL_MATTE";

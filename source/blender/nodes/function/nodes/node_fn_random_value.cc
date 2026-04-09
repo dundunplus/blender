@@ -112,12 +112,12 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   if (params.in_out() == SOCK_IN) {
     if (ELEM(*type, CD_PROP_INT32, CD_PROP_FLOAT3, CD_PROP_FLOAT)) {
       params.add_item(IFACE_("Min"), [type](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("FunctionNodeRandomValue");
+        bNode &node = params.add_node("FunctionNodeRandomValue"_ustr);
         node_storage(node).data_type = *type;
         params.update_and_connect_available_socket(node, "Min"_ustr);
       });
       params.add_item(IFACE_("Max"), [type](LinkSearchOpParams &params) {
-        bNode &node = params.add_node("FunctionNodeRandomValue");
+        bNode &node = params.add_node("FunctionNodeRandomValue"_ustr);
         node_storage(node).data_type = *type;
         params.update_and_connect_available_socket(node, "Max"_ustr);
       });
@@ -126,7 +126,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   }
   else {
     params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("FunctionNodeRandomValue");
+      bNode &node = params.add_node("FunctionNodeRandomValue"_ustr);
       node_storage(node).data_type = *type;
       params.update_and_connect_available_socket(node, "Value"_ustr);
     });
@@ -206,7 +206,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeRandomValue", FN_NODE_RANDOM_VALUE);
+  fn_node_type_base(&ntype, "FunctionNodeRandomValue"_ustr, FN_NODE_RANDOM_VALUE);
   ntype.ui_name = "Random Value";
   ntype.ui_description = "Output a randomized value";
   ntype.enum_name_legacy = "RANDOM_VALUE";

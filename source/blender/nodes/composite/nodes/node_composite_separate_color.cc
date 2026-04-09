@@ -211,7 +211,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeSeparateColor", CMP_NODE_SEPARATE_COLOR);
+  cmp_node_type_base(&ntype, "CompositorNodeSeparateColor"_ustr, CMP_NODE_SEPARATE_COLOR);
   ntype.ui_name = "Separate Color";
   ntype.ui_description = "Split an image into its composite color channels";
   ntype.enum_name_legacy = "SEPARATE_COLOR";

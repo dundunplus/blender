@@ -108,7 +108,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeNormalize", CMP_NODE_NORMALIZE);
+  cmp_node_type_base(&ntype, "CompositorNodeNormalize"_ustr, CMP_NODE_NORMALIZE);
   ntype.ui_name = "Normalize";
   ntype.ui_description =
       "Map values to 0 to 1 range, based on the minimum and maximum pixel values";

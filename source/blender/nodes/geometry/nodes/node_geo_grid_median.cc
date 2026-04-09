@@ -85,14 +85,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
 
   if (params.in_out() == SOCK_IN && (is_grid || is_dynamic)) {
     params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeGridMedian");
+      bNode &node = params.add_node("GeometryNodeGridMedian"_ustr);
       node.custom1 = *data_type;
       params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
   }
   else if (params.in_out() == SOCK_OUT) {
     params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeGridMedian");
+      bNode &node = params.add_node("GeometryNodeGridMedian"_ustr);
       node.custom1 = *data_type;
       params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
@@ -163,7 +163,7 @@ static void node_register()
 {
   static blender::bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeGridMedian");
+  geo_node_type_base(&ntype, "GeometryNodeGridMedian"_ustr);
   ntype.ui_name = "Grid Median";
   ntype.ui_description =
       "Apply median (box) filter smoothing to a voxel. The median value from surrounding "

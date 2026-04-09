@@ -290,7 +290,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   const bNodeSocket &other_socket = params.other_socket();
   if (other_socket.in_out == SOCK_OUT) {
     params.add_item(IFACE_("Value"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeViewer");
+      bNode &node = params.add_node("GeometryNodeViewer"_ustr);
       const auto *item = socket_items::add_item_with_socket_type_and_name<GeoViewerItemsAccessor>(
           params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
       params.update_and_connect_available_socket(node, UString(item->name));
@@ -479,7 +479,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeViewer", GEO_NODE_VIEWER);
+  geo_node_type_base(&ntype, "GeometryNodeViewer"_ustr, GEO_NODE_VIEWER);
   ntype.ui_name = "Viewer";
   ntype.ui_description = "Display the input data in the Spreadsheet Editor";
   ntype.enum_name_legacy = "VIEWER";

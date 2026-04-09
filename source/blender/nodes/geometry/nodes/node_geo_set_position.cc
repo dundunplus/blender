@@ -163,7 +163,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetPosition", GEO_NODE_SET_POSITION);
+  geo_node_type_base(&ntype, "GeometryNodeSetPosition"_ustr, GEO_NODE_SET_POSITION);
   ntype.ui_name = "Set Position";
   ntype.ui_description = "Set the location of each point";
   ntype.enum_name_legacy = "SET_POSITION";

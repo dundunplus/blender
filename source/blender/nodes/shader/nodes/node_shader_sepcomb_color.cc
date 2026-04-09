@@ -125,7 +125,7 @@ void register_node_type_sh_sepcolor()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeSeparateColor", SH_NODE_SEPARATE_COLOR);
+  sh_node_type_base(&ntype, "ShaderNodeSeparateColor"_ustr, SH_NODE_SEPARATE_COLOR);
   ntype.ui_name = "Separate Color";
   ntype.ui_description = "Split a color into its individual components using multiple models";
   ntype.enum_name_legacy = "SEPARATE_COLOR";
@@ -266,7 +266,7 @@ void register_node_type_sh_combcolor()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeCombineColor", SH_NODE_COMBINE_COLOR);
+  sh_node_type_base(&ntype, "ShaderNodeCombineColor"_ustr, SH_NODE_COMBINE_COLOR);
   ntype.ui_name = "Combine Color";
   ntype.ui_description = "Create a color from individual components using multiple models";
   ntype.enum_name_legacy = "COMBINE_COLOR";

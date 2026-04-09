@@ -127,7 +127,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeCurveSetHandles", GEO_NODE_CURVE_SET_HANDLE_TYPE);
+  geo_node_type_base(&ntype, "GeometryNodeCurveSetHandles"_ustr, GEO_NODE_CURVE_SET_HANDLE_TYPE);
   ntype.ui_name = "Set Handle Type";
   ntype.ui_description = "Set the handle type for the control points of a Bézier curve";
   ntype.enum_name_legacy = "CURVE_SET_HANDLES";

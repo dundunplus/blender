@@ -82,7 +82,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeSwitchView", CMP_NODE_SWITCH_VIEW);
+  cmp_node_type_base(&ntype, "CompositorNodeSwitchView"_ustr, CMP_NODE_SWITCH_VIEW);
   ntype.ui_name = "Switch View";
   ntype.ui_description = "Combine the views (left and right) into a single stereo 3D output";
   ntype.enum_name_legacy = "VIEWSWITCH";

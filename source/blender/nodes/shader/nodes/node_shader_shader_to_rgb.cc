@@ -35,7 +35,7 @@ void register_node_type_sh_shadertorgb()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeShaderToRGB", SH_NODE_SHADERTORGB);
+  sh_node_type_base(&ntype, "ShaderNodeShaderToRGB"_ustr, SH_NODE_SHADERTORGB);
   ntype.ui_name = "Shader to RGB";
   ntype.ui_description =
       "Convert rendering effect (such as light and shadow) to color. Typically used for "

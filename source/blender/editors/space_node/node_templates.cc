@@ -470,7 +470,7 @@ static int ui_node_item_name_compare(const void *a, const void *b)
 
 static bool ui_node_item_special_poll(const bNodeTree * /*ntree*/, const bke::bNodeType *ntype)
 {
-  if (ntype->idname == "ShaderNodeUVAlongStroke") {
+  if (ntype->is_type("ShaderNodeUVAlongStroke"_ustr)) {
     /* TODO(sergey): Currently we don't have Freestyle nodes edited from
      * the buttons context, so can ignore its nodes completely.
      *

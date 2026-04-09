@@ -478,7 +478,7 @@ void draw_nodespace_back_pix(const bContext &C,
 
 /* `node_add.cc` */
 
-bNode *add_node(const bContext &C, StringRef idname, const float2 &location);
+bNode *add_node(const bContext &C, UString idname, const float2 &location);
 bNode *add_static_node(const bContext &C, int type, const float2 &location);
 
 void NODE_OT_add_reroute(wmOperatorType *ot);
@@ -501,7 +501,7 @@ void NODE_OT_add_group_input_node(wmOperatorType *ot);
 
 /* `node_group.cc` */
 
-StringRef node_group_idname(const bContext *C);
+UString node_group_idname(const bContext *C);
 void NODE_OT_group_make(wmOperatorType *ot);
 void NODE_OT_group_insert(wmOperatorType *ot);
 void NODE_OT_group_ungroup(wmOperatorType *ot);

@@ -144,7 +144,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDistanceMatte", CMP_NODE_DIST_MATTE);
+  cmp_node_type_base(&ntype, "CompositorNodeDistanceMatte"_ustr, CMP_NODE_DIST_MATTE);
   ntype.ui_name = "Distance Key";
   ntype.ui_description = "Create matte based on 3D distance between colors";
   ntype.enum_name_legacy = "DISTANCE_MATTE";

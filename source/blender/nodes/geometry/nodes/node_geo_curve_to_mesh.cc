@@ -159,7 +159,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeCurveToMesh", GEO_NODE_CURVE_TO_MESH);
+  geo_node_type_base(&ntype, "GeometryNodeCurveToMesh"_ustr, GEO_NODE_CURVE_TO_MESH);
   ntype.ui_name = "Curve to Mesh";
   ntype.ui_description =
       "Convert curves into a mesh, optionally with a custom profile shape defined by curves";

@@ -62,7 +62,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeSDFGridMeanCurvature");
+  geo_node_type_base(&ntype, "GeometryNodeSDFGridMeanCurvature"_ustr);
   ntype.ui_name = "SDF Grid Mean Curvature";
   ntype.ui_description =
       "Apply mean curvature flow smoothing to a signed distance field. Evolves the surface based "

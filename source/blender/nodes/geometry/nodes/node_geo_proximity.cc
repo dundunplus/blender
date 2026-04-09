@@ -332,7 +332,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeProximity", GEO_NODE_PROXIMITY);
+  geo_node_type_base(&ntype, "GeometryNodeProximity"_ustr, GEO_NODE_PROXIMITY);
   ntype.ui_name = "Geometry Proximity";
   ntype.ui_description = "Compute the closest location on the target geometry";
   ntype.enum_name_legacy = "PROXIMITY";

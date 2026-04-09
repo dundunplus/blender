@@ -59,7 +59,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeBlankImage");
+  cmp_node_type_base(&ntype, "CompositorNodeBlankImage"_ustr);
   ntype.ui_name = "Blank Image";
   ntype.ui_description = "Returns an image with the given size and constant color";
   ntype.nclass = NODE_CLASS_INPUT;

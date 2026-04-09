@@ -53,8 +53,8 @@ class SimulationZoneType : public bke::bNodeZoneType {
  public:
   SimulationZoneType()
   {
-    this->input_idname = "GeometryNodeSimulationInput";
-    this->output_idname = "GeometryNodeSimulationOutput";
+    this->input_idname = "GeometryNodeSimulationInput"_ustr;
+    this->output_idname = "GeometryNodeSimulationOutput"_ustr;
     this->input_type = GEO_NODE_SIMULATION_INPUT;
     this->output_type = GEO_NODE_SIMULATION_OUTPUT;
     this->theme_id = TH_NODE_ZONE_SIMULATION;
@@ -71,8 +71,8 @@ class RepeatZoneType : public bke::bNodeZoneType {
  public:
   RepeatZoneType()
   {
-    this->input_idname = "GeometryNodeRepeatInput";
-    this->output_idname = "GeometryNodeRepeatOutput";
+    this->input_idname = "GeometryNodeRepeatInput"_ustr;
+    this->output_idname = "GeometryNodeRepeatOutput"_ustr;
     this->input_type = GEO_NODE_REPEAT_INPUT;
     this->output_type = GEO_NODE_REPEAT_OUTPUT;
     this->theme_id = TH_NODE_ZONE_REPEAT;
@@ -89,8 +89,8 @@ class ForeachGeometryElementZoneType : public bke::bNodeZoneType {
  public:
   ForeachGeometryElementZoneType()
   {
-    this->input_idname = "GeometryNodeForeachGeometryElementInput";
-    this->output_idname = "GeometryNodeForeachGeometryElementOutput";
+    this->input_idname = "GeometryNodeForeachGeometryElementInput"_ustr;
+    this->output_idname = "GeometryNodeForeachGeometryElementOutput"_ustr;
     this->input_type = GEO_NODE_FOREACH_GEOMETRY_ELEMENT_INPUT;
     this->output_type = GEO_NODE_FOREACH_GEOMETRY_ELEMENT_OUTPUT;
     this->theme_id = TH_NODE_ZONE_FOREACH_GEOMETRY_ELEMENT;
@@ -108,8 +108,8 @@ class ClosureZoneType : public bke::bNodeZoneType {
  public:
   ClosureZoneType()
   {
-    this->input_idname = "NodeClosureInput";
-    this->output_idname = "NodeClosureOutput";
+    this->input_idname = "NodeClosureInput"_ustr;
+    this->output_idname = "NodeClosureOutput"_ustr;
     this->input_type = NODE_CLOSURE_INPUT;
     this->output_type = NODE_CLOSURE_OUTPUT;
     this->theme_id = TH_NODE_ZONE_CLOSURE;

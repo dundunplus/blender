@@ -60,7 +60,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetGreasePencilSoftness");
+  geo_node_type_base(&ntype, "GeometryNodeSetGreasePencilSoftness"_ustr);
   ntype.ui_name = "Set Grease Pencil Softness";
   ntype.ui_description = "Set softness attribute on Grease Pencil geometry";
   ntype.nclass = NODE_CLASS_GEOMETRY;

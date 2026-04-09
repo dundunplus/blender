@@ -88,7 +88,7 @@ void register_node_type_sh_bsdf_sheen()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfSheen", SH_NODE_BSDF_SHEEN);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfSheen"_ustr, SH_NODE_BSDF_SHEEN);
   ntype.ui_name = "Sheen BSDF";
   ntype.ui_description =
       "Reflection for materials such as cloth.\nTypically mixed with other shaders (such as a "

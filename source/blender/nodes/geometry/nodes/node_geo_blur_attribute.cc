@@ -485,7 +485,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeBlurAttribute", GEO_NODE_BLUR_ATTRIBUTE);
+  geo_node_type_base(&ntype, "GeometryNodeBlurAttribute"_ustr, GEO_NODE_BLUR_ATTRIBUTE);
   ntype.ui_name = "Blur Attribute";
   ntype.ui_description = "Mix attribute values of neighboring elements";
   ntype.enum_name_legacy = "BLUR_ATTRIBUTE";

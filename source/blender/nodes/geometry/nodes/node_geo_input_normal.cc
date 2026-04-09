@@ -41,7 +41,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputNormal", GEO_NODE_INPUT_NORMAL);
+  geo_node_type_base(&ntype, "GeometryNodeInputNormal"_ustr, GEO_NODE_INPUT_NORMAL);
   ntype.ui_name = "Normal";
   ntype.ui_description =
       "Retrieve a unit length vector indicating the direction pointing away from the geometry at "

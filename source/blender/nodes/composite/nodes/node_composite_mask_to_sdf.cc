@@ -217,7 +217,7 @@ static void node_register()
 {
   static blender::bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeMaskToSDF");
+  cmp_node_type_base(&ntype, "CompositorNodeMaskToSDF"_ustr);
   ntype.ui_name = "Mask To SDF";
   ntype.ui_description = "Computes a signed distance field from the given mask";
   ntype.nclass = NODE_CLASS_OP_FILTER;

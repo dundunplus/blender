@@ -139,7 +139,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeHueCorrect", CMP_NODE_HUECORRECT);
+  cmp_node_type_base(&ntype, "CompositorNodeHueCorrect"_ustr, CMP_NODE_HUECORRECT);
   ntype.ui_name = "Hue Correct";
   ntype.ui_description = "Adjust hue, saturation, and value with a curve";
   ntype.enum_name_legacy = "HUECORRECT";

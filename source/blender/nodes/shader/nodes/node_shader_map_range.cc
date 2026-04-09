@@ -124,7 +124,7 @@ class SocketSearchOp {
 
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("ShaderNodeMapRange");
+    bNode &node = params.add_node("ShaderNodeMapRange"_ustr);
     node_storage(node).data_type = data_type;
     node_storage(node).interpolation_type = interpolation_type;
     params.update_and_connect_available_socket(node, socket_name);
@@ -526,7 +526,7 @@ void register_node_type_sh_map_range()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeMapRange", SH_NODE_MAP_RANGE);
+  common_node_type_base(&ntype, "ShaderNodeMapRange"_ustr, SH_NODE_MAP_RANGE);
   ntype.ui_name = "Map Range";
   ntype.ui_description = "Remap a value from a range to a target range";
   ntype.enum_name_legacy = "MAP_RANGE";

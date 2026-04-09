@@ -391,7 +391,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeScale", CMP_NODE_SCALE);
+  cmp_node_type_base(&ntype, "CompositorNodeScale"_ustr, CMP_NODE_SCALE);
   ntype.ui_name = "Scale";
   ntype.ui_description = "Change the size of the image";
   ntype.enum_name_legacy = "SCALE";

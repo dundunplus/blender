@@ -39,7 +39,7 @@ class SocketSearchOp {
   eNodeSocketDatatype socket_type;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("GeometryNodeListLength");
+    bNode &node = params.add_node("GeometryNodeListLength"_ustr);
     node.custom1 = socket_type;
     params.update_and_connect_available_socket(node, socket_name);
   }
@@ -96,7 +96,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeListLength");
+  geo_node_type_base(&ntype, "GeometryNodeListLength"_ustr);
   ntype.ui_name = "List Length";
   ntype.ui_description = "Count how many items are in a given list";
   ntype.nclass = NODE_CLASS_CONVERTER;

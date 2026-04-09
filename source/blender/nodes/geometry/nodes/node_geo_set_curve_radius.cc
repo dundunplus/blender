@@ -75,7 +75,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetCurveRadius", GEO_NODE_SET_CURVE_RADIUS);
+  geo_node_type_base(&ntype, "GeometryNodeSetCurveRadius"_ustr, GEO_NODE_SET_CURVE_RADIUS);
   ntype.ui_name = "Set Curve Radius";
   ntype.ui_description = "Set the radius of the curve at each control point";
   ntype.enum_name_legacy = "SET_CURVE_RADIUS";

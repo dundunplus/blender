@@ -91,7 +91,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeImportSTL", GEO_NODE_IMPORT_STL);
+  geo_node_type_base(&ntype, "GeometryNodeImportSTL"_ustr, GEO_NODE_IMPORT_STL);
   ntype.ui_name = "Import STL";
   ntype.ui_description = "Import a mesh from an STL file";
   ntype.enum_name_legacy = "IMPORT_STL";

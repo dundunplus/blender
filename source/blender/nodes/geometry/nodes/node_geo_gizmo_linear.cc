@@ -57,7 +57,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeGizmoLinear", GEO_NODE_GIZMO_LINEAR);
+  geo_node_type_base(&ntype, "GeometryNodeGizmoLinear"_ustr, GEO_NODE_GIZMO_LINEAR);
   ntype.ui_name = "Linear Gizmo";
   ntype.ui_description = "Show a linear gizmo in the viewport for a value";
   ntype.enum_name_legacy = "GIZMO_LINEAR";

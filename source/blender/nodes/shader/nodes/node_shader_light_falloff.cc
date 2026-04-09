@@ -61,7 +61,7 @@ void register_node_type_sh_light_falloff()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeLightFalloff", SH_NODE_LIGHT_FALLOFF);
+  sh_node_type_base(&ntype, "ShaderNodeLightFalloff"_ustr, SH_NODE_LIGHT_FALLOFF);
   ntype.ui_name = "Light Falloff";
   ntype.ui_description =
       "Manipulate how light intensity decreases over distance. Typically used for "

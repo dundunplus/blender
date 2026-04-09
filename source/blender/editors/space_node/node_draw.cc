@@ -2780,7 +2780,7 @@ static void node_draw_extra_info_panel(const bContext &C,
 
 static short get_viewer_shortcut_icon(const bNode &node)
 {
-  BLI_assert(node.is_type("CompositorNodeViewer") || node.is_type("GeometryNodeViewer"));
+  BLI_assert(node.is_type("CompositorNodeViewer"_ustr) || node.is_type("GeometryNodeViewer"_ustr));
   switch (node.custom1) {
     case NODE_VIEWER_SHORTCUT_NONE:
       /* No change by default. */
@@ -3098,7 +3098,7 @@ static void node_draw_basis(const bContext &C,
     block_emboss_set(&block, ui::EmbossType::Emboss);
   }
   /* Viewer node shortcuts. */
-  if (node.is_type("CompositorNodeViewer")) {
+  if (node.is_type("CompositorNodeViewer"_ustr)) {
     short shortcut_icon = get_viewer_shortcut_icon(node);
     iconofs -= iconbutw;
     const bool is_active = node.flag & NODE_DO_OUTPUT;
@@ -4396,7 +4396,7 @@ static void draw_frame_overlays(const bContext &C,
                                 const bNodeTree &ntree,
                                 Span<ui::Block *> blocks)
 {
-  for (const bNode *node : ntree.nodes_by_type("NodeFrame")) {
+  for (const bNode *node : ntree.nodes_by_type("NodeFrame"_ustr)) {
     frame_node_draw_overlay(C, tree_draw_ctx, region, snode, *node, *blocks[node->index()]);
   }
 }
@@ -4682,7 +4682,7 @@ static Map<const bNode *, const bNode *> find_menu_switch_sources_for_index_swit
     bke::ComputeContextCache &compute_context_cache)
 {
   Map<const bNode *, const bNode *> result;
-  for (const bNode *index_switch_node : ntree.nodes_by_type("GeometryNodeIndexSwitch")) {
+  for (const bNode *index_switch_node : ntree.nodes_by_type("GeometryNodeIndexSwitch"_ustr)) {
     const bNodeSocket &index_socket = index_switch_node->input_socket(0);
     const ComputeContext *compute_context = ed::space_node::compute_context_for_edittree_socket(
         snode, compute_context_cache, index_socket);

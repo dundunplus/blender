@@ -53,7 +53,7 @@ void register_node_type_sh_invert()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeInvert", SH_NODE_INVERT);
+  sh_node_type_base(&ntype, "ShaderNodeInvert"_ustr, SH_NODE_INVERT);
   ntype.ui_name = "Invert Color";
   ntype.ui_description = "Invert a color, producing a negative";
   ntype.enum_name_legacy = "INVERT";

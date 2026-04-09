@@ -96,7 +96,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   }
 
   params.add_item(IFACE_("String"), [](LinkSearchOpParams &params) {
-    bNode &node = params.add_node("FunctionNodeInputString");
+    bNode &node = params.add_node("FunctionNodeInputString"_ustr);
     params.update_and_connect_available_socket(node, "String"_ustr);
 
     /* Adapt width of the new node to its content. */
@@ -112,7 +112,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeInputString", FN_NODE_INPUT_STRING);
+  fn_node_type_base(&ntype, "FunctionNodeInputString"_ustr, FN_NODE_INPUT_STRING);
   ntype.ui_name = "String";
   ntype.ui_description = "Provide a string value that can be connected to other nodes in the tree";
   ntype.enum_name_legacy = "INPUT_STRING";

@@ -103,7 +103,7 @@ void register_node_type_sh_clamp()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeClamp", SH_NODE_CLAMP);
+  common_node_type_base(&ntype, "ShaderNodeClamp"_ustr, SH_NODE_CLAMP);
   ntype.ui_name = "Clamp";
   ntype.ui_description = "Clamp a value between a minimum and a maximum";
   ntype.enum_name_legacy = "CLAMP";

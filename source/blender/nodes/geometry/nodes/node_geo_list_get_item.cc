@@ -66,7 +66,7 @@ class SocketSearchOp {
   eNodeSocketDatatype socket_type;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("GeometryNodeListGetItem");
+    bNode &node = params.add_node("GeometryNodeListGetItem"_ustr);
     node_storage(node).socket_type = socket_type;
     params.update_and_connect_available_socket(node, socket_name);
   }
@@ -266,7 +266,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeListGetItem");
+  geo_node_type_base(&ntype, "GeometryNodeListGetItem"_ustr);
   ntype.ui_name = "Get List Item";
   ntype.ui_description = "Retrieve a value from a list";
   ntype.nclass = NODE_CLASS_CONVERTER;

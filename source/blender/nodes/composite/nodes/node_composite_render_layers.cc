@@ -336,7 +336,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeRLayers", CMP_NODE_R_LAYERS);
+  cmp_node_type_base(&ntype, "CompositorNodeRLayers"_ustr, CMP_NODE_R_LAYERS);
   ntype.ui_name = "Render Layers";
   ntype.ui_description = "Input render passes from a scene render";
   ntype.enum_name_legacy = "R_LAYERS";

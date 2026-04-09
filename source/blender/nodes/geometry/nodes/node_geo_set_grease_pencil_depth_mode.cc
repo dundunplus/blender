@@ -67,7 +67,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetGreasePencilDepth");
+  geo_node_type_base(&ntype, "GeometryNodeSetGreasePencilDepth"_ustr);
   ntype.ui_name = "Set Grease Pencil Depth";
   ntype.ui_description = "Set the Grease Pencil depth order to use";
   ntype.nclass = NODE_CLASS_GEOMETRY;

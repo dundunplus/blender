@@ -62,7 +62,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeExposure", CMP_NODE_EXPOSURE);
+  cmp_node_type_base(&ntype, "CompositorNodeExposure"_ustr, CMP_NODE_EXPOSURE);
   ntype.ui_name = "Exposure";
   ntype.ui_description = "Adjust brightness using a camera exposure parameter";
   ntype.enum_name_legacy = "EXPOSURE";

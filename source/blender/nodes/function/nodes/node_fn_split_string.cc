@@ -50,7 +50,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeSplitString");
+  fn_node_type_base(&ntype, "FunctionNodeSplitString"_ustr);
   ntype.ui_name = "Split String";
   ntype.ui_description = "Split a string into a list using a separator";
   ntype.nclass = NODE_CLASS_CONVERTER;

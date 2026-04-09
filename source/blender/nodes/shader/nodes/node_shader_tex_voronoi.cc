@@ -823,7 +823,7 @@ void register_node_type_sh_tex_voronoi()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeTexVoronoi", SH_NODE_TEX_VORONOI);
+  common_node_type_base(&ntype, "ShaderNodeTexVoronoi"_ustr, SH_NODE_TEX_VORONOI);
   ntype.ui_name = "Voronoi Texture";
   ntype.ui_description =
       "Generate Worley noise based on the distance to random points. Typically used to generate "

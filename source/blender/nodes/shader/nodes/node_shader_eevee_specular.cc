@@ -87,7 +87,7 @@ void register_node_type_sh_eevee_specular()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeEeveeSpecular", SH_NODE_EEVEE_SPECULAR);
+  sh_node_type_base(&ntype, "ShaderNodeEeveeSpecular"_ustr, SH_NODE_EEVEE_SPECULAR);
   ntype.ui_name = "Specular BSDF";
   ntype.ui_description =
       "Similar to the Principled BSDF node but uses the specular workflow instead of metallic, "

@@ -175,7 +175,8 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeAttributeDomainSize", GEO_NODE_ATTRIBUTE_DOMAIN_SIZE);
+  geo_node_type_base(
+      &ntype, "GeometryNodeAttributeDomainSize"_ustr, GEO_NODE_ATTRIBUTE_DOMAIN_SIZE);
   ntype.ui_name = "Domain Size";
   ntype.ui_description = "Retrieve the number of elements in a geometry for each attribute domain";
   ntype.enum_name_legacy = "ATTRIBUTE_DOMAIN_SIZE";

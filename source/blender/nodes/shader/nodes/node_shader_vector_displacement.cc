@@ -83,7 +83,7 @@ void register_node_type_sh_vector_displacement()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeVectorDisplacement", SH_NODE_VECTOR_DISPLACEMENT);
+  sh_node_type_base(&ntype, "ShaderNodeVectorDisplacement"_ustr, SH_NODE_VECTOR_DISPLACEMENT);
   ntype.ui_name = "Vector Displacement";
   ntype.ui_description = "Displace the surface along an arbitrary direction";
   ntype.enum_name_legacy = "VECTOR_DISPLACEMENT";

@@ -239,7 +239,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeSeparateColor", FN_NODE_SEPARATE_COLOR);
+  fn_node_type_base(&ntype, "FunctionNodeSeparateColor"_ustr, FN_NODE_SEPARATE_COLOR);
   ntype.ui_name = "Separate Color";
   ntype.ui_description = "Split a color into separate channels, based on a particular color model";
   ntype.enum_name_legacy = "SEPARATE_COLOR";

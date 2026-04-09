@@ -83,7 +83,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodePremulKey", CMP_NODE_PREMULKEY);
+  cmp_node_type_base(&ntype, "CompositorNodePremulKey"_ustr, CMP_NODE_PREMULKEY);
   ntype.ui_name = "Alpha Convert";
   ntype.ui_description = "Convert to and from premultiplied (associated) alpha";
   ntype.enum_name_legacy = "PREMULKEY";

@@ -91,7 +91,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Min"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeFieldMinAndMax");
+          bNode &node = params.add_node("GeometryNodeFieldMinAndMax"_ustr);
           node.custom1 = *type;
           params.update_and_connect_available_socket(node, "Min"_ustr);
         },
@@ -99,7 +99,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Max"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeFieldMinAndMax");
+          bNode &node = params.add_node("GeometryNodeFieldMinAndMax"_ustr);
           node.custom1 = *type;
           params.update_and_connect_available_socket(node, "Max"_ustr);
         },
@@ -109,7 +109,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Value"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeFieldMinAndMax");
+          bNode &node = params.add_node("GeometryNodeFieldMinAndMax"_ustr);
           node.custom1 = *type;
           params.update_and_connect_available_socket(node, "Value"_ustr);
         },
@@ -308,7 +308,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeFieldMinAndMax");
+  geo_node_type_base(&ntype, "GeometryNodeFieldMinAndMax"_ustr);
   ntype.ui_name = "Field Min & Max";
   ntype.ui_description = "Calculate the minimum and maximum of a given field";
   ntype.nclass = NODE_CLASS_CONVERTER;

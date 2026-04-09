@@ -422,7 +422,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeZcombine", CMP_NODE_ZCOMBINE);
+  cmp_node_type_base(&ntype, "CompositorNodeZcombine"_ustr, CMP_NODE_ZCOMBINE);
   ntype.ui_name = "Depth Combine";
   ntype.ui_description = "Combine two images using depth maps";
   ntype.enum_name_legacy = "ZCOMBINE";

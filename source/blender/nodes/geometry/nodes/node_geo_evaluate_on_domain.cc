@@ -91,7 +91,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeFieldOnDomain", GEO_NODE_EVALUATE_ON_DOMAIN);
+  geo_node_type_base(&ntype, "GeometryNodeFieldOnDomain"_ustr, GEO_NODE_EVALUATE_ON_DOMAIN);
   ntype.ui_name = "Evaluate on Domain";
   ntype.ui_description =
       "Retrieve values from a field on a different domain besides the domain from the context";

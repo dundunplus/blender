@@ -242,7 +242,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeBoxMask", CMP_NODE_MASK_BOX);
+  cmp_node_type_base(&ntype, "CompositorNodeBoxMask"_ustr, CMP_NODE_MASK_BOX);
   ntype.ui_name = "Box Mask";
   ntype.ui_description = "Create rectangular mask suitable for use as a simple matte";
   ntype.enum_name_legacy = "BOXMASK";

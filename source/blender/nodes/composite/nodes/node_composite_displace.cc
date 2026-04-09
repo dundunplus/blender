@@ -334,7 +334,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDisplace", CMP_NODE_DISPLACE);
+  cmp_node_type_base(&ntype, "CompositorNodeDisplace"_ustr, CMP_NODE_DISPLACE);
   ntype.ui_name = "Displace";
   ntype.ui_description = "Displace pixel position using an offset vector";
   ntype.enum_name_legacy = "DISPLACE";

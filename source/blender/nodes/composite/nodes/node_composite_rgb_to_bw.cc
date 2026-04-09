@@ -67,7 +67,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeRGBToBW", CMP_NODE_RGBTOBW);
+  cmp_node_type_base(&ntype, "CompositorNodeRGBToBW"_ustr, CMP_NODE_RGBTOBW);
   ntype.ui_name = "RGB to BW";
   ntype.ui_description = "Convert RGB input into grayscale using luminance";
   ntype.enum_name_legacy = "RGBTOBW";

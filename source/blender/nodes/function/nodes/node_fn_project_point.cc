@@ -40,7 +40,7 @@ static int node_gpu_material(GPUMaterial *material,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_cmp_node_type_base(&ntype, "FunctionNodeProjectPoint", FN_NODE_PROJECT_POINT);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeProjectPoint"_ustr, FN_NODE_PROJECT_POINT);
   ntype.ui_name = "Project Point";
   ntype.ui_description =
       "Project a point using a matrix, using location, rotation, scale, and perspective divide";

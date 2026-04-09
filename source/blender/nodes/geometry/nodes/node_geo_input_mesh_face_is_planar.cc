@@ -108,7 +108,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   geo_node_type_base(
-      &ntype, "GeometryNodeInputMeshFaceIsPlanar", GEO_NODE_INPUT_MESH_FACE_IS_PLANAR);
+      &ntype, "GeometryNodeInputMeshFaceIsPlanar"_ustr, GEO_NODE_INPUT_MESH_FACE_IS_PLANAR);
   ntype.ui_name = "Is Face Planar";
   ntype.ui_description =
       "Retrieve whether all triangles in a face are on the same plane, i.e. whether they have the "

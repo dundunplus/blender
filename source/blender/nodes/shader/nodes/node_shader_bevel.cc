@@ -59,7 +59,7 @@ void register_node_type_sh_bevel()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBevel", SH_NODE_BEVEL);
+  sh_node_type_base(&ntype, "ShaderNodeBevel"_ustr, SH_NODE_BEVEL);
   ntype.ui_name = "Bevel";
   ntype.ui_description =
       "Generates normals with round corners.\nNote: only supported in Cycles, and may slow down "

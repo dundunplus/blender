@@ -57,7 +57,7 @@ void register_node_type_sh_rgb()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeRGB", SH_NODE_RGB);
+  sh_node_type_base(&ntype, "ShaderNodeRGB"_ustr, SH_NODE_RGB);
   ntype.ui_name = "Color";
   ntype.ui_description = "A color picker";
   ntype.enum_name_legacy = "RGB";

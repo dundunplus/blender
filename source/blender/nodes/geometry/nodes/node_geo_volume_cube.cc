@@ -181,7 +181,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeVolumeCube", GEO_NODE_VOLUME_CUBE);
+  geo_node_type_base(&ntype, "GeometryNodeVolumeCube"_ustr, GEO_NODE_VOLUME_CUBE);
   ntype.ui_name = "Volume Cube";
   ntype.ui_description =
       "Generate a dense volume with a field that controls the density at each grid voxel based on "

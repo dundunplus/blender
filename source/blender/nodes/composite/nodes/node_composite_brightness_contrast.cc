@@ -82,7 +82,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeBrightContrast", CMP_NODE_BRIGHTCONTRAST);
+  cmp_node_type_base(&ntype, "CompositorNodeBrightContrast"_ustr, CMP_NODE_BRIGHTCONTRAST);
   ntype.ui_name = "Brightness/Contrast";
   ntype.ui_description = "Adjust brightness and contrast";
   ntype.enum_name_legacy = "BRIGHTCONTRAST";

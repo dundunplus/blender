@@ -558,7 +558,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDilateErode", CMP_NODE_DILATEERODE);
+  cmp_node_type_base(&ntype, "CompositorNodeDilateErode"_ustr, CMP_NODE_DILATEERODE);
   ntype.ui_name = "Dilate/Erode";
   ntype.ui_description = "Expand and shrink masks";
   ntype.enum_name_legacy = "DILATEERODE";

@@ -235,7 +235,8 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeAlignRotationToVector", FN_NODE_ALIGN_ROTATION_TO_VECTOR);
+  fn_node_type_base(
+      &ntype, "FunctionNodeAlignRotationToVector"_ustr, FN_NODE_ALIGN_ROTATION_TO_VECTOR);
   ntype.ui_name = "Align Rotation to Vector";
   ntype.ui_description = "Orient a rotation along the given direction";
   ntype.enum_name_legacy = "ALIGN_ROTATION_TO_VECTOR";

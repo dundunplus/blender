@@ -191,7 +191,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_cmp_node_type_base(&ntype, "NodeEnableOutput");
+  geo_cmp_node_type_base(&ntype, "NodeEnableOutput"_ustr);
   ntype.ui_name = "Enable Output";
   ntype.ui_description = "Either pass through the input value or output the fallback value";
   ntype.nclass = NODE_CLASS_INTERFACE;

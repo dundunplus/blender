@@ -190,7 +190,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodePointsToCurves", GEO_NODE_POINTS_TO_CURVES);
+  geo_node_type_base(&ntype, "GeometryNodePointsToCurves"_ustr, GEO_NODE_POINTS_TO_CURVES);
   ntype.ui_name = "Points to Curves";
   ntype.ui_description = "Split all points to curve by its group ID and reorder by weight";
   ntype.enum_name_legacy = "POINTS_TO_CURVES";

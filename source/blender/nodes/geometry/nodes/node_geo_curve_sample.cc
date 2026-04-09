@@ -100,7 +100,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   if (type && *type != CD_PROP_STRING) {
     /* The input and output sockets have the same name. */
     params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeSampleCurve");
+      bNode &node = params.add_node("GeometryNodeSampleCurve"_ustr);
       node_storage(node).data_type = *type;
       params.update_and_connect_available_socket(node, "Value"_ustr);
     });
@@ -564,7 +564,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSampleCurve", GEO_NODE_SAMPLE_CURVE);
+  geo_node_type_base(&ntype, "GeometryNodeSampleCurve"_ustr, GEO_NODE_SAMPLE_CURVE);
   ntype.ui_name = "Sample Curve";
   ntype.ui_description =
       "Retrieve data from a point on a curve at a certain distance from its start";

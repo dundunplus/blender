@@ -66,7 +66,7 @@ class SocketSearchOp {
   CMPNodeFilterMethod filter_type = CMP_NODE_FILTER_SOFT;
   void operator()(LinkSearchOpParams &params)
   {
-    bNode &node = params.add_node("CompositorNodeFilter");
+    bNode &node = params.add_node("CompositorNodeFilter"_ustr);
     bNodeSocket &type_socket = *bke::node_find_socket(node, SOCK_IN, "Type");
     type_socket.default_value_typed<bNodeSocketValueMenu>()->value = this->filter_type;
     params.update_and_connect_available_socket(node, "Image"_ustr);
@@ -294,7 +294,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeFilter", CMP_NODE_FILTER);
+  cmp_node_type_base(&ntype, "CompositorNodeFilter"_ustr, CMP_NODE_FILTER);
   ntype.ui_name = "Filter";
   ntype.ui_description = "Apply common image enhancement filters";
   ntype.enum_name_legacy = "FILTER";

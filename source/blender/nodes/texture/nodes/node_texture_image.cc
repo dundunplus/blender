@@ -101,7 +101,7 @@ void register_node_type_tex_image()
 {
   static bke::bNodeType ntype;
 
-  tex_node_type_base(&ntype, "TextureNodeImage", TEX_NODE_IMAGE);
+  tex_node_type_base(&ntype, "TextureNodeImage"_ustr, TEX_NODE_IMAGE);
   ntype.ui_name = "Image";
   ntype.enum_name_legacy = "IMAGE";
   ntype.nclass = NODE_CLASS_INPUT;

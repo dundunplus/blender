@@ -83,7 +83,7 @@ static void position_node_based_on_mouse(bNode &node, const float2 &location)
   node.location[1] = location.y + NODE_DY * 0.5f / UI_SCALE_FAC;
 }
 
-bNode *add_node(const bContext &C, const StringRef idname, const float2 &location)
+bNode *add_node(const bContext &C, const UString idname, const float2 &location)
 {
   SpaceNode &snode = *CTX_wm_space_node(&C);
   Main &bmain = *CTX_data_main(&C);
@@ -212,7 +212,7 @@ static wmOperatorStatus add_reroute_exec(bContext *C, wmOperator *op)
   node_deselect_all(ntree);
 
   ntree.ensure_topology_cache();
-  const Vector<bNode *> frame_nodes = ntree.nodes_by_type("NodeFrame");
+  const Vector<bNode *> frame_nodes = ntree.nodes_by_type("NodeFrame"_ustr);
 
   ED_preview_kill_jobs(CTX_wm_manager(C), CTX_data_main(C));
 
@@ -360,7 +360,7 @@ static wmOperatorStatus node_add_group_exec(bContext *C, wmOperator *op)
 
   ED_preview_kill_jobs(CTX_wm_manager(C), CTX_data_main(C));
 
-  const StringRef node_idname = node_group_idname(C);
+  const UString node_idname = node_group_idname(C);
   if (node_idname[0] == '\0') {
     BKE_report(op->reports, RPT_WARNING, "Could not determine type of group node");
     return OPERATOR_CANCELLED;
@@ -581,7 +581,7 @@ static wmOperatorStatus node_swap_group_asset_invoke(bContext *C,
 
   snode.runtime->cursor /= UI_SCALE_FAC;
 
-  const StringRef node_idname = node_group_idname(C);
+  const UString node_idname = node_group_idname(C);
   if (node_idname[0] == '\0') {
     BKE_report(op->reports, RPT_WARNING, "Could not determine type of group node");
     return OPERATOR_CANCELLED;
@@ -590,7 +590,7 @@ static wmOperatorStatus node_swap_group_asset_invoke(bContext *C,
   BLI_assert(ot);
   PointerRNA itemptr;
   PointerRNA ptr = WM_operator_properties_create_ptr(ot);
-  RNA_string_set(&ptr, "type", node_idname.data());
+  RNA_string_set(&ptr, "type", node_idname.c_str());
 
   /* Assign node group via operator.settings. This needs to be done here so that NODE_OT_swap_node
    * can preserve matching links */
@@ -1232,22 +1232,22 @@ static wmOperatorStatus node_add_import_node_exec(bContext *C, wmOperator *op)
   for (const StringRefNull path : paths) {
     bNode *node = nullptr;
     if (path.endswith(".csv")) {
-      node = add_node(*C, "GeometryNodeImportCSV", snode->runtime->cursor);
+      node = add_node(*C, "GeometryNodeImportCSV"_ustr, snode->runtime->cursor);
     }
     else if (path.endswith(".obj")) {
-      node = add_node(*C, "GeometryNodeImportOBJ", snode->runtime->cursor);
+      node = add_node(*C, "GeometryNodeImportOBJ"_ustr, snode->runtime->cursor);
     }
     else if (path.endswith(".ply")) {
-      node = add_node(*C, "GeometryNodeImportPLY", snode->runtime->cursor);
+      node = add_node(*C, "GeometryNodeImportPLY"_ustr, snode->runtime->cursor);
     }
     else if (path.endswith(".stl")) {
-      node = add_node(*C, "GeometryNodeImportSTL", snode->runtime->cursor);
+      node = add_node(*C, "GeometryNodeImportSTL"_ustr, snode->runtime->cursor);
     }
     else if (path.endswith(".txt")) {
-      node = add_node(*C, "GeometryNodeImportText", snode->runtime->cursor);
+      node = add_node(*C, "GeometryNodeImportText"_ustr, snode->runtime->cursor);
     }
     else if (path.endswith(".vdb")) {
-      node = add_node(*C, "GeometryNodeImportVDB", snode->runtime->cursor);
+      node = add_node(*C, "GeometryNodeImportVDB"_ustr, snode->runtime->cursor);
     }
 
     if (node) {
@@ -1398,7 +1398,7 @@ static wmOperatorStatus node_add_group_input_node_exec(bContext *C, wmOperator *
 
   ED_preview_kill_jobs(CTX_wm_manager(C), CTX_data_main(C));
 
-  bNode *group_input_node = add_node(*C, "NodeGroupInput", snode->runtime->cursor);
+  bNode *group_input_node = add_node(*C, "NodeGroupInput"_ustr, snode->runtime->cursor);
 
   if (single_socket) {
     /* Hide all other sockets in the new node, to only display the selected one. */
@@ -1545,13 +1545,13 @@ static wmOperatorStatus node_add_color_exec(bContext *C, wmOperator *op)
 
   switch (snode->nodetree->type) {
     case NTREE_SHADER:
-      color_node = add_node(*C, "ShaderNodeRGB", snode->runtime->cursor);
+      color_node = add_node(*C, "ShaderNodeRGB"_ustr, snode->runtime->cursor);
       break;
     case NTREE_COMPOSIT:
-      color_node = add_node(*C, "CompositorNodeRGB", snode->runtime->cursor);
+      color_node = add_node(*C, "CompositorNodeRGB"_ustr, snode->runtime->cursor);
       break;
     case NTREE_GEOMETRY:
-      color_node = add_node(*C, "FunctionNodeInputColor", snode->runtime->cursor);
+      color_node = add_node(*C, "FunctionNodeInputColor"_ustr, snode->runtime->cursor);
       break;
     default:
       return OPERATOR_CANCELLED;
@@ -1883,11 +1883,11 @@ static void initialize_compositor_sequencer_node_group(const bContext *C,
   ntree.tree_interface.add_socket(
       "Image", "", "NodeSocketColor", NODE_INTERFACE_SOCKET_OUTPUT, nullptr);
 
-  bNode *output_node = bke::node_add_node(C, ntree, "NodeGroupOutput");
+  bNode *output_node = bke::node_add_node(C, ntree, "NodeGroupOutput"_ustr);
   output_node->location[0] = 200.0f;
   output_node->location[1] = 0.0f;
 
-  bNode *input_node = bke::node_add_node(C, ntree, "NodeGroupInput");
+  bNode *input_node = bke::node_add_node(C, ntree, "NodeGroupInput"_ustr);
   input_node->location[0] = -150.0f - input_node->width;
   input_node->location[1] = 0.0f;
   bke::node_set_active(ntree, *input_node);

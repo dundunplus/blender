@@ -47,7 +47,7 @@ void register_node_type_sh_fresnel()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeFresnel", SH_NODE_FRESNEL);
+  sh_node_type_base(&ntype, "ShaderNodeFresnel"_ustr, SH_NODE_FRESNEL);
   ntype.ui_name = "Fresnel";
   ntype.ui_description =
       "Produce a blending factor depending on the angle between the surface normal and the view "

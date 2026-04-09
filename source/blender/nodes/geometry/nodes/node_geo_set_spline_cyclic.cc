@@ -80,7 +80,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetSplineCyclic", GEO_NODE_SET_SPLINE_CYCLIC);
+  geo_node_type_base(&ntype, "GeometryNodeSetSplineCyclic"_ustr, GEO_NODE_SET_SPLINE_CYCLIC);
   ntype.ui_name = "Set Spline Cyclic";
   ntype.ui_description =
       "Control whether each spline loops back on itself by changing the \"cyclic\" attribute";

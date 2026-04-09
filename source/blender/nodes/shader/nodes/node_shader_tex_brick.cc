@@ -307,7 +307,7 @@ void register_node_type_sh_tex_brick()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeTexBrick", SH_NODE_TEX_BRICK);
+  common_node_type_base(&ntype, "ShaderNodeTexBrick"_ustr, SH_NODE_TEX_BRICK);
   ntype.ui_name = "Brick Texture";
   ntype.ui_description = "Generate a procedural texture producing bricks";
   ntype.enum_name_legacy = "TEX_BRICK";

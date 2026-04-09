@@ -89,7 +89,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSubdivideMesh", GEO_NODE_SUBDIVIDE_MESH);
+  geo_node_type_base(&ntype, "GeometryNodeSubdivideMesh"_ustr, GEO_NODE_SUBDIVIDE_MESH);
   ntype.ui_name = "Subdivide Mesh";
   ntype.ui_description =
       "Divide mesh faces into smaller ones without changing the shape or volume, using linear "

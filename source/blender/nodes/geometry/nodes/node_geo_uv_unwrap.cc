@@ -241,7 +241,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeUVUnwrap", GEO_NODE_UV_UNWRAP);
+  geo_node_type_base(&ntype, "GeometryNodeUVUnwrap"_ustr, GEO_NODE_UV_UNWRAP);
   ntype.ui_name = "UV Unwrap";
   ntype.ui_description = "Generate a UV map based on seam edges";
   ntype.enum_name_legacy = "UV_UNWRAP";

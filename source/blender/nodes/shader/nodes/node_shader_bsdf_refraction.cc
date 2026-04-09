@@ -77,7 +77,7 @@ void register_node_type_sh_bsdf_refraction()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfRefraction", SH_NODE_BSDF_REFRACTION);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfRefraction"_ustr, SH_NODE_BSDF_REFRACTION);
   ntype.ui_name = "Refraction BSDF";
   ntype.ui_description =
       "Glossy refraction with sharp or microfacet distribution, typically used for materials that "

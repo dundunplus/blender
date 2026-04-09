@@ -30,7 +30,7 @@ static void node_register()
   static bke::bNodeType ntype;
 
   geo_node_type_base(
-      &ntype, "GeometryNodeInputNamedLayerSelection", GEO_NODE_INPUT_NAMED_LAYER_SELECTION);
+      &ntype, "GeometryNodeInputNamedLayerSelection"_ustr, GEO_NODE_INPUT_NAMED_LAYER_SELECTION);
   ntype.ui_name = "Named Layer Selection";
   ntype.ui_description = "Output a selection of a Grease Pencil layer";
   ntype.enum_name_legacy = "INPUT_NAMED_LAYER_SELECTION";

@@ -107,7 +107,7 @@ void register_node_type_sh_attribute()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeAttribute", SH_NODE_ATTRIBUTE);
+  sh_node_type_base(&ntype, "ShaderNodeAttribute"_ustr, SH_NODE_ATTRIBUTE);
   ntype.ui_name = "Attribute";
   ntype.ui_description = "Retrieve attributes attached to objects or geometry";
   ntype.enum_name_legacy = "ATTRIBUTE";

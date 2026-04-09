@@ -2537,7 +2537,7 @@ struct GeometryNodesLazyFunctionBuilder {
 
     Vector<const lf::FunctionNode *> &local_side_effect_nodes =
         scope_.construct<Vector<const lf::FunctionNode *>>();
-    for (const bNode *bnode : btree_.nodes_by_type("GeometryNodeWarning")) {
+    for (const bNode *bnode : btree_.nodes_by_type("GeometryNodeWarning"_ustr)) {
       if (bnode->output_socket(0).is_directly_linked()) {
         /* The warning node is not a side-effect node. Instead, the user explicitly used the output
          * socket to specify when the warning node should be used. */
@@ -2964,7 +2964,7 @@ struct GeometryNodesLazyFunctionBuilder {
           this->build_multi_function_node(bnode, fn_item, graph_params);
           break;
         }
-        if (bnode.is_type("NodeEnableOutput")) {
+        if (bnode.is_type("NodeEnableOutput"_ustr)) {
           this->build_enable_output_node(bnode, graph_params);
           break;
         }

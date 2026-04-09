@@ -240,7 +240,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   const eNodeSocketDatatype type = eNodeSocketDatatype(params.other_socket().type);
   if (type == SOCK_GEOMETRY) {
     params.add_item(IFACE_("Geometry"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeCaptureAttribute");
+      bNode &node = params.add_node("GeometryNodeCaptureAttribute"_ustr);
       params.connect_available_socket(node, "Geometry"_ustr);
     });
   }
@@ -249,7 +249,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   }
 
   params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
-    bNode &node = params.add_node("GeometryNodeCaptureAttribute");
+    bNode &node = params.add_node("GeometryNodeCaptureAttribute"_ustr);
     socket_items::add_item_with_socket_type_and_name<CaptureAttributeItemsAccessor>(
         params.node_tree, node, type, params.socket.name);
     params.update_and_connect_available_socket(node, UString(params.socket.name));
@@ -276,7 +276,7 @@ static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeCaptureAttribute", GEO_NODE_CAPTURE_ATTRIBUTE);
+  geo_node_type_base(&ntype, "GeometryNodeCaptureAttribute"_ustr, GEO_NODE_CAPTURE_ATTRIBUTE);
   ntype.ui_name = "Capture Attribute";
   ntype.ui_description =
       "Store the result of a field on a geometry and output the data as a node socket. Allows "

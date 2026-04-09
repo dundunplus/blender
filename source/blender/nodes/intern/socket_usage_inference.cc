@@ -294,7 +294,7 @@ class SocketUsageInferencerImpl {
         break;
       }
       default: {
-        if (node->is_type("NodeEnableOutput")) {
+        if (node->is_type("NodeEnableOutput"_ustr)) {
           this->usage_task__input__enable_output(socket);
           break;
         }
@@ -709,7 +709,7 @@ class SocketUsageInferencerImpl {
         break;
       }
       default: {
-        if (node->is_type("NodeEnableOutput")) {
+        if (node->is_type("NodeEnableOutput"_ustr)) {
           this->disabled_output_task__output__enable_output_node(socket);
           break;
         }

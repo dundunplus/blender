@@ -253,7 +253,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeMovieClip", CMP_NODE_MOVIECLIP);
+  cmp_node_type_base(&ntype, "CompositorNodeMovieClip"_ustr, CMP_NODE_MOVIECLIP);
   ntype.ui_name = "Movie Clip";
   ntype.ui_description =
       "Input image or movie from a movie clip data-block, typically used for motion tracking";

@@ -112,7 +112,7 @@ static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeCombineTransform", FN_NODE_COMBINE_TRANSFORM);
+  fn_node_type_base(&ntype, "FunctionNodeCombineTransform"_ustr, FN_NODE_COMBINE_TRANSFORM);
   ntype.ui_name = "Combine Transform";
   ntype.ui_description =
       "Combine a translation vector, a rotation, and a scale vector into a transformation matrix";

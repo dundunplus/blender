@@ -63,7 +63,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodePosterize", CMP_NODE_POSTERIZE);
+  cmp_node_type_base(&ntype, "CompositorNodePosterize"_ustr, CMP_NODE_POSTERIZE);
   ntype.ui_name = "Posterize";
   ntype.ui_description =
       "Reduce number of colors in an image, converting smooth gradients into sharp transitions";

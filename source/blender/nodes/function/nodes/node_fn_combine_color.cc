@@ -140,7 +140,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeCombineColor", FN_NODE_COMBINE_COLOR);
+  fn_node_type_base(&ntype, "FunctionNodeCombineColor"_ustr, FN_NODE_COMBINE_COLOR);
   ntype.ui_name = "Combine Color";
   ntype.ui_description =
       "Combine four channels into a single color, based on a particular color model";

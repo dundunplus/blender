@@ -123,7 +123,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeSplit", CMP_NODE_SPLIT);
+  cmp_node_type_base(&ntype, "CompositorNodeSplit"_ustr, CMP_NODE_SPLIT);
   ntype.ui_name = "Split";
   ntype.ui_description =
       "Combine two images for side-by-side display. Typically used in combination with a Viewer "

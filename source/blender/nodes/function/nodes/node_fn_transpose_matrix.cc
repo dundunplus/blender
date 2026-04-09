@@ -38,7 +38,7 @@ static int node_gpu_material(GPUMaterial *material,
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_cmp_node_type_base(&ntype, "FunctionNodeTransposeMatrix", FN_NODE_TRANSPOSE_MATRIX);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeTransposeMatrix"_ustr, FN_NODE_TRANSPOSE_MATRIX);
   ntype.ui_name = "Transpose Matrix";
   ntype.ui_description =
       "Flip a matrix over its diagonal, turning columns into rows and vice-versa";

@@ -452,7 +452,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodePlaneTrackDeform", CMP_NODE_PLANETRACKDEFORM);
+  cmp_node_type_base(&ntype, "CompositorNodePlaneTrackDeform"_ustr, CMP_NODE_PLANETRACKDEFORM);
   ntype.ui_name = "Plane Track Deform";
   ntype.ui_description =
       "Replace flat planes in footage by another image, detected by plane tracks from motion "

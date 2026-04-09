@@ -50,7 +50,7 @@ void register_node_type_sh_rgbtobw()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeRGBToBW", SH_NODE_RGBTOBW);
+  sh_node_type_base(&ntype, "ShaderNodeRGBToBW"_ustr, SH_NODE_RGBTOBW);
   ntype.ui_name = "RGB to BW";
   ntype.ui_description = "Convert a color's luminance to a grayscale value";
   ntype.enum_name_legacy = "RGBTOBW";

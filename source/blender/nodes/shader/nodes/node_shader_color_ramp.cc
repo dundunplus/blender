@@ -167,7 +167,7 @@ void register_node_type_sh_valtorgb()
 
   static bke::bNodeType ntype;
 
-  common_node_type_base(&ntype, "ShaderNodeValToRGB", SH_NODE_VALTORGB);
+  common_node_type_base(&ntype, "ShaderNodeValToRGB"_ustr, SH_NODE_VALTORGB);
   ntype.ui_name = "Color Ramp";
   ntype.ui_description = "Map values to colors with the use of a gradient";
   ntype.enum_name_legacy = "VALTORGB";

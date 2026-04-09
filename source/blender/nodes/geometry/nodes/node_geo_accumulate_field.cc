@@ -118,7 +118,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Leading"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeAccumulateField");
+          bNode &node = params.add_node("GeometryNodeAccumulateField"_ustr);
           node_storage(node).data_type = *type;
           params.update_and_connect_available_socket(node, "Leading"_ustr);
         },
@@ -126,7 +126,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Trailing"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeAccumulateField");
+          bNode &node = params.add_node("GeometryNodeAccumulateField"_ustr);
           node_storage(node).data_type = *type;
           params.update_and_connect_available_socket(node, "Trailing"_ustr);
         },
@@ -134,7 +134,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Total"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeAccumulateField");
+          bNode &node = params.add_node("GeometryNodeAccumulateField"_ustr);
           node_storage(node).data_type = *type;
           params.update_and_connect_available_socket(node, "Total"_ustr);
         },
@@ -144,7 +144,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Value"),
         [type](LinkSearchOpParams &params) {
-          bNode &node = params.add_node("GeometryNodeAccumulateField");
+          bNode &node = params.add_node("GeometryNodeAccumulateField"_ustr);
           node_storage(node).data_type = *type;
           params.update_and_connect_available_socket(node, "Value"_ustr);
         },
@@ -438,7 +438,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeAccumulateField", GEO_NODE_ACCUMULATE_FIELD);
+  geo_node_type_base(&ntype, "GeometryNodeAccumulateField"_ustr, GEO_NODE_ACCUMULATE_FIELD);
   ntype.ui_name = "Accumulate Field";
   ntype.ui_description =
       "Add the values of an evaluated field together and output the running total for each "

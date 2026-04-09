@@ -60,7 +60,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeReplaceMaterial", GEO_NODE_REPLACE_MATERIAL);
+  geo_node_type_base(&ntype, "GeometryNodeReplaceMaterial"_ustr, GEO_NODE_REPLACE_MATERIAL);
   ntype.ui_name = "Replace Material";
   ntype.ui_description = "Swap one material with another";
   ntype.enum_name_legacy = "REPLACE_MATERIAL";

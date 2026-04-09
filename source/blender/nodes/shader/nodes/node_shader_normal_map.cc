@@ -198,7 +198,7 @@ void register_node_type_sh_normal_map()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeNormalMap", SH_NODE_NORMAL_MAP);
+  sh_node_type_base(&ntype, "ShaderNodeNormalMap"_ustr, SH_NODE_NORMAL_MAP);
   ntype.ui_name = "Normal Map";
   ntype.ui_description =
       "Generate a perturbed normal from an RGB normal map image. Typically used for faking highly "

@@ -143,8 +143,9 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(
-      &ntype, "GeometryNodeCurvePrimitiveBezierSegment", GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT);
+  geo_node_type_base(&ntype,
+                     "GeometryNodeCurvePrimitiveBezierSegment"_ustr,
+                     GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT);
   ntype.ui_name = "Bézier Segment";
   ntype.ui_description = "Generate a 2D Bézier spline from the given control points and handles";
   ntype.enum_name_legacy = "CURVE_PRIMITIVE_BEZIER_SEGMENT";

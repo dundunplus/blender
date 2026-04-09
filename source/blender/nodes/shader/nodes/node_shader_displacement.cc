@@ -82,7 +82,7 @@ void register_node_type_sh_displacement()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeDisplacement", SH_NODE_DISPLACEMENT);
+  sh_node_type_base(&ntype, "ShaderNodeDisplacement"_ustr, SH_NODE_DISPLACEMENT);
   ntype.ui_name = "Displacement";
   ntype.ui_description = "Displace the surface along the surface normal";
   ntype.enum_name_legacy = "DISPLACEMENT";

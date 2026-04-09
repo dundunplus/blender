@@ -452,7 +452,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeBlur", CMP_NODE_BLUR);
+  cmp_node_type_base(&ntype, "CompositorNodeBlur"_ustr, CMP_NODE_BLUR);
   ntype.ui_name = "Blur";
   ntype.ui_description = "Blur an image, using several blur modes";
   ntype.enum_name_legacy = "BLUR";

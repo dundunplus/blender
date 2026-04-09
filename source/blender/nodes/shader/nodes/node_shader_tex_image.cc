@@ -286,7 +286,7 @@ void register_node_type_sh_tex_image()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeTexImage", SH_NODE_TEX_IMAGE);
+  sh_node_type_base(&ntype, "ShaderNodeTexImage"_ustr, SH_NODE_TEX_IMAGE);
   ntype.ui_name = "Image Texture";
   ntype.ui_description = "Sample an image file as a texture";
   ntype.enum_name_legacy = "TEX_IMAGE";

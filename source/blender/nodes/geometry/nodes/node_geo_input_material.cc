@@ -27,7 +27,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeInputMaterial", GEO_NODE_INPUT_MATERIAL);
+  geo_node_type_base(&ntype, "GeometryNodeInputMaterial"_ustr, GEO_NODE_INPUT_MATERIAL);
   ntype.ui_name = "Material";
   ntype.ui_description = "Output a single material";
   ntype.enum_name_legacy = "INPUT_MATERIAL";

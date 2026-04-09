@@ -192,7 +192,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeCornersOfFace", GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_FACE);
+  geo_node_type_base(
+      &ntype, "GeometryNodeCornersOfFace"_ustr, GEO_NODE_MESH_TOPOLOGY_CORNERS_OF_FACE);
   ntype.ui_name = "Corners of Face";
   ntype.ui_description = "Retrieve corners that make up a face";
   ntype.enum_name_legacy = "CORNERS_OF_FACE";

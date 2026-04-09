@@ -538,7 +538,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeLensdist", CMP_NODE_LENSDIST);
+  cmp_node_type_base(&ntype, "CompositorNodeLensdist"_ustr, CMP_NODE_LENSDIST);
   ntype.ui_name = "Lens Distortion";
   ntype.ui_description = "Simulate distortion and dispersion from camera lenses";
   ntype.enum_name_legacy = "LENSDIST";

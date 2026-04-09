@@ -38,7 +38,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeGridDivergence");
+  geo_node_type_base(&ntype, "GeometryNodeGridDivergence"_ustr);
   ntype.ui_name = "Grid Divergence";
   ntype.ui_description =
       "Calculate the flow into and out of each point of a directional vector grid";

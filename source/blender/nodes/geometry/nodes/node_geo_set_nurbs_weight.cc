@@ -85,7 +85,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeSetNURBSWeight");
+  geo_node_type_base(&ntype, "GeometryNodeSetNURBSWeight"_ustr);
   ntype.ui_name = "Set NURBS Weight";
   ntype.ui_description =
       "Control the influence of each NURBS control point on the curve by changing the "

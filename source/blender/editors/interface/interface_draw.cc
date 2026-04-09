@@ -536,6 +536,7 @@ void draw_but_HISTOGRAM(ARegion *region,
               BLI_rcti_size_y(&scissor_new));
 
   GPUVertFormat *format = immVertexFormat();
+  GPU_scissor_test(true);
   const uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
@@ -587,6 +588,7 @@ void draw_but_HISTOGRAM(ARegion *region,
   immUnbindProgram();
 
   /* Restore scissor test. */
+  GPU_scissor_test(false);
   GPU_scissor(UNPACK4(scissor));
 
   /* outline */
@@ -761,6 +763,7 @@ void draw_but_WAVEFORM(ARegion *region,
   BLF_batch_draw_flush();
 
   GPUVertFormat *format = immVertexFormat();
+  GPU_scissor_test(true);
   const uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
@@ -918,6 +921,7 @@ void draw_but_WAVEFORM(ARegion *region,
   immUnbindProgram();
 
   /* Restore scissor test. */
+  GPU_scissor_test(false);
   GPU_scissor(UNPACK4(scissor));
 
   /* outline */
@@ -1056,6 +1060,7 @@ void draw_but_VECTORSCOPE(ARegion *region,
               BLI_rcti_size_y(&scissor_new));
 
   GPUVertFormat *format = immVertexFormat();
+  GPU_scissor_test(true);
   const uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
@@ -1223,6 +1228,7 @@ void draw_but_VECTORSCOPE(ARegion *region,
   immUnbindProgram();
 
   /* Restore scissor test. */
+  GPU_scissor_test(false);
   GPU_scissor(UNPACK4(scissor));
   /* outline */
   draw_scope_end(&rect);
@@ -1626,6 +1632,7 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
               scissor_new.ymin,
               BLI_rcti_size_x(&scissor_new),
               BLI_rcti_size_y(&scissor_new));
+  GPU_scissor_test(true);
 
   /* Do this first to not mess imm context */
   if (but_cumap->gradient_type == GRAD_H) {
@@ -1930,6 +1937,7 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
   GPU_blend(GPU_BLEND_NONE);
 
   /* Restore scissor-test. */
+  GPU_scissor_test(false);
   GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
 
   /* outline */
@@ -1993,6 +2001,7 @@ void draw_but_CURVEPROFILE(ARegion *region,
               BLI_rcti_size_y(&scissor_new));
 
   GPU_line_width(1.0f);
+  GPU_scissor_test(true);
 
   GPUVertFormat *format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
@@ -2310,6 +2319,7 @@ void draw_but_CURVEPROFILE(ARegion *region,
   immUnbindProgram();
 
   /* Restore scissor-test. */
+  GPU_scissor_test(false);
   GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
 
   /* Outline */
@@ -2356,6 +2366,7 @@ void draw_but_TRACKPREVIEW(ARegion *region,
               scissor_new.ymin,
               BLI_rcti_size_x(&scissor_new),
               BLI_rcti_size_y(&scissor_new));
+  GPU_scissor_test(true);
 
   if (scopes->track_disabled) {
     const float color[4] = {0.7f, 0.3f, 0.3f, 0.3f};
@@ -2491,6 +2502,7 @@ void draw_but_TRACKPREVIEW(ARegion *region,
   }
 
   /* Restore scissor test. */
+  GPU_scissor_test(false);
   GPU_scissor(UNPACK4(scissor));
   /* outline */
   draw_scope_end(&rect);

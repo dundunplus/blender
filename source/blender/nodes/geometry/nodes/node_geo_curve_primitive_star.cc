@@ -91,7 +91,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeCurveStar", GEO_NODE_CURVE_PRIMITIVE_STAR);
+  geo_node_type_base(&ntype, "GeometryNodeCurveStar"_ustr, GEO_NODE_CURVE_PRIMITIVE_STAR);
   ntype.ui_name = "Star";
   ntype.ui_description =
       "Generate a poly spline in a star pattern by connecting alternating points of two circles";

@@ -232,7 +232,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeUVPackIslands", GEO_NODE_UV_PACK_ISLANDS);
+  geo_node_type_base(&ntype, "GeometryNodeUVPackIslands"_ustr, GEO_NODE_UV_PACK_ISLANDS);
   ntype.ui_name = "Pack UV Islands";
   ntype.ui_description =
       "Scale islands of a UV map and move them so they fill the UV space as much as possible";

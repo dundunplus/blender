@@ -120,7 +120,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
   geo_node_type_base(
-      &ntype, "GeometryNodeCurveEndpointSelection", GEO_NODE_CURVE_ENDPOINT_SELECTION);
+      &ntype, "GeometryNodeCurveEndpointSelection"_ustr, GEO_NODE_CURVE_ENDPOINT_SELECTION);
   ntype.ui_name = "Endpoint Selection";
   ntype.ui_description = "Provide a selection for an arbitrary number of endpoints in each spline";
   ntype.enum_name_legacy = "CURVE_ENDPOINT_SELECTION";

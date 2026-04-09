@@ -417,7 +417,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeRelativeToPixel");
+  cmp_node_type_base(&ntype, "CompositorNodeRelativeToPixel"_ustr);
   ntype.ui_name = "Relative To Pixel";
   ntype.ui_description =
       "Converts values that are relative to the image size to be in terms of pixels";

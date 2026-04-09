@@ -99,7 +99,7 @@ static void node_register()
 {
   static blender::bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeCollectionChildren");
+  geo_node_type_base(&ntype, "GeometryNodeCollectionChildren"_ustr);
   ntype.ui_name = "Collection Children";
   ntype.ui_description =
       "Retrieve a collection's object and collection children, in a name-based order";

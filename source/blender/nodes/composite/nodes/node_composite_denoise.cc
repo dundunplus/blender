@@ -390,7 +390,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  cmp_node_type_base(&ntype, "CompositorNodeDenoise", CMP_NODE_DENOISE);
+  cmp_node_type_base(&ntype, "CompositorNodeDenoise"_ustr, CMP_NODE_DENOISE);
   ntype.ui_name = "Denoise";
   ntype.ui_description = "Denoise renders from Cycles and other ray tracing renderers";
   ntype.enum_name_legacy = "DENOISE";

@@ -111,7 +111,7 @@ void register_node_type_sh_bsdf_glass()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeBsdfGlass", SH_NODE_BSDF_GLASS);
+  sh_node_type_base(&ntype, "ShaderNodeBsdfGlass"_ustr, SH_NODE_BSDF_GLASS);
   ntype.ui_name = "Glass BSDF";
   ntype.ui_description = "Glass-like shader mixing refraction and reflection at grazing angles";
   ntype.enum_name_legacy = "BSDF_GLASS";

@@ -47,7 +47,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  geo_node_type_base(&ntype, "GeometryNodeInputInstanceScale", GEO_NODE_INPUT_INSTANCE_SCALE);
+  geo_node_type_base(&ntype, "GeometryNodeInputInstanceScale"_ustr, GEO_NODE_INPUT_INSTANCE_SCALE);
   ntype.ui_name = "Instance Scale";
   ntype.ui_description = "Retrieve the scale of each instance in the geometry";
   ntype.enum_name_legacy = "INPUT_INSTANCE_SCALE";

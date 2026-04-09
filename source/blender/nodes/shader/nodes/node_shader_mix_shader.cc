@@ -67,7 +67,7 @@ void register_node_type_sh_mix_shader()
 
   static bke::bNodeType ntype;
 
-  sh_node_type_base(&ntype, "ShaderNodeMixShader", SH_NODE_MIX_SHADER);
+  sh_node_type_base(&ntype, "ShaderNodeMixShader"_ustr, SH_NODE_MIX_SHADER);
   ntype.ui_name = "Mix Shader";
   ntype.ui_description = "Mix two shaders together. Typically used for material layering";
   ntype.enum_name_legacy = "MIX_SHADER";

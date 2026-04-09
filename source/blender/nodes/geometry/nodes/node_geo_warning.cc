@@ -105,7 +105,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeWarning", GEO_NODE_WARNING);
+  geo_node_type_base(&ntype, "GeometryNodeWarning"_ustr, GEO_NODE_WARNING);
   ntype.ui_name = "Warning";
   ntype.ui_description = "Create custom warnings in node groups";
   ntype.enum_name_legacy = "WARNING";
