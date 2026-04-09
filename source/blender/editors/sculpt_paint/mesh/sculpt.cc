@@ -5888,7 +5888,6 @@ void SculptPaintStroke::done(bool is_cancel)
   }
   bke::PaintRuntime *paint_runtime = sd.paint.runtime;
   Brush *brush = BKE_paint_brush(&sd.paint);
-  BLI_assert(brush == ss.cache->brush); /* const, so we shouldn't change. */
   paint_runtime->draw_inverted = false;
 
   stroke_modifiers_check(*this->depsgraph, this->vc.rv3d, sd, ob, brush);
@@ -5971,12 +5970,14 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   if (brush_type_is_paint(brush.sculpt_brush_type) &&
       !color_supported_check(scene, ob, op->reports))
   {
+    stroke->done(true);
     stroke->free(C, op);
     MEM_delete(stroke);
     return OPERATOR_CANCELLED;
   }
   if (!brush_type_is_attribute_only(brush.sculpt_brush_type) && !shape_key_check(ob, op->reports))
   {
+    stroke->done(true);
     stroke->free(C, op);
     MEM_delete(stroke);
     return OPERATOR_CANCELLED;
@@ -5988,6 +5989,7 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
     const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(ob);
     if (!pbvh || pbvh->type() != bke::pbvh::Type::Grids) {
       BKE_report(op->reports, RPT_ERROR, "Only supported in multiresolution mode");
+      stroke->done(true);
       stroke->free(C, op);
       MEM_delete(stroke);
       return OPERATOR_CANCELLED;
@@ -6010,6 +6012,7 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   ignore_background_click = RNA_boolean_get(op->ptr, "ignore_background_click");
   const float mval[2] = {float(event->mval[0]), float(event->mval[1])};
   if (ignore_background_click && !over_mesh(C, op, mval)) {
+    stroke->done(true);
     stroke->free(C, op);
     MEM_delete(stroke);
     return OPERATOR_PASS_THROUGH;
@@ -6021,6 +6024,9 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   if (ELEM(retval, OPERATOR_FINISHED, OPERATOR_CANCELLED)) {
     SculptPaintStroke *stroke = static_cast<SculptPaintStroke *>(op->customdata);
     if (stroke) {
+      /* We don't need to call `stroke->done` in this case, as it should have happened inside
+       * the modal call */
+      BLI_assert(ob.runtime->sculpt_session->cache == nullptr);
       stroke->free(C, op);
       MEM_delete(stroke);
     }

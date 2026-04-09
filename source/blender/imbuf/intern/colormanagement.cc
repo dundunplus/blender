@@ -2174,11 +2174,6 @@ static void colormanagement_transform_ex(uchar *byte_buffer,
     return;
   }
 
-  if (STREQ(from_colorspace, to_colorspace)) {
-    /* if source and destination color spaces are identical, do nothing. */
-    return;
-  }
-
   ColormanageProcessor cm_processor = ColormanageProcessor::colorspace_processor_new(
       from_colorspace, to_colorspace);
   if (cm_processor.is_noop()) {
@@ -4207,7 +4202,13 @@ ColormanageProcessor ColormanageProcessor::colorspace_processor_new(StringRefNul
                                                                     StringRefNull to_colorspace)
 {
   ColormanageProcessor processor;
+
   processor.is_data_result_ = IMB_colormanagement_space_name_is_data(to_colorspace.c_str());
+
+  if (from_colorspace == to_colorspace) {
+    return processor;
+  }
+
   processor.cpu_processor_ = g_config()->get_cpu_processor(from_colorspace, to_colorspace);
 
   return processor;

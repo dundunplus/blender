@@ -1560,17 +1560,11 @@ static gpu::Texture *create_texture(const ImBuf &ibuf)
 static const char *get_texture_colorspace_name(const ImBuf &ibuf)
 {
   if (ibuf.float_data()) {
-    if (ibuf.float_buffer.colorspace) {
-      return IMB_colormanagement_colorspace_get_name(ibuf.float_buffer.colorspace);
-    }
-    return IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR);
+    return IMB_colormanagement_get_float_colorspace(&ibuf);
   }
 
   if (ibuf.byte_data()) {
-    if (ibuf.byte_buffer.colorspace) {
-      return IMB_colormanagement_colorspace_get_name(ibuf.byte_buffer.colorspace);
-    }
-    return IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DEFAULT_BYTE);
+    return IMB_colormanagement_get_byte_colorspace(&ibuf);
   }
 
   /* Fail-safe fallback. */
