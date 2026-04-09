@@ -24,6 +24,7 @@
 #include "BLI_sys_types.h"
 
 #include "BKE_animsys.h"
+#include "BKE_colortools.hh"
 #include "BKE_curves.hh"
 #include "BKE_idprop.hh"
 #include "BKE_lib_id.hh"
@@ -406,6 +407,27 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 18)) {
+    for (Scene &scene : bmain->scenes) {
+      if (scene.toolsettings->sculpt) {
+        Sculpt &sculpt = *scene.toolsettings->sculpt;
+        MeshAutomaskingSettings *settings = MEM_new<MeshAutomaskingSettings>(__func__);
+        settings->flags = sculpt.automasking_flags;
+        settings->boundary_edges_propagation_steps =
+            sculpt.automasking_boundary_edges_propagation_steps;
+        settings->cavity_blur_steps = sculpt.automasking_cavity_blur_steps;
+        settings->cavity_factor = sculpt.automasking_cavity_factor;
+        settings->start_normal_limit = sculpt.automasking_start_normal_limit;
+        settings->start_normal_falloff = sculpt.automasking_start_normal_falloff;
+        settings->view_normal_limit = sculpt.automasking_view_normal_limit;
+        settings->view_normal_falloff = sculpt.automasking_view_normal_falloff;
+        settings->cavity_curve = BKE_curvemapping_copy(sculpt.automasking_cavity_curve);
+        settings->cavity_curve_op = BKE_curvemapping_copy(sculpt.automasking_cavity_curve_op);
+
+        scene.toolsettings->sculpt->paint.mesh_automasking_settings = settings;
+      }
+    }
+  }
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

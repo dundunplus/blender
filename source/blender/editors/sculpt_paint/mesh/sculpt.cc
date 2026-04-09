@@ -3251,8 +3251,8 @@ static void do_brush_action(const Depsgraph &depsgraph,
     return;
   }
 
-  if (auto_mask::is_enabled(sd, ob, &brush)) {
-    auto_mask::Cache &cache = auto_mask::stroke_cache_ensure(depsgraph, sd, &brush, ob);
+  if (auto_mask::is_enabled(sd.paint, ob, &brush)) {
+    auto_mask::Cache &cache = auto_mask::stroke_cache_ensure(depsgraph, sd.paint, &brush, ob);
     if (cache.settings.flags & BRUSH_AUTOMASKING_CAVITY_ALL) {
       cache.calc_cavity_factor(depsgraph, ob, node_mask);
     }
@@ -4305,7 +4305,7 @@ static bool sculpt_needs_connectivity_info(const Sculpt &sd,
 {
   SculptSession &ss = *object.runtime->sculpt_session;
   const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(object);
-  if (pbvh && auto_mask::is_enabled(sd, object, &brush)) {
+  if (pbvh && auto_mask::is_enabled(sd.paint, object, &brush)) {
     return true;
   }
   return ((ss.cache && ss.cache->toggle_settings.alt_smooth) ||

@@ -825,6 +825,8 @@ static bool vfont_to_curve(Object *ob,
       MARGIN_X_MIN,
       MARGIN_Y_MIN,
   };
+  /* X position of the last base (non-combining) character, for centering combining marks. */
+  float offset_x_base = MARGIN_X_MIN;
 
   /* `xtrax` is used to implement character "spacing".
    * Note that this is added (when adding space), and multiplied when subtracting space.
@@ -1022,6 +1024,7 @@ static bool vfont_to_curve(Object *ob,
       }
 
       offset.x = MARGIN_X_MIN;
+      offset_x_base = MARGIN_X_MIN;
       lnr++;
       cnr = 0;
       wsnr = 0;
@@ -1036,37 +1039,51 @@ static bool vfont_to_curve(Object *ob,
       tabfac = (offset.x - MARGIN_X_MIN + 0.01f);
       tabfac = 2.0f * ceilf(tabfac / 2.0f);
       offset.x = MARGIN_X_MIN + tabfac;
+      offset_x_base = offset.x;
     }
     else {
-      EditFontSelBox *sb = nullptr;
-      float wsfac;
-
-      ct->offset = offset;
-      ct->linenr = lnr;
-      ct->charnr = cnr++;
-
-      if (selboxes && (i >= selstart) && (i <= selend)) {
-        sb = &selboxes[i - selstart];
-        sb->y = (offset.y - font_select_y_offset) * font_size - linedist * font_size * 0.1f;
-        sb->h = linedist * font_size;
-        sb->w = offset.x * font_size;
-      }
-
-      if (charcode == ' ') { /* Space character. */
-        wsfac = cu.wordspace;
-        wsnr++;
-      }
-      else {
-        wsfac = 1.0f;
-      }
-
       /* Won't have been changed since last assignment, ensure this remains the case. */
       BLI_assert(twidth == vfont_char_width(cu, che, ct->is_smallcaps));
 
-      offset.x += (twidth * wsfac * (1.0f + (info->kern / 40.0f))) + XTRAX_WITH_CHAR_WIDTH(twidth);
+      if (twidth == 0.0f && che != nullptr) {
+        /* Combining character: center the mark over the previous base character.
+         * This mirrors the fallback algorithm used by BLF (see #blf_glyph_step)
+         * and HarfBuzz when GPOS tables are absent. */
+        const float base_center = (offset_x_base + offset.x) * 0.5f;
+        ct->offset.x = base_center - BLI_rctf_cent_x(&che->bounds);
+        ct->offset.y = offset.y;
+        ct->linenr = lnr;
+        ct->charnr = cnr++;
+      }
+      else {
+        ct->offset = offset;
+        ct->linenr = lnr;
+        ct->charnr = cnr++;
 
-      if (sb) {
-        sb->w = (offset.x * font_size) - sb->w;
+        EditFontSelBox *sb = nullptr;
+        if (selboxes && (i >= selstart) && (i <= selend)) {
+          sb = &selboxes[i - selstart];
+          sb->y = (offset.y - font_select_y_offset) * font_size - linedist * font_size * 0.1f;
+          sb->h = linedist * font_size;
+          sb->w = offset.x * font_size;
+        }
+
+        float wsfac;
+        if (charcode == ' ') { /* Space character. */
+          wsfac = cu.wordspace;
+          wsnr++;
+        }
+        else {
+          wsfac = 1.0f;
+        }
+
+        offset_x_base = offset.x;
+        offset.x += (twidth * wsfac * (1.0f + (info->kern / 40.0f))) +
+                    XTRAX_WITH_CHAR_WIDTH(twidth);
+
+        if (sb) {
+          sb->w = (offset.x * font_size) - sb->w;
+        }
       }
     }
     ct++;
@@ -1146,7 +1163,11 @@ static bool vfont_to_curve(Object *ob,
         }
 
         if ((mem[j] != '\n') && (chartransdata[j].do_break != 0)) {
-          if (mem[i] == ' ') {
+          /* Skip terminator spaces (those that became the wrap break point):
+           * they were removed from `wspace_nr` so they don't receive slack
+           * and dividing by `wspace_nr` here would be a divide-by-zero on
+           * lines whose only space was consumed by the wrap. */
+          if (mem[i] == ' ' && chartransdata[i].do_break == 0) {
             TempLineInfo *li;
 
             li = &lineinfo[ct->linenr];

@@ -222,6 +222,7 @@ static uint maskrasterize_layer_fill_open_spline_feather_quads(
     uint *face,
     const uint vert_num)
 {
+  UNUSED_VARS_NDEBUG(vert_num);
   uint quad_num = 0;
   while (open_spline_index-- > 0) {
     const uint vertex_offset = open_spline_ranges[open_spline_index].vertex_offset;

@@ -1168,13 +1168,15 @@ bool BLF_character_to_curves(int fontid,
                              ListBaseT<Nurb> *nurbsbase,
                              const float scale,
                              bool use_fallback,
-                             float *r_advance)
+                             float *r_advance,
+                             rctf *r_bounds)
 {
   FontBLF *font = blf_get(fontid);
   if (!font) {
     return false;
   }
-  return blf_character_to_curves(font, unicode, nurbsbase, scale, use_fallback, r_advance);
+  return blf_character_to_curves(
+      font, unicode, nurbsbase, scale, use_fallback, r_advance, r_bounds);
 }
 
 #ifndef NDEBUG

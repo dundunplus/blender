@@ -434,7 +434,7 @@ static void sculpt_color_filter_apply(bContext *C, wmOperator *op, Object &ob)
   }
 
   const IndexMask &node_mask = ss.filter_cache->node_mask;
-  if (auto_mask::is_enabled(sd, ob, nullptr) && ss.filter_cache->automasking &&
+  if (auto_mask::is_enabled(sd.paint, ob, nullptr) && ss.filter_cache->automasking &&
       ss.filter_cache->automasking->settings.flags & BRUSH_AUTOMASKING_CAVITY_ALL)
   {
     ss.filter_cache->automasking->calc_cavity_factor(depsgraph, ob, node_mask);
@@ -547,7 +547,7 @@ static int sculpt_color_filter_init(bContext *C, wmOperator *op)
   RNA_int_get_array(op->ptr, "start_mouse", mval);
   float mval_fl[2] = {float(mval[0]), float(mval[1])};
 
-  const bool use_automasking = auto_mask::is_enabled(sd, ob, nullptr);
+  const bool use_automasking = auto_mask::is_enabled(sd.paint, ob, nullptr);
   if (use_automasking) {
     if (v3d) {
       /* Update the active face set manually as the paint cursor is not enabled when using the Mesh
@@ -583,8 +583,8 @@ static int sculpt_color_filter_init(bContext *C, wmOperator *op)
   const SculptSession &ss = *ob.runtime->sculpt_session;
   filter::Cache *filter_cache = ss.filter_cache;
   filter_cache->active_face_set = face_set_none_id;
-  if (auto_mask::is_enabled(sd, ob, nullptr)) {
-    auto_mask::filter_cache_ensure(*depsgraph, sd, ob);
+  if (auto_mask::is_enabled(sd.paint, ob, nullptr)) {
+    auto_mask::filter_cache_ensure(*depsgraph, sd.paint, ob);
   }
 
   return OPERATOR_PASS_THROUGH;

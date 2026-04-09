@@ -798,6 +798,7 @@ PyObject *BPyInit_blf()
   PyModule_AddIntConstant(submodule, "SHADOW", BLF_SHADOW);
   PyModule_AddIntConstant(submodule, "WORD_WRAP", BLF_WORD_WRAP);
   PyModule_AddIntConstant(submodule, "MONOCHROME", BLF_MONOCHROME);
+  PyModule_AddIntConstant(submodule, "NO_FALLBACK", BLF_NO_FALLBACK);
 
   return submodule;
 }

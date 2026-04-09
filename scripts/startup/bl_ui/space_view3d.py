@@ -1002,7 +1002,7 @@ class VIEW3D_HT_header(Header):
             layout.popover(
                 panel="VIEW3D_PT_sculpt_automasking",
                 text="",
-                icon=VIEW3D_HT_header._sculpt_automasking_icon(tool_settings.sculpt),
+                icon=VIEW3D_HT_header._mesh_paint_automasking_icon(tool_settings.sculpt),
             )
 
         elif object_mode == 'VERTEX_PAINT':
@@ -1108,16 +1108,16 @@ class VIEW3D_HT_header(Header):
         sub.popover(panel="VIEW3D_PT_shading", text="")
 
     @staticmethod
-    def _sculpt_automasking_icon(sculpt):
+    def _mesh_paint_automasking_icon(paint):
         automask_enabled = (
-            sculpt.use_automasking_topology or
-            sculpt.use_automasking_face_sets or
-            sculpt.use_automasking_boundary_edges or
-            sculpt.use_automasking_boundary_face_sets or
-            sculpt.use_automasking_cavity or
-            sculpt.use_automasking_cavity_inverted or
-            sculpt.use_automasking_start_normal or
-            sculpt.use_automasking_view_normal
+            paint.mesh_automasking_settings.use_automasking_topology or
+            paint.mesh_automasking_settings.use_automasking_face_sets or
+            paint.mesh_automasking_settings.use_automasking_boundary_edges or
+            paint.mesh_automasking_settings.use_automasking_boundary_face_sets or
+            paint.mesh_automasking_settings.use_automasking_cavity or
+            paint.mesh_automasking_settings.use_automasking_cavity_inverted or
+            paint.mesh_automasking_settings.use_automasking_start_normal or
+            paint.mesh_automasking_settings.use_automasking_view_normal
         )
 
         return 'CLIPUV_DEHLT' if automask_enabled else 'CLIPUV_HLT'
@@ -6250,16 +6250,18 @@ class VIEW3D_MT_sculpt_automasking_pie(Menu):
         pie = layout.menu_pie()
 
         tool_settings = context.tool_settings
-        sculpt = tool_settings.sculpt
+        paint = tool_settings.sculpt
 
-        pie.prop(sculpt, "use_automasking_topology", text="Topology")
-        pie.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
-        pie.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
-        pie.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
-        pie.prop(sculpt, "use_automasking_cavity", text="Cavity")
-        pie.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
-        pie.prop(sculpt, "use_automasking_start_normal", text="Area Normal")
-        pie.prop(sculpt, "use_automasking_view_normal", text="View Normal")
+        settings = paint.mesh_automasking_settings
+
+        pie.prop(settings, "use_automasking_topology", text="Topology")
+        pie.prop(settings, "use_automasking_face_sets", text="Face Sets")
+        pie.prop(settings, "use_automasking_boundary_edges", text="Mesh Boundary")
+        pie.prop(settings, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        pie.prop(settings, "use_automasking_cavity", text="Cavity")
+        pie.prop(settings, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
+        pie.prop(settings, "use_automasking_start_normal", text="Area Normal")
+        pie.prop(settings, "use_automasking_view_normal", text="View Normal")
 
 
 class VIEW3D_MT_grease_pencil_sculpt_automasking_pie(Menu):
@@ -8883,79 +8885,82 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         layout = self.layout
 
         tool_settings = context.tool_settings
-        sculpt = tool_settings.sculpt
+        paint = tool_settings.sculpt
+
+        settings = paint.mesh_automasking_settings
+
         layout.label(text="Auto-Masking")
 
         col = layout.column(align=True)
-        col.prop(sculpt, "use_automasking_topology", text="Topology")
-        col.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
+        col.prop(settings, "use_automasking_topology", text="Topology")
+        col.prop(settings, "use_automasking_face_sets", text="Face Sets")
 
         col.separator()
 
         col = layout.column(align=True)
         row = col.row()
-        row.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
+        row.prop(settings, "use_automasking_boundary_edges", text="Mesh Boundary")
 
-        if sculpt.use_automasking_boundary_edges:
+        if settings.use_automasking_boundary_edges:
             props = row.operator("sculpt.mask_from_boundary", text="Create Mask")
             props.settings_source = 'SCENE'
             props.boundary_mode = 'MESH'
 
         row = col.row()
-        row.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        row.prop(settings, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
 
-        if sculpt.use_automasking_boundary_face_sets:
+        if settings.use_automasking_boundary_face_sets:
             props = row.operator("sculpt.mask_from_boundary", text="Create Mask")
             props.settings_source = 'SCENE'
             props.boundary_mode = 'FACE_SETS'
 
-        if sculpt.use_automasking_boundary_edges or sculpt.use_automasking_boundary_face_sets:
-            col.prop(sculpt, "automasking_boundary_edges_propagation_steps")
+        if settings.use_automasking_boundary_edges or settings.use_automasking_boundary_face_sets:
+            col.prop(settings, "boundary_edges_propagation_steps")
 
         col.separator()
 
         col = layout.column(align=True)
         row = col.row()
-        row.prop(sculpt, "use_automasking_cavity", text="Cavity")
+        row.prop(settings, "use_automasking_cavity", text="Cavity")
 
-        is_cavity_active = sculpt.use_automasking_cavity or sculpt.use_automasking_cavity_inverted
+        is_cavity_active = settings.use_automasking_cavity or settings.use_automasking_cavity_inverted
 
         if is_cavity_active:
             props = row.operator("sculpt.mask_from_cavity", text="Create Mask")
             props.settings_source = 'SCENE'
 
-        col.prop(sculpt, "use_automasking_cavity_inverted", text="Cavity (inverted)")
+        col.prop(settings, "use_automasking_cavity_inverted", text="Cavity (inverted)")
 
         if is_cavity_active:
             col = layout.column(align=True)
-            col.prop(sculpt, "automasking_cavity_factor", text="Factor")
-            col.prop(sculpt, "automasking_cavity_blur_steps", text="Blur")
+            col.prop(settings, "cavity_factor", text="Factor")
+            col.prop(settings, "cavity_blur_steps", text="Blur")
 
             col = layout.column()
-            col.prop(sculpt, "use_automasking_custom_cavity_curve", text="Custom Curve")
+            col.prop(settings, "use_automasking_custom_cavity_curve", text="Custom Curve")
 
-            if sculpt.use_automasking_custom_cavity_curve:
-                col.template_curve_mapping(sculpt, "automasking_cavity_curve", brush=True)
+            if settings.use_automasking_custom_cavity_curve:
+                col.template_curve_mapping(settings, "cavity_curve", brush=True)
 
         col.separator()
 
         col = layout.column(align=True)
-        col.prop(sculpt, "use_automasking_view_normal", text="View Normal")
+        col.prop(settings, "use_automasking_view_normal", text="View Normal")
 
-        if sculpt.use_automasking_view_normal:
-            col.prop(sculpt, "use_automasking_view_occlusion", text="Occlusion")
+        if settings.use_automasking_view_normal:
+            col.prop(settings, "use_automasking_view_occlusion", text="Occlusion")
             subcol = col.column(align=True)
-            subcol.active = not sculpt.use_automasking_view_occlusion
-            subcol.prop(sculpt, "automasking_view_normal_limit", text="Limit")
-            subcol.prop(sculpt, "automasking_view_normal_falloff", text="Falloff")
+            subcol.active = not settings.use_automasking_view_occlusion
+            subcol.prop(settings, "view_normal_limit", text="Limit")
+            subcol.prop(settings, "view_normal_falloff", text="Falloff")
 
         col = layout.column()
-        col.prop(sculpt, "use_automasking_start_normal", text="Area Normal")
+        col.prop(settings, "use_automasking_start_normal", text="Area Normal")
 
-        if sculpt.use_automasking_start_normal:
+        if settings.use_automasking_start_normal:
             col = layout.column(align=True)
-            col.prop(sculpt, "automasking_start_normal_limit", text="Limit")
-            col.prop(sculpt, "automasking_start_normal_falloff", text="Falloff")
+            col.prop(settings, "start_normal_limit", text="Limit")
+            col.prop(settings, "start_normal_falloff", text="Falloff")
 
 
 class VIEW3D_PT_sculpt_context_menu(Panel):

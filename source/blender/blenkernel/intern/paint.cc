@@ -1684,6 +1684,7 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
 
     paint = &data->paint;
     paint_init_data(*paint);
+    BKE_paint_mesh_automasking_settings_ensure(*paint);
   }
   else if (reinterpret_cast<GpPaint **>(r_paint) == &ts->gp_paint) {
     GpPaint *data = MEM_new<GpPaint>(__func__);
@@ -1735,9 +1736,17 @@ void BKE_paint_brushes_ensure(Main *bmain, Paint *paint)
   }
 }
 
+void BKE_paint_mesh_automasking_settings_ensure(Paint &paint)
+{
+  if (!paint.mesh_automasking_settings) {
+    paint.mesh_automasking_settings = MEM_new<MeshAutomaskingSettings>(__func__);
+    paint.mesh_automasking_settings->cavity_curve = BKE_sculpt_default_cavity_curve();
+    paint.mesh_automasking_settings->cavity_curve_op = BKE_sculpt_default_cavity_curve();
+  }
+}
+
 void BKE_paint_init(Main *bmain, Scene *sce, PaintMode mode, const bool ensure_brushes)
 {
-
   BKE_paint_ensure_from_paintmode(sce, mode);
   Paint *paint = BKE_paint_get_active_from_paintmode(sce, mode);
 
@@ -1747,6 +1756,10 @@ void BKE_paint_init(Main *bmain, Scene *sce, PaintMode mode, const bool ensure_b
 
   if (!paint->cavity_curve) {
     BKE_paint_cavity_curve_preset(paint, CURVE_PRESET_LINE);
+  }
+
+  if (mode == PaintMode::Sculpt) {
+    BKE_paint_mesh_automasking_settings_ensure(*paint);
   }
 }
 
@@ -1767,6 +1780,13 @@ void BKE_paint_free(Paint *paint)
   BKE_curvemapping_free(paint->unified_paint_settings.curve_rand_hue);
   BKE_curvemapping_free(paint->unified_paint_settings.curve_rand_saturation);
   BKE_curvemapping_free(paint->unified_paint_settings.curve_rand_value);
+
+  if (paint->mesh_automasking_settings) {
+    BKE_curvemapping_free(paint->mesh_automasking_settings->cavity_curve);
+    BKE_curvemapping_free(paint->mesh_automasking_settings->cavity_curve_op);
+    MEM_delete(paint->mesh_automasking_settings);
+  }
+
   MEM_SAFE_DELETE(paint->runtime);
 }
 
@@ -1801,6 +1821,15 @@ void BKE_paint_copy(const Paint *src, Paint *dst, const int flag)
 
   if ((flag & LIB_ID_CREATE_NO_USER_REFCOUNT) == 0) {
     id_us_plus(id_cast<ID *>(dst->palette));
+  }
+
+  if (src->mesh_automasking_settings) {
+    dst->mesh_automasking_settings = MEM_new<MeshAutomaskingSettings>(
+        __func__, dna::shallow_copy(*src->mesh_automasking_settings));
+    dst->mesh_automasking_settings->cavity_curve = BKE_curvemapping_copy(
+        src->mesh_automasking_settings->cavity_curve);
+    dst->mesh_automasking_settings->cavity_curve_op = BKE_curvemapping_copy(
+        src->mesh_automasking_settings->cavity_curve_op);
   }
 
   dst->runtime = MEM_new<bke::PaintRuntime>(__func__);
@@ -1944,6 +1973,18 @@ void BKE_paint_blend_write(BlendWriter *writer, Paint *paint)
   if (paint->unified_paint_settings.curve_rand_value) {
     BKE_curvemapping_blend_write(writer, paint->unified_paint_settings.curve_rand_value);
   }
+
+  if (paint->mesh_automasking_settings) {
+    writer->write_struct(paint->mesh_automasking_settings);
+    MeshAutomaskingSettings &automasking_settings = *paint->mesh_automasking_settings;
+    if (automasking_settings.cavity_curve) {
+      BKE_curvemapping_blend_write(writer, automasking_settings.cavity_curve);
+    }
+
+    if (automasking_settings.cavity_curve_op) {
+      BKE_curvemapping_blend_write(writer, automasking_settings.cavity_curve_op);
+    }
+  }
 }
 
 void BKE_paint_blend_read_data(BlendDataReader *reader, const Scene *scene, Paint *paint)
@@ -1998,6 +2039,23 @@ void BKE_paint_blend_read_data(BlendDataReader *reader, const Scene *scene, Pain
   if (ups->curve_rand_value) {
     BKE_curvemapping_blend_read(reader, ups->curve_rand_value);
     BKE_curvemapping_init(ups->curve_rand_value);
+  }
+
+  BLO_read_struct(reader, MeshAutomaskingSettings, &paint->mesh_automasking_settings);
+  if (paint->mesh_automasking_settings) {
+    MeshAutomaskingSettings &automasking_settings = *paint->mesh_automasking_settings;
+
+    BLO_read_struct(reader, CurveMapping, &automasking_settings.cavity_curve);
+    if (automasking_settings.cavity_curve) {
+      BKE_curvemapping_blend_read(reader, automasking_settings.cavity_curve);
+      BKE_curvemapping_init(automasking_settings.cavity_curve);
+    }
+
+    BLO_read_struct(reader, CurveMapping, &automasking_settings.cavity_curve_op);
+    if (automasking_settings.cavity_curve_op) {
+      BKE_curvemapping_blend_read(reader, automasking_settings.cavity_curve_op);
+      BKE_curvemapping_init(automasking_settings.cavity_curve_op);
+    }
   }
 
   paint->runtime = MEM_new<bke::PaintRuntime>(__func__);
@@ -2746,21 +2804,9 @@ void BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
   }
 }
 
-void BKE_sculpt_cavity_curves_ensure(Sculpt *sd)
-{
-  if (!sd->automasking_cavity_curve) {
-    sd->automasking_cavity_curve = BKE_sculpt_default_cavity_curve();
-  }
-
-  if (!sd->automasking_cavity_curve_op) {
-    sd->automasking_cavity_curve_op = BKE_sculpt_default_cavity_curve();
-  }
-}
-
 void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
 {
-  BKE_paint_ensure(scene->toolsettings, reinterpret_cast<Paint **>(&scene->toolsettings->sculpt));
-  BKE_paint_brushes_ensure(bmain, &scene->toolsettings->sculpt->paint);
+  BKE_paint_init(bmain, scene, PaintMode::Sculpt, true);
 
   Sculpt *sd = scene->toolsettings->sculpt;
 
@@ -2770,13 +2816,6 @@ void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
    * reasons.  Don't add more checks here, do it properly
    * in blenloader.
    */
-  if (sd->automasking_start_normal_limit == 0.0f) {
-    sd->automasking_start_normal_limit = defaults.automasking_start_normal_limit;
-    sd->automasking_start_normal_falloff = defaults.automasking_start_normal_falloff;
-
-    sd->automasking_view_normal_limit = defaults.automasking_view_normal_limit;
-    sd->automasking_view_normal_falloff = defaults.automasking_view_normal_limit;
-  }
 
   if (sd->detail_percent == 0.0f) {
     sd->detail_percent = defaults.detail_percent;
@@ -2797,10 +2836,6 @@ void BKE_sculpt_toolsettings_data_ensure(Main *bmain, Scene *scene)
   }
   if (!sd->paint.tile_offset[2]) {
     sd->paint.tile_offset[2] = 1.0f;
-  }
-
-  if (!sd->automasking_cavity_curve || !sd->automasking_cavity_curve_op) {
-    BKE_sculpt_cavity_curves_ensure(sd);
   }
 }
 

@@ -52,9 +52,9 @@ const Cache *active_cache_get(const SculptSession &ss)
   return nullptr;
 }
 
-bool mode_enabled(const Sculpt &sd, const Brush *br, const eAutomasking_flag mode)
+static bool mode_enabled(const Paint &paint, const Brush *br, const eAutomasking_flag mode)
 {
-  int automasking = sd.automasking_flags;
+  int automasking = paint.mesh_automasking_settings->flags;
 
   if (br) {
     automasking |= br->automasking_flags;
@@ -63,40 +63,40 @@ bool mode_enabled(const Sculpt &sd, const Brush *br, const eAutomasking_flag mod
   return eAutomasking_flag(automasking) & mode;
 }
 
-bool is_enabled(const Sculpt &sd, const Object &object, const Brush *br)
+bool is_enabled(const Paint &paint, const Object &object, const Brush *br)
 {
   if (object.runtime->sculpt_session && br && dyntopo::stroke_is_dyntopo(object, *br)) {
     return false;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_TOPOLOGY)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_TOPOLOGY)) {
     return true;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_FACE_SETS)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_FACE_SETS)) {
     return true;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_BOUNDARY_EDGES)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_BOUNDARY_EDGES)) {
     return true;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS)) {
     return true;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_BRUSH_NORMAL)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_BRUSH_NORMAL)) {
     return true;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_VIEW_NORMAL)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_VIEW_NORMAL)) {
     return true;
   }
-  if (mode_enabled(sd, br, BRUSH_AUTOMASKING_CAVITY_ALL)) {
+  if (mode_enabled(paint, br, BRUSH_AUTOMASKING_CAVITY_ALL)) {
     return true;
   }
 
   return false;
 }
 
-static int calc_effective_bits(const Sculpt &sd, const Brush *brush)
+static int calc_effective_bits(const Paint &paint, const Brush *brush)
 {
   if (brush) {
-    int flags = sd.automasking_flags | brush->automasking_flags;
+    int flags = paint.mesh_automasking_settings->flags | brush->automasking_flags;
 
     /* Check if we are using brush cavity settings. */
     if (brush->automasking_flags & BRUSH_AUTOMASKING_CAVITY_ALL) {
@@ -104,15 +104,15 @@ static int calc_effective_bits(const Sculpt &sd, const Brush *brush)
                  BRUSH_AUTOMASKING_CAVITY_NORMAL);
       flags |= brush->automasking_flags;
     }
-    else if (sd.automasking_flags & BRUSH_AUTOMASKING_CAVITY_ALL) {
+    else if (paint.mesh_automasking_settings->flags & BRUSH_AUTOMASKING_CAVITY_ALL) {
       flags &= ~(BRUSH_AUTOMASKING_CAVITY_ALL | BRUSH_AUTOMASKING_CAVITY_USE_CURVE |
                  BRUSH_AUTOMASKING_CAVITY_NORMAL);
-      flags |= sd.automasking_flags;
+      flags |= paint.mesh_automasking_settings->flags;
     }
 
     return flags;
   }
-  return sd.automasking_flags;
+  return paint.mesh_automasking_settings->flags;
 }
 
 static float normal_calc(const float3 &compare_normal,
@@ -162,18 +162,18 @@ static bool is_constrained_by_radius(const Brush *br)
 
 /* Fetch the propogation_steps value, preferring the brush level value over the global sculpt tool
  * value. */
-static int boundary_propagation_steps(const Sculpt &sd, const Brush *brush)
+static int boundary_propagation_steps(const Paint &paint, const Brush *brush)
 {
   return brush && brush->automasking_flags &
                       (BRUSH_AUTOMASKING_BOUNDARY_EDGES | BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) ?
              brush->automasking_boundary_edges_propagation_steps :
-             sd.automasking_boundary_edges_propagation_steps;
+             paint.mesh_automasking_settings->boundary_edges_propagation_steps;
 }
 
 /* Determine if the given automasking settings require values to be precomputed and cached. */
-static bool needs_factors_cache(const Sculpt &sd, const Brush *brush)
+static bool needs_factors_cache(const Paint &paint, const Brush *brush)
 {
-  const int automasking_flags = calc_effective_bits(sd, brush);
+  const int automasking_flags = calc_effective_bits(paint, brush);
 
   if (automasking_flags & BRUSH_AUTOMASKING_TOPOLOGY && brush && is_constrained_by_radius(brush)) {
     return true;
@@ -182,7 +182,7 @@ static bool needs_factors_cache(const Sculpt &sd, const Brush *brush)
   if (automasking_flags &
       (BRUSH_AUTOMASKING_BOUNDARY_EDGES | BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS))
   {
-    return boundary_propagation_steps(sd, brush) != 1;
+    return boundary_propagation_steps(paint, brush) != 1;
   }
   return false;
 }
@@ -1111,13 +1111,13 @@ void calc_vert_factors(const Depsgraph &depsgraph,
 }
 
 static void fill_topology_automasking_factors_mesh(const Depsgraph &depsgraph,
-                                                   const Sculpt &sd,
+                                                   const Paint &paint,
                                                    Object &ob,
                                                    const Span<float3> vert_positions,
                                                    MutableSpan<float> factors)
 {
   SculptSession &ss = *ob.runtime->sculpt_session;
-  const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
+  const Brush *brush = BKE_paint_brush_for_read(&paint);
   const Mesh &mesh = *id_cast<const Mesh *>(ob.data);
   const GroupedSpan<int> vert_to_face_map = mesh.vert_to_face_map();
 
@@ -1148,14 +1148,14 @@ static void fill_topology_automasking_factors_mesh(const Depsgraph &depsgraph,
   }
 }
 
-static void fill_topology_automasking_factors_grids(const Sculpt &sd,
+static void fill_topology_automasking_factors_grids(const Paint &paint,
                                                     Object &ob,
                                                     const SubdivCCG &subdiv_ccg,
                                                     MutableSpan<float> factors)
 
 {
   SculptSession &ss = *ob.runtime->sculpt_session;
-  const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
+  const Brush *brush = BKE_paint_brush_for_read(&paint);
 
   const float radius = ss.cache ? ss.cache->radius : std::numeric_limits<float>::max();
   const int active_vert = ss.active_vert_index();
@@ -1191,13 +1191,13 @@ static void fill_topology_automasking_factors_grids(const Sculpt &sd,
   }
 }
 
-static void fill_topology_automasking_factors_bmesh(const Sculpt &sd,
+static void fill_topology_automasking_factors_bmesh(const Paint &paint,
                                                     Object &ob,
                                                     BMesh &bm,
                                                     MutableSpan<float> factors)
 {
   SculptSession &ss = *ob.runtime->sculpt_session;
-  const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
+  const Brush *brush = BKE_paint_brush_for_read(&paint);
 
   const float radius = ss.cache ? ss.cache->radius : std::numeric_limits<float>::max();
   BMVert *active_vert = std::get<BMVert *>(ss.active_vert());
@@ -1228,7 +1228,7 @@ static void fill_topology_automasking_factors_bmesh(const Sculpt &sd,
 }
 
 static void fill_topology_automasking_factors(const Depsgraph &depsgraph,
-                                              const Sculpt &sd,
+                                              const Paint &paint,
                                               Object &ob,
                                               MutableSpan<float> factors)
 {
@@ -1245,22 +1245,22 @@ static void fill_topology_automasking_factors(const Depsgraph &depsgraph,
   switch (bke::object::pbvh_get(ob)->type()) {
     case bke::pbvh::Type::Mesh:
       fill_topology_automasking_factors_mesh(
-          depsgraph, sd, ob, bke::pbvh::vert_positions_eval(depsgraph, ob), factors);
+          depsgraph, paint, ob, bke::pbvh::vert_positions_eval(depsgraph, ob), factors);
       break;
     case bke::pbvh::Type::Grids:
-      fill_topology_automasking_factors_grids(sd, ob, *ss.subdiv_ccg, factors);
+      fill_topology_automasking_factors_grids(paint, ob, *ss.subdiv_ccg, factors);
       break;
     case bke::pbvh::Type::BMesh:
-      fill_topology_automasking_factors_bmesh(sd, ob, *ss.bm, factors);
+      fill_topology_automasking_factors_bmesh(paint, ob, *ss.bm, factors);
       break;
   }
 }
 
-static void init_face_sets_masking(const Sculpt &sd, Object &ob, MutableSpan<float> factors)
+static void init_face_sets_masking(const Paint &paint, Object &ob, MutableSpan<float> factors)
 {
-  const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
+  const Brush *brush = BKE_paint_brush_for_read(&paint);
 
-  if (!is_enabled(sd, ob, brush)) {
+  if (!is_enabled(paint, ob, brush)) {
     return;
   }
 
@@ -1553,10 +1553,10 @@ static void init_boundary_masking(Object &object,
 /* Updates the cached values, preferring brush settings over tool-level settings. */
 static void cache_settings_update(Cache &automasking,
                                   Object &object,
-                                  const Sculpt &sd,
+                                  const Paint &paint,
                                   const Brush *brush)
 {
-  automasking.settings.flags = calc_effective_bits(sd, brush);
+  automasking.settings.flags = calc_effective_bits(paint, brush);
   automasking.settings.initial_face_set = face_set::active_face_set_get(object);
 
   if (brush && (brush->automasking_flags & BRUSH_AUTOMASKING_VIEW_NORMAL)) {
@@ -1564,8 +1564,9 @@ static void cache_settings_update(Cache &automasking,
     automasking.settings.view_normal_falloff = brush->automasking_view_normal_falloff;
   }
   else {
-    automasking.settings.view_normal_limit = sd.automasking_view_normal_limit;
-    automasking.settings.view_normal_falloff = sd.automasking_view_normal_falloff;
+    automasking.settings.view_normal_limit = paint.mesh_automasking_settings->view_normal_limit;
+    automasking.settings.view_normal_falloff =
+        paint.mesh_automasking_settings->view_normal_falloff;
   }
 
   if (brush && (brush->automasking_flags & BRUSH_AUTOMASKING_BRUSH_NORMAL)) {
@@ -1573,8 +1574,9 @@ static void cache_settings_update(Cache &automasking,
     automasking.settings.start_normal_falloff = brush->automasking_start_normal_falloff;
   }
   else {
-    automasking.settings.start_normal_limit = sd.automasking_start_normal_limit;
-    automasking.settings.start_normal_falloff = sd.automasking_start_normal_falloff;
+    automasking.settings.start_normal_limit = paint.mesh_automasking_settings->start_normal_limit;
+    automasking.settings.start_normal_falloff =
+        paint.mesh_automasking_settings->start_normal_falloff;
   }
 
   if (brush && (brush->automasking_flags & BRUSH_AUTOMASKING_CAVITY_ALL)) {
@@ -1583,9 +1585,9 @@ static void cache_settings_update(Cache &automasking,
     automasking.settings.cavity_blur_steps = brush->automasking_cavity_blur_steps;
   }
   else {
-    automasking.settings.cavity_curve = sd.automasking_cavity_curve;
-    automasking.settings.cavity_factor = sd.automasking_cavity_factor;
-    automasking.settings.cavity_blur_steps = sd.automasking_cavity_blur_steps;
+    automasking.settings.cavity_curve = paint.mesh_automasking_settings->cavity_curve;
+    automasking.settings.cavity_factor = paint.mesh_automasking_settings->cavity_factor;
+    automasking.settings.cavity_blur_steps = paint.mesh_automasking_settings->cavity_blur_steps;
   }
 }
 
@@ -1665,21 +1667,21 @@ static void normal_occlusion_automasking_fill(const Depsgraph &depsgraph,
 }
 
 std::unique_ptr<Cache> cache_init(const Depsgraph &depsgraph,
-                                  const Sculpt &sd,
+                                  const Paint &paint,
                                   const Brush *brush,
                                   Object &ob)
 {
   SculptSession &ss = *ob.runtime->sculpt_session;
 
-  if (!is_enabled(sd, ob, brush)) {
+  if (!is_enabled(paint, ob, brush)) {
     return nullptr;
   }
 
   std::unique_ptr<Cache> automasking = std::make_unique<Cache>();
-  cache_settings_update(*automasking, ob, sd, brush);
+  cache_settings_update(*automasking, ob, paint, brush);
   boundary::ensure_boundary_info(ob);
 
-  int mode = calc_effective_bits(sd, brush);
+  int mode = calc_effective_bits(paint, brush);
 
   vert_random_access_ensure(ob);
   if (mode & BRUSH_AUTOMASKING_TOPOLOGY && ss.active_vert_index() != -1) {
@@ -1707,19 +1709,19 @@ std::unique_ptr<Cache> cache_init(const Depsgraph &depsgraph,
   }
 
   if (mode & BRUSH_AUTOMASKING_CAVITY_ALL) {
-    if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_CAVITY_USE_CURVE)) {
+    if (mode_enabled(paint, brush, BRUSH_AUTOMASKING_CAVITY_USE_CURVE)) {
       if (brush) {
         BKE_curvemapping_init(brush->automasking_cavity_curve);
       }
 
-      BKE_curvemapping_init(sd.automasking_cavity_curve);
+      BKE_curvemapping_init(paint.mesh_automasking_settings->cavity_curve);
     }
     automasking->cavity_factor = Array<float>(verts_num, -1.0f);
   }
 
   /* Avoid precomputing data on the vertex level if the current auto-masking modes do not require
    * it to function. */
-  if (!needs_factors_cache(sd, brush)) {
+  if (!needs_factors_cache(paint, brush)) {
     return automasking;
   }
 
@@ -1730,30 +1732,30 @@ std::unique_ptr<Cache> cache_init(const Depsgraph &depsgraph,
   MutableSpan<float> factors = automasking->factor;
 
   /* Additive modes. */
-  if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_TOPOLOGY)) {
+  if (mode_enabled(paint, brush, BRUSH_AUTOMASKING_TOPOLOGY)) {
     vert_random_access_ensure(ob);
 
     automasking->settings.topology_use_brush_limit = is_constrained_by_radius(brush);
-    fill_topology_automasking_factors(depsgraph, sd, ob, factors);
+    fill_topology_automasking_factors(depsgraph, paint, ob, factors);
   }
 
-  if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_FACE_SETS)) {
+  if (mode_enabled(paint, brush, BRUSH_AUTOMASKING_FACE_SETS)) {
     vert_random_access_ensure(ob);
-    init_face_sets_masking(sd, ob, factors);
+    init_face_sets_masking(paint, ob, factors);
   }
 
-  const int steps = boundary_propagation_steps(sd, brush);
-  if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_BOUNDARY_EDGES)) {
+  const int steps = boundary_propagation_steps(paint, brush);
+  if (mode_enabled(paint, brush, BRUSH_AUTOMASKING_BOUNDARY_EDGES)) {
     vert_random_access_ensure(ob);
     init_boundary_masking(ob, depsgraph, BoundaryAutomaskMode::Edges, steps, factors);
   }
-  if (mode_enabled(sd, brush, BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS)) {
+  if (mode_enabled(paint, brush, BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS)) {
     vert_random_access_ensure(ob);
     init_boundary_masking(ob, depsgraph, BoundaryAutomaskMode::FaceSets, steps, factors);
   }
 
   /* Subtractive modes. */
-  int normal_bits = calc_effective_bits(sd, brush) &
+  int normal_bits = calc_effective_bits(paint, brush) &
                     (BRUSH_AUTOMASKING_VIEW_NORMAL | BRUSH_AUTOMASKING_VIEW_OCCLUSION);
 
   if (normal_bits) {
@@ -1764,28 +1766,29 @@ std::unique_ptr<Cache> cache_init(const Depsgraph &depsgraph,
   return automasking;
 }
 
-Cache &filter_cache_ensure(const Depsgraph &depsgraph, const Sculpt &sd, Object &ob)
+Cache &filter_cache_ensure(const Depsgraph &depsgraph, const Paint &paint, Object &ob)
 {
-  BLI_assert(is_enabled(sd, ob, nullptr));
+  BLI_assert(is_enabled(paint, ob, nullptr));
   if (ob.runtime->sculpt_session->filter_cache->automasking) {
     return *ob.runtime->sculpt_session->filter_cache->automasking;
   }
 
-  ob.runtime->sculpt_session->filter_cache->automasking = cache_init(depsgraph, sd, nullptr, ob);
+  ob.runtime->sculpt_session->filter_cache->automasking = cache_init(
+      depsgraph, paint, nullptr, ob);
   return *ob.runtime->sculpt_session->filter_cache->automasking;
 }
 
 Cache &stroke_cache_ensure(const Depsgraph &depsgraph,
-                           const Sculpt &sd,
+                           const Paint &paint,
                            const Brush *brush,
                            Object &ob)
 {
-  BLI_assert(is_enabled(sd, ob, brush));
+  BLI_assert(is_enabled(paint, ob, brush));
   if (ob.runtime->sculpt_session->cache->automasking) {
     return *ob.runtime->sculpt_session->cache->automasking;
   }
 
-  ob.runtime->sculpt_session->cache->automasking = cache_init(depsgraph, sd, brush, ob);
+  ob.runtime->sculpt_session->cache->automasking = cache_init(depsgraph, paint, brush, ob);
   return *ob.runtime->sculpt_session->cache->automasking;
 }
 

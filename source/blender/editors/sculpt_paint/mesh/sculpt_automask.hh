@@ -108,20 +108,20 @@ const Cache *active_cache_get(const SculptSession &ss);
  * data is also stored at the vertex level prior to the stroke starting.
  */
 std::unique_ptr<Cache> cache_init(const Depsgraph &depsgraph,
-                                  const Sculpt &sd,
+                                  const Paint &paint,
                                   const Brush *brush,
                                   Object &ob);
 
 /** If the FilterCache#automask cache doesn't exist, create and return it. */
-Cache &filter_cache_ensure(const Depsgraph &depsgraph, const Sculpt &sd, Object &ob);
+Cache &filter_cache_ensure(const Depsgraph &depsgraph, const Paint &paint, Object &ob);
 /** If the StrokeCache#automask cache doesn't exist, create and return it. */
 Cache &stroke_cache_ensure(const Depsgraph &depsgraph,
-                           const Sculpt &sd,
+                           const Paint &paint,
                            const Brush *brush,
                            Object &ob);
 
 bool mode_enabled(const Sculpt &sd, const Brush *br, eAutomasking_flag mode);
-bool is_enabled(const Sculpt &sd, const Object &object, const Brush *br);
+bool is_enabled(const Paint &paint, const Object &object, const Brush *br);
 
 /**
  * Calculate all auto-masking influence on each vertex.

@@ -1180,6 +1180,25 @@ enum ePaintCanvasSource {
   PAINT_CANVAS_SOURCE_COLOR_ATTRIBUTE = 2,
 };
 
+struct MeshAutomaskingSettings {
+  DNA_DEFINE_CXX_METHODS(MeshAutomaskingSettings)
+
+  int flags = 0;
+
+  int boundary_edges_propagation_steps = 1;
+  int cavity_blur_steps = 0;
+  float cavity_factor = 0.0f;
+
+  float start_normal_limit = 0.34906585f; /* 20 / 180 * pi. */
+  float start_normal_falloff = 0.25f;
+  float view_normal_limit = 1.570796; /* 0.5 * pi. */
+  float view_normal_falloff = 0.25f;
+
+  struct CurveMapping *cavity_curve = nullptr;
+  /** For use by operators. */
+  struct CurveMapping *cavity_curve_op = nullptr;
+};
+
 /** Paint Tool Base. */
 struct Paint {
   DNA_DEFINE_CXX_METHODS(Paint)
@@ -1224,6 +1243,7 @@ struct Paint {
 
   float tile_offset[3] = {1.0f, 1.0f, 1.0f};
   struct UnifiedPaintSettings unified_paint_settings;
+  struct MeshAutomaskingSettings *mesh_automasking_settings = nullptr;
 
   bke::PaintRuntime *runtime = nullptr;
 };
@@ -1461,7 +1481,8 @@ struct Sculpt {
   /** Transform tool. */
   int transform_mode = 0;
 
-  int automasking_flags = 0;
+  /** Deprecated. \see MeshAutomaskingSettings */
+  DNA_DEPRECATED int automasking_flags = 0;
 
   int radial_symm_legacy[3] = {};
 
@@ -1479,18 +1500,19 @@ struct Sculpt {
   float constant_detail = 3.0f;
   float detail_percent = 25;
 
-  int automasking_boundary_edges_propagation_steps = 1;
-  int automasking_cavity_blur_steps = 0;
-  float automasking_cavity_factor = 0;
+  /** Deprecated. \see MeshAutomaskingSettings */
+  DNA_DEPRECATED int automasking_boundary_edges_propagation_steps = 1;
+  DNA_DEPRECATED int automasking_cavity_blur_steps = 0;
+  DNA_DEPRECATED float automasking_cavity_factor = 0;
 
-  float automasking_start_normal_limit = 0.34906585f; /* 20 / 180 * pi. */
-  float automasking_start_normal_falloff = 0.25f;
-  float automasking_view_normal_limit = 1.570796; /* 0.5 * pi. */
-  float automasking_view_normal_falloff = 0.25f;
+  DNA_DEPRECATED float automasking_start_normal_limit = 0.34906585f; /* 20 / 180 * pi. */
+  DNA_DEPRECATED float automasking_start_normal_falloff = 0.25f;
+  DNA_DEPRECATED float automasking_view_normal_limit = 1.570796; /* 0.5 * pi. */
+  DNA_DEPRECATED float automasking_view_normal_falloff = 0.25f;
 
-  struct CurveMapping *automasking_cavity_curve = nullptr;
+  DNA_DEPRECATED struct CurveMapping *automasking_cavity_curve = nullptr;
   /** For use by operators. */
-  struct CurveMapping *automasking_cavity_curve_op = nullptr;
+  DNA_DEPRECATED struct CurveMapping *automasking_cavity_curve_op = nullptr;
   struct Object *gravity_object = nullptr;
 };
 

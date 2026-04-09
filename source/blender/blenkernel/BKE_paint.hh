@@ -178,6 +178,8 @@ void BKE_paint_settings_foreach_mode(ToolSettings *ts, FunctionRef<void(Paint *p
 
 void BKE_paint_cavity_curve_preset(Paint *paint, int preset);
 
+void BKE_paint_mesh_automasking_settings_ensure(Paint &paint);
+
 eObjectMode BKE_paint_object_mode_from_paintmode(PaintMode mode);
 bool BKE_paint_ensure_from_paintmode(Scene *sce, PaintMode mode);
 Paint *BKE_paint_get_active_from_paintmode(Scene *sce, PaintMode mode);
@@ -651,7 +653,6 @@ bool BKE_paint_canvas_image_get(PaintModeSettings *settings,
                                 ImageUser **r_image_user);
 std::optional<StringRef> BKE_paint_canvas_uvmap_name_get(const PaintModeSettings *settings,
                                                          Object *ob);
-void BKE_sculpt_cavity_curves_ensure(Sculpt *sd);
 CurveMapping *BKE_sculpt_default_cavity_curve();
 CurveMapping *BKE_paint_default_curve();
 

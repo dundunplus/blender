@@ -228,7 +228,8 @@ bool blf_character_to_curves(FontBLF *font,
                              ListBaseT<Nurb> *nurbsbase,
                              const float scale,
                              bool use_fallback,
-                             float *r_advance);
+                             float *r_advance,
+                             rctf *r_bounds);
 
 }  // namespace blender
 

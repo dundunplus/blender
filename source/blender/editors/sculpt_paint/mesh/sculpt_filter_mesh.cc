@@ -2236,7 +2236,7 @@ static void sculpt_mesh_filter_apply(bContext *C, wmOperator *op, bool is_replay
   vert_random_access_ensure(ob);
 
   const IndexMask &node_mask = ss.filter_cache->node_mask;
-  if (auto_mask::is_enabled(sd, ob, nullptr) && ss.filter_cache->automasking &&
+  if (auto_mask::is_enabled(sd.paint, ob, nullptr) && ss.filter_cache->automasking &&
       ss.filter_cache->automasking->settings.flags & BRUSH_AUTOMASKING_CAVITY_ALL)
   {
     ss.filter_cache->automasking->calc_cavity_factor(depsgraph, ob, node_mask);
@@ -2501,7 +2501,7 @@ static wmOperatorStatus sculpt_mesh_filter_start(bContext *C, wmOperator *op)
   RNA_int_get_array(op->ptr, "start_mouse", mval);
 
   const MeshFilterType filter_type = MeshFilterType(RNA_enum_get(op->ptr, "type"));
-  const bool use_automasking = auto_mask::is_enabled(sd, ob, nullptr);
+  const bool use_automasking = auto_mask::is_enabled(sd.paint, ob, nullptr);
   const bool needs_topology_info = sculpt_mesh_filter_needs_pmap(filter_type) || use_automasking;
 
   BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
@@ -2550,8 +2550,8 @@ static wmOperatorStatus sculpt_mesh_filter_start(bContext *C, wmOperator *op)
 
   filter::Cache *filter_cache = ss.filter_cache;
   filter_cache->active_face_set = face_set_none_id;
-  if (auto_mask::is_enabled(sd, ob, nullptr)) {
-    auto_mask::filter_cache_ensure(*depsgraph, sd, ob);
+  if (auto_mask::is_enabled(sd.paint, ob, nullptr)) {
+    auto_mask::filter_cache_ensure(*depsgraph, sd.paint, ob);
   }
 
   sculpt_filter_specific_init(*depsgraph, filter_type, op, ob);
