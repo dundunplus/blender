@@ -101,7 +101,7 @@ Texture *MTLBackend::texture_alloc(const char *name)
 
 TexturePool *MTLBackend::texturepool_alloc()
 {
-  if (G.debug & G_DEBUG_GPU_NO_TEXTURE_POOL) {
+  if (GCaps.texture_pool_workaround) {
     return new TexturePoolImpl();
   }
   return new MTLTexturePool();
@@ -573,6 +573,11 @@ void MTLBackend::capabilities_init(MTLContext *ctx)
     MTLBackend::capabilities.supports_texture_gather = false;
     MTLBackend::capabilities.supports_texture_atomics = false;
     MTLBackend::capabilities.supports_native_tile_inputs = false;
+    GCaps.texture_pool_workaround = true;
+  }
+
+  if (G.debug & G_DEBUG_GPU_NO_TEXTURE_POOL) {
+    GCaps.texture_pool_workaround = true;
   }
 }
 

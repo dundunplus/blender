@@ -87,7 +87,7 @@ class TestGraph:
                 revision_dates[revision] = int(entry.date)
 
             output_values = entry.output_all_runs.get(output)
-            if len(output_values) > 1:
+            if output_values and len(output_values) > 1:
                 use_error_bars = True
 
         # Convert to chart.js data layout.

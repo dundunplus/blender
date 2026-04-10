@@ -367,19 +367,7 @@ void GLBackend::platform_exit()
 
 TexturePool *GLBackend::texturepool_alloc()
 {
-  bool use_fallback = false;
-  /* Fallback: disable backend pool on --debug-gpu-no-texture-pool. */
-  use_fallback |= bool(G.debug & G_DEBUG_GPU_NO_TEXTURE_POOL);
-  /* Fallback: disable backend pool on any Intel driver; glTextureView is inconsistently
-   * broken on Intel HD and newer integrated cards, and output of the vendor string doesn't
-   * differentiate e.g. an Arc V140 from an Arc B750 :( */
-  use_fallback |= (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_ANY, GPU_DRIVER_ANY) ||
-                   GPU_type_matches(GPU_DEVICE_INTEL_UHD, GPU_OS_ANY, GPU_DRIVER_ANY));
-  /* Fallback: disable backend pool on closed source AMD driver; glTextureView
-   * breaks frame-buffers for several formats. This is not an issue on Mesa. */
-  use_fallback |= (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL));
-
-  if (use_fallback) {
+  if (GCaps.texture_pool_workaround) {
     CLOG_TRACE(&LOG, "Using texture pool \"TexturePoolImpl\".");
     return new TexturePoolImpl();
   }
@@ -414,6 +402,7 @@ static void detect_workarounds()
     printf("    version: %s\n\n", version);
     GCaps.depth_blitting_workaround = true;
     GCaps.stencil_clasify_buffer_workaround = true;
+    GCaps.texture_pool_workaround = true;
     GLContext::debug_layer_workaround = true;
     /* Turn off Blender features. */
     GCaps.hdr_viewport_support = false;
@@ -528,6 +517,12 @@ static void detect_workarounds()
       if (ver0 == 31) {
         GCaps.stencil_clasify_buffer_workaround = true;
       }
+
+      /* Disable OpenGL texture pool on Snapdragon 8cx Gen 3 devices. See #142229. We assume that
+       * these devices use driver 30.x.x.x */
+      if (ver0 == 30) {
+        GCaps.texture_pool_workaround = true;
+      }
     }
   }
 #endif
@@ -548,6 +543,25 @@ static void detect_workarounds()
    * `internal format of texture N is not supported`. */
   if (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_WIN, GPU_DRIVER_OFFICIAL)) {
     GLContext::multi_bind_image_support = false;
+  }
+
+  if (G.debug & G_DEBUG_GPU_NO_TEXTURE_POOL) {
+    GCaps.texture_pool_workaround = true;
+  }
+
+  /* Disable texture pool on any Intel driver; glTextureView is inconsistently
+   * broken on Intel HD and newer integrated cards, and output of the vendor string doesn't
+   * differentiate e.g. an Arc V140 from an Arc B750 :( */
+  if ((GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_ANY, GPU_DRIVER_ANY) ||
+       GPU_type_matches(GPU_DEVICE_INTEL_UHD, GPU_OS_ANY, GPU_DRIVER_ANY)))
+  {
+    GCaps.texture_pool_workaround = true;
+  }
+
+  /* Disable texture pool on closed source AMD driver; glTextureView
+   * breaks frame-buffers for several formats. This is not an issue on Mesa. */
+  if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL)) {
+    GCaps.texture_pool_workaround = true;
   }
 
   /* Metal-related Workarounds. */

@@ -1331,6 +1331,7 @@ static void blf_font_wrap_apply(FontBLF *font,
   GlyphStepData step = {};
   const GlyphBLF *g_prev = nullptr;
   ft_pix pen_y = 0;
+  ft_pix line_width = 0;
   int lines = 0;
 
   /* Size of characters not shown at the end of the wrapped line. */
@@ -1458,6 +1459,7 @@ static void blf_font_wrap_apply(FontBLF *font,
                std::min(wrap.last[0] - wrap.start - clip_bytes, str_len - wrap.start),
                pen_y,
                userdata);
+      line_width = step.pen_x_right;
       wrap.start = wrap.last[0];
       blf_glyph_step_reset_for_newline(step);
       step.i = wrap.last[1];
@@ -1475,7 +1477,7 @@ static void blf_font_wrap_apply(FontBLF *font,
   if (r_info) {
     r_info->lines = lines;
     /* Width of last line only (with wrapped lines). */
-    r_info->width = ft_pix_to_int(step.pen_x_right);
+    r_info->width = ft_pix_to_int(line_width);
   }
 
   blf_glyph_cache_release(font);
