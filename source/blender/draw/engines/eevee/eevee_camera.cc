@@ -303,10 +303,10 @@ CameraParams Camera::v3d_camera_params_get() const
                                 inst_.camera_eval_object,
                                 is_right ? STEREO_RIGHT_NAME : STEREO_LEFT_NAME);
     if (!is_camera_viewport_image_render) {
-      /* Duplicate of the shift scaling done inside BKE_camera_params_from_view3d. */
+      /* BKE_camera_multiview_params overwrites shiftx without taking zoom into account.
+       * Replicate the shift scaling done inside BKE_camera_params_from_view3d. */
       float zoom = BKE_screen_view3d_zoom_to_fac(inst_.rv3d->camzoom);
       params.shiftx *= zoom;
-      params.shifty *= zoom;
     }
   }
 

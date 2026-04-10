@@ -305,6 +305,10 @@ void add_depsgraph_relations(Scene &scene, DepsNodeHandle *compositor_output_dep
                            DEG_SCENE_COMP_PARAMETERS,
                            "Active Camera Parameters -> Compositor");
   }
+
+  if (evaluation_dependencies.time_dependent) {
+    DEG_add_time_source_relation(compositor_output_depsgraph_node, "Time Source -> Compositor");
+  }
 }
 
 }  // namespace blender::bke::compositor

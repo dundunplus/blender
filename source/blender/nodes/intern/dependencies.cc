@@ -7,6 +7,7 @@
 #include "DNA_ID.h"
 #include "DNA_object_types.h"
 
+#include "BKE_image.hh"
 #include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
 
@@ -153,6 +154,28 @@ static void add_eval_dependencies_from_node_data(const bNodeTree &tree, EvalDepe
     }
     deps.add_generic_id(node->id);
   }
+  for (const bNode *node : tree.nodes_by_type("CompositorNodeCryptomatteV2"_ustr)) {
+    if (node->is_muted()) {
+      continue;
+    }
+
+    if (CMPNodeCryptomatteSource(node->custom1) != CMP_NODE_CRYPTOMATTE_SOURCE_IMAGE) {
+      continue;
+    }
+
+    if (node->id && BKE_image_is_animated(reinterpret_cast<Image *>(node->id))) {
+      deps.time_dependent = true;
+    }
+  }
+  for (const bNode *node : tree.nodes_by_type("CompositorNodeImage"_ustr)) {
+    if (node->is_muted()) {
+      continue;
+    }
+
+    if (node->id && BKE_image_is_animated(reinterpret_cast<Image *>(node->id))) {
+      deps.time_dependent = true;
+    }
+  }
 }
 
 static bool has_enabled_nodes_of_type(const bNodeTree &tree, const UString type_idname)
@@ -221,7 +244,15 @@ static void gather_geometry_nodes_eval_dependencies(
                                                         "GeometryNodeInputActiveCamera"_ustr);
   deps.needs_scene_render_params |= needs_scene_render_params(ntree);
   deps.time_dependent |= has_enabled_nodes_of_type(ntree, "GeometryNodeSimulationInput"_ustr) ||
-                         has_enabled_nodes_of_type(ntree, "GeometryNodeInputSceneTime"_ustr);
+                         has_enabled_nodes_of_type(ntree, "GeometryNodeInputSceneTime"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeSceneTime"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeTime"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeTrackPos"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeStabilize"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodePlaneTrackDeform"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeMovieDistortion"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeMovieClip"_ustr) ||
+                         has_enabled_nodes_of_type(ntree, "CompositorNodeKeyingScreen"_ustr);
 
   add_eval_dependencies_from_node_data(ntree, deps);
   add_own_transform_dependencies(ntree, deps);

@@ -1626,7 +1626,7 @@ if(WITH_IMAGE_OPENJPEG)
   endif()
 endif()
 
-if (WITH_COMPILER_ASAN AND NOT WITH_COMPILER_ASAN_EXTERN)
+if(WITH_COMPILER_ASAN AND NOT WITH_COMPILER_ASAN_EXTERN)
   # See also:
   # - `EIGEN_MALLOC_ALREADY_ALIGNED` definition and usages in
   #   `./extern/Eigen3/Eigen/src/Core/util/Memory.h`
@@ -2356,11 +2356,11 @@ endif()
 if(WITH_COMPILER_SHORT_FILE_MACRO)
 
   set(_is_new_c TRUE)
-  if (DEFINED CACHE{C_MACRO_PREFIX_MAP})
+  if(DEFINED CACHE{C_MACRO_PREFIX_MAP})
     set(_is_new_c FALSE)
   endif()
   set(_is_new_cxx TRUE)
-  if (DEFINED CACHE{CXX_MACRO_PREFIX_MAP})
+  if(DEFINED CACHE{CXX_MACRO_PREFIX_MAP})
     set(_is_new_cxx FALSE)
   endif()
 

@@ -270,7 +270,9 @@ class ShapeKeyItem : public ui::AbstractTreeViewItem {
   {
     PointerRNA shapekey_ptr = RNA_pointer_create_discrete(
         &shape_key_.key->id, RNA_ShapeKey, shape_key_.kb);
-    RNA_string_set(&shapekey_ptr, "name", new_name.c_str());
+    PropertyRNA *prop = RNA_struct_find_property(&shapekey_ptr, "name");
+    RNA_property_string_set(&shapekey_ptr, prop, new_name.c_str());
+    RNA_property_update(&const_cast<bContext &>(C), &shapekey_ptr, prop);
     ED_undo_push(const_cast<bContext *>(&C), "Rename shape key");
     return true;
   }

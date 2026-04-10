@@ -54,13 +54,6 @@ void main()
   gbuffer::Header gbuf_header = gbuffer::read_header(texel_fullres);
   ClosureType closure_type = gbuffer::mode_to_closure_type(gbuf_header.bin_type(closure_index));
 
-  bool is_reflection = true;
-  if ((closure_type == CLOSURE_BSDF_TRANSLUCENT_ID) ||
-      (closure_type == CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID))
-  {
-    is_reflection = false;
-  }
-
   float depth = reverse_z::read(texelFetch(depth_tx, texel_fullres, 0).r);
   float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
 
@@ -99,7 +92,7 @@ void main()
    * We could split the shader but that would mean to dispatch some area twice for the same closure
    * index. Another idea is to put both HiZ buffer int he same texture and dynamically access one
    * or the other. But that might also impact performance. */
-  if (is_reflection) {
+  if (!closure_has_transmission(closure_type)) {
     hit = raytrace_screen(uniform_buf.raytrace,
                           uniform_buf.hiz,
                           hiz_front_tx,

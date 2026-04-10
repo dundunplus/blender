@@ -1564,11 +1564,11 @@ static short apply_targetless_ik(Object *ob)
         BKE_armature_mat_pose_to_bone(parchan, parchan->pose_mat, mat);
         /* Apply and decompose, doesn't work for constraints or non-uniform scale well. */
         {
-          float rmat3[3][3], qrmat[3][3], imat3[3][3], smat[3][3];
+          float rmat3[3][3], scale[3];
 
+          /* Extract scale, then normalize mat so it is pure rotation. */
+          normalize_m4_ex(mat, scale);
           copy_m3_m4(rmat3, mat);
-          /* Make sure that our rotation matrix only contains rotation and not scale. */
-          normalize_m3(rmat3);
 
           /* Rotation. */
           /* #22409 is partially caused by this, as slight numeric error introduced during
@@ -1577,13 +1577,9 @@ static short apply_targetless_ik(Object *ob)
            * and applied poses. */
           BKE_pchan_mat3_to_rot(parchan, rmat3, false);
 
-          /* For size, remove rotation. */
-          /* Causes problems with some constraints (so apply only if needed). */
+          /* Scale causes problems with some constraints (so apply only if needed). */
           if (data->flag & CONSTRAINT_IK_STRETCH) {
-            BKE_pchan_rot_to_mat3(parchan, qrmat);
-            invert_m3_m3(imat3, qrmat);
-            mul_m3_m3m3(smat, rmat3, imat3);
-            mat3_to_size(parchan->scale, smat);
+            copy_v3_v3(parchan->scale, scale);
           }
 
           /* Causes problems with some constraints (e.g. child-of), so disable this

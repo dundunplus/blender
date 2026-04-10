@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #pragma once
 
+#include "DNA_ID_enums.h"
 #include "DNA_listBase.h"
 
 #include "BLI_compiler_attrs.h"
@@ -231,8 +232,15 @@ void BLO_read_do_version_after_setup(Main *new_bmain,
  * \{ */
 
 struct BLODataBlockInfo {
+  struct Library {
+    const char *filepath = nullptr;
+    LibraryFlag flag = LibraryFlag(0);
+  };
+
   char name[/*MAX_ID_NAME-2*/ 256] = "";
   AssetMetaData *asset_data = nullptr;
+  /** For Library IDs only: specific info, like the stored blendfile path, flags. */
+  BLODataBlockInfo::Library library_data = {};
   /** Ownership over #asset_data above can be "stolen out" of this struct, for more permanent
    * storage. In that case, set this to false to avoid double freeing of the stolen data. */
   bool free_asset_data = false;

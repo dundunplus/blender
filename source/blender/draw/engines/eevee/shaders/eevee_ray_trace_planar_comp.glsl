@@ -50,9 +50,7 @@ void main()
   gbuffer::Header gbuf_header = gbuffer::read_header(texel_fullres);
   ClosureType closure_type = gbuffer::mode_to_closure_type(gbuf_header.bin_type(closure_index));
 
-  if ((closure_type == CLOSURE_BSDF_TRANSLUCENT_ID) ||
-      (closure_type == CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID))
-  {
+  if (closure_has_transmission(closure_type)) {
     /* Planar light-probes cannot trace refraction yet. */
     return;
   }

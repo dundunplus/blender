@@ -1191,18 +1191,18 @@ if(WITH_CYCLES AND (WITH_CYCLES_DEVICE_ONEAPI OR (WITH_CYCLES_EMBREE AND EMBREE_
     list(FIND _sycl_unified_runtime_libraries_glob ${sycl_unified_runtime_library_debug} debug_index)
     list(FIND _sycl_unified_runtime_libraries_glob ${sycl_unified_runtime_library_release} release_index)
     if(NOT debug_index EQUAL -1)
-      set (sycl_unified_runtime_library_release ${sycl_unified_runtime_library})
+      set(sycl_unified_runtime_library_release ${sycl_unified_runtime_library})
     elseif(NOT release_index EQUAL -1 AND NOT sycl_unified_runtime_library_release STREQUAL sycl_unified_runtime_library)
-      set (sycl_unified_runtime_library_debug ${sycl_unified_runtime_library})
+      set(sycl_unified_runtime_library_debug ${sycl_unified_runtime_library})
     else()
       # If there is no debug pair version of the library, then we are assuming
       # that this dll dependency is unique, and should be just added as both
       # release and debug dependency.
-      set (sycl_unified_runtime_library_release ${sycl_unified_runtime_library})
-      set (sycl_unified_runtime_library_debug ${sycl_unified_runtime_library})
+      set(sycl_unified_runtime_library_release ${sycl_unified_runtime_library})
+      set(sycl_unified_runtime_library_debug ${sycl_unified_runtime_library})
     endif()
     list(FIND _sycl_runtime_libraries ${sycl_unified_runtime_library_release} found_index)
-    if (found_index EQUAL -1)
+    if(found_index EQUAL -1)
       list(APPEND _sycl_runtime_libraries RELEASE ${sycl_unified_runtime_library_release})
       list(APPEND _sycl_runtime_libraries DEBUG ${sycl_unified_runtime_library_debug})
       # NOTE(Sirgienko) Due to a bug in DPC++ runtime, in versions 6.2 and 6.3

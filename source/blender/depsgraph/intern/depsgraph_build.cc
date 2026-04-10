@@ -63,6 +63,8 @@ static deg::NodeType deg_build_scene_component_type(eDepsSceneComponentType comp
       return deg::NodeType::ANIMATION;
     case DEG_SCENE_COMP_SEQUENCER:
       return deg::NodeType::SEQUENCER;
+    case DEG_SCENE_COMP_COMPOSITOR:
+      return deg::NodeType::COMPOSITOR;
   }
   return deg::NodeType::UNDEFINED;
 }
@@ -239,6 +241,13 @@ void DEG_add_depends_on_transform_relation(DepsNodeHandle *node_handle, const ch
 {
   deg::DepsNodeHandle *deg_node_handle = get_node_handle(node_handle);
   deg_node_handle->builder->add_depends_on_transform_relation(deg_node_handle, description);
+}
+
+void DEG_add_time_source_relation(DepsNodeHandle *node_handle, const char *description)
+{
+  const deg::TimeSourceKey time_src_key;
+  deg::DepsNodeHandle *deg_node_handle = get_node_handle(node_handle);
+  deg_node_handle->builder->add_node_handle_relation(time_src_key, deg_node_handle, description);
 }
 
 void DEG_add_special_eval_flag(DepsNodeHandle *node_handle, ID *id, uint32_t flag)

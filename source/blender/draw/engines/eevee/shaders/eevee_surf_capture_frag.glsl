@@ -44,9 +44,8 @@ void main()
     if (cl.weight <= CLOSURE_WEIGHT_CUTOFF) {
       continue;
     }
-    if (cl.type != CLOSURE_BSDF_TRANSLUCENT_ID &&
-        cl.type != CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID)
-    {
+    if (!closure_has_transmission(cl.type)) {
+      /* Refraction is not supported in volume light probe capture. */
       albedo += cl.color;
     }
   }

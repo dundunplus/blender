@@ -819,6 +819,26 @@ static const IDHash *blo_bhead_id_deep_hash(const FileData *fd, const BHead *bhe
       POINTER_OFFSET(bhead, sizeof(*bhead) + fd->id_deep_hash_offset));
 }
 
+const char *blo_bhead_library_filepath(const FileData *fd, const BHead *bhead)
+{
+  BLI_assert(blo_bhead_is_id(bhead) && (bhead->code & 0xFFFF) == ID_LI);
+  if (fd->library_filepath_offset < 0) {
+    return nullptr;
+  }
+  return reinterpret_cast<const char *>(
+      POINTER_OFFSET(bhead, sizeof(*bhead) + fd->library_filepath_offset));
+}
+
+LibraryFlag blo_bhead_library_flag(const FileData *fd, const BHead *bhead)
+{
+  BLI_assert(blo_bhead_is_id(bhead) && (bhead->code & 0xFFFF) == ID_LI);
+  if (fd->library_flag_offset < 0) {
+    return LibraryFlag(0);
+  }
+  return *reinterpret_cast<const LibraryFlag *>(
+      POINTER_OFFSET(bhead, sizeof(*bhead) + fd->library_flag_offset));
+}
+
 static void read_blender_header(FileData *fd)
 {
   const BlenderHeaderVariant header_variant = BLO_readfile_blender_header_decode(fd->file);
@@ -890,6 +910,11 @@ static bool read_file_dna(FileData *fd, const char **r_error_message)
             fd->filesdna, "ID", "short", "flag");
         fd->id_deep_hash_offset = DNA_struct_member_offset_by_name_with_alias(
             fd->filesdna, "ID", "IDHash", "deep_hash");
+
+        fd->library_filepath_offset = DNA_struct_member_offset_by_name_with_alias(
+            fd->filesdna, "Library", "char", "filepath[]");
+        fd->library_flag_offset = DNA_struct_member_offset_by_name_with_alias(
+            fd->filesdna, "Library", "ushort", "flag");
 
         fd->filesubversion = subversion;
 
