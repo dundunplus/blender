@@ -14,6 +14,7 @@
 #include "BLI_vector.hh"
 
 #include <optional>
+#include <variant>
 
 #define BCM_CONFIG_FILE "config.ocio"
 
@@ -83,6 +84,7 @@ const char *IMB_colormanagement_get_byte_colorspace(const ImBuf *ibuf);
 const char *IMB_colormanagement_space_from_filepath_rules(const char *filepath);
 
 const ColorSpace *IMB_colormanagement_space_get_named(const char *name);
+const ColorSpace *IMB_colormanagement_space_get_named(StringRefNull name);
 bool IMB_colormanagement_space_is_data(const ColorSpace *colorspace);
 bool IMB_colormanagement_space_is_scene_linear(const ColorSpace *colorspace);
 bool IMB_colormanagement_space_is_srgb(const ColorSpace *colorspace);
@@ -512,19 +514,26 @@ void IMB_partial_display_buffer_update_delayed(
 /* -------------------------------------------------------------------- */
 /** \name Pixel Processor Functions
  * \{ */
-
 class ColormanageProcessor : NonCopyable {
-  std::shared_ptr<const ocio::CPUProcessor> cpu_processor_ = nullptr;
+  using ProcessorType =
+      std::variant<std::shared_ptr<const ocio::CPUProcessor>, const ocio::CPUProcessor *>;
+
+  ProcessorType cpu_processor_ = nullptr;
   CurveMapping *curve_mapping_ = nullptr;
   bool is_data_result_ = false;
 
  public:
+  ColormanageProcessor() = default;
   ColormanageProcessor(ColormanageProcessor &&other) noexcept;
   ~ColormanageProcessor();
   ColormanageProcessor &operator=(ColormanageProcessor &&other) noexcept;
 
   static ColormanageProcessor colorspace_processor_new(StringRefNull from_colorspace,
                                                        StringRefNull to_colorspace);
+  static ColormanageProcessor colorspace_processor_from_scene_linear_new(
+      const ColorSpace &to_colorspace);
+  static ColormanageProcessor colorspace_processor_to_scene_linear_new(
+      const ColorSpace &from_colorspace);
   static ColormanageProcessor display_processor_new(
       const ColorManagedViewSettings *view_settings,
       const ColorManagedDisplaySettings *display_settings,
@@ -546,7 +555,13 @@ class ColormanageProcessor : NonCopyable {
   void apply_byte(unsigned char *buffer, int width, int height, int channels) const;
 
  private:
-  ColormanageProcessor() = default;
+  const ocio::CPUProcessor *get_cpu_processor() const
+  {
+    if (std::holds_alternative<std::shared_ptr<const ocio::CPUProcessor>>(cpu_processor_)) {
+      return std::get<std::shared_ptr<const ocio::CPUProcessor>>(cpu_processor_).get();
+    }
+    return std::get<const ocio::CPUProcessor *>(cpu_processor_);
+  }
 };
 
 bool IMB_colormanagement_display_processor_needed(

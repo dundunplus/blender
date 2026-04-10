@@ -1335,6 +1335,10 @@ const ColorSpace *IMB_colormanagement_space_get_named(const char *name)
 {
   return g_config()->get_color_space(name);
 }
+const ColorSpace *IMB_colormanagement_space_get_named(StringRefNull name)
+{
+  return g_config()->get_color_space(name);
+}
 
 bool IMB_colormanagement_space_is_data(const ColorSpace *colorspace)
 {
@@ -4214,6 +4218,28 @@ ColormanageProcessor ColormanageProcessor::colorspace_processor_new(StringRefNul
   return processor;
 }
 
+ColormanageProcessor ColormanageProcessor::colorspace_processor_from_scene_linear_new(
+    const ColorSpace &to_colorspace)
+{
+  ColormanageProcessor processor;
+
+  processor.is_data_result_ = to_colorspace.is_data();
+  processor.cpu_processor_ = to_colorspace.get_from_scene_linear_cpu_processor();
+
+  return processor;
+}
+
+ColormanageProcessor ColormanageProcessor::colorspace_processor_to_scene_linear_new(
+    const ColorSpace &from_colorspace)
+{
+  ColormanageProcessor processor;
+
+  processor.is_data_result_ = from_colorspace.is_data();
+  processor.cpu_processor_ = from_colorspace.get_to_scene_linear_cpu_processor();
+
+  return processor;
+}
+
 ColormanageProcessor ColormanageProcessor::display_processor_new(
     const ColorManagedViewSettings *view_settings,
     const ColorManagedDisplaySettings *display_settings,
@@ -4288,7 +4314,8 @@ bool ColormanageProcessor::is_noop() const
     return false;
   }
 
-  if (!cpu_processor_) {
+  const ocio::CPUProcessor *cpu_processor = get_cpu_processor();
+  if (!cpu_processor) {
     /* The CPU processor might have failed to be created, for example when the requested color
      * space does not exist in the configuration, or if there is a missing lookup table, or the
      * configuration is invalid due to other reasons.
@@ -4301,7 +4328,7 @@ bool ColormanageProcessor::is_noop() const
     return true;
   }
 
-  return cpu_processor_->is_noop();
+  return cpu_processor->is_noop();
 }
 
 void ColormanageProcessor::apply_v4(float pixel[4]) const
@@ -4310,8 +4337,9 @@ void ColormanageProcessor::apply_v4(float pixel[4]) const
     BKE_curvemapping_evaluate_premulRGBF(curve_mapping_, pixel, pixel);
   }
 
-  if (cpu_processor_) {
-    cpu_processor_->apply_rgba(pixel);
+  const ocio::CPUProcessor *cpu_processor = get_cpu_processor();
+  if (cpu_processor) {
+    cpu_processor->apply_rgba(pixel);
   }
 }
 
@@ -4321,8 +4349,9 @@ void ColormanageProcessor::apply_v4_predivide(float pixel[4]) const
     BKE_curvemapping_evaluate_premulRGBF(curve_mapping_, pixel, pixel);
   }
 
-  if (cpu_processor_) {
-    cpu_processor_->apply_rgba_predivide(pixel);
+  const ocio::CPUProcessor *cpu_processor = get_cpu_processor();
+  if (cpu_processor) {
+    cpu_processor->apply_rgba_predivide(pixel);
   }
 }
 
@@ -4332,8 +4361,9 @@ void ColormanageProcessor::apply_v3(float pixel[3]) const
     BKE_curvemapping_evaluate_premulRGBF(curve_mapping_, pixel, pixel);
   }
 
-  if (cpu_processor_) {
-    cpu_processor_->apply_rgb(pixel);
+  const ocio::CPUProcessor *cpu_processor = get_cpu_processor();
+  if (cpu_processor) {
+    cpu_processor->apply_rgb(pixel);
   }
 }
 
@@ -4372,7 +4402,8 @@ void ColormanageProcessor::apply(
     }
   }
 
-  if (cpu_processor_ && channels >= 3) {
+  const ocio::CPUProcessor *cpu_processor = get_cpu_processor();
+  if (cpu_processor && channels >= 3) {
     /* apply OCIO processor */
     const ocio::PackedImage img(buffer,
                                 width,
@@ -4384,10 +4415,10 @@ void ColormanageProcessor::apply(
                                 size_t(channels) * sizeof(float) * width);
 
     if (predivide) {
-      cpu_processor_->apply_predivide(img);
+      cpu_processor->apply_predivide(img);
     }
     else {
-      cpu_processor_->apply(img);
+      cpu_processor->apply(img);
     }
   }
 }
