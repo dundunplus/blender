@@ -26,7 +26,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   endif()
 endif()
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
 if(NOT EXECUTABLE_OUTPUT_PATH)
   set(FIRST_RUN TRUE)
@@ -57,51 +57,16 @@ endif()
 # -----------------------------------------------------------------------------
 # Set policy
 
-# see "cmake --help-policy CMP0003"
-# So library linking is more sane
-cmake_policy(SET CMP0003 NEW)
-
-# So BUILDINFO and BLENDERPATH strings are automatically quoted
-cmake_policy(SET CMP0005 NEW)
-
-# So syntax problems are errors
-cmake_policy(SET CMP0010 NEW)
-
-# Input directories must have CMakeLists.txt
-cmake_policy(SET CMP0014 NEW)
-
-# Silence draco warning on macOS, new policy works fine.
-if(POLICY CMP0068)
-  cmake_policy(SET CMP0068 NEW)
-endif()
-
-# find_package() uses <PackageName>_ROOT variables.
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
 
 # find_package() uses uppercase <PackageName>_ROOT variables.
 if(POLICY CMP0144)
   cmake_policy(SET CMP0144 NEW)
 endif()
 
-# Install CODE|SCRIPT allow the use of generator expressions.
-if(POLICY CMP0087)
-  cmake_policy(SET CMP0087 NEW)
-endif()
-
-# Allow to specify language per file.
-if(POLICY CMP0119)
-  cmake_policy(SET CMP0119 NEW)
-endif()
-
 # Install DESTINATION paths are normalized.
 if(POLICY CMP0177)
   cmake_policy(SET CMP0177 NEW)
 endif()
-
-# The target_sources() command converts relative paths to absolute.
-cmake_policy(SET CMP0076 NEW)
 
 # -----------------------------------------------------------------------------
 # Load Blender's Local Macros
@@ -211,12 +176,9 @@ if(WIN32)
   )
 endif()
 
-
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19")
-  # This changes the default value from Off to On, but will still allow people to manually change
-  # this setting through their CMakeCache.txt if they desire to do so.
-  set(CMAKE_OPTIMIZE_DEPENDENCIES ON CACHE INTERNAL "")
-endif()
+# This changes the default value from Off to On, but will still allow people to manually change
+# this setting through their CMakeCache.txt if they desire to do so.
+set(CMAKE_OPTIMIZE_DEPENDENCIES ON CACHE INTERNAL "")
 
 # -----------------------------------------------------------------------------
 # Declare Options
@@ -287,7 +249,7 @@ mark_as_advanced(BUILDINFO_OVERRIDE_TIME)
 
 # CMAKE 3.28.2 has issues with the combination of PCH and unity builds, disable for now.
 # upstream ticket https://gitlab.kitware.com/cmake/cmake/-/issues/25650
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16" AND NOT ${CMAKE_VERSION} VERSION_EQUAL "3.28.2")
+if(NOT ${CMAKE_VERSION} VERSION_EQUAL "3.28.2")
   option(WITH_UNITY_BUILD "\
 Enable unity build for modules that support it to improve compile times.\n\
 WARNING: this option allows files to be built without all necessary headers!\n
@@ -956,16 +918,12 @@ mark_as_advanced(
   WITH_GPU_SHADER_ASSERT
 )
 
-if(POLICY CMP0119)
-  option(WITH_GPU_SHADER_CPP_COMPILATION "\
-  Compiler shaders using C++. \
-  Allows testing shader compilation offline and enable C++ IDE support for shader code"
-    ON
-  )
-  mark_as_advanced(WITH_GPU_SHADER_CPP_COMPILATION)
-else()
-  set(WITH_GPU_SHADER_CPP_COMPILATION OFF)
-endif()
+option(WITH_GPU_SHADER_CPP_COMPILATION "\
+Compiler shaders using C++. \
+Allows testing shader compilation offline and enable C++ IDE support for shader code"
+  ON
+)
+mark_as_advanced(WITH_GPU_SHADER_CPP_COMPILATION)
 
 
 # OpenGL

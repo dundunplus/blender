@@ -197,13 +197,19 @@ struct PaintStroke : NonCopyable, NonMovable {
    */
   wmOperatorStatus modal(bContext *C, wmOperator *op, const wmEvent *event);
   wmOperatorStatus exec(bContext *C, wmOperator *op);
-  /** Cancel a stroke and return to the initial state. */
-  void cancel(bContext *C, wmOperator *op);
-  /**
-   * Free internal stroke data, not a destructor due to needed parameters.
-   * TODO: This might not need to be exposed, all internal code paths should end up calling this.
+
+  /** Cancel a stroke and return to the initial state.
+   *
+   * \note Typically handled as part of modal operator actions. Consumers of this API may need
+   * to call this if returning OPERATOR_CANCELLED during the `invoke` operator callback.
    */
-  void free(bContext *C, wmOperator *op);
+  void cancel(bContext *C);
+  /** Finish a stroke, performing any necessary cleanup actions.
+   *
+   * \note Typically handled as part of modal operator actions. Consumers of this API may need
+   * to call this if returning OPERATOR_FINISHED during the `invoke` operator callback.
+   */
+  void finish(bContext *C);
 
   /* TODO: The following accessors should all be parameters passed into various callbacks */
   bool stroke_flipped() const
@@ -273,8 +279,7 @@ struct PaintStroke : NonCopyable, NonMovable {
               bool *r_location_is_set);
 
  private:
-  void stroke_done(bContext *C, wmOperator *op, bool is_cancel);
-
+  void done(bContext *C, bool is_cancel);
   void add_step(bContext *C, wmOperator *op, float2 mval, float pressure);
 
   void add_sample(int input_samples, float x, float y, float pressure);

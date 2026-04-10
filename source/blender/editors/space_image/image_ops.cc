@@ -2762,6 +2762,7 @@ static wmOperatorStatus image_new_invoke(bContext *C, wmOperator *op, const wmEv
 
 static void image_new_draw(bContext * /*C*/, wmOperator *op)
 {
+  /* TODO: Deduplicate with texture_paint_add_texture_paint_slot_ui */
   ui::Layout &layout = *op->layout;
 
   /* copy of WM_operator_props_dialog_popup() layout */
@@ -2769,11 +2770,12 @@ static void image_new_draw(bContext * /*C*/, wmOperator *op)
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  ui::Layout &col = layout.column(false);
-  col.prop(op->ptr, "name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  col.prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  col.prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(op->ptr, "name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  ui::Layout &dim_col = layout.column(true);
+  dim_col.prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  dim_col.prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
+  ui::Layout &col = layout.column(false);
   col.prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   const int gen_type = RNA_enum_get(op->ptr, "generated_type");

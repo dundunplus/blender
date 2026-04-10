@@ -85,13 +85,31 @@ template<typename T>
 }
 
 template<typename T>
-static bke::SocketValueVariant load_data_block_input(PointerRNA &input_props_ptr)
+static bke::SocketValueVariant load_data_block_input(const GeoNodesCallData *call_data,
+                                                     PointerRNA &input_props_ptr)
 {
+  PropertyRNA &prop = *RNA_struct_find_property(&input_props_ptr, "value");
+  if (RNA_property_type(&prop) == PROP_STRING) {
+    if (!call_data) {
+      return bke::SocketValueVariant::From(static_cast<T *>(nullptr));
+    }
+    BLI_assert(call_data->operator_data);
+    const std::string name = RNA_string_get(&input_props_ptr, "value");
+    const ID *id_orig = call_data->operator_data->input_ids->lookup_default(name, nullptr);
+    if (!id_orig) {
+      return bke::SocketValueVariant::From(static_cast<T *>(nullptr));
+    }
+    const ID *id_eval = call_data->operator_data->depsgraphs->get_evaluated_id(*id_orig);
+    return bke::SocketValueVariant::From(id_cast<T *>(const_cast<ID *>(id_eval)));
+  }
+
+  BLI_assert(RNA_property_type(&prop) == PROP_POINTER);
   T *data_block = id_cast<T *>(RNA_pointer_get(&input_props_ptr, "value").owner_id);
   return bke::SocketValueVariant::From(data_block);
 }
 
-static bke::SocketValueVariant init_socket_cpp_value(PointerRNA *input_props_ptr,
+static bke::SocketValueVariant init_socket_cpp_value(const GeoNodesCallData *call_data,
+                                                     PointerRNA *input_props_ptr,
                                                      const bNodeTreeInterfaceSocket &io_socket)
 {
   const bke::bNodeSocketType *stype = io_socket.socket_typeinfo();
@@ -215,70 +233,70 @@ static bke::SocketValueVariant init_socket_cpp_value(PointerRNA *input_props_ptr
     case SOCK_OBJECT: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Object>(*input_props_ptr);
+        return load_data_block_input<Object>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_IMAGE: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Image>(*input_props_ptr);
+        return load_data_block_input<Image>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_COLLECTION: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Collection>(*input_props_ptr);
+        return load_data_block_input<Collection>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_TEXTURE: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Tex>(*input_props_ptr);
+        return load_data_block_input<Tex>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_MATERIAL: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Material>(*input_props_ptr);
+        return load_data_block_input<Material>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_FONT: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<VFont>(*input_props_ptr);
+        return load_data_block_input<VFont>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_SCENE: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Scene>(*input_props_ptr);
+        return load_data_block_input<Scene>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_TEXT_ID: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Text>(*input_props_ptr);
+        return load_data_block_input<Text>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_MASK: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<Mask>(*input_props_ptr);
+        return load_data_block_input<Mask>(call_data, *input_props_ptr);
       }
       break;
     }
     case SOCK_SOUND: {
       const auto type = GeometryNodesInputType(RNA_enum_get(input_props_ptr, "type"));
       if (type == GeometryNodesInputType::Value) {
-        return load_data_block_input<bSound>(*input_props_ptr);
+        return load_data_block_input<bSound>(call_data, *input_props_ptr);
       }
       break;
     }
@@ -533,7 +551,8 @@ bke::GeometrySet execute_geometry_nodes_on_geometry(const bNodeTree &btree,
     }
 
     PointerRNA input_props_ptr = RNA_pointer_get(&inputs_ptr, interface_socket.identifier);
-    bke::SocketValueVariant value = init_socket_cpp_value(&input_props_ptr, interface_socket);
+    bke::SocketValueVariant value = init_socket_cpp_value(
+        &call_data, &input_props_ptr, interface_socket);
     param_inputs[function.inputs.main[i]] = &scope.construct<bke::SocketValueVariant>(
         std::move(value));
   }
@@ -626,7 +645,7 @@ Vector<InferenceValue> get_geometry_nodes_input_inference_values(const bNodeTree
     }
 
     bke::SocketValueVariant &value = scope.add_value(
-        init_socket_cpp_value(&socket_props_ptr, io_input));
+        init_socket_cpp_value(nullptr, &socket_props_ptr, io_input));
     if (!value.is_single()) {
       continue;
     }

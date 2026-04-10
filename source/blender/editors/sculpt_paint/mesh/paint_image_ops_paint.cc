@@ -513,7 +513,7 @@ static wmOperatorStatus paint_invoke(bContext *C, wmOperator *op, const wmEvent 
   if (retval == OPERATOR_FINISHED) {
     ImagePaintStroke *stroke = static_cast<ImagePaintStroke *>(op->customdata);
     if (stroke) {
-      stroke->free(C, op);
+      stroke->finish(C);
       MEM_delete(stroke);
     }
     return OPERATOR_FINISHED;
@@ -603,7 +603,7 @@ static void paint_cancel(bContext *C, wmOperator *op)
     ED_image_undo_restore(ustack->step_init);
   }
 
-  stroke->cancel(C, op);
+  stroke->cancel(C);
 }
 }  // namespace ed::sculpt_paint::image::ops::paint
 

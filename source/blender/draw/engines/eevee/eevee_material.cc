@@ -171,6 +171,10 @@ void MaterialModule::end_sync()
     BKE_image_tag_time(tex->ima);
   }
 
+  /* Avoid any leftover bind before BKE_image_get_gpu_material_texture which could cause assert
+   * about missing specialization constants. */
+  GPU_shader_unbind();
+
   /* Upload to the GPU (create gpu::Texture). This part still requires a valid GPU context and
    * is not easily parallelized. */
   for (GPUMaterialTexture *tex : texture_loading_queue_) {

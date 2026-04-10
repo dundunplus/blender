@@ -1954,7 +1954,7 @@ static wmOperatorStatus wpaint_invoke(bContext *C, wmOperator *op, const wmEvent
   if (retval == OPERATOR_FINISHED) {
     WeightPaintStroke *stroke = static_cast<WeightPaintStroke *>(op->customdata);
     if (stroke) {
-      stroke->free(C, op);
+      stroke->finish(C);
       MEM_delete(stroke);
     }
     return OPERATOR_FINISHED;

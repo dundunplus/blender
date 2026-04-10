@@ -195,6 +195,10 @@ struct GeoNodesOperatorData {
   /** The object currently effected by the operator. */
   const Object *self_object_orig = nullptr;
   const GeoNodesOperatorDepsgraphs *depsgraphs = nullptr;
+  /**
+   * Map from names of data-block node group input RNA properties to original data-blocks.
+   */
+  const Map<std::string, ID *> *input_ids = {};
   Scene *scene_orig = nullptr;
   int2 mouse_position;
   int2 region_size;

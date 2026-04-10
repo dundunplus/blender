@@ -2090,7 +2090,7 @@ static wmOperatorStatus vpaint_invoke(bContext *C, wmOperator *op, const wmEvent
   if (retval == OPERATOR_FINISHED) {
     VertexPaintStroke *stroke = static_cast<VertexPaintStroke *>(op->customdata);
     if (stroke) {
-      stroke->free(C, op);
+      stroke->finish(C);
       MEM_delete(stroke);
     }
     return OPERATOR_FINISHED;

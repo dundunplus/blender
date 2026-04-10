@@ -5970,15 +5970,13 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   if (brush_type_is_paint(brush.sculpt_brush_type) &&
       !color_supported_check(scene, ob, op->reports))
   {
-    stroke->done(true);
-    stroke->free(C, op);
+    stroke->cancel(C);
     MEM_delete(stroke);
     return OPERATOR_CANCELLED;
   }
   if (!brush_type_is_attribute_only(brush.sculpt_brush_type) && !shape_key_check(ob, op->reports))
   {
-    stroke->done(true);
-    stroke->free(C, op);
+    stroke->cancel(C);
     MEM_delete(stroke);
     return OPERATOR_CANCELLED;
   }
@@ -5989,8 +5987,7 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
     const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(ob);
     if (!pbvh || pbvh->type() != bke::pbvh::Type::Grids) {
       BKE_report(op->reports, RPT_ERROR, "Only supported in multiresolution mode");
-      stroke->done(true);
-      stroke->free(C, op);
+      stroke->cancel(C);
       MEM_delete(stroke);
       return OPERATOR_CANCELLED;
     }
@@ -6012,8 +6009,7 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   ignore_background_click = RNA_boolean_get(op->ptr, "ignore_background_click");
   const float mval[2] = {float(event->mval[0]), float(event->mval[1])};
   if (ignore_background_click && !over_mesh(C, op, mval)) {
-    stroke->done(true);
-    stroke->free(C, op);
+    stroke->cancel(C);
     MEM_delete(stroke);
     return OPERATOR_PASS_THROUGH;
   }
@@ -6024,10 +6020,12 @@ static wmOperatorStatus sculpt_brush_stroke_invoke(bContext *C,
   if (ELEM(retval, OPERATOR_FINISHED, OPERATOR_CANCELLED)) {
     SculptPaintStroke *stroke = static_cast<SculptPaintStroke *>(op->customdata);
     if (stroke) {
-      /* We don't need to call `stroke->done` in this case, as it should have happened inside
-       * the modal call */
-      BLI_assert(ob.runtime->sculpt_session->cache == nullptr);
-      stroke->free(C, op);
+      if (retval == OPERATOR_FINISHED) {
+        stroke->finish(C);
+      }
+      else {
+        stroke->cancel(C);
+      }
       MEM_delete(stroke);
     }
     return retval;
@@ -6067,7 +6065,7 @@ static void sculpt_brush_stroke_cancel(bContext *C, wmOperator *op)
   UNUSED_VARS_NDEBUG(brush);
 
   undo::restore_from_undo_step(depsgraph, sd, ob);
-  stroke->cancel(C, op);
+  stroke->cancel(C);
 }
 
 static wmOperatorStatus brush_stroke_modal(bContext *C, wmOperator *op, const wmEvent *event)

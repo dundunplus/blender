@@ -6684,6 +6684,7 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain, bool is_data)
   int width = 1024;
   int height = 1024;
   bool use_float = false;
+  bool use_tiled = false;
   short gen_type = IMA_GENTYPE_BLANK;
   bool alpha = false;
 
@@ -6691,6 +6692,7 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain, bool is_data)
     width = RNA_int_get(op->ptr, "width");
     height = RNA_int_get(op->ptr, "height");
     use_float = RNA_boolean_get(op->ptr, "float");
+    use_tiled = RNA_boolean_get(op->ptr, "tiled");
     gen_type = RNA_enum_get(op->ptr, "generated_type");
     RNA_float_get_array(op->ptr, "color", color);
     alpha = RNA_boolean_get(op->ptr, "alpha");
@@ -6701,7 +6703,6 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain, bool is_data)
     color[3] = 1.0f;
   }
 
-  /* TODO(lukas): Add option for tiled image. */
   ima = BKE_image_add_generated(bmain,
                                 width,
                                 height,
@@ -6712,7 +6713,7 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain, bool is_data)
                                 color,
                                 false,
                                 is_data,
-                                false);
+                                use_tiled);
 
   return ima;
 }
@@ -7034,25 +7035,33 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
 
   switch (slot_type) {
     case PAINT_CANVAS_SOURCE_IMAGE: {
-      ui::Layout &col = layout.column(true);
-      col.prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      col.prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      /* TODO: Deduplicate with image_new_draw */
+      ui::Layout &dim_col = layout.column(true);
+      dim_col.prop(op->ptr, "width", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      dim_col.prop(op->ptr, "height", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-      layout.prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      layout.prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      layout.prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      ui::Layout &col = layout.column(false);
+      col.prop(op->ptr, "generated_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+
+      const int gen_type = RNA_enum_get(op->ptr, "generated_type");
+      ui::Layout &color_col = col.column(false);
+      if (gen_type == IMA_GENTYPE_BLANK) {
+        color_col.prop(op->ptr, "color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      }
+      col.prop(op->ptr, "alpha", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      col.prop(op->ptr, "float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      col.prop(op->ptr, "tiled", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     }
     case PAINT_CANVAS_SOURCE_COLOR_ATTRIBUTE:
       layout.prop(op->ptr, "domain", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
       layout.prop(op->ptr, "data_type", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+      layout.prop(op->ptr, "color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     case PAINT_CANVAS_SOURCE_MATERIAL:
       BLI_assert_unreachable();
       break;
   }
-
-  layout.prop(op->ptr, "color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 #define IMA_DEF_NAME N_("Untitled")
@@ -7124,6 +7133,8 @@ void PAINT_OT_add_texture_paint_slot(wmOperatorType *ot)
                   false,
                   "32-bit Float",
                   "Create image with 32-bit floating-point bit depth");
+
+  RNA_def_boolean(ot->srna, "tiled", false, "Tiled", "Create a tiled image");
 
   /* Color Attribute Properties */
   RNA_def_enum(ot->srna,

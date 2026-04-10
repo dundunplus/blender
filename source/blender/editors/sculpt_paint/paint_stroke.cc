@@ -926,28 +926,7 @@ PaintStroke::PaintStroke(bContext *C, wmOperator *op, int event_type) : event_ty
   paint_runtime->start_pixel_radius = BKE_brush_radius_get(this->paint, this->brush);
 }
 
-void PaintStroke::free(bContext *C, wmOperator * /*op*/)
-{
-  if (RegionView3D *rv3d = CTX_wm_region_view3d(C)) {
-    rv3d->rflag &= ~RV3D_PAINTING;
-  }
-
-  BKE_paint_set_overlay_override(eOverlayFlags(0));
-
-  bke::PaintRuntime *paint_runtime = this->paint->runtime;
-  paint_runtime->draw_anchored = false;
-  paint_runtime->stroke_active = false;
-
-  if (timer_) {
-    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer_);
-  }
-
-  if (stroke_cursor_) {
-    WM_paint_cursor_end(static_cast<wmPaintCursor *>(stroke_cursor_));
-  }
-}
-
-void PaintStroke::stroke_done(bContext *C, wmOperator *op, const bool is_cancel)
+void PaintStroke::done(bContext *C, const bool is_cancel)
 {
   if (print_pressure_status_enabled()) {
     ED_workspace_status_text(C, nullptr);
@@ -965,13 +944,29 @@ void PaintStroke::stroke_done(bContext *C, wmOperator *op, const bool is_cancel)
     }
   }
 
+  /* TODO: Is this stroke_started_ guard necessary? */
   if (stroke_started_) {
     this->redraw(true);
-
-    this->done(is_cancel);
   }
 
-  this->free(C, op);
+  this->done(is_cancel);
+
+  if (RegionView3D *rv3d = CTX_wm_region_view3d(C)) {
+    rv3d->rflag &= ~RV3D_PAINTING;
+  }
+
+  BKE_paint_set_overlay_override(eOverlayFlags(0));
+
+  paint_runtime->draw_anchored = false;
+  paint_runtime->stroke_active = false;
+
+  if (timer_) {
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer_);
+  }
+
+  if (stroke_cursor_) {
+    WM_paint_cursor_end(static_cast<wmPaintCursor *>(stroke_cursor_));
+  }
 }
 
 static bool curves_sculpt_brush_uses_spacing(const eBrushCurvesSculptType tool)
@@ -1355,7 +1350,7 @@ bool PaintStroke::curve_end(bContext *C, wmOperator *op)
     }
   }
 
-  this->stroke_done(C, op, false);
+  this->done(C, false);
 
 #ifdef DEBUG_TIME
   TIMEIT_END_AVERAGED(whole_stroke);
@@ -1400,7 +1395,7 @@ wmOperatorStatus PaintStroke::modal(bContext *C, wmOperator *op, const wmEvent *
   if (paint == nullptr || br == nullptr) {
     /* In some circumstances, the context may change during modal execution. In this case,
      * we need to cancel the operator. See #147544 and related issues for further information. */
-    this->stroke_done(C, op, true);
+    this->done(C, true);
     return OPERATOR_CANCELLED;
   }
   const PaintMode mode = BKE_paintmode_get_active_from_context(C);
@@ -1543,13 +1538,13 @@ wmOperatorStatus PaintStroke::modal(bContext *C, wmOperator *op, const wmEvent *
         paint_stroke_line_constrain(this->last_mouse_position, this->constrained_pos, mouse);
       }
       this->line_end(C, op, mouse);
-      this->stroke_done(C, op, false);
+      this->done(C, false);
       return OPERATOR_FINISHED;
     }
   }
   else if (ELEM(event->type, EVT_RETKEY, EVT_SPACEKEY)) {
     this->line_end(C, op, sample_average.mouse);
-    this->stroke_done(C, op, false);
+    this->done(C, false);
     return OPERATOR_FINISHED;
   }
   else if (br->stroke_method == BRUSH_STROKE_LINE) {
@@ -1681,14 +1676,19 @@ wmOperatorStatus PaintStroke::exec(bContext *C, wmOperator *op)
 
   const bool ok = stroke_started_;
 
-  this->stroke_done(C, op, !ok);
+  this->done(C, !ok);
 
   return ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
-void PaintStroke::cancel(bContext *C, wmOperator *op)
+void PaintStroke::finish(bContext *C)
 {
-  this->stroke_done(C, op, true);
+  this->done(C, false);
+}
+
+void PaintStroke::cancel(bContext *C)
+{
+  this->done(C, true);
 }
 
 static const bToolRef *brush_tool_get(const ScrArea *area, const ARegion *region)

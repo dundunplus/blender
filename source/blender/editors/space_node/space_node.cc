@@ -1226,7 +1226,7 @@ static std::string node_socket_drop_tooltip(bContext * /*C*/,
       bke::node_interface::get_item_as<bNodeTreeInterfaceSocket>(drag_data->item);
 
   if (socket) {
-    return BLI_sprintfN(TIP_("Add \"%s\" Input"), socket->name);
+    return fmt::format(fmt::runtime(TIP_("Add \"{}\" Input")), socket->name);
   }
   else {
     const bNodeTreeInterfacePanel *panel =
@@ -1236,7 +1236,7 @@ static std::string node_socket_drop_tooltip(bContext * /*C*/,
     /* Dragging a panel with toggle defaults to dragging the toggle socket.
      * Display a hint with the modifier required to drag the panel. */
     if (socket) {
-      return BLI_sprintfN(TIP_("Add \"%s\" Input (Ctrl to add panel)"), socket->name);
+      return fmt::format(fmt::runtime(TIP_("Add \"{}\" Input (Ctrl to add panel)")), socket->name);
     }
   }
   BLI_assert_unreachable();
@@ -1253,7 +1253,7 @@ static std::string node_panel_drop_tooltip(bContext * /*C*/,
   const bNodeTreeInterfacePanel *panel = bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(
       drag_data->item);
   BLI_assert(panel);
-  return BLI_sprintfN(TIP_("Add \"%s\" Panel"), panel->name);
+  return fmt::format(fmt::runtime(TIP_("Add \"{}\" Panel")), panel->name);
 }
 
 /* this region dropbox definition */

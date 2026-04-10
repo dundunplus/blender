@@ -745,17 +745,6 @@ static void gather_node_group_ids(const bNodeTree &node_tree, Set<ID *> &ids)
   }
 }
 
-static const bNodeTreeInterfaceSocket *find_group_input_by_identifier(const bNodeTree &node_group,
-                                                                      const StringRef identifier)
-{
-  for (const bNodeTreeInterfaceSocket *input : node_group.interface_inputs()) {
-    if (input->identifier == identifier) {
-      return input;
-    }
-  }
-  return nullptr;
-}
-
 static std::optional<ID_Type> socket_type_to_id_type(const eNodeSocketDatatype socket_type)
 {
   switch (socket_type) {
@@ -804,30 +793,26 @@ static std::optional<ID_Type> socket_type_to_id_type(const eNodeSocketDatatype s
  * input properties will be copied to contain evaluated data-blocks from the active and/or an extra
  * depsgraph.
  */
-static Map<StringRef, ID *> gather_input_ids(const Main &bmain,
-                                             const bNodeTree &node_group,
-                                             const IDProperty &properties)
+static Map<std::string, ID *> gather_input_ids(const Main &bmain,
+                                               const bNodeTree &node_group,
+                                               const PointerRNA &properties_ptr)
 {
-  Map<StringRef, ID *> ids;
-  IDP_foreach_property(
-      &const_cast<IDProperty &>(properties), IDP_TYPE_FILTER_STRING, [&](IDProperty *prop) {
-        const bNodeTreeInterfaceSocket *input = find_group_input_by_identifier(node_group,
-                                                                               prop->name);
-        if (!input) {
-          return;
-        }
-        const std::optional<ID_Type> id_type = socket_type_to_id_type(
-            input->socket_typeinfo()->type);
-        if (!id_type) {
-          return;
-        }
-        const char *id_name = IDP_string_get(prop);
-        ID *id = BKE_libblock_find_name(&const_cast<Main &>(bmain), *id_type, id_name);
-        if (!id) {
-          return;
-        }
-        ids.add(prop->name, id);
-      });
+  PointerRNA inputs_ptr = RNA_pointer_get(const_cast<PointerRNA *>(&properties_ptr), "inputs");
+
+  Map<std::string, ID *> ids;
+  for (const bNodeTreeInterfaceSocket *input : node_group.interface_inputs()) {
+    const std::optional<ID_Type> id_type = socket_type_to_id_type(input->socket_typeinfo()->type);
+    if (!id_type) {
+      continue;
+    }
+    PointerRNA input_props_ptr = RNA_pointer_get(&inputs_ptr, input->identifier);
+    std::string name = RNA_string_get(&input_props_ptr, "value");
+    ID *id = BKE_libblock_find_name(&const_cast<Main &>(bmain), *id_type, name.c_str());
+    if (!id) {
+      continue;
+    }
+    ids.add(std::move(name), id);
+  }
   return ids;
 }
 
@@ -840,33 +825,6 @@ static Depsgraph *build_extra_depsgraph(const Depsgraph &depsgraph_active, const
   DEG_graph_build_from_ids(depsgraph, Vector<ID *>(ids.begin(), ids.end()));
   DEG_evaluate_on_refresh(depsgraph);
   return depsgraph;
-}
-
-static IDProperty *replace_strings_with_id_pointers(const IDProperty &op_properties,
-                                                    const Map<StringRef, ID *> &input_ids)
-{
-  IDProperty *properties = bke::idprop::create_group("Exec Properties").release();
-  IDP_foreach_property(&const_cast<IDProperty &>(op_properties), 0, [&](IDProperty *prop) {
-    if (ID *id = input_ids.lookup_default(prop->name, nullptr)) {
-      IDP_AddToGroup(properties, bke::idprop::create(prop->name, id).release());
-    }
-    else {
-      IDP_AddToGroup(properties, IDP_CopyProperty(prop));
-    }
-  });
-  return properties;
-}
-
-static void replace_inputs_evaluated_data_blocks(
-    IDProperty &properties, const nodes::GeoNodesOperatorDepsgraphs &depsgraphs)
-{
-  IDP_foreach_property(&properties, IDP_TYPE_FILTER_ID, [&](IDProperty *property) {
-    if (ID *id = IDP_ID_get(property)) {
-      if (ID_TYPE_USE_COPY_ON_EVAL(GS(id->name))) {
-        property->data.pointer = const_cast<ID *>(depsgraphs.get_evaluated_id(*id));
-      }
-    }
-  });
 }
 
 static bool object_has_editable_data(const Main &bmain, const Object &object)
@@ -942,8 +900,7 @@ static wmOperatorStatus run_node_group_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph_active = CTX_data_ensure_evaluated_depsgraph(C);
   Set<ID *> extra_ids;
   gather_node_group_ids(*node_tree_orig, extra_ids);
-  const Map<StringRef, ID *> input_ids = gather_input_ids(
-      *bmain, *node_tree_orig, *op->properties);
+  const Map<std::string, ID *> input_ids = gather_input_ids(*bmain, *node_tree_orig, *op->ptr);
   for (ID *id : input_ids.values()) {
     /* Skip IDs that are already fully evaluated in the active depsgraph. */
     if (!DEG_id_is_fully_evaluated(depsgraph_active, id)) {
@@ -955,11 +912,6 @@ static wmOperatorStatus run_node_group_exec(bContext *C, wmOperator *op)
       depsgraph_active,
       extra_ids.is_empty() ? nullptr : build_extra_depsgraph(*depsgraph_active, extra_ids),
   };
-
-  IDProperty *properties = replace_strings_with_id_pointers(*op->properties, input_ids);
-  BLI_SCOPED_DEFER([&]() { IDP_FreeProperty_ex(properties, false); });
-
-  replace_inputs_evaluated_data_blocks(*properties, depsgraphs);
 
   const bNodeTree *node_tree = nullptr;
   if (depsgraphs.extra) {
@@ -1004,6 +956,7 @@ static wmOperatorStatus run_node_group_exec(bContext *C, wmOperator *op)
     operator_eval_data.depsgraphs = &depsgraphs;
     operator_eval_data.self_object_orig = object;
     operator_eval_data.scene_orig = scene;
+    operator_eval_data.input_ids = &input_ids;
     RNA_int_get_array(op->ptr, "mouse_position", operator_eval_data.mouse_position);
     RNA_int_get_array(op->ptr, "region_size", operator_eval_data.region_size);
     RNA_float_get_array(op->ptr, "cursor_position", operator_eval_data.cursor_position);
