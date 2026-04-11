@@ -3618,7 +3618,10 @@ static void rna_def_number_property(StructRNA *srna, PropertyType type)
   else {
     RNA_def_property_float_funcs(prop, "rna_FloatProperty_hard_min_get", nullptr, nullptr);
   }
-  RNA_def_property_ui_text(prop, "Hard Minimum", "Minimum value used by buttons");
+  RNA_def_property_ui_text(
+      prop,
+      "Hard Minimum",
+      "Hard minimum, trying to assign a value below will silently assign this minimum instead");
 
   prop = RNA_def_property(srna, "hard_max", type, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -3628,7 +3631,10 @@ static void rna_def_number_property(StructRNA *srna, PropertyType type)
   else {
     RNA_def_property_float_funcs(prop, "rna_FloatProperty_hard_max_get", nullptr, nullptr);
   }
-  RNA_def_property_ui_text(prop, "Hard Maximum", "Maximum value used by buttons");
+  RNA_def_property_ui_text(
+      prop,
+      "Hard Maximum",
+      "Hard maximum, trying to assign a value above will silently assign this maximum instead");
 
   prop = RNA_def_property(srna, "soft_min", type, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -3638,7 +3644,10 @@ static void rna_def_number_property(StructRNA *srna, PropertyType type)
   else {
     RNA_def_property_float_funcs(prop, "rna_FloatProperty_soft_min_get", nullptr, nullptr);
   }
-  RNA_def_property_ui_text(prop, "Soft Minimum", "Minimum value used by buttons");
+  RNA_def_property_ui_text(
+      prop,
+      "Soft Minimum",
+      "Soft minimum (>= hard_min), user cannot drag widgets below this value in the UI");
 
   prop = RNA_def_property(srna, "soft_max", type, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -3648,7 +3657,10 @@ static void rna_def_number_property(StructRNA *srna, PropertyType type)
   else {
     RNA_def_property_float_funcs(prop, "rna_FloatProperty_soft_max_get", nullptr, nullptr);
   }
-  RNA_def_property_ui_text(prop, "Soft Maximum", "Maximum value used by buttons");
+  RNA_def_property_ui_text(
+      prop,
+      "Soft Maximum",
+      "Soft maximum (<= hard_max), user cannot drag widgets above this value in the UI");
 
   prop = RNA_def_property(srna, "step", type, PROP_UNSIGNED);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);

@@ -1412,10 +1412,10 @@ static void rna_BevelModifier_weight_attribute_visit_for_search(
   PointerRNA mesh_ptr = RNA_id_pointer_create(ob->data);
   PropertyRNA *attributes_prop = RNA_struct_find_property(&mesh_ptr, "attributes");
   RNA_PROP_BEGIN (&mesh_ptr, itemptr, attributes_prop) {
-    const CustomDataLayer *layer = static_cast<const CustomDataLayer *>(itemptr.data);
-    if (bke::allow_procedural_attribute_access(layer->name)) {
+    const StringRefNull name = rna_Attribute_name_get(itemptr);
+    if (bke::allow_procedural_attribute_access(name)) {
       StringPropertySearchVisitParams visit_params{};
-      visit_params.text = layer->name;
+      visit_params.text = name;
       visit_fn(visit_params);
     }
   }
