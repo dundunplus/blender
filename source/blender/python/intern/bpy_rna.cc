@@ -1960,11 +1960,11 @@ static int pyrna_py_to_prop(
           }
         }
 
-        /* if property is an OperatorProperties/GizmoProperties pointer and value is a map,
-         * forward back to pyrna_pydict_to_props */
+        /* if property is an OperatorProperties/GizmoProperties/PropertyGroup pointer and value
+         * is a map, forward back to pyrna_pydict_to_props */
         if (PyDict_Check(value)) {
           const StructRNA *base_type = RNA_struct_base_child_of(ptr_type, nullptr);
-          if (ELEM(base_type, RNA_OperatorProperties, RNA_GizmoProperties)) {
+          if (ELEM(base_type, RNA_OperatorProperties, RNA_GizmoProperties, RNA_PropertyGroup)) {
             PointerRNA opptr = RNA_property_pointer_get(ptr, prop);
             if (opptr.type) {
               return pyrna_pydict_to_props(&opptr, value, false, error_prefix);

@@ -537,6 +537,11 @@ if(TEST_SRC_DIR_EXISTS)
     object_api
     --python ${TEST_PYTHON_DIR}/bl_object.py
   )
+
+  add_blender_test(
+    node_tools
+    --python ${TEST_PYTHON_DIR}/bl_node_tool.py
+  )
 endif()
 
 add_blender_test(
