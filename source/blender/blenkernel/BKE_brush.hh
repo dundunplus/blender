@@ -91,8 +91,6 @@ void BKE_brush_init_curves_sculpt_settings(Brush *brush);
  */
 void BKE_brush_tag_unsaved_changes(Brush *brush);
 
-Brush *BKE_brush_first_search(Main *bmain, eObjectMode ob_mode);
-
 float2 BKE_brush_jitter_pos(const Paint &paint, const Brush &brush, const float2 &pos);
 void BKE_brush_randomize_texture_coords(Paint *paint, bool mask);
 

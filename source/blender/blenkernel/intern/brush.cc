@@ -764,16 +764,6 @@ void BKE_brush_tag_unsaved_changes(Brush *brush)
   }
 }
 
-Brush *BKE_brush_first_search(Main *bmain, const eObjectMode ob_mode)
-{
-  for (Brush &brush : bmain->brushes) {
-    if (brush.ob_mode & ob_mode) {
-      return &brush;
-    }
-  }
-  return nullptr;
-}
-
 void BKE_brush_debug_print_state(Brush *br)
 {
   /* create a fake brush and set it to the defaults */

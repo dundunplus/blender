@@ -691,4 +691,15 @@ void paint_init_pivot(Object *ob, Scene *scene, Paint *paint);
 /* paint curve defines */
 #define PAINT_CURVE_NUM_SEGMENTS 40
 
+/* palette.cc */
+
+void PALETTE_OT_new(wmOperatorType *ot);
+void PALETTE_OT_color_add(wmOperatorType *ot);
+void PALETTE_OT_color_delete(wmOperatorType *ot);
+
+void PALETTE_OT_extract_from_image(wmOperatorType *ot);
+void PALETTE_OT_sort(wmOperatorType *ot);
+void PALETTE_OT_color_move(wmOperatorType *ot);
+void PALETTE_OT_join(wmOperatorType *ot);
+
 }  // namespace blender

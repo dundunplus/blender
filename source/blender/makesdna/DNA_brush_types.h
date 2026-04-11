@@ -451,17 +451,6 @@ struct Brush {
   struct CurveMapping *automasking_cavity_curve = nullptr;
 };
 
-/* Struct to hold palette colors for sorting. */
-#
-#
-struct tPaletteColorHSV {
-  float rgb[3] = {};
-  float value = 0;
-  float h = 0;
-  float s = 0;
-  float v = 0;
-};
-
 struct PaletteColor {
   struct PaletteColor *next = nullptr, *prev = nullptr;
   /* Two values, one to store color, other to store values for sculpt/weight. */

@@ -21,6 +21,7 @@ set(INC_SYS
 
 set(SRC
   brush_asset_ops.cc
+  palette.cc
   paint_cursor.cc
   paint_curve.cc
   paint_curve_undo.cc
