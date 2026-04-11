@@ -32,6 +32,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "paint_intern.hh"
+
 namespace blender {
 
 struct PaletteColorHSV {
@@ -177,7 +179,7 @@ static void palette_sort_luminance(PaletteColorHSV *color_array, const int totco
   qsort(color_array, totcol, sizeof(PaletteColorHSV), palettecolor_compare_luminance);
 }
 
-bool BKE_palette_from_hash(Main *bmain, GHash *color_table, const char *name)
+static bool palette_from_hash(Main *bmain, GHash *color_table, const char *name)
 {
   PaletteColorHSV *color_array = nullptr;
   PaletteColorHSV *col_elm = nullptr;
@@ -400,7 +402,7 @@ static wmOperatorStatus palette_extract_img_exec(bContext *C, wmOperator *op)
       }
     }
 
-    done = BKE_palette_from_hash(bmain, color_table, image->id.name + 2);
+    done = palette_from_hash(bmain, color_table, image->id.name + 2);
   }
 
   /* Free memory. */
