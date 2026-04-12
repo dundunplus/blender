@@ -378,7 +378,7 @@ void ImagePaintStroke::update_step(wmOperator *op, PointerRNA *itemptr)
 {
   PaintOperation *pop = static_cast<PaintOperation *>(mode_data_.get());
   BLI_assert(pop != nullptr);
-  if (pop != nullptr) {
+  if (pop == nullptr) {
     return;
   }
 
@@ -434,7 +434,7 @@ void ImagePaintStroke::redraw(bool final)
 {
   PaintOperation *pop = static_cast<PaintOperation *>(mode_data_.get());
   BLI_assert(pop != nullptr);
-  if (pop != nullptr) {
+  if (pop == nullptr) {
     return;
   }
 
