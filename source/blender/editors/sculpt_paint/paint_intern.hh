@@ -265,8 +265,10 @@ struct PaintStroke : NonCopyable, NonMovable {
    *
    * \param is_cancel: Some paint modes support cancelling a stroke and returning to the initial
    * state. This parameter indicates this case so that appropriate cleanup actions can be taken.
+   * \param stroke_started: Whether the stroke started. Subclasses can use this to determine if
+   * undo steps should be created. See \test_start.
    */
-  virtual void done(bool is_cancel) = 0;
+  virtual void done(bool is_cancel, bool stroke_started) = 0;
 
   /* TODO: This can probably be private, but `paint_image_ops_paint` depends on this */
   bool update(bContext *C,

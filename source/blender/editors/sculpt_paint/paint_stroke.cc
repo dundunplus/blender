@@ -949,7 +949,7 @@ void PaintStroke::done(bContext *C, const bool is_cancel)
     this->redraw(true);
   }
 
-  this->done(is_cancel);
+  this->done(is_cancel, stroke_started_);
 
   if (RegionView3D *rv3d = CTX_wm_region_view3d(C)) {
     rv3d->rflag &= ~RV3D_PAINTING;

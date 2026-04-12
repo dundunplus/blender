@@ -4971,7 +4971,7 @@ struct SculptPaintStroke final : public PaintStroke {
   void redraw(bool final) override;
   bool test_cancel() override;
   void update_step(wmOperator *op, PointerRNA *itemptr) override;
-  void done(bool is_cancel) override;
+  void done(bool is_cancel, bool stroke_started) override;
 };
 
 bool SculptPaintStroke::get_location(float out[3], const float mouse[2], bool force_original)
@@ -5875,7 +5875,7 @@ static void brush_exit_tex(Sculpt &sd)
   }
 }
 
-void SculptPaintStroke::done(bool is_cancel)
+void SculptPaintStroke::done(bool is_cancel, bool stroke_started)
 {
   Object &ob = *this->object;
   SculptSession &ss = *ob.runtime->sculpt_session;
@@ -5908,7 +5908,7 @@ void SculptPaintStroke::done(bool is_cancel)
   MEM_delete(ss.cache);
   ss.cache = nullptr;
 
-  if (!is_cancel) {
+  if (!is_cancel && stroke_started) {
     stroke_undo_end(*paint_mode_settings_, *this->object, brush);
   }
 

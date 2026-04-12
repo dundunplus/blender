@@ -91,7 +91,7 @@ struct GreasePencilPaintStroke final : public PaintStroke {
   void update_step(wmOperator *op, PointerRNA *itemptr) override;
   void redraw(bool final) override;
   bool test_cancel() override;
-  void done(bool is_cancel) override;
+  void done(bool is_cancel, bool stroke_started) override;
 };
 
 bool GreasePencilPaintStroke::get_location(float out[3],
@@ -229,7 +229,7 @@ bool GreasePencilPaintStroke::test_cancel()
   return false;
 }
 
-void GreasePencilPaintStroke::done(bool /*is_cancel*/)
+void GreasePencilPaintStroke::done(bool /*is_cancel*/, bool /*stroke_started*/)
 {
   GreasePencilStrokeOperation *operation = static_cast<GreasePencilStrokeOperation *>(
       mode_data_.get());

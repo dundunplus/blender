@@ -185,7 +185,7 @@ struct SculptCurvesBrushStroke final : public PaintStroke {
   void redraw(bool final) override;
   bool test_cancel() override;
   void update_step(wmOperator *op, PointerRNA *itemptr) override;
-  void done(bool is_cancel) override;
+  void done(bool is_cancel, bool stroke_started) override;
 
  private:
   std::unique_ptr<CurvesSculptStrokeOperation> operation_;
@@ -238,7 +238,7 @@ bool SculptCurvesBrushStroke::test_cancel()
   return false;
 }
 
-void SculptCurvesBrushStroke::done(const bool /*is_cancel*/) {}
+void SculptCurvesBrushStroke::done(const bool /*is_cancel*/, bool /*stroke_started*/) {}
 
 static wmOperatorStatus sculpt_curves_stroke_invoke(bContext *C,
                                                     wmOperator *op,
