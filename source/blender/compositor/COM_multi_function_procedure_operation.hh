@@ -23,6 +23,8 @@
 
 namespace blender::compositor {
 
+struct Schedule;
+
 /* ------------------------------------------------------------------------------------------------
  * Multi-Function Procedure Operation
  *
@@ -65,7 +67,7 @@ class MultiFunctionProcedureOperation : public PixelOperation {
    * should be true. */
   MultiFunctionProcedureOperation(Context &context,
                                   PixelCompileUnit &compile_unit,
-                                  const VectorSet<const bNode *> &schedule,
+                                  const Schedule &schedule,
                                   const bool is_single_value);
 
   /* Calls the multi-function procedure executor on the domain of the operator passing in the

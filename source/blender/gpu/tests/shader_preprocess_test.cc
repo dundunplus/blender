@@ -2018,6 +2018,22 @@ static void test_preprocess_swizzle()
 }
 GPU_TEST(preprocess_swizzle);
 
+static void test_preprocess_binary_literals()
+{
+  using namespace shader;
+  using namespace std;
+
+  {
+    string input = R"(0b1 0b10u 0b10001000100010001000100010001000)";
+    string expect = R"(1 2u 2290649224)";
+    string error;
+    string output = process_test_local(input, error);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+}
+GPU_TEST(preprocess_binary_literals);
+
 static void test_preprocess_enum()
 {
   using namespace shader;

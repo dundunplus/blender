@@ -19,13 +19,14 @@
 #include "COM_operation.hh"
 #include "COM_pixel_operation.hh"
 #include "COM_result.hh"
+#include "COM_scheduler.hh"
 #include "COM_utilities.hh"
 
 namespace blender::compositor {
 
 PixelOperation::PixelOperation(Context &context,
                                PixelCompileUnit &compile_unit,
-                               const VectorSet<const bNode *> &schedule)
+                               const Schedule &schedule)
     : Operation(context), compile_unit_(compile_unit), schedule_(schedule)
 {
 }
@@ -64,7 +65,7 @@ int PixelOperation::get_internal_input_reference_count(const StringRef &identifi
   return inputs_to_reference_counts_map_.lookup(identifier);
 }
 
-void PixelOperation::compute_results_reference_counts(const VectorSet<const bNode *> &schedule)
+void PixelOperation::compute_results_reference_counts(const Schedule &schedule)
 {
   for (const auto item : output_sockets_to_output_identifiers_map_.items()) {
     int reference_count = number_of_inputs_linked_to_output_conditioned(
@@ -72,7 +73,7 @@ void PixelOperation::compute_results_reference_counts(const VectorSet<const bNod
           /* We only consider inputs that are not part of the pixel operations, because inputs
            * that are part of the pixel operations are internal and do not deal with the result
            * directly. */
-          return schedule.contains(&input.owner_node()) &&
+          return schedule.nodes.contains(&input.owner_node()) &&
                  !compile_unit_.contains(&input.owner_node());
         });
 

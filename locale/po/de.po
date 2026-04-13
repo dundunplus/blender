@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-12-02 20:06+0000\n"
 "Last-Translator: Bastitron <bastitronhd@gmail.com>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -4162,10 +4162,6 @@ msgstr "Anzeigen von Hilfelinien für die Strichverlängerung"
 
 msgid "Show Lasso"
 msgstr "Lasso anzeigen"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Füllfarbe beim Zeichnen des Strichs nicht anzeigen"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -18695,16 +18691,92 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
+msgid "Face Data"
+msgstr "Flächendaten"
+
+
 msgid "Math"
 msgstr "Mathematisch"
 
 
-msgid "Mirror"
-msgstr "Spiegeln"
+msgid "Clean Up"
+msgstr "Aufräumen"
+
+
+msgid "Merge"
+msgstr "Zusammenführen"
+
+
+msgid "Show/Hide"
+msgstr "Zeigen/Verbergen"
+
+
+msgid "Special Characters"
+msgstr "Sonderzeichen"
+
+
+msgid "Kerning"
+msgstr "Kerning"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Read"
+msgstr "Lesen"
+
+
+msgid "Sample"
+msgstr "Beispiel"
+
+
+msgid "Write"
+msgstr "Schreiben"
+
+
+msgid "Names"
+msgstr "Namen"
+
+
+msgid "Primitives"
+msgstr "Grundkörper"
+
+
+msgid "Instances"
+msgstr "Instanzen"
+
+
+msgid "Pivot Point"
+msgstr "Drehpunkt"
 
 
 msgid "Snap"
 msgstr "Einrasten"
+
+
+msgid "Import"
+msgstr "Importieren"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proportionaler Bearbeitungsabfall"
+
+
+msgid "Mask Edit"
+msgstr "Maskenbearbeitung"
+
+
+msgid "Vertex Group Locks"
+msgstr "Punktgruppen sperren"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Spiegeln"
 
 
 msgid "Local View"
@@ -18739,20 +18811,8 @@ msgid "Select Similar"
 msgstr "Ähnliche auswählen"
 
 
-msgid "Read"
-msgstr "Lesen"
-
-
 msgid "Select All by Trait"
 msgstr "Alles nach Merkmal auswählen"
-
-
-msgid "Sample"
-msgstr "Beispiel"
-
-
-msgid "Write"
-msgstr "Schreiben"
 
 
 msgid "Select Linked"
@@ -18763,24 +18823,8 @@ msgid "Select Loops"
 msgstr "Schleifen auswählen"
 
 
-msgid "Primitives"
-msgstr "Grundkörper"
-
-
 msgid "Assign Material"
 msgstr "Material zuweisen"
-
-
-msgid "Instances"
-msgstr "Instanzen"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
-msgid "Import"
-msgstr "Importieren"
 
 
 msgid "Light"
@@ -18799,12 +18843,12 @@ msgid "Relations"
 msgstr "Beziehungen"
 
 
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Rigid Body"
 msgstr "Rigid Body"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -18819,14 +18863,6 @@ msgid "Quick Effects"
 msgstr "Schnelle Effekte"
 
 
-msgid "Show/Hide"
-msgstr "Zeigen/Verbergen"
-
-
-msgid "Clean Up"
-msgstr "Aufräumen"
-
-
 msgid "Asset"
 msgstr "Asset"
 
@@ -18839,12 +18875,16 @@ msgid "Convert"
 msgstr "Konvertieren"
 
 
+msgid "Keying"
+msgstr "Schlüsselbilder"
+
+
 msgid "Hooks"
 msgstr "Haken"
 
 
-msgid "Vertex Group Locks"
-msgstr "Punktgruppen sperren"
+msgid "Tracking"
+msgstr "Verfolgen"
 
 
 msgid "Random Mask"
@@ -18857,10 +18897,6 @@ msgstr "Transformation löschen"
 
 msgid "In-Betweens"
 msgstr "Dazwischen"
-
-
-msgid "Names"
-msgstr "Namen"
 
 
 msgid "Toggle Bone Options"
@@ -18877,46 +18913,6 @@ msgstr "Knochen-Optionen ausschalten"
 
 msgid "Mesh Select Mode"
 msgstr "Maschenauswahlmodus"
-
-
-msgid "Face Data"
-msgstr "Flächendaten"
-
-
-msgid "Merge"
-msgstr "Zusammenführen"
-
-
-msgid "Layout"
-msgstr "Layout"
-
-
-msgid "Special Characters"
-msgstr "Sonderzeichen"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
-msgid "Keying"
-msgstr "Schlüsselbilder"
-
-
-msgid "Tracking"
-msgstr "Verfolgen"
-
-
-msgid "Pivot Point"
-msgstr "Drehpunkt"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportionaler Bearbeitungsabfall"
-
-
-msgid "Mask Edit"
-msgstr "Maskenbearbeitung"
 
 
 msgid "Assets"
@@ -38767,6 +38763,14 @@ msgid "Active Palette Color"
 msgstr "Aktive Farbpalette"
 
 
+msgid "Active Tool"
+msgstr "Aktives Werkzeug"
+
+
+msgid "View Lock"
+msgstr "Ansicht sperren"
+
+
 msgid "Shadow Settings"
 msgstr "Schatteneinstellungen"
 
@@ -38837,14 +38841,6 @@ msgstr "Automatisches Maskieren"
 
 msgid "VR"
 msgstr "VR"
-
-
-msgid "Active Tool"
-msgstr "Aktives Werkzeug"
-
-
-msgid "View Lock"
-msgstr "Ansicht sperren"
 
 
 msgid "Chain Scaling"

@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
-"PO-Revision-Date: 2026-03-30 03:12+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"PO-Revision-Date: 2026-04-06 15:46+0000\n"
 "Last-Translator: Satoshi Yamasaki <yamyam@yo.rim.or.jp>\n"
 "Language-Team: Japanese <https://translate.blender.org/projects/blender-ui/ui/ja/>\n"
 "Language: ja\n"
@@ -6154,10 +6154,6 @@ msgstr "ストローク延長用の補助線を表示します"
 
 msgid "Show Lasso"
 msgstr "投げ縄を表示"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "ストロークドロー中にフィルカラーを表示しません"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -35780,6 +35776,10 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "ストロークに沿ったテクスチャピクセルサイズ係数"
 
 
+msgid "Placement"
+msgstr "配置"
+
+
 msgid "Show stroke fills of this material"
 msgstr "このマテリアルのストロークフィルを表示します"
 
@@ -35881,6 +35881,18 @@ msgid "Editor menu containing buttons"
 msgstr "ボタンを含むエディターメニュー"
 
 
+msgid "Face Data"
+msgstr "面データ"
+
+
+msgid "Select by Face Strength"
+msgstr "面の強さで選択"
+
+
+msgid "Set Face Strength"
+msgstr "面の強さを設定"
+
+
 msgid "Math"
 msgstr "数式"
 
@@ -35889,12 +35901,108 @@ msgid "Utilities"
 msgstr "ユーティリティ"
 
 
-msgid "Mirror"
-msgstr "ミラー"
+msgid "Clean Up"
+msgstr "クリーンアップ"
+
+
+msgid "Merge"
+msgstr "マージ"
+
+
+msgid "Show/Hide"
+msgstr "表示/隠す"
+
+
+msgid "Special Characters"
+msgstr "特殊文字"
+
+
+msgid "Kerning"
+msgstr "カーニング"
+
+
+msgid "Metaball"
+msgstr "メタボール"
+
+
+msgid "Read"
+msgstr "読込"
+
+
+msgid "Sample"
+msgstr "サンプル"
+
+
+msgid "Write"
+msgstr "書込"
+
+
+msgid "Names"
+msgstr "名前"
+
+
+msgid "Primitives"
+msgstr "プリミティブ"
+
+
+msgid "Bone Roll"
+msgstr "ボーンロール"
+
+
+msgid "Gizmo"
+msgstr "ギズモ"
+
+
+msgid "Instances"
+msgstr "インスタンス"
+
+
+msgid "Pivot Point"
+msgstr "ピボットポイント"
 
 
 msgid "Snap"
 msgstr "スナップ"
+
+
+msgid "Import"
+msgstr "インポート"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "プロポーショナル編集の減衰タイプ"
+
+
+msgid "Mask Edit"
+msgstr "マスク編集"
+
+
+msgid "Automasking"
+msgstr "自動マスク"
+
+
+msgid "Face Sets Edit"
+msgstr "面セット編集"
+
+
+msgid "Vertex Group Locks"
+msgstr "頂点グループのロック"
+
+
+msgid "Deprecated"
+msgstr "廃止予定"
+
+
+msgid "List"
+msgstr "リスト"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "ミラー"
 
 
 msgid "UV Mapping"
@@ -35933,20 +36041,8 @@ msgid "Select Similar"
 msgstr "類似選択"
 
 
-msgid "Read"
-msgstr "読込"
-
-
 msgid "Select All by Trait"
 msgstr "特徴で全選択"
-
-
-msgid "Sample"
-msgstr "サンプル"
-
-
-msgid "Write"
-msgstr "書込"
 
 
 msgid "Select Linked"
@@ -35957,28 +36053,8 @@ msgid "Select Loops"
 msgstr "ループ選択"
 
 
-msgid "Primitives"
-msgstr "プリミティブ"
-
-
 msgid "Assign Material"
 msgstr "マテリアルを割り当て"
-
-
-msgid "Gizmo"
-msgstr "ギズモ"
-
-
-msgid "Instances"
-msgstr "インスタンス"
-
-
-msgid "Metaball"
-msgstr "メタボール"
-
-
-msgid "Import"
-msgstr "インポート"
 
 
 msgid "Light"
@@ -35989,10 +36065,6 @@ msgid "Light Probe"
 msgstr "ライトプローブ"
 
 
-msgid "Deprecated"
-msgstr "廃止予定"
-
-
 msgid "Add Image"
 msgstr "画像を追加"
 
@@ -36001,16 +36073,12 @@ msgid "Relations"
 msgstr "関係"
 
 
-msgid "List"
-msgstr "リスト"
+msgid "Layout"
+msgstr "レイアウト"
 
 
 msgid "Rigid Body"
 msgstr "リジッドボディ"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -36025,16 +36093,12 @@ msgid "Quick Effects"
 msgstr "クイックエフェクト"
 
 
-msgid "Show/Hide"
-msgstr "表示/隠す"
-
-
-msgid "Clean Up"
-msgstr "クリーンアップ"
-
-
 msgid "Asset"
 msgstr "アセット"
+
+
+msgid "Adjust"
+msgstr "調整"
 
 
 msgid "Make Single User"
@@ -36049,16 +36113,28 @@ msgid "Link/Transfer Data"
 msgstr "データのリンク/転送"
 
 
+msgid "Keying"
+msgstr "キーイング"
+
+
 msgid "Hooks"
 msgstr "フック"
 
 
-msgid "Vertex Group Locks"
-msgstr "頂点グループのロック"
+msgid "Tracking"
+msgstr "トラッキング"
+
+
+msgid "Render Preview"
+msgstr "レンダープレビュー"
 
 
 msgid "Trim/Add"
 msgstr "トリム/追加"
+
+
+msgid "Creative"
+msgstr "クリエイティブ"
 
 
 msgid "Sculpt Set Pivot"
@@ -36089,10 +36165,6 @@ msgid "Bone Collections"
 msgstr "ボーンコレクション"
 
 
-msgid "Names"
-msgstr "名前"
-
-
 msgid "Toggle Bone Options"
 msgstr "ボーンオプションを切り替え"
 
@@ -36107,78 +36179,6 @@ msgstr "ボーンオプションを無効化"
 
 msgid "Mesh Select Mode"
 msgstr "メッシュ選択モード"
-
-
-msgid "Face Data"
-msgstr "面データ"
-
-
-msgid "Select by Face Strength"
-msgstr "面の強さで選択"
-
-
-msgid "Set Face Strength"
-msgstr "面の強さを設定"
-
-
-msgid "Merge"
-msgstr "マージ"
-
-
-msgid "Layout"
-msgstr "レイアウト"
-
-
-msgid "Special Characters"
-msgstr "特殊文字"
-
-
-msgid "Kerning"
-msgstr "カーニング"
-
-
-msgid "Adjust"
-msgstr "調整"
-
-
-msgid "Keying"
-msgstr "キーイング"
-
-
-msgid "Bone Roll"
-msgstr "ボーンロール"
-
-
-msgid "Tracking"
-msgstr "トラッキング"
-
-
-msgid "Render Preview"
-msgstr "レンダープレビュー"
-
-
-msgid "Creative"
-msgstr "クリエイティブ"
-
-
-msgid "Pivot Point"
-msgstr "ピボットポイント"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "プロポーショナル編集の減衰タイプ"
-
-
-msgid "Mask Edit"
-msgstr "マスク編集"
-
-
-msgid "Automasking"
-msgstr "自動マスク"
-
-
-msgid "Face Sets Edit"
-msgstr "面セット編集"
 
 
 msgid "Keyframe Insert Pie"
@@ -60295,10 +60295,6 @@ msgid "Minimal distance accepted between two features"
 msgstr "2つの特徴点間に許容される最小距離"
 
 
-msgid "Placement"
-msgstr "配置"
-
-
 msgid "Placement for detected features"
 msgstr "検出された特徴点の配置"
 
@@ -71413,11 +71409,11 @@ msgstr "形状で隠れるカットラインを表示します"
 
 msgctxt "Operator"
 msgid "Loop Select"
-msgstr "辺ループ選択"
+msgstr "ループ選択"
 
 
 msgid "Select a loop of connected edges"
-msgstr "接続されている辺をループ状に選択"
+msgstr "接続されている辺をループ状に選択します"
 
 
 msgid "Delimit edge loop selection"
@@ -71575,6 +71571,16 @@ msgstr "タイプ"
 
 msgid "Merge method to use"
 msgstr "使用されるマージ方法"
+
+
+msgctxt "Mesh"
+msgid "At Center"
+msgstr "中心に"
+
+
+msgctxt "Mesh"
+msgid "At Cursor"
+msgstr "カーソル位置に"
 
 
 msgid "Move UVs according to merge"
@@ -73825,6 +73831,10 @@ msgstr "背景画像のズーム"
 
 msgid "Zoom in/out the background image"
 msgstr "背景画像をズームイン/アウト"
+
+
+msgid "Zoom to mouse position"
+msgstr "マウス位置でズーム"
 
 
 msgctxt "Operator"
@@ -76432,12 +76442,32 @@ msgid "Replace Modifiers"
 msgstr "モディファイアーを置き換え"
 
 
+msgid "Copy Constraints"
+msgstr "コンストレイントをコピー"
+
+
+msgid "Replace Constraints"
+msgstr "コンストレイントを置き換え"
+
+
 msgid "Copy Grease Pencil Effects"
 msgstr "グリースペンシルエフェクトをコピー"
 
 
 msgid "Replace Grease Pencil Effects"
 msgstr "グリースペンシルエフェクトを置き換え"
+
+
+msgid "Copy Light Linking"
+msgstr "ライトリンキングをコピー"
+
+
+msgid "Copy Shadow Linking"
+msgstr "シャドウリンキングをコピー"
+
+
+msgid "Replace assigned Shadow Linking collection"
+msgstr "シャドウリンキングコレクションの割り当てを置き換えます"
 
 
 msgctxt "Operator"
@@ -81823,6 +81853,11 @@ msgstr "現在のキャッシュを削除します"
 
 
 msgctxt "Operator"
+msgid "Generate Texture Cache"
+msgstr "テクスチャキャッシュを生成"
+
+
+msgctxt "Operator"
 msgid "Viewport Render"
 msgstr "ビューポートレンダー"
 
@@ -85635,12 +85670,29 @@ msgid "Copy modifiers of the active strip to all selected strips"
 msgstr "アクティブストリップのモディファイアーを，選択中のストリップにコピーします"
 
 
+msgid "Name of the modifier to copy. If empty, copy all modifiers"
+msgstr "コピーするモディファイアーの名前．空の場合，すべてのモディファイアーをコピーします"
+
+
 msgid "Replace modifiers in destination"
 msgstr "対象のモディファイアーを置き換えます"
 
 
 msgid "Append active modifiers to selected strips"
 msgstr "アクティブモディファイアーを選択中のストリップにアペンドします"
+
+
+msgctxt "Operator"
+msgid "Duplicate Modifier"
+msgstr "モディファイアーを複製"
+
+
+msgid "Duplicate (active) modifier of the active strip"
+msgstr "アクティブストリップの（アクティブ）モディファイアーを複製します"
+
+
+msgid "Name of the modifier to duplicate. If empty duplicate the active modifier"
+msgstr "複製するモディファイアーの名前．空の場合はアクティブモディファイアーを複製します"
 
 
 msgctxt "Operator"
@@ -93567,6 +93619,34 @@ msgid "Panel containing UI elements"
 msgstr "UIの要素を含むパネル"
 
 
+msgid "glTF Variants"
+msgstr "glTFバリアント"
+
+
+msgid "glTF Material Variants"
+msgstr "glTFマテリアルバリアント"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTFアニメーション"
+
+
+msgid "Active Tool"
+msgstr "アクティブツール"
+
+
+msgid "View Lock"
+msgstr "ビューのロック"
+
+
+msgid "Selectability & Visibility"
+msgstr "選択可否と可視性"
+
+
 msgid "Shadow Settings"
 msgstr "影の設定"
 
@@ -93577,10 +93657,6 @@ msgstr "SSAO設定"
 
 msgid "Cavity"
 msgstr "キャビティ"
-
-
-msgid "glTF Material Variants"
-msgstr "glTFマテリアルバリアント"
 
 
 msgid "Render Pass"
@@ -93597,14 +93673,6 @@ msgstr "オーバーレイ"
 
 msgid "Guides"
 msgstr "ガイド"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTFアニメーション"
 
 
 msgid "Viewer Node"
@@ -93689,22 +93757,6 @@ msgstr "VR"
 
 msgid "VR Info"
 msgstr "VR情報"
-
-
-msgid "Active Tool"
-msgstr "アクティブツール"
-
-
-msgid "glTF Variants"
-msgstr "glTFバリアント"
-
-
-msgid "View Lock"
-msgstr "ビューのロック"
-
-
-msgid "Selectability & Visibility"
-msgstr "選択可否と可視性"
 
 
 msgid "Import Settings"
@@ -140648,10 +140700,6 @@ msgid "PaintCurve"
 msgstr "ペイントカーブ"
 
 
-msgid "Palette created"
-msgstr "パレットを作成しました"
-
-
 msgid "Sample color for %s"
 msgstr "%s 用の色を採取"
 
@@ -140670,6 +140718,10 @@ msgstr "パレット用に色を取得します"
 
 msgid "Cancelling this stroke is unsupported"
 msgstr "このストロークのキャンセルは未対応です"
+
+
+msgid "Palette created"
+msgstr "パレットを作成しました"
 
 
 msgid "Compiled without sound support"
@@ -142480,18 +142532,6 @@ msgstr "パネルトグル"
 
 msgid "Group Sockets"
 msgstr "グループソケット"
-
-
-msgid "Add \"%s\" Input"
-msgstr "入力「%s」を追加"
-
-
-msgid "Add \"%s\" Input (Ctrl to add panel)"
-msgstr "入力「%s」を追加（＋[Ctrl]でパネルを追加）"
-
-
-msgid "Add \"%s\" Panel"
-msgstr "パネル「%s」を追加"
 
 
 msgid "More than one collection is selected"
@@ -150191,6 +150231,14 @@ msgid "Local Pose"
 msgstr "ローカルポーズ"
 
 
+msgid "Transform Pose"
+msgstr "トランスフォームポーズ"
+
+
+msgid "Rest Pose"
+msgstr "レストポーズ"
+
+
 msgid "Object is not an armature"
 msgstr "オブジェクトはアーマチュアではありません"
 
@@ -150372,6 +150420,14 @@ msgid "Volume scale is lower than permitted by OpenVDB"
 msgstr "ボリュームスケールが OpenVDB の許容範囲より小さいです"
 
 
+msgid "Bounds Min"
+msgstr "境界最小"
+
+
+msgid "Bounds Max"
+msgstr "境界最大"
+
+
 msgid "Min X"
 msgstr "最小 X"
 
@@ -150382,6 +150438,10 @@ msgstr "最小 Y"
 
 msgid "Min Z"
 msgstr "最小 Z"
+
+
+msgid "Boolean grid defining the topology/active regions"
+msgstr "トポロジー/アクティブ領域を定義するブーリアングリッド"
 
 
 msgid "Minimum boundary of the grid (world space)"
@@ -153024,12 +153084,20 @@ msgid "Word"
 msgstr "単語"
 
 
+msgid "Subdivision failed for some geometry. Original mesh returned."
+msgstr "一部ジオメトリの細分化に失敗しました．元メッシュを返します."
+
+
 msgid "Edge Crease"
 msgstr "辺クリース"
 
 
 msgid "Limit Surface"
 msgstr "極限曲面"
+
+
+msgid "Accuracy of vertex positions, lower value is faster but less precise."
+msgstr "頂点位置の精度．小さい値で高速になりますが，精度が下がります."
 
 
 msgid "The location of the scene's 3D cursor, in the local space of the modified object"
@@ -153283,6 +153351,10 @@ msgid "No named attributes used"
 msgstr "名前付き属性は未使用です"
 
 
+msgid "Stack limit reached. Closure becomes pass-through."
+msgstr "スタックの限界に達しました．クロージャはパススルーになります."
+
+
 msgid "Conversion not supported when evaluating closure"
 msgstr "クロージャ評価時の変換は未対応です"
 
@@ -153305,6 +153377,10 @@ msgstr "入力ジオメトリには繰り返すドメイン内に要素があり
 
 msgid "\"{}\" from {}"
 msgstr "「{}」（{}）"
+
+
+msgid "Stack limit reached. Group node is ignored."
+msgstr "スタックの限界に達しました．グループノードは無視されます."
 
 
 msgid "Group '{}' ({})"
@@ -153337,6 +153413,18 @@ msgstr "無視された出力があります"
 
 msgid "Unused Output"
 msgstr "未使用の出力"
+
+
+msgid "Sequencer supports up to two Image inputs, the rest will return zero"
+msgstr "シーケンサーが対応する画像入力は二つまでです．残りは０を返します"
+
+
+msgid "Sequencer supports one Float input, the rest will return zero"
+msgstr "シーケンサーが対応する Float 入力は一つだけです．残りは０を返します"
+
+
+msgid "Sequencer supports only Color and Float inputs, the rest will return zero"
+msgstr "シーケンサーが対応するのはカラーと Float 入力のみです．残りは０を返します"
 
 
 msgid "Node group must have a Color output socket"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: VertexSelection <amacsizk2021@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -5342,10 +5342,6 @@ msgstr "Vuruş uzantısı için yardım çizgilerini göster"
 
 msgid "Show Lasso"
 msgstr "Kemeri Göster"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Konturu çizerken dolgu rengini görüntülemeyin"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -28810,6 +28806,10 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "Vuruş boyunca Doku Piksel Boyut faktörü"
 
 
+msgid "Placement"
+msgstr "Atama"
+
+
 msgid "Show stroke fills of this material"
 msgstr "Bu materyalin kontur dolgularını göster"
 
@@ -28903,6 +28903,18 @@ msgid "Editor menu containing buttons"
 msgstr "Düğmeler içeren düzenleyici menüsü"
 
 
+msgid "Face Data"
+msgstr "Yüz Verileri"
+
+
+msgid "Select by Face Strength"
+msgstr "Yüz Gücüne Göre Seç"
+
+
+msgid "Set Face Strength"
+msgstr "Yüz Gücünü Ayarla"
+
+
 msgid "Math"
 msgstr "Matematik"
 
@@ -28911,12 +28923,100 @@ msgid "Utilities"
 msgstr "Kamu hizmetleri"
 
 
-msgid "Mirror"
-msgstr "Yansıtma"
+msgid "Clean Up"
+msgstr "Temizle"
+
+
+msgid "Merge"
+msgstr "Birleştir"
+
+
+msgid "Show/Hide"
+msgstr "Göster/Gizle"
+
+
+msgid "Special Characters"
+msgstr "Özel Karakterler"
+
+
+msgid "Kerning"
+msgstr "Harf aralığı"
+
+
+msgid "Metaball"
+msgstr "Metabol"
+
+
+msgid "Read"
+msgstr "Okumak"
+
+
+msgid "Sample"
+msgstr "Örnek"
+
+
+msgid "Write"
+msgstr "Yazmak"
+
+
+msgid "Names"
+msgstr "Adlar"
+
+
+msgid "Primitives"
+msgstr "İlkel"
+
+
+msgid "Bone Roll"
+msgstr "Kemik Rulosu"
+
+
+msgid "Instances"
+msgstr "Örnekler"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Noktası"
 
 
 msgid "Snap"
 msgstr "Yakala"
+
+
+msgid "Import"
+msgstr "İçe Aktar"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Orantılı Düzenleme Düşüşü"
+
+
+msgid "Mask Edit"
+msgstr "Maske Düzenleme"
+
+
+msgid "Automasking"
+msgstr "Otomatik maskeleme"
+
+
+msgid "Face Sets Edit"
+msgstr "Yüz Setleri Düzenle"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Grup Kilitleri"
+
+
+msgid "Deprecated"
+msgstr "Kullanım dışı bırakıldı"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Yansıtma"
 
 
 msgid "UV Mapping"
@@ -28955,20 +29055,8 @@ msgid "Select Similar"
 msgstr "Benzerini Seç"
 
 
-msgid "Read"
-msgstr "Okumak"
-
-
 msgid "Select All by Trait"
 msgstr "Özelliğe Göre Tümünü Seç"
-
-
-msgid "Sample"
-msgstr "Örnek"
-
-
-msgid "Write"
-msgstr "Yazmak"
 
 
 msgid "Select Linked"
@@ -28979,24 +29067,8 @@ msgid "Select Loops"
 msgstr "Döngüleri Seç"
 
 
-msgid "Primitives"
-msgstr "İlkel"
-
-
 msgid "Assign Material"
 msgstr "Malzeme Atamak"
-
-
-msgid "Instances"
-msgstr "Örnekler"
-
-
-msgid "Metaball"
-msgstr "Metabol"
-
-
-msgid "Import"
-msgstr "İçe Aktar"
 
 
 msgid "Light"
@@ -29007,10 +29079,6 @@ msgid "Light Probe"
 msgstr "Işık Sondası"
 
 
-msgid "Deprecated"
-msgstr "Kullanım dışı bırakıldı"
-
-
 msgid "Add Image"
 msgstr "Resim Ekle"
 
@@ -29019,12 +29087,12 @@ msgid "Relations"
 msgstr "İlişkiler"
 
 
+msgid "Layout"
+msgstr "Yerleşim"
+
+
 msgid "Rigid Body"
 msgstr "Sert Gövde"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -29039,16 +29107,12 @@ msgid "Quick Effects"
 msgstr "Hızlı Etkiler"
 
 
-msgid "Show/Hide"
-msgstr "Göster/Gizle"
-
-
-msgid "Clean Up"
-msgstr "Temizle"
-
-
 msgid "Asset"
 msgstr "Varlık"
+
+
+msgid "Adjust"
+msgstr "Ayarlamak"
 
 
 msgid "Make Single User"
@@ -29063,12 +29127,16 @@ msgid "Link/Transfer Data"
 msgstr "Veriyi Bağlantıla/Aktar"
 
 
+msgid "Keying"
+msgstr "Anahtarlama"
+
+
 msgid "Hooks"
 msgstr "Kancalar"
 
 
-msgid "Vertex Group Locks"
-msgstr "Vertex Grup Kilitleri"
+msgid "Tracking"
+msgstr "Takip"
 
 
 msgid "Trim/Add"
@@ -29103,10 +29171,6 @@ msgid "Bone Collections"
 msgstr "Kemik Koleksiyonları"
 
 
-msgid "Names"
-msgstr "Adlar"
-
-
 msgid "Toggle Bone Options"
 msgstr "Kemik Seçeneklerini Değiştir"
 
@@ -29121,70 +29185,6 @@ msgstr "Kemik Seçeneklerini Devre Dışı Bırak"
 
 msgid "Mesh Select Mode"
 msgstr "Örgü Seçim Kipi"
-
-
-msgid "Face Data"
-msgstr "Yüz Verileri"
-
-
-msgid "Select by Face Strength"
-msgstr "Yüz Gücüne Göre Seç"
-
-
-msgid "Set Face Strength"
-msgstr "Yüz Gücünü Ayarla"
-
-
-msgid "Merge"
-msgstr "Birleştir"
-
-
-msgid "Layout"
-msgstr "Yerleşim"
-
-
-msgid "Special Characters"
-msgstr "Özel Karakterler"
-
-
-msgid "Kerning"
-msgstr "Harf aralığı"
-
-
-msgid "Adjust"
-msgstr "Ayarlamak"
-
-
-msgid "Keying"
-msgstr "Anahtarlama"
-
-
-msgid "Bone Roll"
-msgstr "Kemik Rulosu"
-
-
-msgid "Tracking"
-msgstr "Takip"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Noktası"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Orantılı Düzenleme Düşüşü"
-
-
-msgid "Mask Edit"
-msgstr "Maske Düzenleme"
-
-
-msgid "Automasking"
-msgstr "Otomatik maskeleme"
-
-
-msgid "Face Sets Edit"
-msgstr "Yüz Setleri Düzenle"
 
 
 msgid "Keyframe Insert Pie"
@@ -48337,10 +48337,6 @@ msgstr "Yalnızca görüntü kenarlarından kenar piksellerinden daha uzaktaki �
 
 msgid "Minimal distance accepted between two features"
 msgstr "İki özellik arasında kabul edilen minimum mesafe"
-
-
-msgid "Placement"
-msgstr "Atama"
 
 
 msgid "Placement for detected features"
@@ -75646,6 +75642,26 @@ msgid "Panel containing UI elements"
 msgstr "UI öğelerini içeren panel"
 
 
+msgid "glTF Variants"
+msgstr "glTF Çeşitleri"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF Malzeme Varyantları"
+
+
+msgid "Active Tool"
+msgstr "Etkin Araç"
+
+
+msgid "View Lock"
+msgstr "Görünüm Kilidi"
+
+
+msgid "Selectability & Visibility"
+msgstr "Seçilebilirlik ve Görünürlük"
+
+
 msgid "Shadow Settings"
 msgstr "Gölge Ayarları"
 
@@ -75656,10 +75672,6 @@ msgstr "SSAO Ayarları"
 
 msgid "Cavity"
 msgstr "Boşluk"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF Malzeme Varyantları"
 
 
 msgid "Render Pass"
@@ -75752,22 +75764,6 @@ msgstr "Sanal Gerçeklik"
 
 msgid "VR Info"
 msgstr "VR Bilgisi"
-
-
-msgid "Active Tool"
-msgstr "Etkin Araç"
-
-
-msgid "glTF Variants"
-msgstr "glTF Çeşitleri"
-
-
-msgid "View Lock"
-msgstr "Görünüm Kilidi"
-
-
-msgid "Selectability & Visibility"
-msgstr "Seçilebilirlik ve Görünürlük"
 
 
 msgid "Chain Scaling"
@@ -112385,10 +112381,6 @@ msgid "PaintCurve"
 msgstr "Boya Eğrisi"
 
 
-msgid "Palette created"
-msgstr "Palet oluşturuldu"
-
-
 msgid "Sample color for %s"
 msgstr "%s için örnek renk"
 
@@ -112399,6 +112391,10 @@ msgstr "Fırça. Palet için örnekleme yapmak için Sol Tıklamayı kullanın"
 
 msgid "Palette. Use Left Click to sample more colors"
 msgstr "Palet. Daha fazla renk örneklemek için Sol Tıklamayı kullanın"
+
+
+msgid "Palette created"
+msgstr "Palet oluşturuldu"
 
 
 msgid "Compiled without sound support"

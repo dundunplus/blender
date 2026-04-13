@@ -39,15 +39,15 @@
 #include "COM_multi_function_procedure_operation.hh"
 #include "COM_pixel_operation.hh"
 #include "COM_result.hh"
+#include "COM_scheduler.hh"
 #include "COM_utilities.hh"
 
 namespace blender::compositor {
 
-MultiFunctionProcedureOperation::MultiFunctionProcedureOperation(
-    Context &context,
-    PixelCompileUnit &compile_unit,
-    const VectorSet<const bNode *> &schedule,
-    const bool is_single_value)
+MultiFunctionProcedureOperation::MultiFunctionProcedureOperation(Context &context,
+                                                                 PixelCompileUnit &compile_unit,
+                                                                 const Schedule &schedule,
+                                                                 const bool is_single_value)
     : PixelOperation(context, compile_unit, schedule),
       procedure_builder_(procedure_),
       is_single_value_(is_single_value)
@@ -435,7 +435,7 @@ void MultiFunctionProcedureOperation::assign_output_variables(const bNode &node,
      * populated for it. */
     const bool is_operation_output = is_output_linked_to_node_conditioned(
         *output, [&](const bNode &node) {
-          return schedule_.contains(&node) && !compile_unit_.contains(&node);
+          return schedule_.nodes.contains(&node) && !compile_unit_.contains(&node);
         });
 
     /* If the output is used as the node preview, then an output result needs to be populated for

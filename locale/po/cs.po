@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-12-01 09:17+0000\n"
 "Last-Translator: Matt Mitacek <mattmitacek@gmail.com>\n"
 "Language-Team: Czech <https://translate.blender.org/projects/blender-ui/ui/cs/>\n"
@@ -13823,6 +13823,10 @@ msgid "UV Factor"
 msgstr "UV Faktor"
 
 
+msgid "Placement"
+msgstr "Umístění"
+
+
 msgid "Material slot in an object"
 msgstr "Přivlastnit"
 
@@ -13835,6 +13839,10 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
+msgid "Face Data"
+msgstr "Data Ploch"
+
+
 msgid "Math"
 msgstr "Matematika"
 
@@ -13843,12 +13851,56 @@ msgid "Utilities"
 msgstr "Nástroje"
 
 
-msgid "Mirror"
-msgstr "Zrcadlit"
+msgid "Clean Up"
+msgstr "Vyčistit"
+
+
+msgid "Merge"
+msgstr "Sloučit"
+
+
+msgid "Show/Hide"
+msgstr "Zobrazit/skrýt"
+
+
+msgid "Special Characters"
+msgstr "Speciální Znaky"
+
+
+msgid "Metaball"
+msgstr "Meta objekt"
+
+
+msgid "Names"
+msgstr "Názvy"
+
+
+msgid "Bone Roll"
+msgstr "Kost"
+
+
+msgid "Instances"
+msgstr "Instance"
+
+
+msgid "Pivot Point"
+msgstr "Bod pro pivot"
 
 
 msgid "Snap"
 msgstr "Přichytit"
+
+
+msgid "Import"
+msgstr "Importovat"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Způsob útlumu"
+
+
+msgid "Mirror"
+msgstr "Zrcadlit"
 
 
 msgid "UV Mapping"
@@ -13875,24 +13927,16 @@ msgid "Assign Material"
 msgstr "Přiřadit Materiál"
 
 
-msgid "Instances"
-msgstr "Instance"
-
-
-msgid "Metaball"
-msgstr "Meta objekt"
-
-
-msgid "Import"
-msgstr "Importovat"
-
-
 msgid "Light"
 msgstr "Světlo"
 
 
 msgid "Relations"
 msgstr "Vztahy"
+
+
+msgid "Layout"
+msgstr "Rozložení"
 
 
 msgid "Rigid Body"
@@ -13911,20 +13955,20 @@ msgid "Quick Effects"
 msgstr "Rychlé Efekty"
 
 
-msgid "Show/Hide"
-msgstr "Zobrazit/skrýt"
-
-
-msgid "Clean Up"
-msgstr "Vyčistit"
-
-
 msgid "Make Single User"
 msgstr "Přivlastnit"
 
 
+msgid "Keying"
+msgstr "Klíčovací sestava"
+
+
 msgid "Hooks"
 msgstr "Háky"
+
+
+msgid "Tracking"
+msgstr "Sledování"
 
 
 msgid "Clear Transform"
@@ -13935,48 +13979,8 @@ msgid "Propagate"
 msgstr "Vložit"
 
 
-msgid "Names"
-msgstr "Názvy"
-
-
 msgid "Mesh Select Mode"
 msgstr "Síťový mód výběru"
-
-
-msgid "Face Data"
-msgstr "Data Ploch"
-
-
-msgid "Merge"
-msgstr "Sloučit"
-
-
-msgid "Layout"
-msgstr "Rozložení"
-
-
-msgid "Special Characters"
-msgstr "Speciální Znaky"
-
-
-msgid "Keying"
-msgstr "Klíčovací sestava"
-
-
-msgid "Bone Roll"
-msgstr "Kost"
-
-
-msgid "Tracking"
-msgstr "Sledování"
-
-
-msgid "Pivot Point"
-msgstr "Bod pro pivot"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Způsob útlumu"
 
 
 msgid "Basic"
@@ -19815,10 +19819,6 @@ msgstr "Vybrat podle vzoru"
 
 msgid "Automatically detect features and place markers to track"
 msgstr "Automatické sloučení vrcholů posuntých na to samé umístění"
-
-
-msgid "Placement"
-msgstr "Umístění"
 
 
 msgid "Placement for detected features"
@@ -30361,6 +30361,14 @@ msgid "Restrict"
 msgstr "Omezit"
 
 
+msgid "Active Tool"
+msgstr "Aktivní nástroj"
+
+
+msgid "View Lock"
+msgstr "Zámek zobrazení"
+
+
 msgid "Shadow Settings"
 msgstr "Nastavení Stínů"
 
@@ -30407,14 +30415,6 @@ msgstr "Stereoskopie"
 
 msgid "Auto-Masking"
 msgstr "Auto-Maska"
-
-
-msgid "Active Tool"
-msgstr "Aktivní nástroj"
-
-
-msgid "View Lock"
-msgstr "Zámek zobrazení"
 
 
 msgid "Chain Scaling"

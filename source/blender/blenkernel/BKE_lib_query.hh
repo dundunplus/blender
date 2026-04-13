@@ -116,14 +116,17 @@ enum LibraryForeachIDCallbackFlag {
   /** This ID is used as library override's reference by its owner. */
   IDWALK_CB_OVERRIDE_LIBRARY_REFERENCE = (1 << 16),
 
+  /** This ID is used as library override's hierarchy root by its owner. */
+  IDWALK_CB_OVERRIDE_LIBRARY_HIERARCHY_ROOT = (1 << 17),
+
   /** This ID pointer is not overridable. */
-  IDWALK_CB_OVERRIDE_LIBRARY_NOT_OVERRIDABLE = (1 << 17),
+  IDWALK_CB_OVERRIDE_LIBRARY_NOT_OVERRIDABLE = (1 << 18),
 
   /** This ID pointer is expected to be overridden by default, in liboverride hierarchy context. */
-  IDWALK_CB_OVERRIDE_LIBRARY_HIERARCHY_DEFAULT = (1 << 18),
+  IDWALK_CB_OVERRIDE_LIBRARY_HIERARCHY_DEFAULT = (1 << 19),
 
   /** This ID pointer is runtime data and it should not affect the ID.deep_hash computation. */
-  IDWALK_CB_HASH_IGNORE = (1 << 19),
+  IDWALK_CB_HASH_IGNORE = (1 << 20),
 };
 ENUM_OPERATORS(LibraryForeachIDCallbackFlag);
 

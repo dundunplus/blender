@@ -1101,6 +1101,14 @@ void IndexMask::from_groups(const IndexMask &universe,
                             Fn &&get_group_index,
                             MutableSpan<IndexMask> r_masks)
 {
+  if (r_masks.size() == 1) {
+#ifndef NDEBUG
+    universe.foreach_index([&](const int i) { BLI_assert(get_group_index(i) == 0); });
+#endif
+    r_masks[0] = universe;
+    return;
+  }
+
   Vector<Vector<T>> indices_by_group(r_masks.size());
   universe.foreach_index([&](const int64_t i) {
     const int group_index = get_group_index(i);

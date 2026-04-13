@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-11-14 10:59+0000\n"
 "Last-Translator: Isaac Gicheha <shwaky3@gmail.com>\n"
 "Language-Team: Swahili <https://translate.blender.org/projects/blender-ui/ui/sw/>\n"
@@ -4961,10 +4961,6 @@ msgstr "Onyesha mistari ya usaidizi kwa upanuzi wa kiharusi"
 
 msgid "Show Lasso"
 msgstr "Onyesha Lasso"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Usionyeshe rangi ya kujaza wakati wa kuchora alama"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -28273,6 +28269,10 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "Kipengele cha Ukubwa wa Pixel ya Muundo pamoja na mpigo"
 
 
+msgid "Placement"
+msgstr "Kuweka"
+
+
 msgid "Show stroke fills of this material"
 msgstr "Onyesha mijazo ya kiharusi ya nyenzo hii"
 
@@ -28382,16 +28382,20 @@ msgid "Utilities"
 msgstr "Huduma"
 
 
-msgid "Mirror"
-msgstr "Kioo"
+msgid "Clean Up"
+msgstr "Safisha"
 
 
-msgid "Snap"
-msgstr "Picha"
+msgid "Merge"
+msgstr "Unganisha"
 
 
-msgid "Navigation"
-msgstr "Urambazaji"
+msgid "Show/Hide"
+msgstr "Onyesha/Ficha"
+
+
+msgid "Metaball"
+msgstr "Mpira wa miguu"
 
 
 msgid "Read"
@@ -28406,10 +28410,6 @@ msgid "Write"
 msgstr "Andika"
 
 
-msgid "Select Linked"
-msgstr "Chagua Imeunganishwa"
-
-
 msgid "Primitives"
 msgstr "Watu wa kwanza"
 
@@ -28418,12 +28418,32 @@ msgid "Instances"
 msgstr "Matukio"
 
 
-msgid "Metaball"
-msgstr "Mpira wa miguu"
+msgid "Pivot Point"
+msgstr "Egemeo"
+
+
+msgid "Snap"
+msgstr "Picha"
 
 
 msgid "Import"
 msgstr "Ingiza"
+
+
+msgid "Deprecated"
+msgstr "Imeacha kutumika"
+
+
+msgid "Mirror"
+msgstr "Kioo"
+
+
+msgid "Navigation"
+msgstr "Urambazaji"
+
+
+msgid "Select Linked"
+msgstr "Chagua Imeunganishwa"
 
 
 msgid "Light"
@@ -28434,36 +28454,16 @@ msgid "Light Probe"
 msgstr "Uchunguzi wa Mwanga"
 
 
-msgid "Deprecated"
-msgstr "Imeacha kutumika"
+msgid "Layout"
+msgstr "Mpangilio"
 
 
 msgid "Apply"
 msgstr "Tumia"
 
 
-msgid "Show/Hide"
-msgstr "Onyesha/Ficha"
-
-
-msgid "Clean Up"
-msgstr "Safisha"
-
-
 msgid "Asset"
 msgstr "Mali"
-
-
-msgid "Bone Collections"
-msgstr "Mikusanyo ya Mifupa"
-
-
-msgid "Merge"
-msgstr "Unganisha"
-
-
-msgid "Layout"
-msgstr "Mpangilio"
 
 
 msgid "Adjust"
@@ -28478,8 +28478,8 @@ msgid "Tracking"
 msgstr "Kufuatilia"
 
 
-msgid "Pivot Point"
-msgstr "Egemeo"
+msgid "Bone Collections"
+msgstr "Mikusanyo ya Mifupa"
 
 
 msgid "Keyframe Insert Pie"
@@ -46665,10 +46665,6 @@ msgstr "Vipengele vilivyo zaidi ya pikseli za ukingo kutoka kwenye kingo za pich
 
 msgid "Minimal distance accepted between two features"
 msgstr "Umbali mdogo unakubalika kati ya vipengele viwili"
-
-
-msgid "Placement"
-msgstr "Kuweka"
 
 
 msgid "Placement for detected features"
@@ -72634,6 +72630,14 @@ msgid "Panel containing UI elements"
 msgstr "Paneli iliyo na vipengele vya UI"
 
 
+msgid "View Lock"
+msgstr "Kufuli ya Tazama"
+
+
+msgid "Selectability & Visibility"
+msgstr "Uteuzi"
+
+
 msgid "Shadow Settings"
 msgstr "Mipangilio ya Kivuli"
 
@@ -72700,14 +72704,6 @@ msgstr "Curves Sculpt Parameta Falloff"
 
 msgid "Viewport Debug"
 msgstr "Utatuzi wa kituo cha kutazama"
-
-
-msgid "View Lock"
-msgstr "Kufuli ya Tazama"
-
-
-msgid "Selectability & Visibility"
-msgstr "Uteuzi"
 
 
 msgid "Motion Blur"
@@ -104041,10 +104037,6 @@ msgid "Dynamic Topology found: %s, disabled"
 msgstr "Topolojia Inayobadilika imepatikana: %s, imezimwa"
 
 
-msgid "Palette created"
-msgstr "Palette imeundwa"
-
-
 msgid "Sample color for %s"
 msgstr "Sampuli ya rangi ya %s"
 
@@ -104055,6 +104047,10 @@ msgstr "Brashi."
 
 msgid "Palette. Use Left Click to sample more colors"
 msgstr "Paleti."
+
+
+msgid "Palette created"
+msgstr "Palette imeundwa"
 
 
 msgid "Compiled without sound support"

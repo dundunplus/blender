@@ -17,6 +17,8 @@
 
 namespace blender::compositor {
 
+struct Schedule;
+
 /* ------------------------------------------------------------------------------------------------
  * Node Operation
  *
@@ -49,7 +51,7 @@ class NodeOperation : public Operation {
    * reference counts of the results are the number of operations that use those results, which is
    * computed as the number of inputs whose node is part of the schedule and is linked to the
    * output corresponding to each result. The node execution schedule is given as an input. */
-  void compute_results_reference_counts(const VectorSet<const bNode *> &schedule);
+  void compute_results_reference_counts(const Schedule &schedule);
 
   /* Setter and getter for instance_key_. */
   void set_instance_key(const bNodeInstanceKey &instance_key);

@@ -353,7 +353,6 @@ void ForwardPipeline::sync()
     {
       /* Common resources. */
       opaque_ps_.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
-      opaque_ps_.bind_texture(RADIANCE_PREVIOUS_LAYER_TEX_SLOT, &inst_.render_buffers.combined_tx);
 
       opaque_ps_.bind_resources(inst_.uniform_data);
       opaque_ps_.bind_resources(inst_.lights);

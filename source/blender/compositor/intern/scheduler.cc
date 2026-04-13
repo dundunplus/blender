@@ -354,14 +354,14 @@ static NeededBuffers compute_number_of_needed_buffers(Stack<const bNode *> &outp
  * doesn't always guarantee an optimal evaluation order, as the optimal evaluation order is very
  * difficult to compute, however, this method works well in most cases. Moreover it assumes that
  * all buffers will have roughly the same size, which may not always be the case. */
-VectorSet<const bNode *> compute_schedule(const Context &context,
-                                          const bNodeTree &node_group,
-                                          NodeGroupOutputTypes needed_outputs_types,
-                                          const Set<StringRef> &needed_outputs,
-                                          const bNodeInstanceKey instance_key,
-                                          const bNodeInstanceKey active_node_group_instance_key)
+Schedule compute_schedule(const Context &context,
+                          const bNodeTree &node_group,
+                          NodeGroupOutputTypes needed_outputs_types,
+                          const Set<StringRef> &needed_outputs,
+                          const bNodeInstanceKey instance_key,
+                          const bNodeInstanceKey active_node_group_instance_key)
 {
-  VectorSet<const bNode *> schedule;
+  Schedule schedule;
 
   /* Validate node group. */
   node_group.ensure_topology_cache();
@@ -429,7 +429,7 @@ VectorSet<const bNode *> compute_schedule(const Context &context,
       }
 
       /* The dependency node was already schedule, so skip it. */
-      if (schedule.contains(&output->owner_node())) {
+      if (schedule.nodes.contains(&output->owner_node())) {
         continue;
       }
 
@@ -459,7 +459,7 @@ VectorSet<const bNode *> compute_schedule(const Context &context,
     if (sorted_dependency_nodes.is_empty()) {
       /* The node might have already been scheduled, so we don't use add_new here and simply don't
        * add it if it was already scheduled. */
-      schedule.add(node_stack.pop());
+      schedule.nodes.add(node_stack.pop());
     }
   }
 

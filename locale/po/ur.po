@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-07-23 15:12+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Urdu <https://translate.blender.org/projects/blender-ui/ui/ur/>\n"
@@ -5424,10 +5424,6 @@ msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﺰﮐﺮﻣ ﺩﺪﻣ ﮯﯿﻟ ﮯﮐ ﻊﯿﺳ�
 
 msgid "Show Lasso"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﻮﺴﻟ"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﮧﻧ ﮓﻧﺭ ﻞﻓ ﺖﻗﻭ ﮯﺗﺮﮐ ﮓﻨﺋﺍﺭﮈ ﮎﻭﺮﭩﺳﺍ"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -32510,6 +32506,10 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "ﺮﺼﻨﻋ ﺎﮐ ﺰﺋﺎﺳ ﻞﺴﮑﭘ  ﺖﺧﺎﺳ ﮫﺗﺎﺳ ﮯﮐ ﮎﻭﺮﭩﺳﺍ"
 
 
+msgid "Placement"
+msgstr "ﻦﯿﻌﺗ ﺎﮐ ﮧﮕﺟ"
+
+
 msgid "Show stroke fills of this material"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﺰﻠﻓ ﮎﻭﺮﭩﺳﺍ ﮯﮐ ﺩﺍﻮﻣ ﺱﺍ"
 
@@ -32611,6 +32611,18 @@ msgid "Editor menu containing buttons"
 msgstr "ﻮﻨﯿﻣ ﺮﭩﯾﮉﯾﺍ ﻞﻤﺘﺸﻣ ﺮﭘ ﮞﻮﻨﭩﺑ"
 
 
+msgid "Face Data"
+msgstr "ﺎﭩﯾﮈ ﺎﮐ ﮮﺮﮩﭼ"
+
+
+msgid "Select by Face Strength"
+msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﺖﻗﺎﻃ ﯽﮐ ﮮﺮﮩﭼ"
+
+
+msgid "Set Face Strength"
+msgstr "ﮟﯾﺮﮐ ﻦﯿﻌﺗ ﺎﮐ ﺖﻗﺎﻃ ﯽﮐ ﮮﺮﮩﭼ"
+
+
 msgid "Math"
 msgstr "ﯽﺿﺎﯾﺭ"
 
@@ -32619,12 +32631,104 @@ msgid "Utilities"
 msgstr "ﺖﯾﺩﺎﻓﺍ"
 
 
-msgid "Mirror"
-msgstr "ﮧﻨﯿﺋﺁ"
+msgid "Clean Up"
+msgstr "ﯽﺋﺎﻔﺻ"
+
+
+msgid "Merge"
+msgstr "ﺎﻧﺮﮐ ﻢﺿ"
+
+
+msgid "Show/Hide"
+msgstr "ﮟﯿﺋﺎﭙﮭﭼ/ﮟﯿﺋﺎﮭﮐﺩ"
+
+
+msgid "Special Characters"
+msgstr "ﺭﺍﺩﺮﮐ ﯽﺻﻮﺼﺧ"
+
+
+msgid "Kerning"
+msgstr "ﮓﻨﻧﺮﮐ"
+
+
+msgid "Metaball"
+msgstr "ﻝﺎﺑ ﺎﭩﯿﻣ"
+
+
+msgid "Read"
+msgstr "ﮟﯿﮬﮍﭘ"
+
+
+msgid "Sample"
+msgstr "ﮧﻧﻮﻤﻧ"
+
+
+msgid "Write"
+msgstr "ﮟﯿﮭﮑﻟ"
+
+
+msgid "Names"
+msgstr "ﻡﺎﻧ"
+
+
+msgid "Primitives"
+msgstr "ﻢﯾﺪﻗ"
+
+
+msgid "Bone Roll"
+msgstr "ﻝﻭﺭ ﻥﻮﺑ"
+
+
+msgid "Gizmo"
+msgstr "ﻮﻣﺰﯿﮔ"
+
+
+msgid "Instances"
+msgstr "ﮟﯿﻟﺎﺜﻣ"
+
+
+msgid "Pivot Point"
+msgstr "ﭧﻨﺋﺍﻮﭘ ﭦﻮﯿﭘ"
 
 
 msgid "Snap"
 msgstr "ﭗﯿﻨﺳ"
+
+
+msgid "Import"
+msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "ﻑﺁ ﻝﺎﻓ ﺮﺋﺎﻔﯾﮈﻮﻣ ﺐﺳﺎﻨﺘﻣ"
+
+
+msgid "Mask Edit"
+msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﮏﺳﺎﻣ"
+
+
+msgid "Automasking"
+msgstr "ﮓﻨﮑﺳﺎﻣﻮﭨﺁ"
+
+
+msgid "Face Sets Edit"
+msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﭧﯿﺳ ﮯﮐ ﮮﺮﮩﭼ"
+
+
+msgid "Vertex Group Locks"
+msgstr "ﮎﻻ﻿ ﮦﻭﺮﮔ ﺲﮑﯿﭨﺭﻭ"
+
+
+msgid "Deprecated"
+msgstr "ﮦﺩﻮﺳﺮﻓ"
+
+
+msgid "UV"
+msgstr "ﯼﻭﻮﯾ"
+
+
+msgid "Mirror"
+msgstr "ﮧﻨﯿﺋﺁ"
 
 
 msgid "UV Mapping"
@@ -32663,20 +32767,8 @@ msgid "Select Similar"
 msgstr "ﮟﯾﺮﮐ ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﺡﺮﻃ ﯽﺳﺍ"
 
 
-msgid "Read"
-msgstr "ﮟﯿﮬﮍﭘ"
-
-
 msgid "Select All by Trait"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﯽﮭﺒﺳ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﺖﯿﺻﻮﺼﺧ"
-
-
-msgid "Sample"
-msgstr "ﮧﻧﻮﻤﻧ"
-
-
-msgid "Write"
-msgstr "ﮟﯿﮭﮑﻟ"
 
 
 msgid "Select Linked"
@@ -32687,28 +32779,8 @@ msgid "Select Loops"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﺲﭘﻮﻟ"
 
 
-msgid "Primitives"
-msgstr "ﻢﯾﺪﻗ"
-
-
 msgid "Assign Material"
 msgstr "ﮟﯾﺮﮐ ﺾﯾﻮﻔﺗ ﺩﺍﻮﻣ"
-
-
-msgid "Gizmo"
-msgstr "ﻮﻣﺰﯿﮔ"
-
-
-msgid "Instances"
-msgstr "ﮟﯿﻟﺎﺜﻣ"
-
-
-msgid "Metaball"
-msgstr "ﻝﺎﺑ ﺎﭩﯿﻣ"
-
-
-msgid "Import"
-msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ"
 
 
 msgid "Light"
@@ -32719,10 +32791,6 @@ msgid "Light Probe"
 msgstr "ﺏﻭﺮﭘ ﭧﺋﻻ﻿"
 
 
-msgid "Deprecated"
-msgstr "ﮦﺩﻮﺳﺮﻓ"
-
-
 msgid "Add Image"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺮﯾﻮﺼﺗ"
 
@@ -32731,12 +32799,12 @@ msgid "Relations"
 msgstr "ﮯﺘﺷﺭ"
 
 
+msgid "Layout"
+msgstr "ﭦﺅﺁ ﮯﻟ"
+
+
 msgid "Rigid Body"
 msgstr "ﻢﺴﺟ ﺖﺨﺳ"
-
-
-msgid "UV"
-msgstr "ﯼﻭﻮﯾ"
 
 
 msgid "Apply"
@@ -32751,16 +32819,12 @@ msgid "Quick Effects"
 msgstr "ﺕﺍﺮﺛﺍ ﯼﺭﻮﻓ"
 
 
-msgid "Show/Hide"
-msgstr "ﮟﯿﺋﺎﭙﮭﭼ/ﮟﯿﺋﺎﮭﮐﺩ"
-
-
-msgid "Clean Up"
-msgstr "ﯽﺋﺎﻔﺻ"
-
-
 msgid "Asset"
 msgstr "ﮧﺛﺎﺛﺍ"
+
+
+msgid "Adjust"
+msgstr "ﮟﯾﺮﮐ ﭧﺴﺟﮉﯾﺍ"
 
 
 msgid "Make Single User"
@@ -32775,12 +32839,16 @@ msgid "Link/Transfer Data"
 msgstr "ﮟﯾﺮﮐ ﻞﻘﺘﻨﻣ/ﮏﻨﻟ ﻮﮐ ﺎﭩﯾﮈ"
 
 
+msgid "Keying"
+msgstr "ﮓﻨﯿﻠﮐ"
+
+
 msgid "Hooks"
 msgstr "ﮯﭩﻧﺎﮐ"
 
 
-msgid "Vertex Group Locks"
-msgstr "ﮎﻻ﻿ ﮦﻭﺮﮔ ﺲﮑﯿﭨﺭﻭ"
+msgid "Tracking"
+msgstr "ﮓﻨﮑﯾﺮﭨ"
 
 
 msgid "Trim/Add"
@@ -32815,10 +32883,6 @@ msgid "Bone Collections"
 msgstr "ﮧﻋﻮﻤﺠﻣ ﺎﮐ ﮞﻮﯾﮉﮨ"
 
 
-msgid "Names"
-msgstr "ﻡﺎﻧ"
-
-
 msgid "Toggle Bone Options"
 msgstr "ﮟﯾﺮﮐ ﻞﮔﻮﭨ ﻮﮐ ﺕﺍﺭﺎﯿﺘﺧﺍ ﮯﮐ ﯼﮉﮨ"
 
@@ -32833,70 +32897,6 @@ msgstr "ﮟﯾﺮﮐ ﻝﺎﻌﻓ ﺮﯿﻏ ﻮﮐ ﺕﺍﺭﺎﯿﺘﺧﺍ ﮯ�
 
 msgid "Mesh Select Mode"
 msgstr "ﮈﻮﻣ ﭧﮑﯿﻠﺳ ﺶﯿﻣ"
-
-
-msgid "Face Data"
-msgstr "ﺎﭩﯾﮈ ﺎﮐ ﮮﺮﮩﭼ"
-
-
-msgid "Select by Face Strength"
-msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﺖﻗﺎﻃ ﯽﮐ ﮮﺮﮩﭼ"
-
-
-msgid "Set Face Strength"
-msgstr "ﮟﯾﺮﮐ ﻦﯿﻌﺗ ﺎﮐ ﺖﻗﺎﻃ ﯽﮐ ﮮﺮﮩﭼ"
-
-
-msgid "Merge"
-msgstr "ﺎﻧﺮﮐ ﻢﺿ"
-
-
-msgid "Layout"
-msgstr "ﭦﺅﺁ ﮯﻟ"
-
-
-msgid "Special Characters"
-msgstr "ﺭﺍﺩﺮﮐ ﯽﺻﻮﺼﺧ"
-
-
-msgid "Kerning"
-msgstr "ﮓﻨﻧﺮﮐ"
-
-
-msgid "Adjust"
-msgstr "ﮟﯾﺮﮐ ﭧﺴﺟﮉﯾﺍ"
-
-
-msgid "Keying"
-msgstr "ﮓﻨﯿﻠﮐ"
-
-
-msgid "Bone Roll"
-msgstr "ﻝﻭﺭ ﻥﻮﺑ"
-
-
-msgid "Tracking"
-msgstr "ﮓﻨﮑﯾﺮﭨ"
-
-
-msgid "Pivot Point"
-msgstr "ﭧﻨﺋﺍﻮﭘ ﭦﻮﯿﭘ"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "ﻑﺁ ﻝﺎﻓ ﺮﺋﺎﻔﯾﮈﻮﻣ ﺐﺳﺎﻨﺘﻣ"
-
-
-msgid "Mask Edit"
-msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﮏﺳﺎﻣ"
-
-
-msgid "Automasking"
-msgstr "ﮓﻨﮑﺳﺎﻣﻮﭨﺁ"
-
-
-msgid "Face Sets Edit"
-msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﭧﯿﺳ ﮯﮐ ﮮﺮﮩﭼ"
 
 
 msgid "Keyframe Insert Pie"
@@ -54162,10 +54162,6 @@ msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﺭﻮﻏ ﺮﭘ ﺕﺎﯿﺻﻮﺼﺧ ﯽ
 
 msgid "Minimal distance accepted between two features"
 msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻝﻮﺒﻗ ﮧﻠﺻﺎﻓ ﻢﮐ ﮯﺳ ﻢﮐ ﻥﺎﯿﻣﺭﺩ ﮯﮐ ﺕﺎﯿﺻﻮﺼﺧ ﻭﺩ"
-
-
-msgid "Placement"
-msgstr "ﻦﯿﻌﺗ ﺎﮐ ﮧﮕﺟ"
 
 
 msgid "Placement for detected features"
@@ -83480,6 +83476,26 @@ msgid "Panel containing UI elements"
 msgstr "UI ﻞﻨﯿﭘ ﻞﻤﺘﺸﻣ ﺮﭘ ﺮﺻﺎﻨﻋ"
 
 
+msgid "glTF Material Variants"
+msgstr "glTF ﮟﯿﺘﻟﺎﺣ ﻒﻠﺘﺨﻣ ﯽﮐ ﺩﺍﻮﻣ"
+
+
+msgid "glTF Animations"
+msgstr "glTF ﺮﯾﻭﺎﺼﺗ ﮎﺮﺤﺘﻣ"
+
+
+msgid "Active Tool"
+msgstr "ﻝﻮﭨ ﻝﺎﻌﻓ"
+
+
+msgid "View Lock"
+msgstr "ﮟﯿﮭﮑﯾﺩ ﮎﻻ﻿"
+
+
+msgid "Selectability & Visibility"
+msgstr "ﺖﯿﺋﺮﻣ ﺭﻭﺍ ﺏﺎﺨﺘﻧﺍ"
+
+
 msgid "Shadow Settings"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﻭﮉﯿﺷ"
 
@@ -83490,10 +83506,6 @@ msgstr "SSAO ﺕﺎﺒﯿﺗﺮﺗ"
 
 msgid "Cavity"
 msgstr "ﺎﮩﮔ"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF ﮟﯿﺘﻟﺎﺣ ﻒﻠﺘﺨﻣ ﯽﮐ ﺩﺍﻮﻣ"
 
 
 msgid "Render Pass"
@@ -83510,10 +83522,6 @@ msgstr "ﺰﯿﻟﺭﻭﻭﺍ"
 
 msgid "Guides"
 msgstr "ﺯﮉﯿﺋﺎﮔ"
-
-
-msgid "glTF Animations"
-msgstr "glTF ﺮﯾﻭﺎﺼﺗ ﮎﺮﺤﺘﻣ"
 
 
 msgid "Viewer Node"
@@ -83590,18 +83598,6 @@ msgstr "ﺭﺁ ﯼﻭ"
 
 msgid "VR Info"
 msgstr "VR ﺕﺎﻣﻮﻠﻌﻣ"
-
-
-msgid "Active Tool"
-msgstr "ﻝﻮﭨ ﻝﺎﻌﻓ"
-
-
-msgid "View Lock"
-msgstr "ﮟﯿﮭﮑﯾﺩ ﮎﻻ﻿"
-
-
-msgid "Selectability & Visibility"
-msgstr "ﺖﯿﺋﺮﻣ ﺭﻭﺍ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "Chain Scaling"
@@ -123223,10 +123219,6 @@ msgid "PaintCurve"
 msgstr "ﻮﯾﺮﮐ ﭧﻨﯿﭘ"
 
 
-msgid "Palette created"
-msgstr "ﺎﯿﮔ ﺎﯾﺎﻨﺑ ﭧﯿﻠﯿﭘ"
-
-
 msgid "Sample color for %s"
 msgstr "‪%s‬ ﮓﻧﺭ ﮧﻧﻮﻤﻧ ﮯﯿﻟ ﮯﮐ"
 
@@ -123237,6 +123229,10 @@ msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺎﮐ ﮏﻠﮐ ﮟﯿﺋﺎﺑ ﮯ�
 
 msgid "Palette. Use Left Click to sample more colors"
 msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺎﮐ ﮏﻠﮐ ﮟﯿﺋﺎﺑ ﮯﯿﻟ ﮯﮐ ﮯﻨﯿﻟ ﮯﻧﻮﻤﻧ ﮯﮐ ﮞﻮﮕﻧﺭ ﺪﯾﺰﻣ ﭧﯿﻠﯿﭘ"
+
+
+msgid "Palette created"
+msgstr "ﺎﯿﮔ ﺎﯾﺎﻨﺑ ﭧﯿﻠﯿﭘ"
 
 
 msgid "Compiled without sound support"

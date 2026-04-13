@@ -24,6 +24,7 @@
 
 #include "BLI_assert.h"
 #include "BLI_math_bits.h"
+#include <fmt/format.h>
 
 namespace blender::eevee {
 
@@ -589,9 +590,14 @@ gpu::Shader *ShaderModule::static_shader_get(eShaderType shader_type)
 
 /* Helper class to get free sampler slots for materials. */
 class SlotAllocator {
-  uint64_t available_samplers_ = ~uint64_t(0u);
-  uint32_t available_vertex_id_ = ~uint32_t(0u);
+  /* Assumes slots reserved from ShaderCreateInfos are always below 32. */
+  uint32_t available_samplers_ = ~uint32_t(0u);
+  /* But some backends may allow more samplers that we can use for material textures.
+   * These slots are just increased linearly. */
+  int total_requested_samplers_ = 0;
   bool sampler_overflow_ = false;
+
+  uint32_t available_vertex_id_ = ~uint32_t(0u);
   bool vertex_id_overflow_ = false;
 
   Set<std::string> visited_infos;
@@ -610,17 +616,17 @@ class SlotAllocator {
     }
     for (const ShaderCreateInfo::Resource &res : info.pass_resources_) {
       if (res.bind_type == ShaderCreateInfo::Resource::SAMPLER) {
-        available_samplers_ &= ~(uint64_t(1) << res.slot);
+        available_samplers_ &= ~(uint32_t(1) << res.slot);
       }
     }
     for (const ShaderCreateInfo::Resource &res : info.batch_resources_) {
       if (res.bind_type == ShaderCreateInfo::Resource::SAMPLER) {
-        available_samplers_ &= ~(uint64_t(1) << res.slot);
+        available_samplers_ &= ~(uint32_t(1) << res.slot);
       }
     }
     for (const ShaderCreateInfo::Resource &res : info.geometry_resources_) {
       if (res.bind_type == ShaderCreateInfo::Resource::SAMPLER) {
-        available_samplers_ &= ~(uint64_t(1) << res.slot);
+        available_samplers_ &= ~(uint32_t(1) << res.slot);
       }
     }
 
@@ -630,11 +636,18 @@ class SlotAllocator {
       /** WATCH: Recursive. */
       reserve_slots(*info);
     }
+
+    total_requested_samplers_ = count_bits_uint64(uint64_t(~available_samplers_));
   }
 
   bool sampler_overflow() const
   {
     return sampler_overflow_;
+  }
+
+  int requested_sampler_count() const
+  {
+    return total_requested_samplers_;
   }
 
   bool vertex_id_overflow() const
@@ -644,12 +657,15 @@ class SlotAllocator {
 
   int get_next_sampler()
   {
-    if (available_samplers_ == 0) {
+    int next_sampler = available_samplers_ == 0 ? total_requested_samplers_++ :
+                                                  bitscan_forward_clear_uint(&available_samplers_);
+    if (next_sampler >= GPU_max_textures()) {
       /* Should result in compilation failure. */
       sampler_overflow_ = true;
       return -1;
     }
-    return bitscan_forward_clear_uint64(&available_samplers_);
+
+    return next_sampler;
   }
 
   void set_vertex_input(int index)
@@ -856,7 +872,8 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
   }
 
   if (ELEM(pipeline_type, MAT_PIPE_DEFERRED, MAT_PIPE_FORWARD) &&
-      GPU_material_flag_get(gpumat, GPU_MATFLAG_SHADER_TO_RGBA))
+      GPU_material_flag_get(gpumat, GPU_MATFLAG_SHADER_TO_RGBA) &&
+      GPU_material_flag_get(gpumat, GPU_MATFLAG_TRANSPARENT))
   {
     info.additional_info("eevee_hiz_prev_data");
     info.additional_info("eevee_previous_layer_radiance");
@@ -1282,9 +1299,11 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
   /* Make shaders that have as too many samplers fail compilation and have correct error
    * report instead of raising an error. */
   if (slots.sampler_overflow()) {
-    /* We ran out of binding slots. Many systems inside the GPU backend assume a max amount of 64
-     * samplers. */
-    std::cerr << "Error: EEVEE: Material " << material_name << " uses too many samplers."
+    /* We ran out of binding slots. */
+    std::cerr << fmt::format("Error: EEVEE: Material {} uses too many samplers. ({}/{})",
+                             material_name,
+                             slots.requested_sampler_count(),
+                             GPU_max_textures())
               << std::endl;
     /* Avoid assert in ShaderCreateInfo::finalize. */
     info.batch_resources_.clear();

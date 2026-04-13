@@ -15,6 +15,8 @@
 
 namespace blender::compositor {
 
+struct Schedule;
+
 /* A type representing a contiguous subset of the node execution schedule that will be compiled
  * into a Pixel Operation. */
 using PixelCompileUnit = VectorSet<const bNode *>;
@@ -67,7 +69,7 @@ class PixelOperation : public Operation {
   /* The compile unit that will be compiled into this pixel operation. */
   PixelCompileUnit compile_unit_;
   /* A reference to the node execution schedule that is being compiled. */
-  const VectorSet<const bNode *> &schedule_;
+  const Schedule &schedule_;
   /* A node instance key that identifies the particular group node that uses the node group that
    * this pixel operation belongs to. If the node group represents a top-level standalone node
    * group with no associated group node, this will be bke::NODE_INSTANCE_KEY_BASE. */
@@ -103,9 +105,7 @@ class PixelOperation : public Operation {
   VectorSet<const bNodeSocket *> preview_outputs_;
 
  public:
-  PixelOperation(Context &context,
-                 PixelCompileUnit &compile_unit,
-                 const VectorSet<const bNode *> &schedule);
+  PixelOperation(Context &context, PixelCompileUnit &compile_unit, const Schedule &schedule);
 
   /* Compute a node preview for all nodes in the pixel operations if the node requires a preview.
    *
@@ -144,7 +144,7 @@ class PixelOperation : public Operation {
    * they are referenced and released by the compute_preview method.
    *
    * The node execution schedule is given as an input. */
-  void compute_results_reference_counts(const VectorSet<const bNode *> &schedule);
+  void compute_results_reference_counts(const Schedule &schedule);
 
   /* Getter and setter for instance_key_. */
   void set_instance_key(const bNodeInstanceKey &instance_key);

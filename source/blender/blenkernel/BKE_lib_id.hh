@@ -598,6 +598,12 @@ struct BKEIDDeleteOptions {
    * won't be working (e.g. from readfile code).
    */
   int extra_remapping_flags = 0;
+
+  /**
+   * If `true`, do not validate and update liboverride hierarchy root pointers after deleting some
+   * IDs. Usefull e.g. for ID deletion within liboverride resync process and the like.
+   */
+  bool prevent_liboverride_hierarchy_root_ensure = false;
 };
 
 /**

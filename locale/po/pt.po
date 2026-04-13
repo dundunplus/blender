@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
-"PO-Revision-Date: 2026-04-02 19:12+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"PO-Revision-Date: 2026-04-09 13:12+0000\n"
 "Last-Translator: Duarte Ramos <duarte.framos@gmail.com>\n"
 "Language-Team: Portuguese <https://translate.blender.org/projects/blender-ui/ui/pt/>\n"
 "Language: pt\n"
@@ -3952,7 +3952,7 @@ msgstr "Contexto de Importação de Ficheiro Blend"
 
 
 msgid "Contextual data for a blendfile library/linked-data related operation. Currently only exposed as read-only data for the pre/post blendimport handlers"
-msgstr "Dados contextuais para operação relacionada com os dados de biblioteca/vinculados de  um ficheiro Blend. Actualmente exposto apenas como dados apenas de leitura para os encarregados pre/pos importação de ficheiros blend"
+msgstr "Dados contextuais para operação relacionada com os dados de biblioteca/vinculados de um ficheiro blend. Actualmente exposto apenas como dados apenas de leitura para os encarregados pre/pos importação blend."
 
 
 msgid "Options for this blendfile import operation"
@@ -5774,8 +5774,32 @@ msgstr "Curva usada para a força"
 
 
 msgctxt "Operator"
+msgid "Curve Type"
+msgstr "Tipo de Curva"
+
+
+msgid "Type of curves"
+msgstr "Tipo das curvas"
+
+
+msgctxt "Operator"
+msgid "Catmull Rom"
+msgstr "Catmull Rom"
+
+
+msgctxt "Operator"
 msgid "Poly"
 msgstr "Polígonos"
+
+
+msgctxt "Operator"
+msgid "Bézier"
+msgstr "Bézier"
+
+
+msgctxt "Operator"
+msgid "NURBS"
+msgstr "NURBS"
 
 
 msgid "Dilate/Contract"
@@ -6133,10 +6157,6 @@ msgstr "Mostra linhas auxiliares para extensão de traços"
 
 msgid "Show Lasso"
 msgstr "Mostrar Laço"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Não mostrar cor de preenchimento enquanto desenhar traços"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -30591,6 +30611,14 @@ msgid "Number of extensions with available update"
 msgstr "Número de extensões com actualizações disponíveis"
 
 
+msgid "Event Handling Break"
+msgstr "Pausa de Processamento de Eventos"
+
+
+msgid "Remaining events in the queue are delayed until the next main loop iteration"
+msgstr "Eventos restantes na fila ficam em espera até ao próximo ciclo principal de iteração"
+
+
 msgid "Is Interface Locked"
 msgstr "Tem Interface Bloqueado"
 
@@ -30621,6 +30649,14 @@ msgstr "Nome da Pré Definição"
 
 msgid "Name for new preset"
 msgstr "Nome para nova pré definição"
+
+
+msgid "Reports"
+msgstr "Relatórios"
+
+
+msgid "Collection of reports"
+msgstr "Colecção de relatórios"
 
 
 msgid "Rigify Active Type"
@@ -35110,6 +35146,10 @@ msgid "Calculate Overlap"
 msgstr "Calcular sobreposições"
 
 
+msgid "Calculate self intersections and overlap before filling (only for the sweep-line solver)"
+msgstr "Calcular auto-intersecções e sobreposições antes do preenchimento (apenas para o solucionador linha-de-varrimento)"
+
+
 msgid "Mask Layers"
 msgstr "Camadas de máscara"
 
@@ -35518,6 +35558,10 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "Factor de Tamanho de Pixel da Textura ao longo do traço"
 
 
+msgid "Placement"
+msgstr "Posicionamento"
+
+
 msgid "Show stroke fills of this material"
 msgstr "Mostrar preenchimentos do traço deste material"
 
@@ -35619,6 +35663,18 @@ msgid "Editor menu containing buttons"
 msgstr "Menu de editor contendo botões"
 
 
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Select by Face Strength"
+msgstr "Seleccionar pela Força das Faces"
+
+
+msgid "Set Face Strength"
+msgstr "Definir Força das Faces"
+
+
 msgid "Math"
 msgstr "Matemática"
 
@@ -35627,12 +35683,108 @@ msgid "Utilities"
 msgstr "Utilidades"
 
 
-msgid "Mirror"
-msgstr "Espelhar"
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Merge"
+msgstr "Fundir"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
+msgid "Kerning"
+msgstr "Kerning"
+
+
+msgid "Metaball"
+msgstr "Esfera-meta"
+
+
+msgid "Read"
+msgstr "Ler"
+
+
+msgid "Sample"
+msgstr "Amostrar"
+
+
+msgid "Write"
+msgstr "Escrever"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Primitives"
+msgstr "Primitivas"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem do osso"
+
+
+msgid "Gizmo"
+msgstr "Manipulador"
+
+
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
 
 
 msgid "Snap"
 msgstr "Atrair"
+
+
+msgid "Import"
+msgstr "Importar"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
+
+
+msgid "Mask Edit"
+msgstr "Edição de Máscara"
+
+
+msgid "Automasking"
+msgstr "Auto Máscara"
+
+
+msgid "Face Sets Edit"
+msgstr "Edições de Conjuntos de Faces"
+
+
+msgid "Vertex Group Locks"
+msgstr "Bloqueios de Grupos de Vértices"
+
+
+msgid "Deprecated"
+msgstr "Obsoleto"
+
+
+msgid "List"
+msgstr "Lista"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Espelhar"
 
 
 msgid "UV Mapping"
@@ -35671,20 +35823,8 @@ msgid "Select Similar"
 msgstr "Seleccionar por similaridades"
 
 
-msgid "Read"
-msgstr "Ler"
-
-
 msgid "Select All by Trait"
 msgstr "Seleccionar todos por características..."
-
-
-msgid "Sample"
-msgstr "Amostrar"
-
-
-msgid "Write"
-msgstr "Escrever"
 
 
 msgid "Select Linked"
@@ -35695,28 +35835,8 @@ msgid "Select Loops"
 msgstr "Seleccionar Circuitos"
 
 
-msgid "Primitives"
-msgstr "Primitivas"
-
-
 msgid "Assign Material"
 msgstr "Aplicar Material"
-
-
-msgid "Gizmo"
-msgstr "Manipulador"
-
-
-msgid "Instances"
-msgstr "Instâncias"
-
-
-msgid "Metaball"
-msgstr "Esfera-meta"
-
-
-msgid "Import"
-msgstr "Importar"
 
 
 msgid "Light"
@@ -35727,10 +35847,6 @@ msgid "Light Probe"
 msgstr "Sonda de Luz"
 
 
-msgid "Deprecated"
-msgstr "Obsoleto"
-
-
 msgid "Add Image"
 msgstr "Adicionar Imagem"
 
@@ -35739,16 +35855,12 @@ msgid "Relations"
 msgstr "Relações"
 
 
-msgid "List"
-msgstr "Lista"
+msgid "Layout"
+msgstr "Organizar"
 
 
 msgid "Rigid Body"
 msgstr "Corpo rígido"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -35763,16 +35875,12 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
 msgid "Asset"
 msgstr "Recurso"
+
+
+msgid "Adjust"
+msgstr "Ajustar"
 
 
 msgid "Make Single User"
@@ -35787,12 +35895,20 @@ msgid "Link/Transfer Data"
 msgstr "Vincular/Transferir Dados"
 
 
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
 msgid "Hooks"
 msgstr "Ganchos"
 
 
-msgid "Vertex Group Locks"
-msgstr "Bloqueios de Grupos de Vértices"
+msgid "Tracking"
+msgstr "Rastreamento"
+
+
+msgid "Render Preview"
+msgstr "Pré-Visualização da Render"
 
 
 msgid "Trim/Add"
@@ -35801,6 +35917,10 @@ msgstr "Aparar/Adicionar"
 
 msgid "Add Primitive"
 msgstr "Adicionar Primitiva"
+
+
+msgid "Creative"
+msgstr "Criativo"
 
 
 msgid "Sculpt Set Pivot"
@@ -35831,10 +35951,6 @@ msgid "Bone Collections"
 msgstr "Colecções de Ossos"
 
 
-msgid "Names"
-msgstr "Nomes"
-
-
 msgid "Toggle Bone Options"
 msgstr "Alternar opções de ossos"
 
@@ -35849,78 +35965,6 @@ msgstr "Desativar as opções de ossos"
 
 msgid "Mesh Select Mode"
 msgstr "Modo de selecção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Select by Face Strength"
-msgstr "Seleccionar pela Força das Faces"
-
-
-msgid "Set Face Strength"
-msgstr "Definir Força das Faces"
-
-
-msgid "Merge"
-msgstr "Fundir"
-
-
-msgid "Layout"
-msgstr "Organizar"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiais"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
-msgid "Adjust"
-msgstr "Ajustar"
-
-
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem do osso"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
-msgid "Render Preview"
-msgstr "Pré-Visualização da Render"
-
-
-msgid "Creative"
-msgstr "Criativo"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
-
-
-msgid "Mask Edit"
-msgstr "Edição de Máscara"
-
-
-msgid "Automasking"
-msgstr "Auto Máscara"
-
-
-msgid "Face Sets Edit"
-msgstr "Edições de Conjuntos de Faces"
 
 
 msgid "Keyframe Insert Pie"
@@ -49413,6 +49457,14 @@ msgid "Delete an attribute with a specified name from a geometry. Typically used
 msgstr "Apagar um atributo com nome especificado de uma geometria. Tipicamente usado para optimizar performance"
 
 
+msgid "Rename Attribute"
+msgstr "Renomear Atributo"
+
+
+msgid "Change the name of an attribute"
+msgstr "Alterar nome de um atributo"
+
+
 msgid "Repeat Input"
 msgstr "Repetir Entrada"
 
@@ -53903,6 +53955,14 @@ msgstr "Painéis"
 
 msgid "State of all panels defined by the node group"
 msgstr "Estado de todos os painéis definidos pelo grupo de nós"
+
+
+msgid "Geometry Nodes Modifier Properties"
+msgstr "Propriedades do Modificador Geometry Nodes"
+
+
+msgid "Geometry Nodes Modifier Empty Properties"
+msgstr "Propriedades Vazias do Modificador Geometry Nodes"
 
 
 msgid "Nodes Modifier Warning"
@@ -59952,10 +60012,6 @@ msgstr "São consideradas apenas as funcionalidades que estão além das margens
 
 msgid "Minimal distance accepted between two features"
 msgstr "Distância mínima aceita entre duas funcionalidades."
-
-
-msgid "Placement"
-msgstr "Posicionamento"
 
 
 msgid "Placement for detected features"
@@ -69327,6 +69383,10 @@ msgid "Select markers on and left/right of the current frame"
 msgstr "Seleccionar marcadores à esquerda ou à direita do fotograma actual"
 
 
+msgid "Check which side was clicked"
+msgstr "Verificar que lado foi clicado"
+
+
 msgctxt "Operator"
 msgid "Add Feather Vertex"
 msgstr "Adicionar vértice de pluma"
@@ -71723,6 +71783,11 @@ msgid "Triangulate selected faces"
 msgstr "Torna as faces seleccionadas triangulares."
 
 
+msgctxt "Operator"
+msgid "Select Boundary of Selected"
+msgstr "Seleccionar Fronteira dos Seleccionados"
+
+
 msgid "Select boundary edges around the selected faces"
 msgstr "Selecciona as arestas das extremidades em torno das faces seleccionadas."
 
@@ -71903,6 +71968,15 @@ msgstr "Eixo negativo"
 
 msgid "Aligned Axis"
 msgstr "Eixo alinhado"
+
+
+msgctxt "Operator"
+msgid "Multi Select Boundary Loops"
+msgstr "Seleccionar Circuitos de Fronteira Múltiplos"
+
+
+msgid "Select entire boundary loop of each selected boundary edge"
+msgstr "Seleccionar circuito de fronteira de cada aresta de fronteira seleccionada"
 
 
 msgctxt "Operator"
@@ -74288,6 +74362,11 @@ msgstr "Luz Linear"
 msgctxt "NodeTree"
 msgid "Difference"
 msgstr "Diferença"
+
+
+msgctxt "NodeTree"
+msgid "Exclusion"
+msgstr "Exclusão"
 
 
 msgctxt "NodeTree"
@@ -93131,6 +93210,34 @@ msgid "Panel containing UI elements"
 msgstr "Painel contendo elementos do Interface do Utilizador"
 
 
+msgid "glTF Variants"
+msgstr "Variantes glTF"
+
+
+msgid "glTF Material Variants"
+msgstr "Variantes de material glTF"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "Animações glTF"
+
+
+msgid "Active Tool"
+msgstr "Ferramenta Activa"
+
+
+msgid "View Lock"
+msgstr "Trancar Vista"
+
+
+msgid "Selectability & Visibility"
+msgstr "Selectividade e Visibilidade"
+
+
 msgid "Shadow Settings"
 msgstr "Definições de Sombra"
 
@@ -93141,10 +93248,6 @@ msgstr "Definições SSAO"
 
 msgid "Cavity"
 msgstr "Cavidade"
-
-
-msgid "glTF Material Variants"
-msgstr "Variantes de material glTF"
 
 
 msgid "Render Pass"
@@ -93161,14 +93264,6 @@ msgstr "Sobreposições"
 
 msgid "Guides"
 msgstr "Guias"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "Animações glTF"
 
 
 msgid "Viewer Node"
@@ -93253,22 +93348,6 @@ msgstr "RV"
 
 msgid "VR Info"
 msgstr "Informação RV"
-
-
-msgid "Active Tool"
-msgstr "Ferramenta Activa"
-
-
-msgid "glTF Variants"
-msgstr "Variantes glTF"
-
-
-msgid "View Lock"
-msgstr "Trancar Vista"
-
-
-msgid "Selectability & Visibility"
-msgstr "Selectividade e Visibilidade"
 
 
 msgid "Import Settings"
@@ -98712,6 +98791,10 @@ msgid "Italian - Italiano"
 msgstr "Italiano - Italiano"
 
 
+msgid "Locale code: it_IT. Translation progress: 43%"
+msgstr "Código de língua: it_IT. Progresso de tradução: 43%"
+
+
 msgid "Japanese - 日本語"
 msgstr "Japonês - 日本語"
 
@@ -98722,10 +98805,6 @@ msgstr "Código de língua: ja_JP. Progresso de tradução: 99%"
 
 msgid "Korean - 한국어"
 msgstr "Coreano - 한국어"
-
-
-msgid "Locale code: ko_KR. Translation progress: 97%"
-msgstr "Código de língua: ko_KR. Progresso de tradução: 97%"
 
 
 msgid "Kyrgyz - Кыргыз тили"
@@ -98772,8 +98851,16 @@ msgid "Polish - Polski"
 msgstr "Polaco - Polski"
 
 
+msgid "Locale code: pl_PL. Translation progress: 100%"
+msgstr "Código de língua: pl_PL. Progresso de tradução: 100%"
+
+
 msgid "Portuguese (Brazil) - Português brasileiro"
 msgstr "Português (Brasil) - Português Brasileiro"
+
+
+msgid "Locale code: pt_BR. Translation progress: 42%"
+msgstr "Código de língua: pt_BR. Progresso de tradução: 42%"
 
 
 msgid "Portuguese (Portugal) - Português europeu"
@@ -98898,6 +98985,10 @@ msgstr "Código de língua: ur. Progresso de tradução: 85%"
 
 msgid "Vietnamese - Tiếng Việt"
 msgstr "Vietnamita - Tiếng Việt"
+
+
+msgid "Locale code: vi_VN. Translation progress: 92%"
+msgstr "Código de língua: vi_VN. Progresso de tradução: 92%"
 
 
 msgid "Reference Sphere Size"
@@ -103798,10 +103889,6 @@ msgid "Override Scene Settings"
 msgstr "Revogar Definições de Cena"
 
 
-msgid "Use workbench render and world settings from the sequencer scene, instead of each strip's scene"
-msgstr "Usar definições da cena do sequenciador para renderização do motor Workbench e do Ambiente, em vez de cada cena individual usada na faixa"
-
-
 msgid "Use Simplify"
 msgstr "Usar simplificações"
 
@@ -104012,6 +104099,30 @@ msgstr "Índice activo na lista de visualização de renderização"
 
 msgid "Repeat Item"
 msgstr "Repetir Item"
+
+
+msgid "Report entry"
+msgstr "Entrada de Relatório"
+
+
+msgid "Report message text"
+msgstr "Texto de mensagem de relatório"
+
+
+msgid "Unique per-session report identifier"
+msgstr "Identificador de relatório único por sessão"
+
+
+msgid "Report type (severity)"
+msgstr "Tipo de relatório (severidade)"
+
+
+msgid "Invalid Context"
+msgstr "Contexto Inválido"
+
+
+msgid "Out of Memory"
+msgstr "Sem Memória"
 
 
 msgid "Retiming Key"
@@ -117648,8 +117759,88 @@ msgid "Action when 'Space' is pressed"
 msgstr "Acção quando a 'Barra de Espaços' está pressionada"
 
 
+msgid "Toggle animation playback ('Shift-Space' for Tools or brush asset popup)"
+msgstr "Alternar reprodução de animação ('Shift-Espaço' para Ferramentas ou menu pop-up de recursos de pincéis)"
+
+
+msgid ""
+"Open the popup tool-bar or brush asset popup\n"
+"When holding 'Space' for the tool-bar popup:\n"
+"• Pressing the a tool shortcut switches to it immediately.\n"
+"• Dragging the cursor over a tool and releasing activates it (like a pie menu).\n"
+"For Play use 'Shift-Space'"
+msgstr ""
+"Abrir a barra de ferramentas pop-up ou o pop-up de recursos de pincel\n"
+"Ao manter pressionado 'Espaço' para a barra de ferramentas pop-up:\n"
+"• Carregar no atalho da ferramenta muda para a mesma imediatamente\n"
+"• Arrastar o cursor sobe a ferramenta e libertar activa-a (como um menu circular).\n"
+"Para reprodução usar 'Shift-Espaço'"
+
+
 msgid "Search"
 msgstr "Pesquisar"
+
+
+msgid "Open the operator search popup"
+msgstr "Abrir o pop-up de pesquisa de operador"
+
+
+msgid "Tool Keys"
+msgstr "Teclas de Ferramentas"
+
+
+msgid "The method of keys to activate tools such as move, rotate & scale (G, R, S)"
+msgstr "O método das teclas activarem ferramentas como mover, rodar, escala (G, R, S)"
+
+
+msgid "Immediate"
+msgstr "Imediato"
+
+
+msgid "Activate actions immediately"
+msgstr "Activar acções imediatamente"
+
+
+msgid "Activate the tool for editors that support tools"
+msgstr "Activar a ferramenta para editores que suportam ferramentas"
+
+
+msgid "Alt Click Tool Prompt"
+msgstr "Dica de Ferramenta Alt Clique"
+
+
+msgid "Tapping Alt (without pressing any other keys) shows a prompt in the status-bar, prompting a second keystroke to activate the tool"
+msgstr "Carregar em Alt (sem carregar noutras teclas) mostra uma dica na barra de estado, indicando uma segunda tecla para activar a ferramenta"
+
+
+msgid "Alt Cursor Access"
+msgstr "Acesso Alt ao Cursor"
+
+
+msgid ""
+"Hold Alt-LMB to place the Cursor (instead of LMB), allows tools to activate on press instead of drag.\n"
+"Incompatible with the input preference \"Emulate 3 Button Mouse\" when the \"Alt\" key is used"
+msgstr ""
+"Manter Alt + Botão Esquerdo do Rato para posicionar o Cursor (em vez de Botão Esquerdo do Rato), permite activar ferramentas ao carregar em vez de arrastar.\n"
+"Incompatível com a preferência de introdução \"Emular Rato de 3 Botões\" quando a tecla Alt é usada."
+
+
+msgid "Transform Navigation with Alt"
+msgstr "Navegação de transformação com Alt"
+
+
+msgid "During transformations, use Alt to navigate in the 3D View. Note that if disabled, hotkeys for Proportional Editing, Automatic Constraints, and Auto IK Chain Length will require holding Alt"
+msgstr "Durante transformações, usar Alt para navegar na vista 3D. Atenção que quando desactivado, teclas para Edição Proporcional, Restrições Automáticas, Comprimento Automático de Cadeia de Kinematica Inversa necessitam de pressionar Alt"
+
+
+msgid "Alt Tool Access"
+msgstr "Acesso a Ferramentas Alt"
+
+
+msgid ""
+"Hold Alt to use the active tool when the gizmo would normally be required\n"
+"Incompatible with the input preference \"Emulate 3 Button Mouse\" when the \"Alt\" key is used"
+msgstr "Carregar em Alt para usar a ferramenta activa quando o manipulador seria normalmente necessário. Incompatível com a preferência \"Emular Rato de 3 Botões\" quando a tecla \"Alt\" é usada."
 
 
 msgid ""

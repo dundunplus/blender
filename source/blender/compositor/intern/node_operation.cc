@@ -20,6 +20,7 @@
 #include "COM_node_operation.hh"
 #include "COM_operation.hh"
 #include "COM_result.hh"
+#include "COM_scheduler.hh"
 #include "COM_utilities.hh"
 
 namespace blender::compositor {
@@ -61,7 +62,7 @@ void NodeOperation::evaluate()
   }
 }
 
-void NodeOperation::compute_results_reference_counts(const VectorSet<const bNode *> &schedule)
+void NodeOperation::compute_results_reference_counts(const Schedule &schedule)
 {
   for (const bNodeSocket *output : this->node().output_sockets()) {
     if (!is_socket_available(output)) {
@@ -69,7 +70,8 @@ void NodeOperation::compute_results_reference_counts(const VectorSet<const bNode
     }
 
     const int reference_count = number_of_inputs_linked_to_output_conditioned(
-        *output, [&](const bNodeSocket &input) { return schedule.contains(&input.owner_node()); });
+        *output,
+        [&](const bNodeSocket &input) { return schedule.nodes.contains(&input.owner_node()); });
 
     this->get_result(output->identifier).set_reference_count(reference_count);
   }

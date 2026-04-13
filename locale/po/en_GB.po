@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2026-02-16 18:12+0000\n"
 "Last-Translator: Deniz Jones <sdfoakes@gmail.com>\n"
 "Language-Team: English (United Kingdom) <https://translate.blender.org/projects/blender-ui/ui/en_GB/>\n"
@@ -6055,10 +6055,6 @@ msgstr "Show help lines for stroke extension"
 
 msgid "Show Lasso"
 msgstr "Show Lasso"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Do not display fill colour while drawing the stroke"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -34949,6 +34945,10 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "Texture Pixel Size factor along the stroke"
 
 
+msgid "Placement"
+msgstr "Placement"
+
+
 msgid "Show stroke fills of this material"
 msgstr "Show stroke fills of this material"
 
@@ -35050,6 +35050,18 @@ msgid "Editor menu containing buttons"
 msgstr "Editor menu containing buttons"
 
 
+msgid "Face Data"
+msgstr "Face Data"
+
+
+msgid "Select by Face Strength"
+msgstr "Select by Face Strength"
+
+
+msgid "Set Face Strength"
+msgstr "Set Face Strength"
+
+
 msgid "Math"
 msgstr "Maths"
 
@@ -35058,12 +35070,108 @@ msgid "Utilities"
 msgstr "Utilities"
 
 
-msgid "Mirror"
-msgstr "Mirror"
+msgid "Clean Up"
+msgstr "Clean Up"
+
+
+msgid "Merge"
+msgstr "Merge"
+
+
+msgid "Show/Hide"
+msgstr "Show/Hide"
+
+
+msgid "Special Characters"
+msgstr "Special Characters"
+
+
+msgid "Kerning"
+msgstr "Kerning"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Read"
+msgstr "Read"
+
+
+msgid "Sample"
+msgstr "Sample"
+
+
+msgid "Write"
+msgstr "Write"
+
+
+msgid "Names"
+msgstr "Names"
+
+
+msgid "Primitives"
+msgstr "Primitives"
+
+
+msgid "Bone Roll"
+msgstr "Bone Roll"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instances"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Point"
 
 
 msgid "Snap"
 msgstr "Snap"
+
+
+msgid "Import"
+msgstr "Import"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proportional Editing Falloff"
+
+
+msgid "Mask Edit"
+msgstr "Mask Edit"
+
+
+msgid "Automasking"
+msgstr "Automasking"
+
+
+msgid "Face Sets Edit"
+msgstr "Face Sets Edit"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Group Locks"
+
+
+msgid "Deprecated"
+msgstr "Deprecated"
+
+
+msgid "List"
+msgstr "List"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Mirror"
 
 
 msgid "UV Mapping"
@@ -35102,20 +35210,8 @@ msgid "Select Similar"
 msgstr "Select Similar"
 
 
-msgid "Read"
-msgstr "Read"
-
-
 msgid "Select All by Trait"
 msgstr "Select All by Trait"
-
-
-msgid "Sample"
-msgstr "Sample"
-
-
-msgid "Write"
-msgstr "Write"
 
 
 msgid "Select Linked"
@@ -35126,28 +35222,8 @@ msgid "Select Loops"
 msgstr "Select Loops"
 
 
-msgid "Primitives"
-msgstr "Primitives"
-
-
 msgid "Assign Material"
 msgstr "Assign Material"
-
-
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Instances"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
-msgid "Import"
-msgstr "Import"
 
 
 msgid "Light"
@@ -35158,10 +35234,6 @@ msgid "Light Probe"
 msgstr "Light Probe"
 
 
-msgid "Deprecated"
-msgstr "Deprecated"
-
-
 msgid "Add Image"
 msgstr "Add Image"
 
@@ -35170,16 +35242,12 @@ msgid "Relations"
 msgstr "Relations"
 
 
-msgid "List"
-msgstr "List"
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Rigid Body"
 msgstr "Rigid Body"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -35194,16 +35262,12 @@ msgid "Quick Effects"
 msgstr "Quick Effects"
 
 
-msgid "Show/Hide"
-msgstr "Show/Hide"
-
-
-msgid "Clean Up"
-msgstr "Clean Up"
-
-
 msgid "Asset"
 msgstr "Asset"
+
+
+msgid "Adjust"
+msgstr "Adjust"
 
 
 msgid "Make Single User"
@@ -35218,16 +35282,28 @@ msgid "Link/Transfer Data"
 msgstr "Link/Transfer Data"
 
 
+msgid "Keying"
+msgstr "Keying"
+
+
 msgid "Hooks"
 msgstr "Hooks"
 
 
-msgid "Vertex Group Locks"
-msgstr "Vertex Group Locks"
+msgid "Tracking"
+msgstr "Tracking"
+
+
+msgid "Render Preview"
+msgstr "Render Preview"
 
 
 msgid "Trim/Add"
 msgstr "Trim/Add"
+
+
+msgid "Creative"
+msgstr "Creative"
 
 
 msgid "Sculpt Set Pivot"
@@ -35258,10 +35334,6 @@ msgid "Bone Collections"
 msgstr "Bone Collections"
 
 
-msgid "Names"
-msgstr "Names"
-
-
 msgid "Toggle Bone Options"
 msgstr "Toggle Bone Options"
 
@@ -35276,78 +35348,6 @@ msgstr "Disable Bone Options"
 
 msgid "Mesh Select Mode"
 msgstr "Mesh Select Mode"
-
-
-msgid "Face Data"
-msgstr "Face Data"
-
-
-msgid "Select by Face Strength"
-msgstr "Select by Face Strength"
-
-
-msgid "Set Face Strength"
-msgstr "Set Face Strength"
-
-
-msgid "Merge"
-msgstr "Merge"
-
-
-msgid "Layout"
-msgstr "Layout"
-
-
-msgid "Special Characters"
-msgstr "Special Characters"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
-msgid "Adjust"
-msgstr "Adjust"
-
-
-msgid "Keying"
-msgstr "Keying"
-
-
-msgid "Bone Roll"
-msgstr "Bone Roll"
-
-
-msgid "Tracking"
-msgstr "Tracking"
-
-
-msgid "Render Preview"
-msgstr "Render Preview"
-
-
-msgid "Creative"
-msgstr "Creative"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Point"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportional Editing Falloff"
-
-
-msgid "Mask Edit"
-msgstr "Mask Edit"
-
-
-msgid "Automasking"
-msgstr "Automasking"
-
-
-msgid "Face Sets Edit"
-msgstr "Face Sets Edit"
 
 
 msgid "Keyframe Insert Pie"
@@ -58879,10 +58879,6 @@ msgstr "Only features further than margin pixels from the image edges are consid
 
 msgid "Minimal distance accepted between two features"
 msgstr "Minimal distance accepted between two features"
-
-
-msgid "Placement"
-msgstr "Placement"
 
 
 msgid "Placement for detected features"
@@ -91457,6 +91453,34 @@ msgid "Panel containing UI elements"
 msgstr "Panel containing UI elements"
 
 
+msgid "glTF Variants"
+msgstr "glTF Variants"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF Material Variants"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF Animations"
+
+
+msgid "Active Tool"
+msgstr "Active Tool"
+
+
+msgid "View Lock"
+msgstr "View Lock"
+
+
+msgid "Selectability & Visibility"
+msgstr "Selectability & Visibility"
+
+
 msgid "Shadow Settings"
 msgstr "Shadow Settings"
 
@@ -91467,10 +91491,6 @@ msgstr "SSAO Settings"
 
 msgid "Cavity"
 msgstr "Cavity"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF Material Variants"
 
 
 msgid "Render Pass"
@@ -91487,14 +91507,6 @@ msgstr "Overlays"
 
 msgid "Guides"
 msgstr "Guides"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF Animations"
 
 
 msgid "Viewer Node"
@@ -91579,22 +91591,6 @@ msgstr "VR"
 
 msgid "VR Info"
 msgstr "VR Info"
-
-
-msgid "Active Tool"
-msgstr "Active Tool"
-
-
-msgid "glTF Variants"
-msgstr "glTF Variants"
-
-
-msgid "View Lock"
-msgstr "View Lock"
-
-
-msgid "Selectability & Visibility"
-msgstr "Selectability & Visibility"
 
 
 msgid "Import Settings"
@@ -137757,10 +137753,6 @@ msgid "PaintCurve"
 msgstr "PaintCurve"
 
 
-msgid "Palette created"
-msgstr "Palette created"
-
-
 msgid "Sample color for %s"
 msgstr "Sample colour for %s"
 
@@ -137779,6 +137771,10 @@ msgstr "Sampling colour for palette"
 
 msgid "Cancelling this stroke is unsupported"
 msgstr "Cancelling this stroke is unsupported"
+
+
+msgid "Palette created"
+msgstr "Palette created"
 
 
 msgid "Compiled without sound support"
@@ -139571,18 +139567,6 @@ msgstr "Panel Toggle"
 
 msgid "Group Sockets"
 msgstr "Group Sockets"
-
-
-msgid "Add \"%s\" Input"
-msgstr "Add \"%s\" Input"
-
-
-msgid "Add \"%s\" Input (Ctrl to add panel)"
-msgstr "Add \"%s\" Input (Ctrl to add panel)"
-
-
-msgid "Add \"%s\" Panel"
-msgstr "Add \"%s\" Panel"
 
 
 msgid "More than one collection is selected"

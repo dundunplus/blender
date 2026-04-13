@@ -1552,10 +1552,10 @@ endif()
 # Add the default compiler SIMD flags if enabled
 #
 if(WITH_COMPILER_SIMD)
-  set(COMPILER_SSE42_FLAG "")
-  get_sse_flags(COMPILER_SSE42_FLAG)
-  string(APPEND CMAKE_CXX_FLAGS " ${COMPILER_SSE42_FLAG}")
-  string(APPEND CMAKE_C_FLAGS " ${COMPILER_SSE42_FLAG}")
+  set(COMPILER_SIMD_FLAGS "")
+  get_compiler_simd_flags(COMPILER_SIMD_FLAGS)
+  string(APPEND CMAKE_CXX_FLAGS " ${COMPILER_SIMD_FLAGS}")
+  string(APPEND CMAKE_C_FLAGS " ${COMPILER_SIMD_FLAGS}")
 endif()
 
 # Enable SSE2NEON SIMD support if found.

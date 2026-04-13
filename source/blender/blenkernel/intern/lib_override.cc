@@ -2868,7 +2868,7 @@ static bool lib_override_library_resync(Main *bmain,
   /* Cleanup, many pointers in this GHash are already invalid now. */
   BLI_ghash_free(linkedref_to_old_override, nullptr, nullptr);
 
-  BKE_id_multi_tagged_delete(bmain);
+  BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
 
   /* At this point, `id_root` may have been resynced, therefore deleted. In that case we need to
    * update it to its new version.
@@ -2971,7 +2971,7 @@ static void lib_override_cleanup_after_resync(Main *bmain)
                parameters.num_total[INDEX_ID_NULL],
                parameters.num_local[INDEX_ID_NULL]);
   }
-  BKE_id_multi_tagged_delete(bmain);
+  BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
 }
 
 bool BKE_lib_override_library_resync(Main *bmain,
@@ -3757,7 +3757,7 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
   FOREACH_MAIN_ID_END;
 
   /* Delete 'isolated from root' remaining IDs tagged in above check loop. */
-  BKE_id_multi_tagged_delete(bmain);
+  BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
   BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 
   for (LinkNodePair *pair : id_roots.values()) {
@@ -4041,7 +4041,7 @@ void BKE_lib_override_library_delete(Main *bmain, ID *id_root)
   FOREACH_MAIN_ID_END;
 
   /* Delete the override IDs. */
-  BKE_id_multi_tagged_delete(bmain);
+  BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
 
   /* Should not actually be needed here. */
   BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);

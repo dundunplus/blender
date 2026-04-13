@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-11-12 16:04+0000\n"
 "Last-Translator: blend-it <blend-it@users.noreply.translate.blender.org>\n"
 "Language-Team: Italian <https://translate.blender.org/projects/blender-ui/ui/it/>\n"
@@ -5352,10 +5352,6 @@ msgstr "Mostra le linee di aiuto per l'estensione del tratto"
 
 msgid "Show Lasso"
 msgstr "Mostra Lazo"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Non visualizzare il colore di riempimento mentre si disegna il tratto"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -24529,6 +24525,10 @@ msgid "UV Factor"
 msgstr "Fattore UV"
 
 
+msgid "Placement"
+msgstr "Collocamento"
+
+
 msgid "Show Stroke"
 msgstr "Mostra Tratto"
 
@@ -24566,6 +24566,18 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
+msgid "Face Data"
+msgstr "Dati Faccia"
+
+
+msgid "Select by Face Strength"
+msgstr "Seleziona per Intensità delle Facce"
+
+
+msgid "Set Face Strength"
+msgstr "Imposta Intensità Faccia"
+
+
 msgid "Math"
 msgstr "Matematica"
 
@@ -24574,12 +24586,96 @@ msgid "Utilities"
 msgstr "Utilità"
 
 
-msgid "Mirror"
-msgstr "Specchia"
+msgid "Clean Up"
+msgstr "Ripulisci"
+
+
+msgid "Merge"
+msgstr "Unisci"
+
+
+msgid "Show/Hide"
+msgstr "Mostra/Nascondi"
+
+
+msgid "Special Characters"
+msgstr "Caratteri Speciali"
+
+
+msgid "Kerning"
+msgstr "Crenatura"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Read"
+msgstr "Lettura"
+
+
+msgid "Sample"
+msgstr "Campione"
+
+
+msgid "Write"
+msgstr "Scrittura"
+
+
+msgid "Names"
+msgstr "Nomi"
+
+
+msgid "Primitives"
+msgstr "Primitive"
+
+
+msgid "Bone Roll"
+msgstr "Rollio Osso"
+
+
+msgid "Instances"
+msgstr "Istanze"
+
+
+msgid "Pivot Point"
+msgstr "Punto di Perno"
 
 
 msgid "Snap"
 msgstr "Aggancia"
+
+
+msgid "Import"
+msgstr "Importa"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Decadimento Modifica Proporzionale"
+
+
+msgid "Mask Edit"
+msgstr "Modifica Maschera"
+
+
+msgid "Automasking"
+msgstr "Automascheramento"
+
+
+msgid "Face Sets Edit"
+msgstr "Modifica Sets di Facce"
+
+
+msgid "Vertex Group Locks"
+msgstr "Blocchi del Gruppo di Vertici"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Specchia"
 
 
 msgid "UV Mapping"
@@ -24618,20 +24714,8 @@ msgid "Select Similar"
 msgstr "Seleziona Simili"
 
 
-msgid "Read"
-msgstr "Lettura"
-
-
 msgid "Select All by Trait"
 msgstr "Seleziona Tutto per Caratteristica"
-
-
-msgid "Sample"
-msgstr "Campione"
-
-
-msgid "Write"
-msgstr "Scrittura"
 
 
 msgid "Select Linked"
@@ -24642,24 +24726,8 @@ msgid "Select Loops"
 msgstr "Seleziona Anelli"
 
 
-msgid "Primitives"
-msgstr "Primitive"
-
-
 msgid "Assign Material"
 msgstr "Assegna Materiale"
-
-
-msgid "Instances"
-msgstr "Istanze"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
-msgid "Import"
-msgstr "Importa"
 
 
 msgid "Light"
@@ -24678,12 +24746,12 @@ msgid "Relations"
 msgstr "Relazioni"
 
 
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Rigid Body"
 msgstr "Corpo Rigido"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -24698,16 +24766,12 @@ msgid "Quick Effects"
 msgstr "Effetti Veloci"
 
 
-msgid "Show/Hide"
-msgstr "Mostra/Nascondi"
-
-
-msgid "Clean Up"
-msgstr "Ripulisci"
-
-
 msgid "Asset"
 msgstr "Risorsa"
+
+
+msgid "Adjust"
+msgstr "Regola"
 
 
 msgid "Make Single User"
@@ -24722,12 +24786,16 @@ msgid "Link/Transfer Data"
 msgstr "Collega/Trasferisci Dati"
 
 
+msgid "Keying"
+msgstr "Keying"
+
+
 msgid "Hooks"
 msgstr "Ganci"
 
 
-msgid "Vertex Group Locks"
-msgstr "Blocchi del Gruppo di Vertici"
+msgid "Tracking"
+msgstr "Tracciamento"
 
 
 msgid "Face Sets Init"
@@ -24754,10 +24822,6 @@ msgid "Bone Collections"
 msgstr "Raccolte di Ossa"
 
 
-msgid "Names"
-msgstr "Nomi"
-
-
 msgid "Toggle Bone Options"
 msgstr "Attiva/disattiva Opzioni Osso"
 
@@ -24772,70 +24836,6 @@ msgstr "Disabilita Opzioni Osso"
 
 msgid "Mesh Select Mode"
 msgstr "Modalità Selezione Mesh"
-
-
-msgid "Face Data"
-msgstr "Dati Faccia"
-
-
-msgid "Select by Face Strength"
-msgstr "Seleziona per Intensità delle Facce"
-
-
-msgid "Set Face Strength"
-msgstr "Imposta Intensità Faccia"
-
-
-msgid "Merge"
-msgstr "Unisci"
-
-
-msgid "Layout"
-msgstr "Layout"
-
-
-msgid "Special Characters"
-msgstr "Caratteri Speciali"
-
-
-msgid "Kerning"
-msgstr "Crenatura"
-
-
-msgid "Adjust"
-msgstr "Regola"
-
-
-msgid "Keying"
-msgstr "Keying"
-
-
-msgid "Bone Roll"
-msgstr "Rollio Osso"
-
-
-msgid "Tracking"
-msgstr "Tracciamento"
-
-
-msgid "Pivot Point"
-msgstr "Punto di Perno"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Decadimento Modifica Proporzionale"
-
-
-msgid "Mask Edit"
-msgstr "Modifica Maschera"
-
-
-msgid "Automasking"
-msgstr "Automascheramento"
-
-
-msgid "Face Sets Edit"
-msgstr "Modifica Sets di Facce"
 
 
 msgid "Keyframe Insert Pie"
@@ -35603,10 +35603,6 @@ msgstr "Rileva automaticamente le caratteristiche e colloca i marcatori da tracc
 
 msgid "Minimal distance accepted between two features"
 msgstr "Distanza minima accettata tra due caratteristiche"
-
-
-msgid "Placement"
-msgstr "Collocamento"
 
 
 msgid "Placement for detected features"
@@ -50104,6 +50100,10 @@ msgid "Active Palette Color"
 msgstr "Colore Tavolozza Attivo"
 
 
+msgid "Selectability & Visibility"
+msgstr "Selezionabilità e Visibilità"
+
+
 msgid "Shadow Settings"
 msgstr "Impostazioni Ombra"
 
@@ -50158,10 +50158,6 @@ msgstr "Stereoscopia"
 
 msgid "Auto-Masking"
 msgstr "Auto-Mascheramento"
-
-
-msgid "Selectability & Visibility"
-msgstr "Selezionabilità e Visibilità"
 
 
 msgid "Chain Scaling"

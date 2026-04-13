@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2025-07-23 14:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Arabic <https://translate.blender.org/projects/blender-ui/ui/ar/>\n"
@@ -15648,6 +15648,10 @@ msgid "Dots"
 msgstr "ﺕﺎﺨﻄﻟ"
 
 
+msgid "Placement"
+msgstr "ﻊﺿﻮﻟﺍ"
+
+
 msgid "Material slot in an object"
 msgstr "ﻦﺋﺎﻛ ﻲﻓ ﺔﻣﺎﺧ ﺔﺤﺘﻓ"
 
@@ -15660,16 +15664,52 @@ msgid "Material slot name"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺔﺤﺘﻓ ﻢﺳﺇ"
 
 
+msgid "Face Data"
+msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
+
+
 msgid "Math"
 msgstr "ﺏﺎﺴﺣ"
 
 
-msgid "Mirror"
-msgstr "ﻞﺛﺎﻣ"
+msgid "Merge"
+msgstr "ﺞﻣﺩﺇ"
+
+
+msgid "Special Characters"
+msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
+
+
+msgid "Metaball"
+msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
+
+
+msgid "Names"
+msgstr "ءﺎﻤﺳﺃ"
+
+
+msgid "Bone Roll"
+msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
 
 
 msgid "Snap"
 msgstr "ﻱﺫﺎﺣ"
+
+
+msgid "Import"
+msgstr "ﺩﺭﻮﺘﺳﺇ"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "ﻲﺒﺴﻨﻟﺍ ﺮﻳﺮﺤﺘﻟﺍ ﻲﺷﻼ﻿ﺗ"
+
+
+msgid "UV"
+msgstr "ﺭﻭﺎﺤﻣ"
+
+
+msgid "Mirror"
+msgstr "ﻞﺛﺎﻣ"
 
 
 msgid "UV Mapping"
@@ -15704,14 +15744,6 @@ msgid "Select Linked"
 msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
 
 
-msgid "Metaball"
-msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
-
-
-msgid "Import"
-msgstr "ﺩﺭﻮﺘﺳﺇ"
-
-
 msgid "Light"
 msgstr "ءﻮﺿ"
 
@@ -15720,12 +15752,12 @@ msgid "Relations"
 msgstr "ﺕﺎﻗﻼ﻿ﻌﻟﺍ"
 
 
+msgid "Layout"
+msgstr "ﻖﻴﺴﻨﺗ"
+
+
 msgid "Rigid Body"
 msgstr "ﻞﻋﺎﻔﺘﻣ ﻢﺴﺟ"
-
-
-msgid "UV"
-msgstr "ﺭﻭﺎﺤﻣ"
 
 
 msgid "Apply"
@@ -15744,8 +15776,16 @@ msgid "Make Single User"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺪﻴﺣﻭ ﻪﻠﻌﺟﺍ"
 
 
+msgid "Keying"
+msgstr "ﺺﺤﻔﻟﺍ"
+
+
 msgid "Hooks"
 msgstr "ﺕﺎﻓﺎﻄﺧ"
+
+
+msgid "Tracking"
+msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ"
 
 
 msgid "In-Betweens"
@@ -15754,42 +15794,6 @@ msgstr "ﻦﻴﺑ ﺎﻣ"
 
 msgid "Propagate"
 msgstr "ﻢﻤﻋ"
-
-
-msgid "Names"
-msgstr "ءﺎﻤﺳﺃ"
-
-
-msgid "Face Data"
-msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
-
-
-msgid "Merge"
-msgstr "ﺞﻣﺩﺇ"
-
-
-msgid "Layout"
-msgstr "ﻖﻴﺴﻨﺗ"
-
-
-msgid "Special Characters"
-msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
-
-
-msgid "Keying"
-msgstr "ﺺﺤﻔﻟﺍ"
-
-
-msgid "Bone Roll"
-msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
-
-
-msgid "Tracking"
-msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "ﻲﺒﺴﻨﻟﺍ ﺮﻳﺮﺤﺘﻟﺍ ﻲﺷﻼ﻿ﺗ"
 
 
 msgctxt "MovieClip"
@@ -20839,10 +20843,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ ﻑﺬﺣﺍ"
 
 msgid "Minimal distance accepted between two features"
 msgstr "ﻦﻴﺗﺰﻴﻣ ﻦﻴﺑ ﺔﻟﻮﺒﻘﻤﻟﺍ ﺎﻴﻧﺪﻟﺍ ﺔﻓﺎﺴﻤﻟﺍ"
-
-
-msgid "Placement"
-msgstr "ﻊﺿﻮﻟﺍ"
 
 
 msgid "Placement for detected features"

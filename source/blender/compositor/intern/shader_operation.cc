@@ -35,6 +35,7 @@
 #include "COM_context.hh"
 #include "COM_pixel_operation.hh"
 #include "COM_result.hh"
+#include "COM_scheduler.hh"
 #include "COM_shader_node.hh"
 #include "COM_shader_operation.hh"
 #include "COM_utilities.hh"
@@ -43,7 +44,7 @@ namespace blender::compositor {
 
 ShaderOperation::ShaderOperation(Context &context,
                                  PixelCompileUnit &compile_unit,
-                                 const VectorSet<const bNode *> &schedule)
+                                 const Schedule &schedule)
     : PixelOperation(context, compile_unit, schedule)
 {
   material_ = GPU_material_from_callbacks(
@@ -472,7 +473,7 @@ void ShaderOperation::populate_results_for_node(const bNode &node)
      * of the execution schedule, then an output result needs to be populated for it. */
     const bool is_operation_output = is_output_linked_to_node_conditioned(
         *output, [&](const bNode &node) {
-          return schedule_.contains(&node) && !compile_unit_.contains(&node);
+          return schedule_.nodes.contains(&node) && !compile_unit_.contains(&node);
         });
 
     /* If the output is used as the node preview, then an output result needs to be populated for

@@ -2,6 +2,8 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#pragma once
+
 #define GPENCIL_MATERIAL_BUFFER_LEN 256
 
 #define GPENCIL_LIGHT_BUFFER_LEN 128

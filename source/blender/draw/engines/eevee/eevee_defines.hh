@@ -9,9 +9,7 @@
  * dragging larger headers into the createInfo pipeline which would cause problems.
  */
 
-#ifndef GPU_SHADER
-#  pragma once
-#endif
+#pragma once
 
 #ifndef SQUARE
 #  define SQUARE(x) ((x) * (x))

@@ -1938,7 +1938,7 @@ void ED_view3d_draw_offscreen(Depsgraph *depsgraph,
      * to ensure engines don't recompute them. */
     v3d->camera = nullptr;
     v3d->flag |= V3D_CUSTOM_MATRIX;
-    rv3d->persp = (winmat[3][3] == 0.0f) ? RV3D_PERSP : RV3D_ORTHO;
+    rv3d->persp = (rv3d->winmat[3][3] == 0.0f) ? RV3D_PERSP : RV3D_ORTHO;
   }
 
   if (viewport) {

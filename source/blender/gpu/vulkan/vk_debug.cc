@@ -95,8 +95,6 @@ void VKContext::process_frame_timings()
 
 bool VKContext::debug_capture_begin(const char *title)
 {
-  flush_render_graph(RenderGraphFlushFlags::SUBMIT | RenderGraphFlushFlags::WAIT_FOR_COMPLETION |
-                     RenderGraphFlushFlags::RENEW_RENDER_GRAPH);
   return VKBackend::get().debug_capture_begin(title);
 }
 
@@ -116,8 +114,6 @@ bool VKBackend::debug_capture_begin(const char *title)
 
 void VKContext::debug_capture_end()
 {
-  flush_render_graph(RenderGraphFlushFlags::SUBMIT | RenderGraphFlushFlags::WAIT_FOR_COMPLETION |
-                     RenderGraphFlushFlags::RENEW_RENDER_GRAPH);
   VKBackend::get().debug_capture_end();
 }
 

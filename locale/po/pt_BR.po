@@ -1,18 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
-"PO-Revision-Date: 2025-11-11 12:13+0000\n"
-"Last-Translator: Rafael Teixeira de Avila Soares <rafaeltas@gmail.com>\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"PO-Revision-Date: 2026-04-13 10:12+0000\n"
+"Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.12.1\n"
+"X-Generator: Weblate 5.16.2\n"
 "X-Poedit-SourceCharset: utf-8"
 
 
@@ -137,15 +137,15 @@ msgstr "Cores padrão"
 
 
 msgid "01 - Theme Color Set"
-msgstr "CJ de cores de tema - 01"
+msgstr "01 - Conjunto de Cores de Tema"
 
 
 msgid "02 - Theme Color Set"
-msgstr "CJ de cores de tema - 02"
+msgstr "02 - Conjunto de Cores do Tema"
 
 
 msgid "03 - Theme Color Set"
-msgstr "CJ de cores de tema - 03"
+msgstr "03 - Conjunto de Cores do Tema"
 
 
 msgid "04 - Theme Color Set"
@@ -21180,6 +21180,10 @@ msgid "UV Factor"
 msgstr "Fator UV"
 
 
+msgid "Placement"
+msgstr "Posicionamento"
+
+
 msgid "Material slot in an object"
 msgstr "Compartimentos de material dentro de um objeto."
 
@@ -21196,16 +21200,68 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
 msgid "Math"
 msgstr "Matemática"
 
 
-msgid "Mirror"
-msgstr "Espelhar"
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Merge"
+msgstr "Fundir"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
+msgid "Metaball"
+msgstr "Meta-esfera"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
 
 
 msgid "Snap"
 msgstr "Atrair"
+
+
+msgid "Import"
+msgstr "Importar"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Espelhar"
 
 
 msgid "UV Mapping"
@@ -21256,18 +21312,6 @@ msgid "Select Loops"
 msgstr "Selecionar anéis"
 
 
-msgid "Instances"
-msgstr "Instâncias"
-
-
-msgid "Metaball"
-msgstr "Meta-esfera"
-
-
-msgid "Import"
-msgstr "Importar"
-
-
 msgid "Light"
 msgstr "Luz"
 
@@ -21284,12 +21328,12 @@ msgid "Relations"
 msgstr "Relações"
 
 
+msgid "Layout"
+msgstr "Organizar"
+
+
 msgid "Rigid Body"
 msgstr "Corpo rígido"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -21304,14 +21348,6 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
 msgid "Make Single User"
 msgstr "Tornar usuário único"
 
@@ -21320,8 +21356,16 @@ msgid "Convert"
 msgstr "Converter"
 
 
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
 msgid "Hooks"
 msgstr "Ganchos"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
 
 
 msgid "Random Mask"
@@ -21340,10 +21384,6 @@ msgid "Propagate"
 msgstr "Propagar"
 
 
-msgid "Names"
-msgstr "Nomes"
-
-
 msgid "Toggle Bone Options"
 msgstr "Alternar opções de ossos"
 
@@ -21358,42 +21398,6 @@ msgstr "Desabilitar as opções de ossos"
 
 msgid "Mesh Select Mode"
 msgstr "Modo de seleção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Merge"
-msgstr "Fundir"
-
-
-msgid "Layout"
-msgstr "Organizar"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiais"
-
-
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Basic"
@@ -31491,10 +31495,6 @@ msgstr "São consideradas somente as funcionalidades que estão além das margen
 
 msgid "Minimal distance accepted between two features"
 msgstr "Distância mínima aceita entre duas funcionalidades."
-
-
-msgid "Placement"
-msgstr "Posicionamento"
 
 
 msgid "Placement for detected features"
@@ -64912,10 +64912,6 @@ msgid "Dynamic Topology found: %s, disabled"
 msgstr "Topologia dinâmica encontrada: %s, desabilitados(as)."
 
 
-msgid "Palette created"
-msgstr "Paleta Criada"
-
-
 msgid "Sample color for %s"
 msgstr "Amostragem de cor para %s."
 
@@ -64926,6 +64922,10 @@ msgstr "O pincel atual. Clique com o BEM para obter amostras para a paleta ao in
 
 msgid "Palette. Use Left Click to sample more colors"
 msgstr "A paleta atual. Clique com o BEM para obter mais amostras de cor."
+
+
+msgid "Palette created"
+msgstr "Paleta Criada"
 
 
 msgid "Compiled without sound support"

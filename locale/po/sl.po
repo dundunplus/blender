@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"POT-Creation-Date: 2026-04-13 10:20+0000\n"
 "PO-Revision-Date: 2026-02-14 12:47+0000\n"
 "Last-Translator: Gorazd Gorup <gorupgorazd@gmail.com>\n"
 "Language-Team: Slovenian <https://translate.blender.org/projects/blender-ui/ui/sl/>\n"
@@ -6019,10 +6019,6 @@ msgstr "Pokaže podporne črte za podaljšanje poteze"
 
 msgid "Show Lasso"
 msgstr "Pokaži laso"
-
-
-msgid "Do not display fill color while drawing the stroke"
-msgstr "Med risanjem poteze skrije barvo polnila"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -25841,6 +25837,10 @@ msgid "UV Factor"
 msgstr "Faktor UV"
 
 
+msgid "Placement"
+msgstr "Postavitev"
+
+
 msgid "Show Stroke"
 msgstr "Pokaži potezo"
 
@@ -25878,6 +25878,18 @@ msgid "Use Material Mask"
 msgstr "Uporabi masko materiala"
 
 
+msgid "Face Data"
+msgstr "Podatki lic"
+
+
+msgid "Select by Face Strength"
+msgstr "Izberi glede na krepkost lica"
+
+
+msgid "Set Face Strength"
+msgstr "Nastavi krepkost lica"
+
+
 msgid "Math"
 msgstr "Matematika"
 
@@ -25886,12 +25898,100 @@ msgid "Utilities"
 msgstr "Pripomočki"
 
 
-msgid "Mirror"
-msgstr "Zrcali"
+msgid "Clean Up"
+msgstr "Počisti"
+
+
+msgid "Merge"
+msgstr "Združi"
+
+
+msgid "Show/Hide"
+msgstr "Pokaži / skrij"
+
+
+msgid "Special Characters"
+msgstr "Posebni znaki"
+
+
+msgid "Kerning"
+msgstr "Spodsekavanje"
+
+
+msgid "Metaball"
+msgstr "Metažoga"
+
+
+msgid "Read"
+msgstr "Branje"
+
+
+msgid "Sample"
+msgstr "Vzorčenje"
+
+
+msgid "Write"
+msgstr "Zapiši"
+
+
+msgid "Names"
+msgstr "Imena"
+
+
+msgid "Primitives"
+msgstr "Primitivi"
+
+
+msgid "Bone Roll"
+msgstr "Zasukaj kost"
+
+
+msgid "Gizmo"
+msgstr "Manipulator"
+
+
+msgid "Instances"
+msgstr "Primerki"
+
+
+msgid "Pivot Point"
+msgstr "Osišče"
 
 
 msgid "Snap"
 msgstr "Pritrdi"
+
+
+msgid "Import"
+msgstr "Uvozi"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Slabljenje sorazmernega urejanja"
+
+
+msgid "Mask Edit"
+msgstr "Urejanje maske"
+
+
+msgid "Automasking"
+msgstr "Samodejno maskiranje"
+
+
+msgid "Deprecated"
+msgstr "Zastarelo"
+
+
+msgid "List"
+msgstr "Seznam"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "Zrcali"
 
 
 msgid "UV Mapping"
@@ -25930,20 +26030,8 @@ msgid "Select Similar"
 msgstr "Izberi sorodne"
 
 
-msgid "Read"
-msgstr "Branje"
-
-
 msgid "Select All by Trait"
 msgstr "Izberi vse po značilnosti"
-
-
-msgid "Sample"
-msgstr "Vzorčenje"
-
-
-msgid "Write"
-msgstr "Zapiši"
 
 
 msgid "Select Linked"
@@ -25954,28 +26042,8 @@ msgid "Select Loops"
 msgstr "Izberi zanke"
 
 
-msgid "Primitives"
-msgstr "Primitivi"
-
-
 msgid "Assign Material"
 msgstr "Dodeli material"
-
-
-msgid "Gizmo"
-msgstr "Manipulator"
-
-
-msgid "Instances"
-msgstr "Primerki"
-
-
-msgid "Metaball"
-msgstr "Metažoga"
-
-
-msgid "Import"
-msgstr "Uvozi"
 
 
 msgid "Light"
@@ -25986,10 +26054,6 @@ msgid "Light Probe"
 msgstr "Svetlobna sonda"
 
 
-msgid "Deprecated"
-msgstr "Zastarelo"
-
-
 msgid "Add Image"
 msgstr "Dodaj sliko"
 
@@ -25998,16 +26062,12 @@ msgid "Relations"
 msgstr "Razmerja"
 
 
-msgid "List"
-msgstr "Seznam"
+msgid "Layout"
+msgstr "Ureditev"
 
 
 msgid "Rigid Body"
 msgstr "Togo telo"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Apply"
@@ -26022,16 +26082,12 @@ msgid "Quick Effects"
 msgstr "Učinki na hitro"
 
 
-msgid "Show/Hide"
-msgstr "Pokaži / skrij"
-
-
-msgid "Clean Up"
-msgstr "Počisti"
-
-
 msgid "Asset"
 msgstr "Sredstvo"
+
+
+msgid "Adjust"
+msgstr "Prilagoditev"
 
 
 msgid "Make Single User"
@@ -26046,12 +26102,28 @@ msgid "Link/Transfer Data"
 msgstr "Poveži / prenesi podatke"
 
 
+msgid "Keying"
+msgstr "Ključenje"
+
+
 msgid "Hooks"
 msgstr "Kavlji"
 
 
+msgid "Tracking"
+msgstr "Sledenje"
+
+
+msgid "Render Preview"
+msgstr "Predogled upodobitve"
+
+
 msgid "Trim/Add"
 msgstr "Poreži / dodaj"
+
+
+msgid "Creative"
+msgstr "Ustvarjanje"
 
 
 msgid "Random Mask"
@@ -26072,78 +26144,6 @@ msgstr "Razširjanje"
 
 msgid "Bone Collections"
 msgstr "Zbirke kosti"
-
-
-msgid "Names"
-msgstr "Imena"
-
-
-msgid "Face Data"
-msgstr "Podatki lic"
-
-
-msgid "Select by Face Strength"
-msgstr "Izberi glede na krepkost lica"
-
-
-msgid "Set Face Strength"
-msgstr "Nastavi krepkost lica"
-
-
-msgid "Merge"
-msgstr "Združi"
-
-
-msgid "Layout"
-msgstr "Ureditev"
-
-
-msgid "Special Characters"
-msgstr "Posebni znaki"
-
-
-msgid "Kerning"
-msgstr "Spodsekavanje"
-
-
-msgid "Adjust"
-msgstr "Prilagoditev"
-
-
-msgid "Keying"
-msgstr "Ključenje"
-
-
-msgid "Bone Roll"
-msgstr "Zasukaj kost"
-
-
-msgid "Tracking"
-msgstr "Sledenje"
-
-
-msgid "Render Preview"
-msgstr "Predogled upodobitve"
-
-
-msgid "Creative"
-msgstr "Ustvarjanje"
-
-
-msgid "Pivot Point"
-msgstr "Osišče"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Slabljenje sorazmernega urejanja"
-
-
-msgid "Mask Edit"
-msgstr "Urejanje maske"
-
-
-msgid "Automasking"
-msgstr "Samodejno maskiranje"
 
 
 msgid "Animals"
@@ -36766,10 +36766,6 @@ msgstr "Izbriši obris"
 msgctxt "Operator"
 msgid "Detect Features"
 msgstr "Zaznaj značilke"
-
-
-msgid "Placement"
-msgstr "Postavitev"
 
 
 msgid "Whole Frame"
@@ -49684,6 +49680,26 @@ msgid "Panel containing UI elements"
 msgstr "Plošča, ki vsebuje elemente uporabniškega vmesnika"
 
 
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "Animacije glTF"
+
+
+msgid "Active Tool"
+msgstr "Aktivno orodje"
+
+
+msgid "View Lock"
+msgstr "Zaklep pogleda"
+
+
+msgid "Selectability & Visibility"
+msgstr "Izbirljivost in vidnost"
+
+
 msgid "Shadow Settings"
 msgstr "Nastavitve senc"
 
@@ -49710,14 +49726,6 @@ msgstr "Pomagala"
 
 msgid "Guides"
 msgstr "Vodnice"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "Animacije glTF"
 
 
 msgid "Viewer Node"
@@ -49790,18 +49798,6 @@ msgstr "VR"
 
 msgid "VR Info"
 msgstr "Informacije VR"
-
-
-msgid "Active Tool"
-msgstr "Aktivno orodje"
-
-
-msgid "View Lock"
-msgstr "Zaklep pogleda"
-
-
-msgid "Selectability & Visibility"
-msgstr "Izbirljivost in vidnost"
 
 
 msgid "Import Settings"
@@ -74487,12 +74483,12 @@ msgid "PaintCurve"
 msgstr "RisalnaKrivulja"
 
 
-msgid "Palette created"
-msgstr "Paleta ustvarjena"
-
-
 msgid "Sample color for %s"
 msgstr "Vzorči barvo za %s"
+
+
+msgid "Palette created"
+msgstr "Paleta ustvarjena"
 
 
 msgid "Active F-Curve"
