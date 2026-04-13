@@ -2166,11 +2166,15 @@ static void fill_bm_face_or_corner_attribute(BMesh &bm,
                                              const T &value,
                                              const AttrDomain domain,
                                              const int cd_offset,
-                                             const bool use_vert_sel)
+                                             const bool use_vert_sel,
+                                             const bool only_visible = false)
 {
   BMFace *f;
   BMIter iter;
   BM_ITER_MESH (f, &iter, &bm, BM_FACES_OF_MESH) {
+    if (only_visible && paint_is_bmesh_face_hidden(f)) {
+      continue;
+    }
     BMLoop *l = f->l_first;
     do {
       if (!(use_vert_sel && !BM_elem_flag_test(l->v, BM_ELEM_SELECT))) {
@@ -2192,9 +2196,11 @@ static void fill_mesh_face_or_corner_attribute(Mesh &mesh,
                                                const MutableSpan<T> data,
                                                const bool use_vert_sel,
                                                const bool use_face_sel,
-                                               const bool affect_alpha)
+                                               const bool affect_alpha,
+                                               const bool only_visible = false)
 {
   const bke::AttributeAccessor attributes = mesh.attributes();
+  const VArraySpan hide_poly = *attributes.lookup<bool>(".hide_poly", bke::AttrDomain::Face);
   VArraySpan<bool> select_vert;
   if (use_vert_sel) {
     select_vert = *attributes.lookup<bool>(".select_vert", bke::AttrDomain::Point);
@@ -2208,6 +2214,9 @@ static void fill_mesh_face_or_corner_attribute(Mesh &mesh,
   const Span<int> corner_verts = mesh.corner_verts();
 
   for (const int i : faces.index_range()) {
+    if (only_visible && !hide_poly.is_empty() && hide_poly[i]) {
+      continue;
+    }
     if (!select_poly.is_empty() && !select_poly[i]) {
       continue;
     }
@@ -2234,18 +2243,23 @@ static void fill_mesh_color(Mesh &mesh,
                             const StringRef name,
                             const bool use_vert_sel,
                             const bool use_face_sel,
-                            const bool affect_alpha)
+                            const bool affect_alpha,
+                            const bool only_visible = false)
 {
   if (BMEditMesh *em = mesh.runtime->edit_mesh.get()) {
     BMesh *bm = em->bm;
     const BMDataLayerLookup attr = BM_data_layer_lookup(*mesh.runtime->edit_mesh->bm, name);
     if (attr.type == bke::AttrType::ColorFloat) {
       fill_bm_face_or_corner_attribute<ColorPaint4f>(
-          *bm, color, attr.domain, attr.offset, use_vert_sel);
+          *bm, color, attr.domain, attr.offset, use_vert_sel, only_visible);
     }
     else if (attr.type == bke::AttrType::ColorByte) {
-      fill_bm_face_or_corner_attribute<ColorPaint4b>(
-          *bm, blender::color::encode(color), attr.domain, attr.offset, use_vert_sel);
+      fill_bm_face_or_corner_attribute<ColorPaint4b>(*bm,
+                                                     blender::color::encode(color),
+                                                     attr.domain,
+                                                     attr.offset,
+                                                     use_vert_sel,
+                                                     only_visible);
     }
   }
   else {
@@ -2258,7 +2272,8 @@ static void fill_mesh_color(Mesh &mesh,
           attribute.span.typed<ColorGeometry4f>().cast<ColorPaint4f>(),
           use_vert_sel,
           use_face_sel,
-          affect_alpha);
+          affect_alpha,
+          only_visible);
     }
     else if (attribute.span.type().is<ColorGeometry4b>()) {
       fill_mesh_face_or_corner_attribute<ColorPaint4b>(
@@ -2268,7 +2283,8 @@ static void fill_mesh_color(Mesh &mesh,
           attribute.span.typed<ColorGeometry4b>().cast<ColorPaint4b>(),
           use_vert_sel,
           use_face_sel,
-          affect_alpha);
+          affect_alpha,
+          only_visible);
     }
     attribute.finish();
   }
@@ -2277,7 +2293,8 @@ static void fill_mesh_color(Mesh &mesh,
 static bool fill_active_color(Object &ob,
                               ColorPaint4f fill_color,
                               bool only_selected = true,
-                              bool affect_alpha = true)
+                              bool affect_alpha = true,
+                              const bool only_visible = false)
 {
   Mesh *mesh = BKE_mesh_from_object(&ob);
   if (!mesh) {
@@ -2286,8 +2303,13 @@ static bool fill_active_color(Object &ob,
 
   const bool use_face_sel = only_selected ? (mesh->editflag & ME_EDIT_PAINT_FACE_SEL) != 0 : false;
   const bool use_vert_sel = only_selected ? (mesh->editflag & ME_EDIT_PAINT_VERT_SEL) != 0 : false;
-  fill_mesh_color(
-      *mesh, fill_color, mesh->active_color_attribute, use_vert_sel, use_face_sel, affect_alpha);
+  fill_mesh_color(*mesh,
+                  fill_color,
+                  mesh->active_color_attribute,
+                  use_vert_sel,
+                  use_face_sel,
+                  affect_alpha,
+                  only_visible);
 
   DEG_id_tag_update(&mesh->id, ID_RECALC_SYNC_TO_EVAL);
 
@@ -2297,9 +2319,9 @@ static bool fill_active_color(Object &ob,
   return true;
 }
 
-bool object_active_color_fill(Object &ob, const float fill_color[4], bool only_selected)
+bool object_active_color_init(Object &ob, const float fill_color[4])
 {
-  return fill_active_color(ob, ColorPaint4f(fill_color), only_selected);
+  return fill_active_color(ob, ColorPaint4f(fill_color), false, false);
 }
 
 }  // namespace ed::sculpt_paint
@@ -2328,7 +2350,7 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
   IndexMaskMemory memory;
   const IndexMask node_mask = bke::pbvh::all_leaf_nodes(pbvh, memory);
 
-  fill_active_color(obact, paintcol, true, affect_alpha);
+  fill_active_color(obact, paintcol, true, affect_alpha, true);
 
   pbvh.tag_attribute_changed(node_mask, mesh->active_color_attribute);
 

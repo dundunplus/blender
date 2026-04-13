@@ -147,9 +147,9 @@ enum eAction_TransformFlags {
   ACT_TRANS_ALL = (ACT_TRANS_ONLY | ACT_TRANS_PROP),
 };
 
-/* Temporary data linking PoseChannels with the F-Curves they affect */
-struct tPChanFCurveLink {
-  tPChanFCurveLink *next, *prev;
+/* Temporary struct wrapping data used for pose sliding. */
+struct SlideSubject {
+  SlideSubject *next, *prev;
 
   /** Object this Pose Channel belongs to. */
   Object *ob;
@@ -192,26 +192,26 @@ struct tPChanFCurveLink {
 /** Returns a valid pose armature for this object, else returns NULL. */
 Object *poseAnim_object_get(Object *ob_);
 /**
- * Build up a list of tPChanFCurveLink. First only selected, and if that yields no result, all
+ * Build up a list of SlideSubject. First only selected, and if that yields no result, all
  * visible.
  */
-void poseAnim_mapping_get(bContext *C, ListBaseT<tPChanFCurveLink> *pfLinks);
-/** Free F-Curve <-> PoseChannel links. */
-void poseAnim_mapping_free(ListBaseT<tPChanFCurveLink> *pfLinks);
+void slide_subjects_get(bContext *C, ListBaseT<SlideSubject> *slide_subjects);
+/** Free all slide targets. */
+void slide_subjects_free(ListBaseT<SlideSubject> *slide_subjects);
 
 /**
  * Helper for apply() / reset() - refresh the data.
  */
-void poseAnim_mapping_refresh(bContext *C, Scene *scene, Object *ob);
+void slide_subjects_refresh(bContext *C, Scene *scene, Object *ob);
 /**
- * Reset changes made to current pose.
+ * Reset changes made to current slide targets back to their stored values.
  */
-void poseAnim_mapping_reset(ListBaseT<tPChanFCurveLink> *pfLinks);
+void slide_subjects_reset(ListBaseT<SlideSubject> *slide_subjects);
 /** Perform auto-key-framing after changes were made + confirmed. */
-void poseAnim_mapping_autoKeyframe(bContext *C,
-                                   Scene *scene,
-                                   ListBaseT<tPChanFCurveLink> *pfLinks,
-                                   float cframe);
+void slide_subjects_autokey(bContext *C,
+                            Scene *scene,
+                            ListBaseT<SlideSubject> *slide_subjects,
+                            float cframe);
 
 /** \} */
 
