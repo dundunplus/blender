@@ -455,14 +455,13 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
 
         layout.separator()
 
-        heading = layout.column(align=True, heading="Scrambling Distance")
-        # Tabulated Sobol is used when the debug UI is turned off.
-        heading.active = cscene.sampling_pattern == 'TABULATED_SOBOL'
-        heading.prop(cscene, "auto_scrambling_distance", text="Automatic")
-        heading.prop(cscene, "preview_scrambling_distance", text="Viewport")
-        heading.prop(cscene, "scrambling_distance", text="Multiplier")
+        if cscene.sampling_pattern == 'TABULATED_SOBOL':
+            heading = layout.column(align=True, heading="Scrambling Distance")
+            heading.prop(cscene, "auto_scrambling_distance", text="Automatic")
+            heading.prop(cscene, "preview_scrambling_distance", text="Viewport")
+            heading.prop(cscene, "scrambling_distance", text="Multiplier")
 
-        layout.separator()
+            layout.separator()
 
         col = layout.column(align=True)
         col.prop(cscene, "min_light_bounces")

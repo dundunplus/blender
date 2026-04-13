@@ -16,6 +16,24 @@ SHADER_LIBRARY_CREATE_INFO(eevee_global_ubo)
 /* Based on Frosbite Unified Volumetric.
  * https://www.ea.com/frostbite/news/physically-based-unified-volumetric-rendering-in-frostbite */
 
+struct UnifiedVolumeProperties {
+  [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
+
+  [[image(VOLUME_PROP_SCATTERING_IMG_SLOT, read, UFLOAT_11_11_10)]] image3D in_scattering_img;
+  [[image(VOLUME_PROP_EXTINCTION_IMG_SLOT, read, UFLOAT_11_11_10)]] image3D in_extinction_img;
+  [[image(VOLUME_PROP_EMISSION_IMG_SLOT, read, UFLOAT_11_11_10)]] image3D in_emission_img;
+  [[image(VOLUME_PROP_PHASE_IMG_SLOT, read, SFLOAT_16)]] image3D in_phase_img;
+  [[image(VOLUME_PROP_PHASE_WEIGHT_IMG_SLOT, read, SFLOAT_16)]] image3D in_phase_weight_img;
+};
+
+struct UnifiedVolumeData {
+  [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
+  [[legacy_info]] ShaderCreateInfo draw_view;
+
+  [[sampler(VOLUME_TRANSMITTANCE_TEX_SLOT)]] sampler3D transmittance_tx;
+  [[sampler(VOLUME_SCATTERING_TEX_SLOT)]] sampler3D scattering_tx;
+};
+
 /* Per froxel jitter to break slices and flickering.
  * Wrapped so that changing it is easier. */
 float volume_froxel_jitter(int2 froxel, float offset)

@@ -19,7 +19,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_nodetree)
 FRAGMENT_SHADER_CREATE_INFO(eevee_geom_mesh)
 FRAGMENT_SHADER_CREATE_INFO(eevee_surf_volume)
 
-#include "eevee_volume_lib.glsl"
+#include "eevee_volume_lib.bsl.hh"
 
 /* Needed includes for shader nodes. */
 #include "eevee_attributes_volume_lib.glsl"

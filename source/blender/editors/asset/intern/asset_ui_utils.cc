@@ -126,9 +126,9 @@ std::optional<AssetLibraryReference> get_user_library_ref_for_save(
     BLI_assert_unreachable();
   }
 
-  /* Fallback to the first enabled user library. */
+  /* Fallback to the first enabled on-disk user library. */
   for (const bUserAssetLibrary &asset_library : U.asset_libraries) {
-    if (asset_library.flag & ASSET_LIBRARY_DISABLED) {
+    if (asset_library.flag & (ASSET_LIBRARY_DISABLED | ASSET_LIBRARY_USE_REMOTE_URL)) {
       continue;
     }
     return asset::user_library_to_library_ref(asset_library);

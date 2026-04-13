@@ -72,7 +72,6 @@ set(SRC_GLSL_FRAG
   eevee_surf_volume_frag.glsl
   eevee_surf_world_frag.glsl
   eevee_transparency_resolve_frag.glsl
-  eevee_volume_resolve_frag.glsl
 )
 
 set(SRC_GLSL_COMP
@@ -128,8 +127,6 @@ set(SRC_GLSL_COMP
   eevee_surfel_list_sort_comp.glsl
   eevee_surfel_ray_comp.glsl
   eevee_vertex_copy_comp.glsl
-  eevee_volume_integration_comp.glsl
-  eevee_volume_scatter_comp.glsl
 )
 
 set(SRC_GLSL_LIB
@@ -172,7 +169,6 @@ set(SRC_GLSL_LIB
   eevee_surfel_list_lib.glsl
   # eevee_transparency_lib.glsl # Require Fragment shader include
   # eevee_velocity_lib.glsl # Has dependency on draw_model_lib that is hard to resolve
-  eevee_volume_lib.glsl
 )
 
 set(SRC_BSL

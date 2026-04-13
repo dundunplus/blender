@@ -297,10 +297,8 @@ void VKTexturePool::AllocationHandle::alloc(VkMemoryRequirements requirements)
 
 void VKTexturePool::AllocationHandle::free()
 {
-  VKDevice &device = VKBackend::get().device;
-  /* TODO(not_mark): allocation needs to go to discard pool, but for that it needs to be tracked.
-   * This is only OK right now because `max_unused_cycles_` is sufficiently large. */
-  vmaFreeMemory(device.mem_allocator_get(), allocation);
+  VKDiscardPool &discard_pool = VKDiscardPool::discard_pool_get();
+  discard_pool.discard_allocation(allocation);
   segments = {};
 }
 
@@ -396,10 +394,11 @@ Texture *VKTexturePool::acquire_texture(int2 extent,
 
   /* If no compatible region was found, allocate new memory. */
   if (image_info.allocation == VK_NULL_HANDLE) {
-    requirements.size = std::max(allocation_size, requirements.size);
+    VkMemoryRequirements allocation_requirements = requirements;
+    allocation_requirements.size = std::max(allocation_size, requirements.size);
 
     AllocationHandle handle;
-    handle.alloc(requirements);
+    handle.alloc(allocation_requirements);
 
     std::optional<VKMemorySegment> segment_opt = handle.acquire(requirements);
     if (segment_opt) {

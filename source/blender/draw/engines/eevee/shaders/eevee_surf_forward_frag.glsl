@@ -23,7 +23,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_surf_forward)
 #include "eevee_reverse_z_lib.bsl.hh"
 #include "eevee_sampling_lib.glsl"
 #include "eevee_surf_lib.glsl"
-#include "eevee_volume_lib.glsl"
+#include "eevee_volume_lib.bsl.hh"
 
 /* Global thickness because it is needed for closure_to_rgba. */
 Thickness g_thickness;

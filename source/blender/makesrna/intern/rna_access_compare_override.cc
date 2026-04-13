@@ -891,7 +891,8 @@ bool RNA_struct_override_matches(Main *bmain,
                * a NOOP operation to enforce no change on that property, etc.). */
               op->tag |= LIBOVERRIDE_PROP_TAG_NEEDS_RETORE;
               opop_restore->tag |= LIBOVERRIDE_PROP_TAG_NEEDS_RETORE;
-              liboverride->runtime->tag |= LIBOVERRIDE_TAG_NEEDS_RESTORE;
+              BKE_lib_override_library_tag_set(
+                  *liboverride, IDOverrideLibraryTag::TAG_NEEDS_RESTORE, true);
 
               CLOG_DEBUG(
                   &LOG,

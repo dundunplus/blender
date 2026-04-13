@@ -51,6 +51,31 @@ bool is_auto_resync_enabled();
 
 }  // namespace bke::liboverride
 
+/** Some runtime-only tags for IDOverrideLibrary struct. */
+enum class IDOverrideLibraryTag {
+  /** This override needs to be reloaded. */
+  TAG_NEEDS_RELOAD = 1 << 0,
+
+  /**
+   * This override contains properties with forbidden changes, which should be restored to their
+   * linked reference value.
+   */
+  TAG_NEEDS_RESTORE = 1 << 1,
+
+  /**
+   * This override is detected as being cut from its hierarchy root. Temporarily used during
+   * resync process.
+   */
+  TAG_RESYNC_ISOLATED_FROM_ROOT = 1 << 2,
+  /**
+   * This override was detected as needing resync outside of the resync process (it is a 'really
+   * need resync' case, not a 'need resync for hierarchy reasons' one). Temporarily used during
+   * resync process.
+   */
+  TAG_NEED_RESYNC_ORIGINAL = 1 << 3,
+};
+ENUM_OPERATORS(IDOverrideLibraryTag);
+
 /**
  * Initialize empty overriding of \a reference_id by \a local_id.
  */
@@ -67,6 +92,10 @@ void BKE_lib_override_library_clear(IDOverrideLibrary *liboverride, bool do_id_u
  * Free given \a liboverride.
  */
 void BKE_lib_override_library_free(IDOverrideLibrary **liboverride, bool do_id_user);
+/** Set or clear runtime-only tags in given \a liboverride. */
+void BKE_lib_override_library_tag_set(IDOverrideLibrary &liboverride,
+                                      IDOverrideLibraryTag tag,
+                                      bool value);
 
 /**
  * Return the actual #IDOverrideLibrary data 'controlling' the given `id`, and the actual ID owning

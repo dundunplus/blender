@@ -560,10 +560,8 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_utility_tx_lib.glsl
   engines/eevee/shaders/eevee_velocity_lib.glsl
   engines/eevee/shaders/eevee_vertex_copy_comp.glsl
-  engines/eevee/shaders/eevee_volume_integration_comp.glsl
-  engines/eevee/shaders/eevee_volume_lib.glsl
-  engines/eevee/shaders/eevee_volume_resolve_frag.glsl
-  engines/eevee/shaders/eevee_volume_scatter_comp.glsl
+  engines/eevee/shaders/eevee_volume.bsl.hh
+  engines/eevee/shaders/eevee_volume_lib.bsl.hh
 
   engines/eevee/eevee_camera_shared.hh
   engines/eevee/eevee_debug_shared.hh

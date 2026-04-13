@@ -180,8 +180,8 @@ class Grid : Overlay {
       grid_ubo_.steps[i].y = steps_y[i] * step_mult;
     }
 
-    /* Determine camera offset to center of v2d. */
-    grid_ubo_.offset = float2(v2d->cur.xmax + v2d->cur.xmin, v2d->cur.ymax + v2d->cur.ymin) - 1.0f;
+    /* Align the grid to the tile origin */
+    grid_ubo_.offset = float2(-1.0f);
 
     /* Query grid image zoom level. Then find the lowest relevant grid level + fractional. */
     float dist = ED_space_image_zoom_level(v2d, SI_GRID_STEPS_LEN) * 4.0f;

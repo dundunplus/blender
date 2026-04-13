@@ -28,7 +28,7 @@ COMPUTE_SHADER_CREATE_INFO(draw_resource_id_varying)
 #include "eevee_shadow_page_ops.bsl.hh"
 #include "eevee_shadow_shared.hh"
 #include "eevee_shadow_tilemap_lib.bsl.hh"
-#include "eevee_volume_lib.glsl"
+#include "eevee_volume_lib.bsl.hh"
 #include "gpu_shader_math_vector_compare_lib.glsl"
 
 namespace eevee::shadow::usage {
@@ -295,16 +295,6 @@ void tag_usage_surfel([[resource_table]] TagUsageSurfel &srt,
   tag.tag_surfel(surfel, srt.directional_level);
 }
 
-struct VolumeProperties {
-  [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
-
-  [[image(VOLUME_PROP_SCATTERING_IMG_SLOT, read, UFLOAT_11_11_10)]] image3D in_scattering_img;
-  [[image(VOLUME_PROP_EXTINCTION_IMG_SLOT, read, UFLOAT_11_11_10)]] image3D in_extinction_img;
-  [[image(VOLUME_PROP_EMISSION_IMG_SLOT, read, UFLOAT_11_11_10)]] image3D in_emission_img;
-  [[image(VOLUME_PROP_PHASE_IMG_SLOT, read, SFLOAT_16)]] image3D in_phase_img;
-  [[image(VOLUME_PROP_PHASE_WEIGHT_IMG_SLOT, read, SFLOAT_16)]] image3D in_phase_weight_img;
-};
-
 struct TagUsageVolume {
   [[legacy_info]] ShaderCreateInfo eevee_sampling_data;
   [[legacy_info]] ShaderCreateInfo eevee_hiz_data;
@@ -315,7 +305,7 @@ struct TagUsageVolume {
  */
 [[compute, local_size(VOLUME_GROUP_SIZE, VOLUME_GROUP_SIZE, VOLUME_GROUP_SIZE)]]
 void tag_usage_volume([[resource_table]] TagUsageVolume &srt,
-                      [[resource_table]] VolumeProperties &volume,
+                      [[resource_table]] UnifiedVolumeProperties &volume,
                       [[resource_table]] TagUsage &tag,
                       [[resource_table]] SurfelCapture &capture,
                       [[global_invocation_id]] const uint3 global_id)

@@ -728,7 +728,10 @@ const char *RNA_property_typename(PropertyType type);
 #define IS_DNATYPE_BOOLEAN_COMPAT(_str) \
   (IS_DNATYPE_INT_COMPAT(_str) || strcmp(_str, "int64_t") == 0 || strcmp(_str, "uint64_t") == 0)
 
-void RNA_identifier_sanitize(char *identifier, int property);
+bool RNA_validate_identifier(const char *identifier,
+                             bool is_property,
+                             const char **r_error = nullptr);
+void RNA_identifier_sanitize(char *identifier, bool is_property);
 
 /* Common arguments for length. */
 
