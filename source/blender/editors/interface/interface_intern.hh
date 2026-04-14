@@ -35,20 +35,11 @@ struct bContext;
 struct bContextStore;
 struct CurveMapping;
 struct CurveProfile;
-namespace gpu {
-class Batch;
-}
 struct ID;
 struct ImBuf;
 struct LayoutPanelHeader;
 struct Main;
 struct Scene;
-namespace ui {
-struct SafetyRect;
-struct HandleButtonData;
-struct Layout;
-struct UndoStack_Text;
-}  // namespace ui
 struct uiListType;
 struct uiStyle;
 struct uiWidgetColors;
@@ -58,8 +49,16 @@ struct wmKeyConfig;
 struct wmOperatorType;
 struct wmTimer;
 
+namespace gpu {
+class Batch;
+}
+
 namespace ui {
 
+struct SafetyRect;
+struct HandleButtonData;
+struct Layout;
+struct UndoStack_Text;
 /* ****************** general defines ************** */
 
 #define RNA_ENUM_VALUE -2

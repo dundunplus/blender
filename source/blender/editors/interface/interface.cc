@@ -76,11 +76,8 @@
 
 #include "interface_intern.hh"
 
-namespace blender {
-
+namespace blender::ui {
 static CLG_LogRef LOG = {"ui"};
-
-namespace ui {
 
 /* prototypes. */
 static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p);
@@ -7101,5 +7098,4 @@ std::string button_get_link(const Button *button, bContext *C)
 #endif
 }
 
-}  // namespace ui
-}  // namespace blender
+}  // namespace blender::ui

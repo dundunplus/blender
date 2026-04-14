@@ -31,6 +31,10 @@ struct PropertyRNA;
 struct StructRNA;
 struct wmOperatorType;
 
+namespace wm {
+enum class OpCallContext : int8_t;
+}
+
 /* Layout
  *
  * More automated layout of buttons. Has three levels:
@@ -54,13 +58,6 @@ struct ItemInternal;
 struct LayoutInternal;
 struct Layout;
 struct LayoutRoot;
-}  // namespace ui
-
-namespace wm {
-enum class OpCallContext : int8_t;
-}
-
-namespace ui {
 
 struct PanelLayout {
   Layout *header;

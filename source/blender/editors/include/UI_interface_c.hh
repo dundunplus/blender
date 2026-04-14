@@ -78,6 +78,7 @@ struct wmWindow;
 namespace ed::asset {
 struct AssetFilterSettings;
 }
+
 namespace ui {
 class AbstractView;
 class AbstractViewItem;
@@ -88,11 +89,6 @@ struct ButtonExtraOpIcon;
 struct TooltipData;
 struct PopupBlockHandle;
 struct Block;
-}  // namespace ui
-
-/* Defines */
-
-namespace ui {
 
 /**
  * Character used for splitting labels (right align text after this character).

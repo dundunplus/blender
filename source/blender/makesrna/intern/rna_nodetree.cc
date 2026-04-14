@@ -4478,6 +4478,12 @@ static const EnumPropertyItem node_subsurface_method_items[] = {
      "Random Walk (Skin)",
      "Volumetric approximation to physically based volume scattering, with scattering radius "
      "automatically adjusted to match color textures. Designed for skin shading."},
+    {SHD_SUBSURFACE_RANDOM_WALK_LEGACY,
+     "RANDOM_WALK_LEGACY",
+     0,
+     "Random Walk (Legacy)",
+     "Volumetric approximation to physically based volume scattering, using the scattering radius "
+     "as specified"},
     {0, nullptr, 0, nullptr, nullptr}};
 
 static const EnumPropertyItem prop_image_extension[] = {

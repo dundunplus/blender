@@ -48,9 +48,7 @@
 
 #include "interface_intern.hh"
 
-namespace blender {
-
-namespace ui {
+namespace blender::ui {
 
 struct ButtonItem;
 
@@ -6311,5 +6309,4 @@ EmbossType Layout::emboss_or_undefined() const
   return emboss_;
 }
 
-}  // namespace ui
-}  // namespace blender
+}  // namespace blender::ui
