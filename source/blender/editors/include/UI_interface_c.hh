@@ -1966,6 +1966,7 @@ void button_number_slider_step_size_set(Button *but, float step_size);
 void button_number_slider_precision_set(Button *but, float precision);
 
 void button_label_alpha_factor_set(Button *but, float alpha_factor);
+void button_label_draw_icon_border_set(Button *but, bool use_icon_border);
 
 void button_search_preview_grid_size_set(Button *but, int rows, int cols);
 

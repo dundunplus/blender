@@ -6760,6 +6760,13 @@ void button_label_alpha_factor_set(Button *but, const float alpha_factor)
   but_label->alpha_factor = alpha_factor;
 }
 
+void button_label_draw_icon_border_set(Button *but, const bool use_icon_border)
+{
+  ButtonLabel *but_label = reinterpret_cast<ButtonLabel *>(but);
+  BLI_assert(but->type == ButtonType::Label);
+  but_label->draw_icon_border = use_icon_border;
+}
+
 void button_search_preview_grid_size_set(Button *but, int rows, int cols)
 {
   BLI_assert(but->type == ButtonType::SearchMenu);

@@ -1353,6 +1353,7 @@ static void widget_draw_icon(
 
   const float aspect = but->block->aspect * UI_INV_SCALE_FAC;
   const float height = ICON_DEFAULT_HEIGHT / aspect;
+  bool force_outline = false;
 
   /* calculate blend color */
   if (ELEM(but->type,
@@ -1375,6 +1376,9 @@ static void widget_draw_icon(
     /* extra feature allows more alpha blending */
     const auto *but_label = reinterpret_cast<const ButtonLabel *>(but);
     alpha *= but_label->alpha_factor;
+    if (but_label->draw_icon_border) {
+      force_outline = true;
+    }
   }
   else if (ELEM(but->type, ButtonType::But, ButtonType::Decorator)) {
     WidgetStateInfo state = {0};
@@ -1424,7 +1428,7 @@ static void widget_draw_icon(
     const bTheme *btheme = theme::theme_get();
     /* Only use theme colors if the button doesn't override the color. */
     const bool has_theme = !but->col[3] && icon_get_theme_color(int(icon), color);
-    const bool outline = btheme->tui.icon_border_intensity > 0.0f && has_theme;
+    const bool outline = force_outline || (btheme->tui.icon_border_intensity > 0.0f && has_theme);
 
     /* to indicate draggable */
     if (button_drag_is_draggable(but) && (but->flag & UI_HOVER)) {

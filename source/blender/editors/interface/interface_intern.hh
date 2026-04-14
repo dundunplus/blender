@@ -453,6 +453,8 @@ struct ButtonSeparatorLine : public Button {
 /** Derived struct for #ButtonType::Label. */
 struct ButtonLabel : public Button {
   float alpha_factor = 1.0f;
+  /** When the button draws an icon, also draw a mono-colored border for it. */
+  bool draw_icon_border = false;
 };
 
 /** Derived struct for #ButtonType::Scroll. */
