@@ -12,7 +12,8 @@
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
 #include "DNA_node_tree_interface_types.h"
-#include "DNA_scene_types.h" /* for #ImageFormatData */
+#include "DNA_scene_types.h"  /* for #ImageFormatData */
+#include "DNA_screen_types.h" /* For #TextboxState. */
 #include "DNA_texture_types.h"
 #include "DNA_vec_types.h" /* for #rctf */
 
@@ -3045,6 +3046,7 @@ struct NodeInputString {
   DNA_DEFINE_CXX_METHODS(NodeInputString)
 
   char *string = nullptr;
+  TextboxState textbox_state = {};
 };
 
 struct NodeGeometryExtrudeMesh {

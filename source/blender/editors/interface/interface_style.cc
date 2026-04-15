@@ -139,7 +139,10 @@ void fontstyle_draw_ex(const uiFontStyle *fs,
                        ResultBLF *r_info)
 {
   int xofs = 0, yofs;
-  FontFlags font_flag = BLF_CLIPPING;
+  FontFlags font_flag = {};
+  if (fs_params->word_clip) {
+    font_flag |= BLF_CLIPPING;
+  }
 
   fontstyle_set(fs);
 
