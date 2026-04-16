@@ -5375,6 +5375,9 @@ static int do_but_TEXTBOX(bContext *C,
 
         if (textbox->state->visible_lines != visible_lines) {
           ED_region_tag_redraw(data->region);
+          if (block_is_popup_any(block)) {
+            ED_region_tag_refresh_ui(data->region);
+          }
         }
         textbox->state->visible_lines = visible_lines;
         return WM_UI_HANDLER_BREAK;
@@ -6762,6 +6765,9 @@ static int do_but_GRIP(
       window_to_block(data->region, block, &dragstartx, &dragstarty);
       data->value = data->origvalue + (horizontal ? mx - dragstartx : dragstarty - my);
       numedit_apply(C, block, but, data);
+      if (block_is_popup_any(block)) {
+        ED_region_tag_refresh_ui(data->region);
+      }
     }
 
     retval = WM_UI_HANDLER_BREAK;

@@ -231,7 +231,7 @@ static void lower_namespace(string ns_prefix,
         continue;
       }
       /* Only expand symbols that are visible inside this namespace. */
-      if (symbol.name_space.substr(0, ns_prefix.size()) != ns_prefix) {
+      if (!symbol.name_space.starts_with(ns_prefix)) {
         continue;
       }
       /* Reject symbols declared after the identifier.
@@ -286,7 +286,7 @@ static void lower_namespace(string ns_prefix,
             continue;
           }
           /* Only expand symbols that are visible inside this namespace. */
-          if (ns_prefix.substr(0, overload.name_space.size()) != overload.name_space) {
+          if (!ns_prefix.starts_with(overload.name_space)) {
             continue;
           }
           if (specified_symbol != overload.identifier) {

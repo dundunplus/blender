@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "AS_asset_catalog.hh"
-#include "AS_asset_catalog_tree.hh"
 #include "AS_asset_library.hh"
 #include "AS_asset_representation.hh"
 #include "AS_remote_library.hh"
@@ -18,8 +17,7 @@
 #include "BKE_main.hh"
 #include "BKE_preferences.h"
 
-#include "BLI_fileops.h"
-#include "BLI_listbase.h"
+#include "BLI_listbase.h"  // IWYU pragma: keep
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 
@@ -28,7 +26,6 @@
 #include "DNA_windowmanager_types.h"
 
 #include "asset_catalog_collection.hh"
-#include "asset_catalog_definition_file.hh"
 #include "asset_library_service.hh"
 #include "essentials_library.hh"
 #include "runtime_library.hh"

@@ -195,7 +195,7 @@ struct Button : NonMovable {
 
   ButtonType type = ButtonType(0);
   ButPointerType pointype = ButPointerType::None;
-  bool bit = 0;
+  bool bit = false;
   /* 0-31 bit index. */
   char bitnr = 0;
 

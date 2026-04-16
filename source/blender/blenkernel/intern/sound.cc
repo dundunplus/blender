@@ -1256,8 +1256,9 @@ static int sound_read(
   for (int i = 0; i < length; i++) {
     len = floor(samplejump * (i + 1)) - floor(samplejump * i);
 
-    if (*interrupt)
+    if (*interrupt) {
       return 0;
+    }
 
     aBuffer.assureSize(len * AUD_SAMPLE_SIZE(specs));
     buf = aBuffer.getBuffer();
@@ -1267,10 +1268,12 @@ static int sound_read(
     max = min = *buf;
     power = *buf * *buf;
     for (int j = 1; j < len; j++) {
-      if (buf[j] < min)
+      if (buf[j] < min) {
         min = buf[j];
-      if (buf[j] > max)
+      }
+      if (buf[j] > max) {
         max = buf[j];
+      }
       power += buf[j] * buf[j];
     }
 
@@ -1278,10 +1281,12 @@ static int sound_read(
     buffer[i * 3 + 1] = max;
     buffer[i * 3 + 2] = std::sqrt(power / len);
 
-    if (overallmax < max)
+    if (overallmax < max) {
       overallmax = max;
-    if (overallmax < -min)
+    }
+    if (overallmax < -min) {
       overallmax = -min;
+    }
 
     if (eos) {
       length = i;
@@ -1397,13 +1402,13 @@ static void sound_update_base(Scene *scene, Object *object, Set<AUD_SequenceEntr
         mat4_to_quat(quat, object->object_to_world().ptr());
         float3 location = object->object_to_world().location();
         set_audaspace_anim_property(
-            strip_runtime.speaker_handle, aud::AP_LOCATION, scene->r.cfra, location, 1);
+            strip_runtime.speaker_handle, aud::AP_LOCATION, scene->r.cfra, location, true);
         set_audaspace_anim_property(
-            strip_runtime.speaker_handle, aud::AP_ORIENTATION, scene->r.cfra, quat, 1);
+            strip_runtime.speaker_handle, aud::AP_ORIENTATION, scene->r.cfra, quat, true);
         set_audaspace_anim_property(
-            strip_runtime.speaker_handle, aud::AP_VOLUME, scene->r.cfra, &speaker->volume, 1);
+            strip_runtime.speaker_handle, aud::AP_VOLUME, scene->r.cfra, &speaker->volume, true);
         set_audaspace_anim_property(
-            strip_runtime.speaker_handle, aud::AP_PITCH, scene->r.cfra, &speaker->pitch, 1);
+            strip_runtime.speaker_handle, aud::AP_PITCH, scene->r.cfra, &speaker->pitch, true);
         strip_runtime.speaker_handle->setSound(speaker->sound->runtime->playback_handle);
         strip_runtime.speaker_handle->mute(mute);
       }
@@ -1440,8 +1445,9 @@ void BKE_sound_update_scene(Depsgraph *depsgraph, Scene *scene)
   if (scene->camera) {
     mat4_to_quat(quat, scene->camera->object_to_world().ptr());
     float3 location = scene->camera->object_to_world().location();
-    set_audaspace_anim_property(audio.sound_scene, aud::AP_LOCATION, scene->r.cfra, location, 1);
-    set_audaspace_anim_property(audio.sound_scene, aud::AP_ORIENTATION, scene->r.cfra, quat, 1);
+    set_audaspace_anim_property(
+        audio.sound_scene, aud::AP_LOCATION, scene->r.cfra, location, true);
+    set_audaspace_anim_property(audio.sound_scene, aud::AP_ORIENTATION, scene->r.cfra, quat, true);
   }
 
   audio.speaker_handles = new_set;
@@ -1728,26 +1734,32 @@ float *bke::sound_read_file_buffer(const char *filename,
 
     AUD_Sound sound = AUD_Sound(new ChannelMapper(file, specs));
 
-    if (high < rate)
+    if (high < rate) {
       sound = AUD_Sound(new Lowpass(sound, high));
-    if (low > 0)
+    }
+    if (low > 0) {
       sound = AUD_Sound(new Highpass(sound, low));
+    }
 
     sound = AUD_Sound(new Envelope(sound, attack, release, threshold, 0.1f));
     sound = AUD_Sound(new LinearResample(sound, specs));
 
-    if (square)
+    if (square) {
       sound = AUD_Sound(new Threshold(sound, sthreshold));
+    }
 
-    if (accumulate)
+    if (accumulate) {
       sound = AUD_Sound(new Accumulator(sound, additive));
-    else if (additive)
+    }
+    else if (additive) {
       sound = AUD_Sound(new Sum(sound));
+    }
 
     reader = sound->createReader();
 
-    if (!reader.get())
+    if (!reader.get()) {
       return nullptr;
+    }
 
     int len;
     bool eos;

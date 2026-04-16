@@ -1038,7 +1038,7 @@ static inline void square_points_clamp_to_window(const int2 &p1, int2 &p2, const
   const int max_size_y = (dir_y > 0) ? win_size.y - p1.y - 1 : p1.y;
 
   /* Clamp the square size so it does not exceed window bounds. */
-  square_size = std::min(square_size, std::min(max_size_x, max_size_y));
+  square_size = std::min({square_size, max_size_x, max_size_y});
 
   /* Update p2 to form a clamped square in the same direction as the drag. */
   p2.x = p1.x + dir_x * square_size;

@@ -86,7 +86,7 @@ void SourceProcessor::lower_default_constructors(Parser &parser)
         if (type == "bool") {
           return "false";
         }
-        if (builtin_types.find(string(type)) != builtin_types.end()) {
+        if (builtin_types.contains(string(type))) {
           return string(type) + "(0)";
         }
         return string(type) + "{}";
