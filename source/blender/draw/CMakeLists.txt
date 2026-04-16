@@ -454,8 +454,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_geom_world_vert.glsl
   engines/eevee/shaders/eevee_hiz_debug_frag.glsl
   engines/eevee/shaders/eevee_hiz_update_comp.glsl
-  engines/eevee/shaders/eevee_horizon_scan.bsl.hh
-  engines/eevee/shaders/eevee_horizon_scan_lib.bsl.hh
+  engines/eevee/shaders/eevee_fast_gi.bsl.hh
   engines/eevee/shaders/eevee_light_culling.bsl.hh
   engines/eevee/shaders/eevee_light_shadow_setup.bsl.hh
   engines/eevee/shaders/eevee_light_eval_lib.glsl
@@ -831,7 +830,7 @@ set(GLSL_SRC
 set(GLSL_SRC_TEST
   engines/eevee/shaders/eevee_gbuffer_closure_test.glsl
   engines/eevee/shaders/eevee_gbuffer_normal_test.glsl
-  engines/eevee/shaders/eevee_horizon_scan_test.glsl
+  engines/eevee/shaders/eevee_fast_gi_test.glsl
   engines/eevee/shaders/eevee_occupancy_test.glsl
   engines/eevee/shaders/eevee_shadow_test.glsl
 )

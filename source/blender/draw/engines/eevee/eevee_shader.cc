@@ -172,8 +172,8 @@ ShaderGroups ShaderModule::static_shaders_load(const ShaderGroups request_bits,
   }
   {
     const eShaderType shader_list[] = {
-        HORIZON_DENOISE, HORIZON_RESOLVE, HORIZON_SCAN, HORIZON_SETUP};
-    request(HORIZON_SCAN_SHADERS, AS_SPAN(shader_list));
+        FAST_GI_DENOISE, FAST_GI_RESOLVE, FAST_GI_SCAN, FAST_GI_SETUP};
+    request(FAST_GI_SHADERS, AS_SPAN(shader_list));
   }
   {
     const eShaderType shader_list[] = {LIGHT_CULLING_DEBUG,
@@ -375,14 +375,14 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_hiz_update";
     case HIZ_UPDATE_LAYER:
       return "eevee_hiz_update_layer";
-    case HORIZON_DENOISE:
-      return "eevee_horizon_denoise";
-    case HORIZON_RESOLVE:
-      return "eevee_horizon_resolve";
-    case HORIZON_SCAN:
-      return "eevee_horizon_scan";
-    case HORIZON_SETUP:
-      return "eevee_horizon_setup";
+    case FAST_GI_DENOISE:
+      return "eevee_fast_gi_denoise";
+    case FAST_GI_RESOLVE:
+      return "eevee_fast_gi_resolve";
+    case FAST_GI_SCAN:
+      return "eevee_fast_gi_scan";
+    case FAST_GI_SETUP:
+      return "eevee_fast_gi_setup";
     case LOOKDEV_COPY_WORLD:
       return "eevee_lookdev_copy_world";
     case LOOKDEV_DISPLAY:

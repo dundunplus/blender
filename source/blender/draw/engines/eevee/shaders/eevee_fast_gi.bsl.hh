@@ -31,7 +31,6 @@ VERTEX_SHADER_CREATE_INFO(draw_view)
 #include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_filter_lib.glsl"
 #include "eevee_gbuffer_read_lib.glsl"
-#include "eevee_horizon_scan_lib.bsl.hh"
 #include "eevee_lightprobe_eval_lib.glsl"
 #include "eevee_ray_types_lib.bsl.hh"
 #include "eevee_reverse_z_lib.bsl.hh"
@@ -45,7 +44,87 @@ VERTEX_SHADER_CREATE_INFO(draw_view)
 
 namespace eevee {
 
-namespace horizon {
+namespace fast_gi {
+
+/**
+ * Returns the bitmask for a given ordered pair of angle in [-pi/2..pi/2] range.
+ * Clamps the inputs to the valid range.
+ */
+uint angles_to_bitmask(float2 theta)
+{
+  constexpr int bitmask_len = 32;
+  /* Algorithm 1, line 18. Re-ordered to make sure to clamp to the hemisphere range. */
+  float2 ratio = saturate(theta * M_1_PI + 0.5f);
+  uint a = uint(floor(float(bitmask_len) * ratio.x));
+  /* The paper is wrong here. The additional half Pi is not needed. */
+  uint b = uint(ceil(float(bitmask_len) * (ratio.y - ratio.x)));
+  /* Algorithm 1, line 19. */
+  return (((b < 32u) ? 1u << b : 0u) - 1u) << a;
+}
+
+float bitmask_to_visibility_uniform(uint bitmask)
+{
+  constexpr int bitmask_len = 32;
+  /* Algorithm 1, line 26. */
+  return float(bitCount(bitmask)) / float(bitmask_len);
+}
+
+/**
+ * For a given visibility bitmask storing locally occluded sectors,
+ * returns the uniform (non-cosine weighted) occlusion (visibility).
+ */
+float bitmask_to_occlusion_uniform(uint bitmask)
+{
+  /* Occlusion is the opposite of visibility. */
+  return 1.0f - bitmask_to_visibility_uniform(bitmask);
+}
+
+/**
+ * For a given visibility bitmask storing locally occluded sectors,
+ * returns the cosine weighted occlusion (visibility).
+ */
+float bitmask_to_occlusion_cosine(uint bitmask)
+{
+  /* This is not described in the paper. Another solution would be to change the sector
+   * distribution in `angles_to_bitmask()` but that requires more computation per
+   * samples. The quality difference does not justify it currently. */
+#if 0 /* Reference. */
+  constexpr int bitmask_len = 32;
+  float visibility = 0.0f;
+  for (int bit = 0; bit < bitmask_len; bit++) {
+    float angle = (((float(bit) + 0.5f) / float(bitmask_len)) - 0.5f) * M_PI;
+    /* Integrating over the hemisphere. */
+    if (((bitmask >> bit) & 1u) == 0u) {
+      visibility += cos(angle) * M_PI_2 / float(bitmask_len);
+    }
+  }
+  return visibility;
+#else
+  /* The precomputed weights are the accumulated weights from the reference loop for each of the
+   * samples in the mask. The weight is distributed evenly for each sample inside a mask.
+   * This is like a 4 piecewise linear approximation of the cosine lobe. */
+  constexpr float4 weights = float4(0.0095061f, 0.0270951f, 0.0405571f, 0.0478421f);
+  constexpr uint4 masks = uint4(0xF000000Fu, 0x0F0000F0u, 0x00F00F00u, 0x000FF000u);
+  return saturate(1.0f - dot(float4(bitCount(uint4(bitmask) & masks)), weights));
+#endif
+}
+
+/**
+ * Projects the normal `N` onto a plane defined by `V` and `T`.
+ * V, T, B forms an orthonormal basis around V.
+ * Returns the angle of the normal projected normal with `V` and its length.
+ */
+void projected_normal_to_plane_angle_and_length(
+    float3 N, float3 V, float3 T, float3 B, float &N_proj_len, float &N_angle)
+{
+  /* Projected view normal onto the integration plane. */
+  float3 N_proj = normalize_and_get_length(N - B * dot(N, B), N_proj_len);
+
+  float N_sin = dot(N_proj, T);
+  float N_cos = dot(N_proj, V);
+  /* Angle between normalized projected normal and view vector. */
+  N_angle = sign(N_sin) * acos_fast(N_cos);
+}
 
 /* -------------------------------------------------------------------- */
 /** \name Buffer Sampling implementation
@@ -92,7 +171,7 @@ SphericalHarmonicL1<float4> select_result<SphericalHarmonicL1<float4>>(
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Horizon scan implementation
+/** \name Fast GI scan implementation
  * \{ */
 
 /**
@@ -319,11 +398,11 @@ struct SampleInput {
   [[sampler(1)]] const sampler2DDepth depth_tx;
   /* utility_tx reserves slot 2. */
   /* hiz reserves slot 3. */
-  [[sampler(4)]] const sampler2D horizon_radiance_0_tx;
-  [[sampler(5)]] const sampler2D horizon_radiance_1_tx;
+  [[sampler(4)]] const sampler2D fast_gi_radiance_0_tx;
+  [[sampler(5)]] const sampler2D fast_gi_radiance_1_tx;
   /* lightprobe reserves slot 6-7. */
-  [[sampler(8)]] const sampler2D horizon_radiance_2_tx;
-  [[sampler(9)]] const sampler2D horizon_radiance_3_tx;
+  [[sampler(8)]] const sampler2D fast_gi_radiance_2_tx;
+  [[sampler(9)]] const sampler2D fast_gi_radiance_3_tx;
   [[sampler(10)]] const sampler2D screen_normal_tx;
 
   float3 sample_normal_get(int2 texel, bool &is_processed) const
@@ -341,8 +420,8 @@ struct SampleInput {
                           float2 sample_uv,
                           int2 sample_offset) const
   {
-    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.horizon_resolution_scale +
-                                uniform_buf.raytrace.horizon_resolution_bias;
+    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.fast_gi_resolution_scale +
+                                uniform_buf.raytrace.fast_gi_resolution_bias;
     float sample_depth = texelFetch(hiz_tx, sample_texel_fullres, 0).r;
 
     bool is_valid;
@@ -370,8 +449,8 @@ struct SampleInput {
                           int2 sample_offset) const
   {
     int2 sample_texel = center_texel + sample_offset;
-    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.horizon_resolution_scale +
-                                uniform_buf.raytrace.horizon_resolution_bias;
+    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.fast_gi_resolution_scale +
+                                uniform_buf.raytrace.fast_gi_resolution_bias;
     float2 sample_uv = (float2(sample_texel_fullres) + 0.5f) *
                        uniform_buf.raytrace.full_resolution_inv;
 
@@ -399,10 +478,10 @@ struct SampleInput {
   SphericalHarmonicL1<float4> load_sh(int2 texel) const
   {
     SphericalHarmonicL1<float4> sh;
-    sh.L0.M0 = texelFetch(horizon_radiance_0_tx, texel, 0);
-    sh.L1.Mn1 = texelFetch(horizon_radiance_1_tx, texel, 0);
-    sh.L1.M0 = texelFetch(horizon_radiance_2_tx, texel, 0);
-    sh.L1.Mp1 = texelFetch(horizon_radiance_3_tx, texel, 0);
+    sh.L0.M0 = texelFetch(fast_gi_radiance_0_tx, texel, 0);
+    sh.L1.Mn1 = texelFetch(fast_gi_radiance_1_tx, texel, 0);
+    sh.L1.M0 = texelFetch(fast_gi_radiance_2_tx, texel, 0);
+    sh.L1.Mp1 = texelFetch(fast_gi_radiance_3_tx, texel, 0);
     sh = spherical_harmonics::decompress(sh);
     return sh;
   }
@@ -460,8 +539,8 @@ struct Setup {
 void setup([[global_invocation_id]] const uint3 global_id, [[resource_table]] Setup &srt)
 {
   int2 texel = int2(global_id.xy);
-  int2 texel_fullres = texel * uniform_buf.raytrace.horizon_resolution_scale +
-                       uniform_buf.raytrace.horizon_resolution_bias;
+  int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
+                       uniform_buf.raytrace.fast_gi_resolution_bias;
 
   /* Return early for padding threads so we can use imageStoreFast. */
   if (any(greaterThanEqual(texel, imageSize(srt.out_radiance_img).xy))) {
@@ -538,12 +617,12 @@ void scan([[work_group_id]] const uint3 group_id,
   uint2 tile_coord = unpackUvec2x16(tiles.tiles_coord_buf[group_id.x]);
   int2 texel = int2(local_id.xy + tile_coord * tile_size);
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.horizon_resolution_scale +
-                       uniform_buf.raytrace.horizon_resolution_bias;
+  int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
+                       uniform_buf.raytrace.fast_gi_resolution_bias;
 
   /* Avoid tracing the outside border if dispatch is too big. */
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
-  if (any(greaterThanEqual(texel * uniform_buf.raytrace.horizon_resolution_scale, extent))) {
+  if (any(greaterThanEqual(texel * uniform_buf.raytrace.fast_gi_resolution_scale, extent))) {
     return;
   }
 
@@ -554,10 +633,10 @@ void scan([[work_group_id]] const uint3 group_id,
   /* Do not trace where nothing was rendered. */
   if (texelFetch(gbuf_header_tx, int3(texel_fullres, 0), 0).r == 0u) {
 #if 0 /* This is not needed as the next stage doesn't do bilinear filtering. */
-    imageStore(horizon_radiance_0_img, texel, float4(0.0f));
-    imageStore(horizon_radiance_1_img, texel, float4(0.0f));
-    imageStore(horizon_radiance_2_img, texel, float4(0.0f));
-    imageStore(horizon_radiance_3_img, texel, float4(0.0f));
+    imageStore(fast_gi_radiance_0_img, texel, float4(0.0f));
+    imageStore(fast_gi_radiance_1_img, texel, float4(0.0f));
+    imageStore(fast_gi_radiance_2_img, texel, float4(0.0f));
+    imageStore(fast_gi_radiance_3_img, texel, float4(0.0f));
 #endif
     return;
   }
@@ -570,7 +649,7 @@ void scan([[work_group_id]] const uint3 group_id,
   float4 noise = utility_tx_fetch(utility_tx, float2(texel), UTIL_BLUE_NOISE_LAYER);
   noise = fract(noise + sampling_rng_3D_get(SAMPLING_AO_U).xyzx);
 
-  SphericalHarmonicL1<float4> result = eevee::horizon::eval<SphericalHarmonicL1<float4>>(
+  SphericalHarmonicL1<float4> result = eevee::fast_gi::eval<SphericalHarmonicL1<float4>>(
       hiz_tx,
       srt.screen_radiance_tx,
       srt.screen_normal_tx,
@@ -615,9 +694,9 @@ void denoise([[work_group_id]] const uint3 group_id,
   uint2 tile_coord = unpackUvec2x16(tiles.tiles_coord_buf[group_id.x]);
   int2 texel = int2(local_id.xy + tile_coord * tile_size);
 
-  float2 texel_size = 1.0f / float2(textureSize(sh_in.horizon_radiance_0_tx, 0).xy);
-  int2 texel_fullres = texel * uniform_buf.raytrace.horizon_resolution_scale +
-                       uniform_buf.raytrace.horizon_resolution_bias;
+  float2 texel_size = 1.0f / float2(textureSize(sh_in.fast_gi_radiance_0_tx, 0).xy);
+  int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
+                       uniform_buf.raytrace.fast_gi_resolution_bias;
 
   bool is_valid;
   float center_depth = texelFetch(hiz_tx, texel_fullres, 0).r;
@@ -688,8 +767,8 @@ void resolve([[work_group_id]] const uint3 group_id,
   uint2 tile_coord = unpackUvec2x16(tiles.tiles_coord_buf[group_id.x]);
   int2 texel_fullres = int2(local_id.xy + tile_coord * tile_size);
 
-  int2 texel = max(int2(0), texel_fullres - uniform_buf.raytrace.horizon_resolution_bias) /
-               uniform_buf.raytrace.horizon_resolution_scale;
+  int2 texel = max(int2(0), texel_fullres - uniform_buf.raytrace.fast_gi_resolution_bias) /
+               uniform_buf.raytrace.fast_gi_resolution_scale;
 
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
   if (any(greaterThanEqual(texel_fullres, extent))) {
@@ -708,13 +787,13 @@ void resolve([[work_group_id]] const uint3 group_id,
   float3 center_N = gbuf.surface_N();
 
   SphericalHarmonicL1<float4> accum_sh;
-  if (uniform_buf.raytrace.horizon_resolution_scale == 1) {
+  if (uniform_buf.raytrace.fast_gi_resolution_scale == 1) {
     accum_sh = sh_in.load_sh(texel, true);
   }
   else {
-    float2 interp = float2(texel_fullres - texel * uniform_buf.raytrace.horizon_resolution_scale -
-                           uniform_buf.raytrace.horizon_resolution_bias) /
-                    float2(uniform_buf.raytrace.horizon_resolution_scale);
+    float2 interp = float2(texel_fullres - texel * uniform_buf.raytrace.fast_gi_resolution_scale -
+                           uniform_buf.raytrace.fast_gi_resolution_bias) /
+                    float2(uniform_buf.raytrace.fast_gi_resolution_scale);
     float4 interp4 = float4(interp, 1.0f - interp);
     float4 bilinear_weight = interp4.zxzx * interp4.wwyy;
 
@@ -764,9 +843,9 @@ void resolve([[work_group_id]] const uint3 group_id,
     float mix_fac = saturate(roughness * uniform_buf.raytrace.roughness_mask_scale -
                              uniform_buf.raytrace.roughness_mask_bias);
     bool use_raytrace = mix_fac < 1.0f;
-    bool use_horizon = mix_fac > 0.0f;
+    bool use_fast_gi = mix_fac > 0.0f;
 
-    if (!use_horizon) {
+    if (!use_fast_gi) {
       continue;
     }
 
@@ -774,10 +853,10 @@ void resolve([[work_group_id]] const uint3 group_id,
 
     float3 L = ray.dominant_direction;
 
-    /* Evaluate lighting from horizon scan. */
+    /* Evaluate lighting from fast GI scan. */
     float4 radiance_with_visibility = accum_sh.evaluate_lambert(L);
     float3 radiance = radiance_with_visibility.xyz;
-    /* Evaluate occlusion from horizon scan. */
+    /* Evaluate occlusion from fast GI scan. */
     /* The energy amount from the visibility factor is supposed to be a pure lambertian visibility
      * (which integrate to PI over the hemisphere). However, the tracing step weight the incoming
      * radiance by 4 PI (and with it the visibility). So the expected computation should be
@@ -797,7 +876,7 @@ void resolve([[work_group_id]] const uint3 group_id,
 
     uchar layer_index = bin_indices[i];
 
-    float4 radiance_horizon = float4(radiance, 0.0f);
+    float4 radiance_fast_gi = float4(radiance, 0.0f);
     float4 radiance_raytrace = float4(0.0f);
     if (use_raytrace) {
       /* TODO(fclem): Layered texture. */
@@ -811,7 +890,7 @@ void resolve([[work_group_id]] const uint3 group_id,
         radiance_raytrace = imageLoad(srt.closure2_img, texel_fullres);
       }
     }
-    float4 radiance_mixed = mix(radiance_raytrace, radiance_horizon, mix_fac);
+    float4 radiance_mixed = mix(radiance_raytrace, radiance_fast_gi, mix_fac);
 
     /* TODO(fclem): Layered texture. */
     if (layer_index == 0u) {
@@ -826,12 +905,12 @@ void resolve([[work_group_id]] const uint3 group_id,
   }
 }
 
-}  // namespace horizon
+}  // namespace fast_gi
 
-PipelineCompute horizon_setup(horizon::setup);
-PipelineCompute horizon_scan(horizon::scan);
-PipelineCompute horizon_denoise(horizon::denoise);
-PipelineCompute horizon_resolve(horizon::resolve);
+PipelineCompute fast_gi_setup(fast_gi::setup);
+PipelineCompute fast_gi_scan(fast_gi::scan);
+PipelineCompute fast_gi_denoise(fast_gi::denoise);
+PipelineCompute fast_gi_resolve(fast_gi::resolve);
 
 /** \} */
 
@@ -883,7 +962,7 @@ void occlusion_pass([[global_invocation_id]] const uint3 global_id, [[resource_t
   float4 noise = utility_tx_fetch(lut_tx, float2(texel), UTIL_BLUE_NOISE_LAYER);
   noise = fract(noise + sampling_rng_3D_get(SAMPLING_AO_U).xyzx);
 
-  float result = eevee::horizon::eval<float>(hiz_tx,
+  float result = eevee::fast_gi::eval<float>(hiz_tx,
                                              srt.dummy_tx,
                                              srt.dummy_tx,
                                              vP,

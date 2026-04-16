@@ -20,7 +20,6 @@ namespace blender::nodes::node_fn_input_string_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.is_function_node();
   b.add_output<decl::String>("String"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     params.layout.textbox_with_state(
