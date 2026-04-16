@@ -4165,6 +4165,9 @@ static int do_but_textedit(
           retval = WM_UI_HANDLER_BREAK;
           break;
         }
+        if (event->type == WHEELDOWNMOUSE) {
+          break;
+        }
         ATTR_FALLTHROUGH;
       case EVT_ENDKEY:
         textedit_move(but,
