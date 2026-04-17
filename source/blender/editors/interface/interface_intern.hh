@@ -375,7 +375,7 @@ struct TextWrapCache {
 /** Derived struct for #ButtonType::TextBox */
 struct ButtonTextBox : public Button {
 
-  /** Total number of wrapped lines in the last textbox redraw/event handling. */
+  /** Total number of wrapped lines in the last text-box redraw/event handling. */
   int last_total_lines = 0;
 
   TextboxState *state;

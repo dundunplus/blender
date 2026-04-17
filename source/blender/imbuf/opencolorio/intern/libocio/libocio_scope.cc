@@ -139,7 +139,7 @@ const ScopeInfo &LibOCIOView::scope_info() const
     scope_info_->sdr_white_level = SCOPE_SDR_IN_HDR_SCOPE;
 
     /* HDR: graticules at logarithmic nit values. */
-    Vector<int> nit_values = {0, 18 /* midlde gray */, 100};
+    Vector<int> nit_values = {0, 18 /* middle gray */, 100};
     const int max_nits = (scope_info_->view_transform_max_nits) ?
                              scope_info_->view_transform_max_nits :
                              1000;

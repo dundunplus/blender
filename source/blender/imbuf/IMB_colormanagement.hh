@@ -392,7 +392,7 @@ bool IMB_colormanagement_display_support_emulation(
 /** Max luminance of the view transform, or 0 if no maximum found. */
 int IMB_colormanagement_view_max_nits(const char *display_name, const char *view_name);
 
-/** Get scope display info for waveform/parade/vectorscope. */
+/** Get scope display info for waveform/parade/vector-scope. */
 ocio::ScopeInfo IMB_colormanagement_get_scope_info(
     const ColorManagedDisplaySettings *display_settings, const char *view_name);
 

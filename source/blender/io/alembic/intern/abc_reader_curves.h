@@ -23,7 +23,7 @@ class AbcCurveReader final : public AbcObjectReader {
   Alembic::AbcGeom::ICurvesSchema m_curves_schema;
 
  public:
-  AbcCurveReader(const Alembic::Abc::IObject &object, ImportSettings &settings);
+  AbcCurveReader(const AbcReaderConstructorArgs &args);
 
   bool valid() const override;
   bool accepts_object_type(const Alembic::AbcCoreAbstract::ObjectHeader &alembic_header,

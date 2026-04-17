@@ -18,7 +18,7 @@ class AbcPointsReader final : public AbcObjectReader {
   Alembic::AbcGeom::IPointsSchema::Sample m_sample;
 
  public:
-  AbcPointsReader(const Alembic::Abc::IObject &object, ImportSettings &settings);
+  AbcPointsReader(const AbcReaderConstructorArgs &args);
 
   bool valid() const override;
   bool accepts_object_type(const Alembic::AbcCoreAbstract::ObjectHeader &alembic_header,

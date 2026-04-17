@@ -68,7 +68,7 @@ float linear_to_extended_srgb(float c)
 }
 
 /* Convert from scope space color (that is suitable for plotting positions)
- * to extended sRGB (the color space of the framebuffer). */
+ * to extended sRGB (the color space of the frame-buffer). */
 float3 scope_to_extended_srgb(float3 color)
 {
   float3 scope_linear = float3(scope_to_linear(max(color.r, 0.0f)),
@@ -95,7 +95,7 @@ void main()
     color_alpha_unpremultiply(image_color, image_color);
   }
 
-  /* Convert scope space image color to position and framebuffer color. */
+  /* Convert scope space image color to position and frame-buffer color. */
   float3 position = clamp(image_color.rgb, 0.0f, 1.0f);
   float4 color = float4(scope_to_extended_srgb(image_color.rgb), 1.0f);
 

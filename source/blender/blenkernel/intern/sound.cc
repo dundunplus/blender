@@ -1480,8 +1480,9 @@ char **BKE_sound_get_device_names()
 
     for (int i = 0; i < v_names.size(); i++) {
       std::string name = v_names[i];
-      names[i] = (char *)malloc(sizeof(char) * (name.length() + 1));
-      strcpy(names[i], name.c_str());
+      const size_t name_size = sizeof(char) * (name.length() + 1);
+      names[i] = (char *)malloc(name_size);
+      memcpy(names[i], name.c_str(), name_size);
     }
     names[v_names.size()] = nullptr;
     audio_device_names = names;

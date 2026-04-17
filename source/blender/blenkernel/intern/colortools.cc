@@ -1569,7 +1569,7 @@ static void save_sample_line(Scopes *scopes,
              &scopes->vecscope_rgb[color_idx + 1],
              &scopes->vecscope_rgb[color_idx + 2]);
 
-  /* Compute color in framebuffer colorspace. */
+  /* Compute color in frame-buffer color-space. */
   if (cm_processor_colors) {
     cm_processor_colors->apply_v3(&scopes->vecscope_rgb[color_idx + 0]);
   }
@@ -1687,11 +1687,11 @@ struct ScopesUpdateData {
   const ImBuf *ibuf;
   /** Processor for scope positions (scope space). */
   ColormanageProcessor *cm_processor_positions;
-  /** Processor for scope display colors (framebuffer color space). */
+  /** Processor for scope display colors (frame-buffer color space). */
   ColormanageProcessor *cm_processor_colors;
   /** Luminance coefficients matching the scope display gamut. */
   float3 luma_coefficients;
-  /** RGB to YCbCr matrix for the vectorscope. */
+  /** RGB to YCbCr matrix for the vector-scope. */
   float3x3 yuv_matrix;
   const float *float_data;
   const uchar *byte_data;

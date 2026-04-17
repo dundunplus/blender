@@ -879,14 +879,14 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
   if(WITH_FREESTYLE)
     list(APPEND render_tests render_layer)
     list(APPEND workbench_tests render_layer)
-    endif()
-    
-    if(WITH_MOD_FLUID)
+  endif()
+
+  if(WITH_MOD_FLUID)
     list(APPEND render_tests motion_blur reports volume)
     list(APPEND workbench_tests volume)
-    endif()
-    
-    if(WITH_OPENVDB AND WITH_MOD_FLUID)
+  endif()
+
+  if(WITH_OPENVDB AND WITH_MOD_FLUID)
     # Some tests in the OpenVDB folder make use of fluid simulations to generate smoke
     list(APPEND render_tests openvdb)
     list(APPEND workbench_tests openvdb)

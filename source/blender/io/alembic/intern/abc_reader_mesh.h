@@ -24,7 +24,7 @@ class AbcMeshReader final : public AbcObjectReader {
   Alembic::AbcGeom::IPolyMeshSchema m_schema;
 
  public:
-  AbcMeshReader(const Alembic::Abc::IObject &object, ImportSettings &settings);
+  AbcMeshReader(const AbcReaderConstructorArgs &args);
 
   bool valid() const override;
   bool accepts_object_type(const Alembic::AbcCoreAbstract::ObjectHeader &alembic_header,
@@ -63,7 +63,7 @@ class AbcSubDReader final : public AbcObjectReader {
   Alembic::AbcGeom::ISubDSchema m_schema;
 
  public:
-  AbcSubDReader(const Alembic::Abc::IObject &object, ImportSettings &settings);
+  AbcSubDReader(const AbcReaderConstructorArgs &args);
 
   bool valid() const override;
   bool accepts_object_type(const Alembic::AbcCoreAbstract::ObjectHeader &alembic_header,

@@ -29,8 +29,7 @@ using namespace Alembic::AbcGeom;
 
 namespace io::alembic {
 
-AbcPointsReader::AbcPointsReader(const Alembic::Abc::IObject &object, ImportSettings &settings)
-    : AbcObjectReader(object, settings)
+AbcPointsReader::AbcPointsReader(const AbcReaderConstructorArgs &args) : AbcObjectReader(args)
 {
   IPoints ipoints(m_iobject, kWrapExisting);
   m_schema = ipoints.getSchema();

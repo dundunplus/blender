@@ -2779,7 +2779,7 @@ void Layout::textbox_with_state(PointerRNA *ptr,
 
   const float line_heigth = fontstyle_height_max(UI_FSTYLE_WIDGET);
 
-  /** Ensure minumun value is set. */
+  /** Ensure minimum value is set. */
   textbox_state->visible_lines = std::max(textbox_state->visible_lines,
                                           textbox_minimum_visible_lines);
 

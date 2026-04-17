@@ -251,8 +251,8 @@ struct SphereProbeEval {
   [[legacy_info]] ShaderCreateInfo eevee_volume_probe_data;
 };
 
-/* Sphere probe evaluate everything as diffuse since they can only rely on volume lightprobes being
- * available. */
+/* Sphere probe evaluate everything as diffuse since they can only rely on volume light-probes
+ * being available. */
 [[fragment, early_fragment_tests]]
 void sphere_eval_frag([[resource_table]] SphereProbeEval &srt,
                       [[frag_coord]] const float4 frag_co,

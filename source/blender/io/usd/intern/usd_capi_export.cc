@@ -191,8 +191,8 @@ static void ensure_root_prim(pxr::UsdStageRefPtr stage, const USDExportParams &p
     xf_api.SetRotate(pxr::GfVec3f(eul.x().degree(), eul.y().degree(), eul.z().degree()));
   }
 
-  /* Colorspace on the root prim. It's also applied on all individual prims that need
-   * it, but perhaps this is useful to signal the overall colorspace of the file. */
+  /* Color-space on the root prim. It's also applied on all individual prims that need
+   * it, but perhaps this is useful to signal the overall color-space of the file. */
   colorspace_apply_to_prim(root_xf.GetPrim());
 
   for (const auto &path : pxr::SdfPath(params.root_prim_path).GetPrefixes()) {

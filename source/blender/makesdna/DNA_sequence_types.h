@@ -17,7 +17,8 @@
 #include "DNA_color_types.h"
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
-#include "DNA_vec_types.h" /* for #rctf */
+#include "DNA_screen_types.h" /* for #TextboxState. */
+#include "DNA_vec_types.h"    /* for #rctf */
 
 namespace blender {
 
@@ -825,6 +826,9 @@ struct TextVars {
   /* Fixed size text buffer, only exists for forward/backward compatibility.
    * #TextVars::text_ptr and #TextVars::text_len_bytes are used for full text. */
   char text_legacy[512] = "";
+
+  /** UI textbox state. */
+  TextboxState textbox_state = {};
 };
 
 #define STRIP_FONT_NOT_LOADED -2

@@ -353,10 +353,9 @@ static std::optional<PreprocessedSampleData> preprocess_sample(StringRefNull iob
   return data;
 }
 
-AbcCurveReader::AbcCurveReader(const Alembic::Abc::IObject &object, ImportSettings &settings)
-    : AbcObjectReader(object, settings)
+AbcCurveReader::AbcCurveReader(const AbcReaderConstructorArgs &args) : AbcObjectReader(args)
 {
-  ICurves abc_curves(object, kWrapExisting);
+  ICurves abc_curves(m_iobject, kWrapExisting);
   m_curves_schema = abc_curves.getSchema();
 
   get_min_max_time(m_iobject, m_curves_schema, m_min_time, m_max_time);

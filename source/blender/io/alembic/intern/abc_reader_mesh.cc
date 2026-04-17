@@ -490,8 +490,7 @@ static void read_mesh_sample(const std::string &iobject_full_name,
 
 /* ************************************************************************** */
 
-AbcMeshReader::AbcMeshReader(const IObject &object, ImportSettings &settings)
-    : AbcObjectReader(object, settings)
+AbcMeshReader::AbcMeshReader(const AbcReaderConstructorArgs &args) : AbcObjectReader(args)
 {
   m_settings->read_flag |= MOD_MESHSEQ_READ_ALL;
 
@@ -1012,8 +1011,7 @@ static void read_edge_creases(Mesh *mesh,
 
 /* ************************************************************************** */
 
-AbcSubDReader::AbcSubDReader(const IObject &object, ImportSettings &settings)
-    : AbcObjectReader(object, settings)
+AbcSubDReader::AbcSubDReader(const AbcReaderConstructorArgs &args) : AbcObjectReader(args)
 {
   m_settings->read_flag |= MOD_MESHSEQ_READ_ALL;
 

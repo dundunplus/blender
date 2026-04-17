@@ -1571,9 +1571,12 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
   wl_surface_add_listener(window_->wl.surface, &wl_surface_listener, window_);
 
   /* Color management */
-  wp_color_manager_v1 *color_manager = type == GHOST_kDrawingContextTypeVulkan ?
-                                           system->wp_color_manager_get() :
-                                           nullptr;
+  wp_color_manager_v1 *color_manager = nullptr;
+#ifdef WITH_VULKAN_BACKEND
+  if (type == GHOST_kDrawingContextTypeVulkan) {
+    color_manager = system->wp_color_manager_get();
+  }
+#endif
   if (color_manager) {
     wp_image_description_v1 *image_description = nullptr;
 

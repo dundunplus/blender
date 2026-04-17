@@ -3989,6 +3989,10 @@ static void rna_def_text(StructRNA *srna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_TEXT_ITALIC);
   RNA_def_property_ui_text(prop, "Italic", "Display text as italic");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_raw_update");
+
+  prop = RNA_def_property(srna, "textbox_state", PROP_POINTER, PROP_NONE);
+  RNA_def_property_struct_type(prop, "TextboxState");
+  RNA_def_property_ui_text(prop, "UI Textbot State", "Textbox state in the UI");
 }
 
 static void rna_def_color_mix(StructRNA *srna)
