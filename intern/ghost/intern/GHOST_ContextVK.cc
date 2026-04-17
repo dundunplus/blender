@@ -7,6 +7,7 @@
  */
 
 #include "GHOST_ContextVK.hh"
+#include <vulkan/vulkan_core.h>
 
 #ifdef _WIN32
 #  include <vulkan/vulkan_win32.h>
@@ -981,7 +982,8 @@ GHOST_TSuccess GHOST_ContextVK::swapBufferRelease()
   uint32_t image_index = acquired_swapchain_image_index_.value();
   GHOST_SwapchainImage &swapchain_image = swapchain_images_[image_index];
   GHOST_Frame &submission_frame_data = frame_data_[render_frame_];
-  const bool use_hdr_swapchain = hdr_info_ && hdr_info_->hdr_enabled &&
+  const bool use_hdr_swapchain = hdr_info_ &&
+                                 (hdr_info_->wide_gamut_enabled || hdr_info_->hdr_enabled) &&
                                  device_vk.use_vk_ext_swapchain_colorspace;
 
   GHOST_VulkanSwapChainData swap_chain_data;
@@ -1163,18 +1165,22 @@ static bool selectSurfaceFormat(const VkPhysicalDevice physical_device,
   vector<VkSurfaceFormatKHR> formats(format_count);
   vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, surface, &format_count, formats.data());
 
-  array<pair<VkColorSpaceKHR, VkFormat>, 4> selection_order = {
-      make_pair(VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT, VK_FORMAT_R16G16B16A16_SFLOAT),
-      make_pair(VK_COLOR_SPACE_SRGB_NONLINEAR_KHR, VK_FORMAT_R8G8B8A8_UNORM),
-      make_pair(VK_COLOR_SPACE_SRGB_NONLINEAR_KHR, VK_FORMAT_B8G8R8A8_UNORM),
-  };
+  array<VkSurfaceFormatKHR, 3> selection_order = {{
+#if defined(_WIN32) || defined(__APPLE__)
+      {VK_FORMAT_R16G16B16A16_SFLOAT, VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT},
+#else
+      {VK_FORMAT_R16G16B16A16_SFLOAT, VK_COLOR_SPACE_PASS_THROUGH_EXT},
+#endif
+      {VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR},
+      {VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR}}};
 
-  for (pair<VkColorSpaceKHR, VkFormat> &pair : selection_order) {
-    if (pair.second == VK_FORMAT_R16G16B16A16_SFLOAT && !use_hdr_swapchain) {
+  for (const VkSurfaceFormatKHR &config : selection_order) {
+    if (!use_hdr_swapchain && config.format == VK_FORMAT_R16G16B16A16_SFLOAT) {
       continue;
     }
+
     for (const VkSurfaceFormatKHR &format : formats) {
-      if (format.colorSpace == pair.first && format.format == pair.second) {
+      if (format.format == config.format && format.colorSpace == config.colorSpace) {
         r_surfaceFormat = format;
         return true;
       }
