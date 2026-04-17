@@ -527,7 +527,11 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
                 if elem:
                     col.prop(elem, "filename", text="")  # strip.elements[0] could be a fallback
 
-                col.prop(strip.colorspace_settings, "name", text="Color Space")
+                col.prop_with_menu(
+                    strip.colorspace_settings,
+                    "name",
+                    text="Color Space",
+                    menu="UI_MT_color_space_select")
 
                 col.prop(strip, "alpha_mode", text="Alpha")
                 sub = col.column(align=True)
@@ -537,7 +541,11 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
 
                 col = layout.column()
                 col.prop(strip, "filepath", text="")
-                col.prop(strip.colorspace_settings, "name", text="Color Space")
+                col.prop_with_menu(
+                    strip.colorspace_settings,
+                    "name",
+                    text="Color Space",
+                    menu="UI_MT_color_space_select")
                 col.prop(strip, "stream_index")
                 col.prop(strip, "use_deinterlace")
 

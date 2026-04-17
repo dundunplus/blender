@@ -5068,6 +5068,9 @@ bool WM_event_handler_region_v2d_mask_poll(const wmWindow * /*win*/,
                                            const ARegion *region,
                                            const wmEvent *event)
 {
+  if (wm_event_always_pass(event)) {
+    return true;
+  }
   rcti rect = region->v2d.mask;
   BLI_rcti_translate(&rect, region->winrct.xmin, region->winrct.ymin);
   return event_or_prev_in_rect(event, &rect);

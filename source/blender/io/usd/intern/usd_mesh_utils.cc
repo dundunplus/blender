@@ -4,6 +4,7 @@
 
 #include "usd_mesh_utils.hh"
 #include "usd_attribute_utils.hh"
+#include "usd_colorspace_utils.hh"
 #include "usd_hash_types.hh"
 
 #include "BKE_attribute.hh"
@@ -54,6 +55,7 @@ static void read_face_display_color(Mesh *mesh,
     }
   }
 
+  colorspace_attr_to_scene_linear(primvar.GetAttr(), color_data.span);
   color_data.finish();
 }
 

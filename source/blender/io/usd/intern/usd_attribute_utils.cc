@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "usd_attribute_utils.hh"
+#include "usd_colorspace_utils.hh"
 #include "usd_hash_types.hh"
 
 #include "BLI_map.hh"
@@ -127,18 +128,18 @@ void copy_primvar_to_blender_attribute(const pxr::UsdGeomPrimvar &primvar,
       break;
     case bke::AttrType::ColorFloat: {
       const pxr::SdfValueTypeName pv_type = primvar.GetTypeName();
+      MutableSpan<ColorGeometry4f> colors = attribute.span.typed<ColorGeometry4f>();
       if (ELEM(pv_type,
                pxr::SdfValueTypeNames->Color3fArray,
                pxr::SdfValueTypeNames->Color3hArray,
                pxr::SdfValueTypeNames->Color3dArray))
       {
-        copy_primvar_to_blender_buffer<pxr::GfVec3f>(
-            primvar, time, face_indices, attribute.span.typed<ColorGeometry4f>());
+        copy_primvar_to_blender_buffer<pxr::GfVec3f>(primvar, time, face_indices, colors);
       }
       else {
-        copy_primvar_to_blender_buffer<pxr::GfVec4f>(
-            primvar, time, face_indices, attribute.span.typed<ColorGeometry4f>());
+        copy_primvar_to_blender_buffer<pxr::GfVec4f>(primvar, time, face_indices, colors);
       }
+      colorspace_attr_to_scene_linear(primvar.GetAttr(), colors);
     } break;
     case bke::AttrType::Bool:
       copy_primvar_to_blender_buffer<bool>(
@@ -196,6 +197,7 @@ void copy_blender_attribute_to_primvar(const GVArray &attribute,
         copy_blender_buffer_to_primvar<ColorGeometry4f, pxr::GfVec4f>(
             attribute.typed<ColorGeometry4f>(), time, primvar, value_writer);
       }
+      colorspace_apply_to_prim(primvar.GetAttr().GetPrim());
       break;
     case bke::AttrType::ColorByte:
       if (primvar.GetTypeName() == pxr::SdfValueTypeNames->Color3fArray) {
@@ -206,6 +208,7 @@ void copy_blender_attribute_to_primvar(const GVArray &attribute,
         copy_blender_buffer_to_primvar<ColorGeometry4b, pxr::GfVec4f>(
             attribute.typed<ColorGeometry4b>(), time, primvar, value_writer);
       }
+      colorspace_apply_to_prim(primvar.GetAttr().GetPrim());
       break;
     case bke::AttrType::Quaternion:
       copy_blender_buffer_to_primvar<math::Quaternion, pxr::GfQuatf>(
