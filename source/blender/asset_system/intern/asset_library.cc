@@ -297,6 +297,7 @@ std::weak_ptr<AssetRepresentation> AssetLibrary::add_external_on_disk_asset(
     const int id_type,
     std::unique_ptr<AssetMetaData> metadata)
 {
+  std::scoped_lock lock{asset_storage_.external_assets_mutex};
   return asset_storage_.external_assets.lookup_key_or_add(std::make_shared<AssetRepresentation>(
       relative_asset_path, name, id_type, std::move(metadata), *this));
 }
@@ -308,12 +309,14 @@ std::weak_ptr<AssetRepresentation> AssetLibrary::add_external_online_asset(
     std::unique_ptr<AssetMetaData> metadata,
     OnlineAssetInfo online_info)
 {
+  std::scoped_lock lock{asset_storage_.external_assets_mutex};
   return asset_storage_.external_assets.lookup_key_or_add(std::make_shared<AssetRepresentation>(
       relative_asset_path, name, id_type, std::move(metadata), *this, online_info));
 }
 
 std::weak_ptr<AssetRepresentation> AssetLibrary::add_local_id_asset(ID &id)
 {
+  std::scoped_lock lock{asset_storage_.local_id_assets_mutex};
   return asset_storage_.local_id_assets.lookup_key_or_add(
       std::make_shared<AssetRepresentation>(id, *this));
 }
@@ -325,6 +328,9 @@ bool AssetLibrary::remove_asset(AssetRepresentation &asset)
   if (&asset.owner_asset_library_ != this) {
     return asset.owner_asset_library_.remove_asset(asset);
   }
+
+  std::scoped_lock lock_externs{asset_storage_.external_assets_mutex};
+  std::scoped_lock lock_locals{asset_storage_.local_id_assets_mutex};
 
   BLI_assert(asset_storage_.local_id_assets.contains_as(&asset) ||
              asset_storage_.external_assets.contains_as(&asset));
@@ -338,6 +344,8 @@ bool AssetLibrary::remove_asset(AssetRepresentation &asset)
 void AssetLibrary::remap_ids_and_remove_invalid(const bke::id::IDRemapper &mappings)
 {
   Set<AssetRepresentation *> removed_assets;
+
+  std::scoped_lock lock{asset_storage_.local_id_assets_mutex};
 
   for (const auto &asset_ptr : asset_storage_.local_id_assets) {
     AssetRepresentation &asset = *asset_ptr;
