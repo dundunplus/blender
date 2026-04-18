@@ -34,16 +34,12 @@ class AbcMeshReader final : public AbcObjectReader {
 
   struct Mesh *read_mesh(struct Mesh *existing_mesh,
                          const Alembic::Abc::ISampleSelector &sample_sel,
-                         int read_flag,
-                         const char *velocity_name,
-                         float velocity_scale,
+                         const AbcReadGeometryParams &read_params,
                          const char **r_err_str);
 
   void read_geometry(bke::GeometrySet &geometry_set,
                      const Alembic::Abc::ISampleSelector &sample_sel,
-                     int read_flag,
-                     const char *velocity_name,
-                     float velocity_scale,
+                     const AbcReadGeometryParams &read_params,
                      const char **r_err_str) override;
 
   bool topology_changed(const Mesh *existing_mesh,
@@ -73,17 +69,13 @@ class AbcSubDReader final : public AbcObjectReader {
 
   void read_geometry(bke::GeometrySet &geometry_set,
                      const Alembic::Abc::ISampleSelector &sample_sel,
-                     int read_flag,
-                     const char *velocity_name,
-                     const float velocity_scale,
+                     const AbcReadGeometryParams &read_params,
                      const char **r_err_str) override;
 
  private:
   struct Mesh *read_mesh(struct Mesh *existing_mesh,
                          const Alembic::Abc::ISampleSelector &sample_sel,
-                         int read_flag,
-                         const char *velocity_name,
-                         const float velocity_scale,
+                         const AbcReadGeometryParams &read_params,
                          const char **r_err_str);
 };
 

@@ -149,9 +149,7 @@ Imath::M44d get_matrix(const IXformSchema &schema, const chrono_t time)
 
 void AbcObjectReader::read_geometry(bke::GeometrySet & /*geometry_set*/,
                                     const Alembic::Abc::ISampleSelector & /*sample_sel*/,
-                                    int /*read_flag*/,
-                                    const char * /*velocity_name*/,
-                                    const float /*velocity_scale*/,
+                                    const AbcReadGeometryParams & /*read_params*/,
                                     const char ** /*r_err_str*/)
 {
 }

@@ -560,14 +560,12 @@ void AbcCurveReader::read_curves_sample(Curves *curves_id,
 
 void AbcCurveReader::read_geometry(bke::GeometrySet &geometry_set,
                                    const Alembic::Abc::ISampleSelector &sample_sel,
-                                   int read_flag,
-                                   const char * /*velocity_name*/,
-                                   const float /*velocity_scale*/,
+                                   const AbcReadGeometryParams &read_params,
                                    const char ** /*r_err_str*/)
 {
   Curves *curves = geometry_set.get_curves_for_write();
 
-  bool use_interpolation = read_flag & MOD_MESHSEQ_INTERPOLATE_VERTICES;
+  bool use_interpolation = read_params.read_flag & MOD_MESHSEQ_INTERPOLATE_VERTICES;
   read_curves_sample(curves, use_interpolation, m_curves_schema, sample_sel);
 }
 

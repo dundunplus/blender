@@ -885,12 +885,11 @@ void ABC_read_geometry(CacheReader *reader,
   }
 
   ISampleSelector sample_sel = sample_selector_for_time(params->time);
-  abc_reader->read_geometry(geometry_set,
-                            sample_sel,
-                            params->read_flags,
-                            params->velocity_name,
-                            params->velocity_scale,
-                            r_err_str);
+  AbcReadGeometryParams read_params;
+  read_params.read_flag = params->read_flags;
+  read_params.velocity_name = params->velocity_name ? params->velocity_name : "";
+  read_params.velocity_scale = params->velocity_scale;
+  abc_reader->read_geometry(geometry_set, sample_sel, read_params, r_err_str);
 }
 
 bool ABC_mesh_topology_changed(CacheReader *reader,
