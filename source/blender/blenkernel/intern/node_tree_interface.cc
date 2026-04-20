@@ -1239,13 +1239,13 @@ bool bNodeTreeInterfacePanel::move_item(bNodeTreeInterfaceItem &item, int new_po
   if (!this->items().index_range().contains(old_position)) {
     return false;
   }
+
+  new_position = find_valid_insert_position_for_item(item, new_position);
+  new_position = std::min(std::max(new_position, 0), items_num);
   if (old_position == new_position) {
     /* Nothing changes. */
     return true;
   }
-
-  new_position = find_valid_insert_position_for_item(item, new_position);
-  new_position = std::min(std::max(new_position, 0), items_num);
 
   if (old_position < new_position) {
     /* Actual target position and all existing items shifted by 1. */
