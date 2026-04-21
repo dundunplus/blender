@@ -1601,7 +1601,6 @@ static void rna_experimental_no_data_block_packing_update(bContext *C, PointerRN
   Scene *scene = CTX_data_scene(C);
   rna_userdef_update(bmain, scene, ptr);
   AS_asset_library_import_method_ensure_valid(*bmain);
-  AS_asset_library_essential_import_method_update();
   rna_userdef_asset_libraries_refresh(C, ptr);
 }
 

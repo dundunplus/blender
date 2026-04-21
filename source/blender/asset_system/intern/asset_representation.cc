@@ -226,12 +226,12 @@ void AssetRepresentation::online_asset_mark_downloaded()
 
 std::optional<eAssetImportMethod> AssetRepresentation::get_import_method() const
 {
-  return owner_asset_library_.import_method_;
+  return owner_asset_library_.import_method();
 }
 
 bool AssetRepresentation::may_override_import_method() const
 {
-  if (!owner_asset_library_.import_method_) {
+  if (!owner_asset_library_.import_method()) {
     return true;
   }
   return owner_asset_library_.may_override_import_method_;
@@ -239,7 +239,7 @@ bool AssetRepresentation::may_override_import_method() const
 
 bool AssetRepresentation::get_use_relative_path() const
 {
-  return owner_asset_library_.use_relative_path_;
+  return owner_asset_library_.use_relative_paths();
 }
 
 ID *AssetRepresentation::local_id() const

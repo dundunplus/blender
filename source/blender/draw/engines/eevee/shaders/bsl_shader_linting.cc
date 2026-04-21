@@ -11,6 +11,7 @@
 #include "eevee_camera_lib.bsl.hh"                   /* IWYU pragma: export */
 #include "eevee_colorspace_lib.bsl.hh"               /* IWYU pragma: export */
 #include "eevee_deferred_eval.bsl.hh"                /* IWYU pragma: export */
+#include "eevee_deferred_thickness_amend.bsl.hh"     /* IWYU pragma: export */
 #include "eevee_fast_gi.bsl.hh"                      /* IWYU pragma: export */
 #include "eevee_light_culling.bsl.hh"                /* IWYU pragma: export */
 #include "eevee_light_shadow_setup.bsl.hh"           /* IWYU pragma: export */

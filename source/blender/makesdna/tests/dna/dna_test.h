@@ -9,6 +9,9 @@
 
 #pragma once
 
+#include "BLI_math_matrix_types.hh"
+#include "BLI_math_vector_types.hh"
+
 namespace blender {
 
 struct Library;
@@ -42,6 +45,13 @@ struct TestStruct {
   int tag;
 
   int _pad2;
+};
+
+struct StructWithVectorMatrixTypes {
+  int2 my_int2;
+  float3 my_float3;
+  float _pad[3];
+  float4x4 my_matrix;
 };
 
 }  // namespace blender

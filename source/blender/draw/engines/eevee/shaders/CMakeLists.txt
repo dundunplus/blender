@@ -45,7 +45,6 @@ set(SRC_GLSL_FRAG
   eevee_debug_surfels_frag.glsl
   eevee_deferred_aov_clear_frag.glsl
   eevee_deferred_combine_frag.glsl
-  eevee_deferred_thickness_amend_frag.glsl
   eevee_deferred_tile_classify_frag.glsl
   eevee_depth_of_field_scatter_frag.glsl
   eevee_display_lightprobe_planar_frag.glsl
