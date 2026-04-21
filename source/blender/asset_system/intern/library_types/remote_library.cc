@@ -82,7 +82,10 @@ std::optional<AssetLibraryReference> RemoteAssetLibrary::library_reference() con
 
 std::optional<eAssetImportMethod> RemoteAssetLibrary::import_method() const
 {
-  return ASSET_IMPORT_APPEND_REUSE;
+  if (U.experimental.no_data_block_packing) {
+    return ASSET_IMPORT_APPEND_REUSE;
+  }
+  return ASSET_IMPORT_PACK;
 }
 
 std::optional<StringRefNull> RemoteAssetLibrary::remote_url() const

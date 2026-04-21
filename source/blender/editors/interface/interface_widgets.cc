@@ -2183,9 +2183,9 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
         const float y = rect.ymax - (line_height * float(selection.line - scroll));
         immRectf(pos,
                  rect.xmin + bounds.min,
-                 y - line_height + U.pixelsize,
+                 y - line_height,
                  std::min(rect.xmin + bounds.max, rect.xmax - 2),
-                 y - U.pixelsize);
+                 y);
       }
       immUnbindProgram();
       GPU_blend(GPU_BLEND_NONE);
@@ -2257,11 +2257,7 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
       immUniformThemeColor(TH_WIDGET_TEXT_CURSOR);
       const int y = rect.ymax - (line_height * (line_cursor - scroll));
       /* draw cursor */
-      immRectf(pos,
-               rect.xmin + t,
-               y - line_height + U.pixelsize,
-               rect.xmin + t + caret_width,
-               y - U.pixelsize);
+      immRectf(pos, rect.xmin + t, y - line_height, rect.xmin + t + caret_width, y);
 
       immUnbindProgram();
 #ifdef WITH_INPUT_IME

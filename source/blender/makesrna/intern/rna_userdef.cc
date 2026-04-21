@@ -1558,14 +1558,23 @@ static void rna_preference_gpu_preferred_device_set(PointerRNA *ptr, int value)
 }
 
 static const EnumPropertyItem *rna_preference_asset_libray_import_method_itemf(
-    bContext * /*C*/, PointerRNA * /*ptr*/, PropertyRNA * /*prop*/, bool *r_free)
+    bContext * /*C*/, PointerRNA *ptr, PropertyRNA * /*prop*/, bool *r_free)
 {
+  const bUserAssetLibrary *library = static_cast<bUserAssetLibrary *>(ptr->data);
+
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
   for (const EnumPropertyItem *item = rna_enum_preferences_asset_import_method_items;
        item->identifier;
        item++)
   {
+    if ((library->flag & ASSET_LIBRARY_USE_REMOTE_URL) != 0) {
+      if (item->value == ASSET_IMPORT_LINK) {
+        /* Don't allow linking with remote libraries. */
+        continue;
+      }
+    }
+
     switch (eAssetImportMethod(item->value)) {
       case ASSET_IMPORT_APPEND_REUSE: {
         if (U.experimental.no_data_block_packing) {

@@ -3893,12 +3893,25 @@ static void rna_FileAssetSelectParams_catalog_id_set(PointerRNA *ptr, const char
 }
 
 static const EnumPropertyItem *rna_FileAssetSelectParams_import_method_itemf(
-    bContext * /*C*/, PointerRNA * /*ptr*/, PropertyRNA * /*prop*/, bool *r_free)
+    bContext * /*C*/, PointerRNA *ptr, PropertyRNA * /*prop*/, bool *r_free)
 {
+  const FileAssetSelectParams *params = static_cast<FileAssetSelectParams *>(ptr->data);
+
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
   for (const EnumPropertyItem *item = rna_enum_asset_import_method_items; item->identifier; item++)
   {
+    if ((item->value == FILE_ASSET_IMPORT_LINK) &&
+        (params->asset_library_ref.type == ASSET_LIBRARY_CUSTOM))
+    {
+      const bUserAssetLibrary *user_library = BKE_preferences_asset_library_find_index(
+          &U, params->asset_library_ref.custom_library_index);
+      if (user_library && user_library->flag & ASSET_LIBRARY_USE_REMOTE_URL) {
+        /* Don't allow linking with remote libraries. */
+        continue;
+      }
+    }
+
     switch (eFileAssetImportMethod(item->value)) {
       case FILE_ASSET_IMPORT_APPEND_REUSE: {
         if (U.experimental.no_data_block_packing) {
