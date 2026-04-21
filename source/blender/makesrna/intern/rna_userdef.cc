@@ -6153,6 +6153,13 @@ static void rna_def_userdef_system(BlenderRNA *brna)
       prop, "Region Overlap", "Display tool/property regions over the main region");
   RNA_def_property_update(prop, 0, "rna_userdef_gpu_update");
 
+  prop = RNA_def_property(srna, "show_panel_tabs_compact", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_UIFLAG2_PANEL_TABS_COMPACT);
+  RNA_def_property_ui_text(prop,
+                           "Compact Panel Tabs",
+                           "Display panel tabs in a compact size that shows icons when available");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
   prop = RNA_def_property(srna, "viewport_aa", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_userdef_viewport_aa_items);
   RNA_def_property_ui_text(
