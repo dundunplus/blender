@@ -75,6 +75,7 @@ set(LIB
   PRIVATE bf::dna
   PRIVATE bf::gpu
   bf_imbuf_openimageio
+  bf_imbuf_openexr
   PRIVATE bf::intern::atomic
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
@@ -87,17 +88,6 @@ set(LIB
   PRIVATE bf::dependencies::openimageio
   PRIVATE bf::dependencies::jpeg
 )
-
-if(WITH_IMAGE_OPENEXR)
-  list(APPEND LIB
-    bf_imbuf_openexr
-  )
-  add_definitions(-DWITH_IMAGE_OPENEXR)
-else()
-  list(APPEND SRC
-    intern/openexr/openexr_stub.cpp
-  )
-endif()
 
 if(WITH_IMAGE_OPENJPEG)
   list(APPEND SRC

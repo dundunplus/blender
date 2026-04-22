@@ -670,10 +670,7 @@ void colormanagement_init()
 
   /* Then use fallback. */
   if (g_config() == nullptr) {
-#ifdef WITH_OPENCOLORIO
-    /* Without OpenColorIO this just adds noise. */
     CLOG_STR_INFO_NOCHECK(&LOG, "Using fallback mode for management");
-#endif
     g_config() = ocio::Config::create_fallback();
     colormanage_load_config(*g_config());
   }

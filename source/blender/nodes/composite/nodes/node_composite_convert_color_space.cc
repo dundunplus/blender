@@ -40,10 +40,6 @@ static void node_init(bNodeTree * /*ntree*/, bNode *node)
 
 static void node_draw_buttons(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 {
-#ifndef WITH_OPENCOLORIO
-  layout.label(RPT_("Disabled, built without OpenColorIO"), ICON_ERROR);
-#endif
-
   layout.prop_with_menu(ptr,
                         "from_color_space",
                         ui::ITEM_R_SPLIT_EMPTY_NAME,

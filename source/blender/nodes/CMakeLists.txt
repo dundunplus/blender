@@ -206,10 +206,6 @@ set(LIB
   PRIVATE bf::dependencies::optional::bullet
 )
 
-if(WITH_IMAGE_OPENEXR)
-  add_definitions(-DWITH_IMAGE_OPENEXR)
-endif()
-
 if(WITH_FREESTYLE)
   add_definitions(-DWITH_FREESTYLE)
 endif()

@@ -3863,13 +3863,9 @@ void BKE_image_release_renderresult(Scene *scene, Image *ima, RenderResult *rend
 
 bool BKE_image_is_openexr(Image *ima)
 {
-#ifdef WITH_IMAGE_OPENEXR
   if (ELEM(ima->source, IMA_SRC_FILE, IMA_SRC_SEQUENCE, IMA_SRC_TILED)) {
     return BLI_path_extension_check(ima->filepath, ".exr");
   }
-#else
-  UNUSED_VARS(ima);
-#endif
   return false;
 }
 
@@ -3947,7 +3943,6 @@ static void image_add_view(Image *ima, const char *viewname, const char *filepat
 
 /* After imbuf load, OpenEXR type can return with a EXR-handle open
  * in that case we have to build a render-result. */
-#ifdef WITH_IMAGE_OPENEXR
 static void image_create_multilayer(Image *ima, ImBuf *ibuf, int framenr)
 {
   const char *colorspace = ima->colorspace_settings.name;
@@ -3969,7 +3964,6 @@ static void image_create_multilayer(Image *ima, ImBuf *ibuf, int framenr)
   /* set proper views */
   image_init_multilayer_multiview(ima, ima->rr);
 }
-#endif /* WITH_IMAGE_OPENEXR */
 
 /** Common stuff to do with images after loading. */
 static void image_init_after_load(Image *ima, ImageUser *iuser, ImBuf * /*ibuf*/)
@@ -4227,7 +4221,6 @@ static ImBuf *load_image_single(Image *ima,
   }
 
   if (ibuf) {
-#ifdef WITH_IMAGE_OPENEXR
     if (ibuf->ftype == IMB_FTYPE_OPENEXR && ibuf->exrhandle) {
       /* Handle multilayer and multiview cases, don't assign ibuf here.
        * will be set layer in BKE_image_acquire_ibuf from ima->rr. */
@@ -4241,9 +4234,7 @@ static ImBuf *load_image_single(Image *ima,
         *r_cache_ibuf = false;
       }
     }
-    else
-#endif
-    {
+    else {
       image_init_after_load(ima, iuser, ibuf);
 
       /* Make packed file for auto-pack. */

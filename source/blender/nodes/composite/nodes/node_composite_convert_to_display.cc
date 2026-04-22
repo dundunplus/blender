@@ -80,10 +80,6 @@ static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &
 
 static void node_draw_buttons(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 {
-#ifndef WITH_OPENCOLORIO
-  layout.label(RPT_("Disabled, built without OpenColorIO"), ICON_ERROR);
-#endif
-
   PointerRNA display_ptr = RNA_pointer_get(ptr, "display_settings");
   PointerRNA view_ptr = RNA_pointer_get(ptr, "view_settings");
 
