@@ -1430,6 +1430,12 @@ static void rna_def_node_interface_panel(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Persistent Identifier", "Unique identifier for this panel within this node tree");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+  prop = RNA_def_property(srna, "identifier", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "identifier");
+  RNA_def_property_ui_text(
+      prop, "Identifier", "Unique identifier for this panel within this node tree");
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 }
 
 static void rna_def_node_tree_interface_items_api(StructRNA *srna)

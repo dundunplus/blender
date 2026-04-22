@@ -166,7 +166,7 @@ class ConvertToDisplayOperation : public NodeOperation {
       output_image.store_pixel(texel, input_image.load_pixel<Color>(texel));
     });
 
-    color_processor.apply(static_cast<float *>(output_image.cpu_data().data()),
+    color_processor.apply(static_cast<float *>(output_image.cpu_data_for_write().data()),
                           domain.data_size.x,
                           domain.data_size.y,
                           input_image.channels_count(),
