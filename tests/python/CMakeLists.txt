@@ -1613,6 +1613,13 @@ if(TEST_SRC_DIR_EXISTS)
   )
 
   add_blender_test(
+    bl_texture_paint_brushes
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/texture_paint_brushes_test.py
+    --
+    --testdir "${TEST_SRC_DIR}/mesh_paint"
+  )
+
+  add_blender_test(
     bl_sculpt_brush_curve_presets
     --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/brush_strength_curves_test.py
     --

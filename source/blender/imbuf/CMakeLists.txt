@@ -37,7 +37,7 @@ set(SRC
   intern/interp.cc
   intern/metadata.cc
   intern/module.cc
-  intern/moviecache.cc
+  intern/cache.cc
   intern/readimage.cc
   intern/rectop.cc
   intern/rotate.cc
@@ -57,7 +57,7 @@ set(SRC
   IMB_imbuf_types.hh
   IMB_interp.hh
   IMB_metadata.hh
-  IMB_moviecache.hh
+  IMB_cache.hh
   IMB_openexr.hh
   IMB_thumbs.hh
   intern/IMB_allocimbuf.hh
