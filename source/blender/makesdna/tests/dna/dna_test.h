@@ -54,4 +54,26 @@ struct StructWithVectorMatrixTypes {
   float4x4 my_matrix;
 };
 
+enum class TestEnum8 : int8_t {
+  A = 0,
+  B = 1,
+};
+
+enum TestEnum16 : int16_t {
+  TEST_ENUM16_A = 0,
+  TEST_ENUM16_B = 1,
+};
+
+enum class TestEnum32 : int32_t {
+  A = 0,
+  B = 1,
+};
+
+struct StructWithEnumMembers {
+  TestEnum8 my_enum8;
+  char _pad0;
+  TestEnum16 my_enum16;
+  TestEnum32 my_enum32;
+};
+
 }  // namespace blender

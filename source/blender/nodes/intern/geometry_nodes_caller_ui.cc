@@ -520,11 +520,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       break;
     }
     case SOCK_FONT: {
-      PropertyRNA *prop = RNA_struct_find_property(ctx.properties_ptr, "value");
+      PropertyRNA *prop = RNA_struct_find_property(socket_props_ptr, "value");
       if (prop && RNA_property_type(prop) == PROP_POINTER) {
         template_id(&row,
                     &ctx.C,
-                    ctx.properties_ptr,
+                    socket_props_ptr,
                     "value",
                     nullptr,
                     "FONT_OT_open",
@@ -536,7 +536,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       else {
         /* #template_id only supports pointer properties currently. Node tools store
          * data-block pointers in strings currently. */
-        row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "fonts", name, ICON_FONT_DATA);
+        row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "fonts", name, ICON_FONT_DATA);
       }
       break;
     }

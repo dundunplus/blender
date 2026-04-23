@@ -30,6 +30,8 @@
 #include "eevee_shadow_tag_update.bsl.hh"            /* IWYU pragma: export */
 #include "eevee_shadow_tag_usage.bsl.hh"             /* IWYU pragma: export */
 #include "eevee_shadow_tag_usage_transparent.bsl.hh" /* IWYU pragma: export */
+#include "eevee_shadow_tilemap_amend.bsl.hh"         /* IWYU pragma: export */
+#include "eevee_shadow_tilemap_bounds.bsl.hh"        /* IWYU pragma: export */
 #include "eevee_shadow_tilemap_lib.bsl.hh"           /* IWYU pragma: export */
 #include "eevee_subsurface.bsl.hh"                   /* IWYU pragma: export */
 #include "eevee_thickness_lib.bsl.hh"                /* IWYU pragma: export */

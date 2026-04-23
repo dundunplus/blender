@@ -813,18 +813,21 @@ static int make_structDNA(const char *base_directory,
   DEBUG_PRINTF(0, "\tStart of header scan:\n");
   int header_count = 0;
   Vector<dna::ParsedStruct> parsed_structs;
+  Vector<dna::ParsedEnum> parsed_enums;
   for (int i = 0; *(includefiles[i]) != '\0'; i++) {
     header_count++;
 
     const std::string path = std::string(base_directory) + includefiles[i];
     DEBUG_PRINTF(0, "\t|-- Converting %s\n", path.c_str());
-    if (!dna::parse_dna_header(path, parsed_structs)) {
+    if (!dna::parse_dna_header(path, parsed_structs, parsed_enums)) {
       return 1;
     }
   }
   DEBUG_PRINTF(0, "\tFinished scanning %d headers.\n", header_count);
 
-  dna::substitute_cpp_types(parsed_structs);
+  if (!dna::substitute_cpp_types(parsed_structs, parsed_enums)) {
+    return 1;
+  }
   register_parsed_structs(parsed_structs);
 
   if (calculate_struct_sizes(firststruct, file_verify, base_directory)) {

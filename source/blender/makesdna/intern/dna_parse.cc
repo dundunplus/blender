@@ -20,6 +20,7 @@
 #include <cstring>
 #include <fstream>
 
+#include "BLI_map.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_ref.hh"
@@ -585,7 +586,48 @@ static void skip_struct_body(TokenStream &stream)
   }
 }
 
-bool parse_dna_header(const StringRefNull filepath, Vector<ParsedStruct> &r_structs)
+/** Parse an enum declaration with its underlying type. */
+[[nodiscard]] static bool parse_enum_declaration(TokenStream &stream,
+                                                 const StringRefNull filepath,
+                                                 Vector<ParsedEnum> &r_enums)
+{
+  stream.consume_keyword("class");
+  stream.consume_keyword("struct");
+
+  std::string name;
+  if (!stream.at_end() && stream.kind() == TOKEN_IDENTIFIER) {
+    name = stream.consume().text;
+  }
+
+  std::string underlying_type;
+  if (stream.consume(':')) {
+    if (stream.at_end() || stream.kind() != TOKEN_IDENTIFIER) {
+      fprintf(stderr,
+              "File '%s' contains enum '%s' with unparseable underlying type\n",
+              filepath.c_str(),
+              name.c_str());
+      return false;
+    }
+    underlying_type = stream.consume().text;
+  }
+
+  if (!stream.consume(';')) {
+    if (stream.at_end() || stream.kind() != '{') {
+      return true;
+    }
+    skip_balanced(stream, '{', '}');
+  }
+
+  if (!name.empty()) {
+    r_enums.append({.type_name = std::move(name), .underlying_type = std::move(underlying_type)});
+  }
+
+  return true;
+}
+
+bool parse_dna_header(const StringRefNull filepath,
+                      Vector<ParsedStruct> &r_structs,
+                      Vector<ParsedEnum> &r_enums)
 {
   Vector<char> buffer;
   if (!read_file_data(filepath, buffer)) {
@@ -604,6 +646,13 @@ bool parse_dna_header(const StringRefNull filepath, Vector<ParsedStruct> &r_stru
       stream.advance();
       stream.advance();
       skip_next_struct = true;
+      continue;
+    }
+
+    if (stream.consume_keyword("enum")) {
+      if (!parse_enum_declaration(stream, filepath, r_enums)) {
+        return false;
+      }
       continue;
     }
 
@@ -718,14 +767,46 @@ static void substitute_vector_or_matrix(ParsedMember &member)
   }
 }
 
-void substitute_cpp_types(Vector<ParsedStruct> &structs)
+/** Replace member types matching an enum with the enum's underlying type. */
+[[nodiscard]] static bool substitute_enum(const ParsedStruct &parsed_struct,
+                                          ParsedMember &member,
+                                          const Map<StringRef, const ParsedEnum *> &enum_map)
 {
+  const ParsedEnum *const *found = enum_map.lookup_ptr(member.type_name);
+  if (found == nullptr) {
+    return true;
+  }
+  const ParsedEnum &parsed_enum = **found;
+  if (parsed_enum.underlying_type.empty()) {
+    fprintf(stderr,
+            "Struct '%s' member '%s' uses enum '%s' without an explicit underlying type\n",
+            parsed_struct.type_name.c_str(),
+            member.member_name.c_str(),
+            parsed_enum.type_name.c_str());
+    return false;
+  }
+  member.type_name = parsed_enum.underlying_type;
+  return true;
+}
+
+bool substitute_cpp_types(Vector<ParsedStruct> &structs, const Span<ParsedEnum> enums)
+{
+  Map<StringRef, const ParsedEnum *> enum_map;
+  enum_map.reserve(enums.size());
+  for (const ParsedEnum &parsed_enum : enums) {
+    enum_map.add(parsed_enum.type_name, &parsed_enum);
+  }
+
   for (ParsedStruct &parsed_struct : structs) {
     for (ParsedMember &member : parsed_struct.members) {
       substitute_listbase_t(member);
       substitute_vector_or_matrix(member);
+      if (!substitute_enum(parsed_struct, member, enum_map)) {
+        return false;
+      }
     }
   }
+  return true;
 }
 
 /** \} */

@@ -6,6 +6,7 @@
 
 #include <string>
 
+#include "BLI_span.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
 
@@ -25,10 +26,18 @@ struct ParsedStruct {
   Vector<ParsedMember> members;
 };
 
-/** Extract structs and their members from a DNA header. */
-[[nodiscard]] bool parse_dna_header(StringRefNull filepath, Vector<ParsedStruct> &r_structs);
+struct ParsedEnum {
+  std::string type_name;
+  /** Underlying integer type, e.g. `int8_t`. */
+  std::string underlying_type;
+};
+
+/** Extract structs, their members, and enums from a DNA header. */
+[[nodiscard]] bool parse_dna_header(StringRefNull filepath,
+                                    Vector<ParsedStruct> &r_structs,
+                                    Vector<ParsedEnum> &r_enums);
 
 /** Convert C++ types to plain C types understood by DNA. */
-void substitute_cpp_types(Vector<ParsedStruct> &structs);
+[[nodiscard]] bool substitute_cpp_types(Vector<ParsedStruct> &structs, Span<ParsedEnum> enums);
 
 }  // namespace blender::dna

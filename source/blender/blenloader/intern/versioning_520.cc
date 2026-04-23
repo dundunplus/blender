@@ -483,6 +483,20 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       brush.mesh_automasking_settings->cavity_curve_op = nullptr;
     }
   }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 21)) {
+    for (Material &materials : bmain->materials) {
+      if (materials.gp_style != nullptr) {
+        materials.gp_style->random_size_factor = 0.0f;
+        materials.gp_style->random_strength_factor = 0.0f;
+        materials.gp_style->random_rotation_factor = 0.0f;
+        materials.gp_style->random_hue_factor = 0.0f;
+        materials.gp_style->random_saturation_factor = 0.0f;
+        materials.gp_style->random_value_factor = 0.0f;
+        materials.gp_style->random_noise_scale = 1.0f;
+      }
+    }
+  }
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

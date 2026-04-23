@@ -108,8 +108,6 @@ set(SRC_GLSL_COMP
   eevee_ray_trace_screen_comp.glsl
   eevee_shadow_clipmap_clear_comp.glsl
   eevee_shadow_page_clear_comp.glsl
-  eevee_shadow_tilemap_amend_comp.glsl
-  eevee_shadow_tilemap_bounds_comp.glsl
   eevee_shadow_tilemap_finalize_comp.glsl
   eevee_shadow_tilemap_init_comp.glsl
   eevee_shadow_tilemap_rendermap_comp.glsl

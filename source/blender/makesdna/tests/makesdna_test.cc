@@ -78,12 +78,13 @@ constexpr int kRawDataStructId = 0;               /* raw_data */
 constexpr int kListBaseStructId = 1;              /* ListBase */
 constexpr int kTestStructId = 2;                  /* ID */
 constexpr int kStructWithVectorMatrixTypesId = 3; /* float3 and float4x4 */
+constexpr int kStructWithEnumMembersId = 4;       /* enums with underlying types */
 
 TEST_F(SDNATest, basic)
 {
   ASSERT_NE(sdna, nullptr);
 
-  EXPECT_EQ(sdna->structs_num, 4);
+  EXPECT_EQ(sdna->structs_num, 5);
 }
 
 TEST_F(SDNATest, index_without_alias)
@@ -95,6 +96,8 @@ TEST_F(SDNATest, index_without_alias)
   EXPECT_EQ(DNA_struct_find_index_without_alias(sdna, "TestStruct"), kTestStructId);
   EXPECT_EQ(DNA_struct_find_index_without_alias(sdna, "StructWithVectorMatrixTypes"),
             kStructWithVectorMatrixTypesId);
+  EXPECT_EQ(DNA_struct_find_index_without_alias(sdna, "StructWithEnumMembers"),
+            kStructWithEnumMembersId);
 }
 
 TEST_F(SDNATest, struct_size)
@@ -105,6 +108,7 @@ TEST_F(SDNATest, struct_size)
   EXPECT_EQ(DNA_struct_size(sdna, kTestStructId), sizeof(TestStruct));
   EXPECT_EQ(DNA_struct_size(sdna, kStructWithVectorMatrixTypesId),
             sizeof(StructWithVectorMatrixTypes));
+  EXPECT_EQ(DNA_struct_size(sdna, kStructWithEnumMembersId), sizeof(StructWithEnumMembers));
 }
 
 TEST_F(SDNATest, struct_member_size)
@@ -126,6 +130,14 @@ TEST_F(SDNATest, struct_member_size)
             sizeof(StructWithVectorMatrixTypes::my_float3));
   EXPECT_EQ(get_struct_member_size(sdna, "StructWithVectorMatrixTypes", "my_matrix[4][4]"),
             sizeof(StructWithVectorMatrixTypes::my_matrix));
+
+  /* Enum members get their underlying integer type's size. */
+  EXPECT_EQ(get_struct_member_size(sdna, "StructWithEnumMembers", "my_enum8"),
+            sizeof(StructWithEnumMembers::my_enum8));
+  EXPECT_EQ(get_struct_member_size(sdna, "StructWithEnumMembers", "my_enum16"),
+            sizeof(StructWithEnumMembers::my_enum16));
+  EXPECT_EQ(get_struct_member_size(sdna, "StructWithEnumMembers", "my_enum32"),
+            sizeof(StructWithEnumMembers::my_enum32));
 }
 
 TEST_F(SDNATest, struct_member_offset_by_name_without_alias)
@@ -156,6 +168,17 @@ TEST_F(SDNATest, struct_member_offset_by_name_without_alias)
   EXPECT_EQ(DNA_struct_member_offset_by_name_without_alias(
                 sdna, "StructWithVectorMatrixTypes", "float", "my_matrix[4]4]"),
             offsetof(StructWithVectorMatrixTypes, my_matrix));
+
+  /* Enum members are stored using their underlying integer type. */
+  EXPECT_EQ(DNA_struct_member_offset_by_name_without_alias(
+                sdna, "StructWithEnumMembers", "int8_t", "my_enum8"),
+            offsetof(StructWithEnumMembers, my_enum8));
+  EXPECT_EQ(DNA_struct_member_offset_by_name_without_alias(
+                sdna, "StructWithEnumMembers", "short", "my_enum16"),
+            offsetof(StructWithEnumMembers, my_enum16));
+  EXPECT_EQ(DNA_struct_member_offset_by_name_without_alias(
+                sdna, "StructWithEnumMembers", "int", "my_enum32"),
+            offsetof(StructWithEnumMembers, my_enum32));
 }
 
 }  // namespace blender::dna

@@ -10566,6 +10566,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define("GeometryNode", "GeometryNodeSampleIndex", def_geo_sample_index);
   define("GeometryNode", "GeometryNodeSampleNearest");
   define("GeometryNode", "GeometryNodeSampleNearestSurface");
+  define("GeometryNode", "GeometryNodeSampleSoundFrequencies");
   define("GeometryNode", "GeometryNodeSampleUVSurface");
   define("GeometryNode", "GeometryNodeScaleElements");
   define("GeometryNode", "GeometryNodeScaleInstances");
