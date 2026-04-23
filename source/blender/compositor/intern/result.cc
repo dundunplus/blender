@@ -52,6 +52,7 @@ bool Result::is_single_value_only_type(ResultType type)
     case ResultType::Int:
     case ResultType::Int2:
     case ResultType::Int3:
+    case ResultType::Int4:
     case ResultType::Bool:
     case ResultType::Float4x4:
     case ResultType::Menu:
@@ -93,6 +94,8 @@ gpu::TextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision p
         case ResultType::Int3:
           /* RGB textures are not fully supported by hardware, so we store Int3 results in RGBA
            * textures. */
+          return gpu::TextureFormat::SINT_16_16_16_16;
+        case ResultType::Int4:
           return gpu::TextureFormat::SINT_16_16_16_16;
         case ResultType::Bool:
           /* No bool texture formats, so we store in an 8-bit integer. Precision doesn't matter. */
@@ -138,6 +141,8 @@ gpu::TextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision p
           /* RGB textures are not fully supported by hardware, so we store Int3 results in RGBA
            * textures. */
           return gpu::TextureFormat::SINT_32_32_32_32;
+        case ResultType::Int4:
+          return gpu::TextureFormat::SINT_32_32_32_32;
         case ResultType::Bool:
           /* No bool texture formats, so we store in an 8-bit integer. Precision doesn't matter. */
           return gpu::TextureFormat::SINT_8;
@@ -180,6 +185,7 @@ eGPUDataFormat Result::gpu_data_format(ResultType type)
     case ResultType::Int:
     case ResultType::Int2:
     case ResultType::Int3:
+    case ResultType::Int4:
     case ResultType::Bool:
     case ResultType::Menu:
       return GPU_DATA_INT;
@@ -330,8 +336,7 @@ ResultType Result::type(gpu::TextureFormat format)
       return ResultType::Int2;
     case gpu::TextureFormat::SINT_16_16_16_16:
     case gpu::TextureFormat::SINT_32_32_32_32:
-      /* Stores Int3, see Result::gpu_texture_format. */
-      return ResultType::Int3;
+      return ResultType::Int4;
     case gpu::TextureFormat::SINT_8:
       return ResultType::Bool;
     default:
@@ -361,6 +366,8 @@ const CPPType &Result::cpp_type(const ResultType type)
       return CPPType::get<int2>();
     case ResultType::Int3:
       return CPPType::get<int3>();
+    case ResultType::Int4:
+      return CPPType::get<int4>();
     case ResultType::Bool:
       return CPPType::get<bool>();
     case ResultType::Float4x4:
@@ -406,6 +413,8 @@ const char *Result::type_name(const ResultType type)
       return "int2";
     case ResultType::Int3:
       return "int3";
+    case ResultType::Int4:
+      return "int4";
     case ResultType::Bool:
       return "bool";
     case ResultType::Float4x4:
@@ -522,6 +531,9 @@ void Result::allocate_single_value()
       break;
     case ResultType::Int3:
       this->set_single_value(int3(0));
+      break;
+    case ResultType::Int4:
+      this->set_single_value(int4(0));
       break;
     case ResultType::Bool:
       this->set_single_value(false);
@@ -876,6 +888,7 @@ int64_t Result::channels_count() const
       return 3;
     case ResultType::Color:
     case ResultType::Float4:
+    case ResultType::Int4:
       return 4;
     case ResultType::Float4x4:
       return 16;
@@ -930,6 +943,7 @@ void Result::update_single_value_data()
         case ResultType::Color:
         case ResultType::Int:
         case ResultType::Int2:
+        case ResultType::Int4:
         case ResultType::Bool:
         case ResultType::Menu:
           GPU_texture_update(
