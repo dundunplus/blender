@@ -481,7 +481,11 @@ static void rna_NodeTreeInterfaceSocket_is_panel_toggle_set(PointerRNA *ptr, boo
   const bke::bNodeSocketType *base_typeinfo = bke::node_socket_type_find(io_socket.socket_type);
   BLI_assert(base_typeinfo);
   bNodeTreeInterfacePanel *parent = ntree.tree_interface.find_item_parent(io_socket.item);
-  BLI_assert(parent);
+
+  /* Skip if called for a root socket. */
+  if (!parent) {
+    return;
+  }
 
   if (value) {
     if (base_typeinfo->type != SOCK_BOOLEAN) {
