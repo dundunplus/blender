@@ -2022,7 +2022,8 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
       (ts->object_flag & SCE_OBJECT_MODE_LOCK))
   {
     if (!(v3d->flag2 & V3D_HIDE_OVERLAYS)) {
-      /* NOTE: don't use "BKE_object_pose_armature_get" here, it breaks selection. */
+      /* NOTE: don't use #BKE_object_pose_armature_get it doesn't check for weight-paint mode when
+       * dealing using the deforming armature (breaking selection outside weight paint mode). */
       Object *obpose = OBPOSE_FROM_OBACT(obact);
       if (obpose == nullptr) {
         Object *obweight = OBWEIGHTPAINT_FROM_OBACT(obact);

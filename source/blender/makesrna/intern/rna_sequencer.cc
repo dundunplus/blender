@@ -3992,7 +3992,7 @@ static void rna_def_text(StructRNA *srna)
 
   prop = RNA_def_property(srna, "textbox_state", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "TextboxState");
-  RNA_def_property_ui_text(prop, "UI Textbot State", "Textbox state in the UI");
+  RNA_def_property_ui_text(prop, "UI Textbox State", "Textbox state in the UI");
 }
 
 static void rna_def_color_mix(StructRNA *srna)

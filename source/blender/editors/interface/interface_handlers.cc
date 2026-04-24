@@ -5318,7 +5318,7 @@ static int do_but_TEXTBOX(bContext *C,
       if (!(event->val == KM_PRESS && event->type == LEFTMOUSE)) {
         break;
       }
-      /* Try activate the text-box scrollbar. */
+      /* Try activate the text-box scroll-bar. */
       if (textbox->last_total_lines > textbox->visible_lines() &&
           BLI_rctf_isect_pt(&scroll_rect, UNPACK2(event->xy)))
       {
