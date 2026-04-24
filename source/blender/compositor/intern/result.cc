@@ -671,6 +671,11 @@ Result Result::download_to_cpu() const
       GPU_texture_read(*this, this->get_gpu_data_format(), 0, result.cpu_data_for_write().data());
       break;
     case ResultType::Int3: {
+      if (this->channels_count() == 3) {
+        GPU_texture_read(
+            *this, this->get_gpu_data_format(), 0, result.cpu_data_for_write().data());
+        break;
+      }
       /* Int3 is stored as an Int4 on GPU due to hardware limitations, so read to an Int4 result
        * before copying to result. */
       Result temporary_result = Result(*context_, ResultType::Int4, this->precision());
@@ -684,6 +689,11 @@ Result Result::download_to_cpu() const
       break;
     }
     case ResultType::Float3: {
+      if (this->channels_count() == 3) {
+        GPU_texture_read(
+            *this, this->get_gpu_data_format(), 0, result.cpu_data_for_write().data());
+        break;
+      }
       /* Float3 is stored as a Float4 on GPU due to hardware limitations, so read to a Float4
        * result before copying to result. */
       Result temporary_result = Result(*context_, ResultType::Float4, this->precision());
