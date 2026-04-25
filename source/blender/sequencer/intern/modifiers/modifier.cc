@@ -404,7 +404,7 @@ void modifiers_init()
   modifier_types_init(modifiersTypes);
 }
 
-const StripModifierTypeInfo *modifier_type_info_get(int type)
+const StripModifierTypeInfo *modifier_type_info_get(eStripModifierType type)
 {
   if (type <= 0 || type >= NUM_STRIP_MODIFIER_TYPES) {
     return nullptr;
@@ -412,7 +412,7 @@ const StripModifierTypeInfo *modifier_type_info_get(int type)
   return modifiersTypes[type];
 }
 
-StripModifierData *modifier_new(Strip *strip, const char *name, int type)
+StripModifierData *modifier_new(Strip *strip, const char *name, eStripModifierType type)
 {
   StripModifierData *smd;
   const StripModifierTypeInfo *smti = modifier_type_info_get(type);
@@ -582,7 +582,7 @@ void modifier_list_copy(Strip *strip_new, Strip *strip, const int flag)
   }
 }
 
-int sequence_supports_modifiers(Strip *strip)
+bool strip_supports_modifiers(const Strip *strip)
 {
   return (strip->type != STRIP_TYPE_SOUND);
 }

@@ -44,7 +44,7 @@ static wmOperatorStatus strip_modifier_add_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_sequencer_scene(C);
   Strip *strip = seq::select_active_get(scene);
-  int type = RNA_enum_get(op->ptr, "type");
+  eStripModifierType type = eStripModifierType(RNA_enum_get(op->ptr, "type"));
 
   StripModifierData *smd = seq::modifier_new(strip, nullptr, type);
   seq::modifier_persistent_uid_init(*strip, *smd);
