@@ -185,6 +185,13 @@ class WhiteNoiseFunction : public mf::MultiFunction {
       }
     }
   }
+
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(dimensions_);
+  }
 };
 
 static void sh_node_noise_build_multi_function(NodeMultiFunctionBuilder &builder)

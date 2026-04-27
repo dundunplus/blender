@@ -541,19 +541,19 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       break;
     }
     case SOCK_SCENE: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "scenes", name, ICON_SCENE);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "scenes", name, ICON_SCENE);
       break;
     }
     case SOCK_TEXT_ID: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "texts", name, ICON_TEXT);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "texts", name, ICON_TEXT);
       break;
     }
     case SOCK_MASK: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "masks", name, ICON_NONE);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "masks", name, ICON_NONE);
       break;
     }
     case SOCK_SOUND: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "sounds", name, ICON_SOUND);
+      template_id(&row, &ctx.C, socket_props_ptr, "value", nullptr, "SOUND_OT_open", nullptr);
       break;
     }
     case SOCK_IMAGE: {

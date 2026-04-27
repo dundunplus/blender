@@ -204,6 +204,7 @@ BLI_NOINLINE static void process_leaf_node(const mf::MultiFunction &fn,
 
   /* Actually call the multi-function which will write the results into the output grids (except
    * for boolean grids). */
+  fn.prepare_for_execution();
   fn.call_auto(index_mask, params, context);
 
   for (const int output_i : output_grids.index_range()) {
@@ -549,6 +550,8 @@ bool execute_multi_function_on_value_variant__volume_grid(
 
     output_grids[i] = grid::create_grid_with_topology(mask_tree, *transform, *grid_type);
   }
+
+  fn.prepare_for_execution();
 
   grid::parallel_grid_topology_tasks(
       mask_tree,

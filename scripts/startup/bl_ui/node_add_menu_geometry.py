@@ -433,6 +433,7 @@ class NODE_MT_gn_instance_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "GeometryNodeTranslateInstances")
         layout.separator()
         self.node_operator(layout, "GeometryNodeInputInstanceBounds")
+        self.node_operator(layout, "GeometryNodeInputInstanceReference")
         self.node_operator(layout, "GeometryNodeInstanceTransform")
         self.node_operator(layout, "GeometryNodeInputInstanceRotation")
         self.node_operator(layout, "GeometryNodeInputInstanceScale")

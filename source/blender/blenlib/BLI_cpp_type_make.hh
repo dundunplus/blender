@@ -12,6 +12,7 @@
 
 #include "BLI_cpp_type.hh"
 #include "BLI_index_mask.hh"
+#include "BLI_unique_hash.hh"
 #include "BLI_utildefines.h"
 
 namespace blender {
@@ -321,6 +322,13 @@ template<typename T> uint64_t hash_cb(const void *value)
   return get_default_hash(value_);
 }
 
+template<typename T> void hash_unique_cb(const void *value, UniqueHashBytes &hash)
+{
+  BLI_assert(pointer_can_point_to_instance<T>(value));
+  const T &value_ = *static_cast<const T *>(value);
+  return hash_unique_default(value_, hash);
+}
+
 }  // namespace cpp_type_util
 
 template<typename T, CPPTypeFlags Flags>
@@ -442,6 +450,7 @@ CPPType::CPPType(TypeTag<T> /*type*/,
   }
   if constexpr (bool(Flags & CPPTypeFlags::Hashable)) {
     hash_ = hash_cb<T>;
+    hash_unique_ = hash_unique_cb<T>;
   }
   if constexpr (bool(Flags & CPPTypeFlags::Printable)) {
     print_ = print_cb<T>;

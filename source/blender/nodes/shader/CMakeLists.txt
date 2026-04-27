@@ -132,6 +132,7 @@ set(LIB
   PRIVATE bf::imbuf
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::extern::xxhash
   bf_intern_sky
   bf_nodes
   PRIVATE bf::render

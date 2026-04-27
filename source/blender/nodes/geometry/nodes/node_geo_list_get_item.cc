@@ -128,6 +128,13 @@ class SampleIndexFunction : public mf::MultiFunction {
       list_->cpp_type().fill_construct_indices(single_data->value, dst.data(), valid_indices);
     }
   }
+
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(list_.get());
+  }
 };
 
 static void node_rna(StructRNA *srna)

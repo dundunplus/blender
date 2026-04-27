@@ -528,6 +528,16 @@ class VoronoiMetricFunction : public mf::MultiFunction {
     }
   }
 
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(dimensions_);
+    hash.add(feature_);
+    hash.add(metric_);
+    hash.add(normalize_);
+  }
+
   ExecutionHints get_execution_hints() const override
   {
     return voronoi_execution_hints;
@@ -676,6 +686,14 @@ class VoronoiDistToEdgeFunction : public mf::MultiFunction {
     }
   }
 
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(dimensions_);
+    hash.add(normalize_);
+  }
+
   ExecutionHints get_execution_hints() const override
   {
     return voronoi_execution_hints;
@@ -786,6 +804,13 @@ class VoronoiNSphereFunction : public mf::MultiFunction {
         break;
       }
     }
+  }
+
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(dimensions_);
   }
 
   ExecutionHints get_execution_hints() const override

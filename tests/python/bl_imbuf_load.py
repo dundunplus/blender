@@ -165,6 +165,9 @@ class ImBufLoadTest(ImBufTest):
     def test_load_psd(self):
         self.check("*.psd")
 
+    def test_load_iris(self):
+        self.check("*.rgb")
+
 
 class ImBufBrokenTest(AbstractImBufTest):
     @classmethod

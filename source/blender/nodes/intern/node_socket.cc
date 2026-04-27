@@ -2149,6 +2149,16 @@ static bke::bNodeSocketType *make_socket_type_sound()
   static SocketValueVariant default_value = SocketValueVariant::From(
       static_cast<bSound *>(nullptr));
   socktype->geometry_nodes_default_value = &default_value;
+  socktype->make_geometry_nodes_input_srna = [](const bNodeTree & /*tree*/,
+                                                StructRNA &srna,
+                                                const bNodeTreeInterfaceSocket &socket,
+                                                nodes::GeneratedTreeSrnaData &r_generated) {
+    PropertyRNA *prop = RNA_def_pointer_runtime(
+        &srna, "value", RNA_Sound, socket.name, socket.description);
+    RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+    make_common_value_props(srna, socket, r_generated);
+  };
   return socktype;
 }
 

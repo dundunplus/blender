@@ -11,6 +11,7 @@
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_quaternion_types.hh"
 #include "BLI_math_vector_types.hh"
+#include "BLI_unique_hash.hh"
 
 namespace blender {
 
@@ -40,6 +41,11 @@ BLI_CPP_TYPE_MAKE(ColorGeometry4f, CPPTypeFlags::BasicType)
 BLI_CPP_TYPE_MAKE(ColorGeometry4b, CPPTypeFlags::BasicType)
 
 BLI_CPP_TYPE_MAKE(math::Quaternion, CPPTypeFlags::BasicType | CPPTypeFlags::IdentityDefaultValue)
+
+template<> void hash_unique_default(const std::string &value, UniqueHashBytes &hash)
+{
+  hash.data.extend(Span(value.data(), value.size()).cast<std::byte>());
+}
 
 BLI_CPP_TYPE_MAKE(std::string, CPPTypeFlags::BasicType)
 

@@ -80,6 +80,12 @@ struct TestType {
 
 }  // namespace tests
 
+template<> void hash_unique_default(const tests::TestType &value, UniqueHashBytes &hash)
+{
+  const int int_value = value.value;
+  hash.add(int_value);
+}
+
 BLI_CPP_TYPE_MAKE(tests::TestType, CPPTypeFlags::BasicType)
 
 namespace tests {

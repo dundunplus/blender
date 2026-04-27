@@ -83,6 +83,8 @@
 
 namespace blender {
 
+struct UniqueHashBytes;
+
 /**
  * Different types support different features. Features like copy constructability can be detected
  * automatically easily. For some features this is harder as of C++17. Those have flags in this
@@ -203,6 +205,7 @@ class CPPType : NonCopyable, NonMovable {
   void (*print_)(const void *value, std::stringstream &ss) = nullptr;
   bool (*is_equal_)(const void *a, const void *b) = nullptr;
   uint64_t (*hash_)(const void *value) = nullptr;
+  void (*hash_unique_)(const void *value, UniqueHashBytes &hash) = nullptr;
 
   const void *default_value_ = nullptr;
   std::string debug_name_;
@@ -377,6 +380,7 @@ class CPPType : NonCopyable, NonMovable {
 
   uint64_t hash(const void *value) const;
   uint64_t hash_or_fallback(const void *value, uint64_t fallback_hash) const;
+  void hash_unique(const void *value, UniqueHashBytes &hash) const;
 
   /**
    * Get a pointer to a constant value of this type. The specific value depends on the type.
@@ -694,6 +698,11 @@ inline uint64_t CPPType::hash_or_fallback(const void *value, uint64_t fallback_h
     return this->hash(value);
   }
   return fallback_hash;
+}
+
+inline void CPPType::hash_unique(const void *value, UniqueHashBytes &hash) const
+{
+  this->hash_unique_(value, hash);
 }
 
 inline const void *CPPType::default_value() const

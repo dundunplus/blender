@@ -447,6 +447,15 @@ class NoiseFunction : public mf::MultiFunction {
     hints.min_grain_size = 100;
     return hints;
   }
+
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(dimensions_);
+    hash.add(type_);
+    hash.add(normalize_);
+  }
 };
 
 static void sh_node_noise_build_multi_function(NodeMultiFunctionBuilder &builder)

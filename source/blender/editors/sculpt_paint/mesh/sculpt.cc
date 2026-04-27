@@ -222,9 +222,9 @@ int active_face_set_get(const Object &object)
   return face_set_none_id;
 }
 
-int vert_face_set_get(const GroupedSpan<int> vert_to_face_map,
-                      const Span<int> face_sets,
-                      const int vert)
+int vert_face_set_max_get(const GroupedSpan<int> vert_to_face_map,
+                          const Span<int> face_sets,
+                          const int vert)
 {
   int face_set = face_set_none_id;
   for (const int face : vert_to_face_map[vert]) {
@@ -239,9 +239,23 @@ int vert_face_set_get(const SubdivCCG &subdiv_ccg, const Span<int> face_sets, co
   return face_sets[face];
 }
 
-int vert_face_set_get(const int /*face_set_offset*/, const BMVert & /*vert*/)
+int vert_face_set_max_get(const int /*face_set_offset*/, const BMVert & /*vert*/)
 {
   return face_set_none_id;
+}
+
+Set<int> vert_face_sets_get(const GroupedSpan<int> vert_to_face_map,
+                            const Span<int> face_sets,
+                            const int vert)
+{
+  Set<int> result;
+  for (const int face : vert_to_face_map[vert]) {
+    result.add(face_sets[face]);
+  }
+  if (result.is_empty()) {
+    result.add(face_set_none_id);
+  }
+  return result;
 }
 
 bool vert_has_face_set(const GroupedSpan<int> vert_to_face_map,
@@ -278,6 +292,22 @@ bool vert_has_face_set(const int face_set_offset, const BMVert &vert, const int 
   BMFace *face;
   BM_ITER_ELEM (face, &iter, &const_cast<BMVert &>(vert), BM_FACES_OF_VERT) {
     if (BM_ELEM_CD_GET_INT(face, face_set_offset) == face_set) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool vert_has_any_face_set(const GroupedSpan<int> vert_to_face_map,
+                           const Span<int> face_sets,
+                           int vert,
+                           const Set<int> &allowed_face_sets)
+{
+  if (face_sets.is_empty()) {
+    return allowed_face_sets.contains(face_set_none_id);
+  }
+  for (const int face : vert_to_face_map[vert]) {
+    if (allowed_face_sets.contains(face_sets[face])) {
       return true;
     }
   }
