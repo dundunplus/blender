@@ -4,7 +4,7 @@
 
 #include "testing/testing.h"
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 
 extern "C" {
 #include "ffmpeg_compat.h"
@@ -102,18 +102,7 @@ bool test_codec_audio_by_name(const char *codecname, AVSampleFormat fmt)
   return result;
 }
 
-class FFmpegTest : public testing::Test {
- protected:
-  static void SetUpTestSuite()
-  {
-    blender::bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    blender::bke::gtest_teardown();
-  }
-};
+class FFmpegTest : public blender::bke::BlenderGTestBase {};
 
 #define str(s) #s
 #define FFMPEG_TEST_VCODEC_ID(codec, fmt) \

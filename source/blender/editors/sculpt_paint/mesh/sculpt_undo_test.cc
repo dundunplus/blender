@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_lib_id.hh"
 
 #include "DNA_mesh_types.h"
@@ -15,19 +15,9 @@
 
 namespace blender::ed::sculpt_paint::undo::tests {
 
-class SculptUndoTest : public testing::Test {
+class SculptUndoTest : public bke::BlenderGTestBase {
  public:
   Mesh *cube_mesh;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

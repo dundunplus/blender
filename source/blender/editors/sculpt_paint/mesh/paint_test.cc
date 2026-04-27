@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_paint_bvh.hh"
@@ -24,19 +24,9 @@
 #include "testing/testing.h"
 
 namespace blender::bke::tests {
-class MeshPaintBVHTest : public testing::Test {
+class MeshPaintBVHTest : public BlenderGTestBase {
  public:
   Mesh *cube_mesh;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {
@@ -56,20 +46,10 @@ TEST_F(MeshPaintBVHTest, from_mesh)
       << "Paint BVH should have some non-zero amount of nodes";
 }
 
-class GridsBVHTest : public testing::Test {
+class GridsBVHTest : public BlenderGTestBase {
  public:
   Mesh *cube_mesh;
   std::unique_ptr<SubdivCCG> subdiv_ccg;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {
@@ -104,20 +84,10 @@ TEST_F(GridsBVHTest, from_grids)
       << "Paint BVH should have some non-zero amount of nodes";
 }
 
-class BMeshPaintBVHTest : public testing::Test {
+class BMeshPaintBVHTest : public BlenderGTestBase {
  public:
   Mesh *cube_mesh;
   BMesh *bm;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

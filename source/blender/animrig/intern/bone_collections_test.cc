@@ -9,6 +9,7 @@
 
 #include "BKE_armature.hh"
 #include "BKE_global.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -22,7 +23,9 @@
 
 namespace blender::animrig::tests {
 
-TEST(ANIM_bone_collections, bonecoll_new_free)
+class AnimBoneCollectionTest : public bke::BlenderGTestBase {};
+
+TEST_F(AnimBoneCollectionTest, bonecoll_new_free)
 {
   BoneCollection *bcoll = ANIM_bonecoll_new("some name");
   EXPECT_NE(nullptr, bcoll);
@@ -34,7 +37,7 @@ TEST(ANIM_bone_collections, bonecoll_new_free)
   ANIM_bonecoll_free(bcoll);
 }
 
-TEST(ANIM_bone_collections, bonecoll_default_name)
+TEST_F(AnimBoneCollectionTest, bonecoll_default_name)
 {
   {
     BoneCollection *bcoll = ANIM_bonecoll_new("");
@@ -49,7 +52,7 @@ TEST(ANIM_bone_collections, bonecoll_default_name)
   }
 }
 
-class ArmatureBoneCollections : public testing::Test {
+class ArmatureBoneCollections : public bke::BlenderGTestBase {
  protected:
   bArmature arm = {};
   Bone bone1 = {}, bone2 = {}, bone3 = {};
@@ -78,7 +81,6 @@ class ArmatureBoneCollections : public testing::Test {
      * the armature. */
     BLI_listbase_clear(&arm.bonebase);
 
-    BKE_idtype_init();
     BKE_libblock_free_datablock(&arm.id, 0);
 
     BKE_main_free(bmain);
@@ -1290,7 +1292,7 @@ TEST_F(ArmatureBoneCollections, internal__bonecolls_rotate_block)
   EXPECT_EQ(0, arm.collection_array[5]->child_index);
 }
 
-class ArmatureBoneCollectionsTestList : public testing::Test {
+class ArmatureBoneCollectionsTestList : public bke::BlenderGTestBase {
  protected:
   bArmature arm = {};
 
@@ -1320,7 +1322,6 @@ class ArmatureBoneCollectionsTestList : public testing::Test {
 
   void TearDown() override
   {
-    BKE_idtype_init();
     BKE_libblock_free_datablock(&arm.id, 0);
   }
 

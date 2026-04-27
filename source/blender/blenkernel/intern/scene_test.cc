@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BKE_anim_data.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idprop.hh"
-#include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_scene.hh"
@@ -21,7 +20,34 @@
 
 namespace blender::bke::tests {
 
-TEST(scene, frame_snap_by_seconds)
+class SceneTest : public ::testing::Test {
+ public:
+  Main *bmain;
+
+  static void SetUpTestSuite()
+  {
+    bke::gtest_setup();
+    /* #BKE_scene_duplicate() uses #U::dupflag. */
+    U = dna::shallow_copy(UserDef());
+  }
+
+  static void TearDownTestSuite()
+  {
+    bke::gtest_teardown();
+  }
+
+  void SetUp() override
+  {
+    bmain = BKE_main_new();
+  }
+
+  void TearDown() override
+  {
+    BKE_main_free(bmain);
+  }
+};
+
+TEST_F(SceneTest, frame_snap_by_seconds)
 {
   Scene fake_scene = {};
 
@@ -51,33 +77,6 @@ TEST(scene, frame_snap_by_seconds)
   EXPECT_FLOAT_EQ(48.2, BKE_scene_frame_snap_by_seconds(&fake_scene, 2.0, 48.2));
   EXPECT_FLOAT_EQ(10000.0, BKE_scene_frame_snap_by_seconds(&fake_scene, 2.0, 10000.0));
 }
-
-class SceneTest : public ::testing::Test {
- public:
-  Main *bmain;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-    /* #BKE_scene_duplicate() uses #U::dupflag. */
-    U = dna::shallow_copy(UserDef());
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-
-  void SetUp() override
-  {
-    bmain = BKE_main_new();
-  }
-
-  void TearDown() override
-  {
-    BKE_main_free(bmain);
-  }
-};
 
 TEST_F(SceneTest, linked_copy_id_remapping)
 {

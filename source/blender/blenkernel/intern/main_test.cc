@@ -12,7 +12,7 @@
 #include "BLI_string.h"
 
 #include "BKE_collection.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_library.hh"
@@ -25,17 +25,7 @@
 
 namespace blender::bke::tests {
 
-class BMainTest : public testing::Test {
- public:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-};
+class BMainTest : public bke::BlenderGTestBase {};
 
 class BMainAllIDsIteratorTest : public BMainTest {
  public:

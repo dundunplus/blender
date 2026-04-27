@@ -11,7 +11,7 @@
 
 #include "BKE_appdir.hh"
 #include "BKE_global.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_image.hh"
 #include "BKE_image_partial_update.hh"
@@ -26,7 +26,7 @@ namespace blender::bke::image::partial_update {
 
 constexpr float black_color[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-class ImagePartialUpdateTest : public testing::Test {
+class ImagePartialUpdateTest : public BlenderGTestBase {
  protected:
   Main *bmain;
   Main *prev_bmain;
@@ -35,16 +35,6 @@ class ImagePartialUpdateTest : public testing::Test {
   ImageUser image_user = {nullptr};
   ImBuf *image_buffer;
   PartialUpdateUser *partial_update_user;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
  private:
   Image *create_test_image(int width, int height)

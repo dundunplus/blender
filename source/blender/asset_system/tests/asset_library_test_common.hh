@@ -13,7 +13,7 @@
 #include "asset_library_service.hh"
 
 #include "BKE_appdir.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 
 #include "BLI_fileops.h"
 #include "BLI_path_utils.hh"
@@ -34,20 +34,10 @@ namespace asset_system::tests {
  * Functionality to setup and access directories on disk within which asset library related testing
  * can be done.
  */
-class AssetLibraryTestBase : public testing::Test {
+class AssetLibraryTestBase : public bke::BlenderGTestBase {
  protected:
   std::string asset_library_root_;
   std::string temp_library_path_;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

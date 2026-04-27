@@ -6,7 +6,7 @@
 
 #include "BKE_curves.hh"
 #include "BKE_geometry_set.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_instances.hh"
 #include "BKE_lib_id.hh"
 
@@ -22,18 +22,7 @@ using namespace blender::bke;
 
 namespace geometry::tests {
 
-class RealizeInstancesTest : public testing::Test {
- public:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-};
+class RealizeInstancesTest : public bke::BlenderGTestBase {};
 
 static void create_test_curves(bke::CurvesGeometry &curves, Span<int> offsets)
 {

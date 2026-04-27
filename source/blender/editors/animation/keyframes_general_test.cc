@@ -12,7 +12,7 @@
 
 #include "BKE_armature.hh"
 #include "BKE_fcurve.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -523,8 +523,6 @@ TEST_F(keyframes_paste, pastebuf_match_path_property)
   ID *arm_ob_id;
 
   { /* Set up an armature, to test matching on property names. */
-    BKE_idtype_init();
-
     bArmature *armature = BKE_armature_add(bmain, "Armature");
     for (const auto &bone_name : {"hand.L", "hand.R", "middle"}) {
       Bone *bone = MEM_new<Bone>(__func__);

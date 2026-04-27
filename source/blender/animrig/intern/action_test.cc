@@ -7,7 +7,7 @@
 #include "BKE_action.hh"
 #include "BKE_anim_data.hh"
 #include "BKE_fcurve.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -29,7 +29,9 @@
 
 namespace blender::animrig::tests {
 
-TEST(action, low_level_initialisation)
+class ActionTest : public bke::BlenderGTestBase {};
+
+TEST_F(ActionTest, low_level_initialisation)
 {
   bAction *action = BKE_id_new_nomain<bAction>("NewAction");
 
@@ -39,23 +41,13 @@ TEST(action, low_level_initialisation)
   BKE_id_free(nullptr, action);
 }
 
-class ActionLayersTest : public testing::Test {
+class ActionLayersTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
   Action *action;
   Object *cube;
   Object *suzanne;
   Object *bob;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {
@@ -1266,19 +1258,9 @@ static void add_fcurve_to_action(Action &action, FCurve &fcu)
   cbag.fcurve_append(fcu);
 }
 
-class ActionQueryTest : public testing::Test {
+class ActionQueryTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {
@@ -1416,19 +1398,9 @@ TEST_F(ActionQueryTest, action_has_single_frame)
 
 /*-----------------------------------------------------------*/
 
-class ChannelbagTest : public testing::Test {
+class ChannelbagTest : public bke::BlenderGTestBase {
  public:
   Channelbag *channelbag;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {
@@ -2130,19 +2102,9 @@ TEST_F(ChannelbagTest, channel_group_fcurve_ungroup)
 
 /*-----------------------------------------------------------*/
 
-class ActionFCurveMoveTest : public testing::Test {
+class ActionFCurveMoveTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

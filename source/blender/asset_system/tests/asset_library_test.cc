@@ -5,7 +5,7 @@
 #include "AS_asset_catalog.hh"
 #include "AS_asset_library.hh"
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 
 #include "asset_library_service.hh"
 
@@ -13,17 +13,8 @@
 
 namespace blender::asset_system::tests {
 
-class AssetLibraryTest : public testing::Test {
+class AssetLibraryTest : public bke::BlenderGTestBase {
  public:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-
   void TearDown() override
   {
     asset_system::AssetLibraryService::destroy();

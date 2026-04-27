@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_key.hh"
 #include "BKE_main.hh"
@@ -17,21 +17,11 @@
 #include "MEM_guardedalloc.h"
 namespace blender {
 
-class ShapekeyTest : public testing::Test {
+class ShapekeyTest : public bke::BlenderGTestBase {
  public:
   Main *bmain = nullptr;
   Object *ob = nullptr;
   Mesh *mesh = nullptr;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

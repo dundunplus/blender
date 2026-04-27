@@ -3,25 +3,13 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #include "testing/testing.h"
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 
 #include "NOD_geometry_nodes_bundle.hh"
 
 namespace blender::nodes::tests {
 
-class BundleTest : public ::testing::Test {
-
- protected:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-};
+class BundleTest : public bke::BlenderGTestBase {};
 
 TEST_F(BundleTest, DefaultBundle)
 {

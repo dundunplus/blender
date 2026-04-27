@@ -10,7 +10,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_remap.hh"
@@ -61,19 +61,7 @@ class TestData {
   }
 };
 
-class LibRemapTest : public ::testing::Test {
-
- protected:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-};
+class LibRemapTest : public BlenderGTestBase {};
 
 class MaterialTestData : public TestData {
  public:

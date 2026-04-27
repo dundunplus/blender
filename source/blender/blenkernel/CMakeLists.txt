@@ -415,6 +415,7 @@ set(SRC
   BKE_grease_pencil_fills.hh
   BKE_grease_pencil_legacy_convert.hh
   BKE_grease_pencil_vertex_groups.hh
+  BKE_gtest_base.hh
   BKE_gtest_setup.hh
   BKE_icons.hh
   BKE_id_hash.hh

@@ -4,7 +4,7 @@
 #include "ANIM_action.hh"
 #include "ANIM_action_iterators.hh"
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -19,20 +19,10 @@
 #include "testing/testing.h"
 
 namespace blender::animrig::tests {
-class ActionIteratorsTest : public testing::Test {
+class ActionIteratorsTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
   Action *action;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

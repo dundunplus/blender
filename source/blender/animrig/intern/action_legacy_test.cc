@@ -5,7 +5,7 @@
 #include "ANIM_action_legacy.hh"
 
 #include "BKE_fcurve.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -18,19 +18,9 @@
 #include "testing/testing.h"
 
 namespace blender::animrig::tests {
-class ActionLegacyTest : public testing::Test {
+class ActionLegacyTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

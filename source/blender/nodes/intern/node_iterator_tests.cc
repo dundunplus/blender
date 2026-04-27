@@ -10,7 +10,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_main.hh"
 #include "BKE_material.hh"
@@ -25,19 +25,9 @@
 
 namespace blender::nodes::tests {
 
-class NodeTest : public ::testing::Test {
+class NodeTest : public bke::BlenderGTestBase {
 
  protected:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-
   struct IteratorResult {
     Vector<bNodeTree *> node_trees;
     Vector<ID *> ids;

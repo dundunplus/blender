@@ -19,7 +19,7 @@
 #include "BKE_armature.hh"
 #include "BKE_fcurve.hh"
 #include "BKE_global.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -97,7 +97,9 @@ static void check_keylist_find_next_range(const AnimKeylist *keylist,
   check_keylist_find_range(keylist, ED_keylist_find_next, frame_from, frame_to, expected_frame);
 }
 
-TEST(keylist, find_next)
+class KeyListTest : public bke::BlenderGTestBase {};
+
+TEST_F(KeyListTest, find_next)
 {
   AnimKeylist *keylist = create_test_keylist();
 
@@ -117,7 +119,7 @@ static void check_keylist_find_prev_range(const AnimKeylist *keylist,
   check_keylist_find_range(keylist, ED_keylist_find_prev, frame_from, frame_to, expected_frame);
 }
 
-TEST(keylist, find_prev)
+TEST_F(KeyListTest, find_prev)
 {
   AnimKeylist *keylist = create_test_keylist();
 
@@ -137,7 +139,7 @@ static void check_keylist_find_exact_range(const AnimKeylist *keylist,
   check_keylist_find_range(keylist, ED_keylist_find_exact, frame_from, frame_to, expected_frame);
 }
 
-TEST(keylist, find_exact)
+TEST_F(KeyListTest, find_exact)
 {
   AnimKeylist *keylist = create_test_keylist();
 
@@ -152,7 +154,7 @@ TEST(keylist, find_exact)
   ED_keylist_free(keylist);
 }
 
-TEST(keylist, find_closest)
+TEST_F(KeyListTest, find_closest)
 {
   AnimKeylist *keylist = create_test_keylist();
 
@@ -186,7 +188,7 @@ TEST(keylist, find_closest)
   ED_keylist_free(keylist);
 }
 
-class KeylistSummaryTest : public testing::Test {
+class KeylistSummaryTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
   animrig::Action *action;
@@ -198,16 +200,6 @@ class KeylistSummaryTest : public testing::Test {
 
   SpaceAction saction = {};
   bAnimContext ac = {nullptr};
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

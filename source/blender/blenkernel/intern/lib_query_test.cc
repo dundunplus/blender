@@ -14,7 +14,7 @@
 #include "BKE_collection.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
@@ -66,19 +66,7 @@ class TestData {
   }
 };
 
-class LibQueryTest : public ::testing::Test {
-
- protected:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-};
+class LibQueryTest : public bke::BlenderGTestBase {};
 
 class WholeIDTestData : public TestData {
  public:

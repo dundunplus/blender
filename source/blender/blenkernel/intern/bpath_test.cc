@@ -4,7 +4,7 @@
 #include "testing/testing.h"
 
 #include "BKE_bpath.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -49,17 +49,8 @@ namespace bke::tests {
 #define MOVIECLIP_PATH_RELATIVE RELATIVE_ROOT MOVIECLIP_PATH_ITEM
 #define MOVIECLIP_PATH_RELATIVE_MADE_ABSOLUTE BASE_DIR MOVIECLIP_PATH_ITEM
 
-class BPathTest : public testing::Test {
+class BPathTest : public BlenderGTestBase {
  public:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-
   void SetUp() override
   {
     bmain = BKE_main_new();

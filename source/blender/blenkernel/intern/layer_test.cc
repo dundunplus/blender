@@ -4,7 +4,7 @@
 #include "testing/testing.h"
 
 #include "BKE_appdir.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
@@ -24,18 +24,7 @@
 
 namespace blender::bke::tests {
 
-class ViewLayerTest : public testing::Test {
- protected:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-};
+class ViewLayerTest : public bke::BlenderGTestBase {};
 
 TEST_F(ViewLayerTest, aov_unique_names)
 {

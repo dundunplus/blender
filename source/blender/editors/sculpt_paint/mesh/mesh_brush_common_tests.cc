@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #include "mesh_brush_common.hh"
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_lib_id.hh"
 
 #include "BLI_array_utils.hh"
@@ -19,19 +19,9 @@
 #include "testing/testing.h"
 
 namespace blender::ed::sculpt_paint::tests {
-class MeshTests : public testing::Test {
+class MeshTests : public bke::BlenderGTestBase {
  public:
   Mesh *mesh;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void TearDown() override
   {

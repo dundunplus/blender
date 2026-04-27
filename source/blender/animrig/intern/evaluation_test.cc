@@ -8,7 +8,7 @@
 
 #include "BKE_action.hh"
 #include "BKE_animsys.h"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -29,7 +29,7 @@ namespace blender::animrig::tests {
 
 using namespace blender::animrig::internal;
 
-class AnimationEvaluationTest : public testing::Test {
+class AnimationEvaluationTest : public bke::BlenderGTestBase {
  protected:
   Main *bmain;
   Action *action;
@@ -42,16 +42,6 @@ class AnimationEvaluationTest : public testing::Test {
   PointerRNA cube_rna_ptr;
 
  public:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-
   void SetUp() override
   {
     bmain = BKE_main_new();
@@ -286,7 +276,9 @@ class AccessibleEvaluationResult : public EvaluationResult {
   }
 };
 
-TEST(AnimationEvaluationResultTest, prop_identifier_hashing)
+class AnimationEvaluationResultTest : public bke::BlenderGTestBase {};
+
+TEST_F(AnimationEvaluationResultTest, prop_identifier_hashing)
 {
   AccessibleEvaluationResult result;
 

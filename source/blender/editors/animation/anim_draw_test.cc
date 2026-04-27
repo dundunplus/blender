@@ -9,7 +9,7 @@
 #include "DNA_anim_types.h"
 
 #include "BKE_fcurve.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
@@ -20,20 +20,10 @@
 
 namespace blender::animrig::tests {
 
-class AnimDrawTest : public testing::Test {
+class AnimDrawTest : public bke::BlenderGTestBase {
  public:
   Main *bmain;
   Object *object;
-
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
 
   void SetUp() override
   {

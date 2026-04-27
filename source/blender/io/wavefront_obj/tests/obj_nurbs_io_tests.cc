@@ -6,7 +6,7 @@
 
 #include "BKE_appdir.hh"
 #include "BKE_curves.hh"
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 
 #include "obj_export_file_writer.hh"
 #include "obj_export_nurbs.hh"
@@ -35,18 +35,8 @@ static OBJImportParams default_import_params(const std::string &filepath)
   return params;
 }
 
-class OBJCurvesTest : public testing::Test {
+class OBJCurvesTest : public bke::BlenderGTestBase {
  public:
-  static void SetUpTestSuite()
-  {
-    bke::gtest_setup();
-  }
-
-  static void TearDownTestSuite()
-  {
-    bke::gtest_teardown();
-  }
-
   void write_curves(const Span<std::unique_ptr<IOBJCurve>> curves, OBJExportParams params)
   {
     export_objects(params, Span<std::unique_ptr<OBJMesh>>(nullptr, 0), curves, params.filepath);

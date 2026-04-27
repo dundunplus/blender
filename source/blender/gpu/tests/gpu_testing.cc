@@ -8,7 +8,7 @@
 
 #include "BLI_math_color.h"
 
-#include "BKE_gtest_setup.hh"
+#include "BKE_gtest_base.hh"
 
 #include "GPU_context.hh"
 #include "GPU_debug.hh"
