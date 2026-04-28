@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
 "PO-Revision-Date: 2026-03-21 07:12+0000\n"
 "Last-Translator: 居樂行 <oscilloscope9705@gmail.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -15069,42 +15069,6 @@ msgid "Amount of smoothing to automatically apply to each stroke"
 msgstr "自動套用至每個筆觸的平滑處理量"
 
 
-msgid "Propagation Steps"
-msgstr "傳遞步數"
-
-
-msgid "Blur Steps"
-msgstr "模糊步數"
-
-
-msgid "Cavity Curve"
-msgstr "坑腔曲線"
-
-
-msgid "Cavity Factor"
-msgstr "坑腔係數"
-
-
-msgid "The contrast of the cavity mask"
-msgstr "調整坑腔遮罩的對比"
-
-
-msgid "Area Normal Falloff"
-msgstr "區域法向衰減"
-
-
-msgid "Area Normal Limit"
-msgstr "區域法向限制"
-
-
-msgid "View Normal Falloff"
-msgstr "檢視法向衰減"
-
-
-msgid "View Normal Limit"
-msgstr "檢視法向限制"
-
-
 msgid "Brush blending mode"
 msgstr "筆刷交混模式"
 
@@ -16078,42 +16042,6 @@ msgstr "影響 Alpha"
 
 msgid "When this is disabled, lock alpha while painting"
 msgstr "當它停用時，繪製時會鎖定 alpha"
-
-
-msgid "Mesh Boundary Auto-Masking"
-msgstr "網格邊緣自動遮罩"
-
-
-msgid "Do not affect non manifold boundary edges"
-msgstr "不影響破口邊"
-
-
-msgid "Face Sets Boundary Automasking"
-msgstr "面集邊界自動遮罩"
-
-
-msgid "Cavity Mask"
-msgstr "坑腔遮罩"
-
-
-msgid "Inverted Cavity Mask"
-msgstr "反向坑腔遮罩"
-
-
-msgid "Custom Cavity Curve"
-msgstr "自訂坑腔曲線"
-
-
-msgid "Use custom curve"
-msgstr "使用自訂曲線"
-
-
-msgid "Area Normal"
-msgstr "區域法線"
-
-
-msgid "Occlusion"
-msgstr "遮擋"
 
 
 msgid "Use Color Jitter"
@@ -26553,6 +26481,58 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
+msgid "Clear Transform"
+msgstr "清除變換"
+
+
+msgid "In-Betweens"
+msgstr "內部之間"
+
+
+msgid "Propagate"
+msgstr "增生"
+
+
+msgid "Bone Collections"
+msgstr "骨骼集盒"
+
+
+msgid "Names"
+msgstr "名稱"
+
+
+msgid "Show/Hide"
+msgstr "顯示/隱藏"
+
+
+msgid "Apply"
+msgstr "套用"
+
+
+msgid "Toggle Bone Options"
+msgstr "開關骨骼選項"
+
+
+msgid "Math"
+msgstr "數學公式"
+
+
+msgid "Enable Bone Options"
+msgstr "啟用骨骼設定"
+
+
+msgid "Disable Bone Options"
+msgstr "停用骨骼設定"
+
+
+msgid "Utilities"
+msgstr "效用"
+
+
+msgid "Mesh Select Mode"
+msgstr "網格選取模式"
+
+
 msgid "Face Data"
 msgstr "面資料"
 
@@ -26561,36 +26541,12 @@ msgid "Set Face Strength"
 msgstr "設定面強度"
 
 
-msgid "Math"
-msgstr "數學公式"
-
-
-msgid "Utilities"
-msgstr "效用"
-
-
 msgid "Clean Up"
 msgstr "清理"
 
 
 msgid "Merge"
 msgstr "合併"
-
-
-msgid "Show/Hide"
-msgstr "顯示/隱藏"
-
-
-msgid "Special Characters"
-msgstr "特殊字元"
-
-
-msgid "Kerning"
-msgstr "字間微調"
-
-
-msgid "Metaball"
-msgstr "變幻球"
 
 
 msgid "Read"
@@ -26605,24 +26561,40 @@ msgid "Write"
 msgstr "寫入"
 
 
-msgid "Names"
-msgstr "名稱"
-
-
 msgid "Primitives"
 msgstr "原形"
 
 
-msgid "Bone Roll"
-msgstr "骨骼滾動"
+msgid "Special Characters"
+msgstr "特殊字元"
+
+
+msgid "Kerning"
+msgstr "字間微調"
+
+
+msgid "Metaball"
+msgstr "變幻球"
 
 
 msgid "Gizmo"
 msgstr "操縱器"
 
 
+msgid "Bone Roll"
+msgstr "骨骼滾動"
+
+
 msgid "Instances"
 msgstr "實例化"
+
+
+msgid "Import"
+msgstr "匯入"
+
+
+msgid "Deprecated"
+msgstr "已棄用"
 
 
 msgid "Pivot Point"
@@ -26633,12 +26605,12 @@ msgid "Snap"
 msgstr "吸附"
 
 
-msgid "Import"
-msgstr "匯入"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "比例化編輯衰落"
+
+
+msgid "List"
+msgstr "列表"
 
 
 msgid "Mask Edit"
@@ -26649,24 +26621,16 @@ msgid "Automasking"
 msgstr "自動遮罩"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Face Sets Edit"
 msgstr "面集編輯"
 
 
 msgid "Vertex Group Locks"
 msgstr "頂點群組鎖定"
-
-
-msgid "Deprecated"
-msgstr "已棄用"
-
-
-msgid "List"
-msgstr "列表"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Mirror"
@@ -26725,12 +26689,20 @@ msgid "Assign Material"
 msgstr "指派材質"
 
 
+msgid "Layout"
+msgstr "配置"
+
+
 msgid "Light"
 msgstr "燈光"
 
 
 msgid "Light Probe"
 msgstr "燈光採樣器"
+
+
+msgid "Adjust"
+msgstr "調整"
 
 
 msgid "Add Image"
@@ -26741,32 +26713,36 @@ msgid "Relations"
 msgstr "關係"
 
 
-msgid "Layout"
-msgstr "配置"
+msgid "Keying"
+msgstr "鍵處理"
+
+
+msgid "Tracking"
+msgstr "跟蹤"
 
 
 msgid "Rigid Body"
 msgstr "剛體"
 
 
-msgid "Apply"
-msgstr "套用"
-
-
 msgid "Track"
 msgstr "追蹤"
+
+
+msgid "Creative"
+msgstr "創意"
 
 
 msgid "Quick Effects"
 msgstr "快速效果"
 
 
+msgid "Render Preview"
+msgstr "算繪預覽"
+
+
 msgid "Asset"
 msgstr "素材"
-
-
-msgid "Adjust"
-msgstr "調整"
 
 
 msgid "Make Single User"
@@ -26781,28 +26757,12 @@ msgid "Link/Transfer Data"
 msgstr "連結/傳輸資料"
 
 
-msgid "Keying"
-msgstr "鍵處理"
-
-
 msgid "Hooks"
 msgstr "鉤"
 
 
-msgid "Tracking"
-msgstr "跟蹤"
-
-
-msgid "Render Preview"
-msgstr "算繪預覽"
-
-
 msgid "Trim/Add"
 msgstr "修剪/增加"
-
-
-msgid "Creative"
-msgstr "創意"
 
 
 msgid "Sculpt Set Pivot"
@@ -26815,38 +26775,6 @@ msgstr "面集初始化"
 
 msgid "Random Mask"
 msgstr "隨機遮罩"
-
-
-msgid "Clear Transform"
-msgstr "清除變換"
-
-
-msgid "In-Betweens"
-msgstr "內部之間"
-
-
-msgid "Propagate"
-msgstr "增生"
-
-
-msgid "Bone Collections"
-msgstr "骨骼集盒"
-
-
-msgid "Toggle Bone Options"
-msgstr "開關骨骼選項"
-
-
-msgid "Enable Bone Options"
-msgstr "啟用骨骼設定"
-
-
-msgid "Disable Bone Options"
-msgstr "停用骨骼設定"
-
-
-msgid "Mesh Select Mode"
-msgstr "網格選取模式"
 
 
 msgid "Keyframe Insert Pie"
@@ -27360,6 +27288,78 @@ msgstr "關於"
 
 msgid "Quick Setup"
 msgstr "快速設定"
+
+
+msgid "Propagation Steps"
+msgstr "傳遞步數"
+
+
+msgid "Blur Steps"
+msgstr "模糊步數"
+
+
+msgid "Cavity Curve"
+msgstr "坑腔曲線"
+
+
+msgid "Cavity Factor"
+msgstr "坑腔係數"
+
+
+msgid "The contrast of the cavity mask"
+msgstr "調整坑腔遮罩的對比"
+
+
+msgid "Area Normal Falloff"
+msgstr "區域法向衰減"
+
+
+msgid "Area Normal Limit"
+msgstr "區域法向限制"
+
+
+msgid "Mesh Boundary Auto-Masking"
+msgstr "網格邊緣自動遮罩"
+
+
+msgid "Do not affect non manifold boundary edges"
+msgstr "不影響破口邊"
+
+
+msgid "Face Sets Boundary Automasking"
+msgstr "面集邊界自動遮罩"
+
+
+msgid "Cavity Mask"
+msgstr "坑腔遮罩"
+
+
+msgid "Inverted Cavity Mask"
+msgstr "反向坑腔遮罩"
+
+
+msgid "Custom Cavity Curve"
+msgstr "自訂坑腔曲線"
+
+
+msgid "Use custom curve"
+msgstr "使用自訂曲線"
+
+
+msgid "Area Normal"
+msgstr "區域法線"
+
+
+msgid "Occlusion"
+msgstr "遮擋"
+
+
+msgid "View Normal Falloff"
+msgstr "檢視法向衰減"
+
+
+msgid "View Normal Limit"
+msgstr "檢視法向限制"
 
 
 msgid "Mesh Edge"
@@ -37707,11 +37707,6 @@ msgid "Load a SVG file"
 msgstr "載入一個 SVG 檔案"
 
 
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "匯入 SVG"
-
-
 msgid "Load a FBX file"
 msgstr "載入一個 FBX 檔案"
 
@@ -39358,6 +39353,15 @@ msgstr "Y 最大"
 
 msgid "Y Min"
 msgstr "Y 最小"
+
+
+msgctxt "Operator"
+msgid "Select by Type"
+msgstr "依類型選取"
+
+
+msgid "Extend Selection"
+msgstr "擴展選取"
 
 
 msgctxt "Operator"
@@ -51477,11 +51481,6 @@ msgid "Change selection of all visible objects in scene"
 msgstr "更改場景中所有可見物體的選取狀態"
 
 
-msgctxt "Operator"
-msgid "Select by Type"
-msgstr "依類型選取"
-
-
 msgid "Select all visible objects that are of a type"
 msgstr "選取所有同類型的可見物體"
 
@@ -54939,11 +54938,6 @@ msgid "Enable snapping"
 msgstr "啟用吸附"
 
 
-msgctxt "Operator"
-msgid "Area Options"
-msgstr "區域選項"
-
-
 msgid "Operations for splitting and merging"
 msgstr "切割及合併的操作"
 
@@ -57905,10 +57899,6 @@ msgid "Select View Item"
 msgstr "選取視圖項目"
 
 
-msgid "Extend Selection"
-msgstr "擴展選取"
-
-
 msgid "Range Select"
 msgstr "範圍選取"
 
@@ -58016,14 +58006,6 @@ msgstr "根據 3D 空間中它們所佔的區域，平均各個 UV 島塊的大�
 msgctxt "Operator"
 msgid "Copy UVs"
 msgstr "複製 UV"
-
-
-msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "基於鏡像的網格於 X 軸複製鏡像 UV 座標"
-
-
-msgid "Axis Direction"
-msgstr "軸方向"
 
 
 msgid "Tolerance for finding vertex duplicates"
@@ -58436,20 +58418,6 @@ msgstr "重設 UV 投影"
 
 msgid "Reveal all hidden UV vertices"
 msgstr "揭開所有隱藏的 UV 頂點"
-
-
-msgctxt "Operator"
-msgid "UV Rip"
-msgstr "UV 拆分"
-
-
-msgctxt "Operator"
-msgid "UV Rip Move"
-msgstr "UV 拆分移動"
-
-
-msgid "UV Rip"
-msgstr "UV 拆分"
 
 
 msgctxt "Operator"
@@ -79128,10 +79096,6 @@ msgid "Distribution Type"
 msgstr "分佈類型"
 
 
-msgid "Multiplier"
-msgstr "乘數"
-
-
 msgid "Dicing Rate Render"
 msgstr "算繪切塊率"
 
@@ -79248,6 +79212,10 @@ msgid "Use GPU"
 msgstr "使用 GPU"
 
 
+msgid "Multiplier"
+msgstr "乘數"
+
+
 msgid "Curve Subdivisions"
 msgstr "曲線細分"
 
@@ -79328,11 +79296,6 @@ msgstr "透明背景"
 
 msgid "Invalid context"
 msgstr "無效情境"
-
-
-msgctxt "Operator"
-msgid "Scalable Vector Graphics (.svg)"
-msgstr "可縮放向量圖形 (.svg)"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -82793,6 +82756,11 @@ msgstr "吸附"
 
 
 msgctxt "Operator"
+msgid "Jump to Selected"
+msgstr "跳到所選"
+
+
+msgctxt "Operator"
 msgid "Keyframe Type"
 msgstr "關鍵影格類型"
 
@@ -83105,11 +83073,6 @@ msgstr "平滑（舊式）"
 
 
 msgctxt "Operator"
-msgid "Jump to Selected"
-msgstr "跳到所選"
-
-
-msgctxt "Operator"
 msgid "Easing Type"
 msgstr "緩動類型"
 
@@ -83139,11 +83102,6 @@ msgstr "表述式：{:s}"
 msgctxt "Operator"
 msgid "Zoom Region..."
 msgstr "縮放區域..."
-
-
-msgctxt "Operator"
-msgid "Select Pinned"
-msgstr "選取已釘住"
 
 
 msgctxt "Operator"
@@ -88595,10 +88553,6 @@ msgstr "%s：%s"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "無快捷鍵"
-
-
-msgid "Pin"
-msgstr "釘住"
 
 
 msgid "Shift Left Mouse"
@@ -96361,6 +96315,10 @@ msgid "Value for voxels outside of the cube"
 msgstr "立方體外面體素的值"
 
 
+msgid "Mask Input"
+msgstr "遮罩輸入"
+
+
 msgid "Warnings"
 msgstr "警告"
 
@@ -96387,10 +96345,6 @@ msgstr "\"{}\" 來自 {}"
 
 msgid "Reference Set"
 msgstr "參照集"
-
-
-msgid "Unsupported Inputs"
-msgstr "不支援的輸入"
 
 
 msgid "No Output"
@@ -96959,10 +96913,6 @@ msgid "%s: no Combined pass found in the render layer '%s'"
 msgstr "%s：「%s」算繪層中找不到結合通遞"
 
 
-msgid "%s: failed to allocate clip buffer '%s'"
-msgstr "%s：無法配置截割緩衝「%s」"
-
-
 msgid "%s: incorrect dimensions for partial copy '%s'"
 msgstr "R%s：部份「%s」副本的維度不正確"
 
@@ -96973,10 +96923,6 @@ msgstr "%s：無法載入「%s」"
 
 msgid "Channel %d"
 msgstr "通道 %d"
-
-
-msgid "Mask Input"
-msgstr "遮罩輸入"
 
 
 msgctxt "Sequence"

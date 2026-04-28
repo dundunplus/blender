@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
 "PO-Revision-Date: 2025-12-04 22:18+0000\n"
 "Last-Translator: Jackson Zheng <business.jackson.zheng@gmail.com>\n"
 "Language-Team: Hindi <https://translate.blender.org/projects/blender-ui/ui/hi/>\n"
@@ -2586,32 +2586,44 @@ msgid "Placement"
 msgstr "नियोजन"
 
 
-msgid "Math"
-msgstr "गणित"
-
-
-msgid "Merge"
-msgstr "विलय करें"
+msgid "Names"
+msgstr "नाम"
 
 
 msgid "Show/Hide"
 msgstr "छुपाएँ / दिखाएँ"
 
 
-msgid "Names"
-msgstr "नाम"
+msgid "Apply"
+msgstr "लागू करें"
+
+
+msgid "Toggle Bone Options"
+msgstr "हड्डी विकल्प बंद/बुझ"
+
+
+msgid "Math"
+msgstr "गणित"
+
+
+msgid "Enable Bone Options"
+msgstr "हड्डी विकल्प को सक्षम करें"
+
+
+msgid "Merge"
+msgstr "विलय करें"
 
 
 msgid "Bone Roll"
 msgstr "हड्डी पंजी"
 
 
-msgid "Snap"
-msgstr "स्नैप"
-
-
 msgid "Import"
 msgstr "आयात करें"
+
+
+msgid "Snap"
+msgstr "स्नैप"
 
 
 msgid "UV"
@@ -2626,12 +2638,12 @@ msgid "Light"
 msgstr "प्रकाश"
 
 
+msgid "Keying"
+msgstr "कुंजीयन"
+
+
 msgid "Rigid Body"
 msgstr "कठोर-पदार्थ"
-
-
-msgid "Apply"
-msgstr "लागू करें"
 
 
 msgid "Track"
@@ -2646,20 +2658,8 @@ msgid "Make Single User"
 msgstr "एकल प्रयोक्ता बनाएँ"
 
 
-msgid "Keying"
-msgstr "कुंजीयन"
-
-
 msgid "Hooks"
 msgstr "खूँटी"
-
-
-msgid "Toggle Bone Options"
-msgstr "हड्डी विकल्प बंद/बुझ"
-
-
-msgid "Enable Bone Options"
-msgstr "हड्डी विकल्प को सक्षम करें"
 
 
 msgid "Basic"
@@ -4201,10 +4201,6 @@ msgstr "मान मूलभूत पर पूर्ववत करें"
 msgctxt "Operator"
 msgid "Align"
 msgstr "संरेखित करें"
-
-
-msgid "Axis Direction"
-msgstr "अक्ष दिशा"
 
 
 msgctxt "Operator"

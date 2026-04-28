@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -5367,10 +5367,6 @@ msgid "Has Jitter"
 msgstr "நடுக்கம் உள்ளது"
 
 
-msgid "Has Normal Raidus"
-msgstr "இயல்பான ஆரம் கொண்டது"
-
-
 msgid "Has Crease/Pinch Factor"
 msgstr "மடிப்பு/பிஞ்ச் காரணி உள்ளது"
 
@@ -7616,16 +7612,8 @@ msgid "ACES 1.3 sRGB"
 msgstr "ACES 1.3 sRGB"
 
 
-msgid "ACES 1.0 Output Transform for SDR D65 video, limited to Rec.709 gamut"
-msgstr "SDR D65 வீடியோவிற்கான ACES 1.0 வெளியீட்டு மாற்றம், Rec.709 வரம்பிற்கு மட்டுமே"
-
-
 msgid "ACES 2.0 sRGB"
 msgstr "ACES 2.0 sRGB"
-
-
-msgid "ACES 2 Output Transform for 100 nit SDR Rec709"
-msgstr "100 nit SDR Rec709க்கான ACES 2 வெளியீடு மாற்றம்"
 
 
 msgid "ACES2065-1"
@@ -7656,10 +7644,6 @@ msgid "AgX Base sRGB"
 msgstr "agx base srgb"
 
 
-msgid "AgX Base Image Encoding for sRGB Display"
-msgstr "srgb காட்சிக்கான agx அடிப்படை பட குறியாக்கம்"
-
-
 msgid "AgX Log"
 msgstr "agx பதிவு"
 
@@ -7688,16 +7672,8 @@ msgid "Filmic sRGB"
 msgstr "திரைப்பட எச்ஆர்சிபி"
 
 
-msgid "sRGB display space with Filmic view transform"
-msgstr "திரைப்பட வியூ உருமாற்றத்துடன் எச்ஆர்சிபி காட்சி இடம்"
-
-
 msgid "Khronos PBR Neutral sRGB"
 msgstr "க்ரோனோச் எஃப்.பி.ஐ நடுநிலை சி.சி.சி.பி"
-
-
-msgid "Khronos PBR Neutral Image Encoding for sRGB Display"
-msgstr "எச்.ஆர்.சி.பி காட்சிக்கு க்ரோனோச் பிபிஆர் நடுநிலை பட குறியாக்கம்"
 
 
 msgid "Linear CIE-XYZ D65"
@@ -19021,58 +18997,6 @@ msgid "Amount of smoothing to automatically apply to each stroke"
 msgstr "ஒவ்வொரு பக்கவாதத்திற்கும் தானாக பொருந்தும் மென்மையான அளவு"
 
 
-msgid "Propagation Steps"
-msgstr "பரப்புதல் படிகள்"
-
-
-msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
-msgstr "எல்லை விளிம்பு ஆட்டோமேச்கிங் முழுமையாக முகமூடி அணிந்த விளிம்பிலிருந்து செங்குத்துகளைப் பாதுகாக்கப் போகும் தூரம்"
-
-
-msgid "Blur Steps"
-msgstr "மங்கலான படிகள்"
-
-
-msgid "The number of times the cavity mask is blurred"
-msgstr "குழி முகமூடி எத்தனை முறை மங்கலானது"
-
-
-msgid "Cavity Curve"
-msgstr "குழி வளைவு"
-
-
-msgid "Cavity Factor"
-msgstr "குழி காரணி"
-
-
-msgid "The contrast of the cavity mask"
-msgstr "குழி முகமூடியின் மாறுபாடு"
-
-
-msgid "Area Normal Falloff"
-msgstr "பரப்பு சாதாரண வீழ்ச்சி"
-
-
-msgid "Extend the angular range with a falloff gradient"
-msgstr "கோண வரம்பை ஒரு வீழ்ச்சி சாய்வு மூலம் நீட்டிக்கவும்"
-
-
-msgid "Area Normal Limit"
-msgstr "பரப்பு சாதாரண வரம்பு"
-
-
-msgid "The range of angles that will be affected"
-msgstr "பாதிக்கப்படும் கோணங்களின் வரம்பு"
-
-
-msgid "View Normal Falloff"
-msgstr "சாதாரண வீழ்ச்சியைக் காண்க"
-
-
-msgid "View Normal Limit"
-msgstr "சாதாரண வரம்பைக் காண்க"
-
-
 msgctxt "Color"
 msgid "Blending Mode"
 msgstr "கலப்பு முறை"
@@ -20713,74 +20637,6 @@ msgstr "ஆல்பாவை பாதிக்கும்"
 
 msgid "When this is disabled, lock alpha while painting"
 msgstr "இது முடக்கப்பட்டால், ஓவியம் வரைவின் போது ஆல்பாவைப் பூட்டவும்"
-
-
-msgid "Mesh Boundary Auto-Masking"
-msgstr "மெச் எல்லை ஆட்டோ-மாசிங்"
-
-
-msgid "Do not affect non manifold boundary edges"
-msgstr "அல்லாத பன்மடங்கு எல்லை விளிம்புகளை பாதிக்காதீர்கள்"
-
-
-msgid "Face Sets Boundary Automasking"
-msgstr "முகம் எல்லை ஆட்டோமேச்கிங்கை அமைக்கிறது"
-
-
-msgid "Do not affect vertices that belong to a face set boundary"
-msgstr "முகத்தை அமைக்கும் எல்லைக்கு உட்பட்ட செங்குத்துகளை பாதிக்காதீர்கள்"
-
-
-msgid "Cavity Mask"
-msgstr "குழி முகமூடி"
-
-
-msgid "Do not affect vertices on peaks, based on the surface curvature"
-msgstr "மேற்பரப்பு வளைவின் அடிப்படையில் சிகரங்களில் செங்குத்துகளை பாதிக்காதீர்கள்"
-
-
-msgid "Inverted Cavity Mask"
-msgstr "தலைகீழ் குழி முகமூடி"
-
-
-msgid "Do not affect vertices within crevices, based on the surface curvature"
-msgstr "மேற்பரப்பு வளைவின் அடிப்படையில் பிளவுகளுக்குள் செங்குத்துகளை பாதிக்காதீர்கள்"
-
-
-msgid "Custom Cavity Curve"
-msgstr "தனிப்பயன் குழி வளைவு"
-
-
-msgid "Use custom curve"
-msgstr "தனிப்பயன் வளைவைப் பயன்படுத்தவும்"
-
-
-msgid "Affect only vertices that share face sets with the active vertex"
-msgstr "செயலில் உள்ள வெர்டெக்சுடன் முகத் தொகுப்புகளைப் பகிரும் முனைகளை மட்டும் பாதிக்கும்"
-
-
-msgid "Area Normal"
-msgstr "இயல்பான பரப்பு"
-
-
-msgid "Affect only vertices with a similar normal to where the stroke starts"
-msgstr "வீச்சு தொடங்கும் இடத்திற்கு ஒத்த இயல்புடன் கூடிய செங்குத்துகளை மட்டுமே பாதிக்கிறது"
-
-
-msgid "Affect only vertices connected to the active vertex under the brush"
-msgstr "தூரிகையின் கீழ் செயலில் உள்ள வெர்டெக்சுடன் இணைக்கப்பட்ட செங்குத்துகளை மட்டுமே பாதிக்கும்"
-
-
-msgid "Affect only vertices with a normal that faces the viewer"
-msgstr "பார்வையாளரை எதிர்கொள்ளும் இயல்புடன் செங்குத்துகளை மட்டுமே பாதிக்கும்"
-
-
-msgid "Occlusion"
-msgstr "மறைவு"
-
-
-msgid "Only affect vertices that are not occluded by other faces (slower performance)"
-msgstr "மற்ற முகங்களால் மறைக்கப்படாத செங்குத்துகளை மட்டுமே பாதிக்கிறது (மெதுவான செயல்திறன்)"
 
 
 msgid "Collide with objects during the simulation"
@@ -35079,6 +34935,10 @@ msgid "Placement"
 msgstr "வேலை வாய்ப்பு"
 
 
+msgid "Scale the noise frequency"
+msgstr "இரைச்சல் அதிர்வெண்ணை அளவிடவும்"
+
+
 msgid "Show stroke fills of this material"
 msgstr "இந்த மூலப்பொருளின் வீச்சு நிரப்புதல்களைக் காட்டு"
 
@@ -35180,6 +35040,58 @@ msgid "Editor menu containing buttons"
 msgstr "பொத்தான்களைக் கொண்ட திருத்தி பட்டியல்"
 
 
+msgid "Clear Transform"
+msgstr "தெளிவான உருமாற்றம்"
+
+
+msgid "In-Betweens"
+msgstr "இன்-பெட்வீன்ச்"
+
+
+msgid "Propagate"
+msgstr "பிரச்சாரம்"
+
+
+msgid "Bone Collections"
+msgstr "எலும்பு வசூல்"
+
+
+msgid "Names"
+msgstr "பெயர்கள்"
+
+
+msgid "Show/Hide"
+msgstr "காட்டு/மறைக்க"
+
+
+msgid "Apply"
+msgstr "இடு"
+
+
+msgid "Toggle Bone Options"
+msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
+
+
+msgid "Math"
+msgstr "கணிதம்"
+
+
+msgid "Enable Bone Options"
+msgstr "எலும்பு விருப்பங்களை இயக்கவும்"
+
+
+msgid "Disable Bone Options"
+msgstr "எலும்பு விருப்பங்களை முடக்கு"
+
+
+msgid "Utilities"
+msgstr "பயன்பாடுகள்"
+
+
+msgid "Mesh Select Mode"
+msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
+
+
 msgid "Face Data"
 msgstr "முகத்தை முகம்"
 
@@ -35192,36 +35104,12 @@ msgid "Set Face Strength"
 msgstr "முக வலிமையை அமைக்கவும்"
 
 
-msgid "Math"
-msgstr "கணிதம்"
-
-
-msgid "Utilities"
-msgstr "பயன்பாடுகள்"
-
-
 msgid "Clean Up"
 msgstr "தூய்மை செய்"
 
 
 msgid "Merge"
 msgstr "ஒன்றிணைக்கவும்"
-
-
-msgid "Show/Hide"
-msgstr "காட்டு/மறைக்க"
-
-
-msgid "Special Characters"
-msgstr "சிறப்பு எழுத்துக்கள்"
-
-
-msgid "Kerning"
-msgstr "கெர்னிங்"
-
-
-msgid "Metaball"
-msgstr "வளர்சிதை மாற்ற"
 
 
 msgid "Read"
@@ -35236,24 +35124,40 @@ msgid "Write"
 msgstr "எழுதுங்கள்"
 
 
-msgid "Names"
-msgstr "பெயர்கள்"
-
-
 msgid "Primitives"
 msgstr "ப்ரைமிடிவ்ச்"
 
 
-msgid "Bone Roll"
-msgstr "எலும்பு ரோல்"
+msgid "Special Characters"
+msgstr "சிறப்பு எழுத்துக்கள்"
+
+
+msgid "Kerning"
+msgstr "கெர்னிங்"
+
+
+msgid "Metaball"
+msgstr "வளர்சிதை மாற்ற"
 
 
 msgid "Gizmo"
 msgstr "கிச்மோ"
 
 
+msgid "Bone Roll"
+msgstr "எலும்பு ரோல்"
+
+
 msgid "Instances"
 msgstr "நிகழ்வுகள்"
+
+
+msgid "Import"
+msgstr "இறக்குமதி"
+
+
+msgid "Deprecated"
+msgstr "மதிப்பிடப்பட்டது"
 
 
 msgid "Pivot Point"
@@ -35264,12 +35168,12 @@ msgid "Snap"
 msgstr "ச்னாப்"
 
 
-msgid "Import"
-msgstr "இறக்குமதி"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "விகிதாசார திருத்துதல் வீழ்ச்சி"
+
+
+msgid "List"
+msgstr "பட்டியல்"
 
 
 msgid "Mask Edit"
@@ -35280,24 +35184,16 @@ msgid "Automasking"
 msgstr "ஆட்டோமேச்கிங்"
 
 
+msgid "UV"
+msgstr "புறஊதா"
+
+
 msgid "Face Sets Edit"
 msgstr "முகம் தொகுப்புகள் திருத்து"
 
 
 msgid "Vertex Group Locks"
 msgstr "வெர்டெக்ச் குழு பூட்டுகள்"
-
-
-msgid "Deprecated"
-msgstr "மதிப்பிடப்பட்டது"
-
-
-msgid "List"
-msgstr "பட்டியல்"
-
-
-msgid "UV"
-msgstr "புறஊதா"
 
 
 msgid "Mirror"
@@ -35356,12 +35252,20 @@ msgid "Assign Material"
 msgstr "மூலப்பொருள் ஒதுக்க"
 
 
+msgid "Layout"
+msgstr "தளவமைப்பு"
+
+
 msgid "Light"
 msgstr "ஒளி"
 
 
 msgid "Light Probe"
 msgstr "ஒளி ஆய்வு"
+
+
+msgid "Adjust"
+msgstr "சரிசெய்யவும்"
 
 
 msgid "Add Image"
@@ -35372,32 +35276,36 @@ msgid "Relations"
 msgstr "உறவுகள்"
 
 
-msgid "Layout"
-msgstr "தளவமைப்பு"
+msgid "Keying"
+msgstr "கீயிங்"
+
+
+msgid "Tracking"
+msgstr "கண்காணிப்பு"
 
 
 msgid "Rigid Body"
 msgstr "கடினமான உடல்"
 
 
-msgid "Apply"
-msgstr "இடு"
-
-
 msgid "Track"
 msgstr "டிராக்"
+
+
+msgid "Creative"
+msgstr "படைப்பாற்றல்"
 
 
 msgid "Quick Effects"
 msgstr "விரைவான விளைவுகள்"
 
 
+msgid "Render Preview"
+msgstr "வழங்குதல் முன்னோட்டம்"
+
+
 msgid "Asset"
 msgstr "சொத்து"
-
-
-msgid "Adjust"
-msgstr "சரிசெய்யவும்"
 
 
 msgid "Make Single User"
@@ -35412,28 +35320,12 @@ msgid "Link/Transfer Data"
 msgstr "இணைப்பு/பரிமாற்ற தரவு"
 
 
-msgid "Keying"
-msgstr "கீயிங்"
-
-
 msgid "Hooks"
 msgstr "கொக்கிகள்"
 
 
-msgid "Tracking"
-msgstr "கண்காணிப்பு"
-
-
-msgid "Render Preview"
-msgstr "வழங்குதல் முன்னோட்டம்"
-
-
 msgid "Trim/Add"
 msgstr "டிரிம்/சேர்"
-
-
-msgid "Creative"
-msgstr "படைப்பாற்றல்"
 
 
 msgid "Sculpt Set Pivot"
@@ -35446,38 +35338,6 @@ msgstr "முகம் தொடங்குகிறது"
 
 msgid "Random Mask"
 msgstr "சீரற்ற முகமூடி"
-
-
-msgid "Clear Transform"
-msgstr "தெளிவான உருமாற்றம்"
-
-
-msgid "In-Betweens"
-msgstr "இன்-பெட்வீன்ச்"
-
-
-msgid "Propagate"
-msgstr "பிரச்சாரம்"
-
-
-msgid "Bone Collections"
-msgstr "எலும்பு வசூல்"
-
-
-msgid "Toggle Bone Options"
-msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
-
-
-msgid "Enable Bone Options"
-msgstr "எலும்பு விருப்பங்களை இயக்கவும்"
-
-
-msgid "Disable Bone Options"
-msgstr "எலும்பு விருப்பங்களை முடக்கு"
-
-
-msgid "Mesh Select Mode"
-msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
 
 
 msgid "Keyframe Insert Pie"
@@ -36100,6 +35960,126 @@ msgstr "பற்றி"
 
 msgid "Quick Setup"
 msgstr "விரைவான அமைப்பு"
+
+
+msgid "Propagation Steps"
+msgstr "பரப்புதல் படிகள்"
+
+
+msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
+msgstr "எல்லை விளிம்பு ஆட்டோமேச்கிங் முழுமையாக முகமூடி அணிந்த விளிம்பிலிருந்து செங்குத்துகளைப் பாதுகாக்கப் போகும் தூரம்"
+
+
+msgid "Blur Steps"
+msgstr "மங்கலான படிகள்"
+
+
+msgid "The number of times the cavity mask is blurred"
+msgstr "குழி முகமூடி எத்தனை முறை மங்கலானது"
+
+
+msgid "Cavity Curve"
+msgstr "குழி வளைவு"
+
+
+msgid "Cavity Factor"
+msgstr "குழி காரணி"
+
+
+msgid "The contrast of the cavity mask"
+msgstr "குழி முகமூடியின் மாறுபாடு"
+
+
+msgid "Area Normal Falloff"
+msgstr "பரப்பு சாதாரண வீழ்ச்சி"
+
+
+msgid "Extend the angular range with a falloff gradient"
+msgstr "கோண வரம்பை ஒரு வீழ்ச்சி சாய்வு மூலம் நீட்டிக்கவும்"
+
+
+msgid "Area Normal Limit"
+msgstr "பரப்பு சாதாரண வரம்பு"
+
+
+msgid "The range of angles that will be affected"
+msgstr "பாதிக்கப்படும் கோணங்களின் வரம்பு"
+
+
+msgid "Mesh Boundary Auto-Masking"
+msgstr "மெச் எல்லை ஆட்டோ-மாசிங்"
+
+
+msgid "Do not affect non manifold boundary edges"
+msgstr "அல்லாத பன்மடங்கு எல்லை விளிம்புகளை பாதிக்காதீர்கள்"
+
+
+msgid "Face Sets Boundary Automasking"
+msgstr "முகம் எல்லை ஆட்டோமேச்கிங்கை அமைக்கிறது"
+
+
+msgid "Do not affect vertices that belong to a face set boundary"
+msgstr "முகத்தை அமைக்கும் எல்லைக்கு உட்பட்ட செங்குத்துகளை பாதிக்காதீர்கள்"
+
+
+msgid "Cavity Mask"
+msgstr "குழி முகமூடி"
+
+
+msgid "Do not affect vertices on peaks, based on the surface curvature"
+msgstr "மேற்பரப்பு வளைவின் அடிப்படையில் சிகரங்களில் செங்குத்துகளை பாதிக்காதீர்கள்"
+
+
+msgid "Inverted Cavity Mask"
+msgstr "தலைகீழ் குழி முகமூடி"
+
+
+msgid "Do not affect vertices within crevices, based on the surface curvature"
+msgstr "மேற்பரப்பு வளைவின் அடிப்படையில் பிளவுகளுக்குள் செங்குத்துகளை பாதிக்காதீர்கள்"
+
+
+msgid "Custom Cavity Curve"
+msgstr "தனிப்பயன் குழி வளைவு"
+
+
+msgid "Use custom curve"
+msgstr "தனிப்பயன் வளைவைப் பயன்படுத்தவும்"
+
+
+msgid "Affect only vertices that share face sets with the active vertex"
+msgstr "செயலில் உள்ள வெர்டெக்சுடன் முகத் தொகுப்புகளைப் பகிரும் முனைகளை மட்டும் பாதிக்கும்"
+
+
+msgid "Area Normal"
+msgstr "இயல்பான பரப்பு"
+
+
+msgid "Affect only vertices with a similar normal to where the stroke starts"
+msgstr "வீச்சு தொடங்கும் இடத்திற்கு ஒத்த இயல்புடன் கூடிய செங்குத்துகளை மட்டுமே பாதிக்கிறது"
+
+
+msgid "Affect only vertices connected to the active vertex under the brush"
+msgstr "தூரிகையின் கீழ் செயலில் உள்ள வெர்டெக்சுடன் இணைக்கப்பட்ட செங்குத்துகளை மட்டுமே பாதிக்கும்"
+
+
+msgid "Affect only vertices with a normal that faces the viewer"
+msgstr "பார்வையாளரை எதிர்கொள்ளும் இயல்புடன் செங்குத்துகளை மட்டுமே பாதிக்கும்"
+
+
+msgid "Occlusion"
+msgstr "மறைவு"
+
+
+msgid "Only affect vertices that are not occluded by other faces (slower performance)"
+msgstr "மற்ற முகங்களால் மறைக்கப்படாத செங்குத்துகளை மட்டுமே பாதிக்கிறது (மெதுவான செயல்திறன்)"
+
+
+msgid "View Normal Falloff"
+msgstr "சாதாரண வீழ்ச்சியைக் காண்க"
+
+
+msgid "View Normal Limit"
+msgstr "சாதாரண வரம்பைக் காண்க"
 
 
 msgid "Mesh Edge"
@@ -40170,10 +40150,6 @@ msgstr "ஒலி ஆஃப்செட்"
 
 msgid "Offset the noise along the strokes"
 msgstr "வீச்சுகள் மூலம் சத்தத்தை ஈடுசெய்யவும்"
-
-
-msgid "Scale the noise frequency"
-msgstr "இரைச்சல் அதிர்வெண்ணை அளவிடவும்"
 
 
 msgid "Where to perform randomization"
@@ -52835,6 +52811,10 @@ msgid "Panel description"
 msgstr "குழு விளக்கம்"
 
 
+msgid "Unique identifier for this panel within this node tree"
+msgstr "இந்த முனை மரத்திற்குள் இந்த பேனலுக்கான தனிப்பட்ட அடையாளங்காட்டி"
+
+
 msgid "Items in the node panel"
 msgstr "முனை பேனலில் உள்ள உருப்படிகள்"
 
@@ -52845,10 +52825,6 @@ msgstr "குழு பெயர்"
 
 msgid "Persistent Identifier"
 msgstr "தொடர்ச்சியான அடையாளங்காட்டி"
-
-
-msgid "Unique identifier for this panel within this node tree"
-msgstr "இந்த முனை மரத்திற்குள் இந்த பேனலுக்கான தனிப்பட்ட அடையாளங்காட்டி"
 
 
 msgid "Panel is selected in the interface"
@@ -54241,11 +54217,6 @@ msgstr "பி.வி.எச் இறக்குமதி"
 
 msgid "Load a SVG file"
 msgstr "ஒரு எச்விசி கோப்பை ஏற்றவும்"
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "இறக்குமதி எச்விசி"
 
 
 msgid "Load a FBX file"
@@ -56837,6 +56808,15 @@ msgstr "ஒய் அதிகபட்சம்"
 
 msgid "Y Min"
 msgstr "ஒய் மணித்துளி"
+
+
+msgctxt "Operator"
+msgid "Select by Type"
+msgstr "வகை மூலம் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Extend Selection"
+msgstr "தேர்வை நீட்டிக்கவும்"
 
 
 msgctxt "Operator"
@@ -76262,11 +76242,6 @@ msgid "Change selection of all visible objects in scene"
 msgstr "காட்சியில் காணக்கூடிய அனைத்து பொருட்களின் தேர்வையும் மாற்றவும்"
 
 
-msgctxt "Operator"
-msgid "Select by Type"
-msgstr "வகை மூலம் தேர்ந்தெடுக்கவும்"
-
-
 msgid "Select all visible objects that are of a type"
 msgstr "ஒரு வகையைச் சேர்ந்த அனைத்து புலப்படும் பொருட்களையும் தேர்ந்தெடுக்கவும்"
 
@@ -81443,11 +81418,6 @@ msgid "Enable snapping"
 msgstr "ச்னாப்பிங்கை இயக்கு"
 
 
-msgctxt "Operator"
-msgid "Area Options"
-msgstr "பரப்பு விருப்பங்கள்"
-
-
 msgid "Operations for splitting and merging"
 msgstr "பிரித்தல் மற்றும் ஒன்றிணைப்பதற்கான செயல்பாடுகள்"
 
@@ -86293,10 +86263,6 @@ msgid "Activate selected view item"
 msgstr "தேர்ந்தெடுக்கப்பட்ட பார்வை உருப்படியை செயல்படுத்தவும்"
 
 
-msgid "Extend Selection"
-msgstr "தேர்வை நீட்டிக்கவும்"
-
-
 msgid "Range Select"
 msgstr "வரம்பு தேர்ந்தெடுக்கவும்"
 
@@ -86562,14 +86528,6 @@ msgstr "தேர்ந்தெடுக்கப்பட்ட புறஊ�
 msgctxt "Operator"
 msgid "Copy Mirrored UV Coords"
 msgstr "நகலெடுக்கப்பட்ட புறஊதா கால்களை நகலெடுக்கவும்"
-
-
-msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "பிரதிபலித்த கண்ணி அடிப்படையில் ஃச் அச்சில் கண்ணாடி புறஊதா ஆயங்களை நகலெடுக்கவும்"
-
-
-msgid "Axis Direction"
-msgstr "அச்சு திசை"
 
 
 msgid "Tolerance for finding vertex duplicates"
@@ -87196,26 +87154,12 @@ msgid "Reveal all hidden UV vertices"
 msgstr "மறைக்கப்பட்ட அனைத்து புறஊதா செங்குத்துகளையும் வெளிப்படுத்துங்கள்"
 
 
-msgctxt "Operator"
-msgid "UV Rip"
-msgstr "புறஊதா"
-
-
 msgid "Rip selected vertices or a selected region"
 msgstr "rip தேர்ந்தெடுக்கப்பட்ட செங்குத்துகள் அல்லது தேர்ந்தெடுக்கப்பட்ட மண்டலம்"
 
 
-msgctxt "Operator"
-msgid "UV Rip Move"
-msgstr "புறஊதா"
-
-
 msgid "Unstitch UVs and move the result"
 msgstr "uv களைத் துடைத்து, முடிவை நகர்த்தவும்"
-
-
-msgid "UV Rip"
-msgstr "புறஊதா"
 
 
 msgctxt "Operator"
@@ -120049,10 +119993,6 @@ msgid "Distribution Type"
 msgstr "விநியோக வகை"
 
 
-msgid "Multiplier"
-msgstr "பெருக்கி"
-
-
 msgid "Dicing Rate Render"
 msgstr "டைசிங் வீத வழங்கல்"
 
@@ -120169,6 +120109,10 @@ msgid "Use GPU"
 msgstr "gpu ஐப் பயன்படுத்தவும்"
 
 
+msgid "Multiplier"
+msgstr "பெருக்கி"
+
+
 msgid "Curve Subdivisions"
 msgstr "வளைவு துணைப்பிரிவுகள்"
 
@@ -120282,11 +120226,6 @@ msgstr "பி.வி.எச் கோப்பில் அதன் இயக�
 
 msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "தவறான இலக்கு %r ('ஆர்மேச்சர்' அல்லது 'பொருள்' ஆக இருக்க வேண்டும்)"
-
-
-msgctxt "Operator"
-msgid "Scalable Vector Graphics (.svg)"
-msgstr "அளவிடக்கூடிய திசையன் கிராபிக்ச் (.svg)"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -125726,6 +125665,11 @@ msgstr "ச்னாப்"
 
 
 msgctxt "Operator"
+msgid "Jump to Selected"
+msgstr "தேர்ந்தெடுக்கப்பட்ட என்பதற்குச் செல்லவும்"
+
+
+msgctxt "Operator"
 msgid "Keyframe Type"
 msgstr "கீஃப்ரேம் வகை"
 
@@ -126078,11 +126022,6 @@ msgstr "மென்மையான (மரபு)"
 
 
 msgctxt "Operator"
-msgid "Jump to Selected"
-msgstr "தேர்ந்தெடுக்கப்பட்ட என்பதற்குச் செல்லவும்"
-
-
-msgctxt "Operator"
 msgid "Easing Type"
 msgstr "தளர்த்தும் வகை"
 
@@ -126136,11 +126075,6 @@ msgstr "வெளிப்பாடு: {:s}"
 msgctxt "Operator"
 msgid "Zoom Region..."
 msgstr "சூம் மண்டலம்..."
-
-
-msgctxt "Operator"
-msgid "Select Pinned"
-msgstr "பின்னட் என்பதைத் தேர்ந்தெடுக்கவும்"
 
 
 msgctxt "Operator"
@@ -134200,10 +134134,6 @@ msgstr "%s: %s"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "விசைப்பலகை அல்லாத குறுக்குவழி"
-
-
-msgid "Pin"
-msgstr "முள்"
 
 
 msgid "Shift Left Mouse"
@@ -146883,10 +146813,6 @@ msgid "Cr"
 msgstr "சிஆர்"
 
 
-msgid "Disabled, built without OpenColorIO"
-msgstr "முடக்கப்பட்டது, ஓபன்கோலோரியோ இல்லாமல் கட்டப்பட்டது"
-
-
 msgid "Convert from display to scene linear instead. Not all view transforms can be inverted exactly, and the result may not match the original scene linear image"
 msgstr "காட்சிக்கு பதிலாக காட்சி நேரியல் நிலைக்கு மாற்றவும். எல்லா காட்சி மாற்றங்களையும் சரியாக தலைகீழாக மாற்ற முடியாது, மேலும் இதன் முடிவு அசல் காட்சி நேரியல் படத்துடன் பொருந்தாமல் போகலாம்"
 
@@ -151289,6 +151215,10 @@ msgid "Volume to convert to a mesh"
 msgstr "ஒரு கண்ணி மாற்றும் தொகுதி"
 
 
+msgid "Mask Input"
+msgstr "முகமூடி உள்ளீடு"
+
+
 msgid "Warnings"
 msgstr "எச்சரிக்கைகள்"
 
@@ -151343,10 +151273,6 @@ msgstr "குறிப்பு தொகுப்பு"
 
 msgid "Inspection index is out of range"
 msgstr "ஆய்வுக் குறியீடு வரம்பிற்கு வெளியே உள்ளது"
-
-
-msgid "Unsupported Inputs"
-msgstr "ஆதரிக்கப்படாத உள்ளீடுகள்"
 
 
 msgid "No Output"
@@ -151824,10 +151750,6 @@ msgstr "மேற்பரப்பு சிதறல் ஆரம் அளவ
 
 msgid "Index of Refraction (IOR) used for rays that enter the subsurface component"
 msgstr "மேற்பரப்பு கூறுக்குள் நுழையும் கதிர்களுக்கு பயன்படுத்தப்படும் ஒளிவிலகல் குறியீடு (IOR)"
-
-
-msgid "Directionality of volume scattering within the subsurface medium. Zero scatters uniformly in all directions, with higher values scattering more strongly forward. For example, skin has been measured to have an anisotropy of 0.8"
-msgstr "மேற்பரப்பு ஊடகத்திற்குள் தொகுதி சிதறலின் திசை. சுழிய அனைத்து திசைகளிலும் ஒரே மாதிரியாக சிதறுகிறது, அதிக மதிப்புகள் மிகவும் வலுவாக முன்னோக்கி சிதறடிக்கப்படுகின்றன. எடுத்துக்காட்டாக, தோல் 0.8 இன் அனிசோட்ரோபியைக் கொண்டிருப்பதாக அளவிடப்பட்டுள்ளது"
 
 
 msgid "Adjustment to the Index of Refraction (IOR) to increase or decrease specular intensity (0.5 means no adjustment, 0 removes all reflections, 1 doubles them at normal incidence)"
@@ -152677,10 +152599,6 @@ msgid "%s: no Combined pass found in the render layer '%s'"
 msgstr "%s: '%s' வழங்குதல் லேயரில் ஒருங்கிணைந்த பாச் இல்லை"
 
 
-msgid "%s: failed to allocate clip buffer '%s'"
-msgstr "%s: கிளிப் பஃப்பரை '%s' ஒதுக்குவதில் தோல்வி"
-
-
 msgid "%s: incorrect dimensions for partial copy '%s'"
 msgstr "%s: பகுதியளவு நகலுக்கான தவறான பரிமாணங்கள் '%s'"
 
@@ -152707,10 +152625,6 @@ msgstr "துண்டு சிறு உருவங்களை உருவ
 
 msgid "Channel %d"
 msgstr "சேனல் %d"
-
-
-msgid "Mask Input"
-msgstr "முகமூடி உள்ளீடு"
 
 
 msgctxt "Sequence"

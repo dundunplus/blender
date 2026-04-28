@@ -761,6 +761,13 @@ if(TEST_SRC_DIR_EXISTS)
   )
 
   add_blender_test(
+    bl_animation_motion_path
+    --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_motion_path.py
+    --
+    --testdir "${TEST_SRC_DIR}/animation"
+  )
+
+  add_blender_test(
     bl_pose_assets
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_pose_assets.py
     --

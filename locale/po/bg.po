@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Just Adam <adam.abbas2009@gmail.com>\n"
 "Language-Team: Bulgarian <https://translate.blender.org/projects/blender-ui/ui/bg/>\n"
@@ -1148,6 +1148,14 @@ msgid "ID Type"
 msgstr "ID тип"
 
 
+msgid "In-Betweens"
+msgstr "Междинни Кадри"
+
+
+msgid "Apply"
+msgstr "Прилагане"
+
+
 msgid "Merge"
 msgstr "Слей"
 
@@ -1168,20 +1176,12 @@ msgid "Rigid Body"
 msgstr "Твърдо тяло"
 
 
-msgid "Apply"
-msgstr "Прилагане"
-
-
 msgid "Make Single User"
 msgstr "Направи с Единствен Потребител"
 
 
 msgid "Hooks"
 msgstr "Куки"
-
-
-msgid "In-Betweens"
-msgstr "Междинни Кадри"
 
 
 msgid "Cache"

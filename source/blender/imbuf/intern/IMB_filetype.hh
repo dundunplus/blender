@@ -314,6 +314,11 @@ ImBuf *imb_load_dds(const unsigned char *mem,
                     int flags,
                     ImFileColorSpace &r_colorspace);
 
+uint8_t *imb_load_dds_compressed_data(const char *filepath,
+                                      int width,
+                                      int height,
+                                      int &r_mipcount);
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

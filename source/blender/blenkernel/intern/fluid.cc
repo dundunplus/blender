@@ -3888,6 +3888,11 @@ static void fluid_modifier_processDomain(FluidModifierData *fmd,
   /* Try to read from cache and keep track of read success. */
   if (read_cache) {
 
+    /* Reallocate fluid object to match cached config before reading mesh/particles. */
+    if (has_config && manta_needs_realloc(fds->fluid, fmd)) {
+      BKE_fluid_reallocate_fluid(fds, fds->res, 1);
+    }
+
     /* Read mesh cache. */
     if (with_liquid && with_mesh) {
       if (mesh_frame != scene_framenr) {
@@ -3942,13 +3947,6 @@ static void fluid_modifier_processDomain(FluidModifierData *fmd,
     else {
       if (data_frame != scene_framenr) {
         has_config = manta_read_config(fds->fluid, fmd, data_frame);
-      }
-
-      if (with_smoke || with_liquid) {
-        /* Read config and realloc fluid object if needed. */
-        if (has_config && manta_needs_realloc(fds->fluid, fmd)) {
-          BKE_fluid_reallocate_fluid(fds, fds->res, 1);
-        }
       }
 
       read_partial = !baking_data && !baking_particles && !baking_mesh && next_data &&

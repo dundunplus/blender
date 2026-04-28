@@ -187,7 +187,6 @@ void IMB_assign_byte_buffer(ImBuf *ibuf, const ImBufByteBuffer &buffer, ImBufOwn
 void IMB_assign_float_buffer(ImBuf *ibuf,
                              const ImBufFloatBuffer &buffer,
                              ImBufOwnership ownership);
-void IMB_assign_dds_data(ImBuf *ibuf, const DDSData &data, ImBufOwnership ownership);
 
 /**
  * Make corresponding buffers available for modification.

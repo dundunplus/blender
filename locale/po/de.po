@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
 "PO-Revision-Date: 2025-12-02 20:06+0000\n"
 "Last-Translator: Bastitron <bastitronhd@gmail.com>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -11475,10 +11475,6 @@ msgid "Auto-Smooth"
 msgstr "Automatisches Weichzeichnen"
 
 
-msgid "Propagation Steps"
-msgstr "Propagationsschritte"
-
-
 msgid "Brush blending mode"
 msgstr "Pinsel-Überblendungsmodus"
 
@@ -18691,12 +18687,48 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
-msgid "Face Data"
-msgstr "Flächendaten"
+msgid "Clear Transform"
+msgstr "Transformation löschen"
+
+
+msgid "In-Betweens"
+msgstr "Dazwischen"
+
+
+msgid "Names"
+msgstr "Namen"
+
+
+msgid "Show/Hide"
+msgstr "Zeigen/Verbergen"
+
+
+msgid "Apply"
+msgstr "Anwenden"
+
+
+msgid "Toggle Bone Options"
+msgstr "Knochen-Optionen umschalten"
 
 
 msgid "Math"
 msgstr "Mathematisch"
+
+
+msgid "Enable Bone Options"
+msgstr "Knochen-Optionen einschalten"
+
+
+msgid "Disable Bone Options"
+msgstr "Knochen-Optionen ausschalten"
+
+
+msgid "Mesh Select Mode"
+msgstr "Maschenauswahlmodus"
+
+
+msgid "Face Data"
+msgstr "Flächendaten"
 
 
 msgid "Clean Up"
@@ -18705,22 +18737,6 @@ msgstr "Aufräumen"
 
 msgid "Merge"
 msgstr "Zusammenführen"
-
-
-msgid "Show/Hide"
-msgstr "Zeigen/Verbergen"
-
-
-msgid "Special Characters"
-msgstr "Sonderzeichen"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
-msgid "Metaball"
-msgstr "Metaball"
 
 
 msgid "Read"
@@ -18735,16 +18751,28 @@ msgid "Write"
 msgstr "Schreiben"
 
 
-msgid "Names"
-msgstr "Namen"
-
-
 msgid "Primitives"
 msgstr "Grundkörper"
 
 
+msgid "Special Characters"
+msgstr "Sonderzeichen"
+
+
+msgid "Kerning"
+msgstr "Kerning"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
 msgid "Instances"
 msgstr "Instanzen"
+
+
+msgid "Import"
+msgstr "Importieren"
 
 
 msgid "Pivot Point"
@@ -18755,10 +18783,6 @@ msgid "Snap"
 msgstr "Einrasten"
 
 
-msgid "Import"
-msgstr "Importieren"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "Proportionaler Bearbeitungsabfall"
 
@@ -18767,12 +18791,12 @@ msgid "Mask Edit"
 msgstr "Maskenbearbeitung"
 
 
-msgid "Vertex Group Locks"
-msgstr "Punktgruppen sperren"
-
-
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Vertex Group Locks"
+msgstr "Punktgruppen sperren"
 
 
 msgid "Mirror"
@@ -18827,6 +18851,10 @@ msgid "Assign Material"
 msgstr "Material zuweisen"
 
 
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Light"
 msgstr "Licht"
 
@@ -18843,16 +18871,16 @@ msgid "Relations"
 msgstr "Beziehungen"
 
 
-msgid "Layout"
-msgstr "Layout"
+msgid "Keying"
+msgstr "Schlüsselbilder"
+
+
+msgid "Tracking"
+msgstr "Verfolgen"
 
 
 msgid "Rigid Body"
 msgstr "Rigid Body"
-
-
-msgid "Apply"
-msgstr "Anwenden"
 
 
 msgid "Track"
@@ -18875,44 +18903,12 @@ msgid "Convert"
 msgstr "Konvertieren"
 
 
-msgid "Keying"
-msgstr "Schlüsselbilder"
-
-
 msgid "Hooks"
 msgstr "Haken"
 
 
-msgid "Tracking"
-msgstr "Verfolgen"
-
-
 msgid "Random Mask"
 msgstr "Zufällige Maske"
-
-
-msgid "Clear Transform"
-msgstr "Transformation löschen"
-
-
-msgid "In-Betweens"
-msgstr "Dazwischen"
-
-
-msgid "Toggle Bone Options"
-msgstr "Knochen-Optionen umschalten"
-
-
-msgid "Enable Bone Options"
-msgstr "Knochen-Optionen einschalten"
-
-
-msgid "Disable Bone Options"
-msgstr "Knochen-Optionen ausschalten"
-
-
-msgid "Mesh Select Mode"
-msgstr "Maschenauswahlmodus"
 
 
 msgid "Assets"
@@ -19198,6 +19194,10 @@ msgstr "Über"
 
 msgid "Quick Setup"
 msgstr "Schnelleinrichtung"
+
+
+msgid "Propagation Steps"
+msgstr "Propagationsschritte"
 
 
 msgid "Mesh Edge"
@@ -24830,11 +24830,6 @@ msgstr "BVH importieren"
 
 msgid "Load a SVG file"
 msgstr "Laden einer SVG-Datei"
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "SVG importieren"
 
 
 msgid "Load a FBX file"
@@ -35257,11 +35252,6 @@ msgstr "Einrasten"
 
 
 msgctxt "Operator"
-msgid "Area Options"
-msgstr "Bereichoptionen"
-
-
-msgctxt "Operator"
 msgid "Split Area"
 msgstr "Bereich aufteilen"
 
@@ -37021,10 +37011,6 @@ msgstr "Reihenfolge"
 msgctxt "Operator"
 msgid "Copy Mirrored UV Coords"
 msgstr "Kopieren gespiegelter UV-Coords"
-
-
-msgid "Axis Direction"
-msgstr "Achsenrichtung"
 
 
 msgctxt "Operator"
@@ -48417,10 +48403,6 @@ msgid "Start Sample"
 msgstr "Startbeispiel"
 
 
-msgid "Multiplier"
-msgstr "Multiplizierer"
-
-
 msgid "Direct Light"
 msgstr "Direkte Beleuchtung"
 
@@ -48495,6 +48477,10 @@ msgstr "Kamera herausnehmen"
 
 msgid "Min Samples"
 msgstr "Minimale Beispiele"
+
+
+msgid "Multiplier"
+msgstr "Multiplizierer"
 
 
 msgid "Curve Subdivisions"
@@ -54022,10 +54008,6 @@ msgstr "%s: %s"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Kein Tastaturkürzel"
-
-
-msgid "Pin"
-msgstr "Anheften"
 
 
 msgid "Shift Left Mouse"

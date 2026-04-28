@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -8498,16 +8498,52 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
-msgid "Math"
-msgstr "Математика"
+msgid "Clear Transform"
+msgstr "Очисти трансформације"
 
 
-msgid "Merge"
-msgstr "Сједини"
+msgid "In-Betweens"
+msgstr "У међувремену"
+
+
+msgid "Propagate"
+msgstr "Пренеси"
+
+
+msgid "Names"
+msgstr "Имена"
 
 
 msgid "Show/Hide"
 msgstr "Прикажи/сакриј"
+
+
+msgid "Apply"
+msgstr "Примени"
+
+
+msgid "Toggle Bone Options"
+msgstr "Мање/више информација"
+
+
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "Enable Bone Options"
+msgstr "Омогући опције костију"
+
+
+msgid "Disable Bone Options"
+msgstr "Онемогући опције костију"
+
+
+msgid "Mesh Select Mode"
+msgstr "Мод избора мреже"
+
+
+msgid "Merge"
+msgstr "Сједини"
 
 
 msgid "Special Characters"
@@ -8518,20 +8554,16 @@ msgid "Metaball"
 msgstr "Мета лопта"
 
 
-msgid "Names"
-msgstr "Имена"
-
-
 msgid "Bone Roll"
 msgstr "Ролна костију"
 
 
-msgid "Snap"
-msgstr "Лепљење"
-
-
 msgid "Import"
 msgstr "Увоз"
+
+
+msgid "Snap"
+msgstr "Лепљење"
 
 
 msgid "UV"
@@ -8570,12 +8602,16 @@ msgid "Relations"
 msgstr "Односи"
 
 
+msgid "Keying"
+msgstr "Збирка тастера"
+
+
+msgid "Tracking"
+msgstr "Праћење"
+
+
 msgid "Rigid Body"
 msgstr "Круто тело"
-
-
-msgid "Apply"
-msgstr "Примени"
 
 
 msgid "Track"
@@ -8586,44 +8622,8 @@ msgid "Quick Effects"
 msgstr "Брзи ефекти"
 
 
-msgid "Keying"
-msgstr "Збирка тастера"
-
-
 msgid "Hooks"
 msgstr "Удице"
-
-
-msgid "Tracking"
-msgstr "Праћење"
-
-
-msgid "Clear Transform"
-msgstr "Очисти трансформације"
-
-
-msgid "In-Betweens"
-msgstr "У међувремену"
-
-
-msgid "Propagate"
-msgstr "Пренеси"
-
-
-msgid "Toggle Bone Options"
-msgstr "Мање/више информација"
-
-
-msgid "Enable Bone Options"
-msgstr "Омогући опције костију"
-
-
-msgid "Disable Bone Options"
-msgstr "Онемогући опције костију"
-
-
-msgid "Mesh Select Mode"
-msgstr "Мод избора мреже"
 
 
 msgid "Basic"
@@ -11244,11 +11244,6 @@ msgstr "Учитај BVH датотеку скидања покрета"
 msgctxt "Operator"
 msgid "Import BVH"
 msgstr "Увоз BVH"
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "Увоз SVG"
 
 
 msgctxt "Operator"
@@ -18189,10 +18184,6 @@ msgid "Average Islands Scale"
 msgstr "Просечна величина острва"
 
 
-msgid "Axis Direction"
-msgstr "Смер оса"
-
-
 msgctxt "Operator"
 msgid "Cube Projection"
 msgstr "Кубична пројекција"
@@ -23996,10 +23987,6 @@ msgstr "Модификатор вредности F-криве"
 
 msgid "Nothing selected"
 msgstr "Ништа није изабрано"
-
-
-msgid "Pin"
-msgstr "Закачи"
 
 
 msgctxt "Operator"

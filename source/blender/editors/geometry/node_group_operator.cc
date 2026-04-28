@@ -1289,13 +1289,15 @@ static StructRNA *get_input_socket_struct_rna(IDProperty &input_idprop,
       break;
     }
     case SOCK_STRING: {
-      PropertyRNA *prop = RNA_def_string(
-          srna,
-          "value",
-          IDP_group_lookup_string(input_idprop, "default_value").value_or("").c_str(),
-          0,
-          name.c_str(),
-          description.c_str());
+      const StringRefNull default_value =
+          IDP_group_lookup_string(input_idprop, "default_value").value_or("");
+      PropertyRNA *prop = RNA_def_string(srna,
+                                         "value",
+                                         default_value.is_empty() ? nullptr :
+                                                                    default_value.c_str(),
+                                         0,
+                                         name.c_str(),
+                                         description.c_str());
       RNA_def_property_subtype(
           prop,
           PropertySubType(IDP_group_lookup_int(input_idprop, "subtype").value_or(PROP_NONE)));

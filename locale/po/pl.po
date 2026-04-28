@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
-"PO-Revision-Date: 2026-04-06 15:46+0000\n"
+"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"PO-Revision-Date: 2026-04-14 12:12+0000\n"
 "Last-Translator: Paweł Mazur <pawelmazur.zam@gmail.com>\n"
 "Language-Team: Polish <https://translate.blender.org/projects/blender-ui/ui/pl/>\n"
 "Language: pl\n"
@@ -5048,7 +5048,7 @@ msgstr "Wyświetl drut"
 
 
 msgid "Bone is always displayed in wireframe regardless of viewport shading mode (useful for non-obstructive custom bone shapes)"
-msgstr "Kość jest zawsze wyświetlana w formie szkieletu, niezależnie od trybu cieniowania widoku (przydatne w przypadku niezakłócających, własnych kształtów kości)"
+msgstr "Kość jest zawsze wyświetlana w formie szkieletu, niezależnie od trybu cieniowania rzutni (przydatne w przypadku niezakłócających, własnych kształtów kości)"
 
 
 msgid "Tail"
@@ -5439,10 +5439,6 @@ msgid "Has Jitter"
 msgstr "Ma drgania"
 
 
-msgid "Has Normal Raidus"
-msgstr "Ma promień normalny"
-
-
 msgid "Has Crease/Pinch Factor"
 msgstr "Ma współczynnik zagnieceń / ściskania"
 
@@ -5736,6 +5732,10 @@ msgstr "Płaska"
 
 msgid "Threshold"
 msgstr "Próg"
+
+
+msgid "Threshold distance between points for conversion"
+msgstr "Odległość progowa między punktami do konwersji"
 
 
 msgid "Curve Jitter"
@@ -6154,6 +6154,10 @@ msgstr "Pokaż linie pomocnicze dla wydłużenia obrysu"
 
 msgid "Show Lasso"
 msgstr "Pokaż lasso"
+
+
+msgid "Display fill color while drawing the stroke"
+msgstr "Wyświetl kolor wypełnienia podczas rysowania obrysu"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -7735,16 +7739,8 @@ msgid "ACES 1.3 sRGB"
 msgstr "ACES 1.3 sRGB"
 
 
-msgid "ACES 1.0 Output Transform for SDR D65 video, limited to Rec.709 gamut"
-msgstr "Transformacja wyjściowa ACES 1.0 dla filmu SDR D65, ograniczona do gamy Rec.709"
-
-
 msgid "ACES 2.0 sRGB"
 msgstr "ACES 2.0 sRGB"
-
-
-msgid "ACES 2 Output Transform for 100 nit SDR Rec709"
-msgstr "Transformacja wyjściowa ACES 2 dla 100 nitów SDR Rec709"
 
 
 msgid "ACES2065-1"
@@ -7805,10 +7801,6 @@ msgstr "Przestrzeń wejściowa kamery ARRI wykorzystująca funkcję transferu Lo
 
 msgid "AgX Base sRGB"
 msgstr "Podstawa AgX sRGB"
-
-
-msgid "AgX Base Image Encoding for sRGB Display"
-msgstr "Kodowanie obrazu bazowego AgX dla wyświetlacza sRGB"
 
 
 msgid "AgX Log"
@@ -7887,16 +7879,8 @@ msgid "Filmic sRGB"
 msgstr "Filmowy sRGB"
 
 
-msgid "sRGB display space with Filmic view transform"
-msgstr "Przestrzeń wyświetlania sRGB z transformacją widoku Filmic"
-
-
 msgid "Khronos PBR Neutral sRGB"
 msgstr "Neutralny Khronos PBR sRGB"
-
-
-msgid "Khronos PBR Neutral Image Encoding for sRGB Display"
-msgstr "Kodowanie obrazu neutralnego Khronos PBR dla wyświetlaczy sRGB"
 
 
 msgid "Linear ARRI Wide Gamut 3"
@@ -19392,58 +19376,6 @@ msgid "Amount of smoothing to automatically apply to each stroke"
 msgstr "Ilość wygładzania stosowana automatycznie do każdego obrysu"
 
 
-msgid "Propagation Steps"
-msgstr "Etapy propagacji"
-
-
-msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
-msgstr "Odległość, w której automatyczne maskowanie krawędzi granicznej będzie chronić wierzchołki przed całkowicie zamaskowaną krawędzią"
-
-
-msgid "Blur Steps"
-msgstr "Kroki rozmycia"
-
-
-msgid "The number of times the cavity mask is blurred"
-msgstr "Liczba rozmyć maski wgłębienia"
-
-
-msgid "Cavity Curve"
-msgstr "Krzywa wgłębienia"
-
-
-msgid "Cavity Factor"
-msgstr "Współczynnik wgłębienia"
-
-
-msgid "The contrast of the cavity mask"
-msgstr "Kontrast maski wgłebienia"
-
-
-msgid "Area Normal Falloff"
-msgstr "Zanik normalny obszaru"
-
-
-msgid "Extend the angular range with a falloff gradient"
-msgstr "Rozszerz zakres kątowy za pomocą gradientu zaniku"
-
-
-msgid "Area Normal Limit"
-msgstr "Ogranicz normalny obszaru"
-
-
-msgid "The range of angles that will be affected"
-msgstr "Zakres kątów, które zostaną objęte wpływem"
-
-
-msgid "View Normal Falloff"
-msgstr "Zanik widoku normalnego"
-
-
-msgid "View Normal Limit"
-msgstr "Limit widoku normalnego"
-
-
 msgctxt "Color"
 msgid "Blending Mode"
 msgstr "Tryb mieszania"
@@ -20486,6 +20418,10 @@ msgid "Smooth"
 msgstr "Gładka"
 
 
+msgid "Mesh Automasking Settings"
+msgstr "Ustawienia automatycznego maskowania siatki"
+
+
 msgid "Minimum distance to other scene objects after projecting onto them"
 msgstr "Minimalna odległość do innych obiektów sceny po rzutowaniu na nie obrazu"
 
@@ -21101,74 +21037,6 @@ msgstr "Wpływ alfa"
 
 msgid "When this is disabled, lock alpha while painting"
 msgstr "Po wyłączeniu tej opcji zablokuj alfę podczas malowania"
-
-
-msgid "Mesh Boundary Auto-Masking"
-msgstr "Automatyczne maskowanie granic siatki"
-
-
-msgid "Do not affect non manifold boundary edges"
-msgstr "Nie wpływa na krawędzie graniczne nierozmaitości"
-
-
-msgid "Face Sets Boundary Automasking"
-msgstr "Automatyczne maskowanie granic zestawów lica"
-
-
-msgid "Do not affect vertices that belong to a face set boundary"
-msgstr "Nie wpływa na wierzchołki należące do granicy zestawu lica"
-
-
-msgid "Cavity Mask"
-msgstr "Maska wgłębienia"
-
-
-msgid "Do not affect vertices on peaks, based on the surface curvature"
-msgstr "Nie wpływa na wierzchołki na szczytach, w oparciu o krzywiznę powierzchni"
-
-
-msgid "Inverted Cavity Mask"
-msgstr "Odwrócona maska wgłębienia"
-
-
-msgid "Do not affect vertices within crevices, based on the surface curvature"
-msgstr "Nie wpływa na wierzchołki w szczelinach, w oparciu o krzywiznę powierzchni"
-
-
-msgid "Custom Cavity Curve"
-msgstr "Własna krzywa wgłębienia"
-
-
-msgid "Use custom curve"
-msgstr "Użyj własnej krzywej"
-
-
-msgid "Affect only vertices that share face sets with the active vertex"
-msgstr "Wpływa tylko na wierzchołki, które współdzielą zestawy lic z aktywnym wierzchołkiem"
-
-
-msgid "Area Normal"
-msgstr "Obszar normalny"
-
-
-msgid "Affect only vertices with a similar normal to where the stroke starts"
-msgstr "Wpływa tylko na wierzchołki o podobnej normalnej do miejsca, w którym rozpoczyna się obrys"
-
-
-msgid "Affect only vertices connected to the active vertex under the brush"
-msgstr "Dotyczą tylko wierzchołków połączonych z aktywnym wierzchołkiem pod pędzlem"
-
-
-msgid "Affect only vertices with a normal that faces the viewer"
-msgstr "Wpływa tylko na wierzchołki z normalną zwróconą w stronę widza"
-
-
-msgid "Occlusion"
-msgstr "Okluzja"
-
-
-msgid "Only affect vertices that are not occluded by other faces (slower performance)"
-msgstr "Dotyczy tylko wierzchołków, które nie są przesłonięte przez inne lica (wolniejsza wydajność)"
 
 
 msgid "Bidirectional"
@@ -27158,7 +27026,7 @@ msgstr "Wyświetl przezroczystość materiału w obiekcie"
 
 
 msgid "Display the object's wireframe over solid shading"
-msgstr "Wyświetl szkielet obiektu na jednolitym cieniowaniu"
+msgstr "Wyświetl szkielet obiektu na cieniowaniu litym"
 
 
 msgid "Soft Body Settings"
@@ -35555,8 +35423,40 @@ msgid "Texture Pixel Size factor along the stroke"
 msgstr "Współczynnik rozmiaru pikseli tekstury wzdłuż obrysu"
 
 
+msgid "Number of dots placed per segment"
+msgstr "Liczba kropek umieszczonych na segmencie"
+
+
+msgid "Density of dots along the stroke"
+msgstr "Gęstość kropek wzdłuż obrysu"
+
+
 msgid "Placement"
 msgstr "Umieszczenie"
+
+
+msgid "Defines how Dots or Squares are placed along strokes"
+msgstr "Definiuje sposób umieszczania kropek lub kwadratów wzdłuż obrysów"
+
+
+msgid "Place dots evenly along each segment of the stroke"
+msgstr "Rozmieść kropki równomiernie wzdłuż każdego segmentu obrysu"
+
+
+msgid "Place dots evenly with respect to radius"
+msgstr "Rozmieść kropki równomiernie względem promienia"
+
+
+msgid "Place dots evenly along the length of the stroke"
+msgstr "Rozmieść kropki równomiernie wzdłuż długości obrysu"
+
+
+msgid "Spacing between dots as a percentage of the diameter"
+msgstr "Odstęp między kropkami jako procent średnicy"
+
+
+msgid "Scale the noise frequency"
+msgstr "Skaluj częstotliwość szumu"
 
 
 msgid "Show stroke fills of this material"
@@ -35660,6 +35560,58 @@ msgid "Editor menu containing buttons"
 msgstr "Menu edytora zawierające przyciski"
 
 
+msgid "Clear Transform"
+msgstr "Wyczyść transformację"
+
+
+msgid "In-Betweens"
+msgstr "Pomiędzy"
+
+
+msgid "Propagate"
+msgstr "Rozprzestrzeniaj"
+
+
+msgid "Bone Collections"
+msgstr "Kolekcje kości"
+
+
+msgid "Names"
+msgstr "Nazwy"
+
+
+msgid "Show/Hide"
+msgstr "Pokaż / ukryj"
+
+
+msgid "Apply"
+msgstr "Zastosuj"
+
+
+msgid "Toggle Bone Options"
+msgstr "Przełącz opcje kości"
+
+
+msgid "Math"
+msgstr "Matematyka"
+
+
+msgid "Enable Bone Options"
+msgstr "Włącz opcje kości"
+
+
+msgid "Disable Bone Options"
+msgstr "Wyłącz opcje kości"
+
+
+msgid "Utilities"
+msgstr "Narzędzia"
+
+
+msgid "Mesh Select Mode"
+msgstr "Tryb wybierz siatkę"
+
+
 msgid "Face Data"
 msgstr "Dane lica"
 
@@ -35672,36 +35624,12 @@ msgid "Set Face Strength"
 msgstr "Ustaw siłę lica"
 
 
-msgid "Math"
-msgstr "Matematyka"
-
-
-msgid "Utilities"
-msgstr "Narzędzia"
-
-
 msgid "Clean Up"
 msgstr "Oczyść"
 
 
 msgid "Merge"
 msgstr "Scal"
-
-
-msgid "Show/Hide"
-msgstr "Pokaż / ukryj"
-
-
-msgid "Special Characters"
-msgstr "Znaki specjalne"
-
-
-msgid "Kerning"
-msgstr "Odstęp między literami"
-
-
-msgid "Metaball"
-msgstr "Metakula"
 
 
 msgid "Read"
@@ -35716,24 +35644,40 @@ msgid "Write"
 msgstr "Napisz"
 
 
-msgid "Names"
-msgstr "Nazwy"
-
-
 msgid "Primitives"
 msgstr "Prymitywy"
 
 
-msgid "Bone Roll"
-msgstr "Rolka kości"
+msgid "Special Characters"
+msgstr "Znaki specjalne"
+
+
+msgid "Kerning"
+msgstr "Odstęp między literami"
+
+
+msgid "Metaball"
+msgstr "Metakula"
 
 
 msgid "Gizmo"
 msgstr "Gizmo"
 
 
+msgid "Bone Roll"
+msgstr "Rolka kości"
+
+
 msgid "Instances"
 msgstr "Instancje"
+
+
+msgid "Import"
+msgstr "Importuj"
+
+
+msgid "Deprecated"
+msgstr "Przestarzałe"
 
 
 msgid "Pivot Point"
@@ -35744,12 +35688,12 @@ msgid "Snap"
 msgstr "Przyciągaj"
 
 
-msgid "Import"
-msgstr "Importuj"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "Proporcjonalne zanikanie edycji"
+
+
+msgid "List"
+msgstr "Lista"
 
 
 msgid "Mask Edit"
@@ -35760,24 +35704,16 @@ msgid "Automasking"
 msgstr "Automatyczne maskowanie"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Face Sets Edit"
 msgstr "Edytuj zestawy lica"
 
 
 msgid "Vertex Group Locks"
 msgstr "Blokady grup wierzchołków"
-
-
-msgid "Deprecated"
-msgstr "Przestarzałe"
-
-
-msgid "List"
-msgstr "Lista"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Mirror"
@@ -35836,12 +35772,20 @@ msgid "Assign Material"
 msgstr "Przypisz materiał"
 
 
+msgid "Layout"
+msgstr "Układ"
+
+
 msgid "Light"
 msgstr "Światło"
 
 
 msgid "Light Probe"
 msgstr "Sonda świetlna"
+
+
+msgid "Adjust"
+msgstr "Dostosuj"
 
 
 msgid "Add Image"
@@ -35852,32 +35796,36 @@ msgid "Relations"
 msgstr "Relacje"
 
 
-msgid "Layout"
-msgstr "Układ"
+msgid "Keying"
+msgstr "Kluczowanie"
+
+
+msgid "Tracking"
+msgstr "Śledzenie"
 
 
 msgid "Rigid Body"
 msgstr "Ciało sztywne"
 
 
-msgid "Apply"
-msgstr "Zastosuj"
-
-
 msgid "Track"
 msgstr "Ścieżka"
+
+
+msgid "Creative"
+msgstr "Twórczy"
 
 
 msgid "Quick Effects"
 msgstr "Szybkie efekty"
 
 
+msgid "Render Preview"
+msgstr "Podgląd renderowania"
+
+
 msgid "Asset"
 msgstr "Zasób"
-
-
-msgid "Adjust"
-msgstr "Dostosuj"
 
 
 msgid "Make Single User"
@@ -35892,20 +35840,8 @@ msgid "Link/Transfer Data"
 msgstr "Łącze / transfer danych"
 
 
-msgid "Keying"
-msgstr "Kluczowanie"
-
-
 msgid "Hooks"
 msgstr "Haki"
-
-
-msgid "Tracking"
-msgstr "Śledzenie"
-
-
-msgid "Render Preview"
-msgstr "Podgląd renderowania"
 
 
 msgid "Trim/Add"
@@ -35914,10 +35850,6 @@ msgstr "Przytnij / dodaj"
 
 msgid "Add Primitive"
 msgstr "Dodaj prymityw"
-
-
-msgid "Creative"
-msgstr "Twórczy"
 
 
 msgid "Sculpt Set Pivot"
@@ -35930,38 +35862,6 @@ msgstr "Zestawy lica Init"
 
 msgid "Random Mask"
 msgstr "Losowa maska"
-
-
-msgid "Clear Transform"
-msgstr "Wyczyść transformację"
-
-
-msgid "In-Betweens"
-msgstr "Pomiędzy"
-
-
-msgid "Propagate"
-msgstr "Rozprzestrzeniaj"
-
-
-msgid "Bone Collections"
-msgstr "Kolekcje kości"
-
-
-msgid "Toggle Bone Options"
-msgstr "Przełącz opcje kości"
-
-
-msgid "Enable Bone Options"
-msgstr "Włącz opcje kości"
-
-
-msgid "Disable Bone Options"
-msgstr "Wyłącz opcje kości"
-
-
-msgid "Mesh Select Mode"
-msgstr "Tryb wybierz siatkę"
 
 
 msgid "Keyframe Insert Pie"
@@ -36584,6 +36484,134 @@ msgstr "Informacje o"
 
 msgid "Quick Setup"
 msgstr "Szybka konfiguracja"
+
+
+msgid "Automasking Settings"
+msgstr "Ustawienia automatycznego maskowania"
+
+
+msgid "Automasking settings for mesh painting & sculpting."
+msgstr "Ustawienia automatycznego maskowania do malowania i rzeźbienia siatki."
+
+
+msgid "Propagation Steps"
+msgstr "Etapy propagacji"
+
+
+msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
+msgstr "Odległość, w której automatyczne maskowanie krawędzi granicznej będzie chronić wierzchołki przed całkowicie zamaskowaną krawędzią"
+
+
+msgid "Blur Steps"
+msgstr "Kroki rozmycia"
+
+
+msgid "The number of times the cavity mask is blurred"
+msgstr "Liczba rozmyć maski wgłębienia"
+
+
+msgid "Cavity Curve"
+msgstr "Krzywa wgłębienia"
+
+
+msgid "Cavity Factor"
+msgstr "Współczynnik wgłębienia"
+
+
+msgid "The contrast of the cavity mask"
+msgstr "Kontrast maski wgłebienia"
+
+
+msgid "Area Normal Falloff"
+msgstr "Zanik normalny obszaru"
+
+
+msgid "Extend the angular range with a falloff gradient"
+msgstr "Rozszerz zakres kątowy za pomocą gradientu zaniku"
+
+
+msgid "Area Normal Limit"
+msgstr "Ogranicz normalny obszaru"
+
+
+msgid "The range of angles that will be affected"
+msgstr "Zakres kątów, które zostaną objęte wpływem"
+
+
+msgid "Mesh Boundary Auto-Masking"
+msgstr "Automatyczne maskowanie granic siatki"
+
+
+msgid "Do not affect non manifold boundary edges"
+msgstr "Nie wpływa na krawędzie graniczne nierozmaitości"
+
+
+msgid "Face Sets Boundary Automasking"
+msgstr "Automatyczne maskowanie granic zestawów lica"
+
+
+msgid "Do not affect vertices that belong to a face set boundary"
+msgstr "Nie wpływa na wierzchołki należące do granicy zestawu lica"
+
+
+msgid "Cavity Mask"
+msgstr "Maska wgłębienia"
+
+
+msgid "Do not affect vertices on peaks, based on the surface curvature"
+msgstr "Nie wpływa na wierzchołki na szczytach, w oparciu o krzywiznę powierzchni"
+
+
+msgid "Inverted Cavity Mask"
+msgstr "Odwrócona maska wgłębienia"
+
+
+msgid "Do not affect vertices within crevices, based on the surface curvature"
+msgstr "Nie wpływa na wierzchołki w szczelinach, w oparciu o krzywiznę powierzchni"
+
+
+msgid "Custom Cavity Curve"
+msgstr "Własna krzywa wgłębienia"
+
+
+msgid "Use custom curve"
+msgstr "Użyj własnej krzywej"
+
+
+msgid "Affect only vertices that share face sets with the active vertex"
+msgstr "Wpływa tylko na wierzchołki, które współdzielą zestawy lic z aktywnym wierzchołkiem"
+
+
+msgid "Area Normal"
+msgstr "Obszar normalny"
+
+
+msgid "Affect only vertices with a similar normal to where the stroke starts"
+msgstr "Wpływa tylko na wierzchołki o podobnej normalnej do miejsca, w którym rozpoczyna się obrys"
+
+
+msgid "Affect only vertices connected to the active vertex under the brush"
+msgstr "Dotyczą tylko wierzchołków połączonych z aktywnym wierzchołkiem pod pędzlem"
+
+
+msgid "Affect only vertices with a normal that faces the viewer"
+msgstr "Wpływa tylko na wierzchołki z normalną zwróconą w stronę widza"
+
+
+msgid "Occlusion"
+msgstr "Okluzja"
+
+
+msgid "Only affect vertices that are not occluded by other faces (slower performance)"
+msgstr "Dotyczy tylko wierzchołków, które nie są przesłonięte przez inne lica (wolniejsza wydajność)"
+
+
+msgid "View Normal Falloff"
+msgstr "Zanik widoku normalnego"
+
+
+msgid "View Normal Limit"
+msgstr "Limit widoku normalnego"
 
 
 msgid "Mesh Edge"
@@ -40664,10 +40692,6 @@ msgid "Offset the noise along the strokes"
 msgstr "Przesuń szum wzdłuż obrysów"
 
 
-msgid "Scale the noise frequency"
-msgstr "Skaluj częstotliwość szumu"
-
-
 msgid "Where to perform randomization"
 msgstr "Gdzie wykonać randomizację"
 
@@ -43906,7 +43930,7 @@ msgstr "Modyfikator szkieletu"
 
 
 msgid "Wireframe effect modifier"
-msgstr "Modyfikator efektu szkieletowego"
+msgstr "Modyfikator efektu szkieletu"
 
 
 msgid "Crease weight (if active)"
@@ -43934,7 +43958,7 @@ msgstr "Zagnij krawędzie centrum, aby poprawić powierzchnię podpodziału"
 
 
 msgid "Offset Even"
-msgstr "Przesunięcie parzyste"
+msgstr "Przesunięcie równomierne"
 
 
 msgid "Scale the offset to give more even thickness"
@@ -53503,6 +53527,10 @@ msgid "Panel description"
 msgstr "Opis panelu"
 
 
+msgid "Unique identifier for this panel within this node tree"
+msgstr "Unikatowy identyfikator tego panelu w tym drzewie węzłów"
+
+
 msgid "Items in the node panel"
 msgstr "Elementy w panelu węzła"
 
@@ -53513,10 +53541,6 @@ msgstr "Nazwa panelu"
 
 msgid "Persistent Identifier"
 msgstr "Trwały identyfikator"
-
-
-msgid "Unique identifier for this panel within this node tree"
-msgstr "Unikatowy identyfikator tego panelu w tym drzewie węzłów"
 
 
 msgid "Panel is selected in the interface"
@@ -54925,11 +54949,6 @@ msgstr "Importuj BVH"
 
 msgid "Load a SVG file"
 msgstr "Wczytaj plik SVG"
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "Importuj SVG"
 
 
 msgid "Load a FBX file"
@@ -57535,6 +57554,15 @@ msgstr "Maksymalna Y"
 
 msgid "Y Min"
 msgstr "Minimalna Y"
+
+
+msgctxt "Operator"
+msgid "Select by Type"
+msgstr "Wybierz według typu"
+
+
+msgid "Extend Selection"
+msgstr "Rozszerz wybór"
 
 
 msgctxt "Operator"
@@ -70797,7 +70825,7 @@ msgstr "Wstawianie nowego lica do wybranych lic"
 
 
 msgid "Inset face boundaries"
-msgstr "Wstawione granice lica"
+msgstr "Wstaw granice lica"
 
 
 msgid "Edge Rail"
@@ -72794,7 +72822,7 @@ msgstr "Szkielet"
 
 
 msgid "Create a solid wireframe from faces"
-msgstr "Utwórz lity szkielet z lic"
+msgstr "Utwórz szkielet lity z lic"
 
 
 msgid "Crease Weight"
@@ -77166,11 +77194,6 @@ msgstr "Wyczyść skalę delty oprócz wyczyszczenia transformacji skali normaln
 
 msgid "Change selection of all visible objects in scene"
 msgstr "Zmień wybór wszystkich widocznych obiektów na scenie"
-
-
-msgctxt "Operator"
-msgid "Select by Type"
-msgstr "Wybierz według typu"
 
 
 msgid "Select all visible objects that are of a type"
@@ -82399,11 +82422,6 @@ msgid "Enable snapping"
 msgstr "Włącz przyciąganie"
 
 
-msgctxt "Operator"
-msgid "Area Options"
-msgstr "Opcje obszaru"
-
-
 msgid "Operations for splitting and merging"
 msgstr "Operacje dzielenia i scalania"
 
@@ -87287,10 +87305,6 @@ msgid "Activate selected view item"
 msgstr "Aktywuj wybrany element widoku"
 
 
-msgid "Extend Selection"
-msgstr "Rozszerz wybór"
-
-
 msgid "Range Select"
 msgstr "Wybierz zakres"
 
@@ -87556,14 +87570,6 @@ msgstr "Kopiuj wybrane wierzchołki UV"
 msgctxt "Operator"
 msgid "Copy Mirrored UV Coords"
 msgstr "Kopiuj lustrzane współrzędne UV"
-
-
-msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "Kopiuj współrzędne UV w lustrze na osi X na podstawie siatki lustrzanej"
-
-
-msgid "Axis Direction"
-msgstr "Kierunek osi"
 
 
 msgid "Tolerance for finding vertex duplicates"
@@ -88190,26 +88196,12 @@ msgid "Reveal all hidden UV vertices"
 msgstr "Odkryj wszystkie ukryte wierzchołki UV"
 
 
-msgctxt "Operator"
-msgid "UV Rip"
-msgstr "Rozerwij UV"
-
-
 msgid "Rip selected vertices or a selected region"
 msgstr "Rozerwij wybrane wierzchołki lub wybrany region"
 
 
-msgctxt "Operator"
-msgid "UV Rip Move"
-msgstr "Przenieś rozerwane UV"
-
-
 msgid "Unstitch UVs and move the result"
 msgstr "Rozszyj UV i przenieś wynik"
-
-
-msgid "UV Rip"
-msgstr "Rozerwij UV"
 
 
 msgctxt "Operator"
@@ -88272,6 +88264,10 @@ msgstr "Odznacz wierzchołki UV na granicy każdego obszaru zaznaczenia"
 
 msgid "Select all UV vertices linked to the active UV map"
 msgstr "Wybierz wszystkie wierzchołki UV połączone z aktywną mapą UV"
+
+
+msgid "Delimit selection when selecting linked UVs"
+msgstr "Ogranicz wybór podczas wybierania powiązanych UV"
 
 
 msgid "Select all UV vertices linked under the mouse"
@@ -98644,6 +98640,10 @@ msgid "Chinese (Simplified) - 简体中文"
 msgstr "Chiński (uproszczony) - 简体中文"
 
 
+msgid "Locale code: zh_HANS. Translation progress: 100%"
+msgstr "Kod regionalny: zh_HANS. Postęp tłumaczenia: 100%"
+
+
 msgid "Chinese (Traditional) - 繁體中文"
 msgstr "Chiński (tradycyjny) - 繁體中文"
 
@@ -98720,10 +98720,6 @@ msgid "French - Français"
 msgstr "Francuski - Français"
 
 
-msgid "Locale code: fr_FR. Translation progress: 99%"
-msgstr "Kod regionalny: fr_FR. Postęp tłumaczenia: 99%"
-
-
 msgid "Georgian - ქართული"
 msgstr "Gruziński - ქართული"
 
@@ -98798,6 +98794,10 @@ msgstr "Kod regionalny: ja_JP. Postęp tłumaczenia: 99%"
 
 msgid "Korean - 한국어"
 msgstr "Koreański - 한국어"
+
+
+msgid "Locale code: ko_KR. Translation progress: 96%"
+msgstr "Kod regionalny: ko_KR. Postęp tłumaczenia: 96%"
 
 
 msgid "Kyrgyz - Кыргыз тили"
@@ -98978,10 +98978,6 @@ msgstr "Kod regionalny: ur. Postęp tłumaczenia: 85%"
 
 msgid "Vietnamese - Tiếng Việt"
 msgstr "Wietnamski - Tiếng Việt"
-
-
-msgid "Locale code: vi_VN. Translation progress: 92%"
-msgstr "Kod regionalny: vi_VN. Postęp tłumaczenia: 92%"
 
 
 msgid "Reference Sphere Size"
@@ -101663,6 +101659,10 @@ msgid "Manually set the resolution of the sampling map, higher values are slower
 msgstr "Ręcznie ustaw rozdzielczość mapy próbkowania, wyższe wartości są wolniejsze i wymagają więcej pamięci, ale zmniejszają szum"
 
 
+msgid "Enable shadow casting from the world"
+msgstr "Włącz rzucanie cienia ze świata"
+
+
 msgid "Interpolation method to use for volumes"
 msgstr "Metoda interpolacji do zastosowania w przypadku objętości"
 
@@ -103882,6 +103882,10 @@ msgstr "Przetwarzaj wynik renderowania (i kompozycji) za pomocą potoku edytora 
 
 msgid "Override Scene Settings"
 msgstr "Nadpisz ustawienia sceny"
+
+
+msgid "Use Workbench render and world settings from the sequencer scene, instead of each strip's scene"
+msgstr "Użyj ustawień renderowania i świata stołu warsztatowego ze sceny sekwencera, zamiast ze sceny każdego paska"
 
 
 msgid "Use Simplify"
@@ -109972,7 +109976,7 @@ msgstr "Początek zawartości"
 
 
 msgid "Timeline frame where underlying strip source begins"
-msgstr "KLatka osi czasu, w której zaczyna się źródło paska bazowego"
+msgstr "Klatka osi czasu, w której zaczyna się źródło paska bazowego"
 
 
 msgid "Strip Duration"
@@ -113603,7 +113607,7 @@ msgstr "Wyświetl nakładkę"
 
 
 msgid "Color for wireframe when in edit mode, but edge selection is active"
-msgstr "Kolor dla modelu szkieletowego w trybie edycji, ale wybór krawędzi jest aktywny"
+msgstr "Kolor dla szkieletu w trybie edycji, ale wybór krawędzi jest aktywny"
 
 
 msgid "Theme Widget Color Set"
@@ -114873,6 +114877,22 @@ msgstr "Indeks aktywnej mapy UV"
 
 msgid "Active UV map index"
 msgstr "Indeks aktywnej mapy UV"
+
+
+msgid "Active Render UV Map Layer"
+msgstr "Aktywna warstwa mapy UV renderowania"
+
+
+msgid "Active Render UV Map layer"
+msgstr "Aktywna warstwa mapy UV renderowania"
+
+
+msgid "Active Render UV Map Index"
+msgstr "Indeks mapy UV aktywnego renderowania"
+
+
+msgid "Active Render UV map index"
+msgstr "Indeks mapy UV aktywnego renderowania"
 
 
 msgid "UV projector used by the UV project modifier"
@@ -116579,7 +116599,7 @@ msgstr "Rodzaj wyświetlacza szkieletowego"
 
 
 msgid "Don't display volume in wireframe mode"
-msgstr "Nie wyświetlaj objętości w trybie szkieletowym"
+msgstr "Nie wyświetlaj objętości w trybie szkieletu"
 
 
 msgid "Display single bounding box for the entire grid"
@@ -117864,7 +117884,7 @@ msgstr ""
 "umożliwiając, aby wciśnięcie tego samego klawisza miało drugorzędną akcję.\n"
 "\n"
 "• Wciśnięcie klawisza Tab w widoku 3D przełącza tryb edycji, przeciągnięcie powoduje wyświetlenie menu trybów.\n"
-"• Wciśnięcie klawisza Z w widoku 3D przełącza tryb szkieletowy, przeciągnięcie powoduje wyświetlenie trybów rysowania.\n"
+"• Wciśnięcie klawisza Z w widoku 3D przełącza tryb szkieletu, przeciągnięcie powoduje wyświetlenie trybów rysowania.\n"
 "• Wciśnięcie klawisza Tyldy w widoku 3D powoduje nawigację pierwszoosobową, a przeciągnięcie powoduje wyświetlenie osi widoku"
 
 
@@ -121443,10 +121463,6 @@ msgid "Distribution Type"
 msgstr "Rodzaj rozkładu"
 
 
-msgid "Multiplier"
-msgstr "Mnożnik"
-
-
 msgid "Dicing Rate Render"
 msgstr "Szybkość renderowania podziału"
 
@@ -121576,6 +121592,10 @@ msgid "Use GPU"
 msgstr "Użyj GPU"
 
 
+msgid "Multiplier"
+msgstr "Mnożnik"
+
+
 msgid "Curve Subdivisions"
 msgstr "Podpodziały krzywych"
 
@@ -121689,11 +121709,6 @@ msgstr "Nie można wydłużyć czasu trwania sceny, ponieważ plik BVH nie zawie
 
 msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Nieprawidłowy cel %r (musi być „ARMATURA” lub „OBIEKT”)"
-
-
-msgctxt "Operator"
-msgid "Scalable Vector Graphics (.svg)"
-msgstr "Skalowalna grafika wektorowa (.svg)"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -127166,6 +127181,11 @@ msgstr "Przyciągaj"
 
 
 msgctxt "Operator"
+msgid "Jump to Selected"
+msgstr "Przeskocz do wybranych"
+
+
+msgctxt "Operator"
 msgid "Keyframe Type"
 msgstr "Typ klatki kluczowej"
 
@@ -127518,11 +127538,6 @@ msgstr "Gładka (starsza)"
 
 
 msgctxt "Operator"
-msgid "Jump to Selected"
-msgstr "Przeskocz do wybranych"
-
-
-msgctxt "Operator"
 msgid "Easing Type"
 msgstr "Rodzaj łagodzenia"
 
@@ -127576,11 +127591,6 @@ msgstr "Wyrażenie: {:s}"
 msgctxt "Operator"
 msgid "Zoom Region..."
 msgstr "Powiększ obszar..."
-
-
-msgctxt "Operator"
-msgid "Select Pinned"
-msgstr "Wybierz przypięte"
 
 
 msgctxt "Operator"
@@ -135240,6 +135250,10 @@ msgid "Enable catalog, making contained assets visible in the asset shelf"
 msgstr "Włącz katalog, dzięki czemu zawarte w nim zasoby będą widoczne na półce zasobów"
 
 
+msgid "Download Asset"
+msgstr "Pobierz zasób"
+
+
 msgid "Toggle catalog visibility in the asset shelf"
 msgstr "Przełącz widoczność katalogu na półce zasobów"
 
@@ -135593,6 +135607,10 @@ msgid "Error registering node tool \"%s\", %s"
 msgstr "Błąd rejestrowania narzędzia węzła „%s”, %s"
 
 
+msgid "Error registering node tool \"%s\". Invalid metadata for input \"%s\". Asset meta-data may be out of date"
+msgstr "Błąd podczas rejestrowania narzędzia węzła „%s”. Nieprawidłowe metadane dla danych wejściowych „%s”. Metadane zasobu mogą być nieaktualne"
+
+
 msgid "Place Next Stroke Vertex"
 msgstr "Umieść następny wierzchołek obrysu"
 
@@ -135917,10 +135935,6 @@ msgstr "Kopiuj łącze"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Skrót bez klawiatury"
-
-
-msgid "Pin"
-msgstr "Przypnij"
 
 
 msgid "Shift Left Mouse"
@@ -142498,6 +142512,18 @@ msgid "Group Sockets"
 msgstr "Gniazda grupowe"
 
 
+msgid "Add \"{}\" Input"
+msgstr "Dodaj wejście „{}”"
+
+
+msgid "Add \"{}\" Input (Ctrl to add panel)"
+msgstr "Dodaj wejście „{}” (Ctrl, aby dodać panel)"
+
+
+msgid "Add \"{}\" Panel"
+msgstr "Dodaj panel „{}”"
+
+
 msgid "More than one collection is selected"
 msgstr "Wybrano więcej niż jedną kolekcję"
 
@@ -144172,6 +144198,10 @@ msgstr "Prześwietlenie niedostępne w obecnym trybie"
 
 msgid "Cannot remove background image %d from camera '%s', as it is from the linked reference data"
 msgstr "Nie można usunąć obrazu tła %d z kamery „%s”, ponieważ pochodzi on z powiązanych danych referencyjnych"
+
+
+msgid "Clipping works in Wireframe and Solid viewport shading only"
+msgstr "Przycinanie działa tylko w cieniowaniu rzutni szkieletu i litej"
 
 
 msgid "Gizmos hidden in this view"
@@ -148902,10 +148932,6 @@ msgid "Cr"
 msgstr "Cr"
 
 
-msgid "Disabled, built without OpenColorIO"
-msgstr "Wyłączony, zbudowane bez OpenColorIO"
-
-
 msgid "Convert from display to scene linear instead. Not all view transforms can be inverted exactly, and the result may not match the original scene linear image"
 msgstr "Zamiast tego przekonwertuj obraz z widoku na liniowy. Nie wszystkie transformacje widoku można dokładnie odwrócić, a wynik może nie być zgodny z oryginalnym liniowym obrazem sceny"
 
@@ -153392,6 +153418,10 @@ msgid "Volume to convert to a mesh"
 msgstr "Objętość do konwersji na siatkę"
 
 
+msgid "Mask Input"
+msgstr "Wejście maski"
+
+
 msgid "Warnings"
 msgstr "Ostrzeżenia"
 
@@ -153464,10 +153494,6 @@ msgid "To %s"
 msgstr "Do %s"
 
 
-msgid "Unsupported Inputs"
-msgstr "Nieobsługiwane wejścia"
-
-
 msgid "No Output"
 msgstr "Brak wyjścia"
 
@@ -153482,18 +153508,6 @@ msgstr "Zignorowane wyjścia"
 
 msgid "Unused Output"
 msgstr "Niewykorzystane wyjście"
-
-
-msgid "Sequencer supports up to two Image inputs, the rest will return zero"
-msgstr "Sekwencer obsługuje do dwóch wejść obrazu, reszta zwróci zero"
-
-
-msgid "Sequencer supports one Float input, the rest will return zero"
-msgstr "Sekwencer obsługuje jedno wejście typu zmiennoprzecinkowego, reszta zwróci zero"
-
-
-msgid "Sequencer supports only Color and Float inputs, the rest will return zero"
-msgstr "Sekwencer obsługuje tylko dane wejściowe Kolor i Zmiennoprzecinkowy, reszta zwróci zero"
 
 
 msgid "Node group must have a Color output socket"
@@ -153967,10 +153981,6 @@ msgstr "Współczynnik skali promienia rozpraszania podpowierzchniowego"
 
 msgid "Index of Refraction (IOR) used for rays that enter the subsurface component"
 msgstr "Współczynnik załamania światła (IOR) stosowany w przypadku promieni wnikających do składowej podpowierzchniowej"
-
-
-msgid "Directionality of volume scattering within the subsurface medium. Zero scatters uniformly in all directions, with higher values scattering more strongly forward. For example, skin has been measured to have an anisotropy of 0.8"
-msgstr "Kierunkowość rozpraszania objętościowego w ośrodku podpowierzchniowym. Zero rozprasza równomiernie we wszystkich kierunkach, a wyższe wartości rozpraszają silniej do przodu. Na przykład zmierzono, że skóra ma anizotropię równą 0,8"
 
 
 msgid "Adjustment to the Index of Refraction (IOR) to increase or decrease specular intensity (0.5 means no adjustment, 0 removes all reflections, 1 doubles them at normal incidence)"
@@ -154824,10 +154834,6 @@ msgid "%s: no Combined pass found in the render layer '%s'"
 msgstr "%s: nie znaleziono przejścia łączonego w warstwie renderowania „%s\""
 
 
-msgid "%s: failed to allocate clip buffer '%s'"
-msgstr "%s: nie udało się przydzielić bufora klipu „%s\""
-
-
 msgid "%s: incorrect dimensions for partial copy '%s'"
 msgstr "%s: nieprawidłowe wymiary dla częściowej kopii „%s\""
 
@@ -154854,10 +154860,6 @@ msgstr "Generowanie miniatur pasków..."
 
 msgid "Channel %d"
 msgstr "Kanał %d"
-
-
-msgid "Mask Input"
-msgstr "Wejście maski"
 
 
 msgctxt "Sequence"

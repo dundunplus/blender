@@ -221,7 +221,7 @@ static ImBuf *compute_linear_buffer(ImBuf *image_buffer)
       IMB_colormanagement_space_is_scene_linear(image_buffer->byte_buffer.colorspace);
   if (image_buffer->ftype == IMB_FTYPE_DDS && is_suitable_compressed_color_space) {
     linear_image_buffer->ftype = IMB_FTYPE_DDS;
-    IMB_assign_dds_data(linear_image_buffer, image_buffer->dds_data, IB_DO_NOT_TAKE_OWNERSHIP);
+    linear_image_buffer->filepath = image_buffer->filepath;
   }
 
   return linear_image_buffer;

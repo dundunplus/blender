@@ -17,14 +17,11 @@
 
 #include "IMB_allocimbuf.hh"
 #include "IMB_colormanagement_intern.hh"
-#include "IMB_filetype.hh"
 #include "IMB_metadata.hh"
 
 #include "imbuf.hh"
 
 #include "MEM_guardedalloc.h"
-
-#include "BLI_threads.h"
 
 #include "GPU_context.hh"
 #include "GPU_state.hh"
@@ -56,28 +53,6 @@ template<class BufferType> static void imb_free_buffer(BufferType &buffer)
   /* Reset buffer to defaults. */
   buffer.data = nullptr;
   buffer.ownership = IB_DO_NOT_TAKE_OWNERSHIP;
-}
-
-/* Free the specified DDS buffer storage, freeing memory when needed and restoring the state of the
- * buffer to its defaults. */
-static void imb_free_dds_buffer(DDSData &dds_data)
-{
-  if (dds_data.data) {
-    switch (dds_data.ownership) {
-      case IB_DO_NOT_TAKE_OWNERSHIP:
-        break;
-
-      case IB_TAKE_OWNERSHIP:
-        /* dds_data.data is allocated by DirectDrawSurface::readData(), so don't use
-         * MEM_delete! */
-        free(dds_data.data);
-        break;
-    }
-  }
-
-  /* Reset buffer to defaults. */
-  dds_data.data = nullptr;
-  dds_data.ownership = IB_DO_NOT_TAKE_OWNERSHIP;
 }
 
 /* Allocate pixel storage of the given buffer. The buffer owns the allocated memory.
@@ -211,7 +186,6 @@ void IMB_freeImBuf(ImBuf *ibuf)
     IMB_free_gpu_textures(ibuf);
     IMB_metadata_free(ibuf->metadata);
     colormanage_cache_free(ibuf);
-    imb_free_dds_buffer(ibuf->dds_data);
     MEM_delete(ibuf);
   }
 }
@@ -469,16 +443,6 @@ void IMB_assign_float_buffer(ImBuf *ibuf,
   ibuf->float_buffer.colorspace = buffer.colorspace;
 }
 
-void IMB_assign_dds_data(ImBuf *ibuf, const DDSData &data, const ImBufOwnership ownership)
-{
-  BLI_assert(ibuf->ftype == IMB_FTYPE_DDS);
-
-  imb_free_dds_buffer(ibuf->dds_data);
-
-  ibuf->dds_data = data;
-  ibuf->dds_data.ownership = ownership;
-}
-
 ImBuf *IMB_allocFromBufferOwn(
     uint8_t *byte_buffer, float *float_buffer, uint w, uint h, uint channels)
 {
@@ -644,7 +608,6 @@ ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
   tbuf.byte_buffer = ibuf2->byte_buffer;
   tbuf.float_buffer = ibuf2->float_buffer;
   tbuf.encoded_buffer = ibuf2->encoded_buffer;
-  tbuf.dds_data.data = nullptr;
 
   /* Set `malloc` flag. */
   tbuf.refcounter = 0;

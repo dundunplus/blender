@@ -470,16 +470,25 @@ CPPType::CPPType(TypeTag<T> /*type*/,
   this->is_move_assignable = move_assign_ != nullptr;
 }
 
-/** Create a new #CPPType that can be accessed through `CPPType::get<T>()`. */
-#define BLI_CPP_TYPE_MAKE(TYPE_NAME, FLAGS) \
-  template<> const CPPType &CPPType::get_impl<TYPE_NAME>() \
-  { \
-    static CPPType type{ \
-        TypeTag<TYPE_NAME>(), TypeForValue<CPPTypeFlags, FLAGS>(), STRINGIFY(TYPE_NAME)}; \
-    return type; \
-  }
+namespace detail {
+template<typename T, CPPTypeFlags FLAGS> inline void register_cpp_type(const StringRef type_name)
+{
+  static CPPType *cpp_type = new (detail::cpp_type_impl<T>.ptr())
+      CPPType(TypeTag<T>(), TypeForValue<CPPTypeFlags, FLAGS>(), type_name);
 
-/** Register a #CPPType created with #BLI_CPP_TYPE_MAKE. */
-#define BLI_CPP_TYPE_REGISTER(TYPE_NAME) CPPType::get<TYPE_NAME>()
+  /* Call destructor on exit. */
+  struct CPPTypeDestructor {
+    ~CPPTypeDestructor()
+    {
+      std::destroy_at(cpp_type);
+    }
+  };
+  static CPPTypeDestructor cpp_type_destructor;
+}
+}  // namespace detail
+
+/** Register a #CPPType created with #CPPType::get<T>(). */
+#define BLI_CPP_TYPE_REGISTER(TYPE_NAME, FLAGS) \
+  blender::detail::register_cpp_type<TYPE_NAME, FLAGS>(STRINGIFY(TYPE_NAME))
 
 }  // namespace blender
