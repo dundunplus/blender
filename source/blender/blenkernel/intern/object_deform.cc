@@ -356,13 +356,12 @@ static void object_defgroup_remove_edit_mode(Object *ob, bDeformGroup *dg)
   }
   else if (ob->type == OB_LATTICE) {
     Lattice *lt = (id_cast<Lattice *>(ob->data))->editlatt->latt;
-    BPoint *bp;
     MDeformVert *dvert = lt->dvert;
     int a, tot;
 
     if (dvert) {
       tot = lt->pntsu * lt->pntsv * lt->pntsw;
-      for (a = 0, bp = lt->def; a < tot; a++, bp++, dvert++) {
+      for (a = 0; a < tot; a++, dvert++) {
         for (i = 0; i < dvert->totweight; i++) {
           if (dvert->dw[i].def_nr > def_nr) {
             dvert->dw[i].def_nr--;

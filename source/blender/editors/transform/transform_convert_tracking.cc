@@ -449,7 +449,6 @@ static void cancelTransTracking(TransInfo *t)
 
 static void flushTransTracking(TransInfo *t)
 {
-  TransData *td;
   TransData2D *td2d;
   TransDataTracking *tdt;
   int td_index;
@@ -462,11 +461,10 @@ static void flushTransTracking(TransInfo *t)
 
   /* Flush to 2d vector from internally used 3d vector. */
   for (td_index = 0,
-      td = tc->data,
       td2d = tc->data_2d,
       tdt = static_cast<TransDataTracking *>(tc->custom.type.data);
        td_index < tc->data_len;
-       td_index++, td2d++, td++, tdt++)
+       td_index++, td2d++, tdt++)
   {
     if (tdt->mode == transDataTracking_ModeTracks) {
       float loc2d[2];

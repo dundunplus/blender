@@ -4348,14 +4348,13 @@ static void project_paint_build_proj_ima(ProjPaintState *ps,
 {
   ProjPaintImage *projIma;
   PrepareImageEntry *entry;
-  int i;
 
   /* build an array of images we use */
   projIma = ps->projImages = static_cast<ProjPaintImage *>(
       BLI_memarena_alloc(arena, sizeof(ProjPaintImage) * ps->image_tot));
 
-  for (entry = static_cast<PrepareImageEntry *>(used_images->first), i = 0; entry;
-       entry = entry->next, i++, projIma++)
+  for (entry = static_cast<PrepareImageEntry *>(used_images->first); entry;
+       entry = entry->next, projIma++)
   {
     projIma->iuser = entry->iuser;
     int size;

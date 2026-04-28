@@ -440,7 +440,6 @@ void *NodeTreeInterfaceDragController::create_drag_data() const
 
   bNodeTreeInterfaceItemReference *drag_data = MEM_new_zeroed<bNodeTreeInterfaceItemReference>(
       __func__);
-  drag_data->item = &item_;
   drag_data->tree = &tree_;
   drag_data->items_count = drag_items.size();
   drag_data->items = MEM_new_array_zeroed<bNodeTreeInterfaceItem *>(drag_data->items_count,

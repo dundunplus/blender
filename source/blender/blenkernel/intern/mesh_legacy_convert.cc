@@ -841,7 +841,6 @@ static void mesh_loops_to_tessdata(Mesh &mesh,
                                    CustomData *fdata_legacy,
                                    CustomData *corner_data,
                                    MFace *mface,
-                                   const int *polyindices,
                                    uint (*loopindices)[4],
                                    const int num_faces)
 {
@@ -856,7 +855,6 @@ static void mesh_loops_to_tessdata(Mesh &mesh,
   const bool hasOrigSpace = CustomData_has_layer(corner_data, CD_ORIGSPACE_MLOOP);
   const bool hasLoopNormal = CustomData_has_layer(corner_data, CD_NORMAL);
   int findex, i, j;
-  const int *pidx;
   uint(*lidx)[4];
 
   const bke::AttributeAccessor attributes = mesh.attributes();
@@ -866,9 +864,7 @@ static void mesh_loops_to_tessdata(Mesh &mesh,
         CustomData_get_layer_n_for_write(fdata_legacy, CD_MTFACE, i, num_faces));
     const VArraySpan uv = *attributes.lookup<float2>(uv_names[i], bke::AttrDomain::Corner);
 
-    for (findex = 0, pidx = polyindices, lidx = loopindices; findex < num_faces;
-         pidx++, lidx++, findex++, texface++)
-    {
+    for (findex = 0, lidx = loopindices; findex < num_faces; lidx++, findex++, texface++) {
       for (j = (mface ? mface[findex].v4 : (*lidx)[3]) ? 4 : 3; j--;) {
         copy_v2_v2(texface->uv[j], uv[(*lidx)[j]]);
       }
@@ -1204,8 +1200,7 @@ static void mesh_tessface_calc(Mesh &mesh)
    * (because they are sorted for polygons, and our quads are still mere copies of their polygons).
    * So we pass nullptr as #MFace pointer, and #mesh_loops_to_tessdata
    * will use the fourth loop index as quad test. */
-  mesh_loops_to_tessdata(
-      mesh, fdata_legacy, &mesh.corner_data, nullptr, mface_to_poly_map, lindices, totface);
+  mesh_loops_to_tessdata(mesh, fdata_legacy, &mesh.corner_data, nullptr, lindices, totface);
 
   /* NOTE: quad detection issue - fourth vert-index vs fourth loop-index:
    * ...However, most #TFace code uses `MFace->v4 == 0` test to check whether it is a tri or quad.
