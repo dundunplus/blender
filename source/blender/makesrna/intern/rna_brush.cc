@@ -1237,7 +1237,7 @@ static void rna_def_sculpt_capabilities(BlenderRNA *brna)
 
   SCULPT_BRUSH_CAPABILITY(has_accumulate, "Has Accumulate");
   SCULPT_BRUSH_CAPABILITY(has_auto_smooth, "Has Auto Smooth");
-  SCULPT_BRUSH_CAPABILITY(has_normal_radius, "Has Normal Raidus");
+  SCULPT_BRUSH_CAPABILITY(has_normal_radius, "Has Normal Radius");
   SCULPT_BRUSH_CAPABILITY(has_hardness, "Has Hardness");
   SCULPT_BRUSH_CAPABILITY(has_topology_rake, "Has Topology Rake");
   SCULPT_BRUSH_CAPABILITY(has_height, "Has Height");
