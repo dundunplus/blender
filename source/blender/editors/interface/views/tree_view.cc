@@ -6,9 +6,6 @@
  * \ingroup edinterface
  */
 
-#include "DNA_userdef_types.h"
-#include "DNA_windowmanager_types.h"
-
 #include "BKE_context.hh"
 
 #include "BLT_translation.hh"
@@ -21,11 +18,7 @@
 #include "UI_interface_layout.hh"
 #include "UI_view2d.hh"
 
-#include "WM_api.hh"
-#include "WM_types.hh"
-
 #include "BLI_listbase.h"
-#include "BLI_math_base.h"
 #include "BLI_multi_value_map.hh"
 #include "BLI_string.h"
 
