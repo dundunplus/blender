@@ -48,7 +48,7 @@ void BKE_cpp_types_init()
                         CPPTypeFlags::Hashable | CPPTypeFlags::EqualityComparable);
   BLI_CPP_TYPE_REGISTER(nodes::BundlePtr, CPPTypeFlags::EqualityComparable);
   BLI_CPP_TYPE_REGISTER(nodes::ClosurePtr, CPPTypeFlags::EqualityComparable);
-  BLI_CPP_TYPE_REGISTER(nodes::ListPtr, CPPTypeFlags::EqualityComparable);
+  BLI_CPP_TYPE_REGISTER(nodes::GListPtr, CPPTypeFlags::EqualityComparable);
 
   BLI_CPP_TYPE_REGISTER(bke::GeometryNodesReferenceSet, CPPTypeFlags::None);
   BLI_CPP_TYPE_REGISTER(bke::SocketValueVariant, CPPTypeFlags::Printable);

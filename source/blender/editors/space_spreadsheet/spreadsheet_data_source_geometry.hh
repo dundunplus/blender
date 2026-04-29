@@ -117,10 +117,10 @@ class VolumeGridDataSource : public DataSource {
 #endif
 
 class ListDataSource : public DataSource {
-  nodes::ListPtr list_;
+  nodes::GListPtr list_;
 
  public:
-  ListDataSource(nodes::ListPtr list);
+  ListDataSource(nodes::GListPtr list);
 
   void foreach_default_column_ids(
       FunctionRef<void(const SpreadsheetColumnID &, bool is_extra)> fn) const override;

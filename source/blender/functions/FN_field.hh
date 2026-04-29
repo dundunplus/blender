@@ -182,7 +182,7 @@ class GField {
   uint64_t hash() const;
 
   /**
-   * Get a typed reference to this field. Not that #Field<T> happens to be identical to #GField on
+   * Get a typed reference to this field. Note that #Field<T> happens to be identical to #GField on
    * a bit-level. So this is just a cast.
    */
   template<typename T> const Field<T> &typed() const;

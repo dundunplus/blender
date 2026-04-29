@@ -90,11 +90,11 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 }
 
 class SampleIndexFunction : public mf::MultiFunction {
-  ListPtr list_;
+  GListPtr list_;
   mf::Signature signature_;
 
  public:
-  SampleIndexFunction(ListPtr list) : list_(std::move(list))
+  SampleIndexFunction(GListPtr list) : list_(std::move(list))
   {
     mf::SignatureBuilder builder{"Sample Index", signature_};
     builder.single_input<int>("Index");
@@ -117,14 +117,14 @@ class SampleIndexFunction : public mf::MultiFunction {
           list_->cpp_type().default_value(), dst.data(), invalid_indices);
     }
 
-    const List::DataVariant &data = list_->data();
-    if (const auto *array_data = std::get_if<nodes::List::ArrayData>(&data)) {
+    const GList::DataVariant &data = list_->data();
+    if (const auto *array_data = std::get_if<nodes::GList::ArrayData>(&data)) {
       const GSpan src(list_->cpp_type(), array_data->data, list_->size());
       valid_indices.foreach_index([&](const int i, const int mask) {
         list_->cpp_type().copy_construct(src[indices[i]], dst[mask]);
       });
     }
-    else if (const auto *single_data = std::get_if<nodes::List::SingleData>(&data)) {
+    else if (const auto *single_data = std::get_if<nodes::GList::SingleData>(&data)) {
       list_->cpp_type().fill_construct_indices(single_data->value, dst.data(), valid_indices);
     }
   }
@@ -169,13 +169,13 @@ static void node_rna(StructRNA *srna)
  * Needed because #execute_multi_function_on_value_variant does not support types that can't be
  * processed as fields.
  */
-static bke::SocketValueVariant get_single_item(ListPtr &list,
+static bke::SocketValueVariant get_single_item(GListPtr &list,
                                                const eNodeSocketDatatype socket_type,
                                                const int64_t index)
 {
   bke::SocketValueVariant value;
   void *value_ptr = value.allocate_single(socket_type);
-  if (const auto *data = std::get_if<List::ArrayData>(&list->data())) {
+  if (const auto *data = std::get_if<GList::ArrayData>(&list->data())) {
     if (list->is_mutable() && data->sharing_info->is_mutable()) {
       GMutableSpan data_span(list->cpp_type(), const_cast<void *>(data->data), list->size());
       list->cpp_type().move_construct(data_span[index], value_ptr);
@@ -185,7 +185,7 @@ static bke::SocketValueVariant get_single_item(ListPtr &list,
     list->cpp_type().copy_construct(data_span[index], value_ptr);
     return value;
   }
-  if (const auto *data = std::get_if<List::SingleData>(&list->data())) {
+  if (const auto *data = std::get_if<GList::SingleData>(&list->data())) {
     if (list->is_mutable() && data->sharing_info->is_mutable()) {
       list->cpp_type().move_construct(const_cast<void *>(data->value), value_ptr);
       return value;
@@ -197,9 +197,9 @@ static bke::SocketValueVariant get_single_item(ListPtr &list,
   return {};
 }
 
-static bke::SocketValueVariant get_socket_value_item(ListPtr &list, const int64_t index)
+static bke::SocketValueVariant get_socket_value_item(GListPtr &list, const int64_t index)
 {
-  if (const auto *data = std::get_if<List::ArrayData>(&list->data())) {
+  if (const auto *data = std::get_if<GList::ArrayData>(&list->data())) {
     if (list->is_mutable() && data->sharing_info->is_mutable()) {
       MutableSpan data_span(static_cast<bke::SocketValueVariant *>(const_cast<void *>(data->data)),
                             list->size());
@@ -209,7 +209,7 @@ static bke::SocketValueVariant get_socket_value_item(ListPtr &list, const int64_
                          list->size());
     return data_span[index];
   }
-  if (const auto *data = std::get_if<List::SingleData>(&list->data())) {
+  if (const auto *data = std::get_if<GList::SingleData>(&list->data())) {
     if (list->is_mutable() && data->sharing_info->is_mutable()) {
       return std::move(*static_cast<bke::SocketValueVariant *>(const_cast<void *>(data->value)));
     }
@@ -222,7 +222,7 @@ static bke::SocketValueVariant get_socket_value_item(ListPtr &list, const int64_
 static void node_geo_exec(GeoNodeExecParams params)
 {
   bke::SocketValueVariant index = params.extract_input<bke::SocketValueVariant>("Index"_ustr);
-  ListPtr list = params.extract_input<ListPtr>("List"_ustr);
+  GListPtr list = params.extract_input<GListPtr>("List"_ustr);
   if (!list) {
     params.set_default_remaining_outputs();
     return;

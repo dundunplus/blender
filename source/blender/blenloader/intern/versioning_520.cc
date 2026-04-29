@@ -520,6 +520,21 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     version_strip_modifier_show_preview_flag(*bmain);
   }
 
+  /* The ID member of the Viewer node is no longer initialized to the Viewer Image, so clear that
+   * member. */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 23)) {
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      if (node_tree->type == NTREE_COMPOSIT) {
+        for (bNode &node : node_tree->nodes) {
+          if (node.type_legacy == CMP_NODE_VIEWER) {
+            node.id = nullptr;
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

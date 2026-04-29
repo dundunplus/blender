@@ -8,7 +8,10 @@
 
 namespace blender::nodes {
 
-class List;
-using ListPtr = ImplicitSharingPtr<List>;
+class GList;
+using GListPtr = ImplicitSharingPtr<GList>;
+
+template<typename T> class List;
+template<typename T> using ListPtr = ImplicitSharingPtr<List<T>>;
 
 }  // namespace blender::nodes

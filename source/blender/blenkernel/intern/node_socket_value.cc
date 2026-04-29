@@ -199,11 +199,11 @@ template<typename T> T SocketValueVariant::extract()
     BLI_assert(static_type_is_base_socket_type<base_type>(this->socket_type()));
     return this->extract<fn::GField>().typed<base_type>();
   }
-  else if constexpr (std::is_same_v<T, nodes::ListPtr>) {
+  else if constexpr (std::is_same_v<T, nodes::GListPtr>) {
     if (this->kind() != Kind::List) {
       return {};
     }
-    return std::move(value_.get<nodes::ListPtr>());
+    return std::move(value_.get<nodes::GListPtr>());
   }
 #ifdef WITH_OPENVDB
   else if constexpr (std::is_same_v<T, GVolumeGrid>) {
@@ -278,7 +278,7 @@ template<typename T> void SocketValueVariant::store_impl(T value)
     /* Always store #Field<T> as #GField. */
     this->store_impl<fn::GField>(std::move(value));
   }
-  else if constexpr (std::is_same_v<T, nodes::ListPtr>) {
+  else if constexpr (std::is_same_v<T, nodes::GListPtr>) {
     const CPPType &list_cpp_type = value->cpp_type();
     eNodeSocketDatatype socket_type = SOCK_CUSTOM;
     if (list_cpp_type.is<bke::SocketValueVariant>()) {
@@ -295,7 +295,7 @@ template<typename T> void SocketValueVariant::store_impl(T value)
       BLI_assert(new_socket_type);
       socket_type = *new_socket_type;
     }
-    value_.emplace<nodes::ListPtr>(std::move(value));
+    value_.emplace<nodes::GListPtr>(std::move(value));
     value_.extra.socket_type = socket_type;
     value_.extra.kind = Kind::List;
   }
@@ -617,9 +617,9 @@ void SocketValueVariant::ensure_owns_direct_data()
         }
       }
       if (this->is_list()) {
-        if (nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+        if (nodes::GListPtr &list_ptr = value_.get<nodes::GListPtr>()) {
           list_ptr.ensure_mutable_inplace();
-          nodes::List &list = const_cast<nodes::List &>(*list_ptr);
+          auto &list = const_cast<nodes::GList &>(*list_ptr);
           list.ensure_owns_direct_data();
         }
       }
@@ -631,9 +631,9 @@ void SocketValueVariant::ensure_owns_direct_data()
         geometry.ensure_owns_direct_data();
       }
       if (this->is_list()) {
-        if (nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+        if (nodes::GListPtr &list_ptr = value_.get<nodes::GListPtr>()) {
           list_ptr.ensure_mutable_inplace();
-          nodes::List &list = const_cast<nodes::List &>(*list_ptr);
+          auto &list = const_cast<nodes::GList &>(*list_ptr);
           list.ensure_owns_direct_data();
         }
       }
@@ -679,7 +679,7 @@ bool SocketValueVariant::owns_direct_data() const
         }
       }
       else if (this->is_list()) {
-        if (const nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+        if (const auto &list_ptr = value_.get<nodes::GListPtr>()) {
           return list_ptr->owns_direct_data();
         }
       }
@@ -691,7 +691,7 @@ bool SocketValueVariant::owns_direct_data() const
         return geometry.owns_direct_data();
       }
       if (this->is_list()) {
-        if (const nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+        if (const auto &list_ptr = value_.get<nodes::GListPtr>()) {
           return list_ptr->owns_direct_data();
         }
       }
@@ -762,7 +762,7 @@ void SocketValueVariant::count_memory(MemoryCounter &memory) const
       break;
     }
     case Kind::List: {
-      if (const nodes::ListPtr &list = value_.get<nodes::ListPtr>()) {
+      if (const auto &list = value_.get<nodes::GListPtr>()) {
         list->count_memory(memory);
       }
       break;
@@ -797,7 +797,7 @@ INSTANTIATE(std::string)
 INSTANTIATE(fn::GField)
 INSTANTIATE(nodes::BundlePtr)
 INSTANTIATE(nodes::ClosurePtr)
-INSTANTIATE(nodes::ListPtr)
+INSTANTIATE(nodes::GListPtr)
 INSTANTIATE(bke::GeometrySet)
 
 INSTANTIATE(Object *)

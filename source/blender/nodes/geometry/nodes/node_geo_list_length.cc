@@ -63,7 +63,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  ListPtr list = params.extract_input<ListPtr>("List"_ustr);
+  auto list = params.extract_input<GListPtr>("List"_ustr);
   if (!list) {
     params.set_default_remaining_outputs();
     return;
