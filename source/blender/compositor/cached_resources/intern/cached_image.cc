@@ -335,12 +335,12 @@ CachedImage::CachedImage(Context &context,
   if (context.use_gpu()) {
     texture_ = IMB_create_gpu_texture("Image Texture", linear_image_buffer, true, true, false);
     GPU_texture_update_mipmap_chain(texture_);
-    this->result.wrap_external(texture_);
+    this->result.share_data(texture_);
   }
   else {
     const int2 size = int2(image_buffer->x, image_buffer->y);
     Result buffer_result(context, float_type(image_buffer->channels), ResultPrecision::Full);
-    buffer_result.wrap_external(linear_image_buffer->float_data_for_write(), size);
+    buffer_result.share_data(linear_image_buffer->float_data(), size);
     this->result.allocate_texture(size, false);
 
     if (buffer_result.type() == ResultType::Color && result.type() == ResultType::Float4) {

@@ -880,6 +880,7 @@ enum eStripModifierFlag : uint32_t {
   STRIP_MODIFIER_FLAG_MUTE = (1 << 0),
   STRIP_MODIFIER_FLAG_EXPANDED = (1 << 1),
   STRIP_MODIFIER_FLAG_ACTIVE = (1 << 2),
+  STRIP_MODIFIER_FLAG_SHOW_PREVIEW = (1 << 3),
 };
 ENUM_OPERATORS(eStripModifierFlag);
 
@@ -924,6 +925,10 @@ struct StripModifierData {
   struct IDProperty *system_properties = nullptr;
 
   blender::seq::StripModifierDataRuntime *runtime = nullptr;
+
+#ifdef __cplusplus
+  bool is_type_sound() const;
+#endif
 };
 
 struct ColorBalanceModifierData {

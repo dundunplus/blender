@@ -287,6 +287,24 @@ static void fix_single_point_curves_custom_knots(Main *bmain)
   }
 }
 
+static void version_strip_modifier_show_preview_flag(Main &bmain)
+{
+  for (Scene &scene : bmain.scenes) {
+    Editing *ed = seq::editing_get(&scene);
+    if (ed == nullptr) {
+      continue;
+    }
+    seq::foreach_strip(&ed->seqbase, [&](Strip *strip) {
+      for (StripModifierData &smd : strip->modifiers) {
+        if ((smd.flag & STRIP_MODIFIER_FLAG_MUTE) == 0) {
+          smd.flag |= STRIP_MODIFIER_FLAG_SHOW_PREVIEW;
+        }
+      }
+      return true;
+    });
+  }
+}
+
 void do_versions_after_linking_520(FileData *fd, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 2)) {
@@ -497,6 +515,11 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       }
     }
   }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 22)) {
+    version_strip_modifier_show_preview_flag(*bmain);
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

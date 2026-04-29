@@ -440,14 +440,14 @@ class Context : public compositor::Context {
       gpu::Texture *pass_texture = RE_pass_ensure_gpu_texture_cache(render, render_pass);
       /* Don't assume render will keep pass data stored, add our own reference. */
       GPU_texture_ref(pass_texture);
-      pass_data.wrap_external(pass_texture);
+      pass_data.share_data(pass_texture);
       cached_gpu_passes_.append(pass_texture);
     }
     else {
       /* Don't assume render will keep pass data stored, add our own reference. */
       IMB_refImBuf(render_pass->ibuf);
-      pass_data.wrap_external(render_pass->ibuf->float_data_for_write(),
-                              int2(render_pass->ibuf->x, render_pass->ibuf->y));
+      pass_data.share_data(render_pass->ibuf->float_data_for_write(),
+                           int2(render_pass->ibuf->x, render_pass->ibuf->y));
       cached_cpu_passes_.append(render_pass->ibuf);
     }
 
