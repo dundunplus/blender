@@ -3162,7 +3162,7 @@ void region_view_scroll_at_borders(bContext *C, wmDropBox &dropbox, const wmEven
  * \param xy: Coordinate to find a view item at, in window space.
  */
 AbstractViewItem *region_views_find_item_at(const ARegion &region, const int xy[2]);
-AbstractViewItem *region_views_find_active_item(const ARegion *region);
+AbstractViewItem *region_views_find_active_item(const ARegion *region, const AbstractView *view);
 Button *region_views_find_active_item_but(const ARegion *region);
 void region_views_clear_search_highlight(const ARegion *region);
 

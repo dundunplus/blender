@@ -298,9 +298,9 @@ AbstractViewItem *region_views_find_item_at(const ARegion &region, const int xy[
   return item_but->view_item;
 }
 
-AbstractViewItem *region_views_find_active_item(const ARegion *region)
+AbstractViewItem *region_views_find_active_item(const ARegion *region, const AbstractView *view)
 {
-  auto *item_but = static_cast<ButtonViewItem *>(view_item_find_active(region));
+  auto *item_but = static_cast<ButtonViewItem *>(view_item_find_active(region, view));
   if (!item_but) {
     return nullptr;
   }

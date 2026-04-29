@@ -1867,7 +1867,6 @@ void BKE_scopes_update(Scopes *scopes,
   uint nl, na, nr, ng, nb;
   double divl, diva, divr, divg, divb;
   int ycc_mode = -1;
-  void *cache_handle = nullptr;
   std::optional<ColormanageProcessor> cm_processor_positions;
   std::optional<ColormanageProcessor> cm_processor_colors;
 
@@ -2005,10 +2004,6 @@ void BKE_scopes_update(Scopes *scopes,
     scopes->hist.data_g[a] = data_chunk.bin_g[a] * divg;
     scopes->hist.data_b[a] = data_chunk.bin_b[a] * divb;
     scopes->hist.data_a[a] = data_chunk.bin_a[a] * diva;
-  }
-
-  if (cache_handle) {
-    IMB_display_buffer_release(cache_handle);
   }
 
   scopes->ok = 1;

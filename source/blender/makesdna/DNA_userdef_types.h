@@ -478,13 +478,6 @@ enum eMultiSample_Type {
   USER_MULTISAMPLE_16 = 16,
 };
 
-/** #UserDef.image_draw_method */
-enum eImageDrawMethod {
-  IMAGE_DRAW_METHOD_AUTO = 0,
-  IMAGE_DRAW_METHOD_GLSL = 1,
-  IMAGE_DRAW_METHOD_2DTEXTURE = 2,
-};
-
 /** #UserDef.virtual_pixel */
 enum eUserpref_VirtualPixel {
   VIRTUAL_PIXEL_NATIVE = 0,
@@ -1133,11 +1126,7 @@ struct UserDef {
                   NDOF_SHOULD_PAN | NDOF_SHOULD_ZOOM | NDOF_SHOULD_ROTATE | NDOF_CAMERA_PAN_ZOOM;
   /** #eNdof_Navigation_Mode, current navigation mode. */
   uint8_t ndof_navigation_mode = 0;
-  char _pad17[1] = {};
-
-  /** eImageDrawMethod, Method to be used to draw the images
-   * (AUTO, GLSL, Textures or DrawPixels) */
-  short image_draw_method = IMAGE_DRAW_METHOD_AUTO;
+  char _pad17[3] = {};
 
   float glalphaclip = 0.004;
 

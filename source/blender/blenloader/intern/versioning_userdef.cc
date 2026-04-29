@@ -1182,12 +1182,6 @@ void blo_do_versions_userdef(UserDef *userdef)
     userdef->move_threshold = 2;
   }
 
-  if (!USER_VERSION_ATLEAST(280, 58)) {
-    if (userdef->image_draw_method != IMAGE_DRAW_METHOD_GLSL) {
-      userdef->image_draw_method = IMAGE_DRAW_METHOD_AUTO;
-    }
-  }
-
   /* Patch to set dupli light-probes and grease-pencil. */
   if (!USER_VERSION_ATLEAST(280, 58)) {
     userdef->dupflag |= USER_DUP_LIGHTPROBE;

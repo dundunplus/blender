@@ -328,39 +328,18 @@ ImBuf *IMB_colormanagement_imbuf_for_write(ImBuf *ibuf,
                                            bool allocate_result,
                                            const ImageFormatData *image_format);
 
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Public Display Buffers Interfaces
- * \{ */
-
 void IMB_colormanagement_display_settings_from_ctx(
     const bContext *C,
     ColorManagedViewSettings **r_view_settings,
     ColorManagedDisplaySettings **r_display_settings);
 
-/**
- * Acquire display buffer for given image buffer using specified view and display settings.
- */
-const uchar *IMB_display_buffer_acquire(ImBuf *ibuf,
-                                        const ColorManagedViewSettings *view_settings,
-                                        const ColorManagedDisplaySettings *display_settings,
-                                        void **cache_handle);
-/**
- * Same as #IMB_display_buffer_acquire but gets view and display settings from context.
- */
-const uchar *IMB_display_buffer_acquire_ctx(const bContext *C, ImBuf *ibuf, void **cache_handle);
-
-void IMB_display_buffer_transform_apply(unsigned char *display_buffer,
-                                        float *linear_buffer,
-                                        int width,
-                                        int height,
-                                        int channels,
-                                        const ColorManagedViewSettings *view_settings,
-                                        const ColorManagedDisplaySettings *display_settings,
-                                        bool predivide);
-
-void IMB_display_buffer_release(void *cache_handle);
+void IMB_colormanagement_scene_linear_to_display_buffer(
+    uint8_t *display_buffer,
+    const float *linear_buffer,
+    int width,
+    int height,
+    const ColorManagedViewSettings *view_settings,
+    const ColorManagedDisplaySettings *display_settings);
 
 /** \} */
 
@@ -480,42 +459,6 @@ void IMB_colormanagement_colorspace_items_add(EnumPropertyItem **items, int *tot
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Tile-based Buffer Management
- * \{ */
-
-void IMB_partial_display_buffer_update(ImBuf *ibuf,
-                                       const float *linear_buffer,
-                                       const unsigned char *byte_buffer,
-                                       int stride,
-                                       int offset_x,
-                                       int offset_y,
-                                       const ColorManagedViewSettings *view_settings,
-                                       const ColorManagedDisplaySettings *display_settings,
-                                       int xmin,
-                                       int ymin,
-                                       int xmax,
-                                       int ymax);
-
-void IMB_partial_display_buffer_update_threaded(
-    ImBuf *ibuf,
-    const float *linear_buffer,
-    const unsigned char *byte_buffer,
-    int stride,
-    int offset_x,
-    int offset_y,
-    const ColorManagedViewSettings *view_settings,
-    const ColorManagedDisplaySettings *display_settings,
-    int xmin,
-    int ymin,
-    int xmax,
-    int ymax);
-
-void IMB_partial_display_buffer_update_delayed(
-    ImBuf *ibuf, int xmin, int ymin, int xmax, int ymax);
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Pixel Processor Functions
  * \{ */
 class ColormanageProcessor : NonCopyable {
@@ -605,7 +548,8 @@ bool IMB_colormanagement_setup_glsl_draw_from_space(
     float dither,
     bool predivide,
     bool do_overlay_merge,
-    ColorManagedDisplaySpace display_space = DISPLAY_SPACE_DRAW);
+    ColorManagedDisplaySpace display_space = DISPLAY_SPACE_DRAW,
+    float opacity = 1.0f);
 /**
  * Same as setup_glsl_draw, but color management settings are guessing from a given context.
  */
