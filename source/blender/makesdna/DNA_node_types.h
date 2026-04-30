@@ -3338,6 +3338,13 @@ struct NodeGeometrySampleIndex {
   char _pad[1] = {};
 };
 
+struct NodeRaycastSampleAttributeItem {
+  int8_t data_type = 0; /** #eCustomDataType. */
+  char _pad[3] = {};
+  int identifier;
+  char *name = nullptr;
+};
+
 struct NodeGeometryRaycast {
   DNA_DEFINE_CXX_METHODS(NodeGeometryRaycast)
 
@@ -3346,6 +3353,16 @@ struct NodeGeometryRaycast {
 
   /** #eCustomDataType. */
   int8_t data_type = 0;
+};
+
+struct NodeShaderRaycast {
+  DNA_DEFINE_CXX_METHODS(NodeShaderRaycast)
+
+  int _pad0;
+  int next_identifier = 0;
+  NodeRaycastSampleAttributeItem *sample_attribute_items = nullptr;
+  int sample_attribute_items_num = 0;
+  int active_index = 0;
 };
 
 struct NodeGeometryCurveFill {

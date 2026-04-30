@@ -535,6 +535,19 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     FOREACH_NODETREE_END;
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 24)) {
+    FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+      if (node_tree->type == NTREE_SHADER) {
+        for (bNode &node : node_tree->nodes) {
+          if (node.type_legacy == SH_NODE_RAYCAST && node.storage == nullptr) {
+            node.storage = MEM_new<NodeShaderRaycast>(__func__);
+          }
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.

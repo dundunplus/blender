@@ -380,6 +380,37 @@ class TestPropArrayIndex(unittest.TestCase):
         )
 
 
+class TestPropArraySliceStep(unittest.TestCase):
+    # Even though slice steps other than 1 are not yet supported,
+    # ensure the basics work and the unsupported cases show errors as expected.
+
+    size_1d = 10
+
+    def setUp(self):
+        id_type.test_array_i_1d = IntVectorProperty(size=self.size_1d)
+        id_inst.test_array_i_1d = tuple(range(self.size_1d))
+
+    def tearDown(self):
+        del id_type.test_array_i_1d
+
+    def test_slice_step_one_is_no_op(self):
+        # `arr[a:b:1]` must behave identically to `arr[a:b]`.
+        arr = id_inst.test_array_i_1d
+        self.assertEqual(tuple(arr[::1]), tuple(arr[:]))
+        self.assertEqual(tuple(arr[2:7:1]), tuple(arr[2:7]))
+        self.assertEqual(tuple(arr[2:7:1]), (2, 3, 4, 5, 6))
+
+    def test_slice_step_unsupported_message(self):
+        # Non-1 steps must be rejected with the documented message.
+        arr = id_inst.test_array_i_1d
+        with self.assertRaisesRegex(TypeError, "slice steps not supported"):
+            arr[::2]
+        with self.assertRaisesRegex(TypeError, "slice steps not supported"):
+            arr[1:5:2]
+        with self.assertRaisesRegex(TypeError, "slice steps not supported"):
+            arr[::-1]
+
+
 class TestPropArrayForeach(unittest.TestCase):
     # Test foreach_get/_set access of Int and Float vector properties (bool ones do not support this).
 
