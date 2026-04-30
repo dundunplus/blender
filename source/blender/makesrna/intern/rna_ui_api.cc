@@ -105,14 +105,21 @@ std::optional<StringRefNull> rna_translate_ui_text(
   return BLT_pgettext(BLT_I18NCONTEXT_DEFAULT, text);
 }
 
-static void rna_uiItemTextBox(
-    Layout *layout, bContext *C, PointerRNA *ptr, const char *propname, PointerRNA *state_ptr)
+static void rna_uiItemTextBox(Layout *layout,
+                              bContext *C,
+                              PointerRNA *ptr,
+                              const char *propname,
+                              PointerRNA *state_ptr,
+                              const char *placeholder)
 {
+  std::optional<StringRefNull> placeholder_opt = placeholder ? std::make_optional<StringRefNull>(
+                                                                   placeholder) :
+                                                               std::nullopt;
   if (state_ptr && !RNA_pointer_is_null(state_ptr)) {
-    layout->textbox_with_state(ptr, propname, state_ptr->data_as<TextboxState>());
+    layout->textbox_with_state(ptr, propname, state_ptr->data_as<TextboxState>(), placeholder_opt);
   }
   else {
-    layout->textbox(C, ptr, propname);
+    layout->textbox(C, ptr, propname, placeholder_opt);
   }
 }
 
@@ -1515,6 +1522,9 @@ void RNA_api_ui_layout(StructRNA *srna)
   api_ui_item_rna_common(func);
   parm = RNA_def_pointer(func, "textbox_state", "TextboxState", nullptr, "");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_RNAPTR);
+  parm = RNA_def_string(
+      func, "placeholder", nullptr, 0, "", "Hint describing the expected value when empty");
+  RNA_def_property_clear_flag(parm, PROP_NEVER_NULL);
 
   func = RNA_def_function(srna, "prop", "rna_uiItemR");
   RNA_def_function_ui_description(func,

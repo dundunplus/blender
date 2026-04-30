@@ -461,64 +461,55 @@ bool IMB_initImBuf(ImBuf *ibuf, uint x, uint y, uchar planes, uint flags)
 
 ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
 {
-  ImBuf *ibuf2, tbuf;
-  int flags = IB_uninitialized_pixels;
-  int x, y;
-
   if (ibuf1 == nullptr) {
     return nullptr;
   }
 
-  if (ibuf1->byte_data()) {
-    flags |= IB_byte_data;
-  }
-
-  x = ibuf1->x;
-  y = ibuf1->y;
-
-  ibuf2 = IMB_allocImBuf(x, y, ibuf1->planes, flags);
+  ImBuf *ibuf2 = IMB_allocImBuf(ibuf1->x, ibuf1->y, ibuf1->planes, 0);
   if (ibuf2 == nullptr) {
     return nullptr;
   }
-
-  if (flags & IB_byte_data) {
-    memcpy(ibuf2->byte_data_for_write(), ibuf1->byte_data(), size_t(x) * y * 4 * sizeof(uint8_t));
-  }
-
-  if (ibuf1->float_data()) {
-    /* Ensure the correct number of channels are being allocated for the new #ImBuf. Some
-     * compositing scenarios might end up with >4 channels and we want to duplicate them properly.
-     */
-    if (IMB_alloc_float_pixels(ibuf2, ibuf1->channels, false) == false) {
-      IMB_freeImBuf(ibuf2);
-      return nullptr;
-    }
-
+  ibuf2->x = ibuf1->x;
+  ibuf2->y = ibuf1->y;
+  ibuf2->display_size[0] = ibuf1->display_size[0];
+  ibuf2->display_size[1] = ibuf1->display_size[1];
+  ibuf2->data_offset[0] = ibuf1->data_offset[0];
+  ibuf2->data_offset[1] = ibuf1->data_offset[1];
+  ibuf2->display_offset[0] = ibuf1->display_offset[0];
+  ibuf2->display_offset[1] = ibuf1->display_offset[1];
+  ibuf2->planes = ibuf1->planes;
+  ibuf2->channels = ibuf1->channels;
+  ibuf2->flags = ibuf1->flags;
+  if (const float *src_buffer = ibuf1->float_data()) {
+    IMB_alloc_float_pixels(ibuf2, ibuf1->channels, false);
     memcpy(ibuf2->float_data_for_write(),
-           ibuf1->float_data(),
-           size_t(ibuf2->channels) * x * y * sizeof(float));
+           src_buffer,
+           sizeof(float) * ibuf1->channels * ibuf1->x * ibuf1->y);
+    ibuf2->float_buffer.colorspace = ibuf1->float_buffer.colorspace;
   }
-
-  ibuf2->byte_buffer.colorspace = ibuf1->byte_buffer.colorspace;
-  ibuf2->float_buffer.colorspace = ibuf1->float_buffer.colorspace;
-
-  /* silly trick to copy the entire contents of ibuf1 struct over to ibuf */
-  tbuf = *ibuf1;
-
-  /* fix pointers */
-  tbuf.byte_buffer = ibuf2->byte_buffer;
-  tbuf.float_buffer = ibuf2->float_buffer;
-
-  tbuf.refcounter = 0;
-
-  /* for now don't duplicate metadata */
-  tbuf.metadata = nullptr;
-
+  if (const uint8_t *src_buffer = ibuf1->byte_data()) {
+    IMB_alloc_byte_pixels(ibuf2, false);
+    memcpy(ibuf2->byte_data_for_write(), src_buffer, sizeof(uint8_t) * 4 * ibuf1->x * ibuf1->y);
+    ibuf2->byte_buffer.colorspace = ibuf1->byte_buffer.colorspace;
+  }
   /* GPU textures can not be easily copied, as it is not guaranteed that this function is called
    * from within an active GPU context. */
-  tbuf.gpu.texture = nullptr;
-
-  *ibuf2 = tbuf;
+  ibuf2->gpu.texture = nullptr;
+  ibuf2->ppm[0] = ibuf1->ppm[0];
+  ibuf2->ppm[1] = ibuf1->ppm[1];
+  ibuf2->dither = ibuf1->dither;
+  ibuf2->index = ibuf1->index;
+  ibuf2->userflags = ibuf1->userflags;
+  ibuf2->userflags = ibuf1->userflags;
+  /* for now don't duplicate metadata */
+  ibuf2->metadata = nullptr;
+  ibuf2->exrhandle = ibuf1->exrhandle;
+  ibuf2->ftype = ibuf1->ftype;
+  ibuf2->foptions = ibuf1->foptions;
+  ibuf2->filepath = ibuf1->filepath;
+  ibuf2->fileframe = ibuf1->fileframe;
+  ibuf2->refcounter = 0;
+  ibuf2->colormanage_flag = ibuf1->colormanage_flag;
 
   return ibuf2;
 }

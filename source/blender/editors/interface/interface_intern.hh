@@ -382,6 +382,10 @@ struct ButtonTextBox : public Button {
 
   /** Wrap cache from last redraw/event handling. */
   std::unique_ptr<TextWrapCache> wrap_cache;
+
+  /** Placeholder wrap cache from last draw. */
+  std::unique_ptr<TextWrapCache> placeholder_wrap_cache;
+
   void line_scroll_set(int line_scroll);
   int line_scroll() const;
   int visible_lines() const;

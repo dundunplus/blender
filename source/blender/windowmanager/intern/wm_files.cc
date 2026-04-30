@@ -2309,12 +2309,14 @@ static bool wm_autosave_write_try(Main *bmain, wmWindowManager *wm)
    * auto-save when we are in a mode where auto-save wouldn't have worked previously anyway. This
    * check can be removed once the performance regressions have been solved. */
   if (ED_undosys_stack_memfile_get_if_active(wm->runtime->undo_stack) != nullptr) {
-    WM_autosave_write(wm, bmain, nullptr);
-    return true;
+    const bool success = WM_autosave_write(wm, bmain, &wm->runtime->reports);
+    WM_report_banner_show(wm, nullptr);
+    return success;
   }
   if ((U.uiflag & USER_GLOBALUNDO) == 0) {
-    WM_autosave_write(wm, bmain, nullptr);
-    return true;
+    const bool success = WM_autosave_write(wm, bmain, &wm->runtime->reports);
+    WM_report_banner_show(wm, nullptr);
+    return success;
   }
   /* Can't auto-save with MemFile right now, try again later. */
   return false;

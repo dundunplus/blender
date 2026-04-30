@@ -1122,6 +1122,7 @@ static bool but_update_from_old_block(Block *block,
     /* Steal text wrap cache if the old textbox is not active. */
     if (!(oldbut->active || oldbut->semi_modal_state)) {
       textbox->wrap_cache = std::move(old_textbox->wrap_cache);
+      textbox->placeholder_wrap_cache = std::move(old_textbox->placeholder_wrap_cache);
     }
   }
 
