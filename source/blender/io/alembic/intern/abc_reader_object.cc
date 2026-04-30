@@ -45,8 +45,6 @@ AbcObjectReader::AbcObjectReader(const AbcReaderConstructorArgs &args)
       m_iobject(args.object),
       m_settings(&args.settings),
       m_is_reading_a_file_sequence(args.settings.is_sequence),
-      m_min_time(std::numeric_limits<chrono_t>::max()),
-      m_max_time(std::numeric_limits<chrono_t>::min()),
       m_refcount(0),
       parent_reader(nullptr)
 {
@@ -281,16 +279,6 @@ void AbcObjectReader::addCacheModifier()
   id_us_plus(&mcmd->cache_file->id);
 
   STRNCPY(mcmd->object_path, m_iobject.getFullName().c_str());
-}
-
-chrono_t AbcObjectReader::minTime() const
-{
-  return m_min_time;
-}
-
-chrono_t AbcObjectReader::maxTime() const
-{
-  return m_max_time;
 }
 
 int AbcObjectReader::refcount() const

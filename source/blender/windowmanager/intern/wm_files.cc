@@ -2309,11 +2309,11 @@ static bool wm_autosave_write_try(Main *bmain, wmWindowManager *wm)
    * auto-save when we are in a mode where auto-save wouldn't have worked previously anyway. This
    * check can be removed once the performance regressions have been solved. */
   if (ED_undosys_stack_memfile_get_if_active(wm->runtime->undo_stack) != nullptr) {
-    WM_autosave_write(wm, bmain);
+    WM_autosave_write(wm, bmain, nullptr);
     return true;
   }
   if ((U.uiflag & USER_GLOBALUNDO) == 0) {
-    WM_autosave_write(wm, bmain);
+    WM_autosave_write(wm, bmain, nullptr);
     return true;
   }
   /* Can't auto-save with MemFile right now, try again later. */
@@ -2325,7 +2325,7 @@ bool WM_autosave_is_scheduled(wmWindowManager *wm)
   return wm->autosave_scheduled;
 }
 
-void WM_autosave_write(wmWindowManager *wm, Main *bmain)
+bool WM_autosave_write(wmWindowManager *wm, Main *bmain, ReportList *reports)
 {
   ED_editors_flush_edits(bmain);
 
@@ -2337,13 +2337,14 @@ void WM_autosave_write(wmWindowManager *wm, Main *bmain)
 
   /* Error reporting into console. */
   BlendFileWriteParams params{};
-  BLO_write_file(bmain, filepath, fileflags, &params, nullptr);
+  const bool success = BLO_write_file(bmain, filepath, fileflags, &params, reports);
 
   /* Restart auto-save timer. */
   wm_autosave_timer_end(wm);
   wm_autosave_timer_begin(wm);
 
-  wm->autosave_scheduled = false;
+  wm->autosave_scheduled = !success;
+  return success;
 }
 
 static void wm_autosave_timer_begin_ex(wmWindowManager *wm, double timestep)
@@ -2417,6 +2418,21 @@ void wm_autosave_delete()
       BLI_rename_overwrite(filepath, filepath_quit);
     }
   }
+}
+
+static wmOperatorStatus wm_save_auto_save_exec(bContext *C, wmOperator *op)
+{
+  const bool success = WM_autosave_write(CTX_wm_manager(C), CTX_data_main(C), op->reports);
+  return success ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+void WM_OT_save_auto_save(wmOperatorType *ot)
+{
+  ot->name = "Save Autosave";
+  ot->idname = "WM_OT_save_auto_save";
+  ot->description = "Create an autosave in the temp directory for the current file";
+
+  ot->exec = wm_save_auto_save_exec;
 }
 
 /** \} */
