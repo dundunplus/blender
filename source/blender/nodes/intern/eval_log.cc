@@ -250,7 +250,7 @@ ClosureValueLog::ClosureValueLog(Vector<Item> inputs,
   }
 }
 
-ListInfoLog::ListInfoLog(const GList *list)
+ListInfoLog::ListInfoLog(const GListPtr &list)
 {
   if (!list) {
     this->size = 0;
@@ -329,7 +329,7 @@ void NodeTreeLogger::log_value(const bNode &node, const bNodeSocket &socket, con
 #endif
     else if (value_variant.is_list()) {
       const auto list = value_variant.extract<GListPtr>();
-      store_logged_value(this->allocator->construct<ListInfoLog>(list.get()));
+      store_logged_value(this->allocator->construct<ListInfoLog>(list));
     }
     else if (value_variant.valid_for_socket(SOCK_BUNDLE)) {
       Vector<BundleValueLog::Item> items;

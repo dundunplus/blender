@@ -156,7 +156,7 @@ void outliner_free_tree(ListBaseT<TreeElement> *tree)
 
 void outliner_cleanup_tree(SpaceOutliner *space_outliner)
 {
-  outliner_free_tree(&space_outliner->tree);
+  outliner_free_tree(&space_outliner->runtime->tree);
   outliner_storage_cleanup(space_outliner);
 }
 
@@ -711,7 +711,8 @@ static void outliner_restore_scrolling_position(SpaceOutliner *space_outliner,
   if (focus->tselem != nullptr) {
     outliner_set_coordinates(region, space_outliner);
 
-    TreeElement *te_new = outliner_find_tree_element(&space_outliner->tree, focus->tselem);
+    TreeElement *te_new = outliner_find_tree_element(&space_outliner->runtime->tree,
+                                                     focus->tselem);
 
     if (te_new != nullptr) {
       int ys_new = te_new->ys;
@@ -777,7 +778,8 @@ static TreeElement *outliner_find_first_desired_element_at_y(const SpaceOutliner
                                                              const float view_co,
                                                              const float view_co_limit)
 {
-  TreeElement *te = outliner_find_item_at_y(space_outliner, &space_outliner->tree, view_co);
+  TreeElement *te = outliner_find_item_at_y(
+      space_outliner, &space_outliner->runtime->tree, view_co);
 
   bool (*callback_test)(TreeElement *);
   if ((space_outliner->outlinevis == SO_VIEW_LAYER) &&
@@ -1157,7 +1159,7 @@ static void outliner_filter_tree(const Main &bmain,
                           bmain,
                           scene,
                           view_layer,
-                          &space_outliner->tree,
+                          &space_outliner->runtime->tree,
                           search_string,
                           exclude_filter);
 }
@@ -1217,7 +1219,7 @@ void outliner_build_tree(Main *mainvar,
   OutlinerTreeElementFocus focus;
   outliner_store_scrolling_position(space_outliner, region, &focus);
 
-  outliner_free_tree(&space_outliner->tree);
+  outliner_free_tree(&space_outliner->runtime->tree);
   outliner_storage_cleanup(space_outliner);
 
   space_outliner->runtime->tree_display = AbstractTreeDisplay::create_from_display_mode(
@@ -1227,18 +1229,18 @@ void outliner_build_tree(Main *mainvar,
   BLI_assert(space_outliner->runtime->tree_display != nullptr);
 
   TreeSourceData source_data{*mainvar, *workspace, *scene, *view_layer};
-  space_outliner->tree = ListBaseT<TreeElement>{
+  space_outliner->runtime->tree = ListBaseT<TreeElement>{
       space_outliner->runtime->tree_display->build_tree(source_data)};
 
   if ((space_outliner->flag & SO_SKIP_SORT_ALPHA) == 0) {
-    outliner_sort(&space_outliner->tree);
+    outliner_sort(&space_outliner->runtime->tree);
   }
   else if ((space_outliner->filter & SO_FILTER_NO_CHILDREN) == 0) {
     /* We group the children that are in the collection before the ones that are not.
      * This way we can try to draw them in a different style altogether.
      * We also have to respect the original order of the elements in case alphabetical
      * sorting is not enabled. This keep object data and modifiers before its children. */
-    outliner_collections_children_sort(&space_outliner->tree);
+    outliner_collections_children_sort(&space_outliner->runtime->tree);
   }
 
   outliner_filter_tree(*mainvar, space_outliner, scene, view_layer);

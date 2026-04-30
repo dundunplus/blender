@@ -205,6 +205,14 @@ template<typename T> T SocketValueVariant::extract()
     }
     return std::move(value_.get<nodes::GListPtr>());
   }
+  else if constexpr (nodes::is_ListPtr_v<T>) {
+    if (this->kind() != Kind::List) {
+      return {};
+    }
+    using base_type = typename T::base_type;
+    BLI_assert(static_type_is_base_socket_type<base_type>(this->socket_type()));
+    return this->extract<nodes::GListPtr>().typed<base_type>();
+  }
 #ifdef WITH_OPENVDB
   else if constexpr (std::is_same_v<T, GVolumeGrid>) {
     switch (this->kind()) {
@@ -298,6 +306,10 @@ template<typename T> void SocketValueVariant::store_impl(T value)
     value_.emplace<nodes::GListPtr>(std::move(value));
     value_.extra.socket_type = socket_type;
     value_.extra.kind = Kind::List;
+  }
+  else if constexpr (nodes::is_ListPtr_v<T>) {
+    /* Always store #ListPtr as #GListPtr.*/
+    this->store_impl<nodes::GListPtr>(std::move(value));
   }
 #ifdef WITH_OPENVDB
   else if constexpr (std::is_same_v<T, GVolumeGrid>) {
@@ -618,8 +630,7 @@ void SocketValueVariant::ensure_owns_direct_data()
       }
       if (this->is_list()) {
         if (nodes::GListPtr &list_ptr = value_.get<nodes::GListPtr>()) {
-          list_ptr.ensure_mutable_inplace();
-          auto &list = const_cast<nodes::GList &>(*list_ptr);
+          auto &list = list_ptr.get_for_write();
           list.ensure_owns_direct_data();
         }
       }
@@ -632,8 +643,7 @@ void SocketValueVariant::ensure_owns_direct_data()
       }
       if (this->is_list()) {
         if (nodes::GListPtr &list_ptr = value_.get<nodes::GListPtr>()) {
-          list_ptr.ensure_mutable_inplace();
-          auto &list = const_cast<nodes::GList &>(*list_ptr);
+          auto &list = list_ptr.get_for_write();
           list.ensure_owns_direct_data();
         }
       }
@@ -776,45 +786,51 @@ void SocketValueVariant::count_memory(MemoryCounter &memory) const
   template void SocketValueVariant::store_impl(TYPE);
 
 #ifdef WITH_OPENVDB
-#  define INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(TYPE) \
+#  define INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(TYPE) \
     INSTANTIATE(TYPE) \
     INSTANTIATE(fn::Field<TYPE>) \
+    INSTANTIATE(nodes::ListPtr<TYPE>) \
     INSTANTIATE(VolumeGrid<TYPE>)
 #else
-#  define INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(TYPE) \
+#  define INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(TYPE) \
     INSTANTIATE(TYPE) \
-    INSTANTIATE(fn::Field<TYPE>)
+    INSTANTIATE(fn::Field<TYPE>) \
+    INSTANTIATE(nodes::ListPtr<TYPE>)
 #endif
 
-INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(int)
-INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(bool)
-INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(float)
-INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(float3)
-INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(ColorGeometry4f)
-INSTANTIATE_SINGLE_AND_FIELD_AND_GRID(math::Quaternion)
+#define INSTANTIATE_SINGLE_AND_LIST(TYPE) \
+  INSTANTIATE(TYPE) \
+  INSTANTIATE(nodes::ListPtr<TYPE>)
 
-INSTANTIATE(std::string)
+INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(int)
+INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(bool)
+INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(float)
+INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(float3)
+INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(ColorGeometry4f)
+INSTANTIATE_SINGLE_AND_FIELD_AND_GRID_AND_LIST(math::Quaternion)
+
+INSTANTIATE_SINGLE_AND_LIST(std::string)
 INSTANTIATE(fn::GField)
-INSTANTIATE(nodes::BundlePtr)
-INSTANTIATE(nodes::ClosurePtr)
+INSTANTIATE_SINGLE_AND_LIST(nodes::BundlePtr)
+INSTANTIATE_SINGLE_AND_LIST(nodes::ClosurePtr)
 INSTANTIATE(nodes::GListPtr)
-INSTANTIATE(bke::GeometrySet)
+INSTANTIATE_SINGLE_AND_LIST(bke::GeometrySet)
 
-INSTANTIATE(Object *)
-INSTANTIATE(Collection *)
-INSTANTIATE(Tex *)
-INSTANTIATE(Image *)
-INSTANTIATE(Material *)
-INSTANTIATE(VFont *)
-INSTANTIATE(Scene *)
-INSTANTIATE(Text *)
-INSTANTIATE(Mask *)
-INSTANTIATE(bSound *)
+INSTANTIATE_SINGLE_AND_LIST(Object *)
+INSTANTIATE_SINGLE_AND_LIST(Collection *)
+INSTANTIATE_SINGLE_AND_LIST(Tex *)
+INSTANTIATE_SINGLE_AND_LIST(Image *)
+INSTANTIATE_SINGLE_AND_LIST(Material *)
+INSTANTIATE_SINGLE_AND_LIST(VFont *)
+INSTANTIATE_SINGLE_AND_LIST(Scene *)
+INSTANTIATE_SINGLE_AND_LIST(Text *)
+INSTANTIATE_SINGLE_AND_LIST(Mask *)
+INSTANTIATE_SINGLE_AND_LIST(bSound *)
 
-INSTANTIATE(float4x4)
+INSTANTIATE_SINGLE_AND_LIST(float4x4)
 INSTANTIATE(fn::Field<float4x4>)
 
-INSTANTIATE(nodes::MenuValue)
+INSTANTIATE_SINGLE_AND_LIST(nodes::MenuValue)
 INSTANTIATE(fn::Field<nodes::MenuValue>)
 
 #ifdef WITH_OPENVDB

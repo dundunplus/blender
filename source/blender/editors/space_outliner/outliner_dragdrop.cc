@@ -81,7 +81,7 @@ static TreeElement *outliner_dropzone_find(const SpaceOutliner *space_outliner,
                                            const float fmval[2],
                                            const bool children)
 {
-  for (TreeElement &te : space_outliner->tree) {
+  for (TreeElement &te : space_outliner->runtime->tree) {
     TreeElement *te_valid = outliner_dropzone_element(&te, fmval, children);
     if (te_valid) {
       return te_valid;
@@ -122,7 +122,7 @@ static TreeElement *outliner_drop_insert_find(bContext *C,
   float view_mval[2];
 
   /* Empty tree, e.g. while filtered. */
-  if (BLI_listbase_is_empty(&space_outliner->tree)) {
+  if (BLI_listbase_is_empty(&space_outliner->runtime->tree)) {
     return nullptr;
   }
 
@@ -131,7 +131,8 @@ static TreeElement *outliner_drop_insert_find(bContext *C,
   mval[1] = xy[1] - region->winrct.ymin;
 
   ui::view2d_region_to_view(&region->v2d, mval[0], mval[1], &view_mval[0], &view_mval[1]);
-  te_hovered = outliner_find_item_at_y(space_outliner, &space_outliner->tree, view_mval[1]);
+  te_hovered = outliner_find_item_at_y(
+      space_outliner, &space_outliner->runtime->tree, view_mval[1]);
 
   if (te_hovered) {
     /* Mouse hovers an element (ignoring x-axis),
@@ -163,8 +164,8 @@ static TreeElement *outliner_drop_insert_find(bContext *C,
 
   /* Mouse doesn't hover any item (ignoring x-axis),
    * so it's either above list bounds or below. */
-  TreeElement *first = static_cast<TreeElement *>(space_outliner->tree.first);
-  TreeElement *last = static_cast<TreeElement *>(space_outliner->tree.last);
+  TreeElement *first = static_cast<TreeElement *>(space_outliner->runtime->tree.first);
+  TreeElement *last = static_cast<TreeElement *>(space_outliner->runtime->tree.last);
 
   if (view_mval[1] < last->ys) {
     *r_insert_type = TE_INSERT_AFTER;
@@ -399,7 +400,7 @@ static void parent_drop_set_parents(bContext *C,
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
 
   TreeElement *te = outliner_find_id(
-      space_outliner, &space_outliner->tree, &parent->id, TreeElementFlag(0));
+      space_outliner, &space_outliner->runtime->tree, &parent->id, TreeElementFlag(0));
   Scene *scene = id_cast<Scene *>(outliner_search_back(te, ID_SCE));
 
   if (scene == nullptr) {
@@ -1047,7 +1048,8 @@ static void datastack_drop_reorder(bContext *C, ReportList *reports, StackDropDa
 {
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
 
-  TreeElement *drag_te = outliner_find_tree_element(&space_outliner->tree, drop_data->drag_tselem);
+  TreeElement *drag_te = outliner_find_tree_element(&space_outliner->runtime->tree,
+                                                    drop_data->drag_tselem);
   if (!drag_te) {
     return;
   }
@@ -1356,7 +1358,8 @@ static wmOperatorStatus collection_drop_invoke(bContext *C,
     relative = data.to;
     relative_after = (data.insert_type == TE_INSERT_AFTER);
 
-    TreeElement *parent_te = outliner_find_parent_element(&space_outliner->tree, nullptr, data.te);
+    TreeElement *parent_te = outliner_find_parent_element(
+        &space_outliner->runtime->tree, nullptr, data.te);
     data.to = (parent_te) ? outliner_collection_from_tree_element(parent_te) : nullptr;
   }
 
@@ -1448,7 +1451,7 @@ static TreeElement *outliner_item_drag_element_find(SpaceOutliner *space_outline
   WM_event_drag_start_mval(event, region, mval);
 
   const float my = ui::view2d_region_to_view_y(&region->v2d, mval[1]);
-  return outliner_find_item_at_y(space_outliner, &space_outliner->tree, my);
+  return outliner_find_item_at_y(space_outliner, &space_outliner->runtime->tree, my);
 }
 
 static wmOperatorStatus outliner_item_drag_drop_invoke(bContext *C,
@@ -1522,7 +1525,7 @@ static wmOperatorStatus outliner_item_drag_drop_invoke(bContext *C,
 
     if (GS(data.drag_id->name) == ID_OB) {
       outliner_tree_traverse(space_outliner,
-                             &space_outliner->tree,
+                             &space_outliner->runtime->tree,
                              0,
                              TSE_SELECTED,
                              outliner_collect_selected_objects,
@@ -1530,7 +1533,7 @@ static wmOperatorStatus outliner_item_drag_drop_invoke(bContext *C,
     }
     else {
       outliner_tree_traverse(space_outliner,
-                             &space_outliner->tree,
+                             &space_outliner->runtime->tree,
                              0,
                              TSE_SELECTED,
                              outliner_collect_selected_collections,

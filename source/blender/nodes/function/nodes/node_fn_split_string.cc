@@ -46,7 +46,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const std::string separator = params.extract_input<std::string>("Separator"_ustr);
 
   Vector<std::string> list = split_string(str, separator);
-  params.set_output("List"_ustr, GList::from_container(std::move(list)));
+  params.set_output("List"_ustr, List<std::string>::from_container(std::move(list)));
 }
 
 static void node_register()

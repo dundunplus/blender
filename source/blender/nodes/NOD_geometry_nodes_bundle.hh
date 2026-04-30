@@ -11,6 +11,7 @@
 #include "BLI_ustring.hh"
 
 #include "NOD_geometry_nodes_bundle_fwd.hh"
+#include "NOD_geometry_nodes_list.hh"
 #include "NOD_geometry_nodes_values.hh"
 
 #include "DNA_node_types.h"

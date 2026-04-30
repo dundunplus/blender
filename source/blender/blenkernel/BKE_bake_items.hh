@@ -15,7 +15,7 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_volume_grid_fwd.hh"
 
-#include "NOD_geometry_nodes_list_fwd.hh"
+#include "NOD_geometry_nodes_list.hh"
 
 namespace blender::bke::bake {
 

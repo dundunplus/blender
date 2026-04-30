@@ -14,7 +14,8 @@
 
 #include "NOD_geometry_nodes_bundle_fwd.hh"
 #include "NOD_geometry_nodes_closure_fwd.hh"
-#include "NOD_geometry_nodes_list_fwd.hh"
+
+#include "NOD_geometry_nodes_list.hh"
 
 #include "spreadsheet_data_source.hh"
 

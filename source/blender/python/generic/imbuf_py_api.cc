@@ -1564,16 +1564,15 @@ static PyObject *imbuf_write_to_buffer_impl(ImBuf *ibuf, PyObject *file)
     ibuf->ftype = IMB_FTYPE_DEFAULT;
   }
 
-  const bool ok = IMB_save_image(
-      ibuf, "<memory>", eImBufFlags(IB_mem | (is_float ? IB_float_data : IB_byte_data)));
-  if (!ok) {
+  Vector<uint8_t> encoded = IMB_save_image_to_buffer(ibuf,
+                                                     is_float ? IB_float_data : IB_byte_data);
+  if (encoded.is_empty()) {
     PyErr_SetString(PyExc_RuntimeError, "write_to_buffer: failed to write image to memory");
     return nullptr;
   }
 
-  PyObject *memview = PyMemoryView_FromMemory(reinterpret_cast<char *>(ibuf->encoded_buffer.data),
-                                              Py_ssize_t(ibuf->encoded_size),
-                                              PyBUF_READ);
+  PyObject *memview = PyMemoryView_FromMemory(
+      reinterpret_cast<char *>(encoded.data()), Py_ssize_t(encoded.size()), PyBUF_READ);
   if (!memview) {
     return nullptr;
   }
@@ -1621,7 +1620,7 @@ static PyObject *M_imbuf_write_to_buffer(PyObject * /*self*/, PyObject *args)
     return nullptr;
   }
 
-  /* Work on a copy to avoid mutating the original (encoded_buffer, ftype).
+  /* Work on a copy to avoid mutating the original (ftype).
    * This could be avoided by making the encoded buffer free function public. */
   ImBuf *ibuf = IMB_dupImBuf(py_imb->ibuf);
   if (!ibuf) {

@@ -199,9 +199,12 @@ class RayTraceModule {
   TextureFromPool fast_gi_radiance_tx_[4] = {{"fast_gi_radiance_tx_"}};
   TextureFromPool fast_gi_radiance_denoised_tx_[4] = {{"fast_gi_radiance_denoised_tx_"}};
   /** Texture containing the input screen radiance but re-projected. */
-  TextureFromPool downsampled_in_radiance_tx_ = {"downsampled_in_radiance_tx_"};
+  Texture downsampled_in_radiance_tx_ = {"downsampled_in_radiance_tx_"};
   /** Texture containing the view space normal. The BSDF normal is arbitrarily chosen. */
-  TextureFromPool downsampled_in_normal_tx_ = {"downsampled_in_normal_tx_"};
+  Texture downsampled_in_normal_tx_ = {"downsampled_in_normal_tx_"};
+  /** Pointers to the mip view of the above textures. Available after sync. */
+  gpu::Texture *downsampled_in_radiance_tx_ptr_[4] = {nullptr};
+  gpu::Texture *downsampled_in_normal_tx_ptr_[4] = {nullptr};
   /** Textures containing the ray hit radiance denoised (full-res). One of them is result_tx. */
   gpu::Texture *denoised_spatial_tx_ = nullptr;
   gpu::Texture *denoised_temporal_tx_ = nullptr;

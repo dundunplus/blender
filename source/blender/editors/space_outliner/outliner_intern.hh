@@ -62,6 +62,8 @@ struct SpaceOutliner_Runtime {
   /* Hash table for tree-store elements, using `(id, type, index)` as key. */
   std::unique_ptr<treehash::TreeHash> tree_hash;
 
+  ListBaseT<ed::outliner::TreeElement> tree = {nullptr, nullptr};
+
   SpaceOutliner_Runtime() = default;
   /** Used for copying runtime data to a duplicated space. */
   SpaceOutliner_Runtime(const SpaceOutliner_Runtime &);

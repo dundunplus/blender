@@ -198,7 +198,7 @@ static void mix_socket_values_same_type(bke::SocketValueVariant &a,
        * grids and single values. For now just don't try to support those combinations. */
       return;
     }
-    nodes::GList &a_list = a_list_ptr.ensure_mutable_inplace();
+    nodes::GList &a_list = a_list_ptr.get_for_write();
     std::variant<GMutableSpan, GMutablePointer> a_values = a_list.values_for_write();
     if (auto *a_span = std::get_if<GMutableSpan>(&a_values)) {
       const GVArray b_varray = b_list->varray();

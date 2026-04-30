@@ -97,7 +97,6 @@ enum eImBufFlags {
   /** Image has byte data (unsigned 0..1 range in a byte, always 4 channels). */
   IB_byte_data = 1 << 0,
   IB_test = 1 << 1,
-  IB_mem = 1 << 4,
   /** Image has float data (usually 1..4 channels, 32 bit float per channel). */
   IB_float_data = 1 << 5,
   IB_multilayer = 1 << 7,
@@ -273,14 +272,7 @@ struct ImBuf {
   /** reference counter for multiple users */
   int32_t refcounter = 0;
 
-  /* some parameters to pass along for packing images */
-  /** Compressed image only used with PNG and EXR currently. */
-  ImBufByteBuffer encoded_buffer;
-  /** Size of data written to `encoded_buffer`. */
-  unsigned int encoded_size = 0;
-  /** Size of `encoded_buffer` */
-  unsigned int encoded_buffer_size = 0;
-
+  /* color management */
   int colormanage_flag = 0;
 
   const uint8_t *byte_data() const;

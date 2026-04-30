@@ -186,8 +186,6 @@ struct SpaceOutliner {
   /** Deprecated, copied to region. */
   DNA_DEPRECATED View2D v2d;
 
-  ListBaseT<ed::outliner::TreeElement> tree = {nullptr, nullptr};
-
   /**
    * Treestore is an ordered list of TreeStoreElem's from outliner tree;
    * Note that treestore may contain duplicate elements if element

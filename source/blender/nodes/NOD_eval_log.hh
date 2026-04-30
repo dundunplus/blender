@@ -242,7 +242,7 @@ class ListInfoLog : public ValueLog {
  public:
   int64_t size;
 
-  ListInfoLog(const GList *list);
+  ListInfoLog(const GListPtr &list);
 };
 
 /**

@@ -9004,17 +9004,19 @@ GHOST_TSuccess GHOST_SystemWayland::putClipboardImage(uint *rgba, int width, int
       reinterpret_cast<uint8_t *>(rgba), nullptr, width, height, 32);
   ibuf->ftype = blender::IMB_FTYPE_PNG;
   ibuf->foptions.quality = 15;
-  if (!IMB_save_image(ibuf, "<memory>", blender::IB_byte_data | blender::IB_mem)) {
+  blender::Vector<uint8_t> encoded = blender::IMB_save_image_to_buffer(ibuf,
+                                                                       blender::IB_byte_data);
+  if (encoded.is_empty()) {
     blender::IMB_freeImBuf(ibuf);
     return GHOST_kFailure;
   }
 
-  /* Copy #ImBuf encoded_buffer to data source. */
+  /* Copy encoded buffer to data source. */
   GWL_SimpleBuffer *imgbuffer = &data_source->buffer_out;
   gwl_simple_buffer_free_data(imgbuffer);
-  imgbuffer->data_size = ibuf->encoded_buffer_size;
+  imgbuffer->data_size = encoded.size();
   char *data = static_cast<char *>(malloc(imgbuffer->data_size));
-  std::memcpy(data, ibuf->encoded_buffer.data, ibuf->encoded_buffer_size);
+  std::memcpy(data, encoded.data(), encoded.size());
   imgbuffer->data = data;
 
   data_source->wl.source = wl_data_device_manager_create_data_source(

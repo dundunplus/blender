@@ -601,10 +601,8 @@ const EnumPropertyItem *rna_NodeSocket_structure_type_item_filter(
         break;
       }
       case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST: {
-        if (U.experimental.use_geometry_nodes_lists) {
-          if (supports_lists) {
-            RNA_enum_item_add(&items, &items_count, item);
-          }
+        if (supports_lists) {
+          RNA_enum_item_add(&items, &items_count, item);
         }
         break;
       }

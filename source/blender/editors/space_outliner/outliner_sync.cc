@@ -341,7 +341,7 @@ void ED_outliner_select_sync_from_outliner(bContext *C, SpaceOutliner *space_out
                                         *bmain,
                                         scene,
                                         view_layer,
-                                        &space_outliner->tree,
+                                        &space_outliner->runtime->tree,
                                         &sync_types,
                                         &selected_items);
 
@@ -553,7 +553,7 @@ bool outliner_sync_selection(const bContext *C,
                                         tvc.scene,
                                         tvc.view_layer,
                                         space_outliner,
-                                        &space_outliner->tree,
+                                        &space_outliner->runtime->tree,
                                         &active_data,
                                         &sync_types,
                                         &r_any_new_active);

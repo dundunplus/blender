@@ -44,8 +44,7 @@ void AmbientOcclusion::init()
   /* AO node uses its own number of samples. */
   data_.lod_factor_ao = 1.0f / (1.0f + sce_eevee.fast_gi_quality * 4.0f);
   /* Scale up to LOD 5 at the end of the ray. */
-  data_.lod_factor = (5.0f / sce_eevee.fast_gi_step_count) /
-                     (1.0f + sce_eevee.fast_gi_quality * 4.0f);
+  data_.lod_factor = (1.0f - sce_eevee.fast_gi_quality) * 0.2f;
   data_.angle_bias = 1.0 / max_ff(1e-8f, 1.0 - sce_eevee.fast_gi_bias);
   data_.thickness_near = sce_eevee.fast_gi_thickness_near;
   data_.thickness_far = sce_eevee.fast_gi_thickness_far;

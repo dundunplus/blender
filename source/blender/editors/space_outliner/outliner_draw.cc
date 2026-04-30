@@ -120,7 +120,7 @@ void outliner_tree_dimensions(SpaceOutliner *space_outliner, int *r_width, int *
 {
   *r_width = 0;
   *r_height = 0;
-  outliner_tree_dimensions_impl(space_outliner, &space_outliner->tree, r_width, r_height);
+  outliner_tree_dimensions_impl(space_outliner, &space_outliner->runtime->tree, r_width, r_height);
 }
 
 /**
@@ -764,7 +764,7 @@ static void namebutton_fn(bContext *C, void *tsep, char *oldname)
   };
 
   if (ts && tselem) {
-    TreeElement *te = outliner_find_tree_element(&space_outliner->tree, tselem);
+    TreeElement *te = outliner_find_tree_element(&space_outliner->runtime->tree, tselem);
 
     if (ELEM(tselem->type, TSE_SOME_ID, TSE_LINKED_NODE_TREE)) {
       if (id_rename_helper()) {
@@ -2247,7 +2247,7 @@ static void outliner_mode_toggle_fn(bContext *C, void *tselem_poin, void * /*arg
   TreeViewContext tvc;
   outliner_viewcontext_init(C, &tvc);
 
-  TreeElement *te = outliner_find_tree_element(&space_outliner->tree, tselem);
+  TreeElement *te = outliner_find_tree_element(&space_outliner->runtime->tree, tselem);
   if (!te) {
     return;
   }
@@ -3875,7 +3875,7 @@ static void outliner_draw_tree(ui::Block *block,
   if (space_outliner->outlinevis == SO_DATA_API) {
     /* struct marks */
     int starty = int(region->v2d.tot.ymax) - UI_UNIT_Y - OL_Y_OFFSET;
-    outliner_draw_struct_marks(region, space_outliner, &space_outliner->tree, &starty);
+    outliner_draw_struct_marks(region, space_outliner, &space_outliner->runtime->tree, &starty);
   }
 
   /* Draw highlights before hierarchy. */
@@ -3899,14 +3899,15 @@ static void outliner_draw_tree(ui::Block *block,
   {
     int starty = int(region->v2d.tot.ymax) - OL_Y_OFFSET;
     int startx = columns_offset + UI_UNIT_X / 2 - (U.pixelsize + 1) / 2;
-    outliner_draw_hierarchy_lines(space_outliner, &space_outliner->tree, tvc, startx, &starty);
+    outliner_draw_hierarchy_lines(
+        space_outliner, &space_outliner->runtime->tree, tvc, startx, &starty);
   }
 
   /* Items themselves. */
   {
     int starty = int(region->v2d.tot.ymax) - UI_UNIT_Y - OL_Y_OFFSET;
     int startx = columns_offset;
-    for (TreeElement &te : space_outliner->tree) {
+    for (TreeElement &te : space_outliner->runtime->tree) {
       outliner_draw_tree_element(block,
                                  fstyle,
                                  tvc,
@@ -4099,12 +4100,13 @@ void draw_outliner(const bContext *C, bool do_rebuild)
     if (space_outliner->lib_override_view_mode == SO_LIB_OVERRIDE_VIEW_PROPERTIES) {
       block_emboss_set(block, ui::EmbossType::Emboss);
       block_flag_enable(block, ui::BLOCK_NO_DRAW_OVERRIDDEN_STATE);
-      outliner_draw_overrides_rna_buts(block, region, space_outliner, &space_outliner->tree, x);
+      outliner_draw_overrides_rna_buts(
+          block, region, space_outliner, &space_outliner->runtime->tree, x);
       block_emboss_set(block, ui::EmbossType::NoneOrStatus);
     }
     else if (space_outliner->lib_override_view_mode == SO_LIB_OVERRIDE_VIEW_HIERARCHIES) {
       outliner_draw_overrides_restrictbuts(
-          mainvar, block, region, space_outliner, &space_outliner->tree, x);
+          mainvar, block, region, space_outliner, &space_outliner->runtime->tree, x);
     }
   }
   else if (right_column_width > 0.0f) {
@@ -4117,7 +4119,7 @@ void draw_outliner(const bContext *C, bool do_rebuild)
                                tvc.view_layer,
                                region,
                                space_outliner,
-                               &space_outliner->tree,
+                               &space_outliner->runtime->tree,
                                props_active);
   }
 

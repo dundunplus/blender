@@ -268,8 +268,14 @@ void RayTraceModule::sync()
     pass.bind_texture("depth_tx", &depth_tx);
     pass.bind_texture(
         "in_radiance_tx", &screen_radiance_front_tx_, GPUSamplerState::default_sampler());
-    pass.bind_image("out_radiance_img", &downsampled_in_radiance_tx_);
-    pass.bind_image("out_normal_img", &downsampled_in_normal_tx_);
+    pass.bind_image("out_radiance_mip0", &downsampled_in_radiance_tx_ptr_[0]);
+    pass.bind_image("out_radiance_mip1", &downsampled_in_radiance_tx_ptr_[1]);
+    pass.bind_image("out_radiance_mip2", &downsampled_in_radiance_tx_ptr_[2]);
+    pass.bind_image("out_radiance_mip3", &downsampled_in_radiance_tx_ptr_[3]);
+    pass.bind_image("out_normal_mip0", &downsampled_in_normal_tx_ptr_[0]);
+    pass.bind_image("out_normal_mip1", &downsampled_in_normal_tx_ptr_[1]);
+    pass.bind_image("out_normal_mip2", &downsampled_in_normal_tx_ptr_[2]);
+    pass.bind_image("out_normal_mip3", &downsampled_in_normal_tx_ptr_[3]);
     pass.bind_resources(inst_.uniform_data);
     pass.bind_resources(inst_.gbuffer);
     pass.dispatch(&fast_gi_tracing_dispatch_size_);
@@ -277,6 +283,8 @@ void RayTraceModule::sync()
     pass.barrier(GPU_BARRIER_TEXTURE_FETCH);
   }
   {
+    const GPUSamplerState mipmap_linear = {GPU_SAMPLER_FILTERING_MIPMAP |
+                                           GPU_SAMPLER_FILTERING_LINEAR};
     PassSimple &pass = fast_gi_scan_ps_;
     pass.init();
     gpu::Shader *sh = inst_.shaders.static_shader_get(FAST_GI_SCAN);
@@ -284,8 +292,8 @@ void RayTraceModule::sync()
     pass.specialize_constant(sh, "step_count", fast_gi_step_count_);
     pass.specialize_constant(sh, "ao_only", fast_gi_ao_only_);
     pass.shader_set(sh);
-    pass.bind_texture("screen_radiance_tx", &downsampled_in_radiance_tx_);
-    pass.bind_texture("screen_normal_tx", &downsampled_in_normal_tx_);
+    pass.bind_texture("screen_radiance_tx", &downsampled_in_radiance_tx_, mipmap_linear);
+    pass.bind_texture("screen_normal_tx", &downsampled_in_normal_tx_, mipmap_linear);
     pass.bind_image("sh_0_img", &fast_gi_radiance_tx_[0]);
     pass.bind_image("sh_1_img", &fast_gi_radiance_tx_[1]);
     pass.bind_image("sh_2_img", &fast_gi_radiance_tx_[2]);
@@ -426,10 +434,12 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   const int fast_gi_resolution_scale = max_ii(
       1, power_of_2_max_i(inst_.scene->eevee.fast_gi_resolution));
 
+  const int2 group_size(RAYTRACE_GROUP_SIZE);
   const int2 extent = inst_.film.render_extent_get();
   const int2 tracing_res = math::divide_ceil(extent, int2(resolution_scale));
-  const int2 tracing_res_fast_gi = math::divide_ceil(extent, int2(fast_gi_resolution_scale));
-  const int2 group_size(RAYTRACE_GROUP_SIZE);
+  /* Just like HiZ, the FastGI needs a multiple of its dispatch size in order to use MipMaps. */
+  const int2 tracing_res_fast_gi = math::ceil_to_multiple(
+      math::divide_ceil(extent, int2(fast_gi_resolution_scale)), group_size);
 
   const int2 denoise_tiles = divide_ceil(extent, group_size);
   const int2 raytrace_tiles = divide_ceil(tracing_res, group_size);
@@ -477,9 +487,12 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   data_.full_resolution = extent;
   data_.full_resolution_inv = 1.0f / float2(extent);
 
+  data_.fast_gi_uv_scale = float2(extent) / float2(tracing_res_fast_gi * fast_gi_resolution_scale);
+  data_.fast_gi_lod_bias = log2_floor_u(resolution_scale);
   data_.fast_gi_resolution_scale = fast_gi_resolution_scale;
   data_.fast_gi_resolution_bias = int2(inst_.sampling.rng_2d_get(SAMPLING_RAYTRACE_V) *
                                        fast_gi_resolution_scale);
+
   /* TODO(fclem): Eventually all uniform data is setup here. */
 
   inst_.uniform_data.push_update();
@@ -504,10 +517,18 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
     if (use_fast_gi_scan) {
       GPU_debug_group_begin("Fast GI");
 
-      downsampled_in_radiance_tx_.acquire(
-          tracing_res_fast_gi, gpu::TextureFormat::RAYTRACE_RADIANCE_FORMAT, usage_rw);
-      downsampled_in_normal_tx_.acquire(
-          tracing_res_fast_gi, gpu::TextureFormat::UNORM_10_10_10_2, usage_rw);
+      downsampled_in_radiance_tx_.ensure_2d(
+          gpu::TextureFormat::RAYTRACE_RADIANCE_FORMAT, tracing_res_fast_gi, usage_rw, nullptr, 4);
+      downsampled_in_normal_tx_.ensure_2d(
+          gpu::TextureFormat::UNORM_10_10_10_2, tracing_res_fast_gi, usage_rw, nullptr, 4);
+
+      downsampled_in_radiance_tx_.ensure_mip_views();
+      downsampled_in_normal_tx_.ensure_mip_views();
+
+      for (int i : IndexRange(4)) {
+        downsampled_in_radiance_tx_ptr_[i] = downsampled_in_radiance_tx_.mip_view(i);
+        downsampled_in_normal_tx_ptr_[i] = downsampled_in_normal_tx_.mip_view(i);
+      }
 
       fast_gi_radiance_tx_[0].acquire(
           tracing_res_fast_gi, gpu::TextureFormat::SFLOAT_16_16_16_16, usage_rw);
@@ -536,8 +557,6 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
         fast_gi_radiance_tx_[i].release();
         fast_gi_radiance_denoised_tx_[i].release();
       }
-      downsampled_in_radiance_tx_.release();
-      downsampled_in_normal_tx_.release();
 
       GPU_debug_group_end();
     }

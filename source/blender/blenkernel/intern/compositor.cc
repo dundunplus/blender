@@ -280,6 +280,13 @@ void add_depsgraph_relations(Scene &scene, DepsNodeHandle *compositor_output_dep
       case ID_TE:
         DEG_add_generic_id_relation(compositor_output_depsgraph_node, id, "Texture -> Compositor");
         break;
+      case ID_MC:
+        DEG_add_generic_id_relation(
+            compositor_output_depsgraph_node, id, "Movie Clip -> Compositor");
+        break;
+      case ID_MSK:
+        DEG_add_generic_id_relation(compositor_output_depsgraph_node, id, "Mask -> Compositor");
+        break;
       case ID_VF:
         DEG_add_vfont_relation(
             compositor_output_depsgraph_node, reinterpret_cast<VFont *>(id), "Font -> Compositor");
