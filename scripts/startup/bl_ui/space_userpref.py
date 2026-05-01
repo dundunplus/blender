@@ -3084,6 +3084,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_geometry_bundle"}, ("blender/blender/issues/150574", "#150574")),
                 ({"property": "use_remote_asset_libraries"}, ("blender/blender/issues/134495", "#134495")),
                 ({"property": "use_collection_importer"}, ("blender/blender/issues/132171", "#132171")),
+                ({"property": "use_geometry_nodes_hair_dynamics"}, ("blender/blender/issues/141609", "#141609")),
             ),
         )
 

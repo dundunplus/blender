@@ -214,13 +214,21 @@ static void add_hdr_mastering_display_metadata(AVCodecParameters *codecpar,
  * The side data is only added when the scene uses stereoscopic with stereo views and the image
  * format also contains stereo views.
  */
-static void add_stereo3d_metadata(MovieWriter &context,
+static void add_stereo3d_metadata(AVCodecParameters *codecpar,
                                   const RenderData &render_data,
                                   const ImageFormatData &imf)
 {
-  BLI_assert(context.current_frame);
   if (BKE_scene_multiview_is_stereo3d(&render_data) && imf.views_format == R_IMF_VIEWS_STEREO_3D) {
-    AVStereo3D *stereo_3d = av_stereo3d_create_side_data(context.current_frame);
+    AVPacketSideData *side_data = av_packet_side_data_new(&codecpar->coded_side_data,
+                                                          &codecpar->nb_coded_side_data,
+                                                          AV_PKT_DATA_STEREO3D,
+                                                          sizeof(AVStereo3D),
+                                                          0);
+    if (side_data == nullptr) {
+      CLOG_ERROR(&LOG, "Failed to attach stereo3d metadata to stream");
+      return;
+    }
+    AVStereo3D *stereo_3d = reinterpret_cast<AVStereo3D *>(side_data->data);
     AVStereo3DType interlace_type = AV_STEREO3D_UNSPEC;
     switch (imf.stereo3d_format.interlace_type) {
       case S3D_INTERLACE_ROW:
@@ -1219,7 +1227,7 @@ static AVStream *alloc_video_stream(MovieWriter *context,
   avcodec_parameters_from_context(st->codecpar, c);
 
   add_hdr_mastering_display_metadata(st->codecpar, c, imf);
-  add_stereo3d_metadata(*context, *rd, *imf);
+  add_stereo3d_metadata(st->codecpar, *rd, *imf);
 
   context->video_time = 0.0f;
 
