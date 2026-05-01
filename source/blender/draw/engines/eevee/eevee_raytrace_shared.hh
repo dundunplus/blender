@@ -17,8 +17,6 @@ namespace blender::eevee {
 struct [[host_shared]] RayTraceData {
   /** ViewProjection matrix used to render the previous frame. */
   float4x4 history_persmat;
-  /** ViewProjection matrix used to render the radiance texture. */
-  float4x4 radiance_persmat;
   /** ViewProjection matrix used to denoise the previous frame. */
   float4x4 denoise_history_persmat;
   /** Input resolution. */
@@ -26,8 +24,8 @@ struct [[host_shared]] RayTraceData {
   /** Inverse of input resolution to get screen UVs. */
   float2 full_resolution_inv;
   /** Scale and bias to go from ray-trace resolution to input resolution. */
-  int2 resolution_bias;
-  int resolution_scale;
+  int2 trace_pixel_offset;
+  int trace_pixel_scale;
   /** View space thickness the objects. */
   float thickness;
   /** Scale and bias to go from fast GI resolution to input resolution. */

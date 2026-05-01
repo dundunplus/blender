@@ -274,12 +274,6 @@ struct SpaceNode_Runtime {
 
   std::optional<int> frame_identifier_to_highlight;
 
-  /**
-   * Indicates that the compositing int the space tree needs to be re-evaluated using
-   * regular compositing pipeline.
-   */
-  bool recalc_regular_compositing;
-
   /** Temporary data for modal linking operator. */
   std::unique_ptr<bNodeLinkDrag> linkdrag;
 

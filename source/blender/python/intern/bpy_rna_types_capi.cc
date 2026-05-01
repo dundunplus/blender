@@ -28,6 +28,7 @@
 #include "bpy_rna_text.hh"
 #include "bpy_rna_types_capi.hh"
 #include "bpy_rna_ui.hh"
+#include "bpy_rna_wm.hh"
 
 #include "bpy_rna_operator.hh"
 
@@ -205,6 +206,17 @@ static PyGetSetDef pyrna_windowmanager_getset[] = {
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Window Type
+ * \{ */
+
+static PyMethodDef pyrna_window_methods[] = {
+    {nullptr, nullptr, 0, nullptr}, /* #BPY_rna_window_screenshot_method_def */
+    {nullptr, nullptr, 0, nullptr},
+};
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Context Type
  * \{ */
 
@@ -316,6 +328,11 @@ void BPY_rna_types_extend_capi()
   /* WindowManager */
   pyrna_struct_type_extend_capi(
       RNA_WindowManager, pyrna_windowmanager_methods, pyrna_windowmanager_getset);
+
+  /* Window */
+  ARRAY_SET_ITEMS(pyrna_window_methods, BPY_rna_window_screenshot_method_def);
+  BLI_STATIC_ASSERT(ARRAY_SIZE(pyrna_window_methods) == 2, "Unexpected number of methods")
+  pyrna_struct_type_extend_capi(RNA_Window, pyrna_window_methods, nullptr);
 
   /* Context */
   bpy_rna_context_types_init();

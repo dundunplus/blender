@@ -278,10 +278,6 @@ static void image_keymap(wmKeyConfig *keyconf)
 /* area+region dropbox definition */
 static void image_dropboxes() {}
 
-/**
- * \note take care not to get into feedback loop here,
- *       calling composite job causes viewer to refresh.
- */
 static void image_refresh(const bContext *C, ScrArea *area)
 {
   Scene *scene = CTX_data_scene(C);
@@ -290,17 +286,6 @@ static void image_refresh(const bContext *C, ScrArea *area)
 
   ima = ED_space_image(sima);
   BKE_image_user_frame_calc(ima, &sima->iuser, scene->r.cfra);
-
-  /* Check if we have to set the image from the edit-mesh. */
-  if (ima && (ima->source == IMA_SRC_VIEWER && sima->mode == SI_MODE_MASK)) {
-    if (scene->compositing_node_group) {
-      Mask *mask = ED_space_image_get_mask(sima);
-      if (mask) {
-        ED_node_compositor_job(
-            CTX_data_main(C), CTX_wm_window(C), CTX_data_scene(C), CTX_data_view_layer(C));
-      }
-    }
-  }
 }
 
 static void image_listener(const wmSpaceTypeListenerParams *params)

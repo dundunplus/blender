@@ -11,6 +11,7 @@
 #include "GPU_debug.hh"
 
 #include "eevee_instance.hh"
+#include <iostream>
 
 #include "eevee_raytrace.hh"
 
@@ -20,6 +21,43 @@ namespace blender::eevee {
 /** \name Raytracing
  *
  * \{ */
+
+/**
+ * From Fabian Giesen's article:
+ * https://fgiesen.wordpress.com/2009/12/13/decoding-morton-codes/
+ */
+static uint compact_bits(uint x)
+{
+  x &= 0x55555555;
+  x = (x ^ (x >> 1)) & 0x33333333;
+  x = (x ^ (x >> 2)) & 0x0f0f0f0f;
+  x = (x ^ (x >> 4)) & 0x00ff00ff;
+  x = (x ^ (x >> 8)) & 0x0000ffff;
+  return x;
+}
+
+static uint2 morton2d_to_coordinate(uint code)
+{
+  return uint2(compact_bits(code >> 0), compact_bits(code >> 1));
+}
+
+/* Return a pseudo random sequence visiting all pixels in a tile before wrapping.
+ * `tile_size` needs to be a power of 2. */
+static uint2 random_in_tile(uint sample_id, uint tile_size)
+{
+  if (tile_size == 1) {
+    return uint2(0);
+  }
+
+  uint hash = sample_id;
+  hash = hash ^ (hash >> 16);
+  hash *= 0x85ebca6b;
+  hash = hash ^ (hash >> 13);
+  hash *= 0xc2b2ae35;
+  hash = hash ^ (hash >> 16);
+
+  return morton2d_to_coordinate(hash % square(tile_size));
+}
 
 void RayTraceModule::init()
 {
@@ -77,7 +115,7 @@ void RayTraceModule::sync()
     gpu::Shader *sh = inst_.shaders.static_shader_get(RAY_TILE_COMPACT);
     pass.init();
     pass.specialize_constant(sh, "closure_index", &data_.closure_index);
-    pass.specialize_constant(sh, "resolution_scale", &data_.resolution_scale);
+    pass.specialize_constant(sh, "resolution_scale", &data_.trace_pixel_scale);
     pass.shader_set(sh);
     pass.bind_image("tile_raytrace_denoise_img", &tile_raytrace_denoise_tx_);
     pass.bind_image("tile_raytrace_tracing_img", &tile_raytrace_tracing_tx_);
@@ -179,7 +217,7 @@ void RayTraceModule::sync()
     gpu::Shader *sh = inst_.shaders.static_shader_get(RAY_DENOISE_SPATIAL);
     pass.init();
     pass.specialize_constant(sh, "closure_index", &data_.closure_index);
-    pass.specialize_constant(sh, "raytrace_resolution_scale", &data_.resolution_scale);
+    pass.specialize_constant(sh, "raytrace_resolution_scale", &data_.trace_pixel_scale);
     pass.specialize_constant(sh, "skip_denoise", reinterpret_cast<bool *>(&data_.skip_denoise));
     pass.shader_set(sh);
     pass.bind_ssbo("tiles_coord_buf", &raytrace_denoise_tiles_buf_);
@@ -216,6 +254,7 @@ void RayTraceModule::sync()
     pass.bind_image("out_radiance_img", &denoised_temporal_tx_);
     pass.bind_image("in_variance_img", &hit_variance_tx_);
     pass.bind_image("out_variance_img", &denoise_variance_tx_);
+    pass.bind_image("tile_mask_img", &tile_raytrace_denoise_tx_);
     pass.bind_ssbo("tiles_coord_buf", &raytrace_denoise_tiles_buf_);
     pass.bind_resources(inst_.sampling);
     pass.dispatch(raytrace_denoise_dispatch_buf_);
@@ -369,7 +408,7 @@ void RayTraceModule::sync()
                                        use_temporal_denoise;
 
     data_.closure_index = i;
-    data_.resolution_scale = max_ii(1, power_of_2_max_i(ray_tracing_options_.resolution_scale));
+    data_.trace_pixel_scale = max_ii(1, power_of_2_max_i(ray_tracing_options_.resolution_scale));
     data_.skip_denoise = !use_spatial_denoise;
     inst_.manager->warm_shader_specialization(tile_classify_ps_);
     inst_.manager->warm_shader_specialization(tile_compact_ps_);
@@ -413,8 +452,6 @@ void RayTraceModule::debug_draw(View & /*view*/, gpu::FrameBuffer * /*view_fb*/)
 RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
                                       gpu::Texture *screen_radiance_back_tx,
                                       eClosureBits active_closures,
-                                      /* TODO(fclem): Maybe wrap these two in some other class. */
-                                      View &main_view,
                                       View &render_view)
 {
   using namespace blender::math;
@@ -480,19 +517,17 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   data_.roughness_mask_bias = data_.roughness_mask_scale * roughness_mask_start;
 
   /* Data for the radiance setup. */
-  data_.resolution_scale = resolution_scale;
-  data_.resolution_bias = int2(inst_.sampling.rng_2d_get(SAMPLING_RAYTRACE_V) * resolution_scale);
+  data_.trace_pixel_scale = resolution_scale;
+  data_.trace_pixel_offset = int2(random_in_tile(inst_.sampling.sample_index(), resolution_scale));
   data_.history_persmat = rt_buffer.history_persmat;
-  data_.radiance_persmat = render_view.persmat();
   data_.full_resolution = extent;
   data_.full_resolution_inv = 1.0f / float2(extent);
 
   data_.fast_gi_uv_scale = float2(extent) / float2(tracing_res_fast_gi * fast_gi_resolution_scale);
   data_.fast_gi_lod_bias = log2_floor_u(resolution_scale);
   data_.fast_gi_resolution_scale = fast_gi_resolution_scale;
-  data_.fast_gi_resolution_bias = int2(inst_.sampling.rng_2d_get(SAMPLING_RAYTRACE_V) *
-                                       fast_gi_resolution_scale);
-
+  data_.fast_gi_resolution_bias = int2(
+      random_in_tile(inst_.sampling.sample_index(), fast_gi_resolution_scale));
   /* TODO(fclem): Eventually all uniform data is setup here. */
 
   inst_.uniform_data.push_update();
@@ -510,7 +545,7 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   data_.trace_refraction = screen_radiance_back_tx != nullptr;
 
   for (int i = 0; i < 3; i++) {
-    result.closures[i] = trace(i, (closure_count > i), options, rt_buffer, main_view, render_view);
+    result.closures[i] = trace(i, (closure_count > i), options, rt_buffer, render_view);
   }
 
   if (has_active_closure) {
@@ -569,14 +604,11 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   return result;
 }
 
-RayTraceResultTexture RayTraceModule::trace(
-    int closure_index,
-    bool active_layer,
-    RaytraceEEVEE options,
-    RayTraceBuffer &rt_buffer,
-    /* TODO(fclem): Maybe wrap these two in some other class. */
-    View &main_view,
-    View &render_view)
+RayTraceResultTexture RayTraceModule::trace(int closure_index,
+                                            bool active_layer,
+                                            RaytraceEEVEE options,
+                                            RayTraceBuffer &rt_buffer,
+                                            View &render_view)
 {
   RayTraceBuffer::DenoiseBuffer *denoise_buf = &rt_buffer.closures[closure_index];
 
@@ -617,10 +649,9 @@ RayTraceResultTexture RayTraceModule::trace(
   data_.roughness_mask_scale = 1.0 / roughness_mask_fade;
   data_.roughness_mask_bias = data_.roughness_mask_scale * roughness_mask_start;
 
-  data_.resolution_scale = resolution_scale;
-  data_.resolution_bias = int2(inst_.sampling.rng_2d_get(SAMPLING_RAYTRACE_V) * resolution_scale);
+  data_.trace_pixel_scale = resolution_scale;
+  data_.trace_pixel_offset = int2(random_in_tile(inst_.sampling.sample_index(), resolution_scale));
   data_.denoise_history_persmat = denoise_buf->history_persmat;
-  data_.radiance_persmat = render_view.persmat();
   data_.full_resolution = extent;
   data_.full_resolution_inv = 1.0f / float2(extent);
   data_.skip_denoise = !use_spatial_denoise;
@@ -672,12 +703,13 @@ RayTraceResultTexture RayTraceModule::trace(
   if (use_temporal_denoise) {
     denoise_buf->denoised_temporal_tx.acquire(
         extent, gpu::TextureFormat::RAYTRACE_RADIANCE_FORMAT, usage_rw);
-    denoise_variance_tx_.acquire(use_bilateral_denoise ? extent : int2(1),
-                                 gpu::TextureFormat::RAYTRACE_VARIANCE_FORMAT,
-                                 usage_rw);
-    denoise_buf->variance_history_tx.acquire(use_bilateral_denoise ? extent : int2(1),
-                                             gpu::TextureFormat::RAYTRACE_VARIANCE_FORMAT,
-                                             usage_rw);
+
+    int2 variance_size = use_bilateral_denoise ? extent : int2(1);
+    gpu::TextureFormat variance_format = gpu::TextureFormat::RAYTRACE_VARIANCE_FORMAT;
+
+    denoise_variance_tx_.acquire(variance_size, variance_format, usage_rw);
+    denoise_buf->variance_history_tx.acquire(variance_size, variance_format, usage_rw);
+
     denoise_buf->tilemask_history_tx.ensure_2d_array(gpu::TextureFormat::RAYTRACE_TILEMASK_FORMAT,
                                                      tile_raytrace_denoise_tx_.size().xy(),
                                                      tile_raytrace_denoise_tx_.size().z,
@@ -699,7 +731,7 @@ RayTraceResultTexture RayTraceModule::trace(
     inst_.manager->submit(denoise_temporal_ps_, render_view);
 
     /* Save view-projection matrix for next reprojection. */
-    denoise_buf->history_persmat = main_view.persmat();
+    denoise_buf->history_persmat = render_view.persmat();
     /* Radiance will be swapped with history in #RayTraceResult::release().
      * Variance is swapped with history after bilateral denoise.
      * It keeps data-flow easier to follow. */

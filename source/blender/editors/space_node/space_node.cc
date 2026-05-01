@@ -689,17 +689,11 @@ static bool any_node_uses_id(const bNodeTree *ntree, const ID *id)
 /**
  * Tag the space to recalculate the current tree.
  *
- * For all node trees this will do `snode_set_context()` which takes care of setting an active
- * tree. This will be done in the area refresh callback.
- *
- * For compositor tree this will additionally start of the compositor job.
+ * This will do `snode_set_context()` which takes care of setting an active tree. This will be done
+ * in the area refresh callback.
  */
-static void node_area_tag_tree_recalc(SpaceNode *snode, ScrArea *area)
+static void node_area_tag_tree_recalc(SpaceNode * /*snode*/, ScrArea *area)
 {
-  if (ED_node_is_compositor(snode)) {
-    snode->runtime->recalc_regular_compositing = true;
-  }
-
   ED_area_tag_refresh(area);
 }
 
@@ -852,21 +846,9 @@ static void node_area_listener(const wmSpaceTypeListenerParams *params)
   }
 }
 
-static void node_area_refresh(const bContext *C, ScrArea *area)
+static void node_area_refresh(const bContext *C, ScrArea * /*area*/)
 {
-  /* default now: refresh node is starting preview */
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
   snode_set_context(*C);
-
-  Scene *scene = CTX_data_scene(C);
-  if (snode->nodetree && snode->nodetree == scene->compositing_node_group) {
-    if (snode->runtime->recalc_regular_compositing) {
-      snode->runtime->recalc_regular_compositing = false;
-      ED_node_compositor_job(
-          CTX_data_main(C), CTX_wm_window(C), CTX_data_scene(C), CTX_data_view_layer(C));
-    }
-  }
 }
 
 static SpaceLink *node_duplicate(SpaceLink *sl)
