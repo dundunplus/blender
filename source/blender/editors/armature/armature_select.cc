@@ -686,7 +686,7 @@ static EditBone *get_nearest_editbonepoint(
   view3d_gpu_select_cache_begin();
 
   {
-    const eV3DSelectObjectFilter select_filter = VIEW3D_SELECT_FILTER_NOP;
+    const eV3DSelectObjectFilter select_filter = VIEW3D_SELECT_FILTER_OBJECT_MODE_LOCK_SAME_TYPE;
 
     GPUSelectStorage &storage = buffer.storage;
     rcti rect;

@@ -1007,7 +1007,9 @@ enum class eV3DSelectShape {
   CIRCLE,
 };
 
-eV3DSelectObjectFilter ED_view3d_select_filter_from_mode(const Scene *scene, const Object *obact);
+eV3DSelectObjectFilter ED_view3d_select_filter_from_mode(const Scene *scene,
+                                                         const View3D *v3d,
+                                                         const Object *obact);
 
 /**
  * Optionally cache data for multiple calls to #view3d_gpu_select
@@ -1139,7 +1141,6 @@ void ED_view3d_draw_setup_view(const wmWindowManager *wm,
  * `mval` comes from event->mval, only use within region handlers.
  */
 Base *ED_view3d_give_base_under_cursor(bContext *C, const int mval[2]);
-Base *ED_view3d_give_base_under_cursor_skip_editmode(bContext *C, const int mval[2]);
 Object *ED_view3d_give_object_under_cursor(bContext *C, const int mval[2]);
 Object *ED_view3d_give_material_slot_under_cursor(bContext *C,
                                                   const int mval[2],
