@@ -137,7 +137,7 @@ void ED_keyframes_add(FCurve *fcu, int num_keys_to_add)
   /* Iterate over the new keys to update their settings. */
   while (num_keys_to_add--) {
     /* Defaults, ignoring user-preference gives predictable results for API. */
-    bezt->f1 = bezt->f2 = bezt->f3 = SELECT;
+    bezt->f1 = bezt->f2 = bezt->f3 = BEZT_FLAG_SELECT;
     bezt->ipo = BEZT_IPO_BEZ;
     bezt->h1 = bezt->h2 = HD_AUTO_ANIM;
     bezt++;
@@ -1298,7 +1298,7 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
             *fcu,
             anim_eval_context.eval_time,
             eBezTriple_KeyframeType(ts->keyframe_type),
-            eInsertKeyFlags(0));
+            eInsertKeyFlags{});
         changed = result == SingleKeyingResult::SUCCESS;
         if (result != SingleKeyingResult::SUCCESS) {
           generate_single_keying_result_report(result, op->reports);

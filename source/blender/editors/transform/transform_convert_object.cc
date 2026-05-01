@@ -562,7 +562,7 @@ static void createTransObject(bContext *C, TransInfo *t)
     td->protectflag = ob->protectflag;
     tx->rotOrder = ob->rotmode;
 
-    if (base->flag & BA_TRANSFORM_CHILD) {
+    if (base->flag_legacy & BA_TRANSFORM_CHILD) {
       td->flag |= TD_NOCENTER;
       td->flag |= TD_NO_LOC;
     }

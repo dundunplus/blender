@@ -115,7 +115,7 @@ MetaElem *ED_mball_add_primitive(
   /* Deselect all existing metaelems */
   ml = static_cast<MetaElem *>(mball->editelems->first);
   while (ml) {
-    ml->flag &= ~SELECT;
+    ml->flag &= ~MB_SELECT;
     ml = ml->next;
   }
 
@@ -133,7 +133,7 @@ MetaElem *ED_mball_add_primitive(
     mul_v3_fl(&ml->expx, dia);
   }
 
-  ml->flag |= SELECT;
+  ml->flag |= MB_SELECT;
   mball->lastelem = ml;
   return ml;
 }
@@ -319,7 +319,7 @@ static bool mball_select_similar_type(Object *obedit,
 
     if (select) {
       changed = true;
-      ml.flag |= SELECT;
+      ml.flag |= MB_SELECT;
     }
   }
   return changed;
@@ -398,7 +398,7 @@ static wmOperatorStatus mball_select_similar_exec(bContext *C, wmOperator *op)
         for (MetaElem &ml : *mb->editelems) {
           short mball_type = 1 << (ml.type + 1);
           if (mball_type & type_ref) {
-            ml.flag |= SELECT;
+            ml.flag |= MB_SELECT;
             changed = true;
           }
         }
@@ -485,10 +485,10 @@ static wmOperatorStatus select_random_metaelems_exec(bContext *C, wmOperator *op
     for (MetaElem &ml : *mb->editelems) {
       if (BLI_rng_get_float(rng) < randfac) {
         if (select) {
-          ml.flag |= SELECT;
+          ml.flag |= MB_SELECT;
         }
         else {
-          ml.flag &= ~SELECT;
+          ml.flag &= ~MB_SELECT;
         }
       }
     }
@@ -548,7 +548,7 @@ static wmOperatorStatus duplicate_metaelems_exec(bContext *C, wmOperator * /*op*
           newml = MEM_dupalloc(ml);
           BLI_addtail(mb->editelems, newml);
           mb->lastelem = newml;
-          ml->flag &= ~SELECT;
+          ml->flag &= ~MB_SELECT;
         }
         ml = ml->prev;
       }
@@ -713,7 +713,7 @@ static wmOperatorStatus reveal_metaelems_exec(bContext *C, wmOperator *op)
 
   for (MetaElem &ml : *mb->editelems) {
     if (ml.flag & MB_HIDE) {
-      SET_FLAG_FROM_TEST(ml.flag, select, SELECT);
+      SET_FLAG_FROM_TEST(ml.flag, select, MB_SELECT);
       ml.flag &= ~MB_HIDE;
       changed = true;
     }
@@ -885,25 +885,25 @@ bool ED_mball_select_pick(bContext *C, const int mval[2], const SelectPick_Param
 
     switch (params.sel_op) {
       case SEL_OP_ADD: {
-        ml->flag |= SELECT;
+        ml->flag |= MB_SELECT;
         break;
       }
       case SEL_OP_SUB: {
-        ml->flag &= ~SELECT;
+        ml->flag &= ~MB_SELECT;
         break;
       }
       case SEL_OP_XOR: {
         if (ml->flag & SELECT) {
-          ml->flag &= ~SELECT;
+          ml->flag &= ~MB_SELECT;
         }
         else {
-          ml->flag |= SELECT;
+          ml->flag |= MB_SELECT;
         }
         break;
       }
       case SEL_OP_SET: {
         /* Deselect has already been performed. */
-        ml->flag |= SELECT;
+        ml->flag |= MB_SELECT;
         break;
       }
       case SEL_OP_AND: {

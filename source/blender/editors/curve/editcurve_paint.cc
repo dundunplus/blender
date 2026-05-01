@@ -939,7 +939,7 @@ static wmOperatorStatus curve_draw_exec(bContext *C, wmOperator *op)
         }
 
         bezt->h1 = bezt->h2 = HD_ALIGN; /* will set to free in second pass */
-        bezt->f1 = bezt->f2 = bezt->f3 = SELECT;
+        bezt->f1 = bezt->f2 = bezt->f3 = BEZT_FLAG_SELECT;
       }
 
       if (corners_index) {

@@ -544,7 +544,7 @@ static wmOperatorStatus override_add_button_exec(bContext *C, wmOperator *op)
   bool created;
   const bool all = RNA_boolean_get(op->ptr, "all");
 
-  const short operation = LIBOVERRIDE_OP_REPLACE;
+  const eID_OverrideLib_Op operation = LIBOVERRIDE_OP_REPLACE;
 
   /* try to reset the nominated setting to its default value */
   context_active_but_prop_get(C, &ptr, &prop, &index);

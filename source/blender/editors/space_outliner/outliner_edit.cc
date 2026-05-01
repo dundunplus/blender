@@ -1306,7 +1306,9 @@ static int outliner_count_levels(ListBaseT<TreeElement> *lb, const int curlevel)
   return level;
 }
 
-int outliner_flag_is_any_test(ListBaseT<TreeElement> *lb, short flag, const int curlevel)
+int outliner_flag_is_any_test(ListBaseT<TreeElement> *lb,
+                              eTreeStoreElem_Flag flag,
+                              const int curlevel)
 {
   for (TreeElement &te : *lb) {
     TreeStoreElem *tselem = TREESTORE(&te);
@@ -1322,12 +1324,14 @@ int outliner_flag_is_any_test(ListBaseT<TreeElement> *lb, short flag, const int 
   return 0;
 }
 
-bool outliner_flag_set(SpaceOutliner &space_outliner, const short flag, const short set)
+bool outliner_flag_set(SpaceOutliner &space_outliner,
+                       const eTreeStoreElem_Flag flag,
+                       const short set)
 {
   return outliner_flag_set(space_outliner.runtime->tree, flag, set);
 }
 
-bool outliner_flag_set(ListBaseT<TreeElement> &lb, const short flag, const short set)
+bool outliner_flag_set(ListBaseT<TreeElement> &lb, const eTreeStoreElem_Flag flag, const short set)
 {
   bool changed = false;
 
@@ -1349,12 +1353,12 @@ bool outliner_flag_set(ListBaseT<TreeElement> &lb, const short flag, const short
   return changed;
 }
 
-bool outliner_flag_flip(SpaceOutliner &space_outliner, const short flag)
+bool outliner_flag_flip(SpaceOutliner &space_outliner, const eTreeStoreElem_Flag flag)
 {
   return outliner_flag_flip(space_outliner.runtime->tree, flag);
 }
 
-bool outliner_flag_flip(ListBaseT<TreeElement> &lb, const short flag)
+bool outliner_flag_flip(ListBaseT<TreeElement> &lb, const eTreeStoreElem_Flag flag)
 {
   bool changed = false;
 
@@ -1911,7 +1915,7 @@ static void tree_element_to_path(TreeElement *te,
                                  char **path,
                                  int *array_index,
                                  short *flag,
-                                 short * /*groupmode*/)
+                                 eKSP_Grouping * /*groupmode*/)
 {
   ListBaseT<LinkData> hierarchy = {nullptr, nullptr};
   char *newpath = nullptr;
@@ -2080,7 +2084,7 @@ static void do_outliner_drivers_editop(SpaceOutliner *space_outliner,
     char *path = nullptr;
     int array_index = 0;
     short flag = 0;
-    short groupmode = KSP_GROUP_KSNAME;
+    eKSP_Grouping groupmode = KSP_GROUP_KSNAME;
 
     TreeElementRNACommon *te_rna = tree_element_cast<TreeElementRNACommon>(te);
     PointerRNA ptr = te_rna ? te_rna->get_pointer_rna() : PointerRNA_NULL;
@@ -2247,7 +2251,8 @@ static KeyingSet *verify_active_keyingset(Scene *scene, short add)
   /* Add if none found */
   /* XXX the default settings have yet to evolve. */
   if ((add) && (ks == nullptr)) {
-    ks = BKE_keyingset_add(&scene->keyingsets, nullptr, nullptr, KEYINGSET_ABSOLUTE, 0);
+    ks = BKE_keyingset_add(
+        &scene->keyingsets, nullptr, nullptr, KEYINGSET_ABSOLUTE, INSERTKEY_NOFLAGS);
     scene->active_keyingset = BLI_listbase_count(&scene->keyingsets);
   }
 
@@ -2271,7 +2276,7 @@ static void do_outliner_keyingset_editop(SpaceOutliner *space_outliner,
     char *path = nullptr;
     int array_index = 0;
     short flag = 0;
-    short groupmode = KSP_GROUP_KSNAME;
+    eKSP_Grouping groupmode = KSP_GROUP_KSNAME;
 
     /* check if RNA-property described by this selected element is an animatable prop */
     const TreeElementRNACommon *te_rna = tree_element_cast<TreeElementRNACommon>(te);
@@ -2293,7 +2298,8 @@ static void do_outliner_keyingset_editop(SpaceOutliner *space_outliner,
           /* add a new path with the information obtained (only if valid) */
           /* TODO: what do we do with group name?
            * for now, we don't supply one, and just let this use the KeyingSet name */
-          BKE_keyingset_add_path(ks, id, nullptr, path, array_index, flag, groupmode);
+          BKE_keyingset_add_path(
+              ks, id, nullptr, path, array_index, eKSP_Settings(flag), groupmode);
           ks->active_path = BLI_listbase_count(&ks->paths);
           break;
         }

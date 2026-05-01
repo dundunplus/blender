@@ -943,10 +943,10 @@ void blo_do_versions_410(FileData *fd, Library * /*lib*/, Main *bmain)
     if (!DNA_struct_member_exists(fd->filesdna, "Material", "char", "displacement_method")) {
       /* Replace Cycles.displacement_method by Material::displacement_method. */
       for (Material &material : bmain->materials) {
-        int displacement_method = MA_DISPLACEMENT_BUMP;
+        eMaterial_DisplacementMethod displacement_method = MA_DISPLACEMENT_BUMP;
         if (IDProperty *cmat = version_cycles_properties_from_ID(&material.id)) {
-          displacement_method = version_cycles_property_int(
-              cmat, "displacement_method", MA_DISPLACEMENT_BUMP);
+          displacement_method = eMaterial_DisplacementMethod(
+              version_cycles_property_int(cmat, "displacement_method", MA_DISPLACEMENT_BUMP));
         }
         material.displacement_method = displacement_method;
       }
@@ -1165,7 +1165,9 @@ void blo_do_versions_410(FileData *fd, Library * /*lib*/, Main *bmain)
     for (Brush &brush : bmain->brushes) {
       /* The `sculpt_flag` was used to store the `BRUSH_DIR_IN`
        * With the fix for #115313 this is now just using the `brush->flag`. */
-      if (brush.gpencil_settings && (brush.gpencil_settings->sculpt_flag & BRUSH_DIR_IN) != 0) {
+      if (brush.gpencil_settings &&
+          (brush.gpencil_settings->sculpt_flag & eGP_Sculpt_Flag(BRUSH_DIR_IN)) != 0)
+      {
         brush.flag |= BRUSH_DIR_IN;
       }
     }

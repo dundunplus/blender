@@ -47,7 +47,7 @@ struct EnumRNAAccessors {
       }, \
       [](PointerRNA *ptr, PropertyRNA * /*prop*/, const int value) { \
         bNode &node = *static_cast<bNode *>(ptr->data); \
-        node.member = value; \
+        node.member = static_cast<std::remove_reference_t<decltype(node.member)>>(value); \
       })
 
 /**
@@ -62,7 +62,8 @@ struct EnumRNAAccessors {
       }, \
       [](PointerRNA *ptr, PropertyRNA * /*prop*/, const int value) { \
         bNode &node = *static_cast<bNode *>(ptr->data); \
-        node_storage(node).member = value; \
+        node_storage(node).member = \
+            static_cast<std::remove_reference_t<decltype(node_storage(node).member)>>(value); \
       })
 
 struct BooleanRNAAccessors {

@@ -2184,7 +2184,7 @@ static void ebone_fn(int event, TreeElement *te, TreeStoreElem * /*tselem*/, voi
   }
   else if (event == OL_DOP_HIDE) {
     ebone->flag |= BONE_HIDDEN_A;
-    ebone->flag &= ~BONE_SELECTED | BONE_TIPSEL | BONE_ROOTSEL;
+    ebone->flag &= ~(BONE_SELECTED | BONE_TIPSEL | BONE_ROOTSEL);
   }
   else if (event == OL_DOP_UNHIDE) {
     ebone->flag &= ~BONE_HIDDEN_A;

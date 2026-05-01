@@ -96,7 +96,7 @@ void ED_outliner_select_sync_flag_outliners(const bContext *C)
   }
 
   /* Clear global sync flag */
-  wm->outliner_sync_select_dirty = 0;
+  wm->outliner_sync_select_dirty = eWM_OutlinerSyncSelectDirty{};
 }
 
 namespace ed::outliner {

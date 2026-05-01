@@ -37,6 +37,8 @@ struct bPose;
 struct bPoseChannel;
 struct MDeformVert;
 
+enum eRotationModes : short;
+
 struct EditBone {
   EditBone *next = nullptr, *prev = nullptr;
   /** User-Defined Properties on this Bone */
@@ -66,10 +68,10 @@ struct EditBone {
    * their parents. Therefore any rotations specified during the
    * animation are automatically relative to the bones' rest positions.
    */
-  int flag = 0;
+  eBone_Flag flag = {};
   int layer = 0;
   int drawtype = 0; /* eArmature_Drawtype */
-  char inherit_scale_mode = 0;
+  eBone_InheritScaleMode inherit_scale_mode = BONE_INHERIT_SCALE_FULL;
 
   /* Envelope distance & weight */
   float dist = 0, weight = 0;
@@ -91,12 +93,12 @@ struct EditBone {
   /** Mapping of vertices to segments. */
   eBone_BBoneMappingMode bbone_mapping_mode = BBONE_MAPPING_STRAIGHT;
   /** Type of next/prev bone handles */
-  char bbone_prev_type = 0;
-  char bbone_next_type = 0;
+  eBone_BBoneHandleType bbone_prev_type = BBONE_HANDLE_AUTO;
+  eBone_BBoneHandleType bbone_next_type = BBONE_HANDLE_AUTO;
   /** B-Bone flags. */
-  int bbone_flag = 0;
-  short bbone_prev_flag = 0;
-  short bbone_next_flag = 0;
+  eBone_BBoneFlag bbone_flag = {};
+  eBone_BBoneHandleFlag bbone_prev_flag = {};
+  eBone_BBoneHandleFlag bbone_next_flag = {};
   /** Next/prev bones to use as handle references when calculating bbones (optional) */
   EditBone *bbone_prev = nullptr;
   EditBone *bbone_next = nullptr;
@@ -465,8 +467,12 @@ void BKE_bone_parent_transform_calc_from_matrices(int bone_flag,
  * - the result should be that the rotations given in the provided pointers have had conversions
  *   applied (as appropriate), such that the rotation of the element hasn't 'visually' changed.
  */
-void BKE_rotMode_change_values(
-    float quat[4], float eul[3], float axis[3], float *angle, short oldMode, short newMode);
+void BKE_rotMode_change_values(float quat[4],
+                               float eul[3],
+                               float axis[3],
+                               float *angle,
+                               eRotationModes oldMode,
+                               eRotationModes newMode);
 
 /* B-Bone support */
 #define MAX_BBONE_SUBDIV 32

@@ -775,6 +775,9 @@ static void node_texture_buts_proc(ui::Layout &layout, bContext * /*C*/, Pointer
       col.prop(&tex_ptr, "color_mode", DEFAULT_FLAGS, "", ICON_NONE);
       break;
     }
+    case TEX_NOISE:
+    case TEX_IMAGE:
+      break;
   }
 }
 

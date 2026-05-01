@@ -313,6 +313,8 @@ bool DRW_object_use_hide_faces(const Object *ob)
       case OB_MODE_VERTEX_PAINT:
       case OB_MODE_WEIGHT_PAINT:
         return true;
+      default:
+        break;
     }
   }
 
@@ -673,7 +675,7 @@ static bool supports_handle_ranges(DupliObject *dupli, Object *parent, const DRW
   }
 
   Object *ob = dupli->ob;
-  if (min(ob->dt, parent->dt) == OB_BOUNDBOX) {
+  if (eDrawType(min(int(ob->dt), int(parent->dt))) == OB_BOUNDBOX) {
     return false;
   }
 

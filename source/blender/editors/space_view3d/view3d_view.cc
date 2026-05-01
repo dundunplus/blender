@@ -1430,7 +1430,7 @@ void ED_view3d_xr_shading_update(wmWindowManager *wm, const View3D *v3d, const S
   if (v3d->runtime.flag & V3D_RUNTIME_XR_SESSION_ROOT) {
     View3DShading *xr_shading = &wm->xr.session_settings.shading;
     /* Flags that shouldn't be overridden by the 3D View shading. */
-    int flag_copy = 0;
+    eView3DShading_Flag flag_copy = eView3DShading_Flag{};
     if (v3d->shading.type != OB_SOLID) {
       /* Don't set V3D_SHADING_WORLD_ORIENTATION for solid shading since it results in distorted
        * lighting when the view matrix has a scale factor. */
@@ -1453,7 +1453,7 @@ void ED_view3d_xr_shading_update(wmWindowManager *wm, const View3D *v3d, const S
     }
 
     /* Copy shading from View3D to VR view. */
-    const int old_xr_shading_flag = xr_shading->flag;
+    const eView3DShading_Flag old_xr_shading_flag = xr_shading->flag;
     *xr_shading = v3d->shading;
     xr_shading->flag = (xr_shading->flag & ~flag_copy) | (old_xr_shading_flag & flag_copy);
     if (v3d->shading.prop) {

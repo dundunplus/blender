@@ -5,6 +5,7 @@
 #include "NOD_dependencies.hh"
 
 #include "DNA_ID.h"
+#include "DNA_node_types.h"
 #include "DNA_object_types.h"
 
 #include "BKE_image.hh"
@@ -137,6 +138,8 @@ static void add_eval_dependencies_from_socket(const bNodeSocket &socket, EvalDep
       }
       break;
     }
+    default:
+      break;
   }
 }
 

@@ -33,15 +33,14 @@ struct BlendWriter;
 struct BlendDataReader;
 
 /** Type of interface item. */
-enum eNodeTreeInterfaceItemType {
+enum eNodeTreeInterfaceItemType : char {
   NODE_INTERFACE_PANEL = 0,
   NODE_INTERFACE_SOCKET = 1,
 };
 
 /** Describes a socket and all necessary details for a node declaration. */
 struct bNodeTreeInterfaceItem {
-  /* eNodeTreeInterfaceItemType */
-  char item_type = 0;
+  eNodeTreeInterfaceItemType item_type = NODE_INTERFACE_PANEL;
   char _pad[7] = {};
 
 #ifdef __cplusplus
@@ -50,7 +49,7 @@ struct bNodeTreeInterfaceItem {
 };
 
 /* Socket interface flags */
-enum NodeTreeInterfaceSocketFlag {
+enum NodeTreeInterfaceSocketFlag : int {
   NODE_INTERFACE_SOCKET_INPUT = 1 << 0,
   NODE_INTERFACE_SOCKET_OUTPUT = 1 << 1,
   NODE_INTERFACE_SOCKET_HIDE_VALUE = 1 << 2,
@@ -75,7 +74,7 @@ enum NodeTreeInterfaceSocketFlag {
 };
 ENUM_OPERATORS(NodeTreeInterfaceSocketFlag);
 
-enum NodeSocketInterfaceStructureType {
+enum NodeSocketInterfaceStructureType : int8_t {
   NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO = 0,
   NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE = 1,
   NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC = 2,
@@ -98,7 +97,7 @@ enum class StructureType : int8_t {
 #endif
 
 /* Panel interface flags */
-enum NodeTreeInterfacePanelFlag {
+enum NodeTreeInterfacePanelFlag : int {
   /* Panel starts closed on new node instances. */
   NODE_INTERFACE_PANEL_DEFAULT_CLOSED = 1 << 0,
   /* In the past, not all panels allowed child panels. Now all allow them. */
@@ -112,7 +111,7 @@ enum NodeTreeInterfacePanelFlag {
 };
 ENUM_OPERATORS(NodeTreeInterfacePanelFlag);
 
-enum NodeDefaultInputType {
+enum NodeDefaultInputType : short {
   NODE_DEFAULT_INPUT_VALUE = 0,
   NODE_DEFAULT_INPUT_INDEX_FIELD = 1,
   NODE_DEFAULT_INPUT_ID_INDEX_FIELD = 2,
@@ -131,13 +130,11 @@ struct bNodeTreeInterfaceSocket {
   char *description = nullptr;
   /* Type idname of the socket to generate, e.g. "NodeSocketFloat". */
   char *socket_type = nullptr;
-  /* NodeTreeInterfaceSocketFlag */
-  int flag = 0;
+  NodeTreeInterfaceSocketFlag flag = {};
 
   /* AttrDomain */
   int16_t attribute_domain = 0;
-  /** NodeDefaultInputType. */
-  int16_t default_input = 0;
+  NodeDefaultInputType default_input = NODE_DEFAULT_INPUT_VALUE;
   char *default_attribute_name = nullptr;
 
   /* Unique identifier for generated sockets. */
@@ -147,8 +144,7 @@ struct bNodeTreeInterfaceSocket {
 
   struct IDProperty *properties = nullptr;
 
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
   char _pad[7] = {};
 
 #ifdef __cplusplus
@@ -184,8 +180,7 @@ struct bNodeTreeInterfacePanel {
   /* UI name of the panel. */
   char *name = nullptr;
   char *description = nullptr;
-  /* NodeTreeInterfacePanelFlag */
-  int flag = 0;
+  NodeTreeInterfacePanelFlag flag = {};
   char _pad[4] = {};
 
   bNodeTreeInterfaceItem **items_array = nullptr;

@@ -1059,7 +1059,7 @@ static wmOperatorStatus grease_pencil_layer_group_color_tag_exec(bContext *C, wm
   using namespace blender::bke::greasepencil;
   GreasePencil &grease_pencil = *ed::greasepencil::from_context(*C);
 
-  const int color_tag = RNA_enum_get(op->ptr, "color_tag");
+  const GroupColorTag color_tag = GroupColorTag(RNA_enum_get(op->ptr, "color_tag"));
   LayerGroup *active_group = grease_pencil.get_active_group();
   active_group->color_tag = color_tag;
 

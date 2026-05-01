@@ -14,6 +14,7 @@
 
 #include "DNA_ID.h"
 #include "DNA_collection_types.h"
+#include "DNA_layer_types.h"
 #include "DNA_object_types.h"
 
 #include "BKE_collection.hh"
@@ -981,9 +982,10 @@ static wmOperatorStatus collection_view_layer_exec(bContext *C, wmOperator *op)
   data.is_liboverride_allowed = true;
   data.is_liboverride_hierarchy_root_allowed = true;
   bool clear = strstr(op->idname, "clear") != nullptr;
-  int flag = strstr(op->idname, "holdout")       ? LAYER_COLLECTION_HOLDOUT :
-             strstr(op->idname, "indirect_only") ? LAYER_COLLECTION_INDIRECT_ONLY :
-                                                   LAYER_COLLECTION_EXCLUDE;
+  eLayerCollection_Flag flag = strstr(op->idname, "holdout") ? LAYER_COLLECTION_HOLDOUT :
+                               strstr(op->idname, "indirect_only") ?
+                                                               LAYER_COLLECTION_INDIRECT_ONLY :
+                                                               LAYER_COLLECTION_EXCLUDE;
 
   outliner_tree_traverse(space_outliner,
                          &space_outliner->runtime->tree,
@@ -1349,7 +1351,7 @@ static wmOperatorStatus collection_flag_exec(bContext *C, wmOperator *op)
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
   const bool is_render = strstr(op->idname, "render");
   const bool clear = strstr(op->idname, "show") || strstr(op->idname, "enable");
-  int flag = is_render ? COLLECTION_HIDE_RENDER : COLLECTION_HIDE_VIEWPORT;
+  eCollection_Flag flag = is_render ? COLLECTION_HIDE_RENDER : COLLECTION_HIDE_VIEWPORT;
   CollectionEditData data{};
   data.scene = scene;
   data.space_outliner = space_outliner;
@@ -1620,7 +1622,7 @@ static wmOperatorStatus outliner_color_tag_set_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
-  const short color_tag = RNA_enum_get(op->ptr, "color");
+  const CollectionColorTag color_tag = CollectionColorTag(RNA_enum_get(op->ptr, "color"));
 
   IDsSelectedData selected{};
 

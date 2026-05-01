@@ -618,6 +618,9 @@ static void splineik_evaluate_bone(
 
     /* Apply volume preservation. */
     switch (ik_data->xzScaleMode) {
+      case CONSTRAINT_SPLINEIK_XZS_NONE:
+      case CONSTRAINT_SPLINEIK_XZS_ORIGINAL:
+        break;
       case CONSTRAINT_SPLINEIK_XZS_INVERSE: {
         /* Old 'volume preservation' method using the inverse scale. */
         float scale;

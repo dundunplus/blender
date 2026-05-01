@@ -456,7 +456,7 @@ static void view3d_userdata_lassoselect_init(LassoSelectUserData *r_data,
   r_data->mcoords = mcoords;
   r_data->sel_op = sel_op;
   /* SELECT by default, but can be changed if needed (only few cases use and respect this). */
-  r_data->select_flag = eBezTriple_Flag(SELECT);
+  r_data->select_flag = BEZT_FLAG_SELECT;
 
   /* runtime */
   r_data->pass = 0;
@@ -954,7 +954,7 @@ static void do_lasso_select_curve__doSelect(void *user_data,
       data->is_changed = true;
     }
     else {
-      uint8_t *flag_p = (&bezt->f1) + beztindex;
+      eBezTriple_Flag *flag_p = (&bezt->f1) + beztindex;
       const bool is_select = *flag_p & SELECT;
       const int sel_op_result = ED_select_op_action_deselected(data->sel_op, is_select, is_inside);
       if (sel_op_result != -1) {
@@ -991,7 +991,8 @@ static bool do_lasso_select_curve(const ViewContext *vc,
 
   /* Deselect items that were not added to selection (indicated by temp flag). */
   if (deselect_all) {
-    data.is_changed |= BKE_nurbList_flag_set_from_flag(nurbs, BEZT_FLAG_TEMP_TAG, SELECT);
+    data.is_changed |= BKE_nurbList_flag_set_from_flag(
+        nurbs, BEZT_FLAG_TEMP_TAG, BEZT_FLAG_SELECT);
   }
 
   if (data.is_changed) {
@@ -1164,7 +1165,7 @@ static void do_lasso_select_mball__doSelectElem(void *user_data,
                               data->mcoords, screen_co[0], screen_co[1], INT_MAX));
   const int sel_op_result = ED_select_op_action_deselected(data->sel_op, is_select, is_inside);
   if (sel_op_result != -1) {
-    SET_FLAG_FROM_TEST(ml->flag, sel_op_result, SELECT);
+    SET_FLAG_FROM_TEST(ml->flag, sel_op_result, MB_SELECT);
     data->is_changed = true;
   }
 }
@@ -3755,7 +3756,7 @@ static void view3d_userdata_boxselect_init(BoxSelectUserData *r_data,
 
   r_data->sel_op = sel_op;
   /* SELECT by default, but can be changed if needed (only few cases use and respect this). */
-  r_data->select_flag = eBezTriple_Flag(SELECT);
+  r_data->select_flag = BEZT_FLAG_SELECT;
 
   /* runtime */
   r_data->is_done = false;
@@ -3921,7 +3922,7 @@ static void do_nurbs_box_select__doSelect(void *user_data,
       bezt->f1 = bezt->f3 = bezt->f2;
     }
     else {
-      uint8_t *flag_p = (&bezt->f1) + beztindex;
+      eBezTriple_Flag *flag_p = (&bezt->f1) + beztindex;
       const bool is_select = *flag_p & SELECT;
       const int sel_op_result = ED_select_op_action_deselected(data->sel_op, is_select, is_inside);
       if (sel_op_result != -1) {
@@ -3952,7 +3953,8 @@ static bool do_nurbs_box_select(const ViewContext *vc, const rcti *rect, const e
 
   /* Deselect items that were not added to selection (indicated by temp flag). */
   if (deselect_all) {
-    data.is_changed |= BKE_nurbList_flag_set_from_flag(nurbs, BEZT_FLAG_TEMP_TAG, SELECT);
+    data.is_changed |= BKE_nurbList_flag_set_from_flag(
+        nurbs, BEZT_FLAG_TEMP_TAG, BEZT_FLAG_SELECT);
   }
 
   BKE_curve_nurb_vert_active_validate(curve);
@@ -4249,7 +4251,7 @@ static bool do_meta_box_select(const ViewContext *vc, const rcti *rect, const eS
 
     const int sel_op_result = ED_select_op_action_deselected(sel_op, is_select, is_inside);
     if (sel_op_result != -1) {
-      SET_FLAG_FROM_TEST(ml->flag, sel_op_result, SELECT);
+      SET_FLAG_FROM_TEST(ml->flag, sel_op_result, MB_SELECT);
     }
     changed |= (flag_prev != ml->flag);
   }
@@ -4767,7 +4769,7 @@ static void view3d_userdata_circleselect_init(CircleSelectUserData *r_data,
   r_data->radius_squared = rad * rad;
 
   /* SELECT by default, but can be changed if needed (only few cases use and respect this). */
-  r_data->select_flag = eBezTriple_Flag(SELECT);
+  r_data->select_flag = BEZT_FLAG_SELECT;
 
   /* runtime */
   r_data->is_changed = false;
@@ -5105,7 +5107,8 @@ static bool nurbscurve_circle_select(const ViewContext *vc,
 
   /* Deselect items that were not added to selection (indicated by temp flag). */
   if (deselect_all) {
-    data.is_changed |= BKE_nurbList_flag_set_from_flag(nurbs, BEZT_FLAG_TEMP_TAG, SELECT);
+    data.is_changed |= BKE_nurbList_flag_set_from_flag(
+        nurbs, BEZT_FLAG_TEMP_TAG, BEZT_FLAG_SELECT);
   }
 
   BKE_curve_nurb_vert_active_validate(id_cast<Curve *>(vc->obedit->data));
@@ -5322,10 +5325,10 @@ static void do_circle_select_mball__doSelectElem(void *user_data,
 
   if (len_squared_v2v2(data->mval_fl, screen_co) <= data->radius_squared) {
     if (data->select) {
-      ml->flag |= SELECT;
+      ml->flag |= MB_SELECT;
     }
     else {
-      ml->flag &= ~SELECT;
+      ml->flag &= ~MB_SELECT;
     }
     data->is_changed = true;
   }

@@ -2448,8 +2448,12 @@ void BKE_armature_mat_pose_to_delta(float delta_mat[4][4],
  * Used for Objects and Pose Channels, since both can have multiple rotation representations.
  * \{ */
 
-void BKE_rotMode_change_values(
-    float quat[4], float eul[3], float axis[3], float *angle, short oldMode, short newMode)
+void BKE_rotMode_change_values(float quat[4],
+                               float eul[3],
+                               float axis[3],
+                               float *angle,
+                               eRotationModes oldMode,
+                               eRotationModes newMode)
 {
   /* check if any change - if so, need to convert data */
   if (newMode > 0) { /* to euler */

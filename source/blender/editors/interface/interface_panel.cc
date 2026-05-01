@@ -617,7 +617,7 @@ static void panel_custom_data_active_set(Panel *panel)
 /**
  * Set flag state for a panel and its sub-panels.
  */
-static void panel_set_flag_recursive(Panel *panel, short flag, bool value)
+static void panel_set_flag_recursive(Panel *panel, ePanel_Flag flag, bool value)
 {
   SET_FLAG_FROM_TEST(panel->flag, value, flag);
 

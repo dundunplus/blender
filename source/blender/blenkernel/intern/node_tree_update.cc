@@ -1007,8 +1007,8 @@ class NodeTreeMainUpdater {
     }
   }
 
-  static int get_socket_shape(const bNodeSocket &socket,
-                              const bool use_inferred_structure_type = false)
+  static eNodeSocketDisplayShape get_socket_shape(const bNodeSocket &socket,
+                                                  const bool use_inferred_structure_type = false)
   {
     const SocketDeclaration *decl = socket.runtime->declaration;
     if (!decl) {

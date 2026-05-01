@@ -22,6 +22,8 @@ struct bConstraint;
 struct bConstraintTarget;
 struct bPoseChannel;
 
+enum eBConstraint_Types : short;
+
 /* ---------------------------------------------------------------------------- */
 
 /* special struct for use in constraint evaluation */
@@ -240,14 +242,16 @@ bool BKE_constraint_is_nonlocal_in_liboverride(const struct Object *ob,
 /**
  * Add new constraint for the given object.
  */
-struct bConstraint *BKE_constraint_add_for_object(struct Object *ob, const char *name, short type);
+struct bConstraint *BKE_constraint_add_for_object(struct Object *ob,
+                                                  const char *name,
+                                                  eBConstraint_Types type);
 /**
  * Add new constraint for the given bone.
  */
 struct bConstraint *BKE_constraint_add_for_pose(struct Object *ob,
                                                 struct bPoseChannel *pchan,
                                                 const char *name,
-                                                short type);
+                                                eBConstraint_Types type);
 
 /**
  * Remove the specified constraint from the given constraint stack.

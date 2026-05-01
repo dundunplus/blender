@@ -20,6 +20,8 @@
 #  include "BLI_winstuff.h"
 #endif
 
+#include "BLT_date_string.hh"
+#include "BLT_lang.hh"
 #include "BLT_translation.hh"
 
 #include "BKE_studiolight.h"
@@ -34,8 +36,6 @@
 #include "WM_api.hh"
 #include "WM_keymap.hh"
 #include "WM_types.hh"
-
-#include "BLT_lang.hh"
 
 namespace blender {
 
@@ -73,6 +73,50 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_DEVELOPER_TOOLS, "DEVELOPER_TOOLS", 0, "Developer Tools", ""},
     {USER_SECTION_EXPERIMENTAL, "EXPERIMENTAL", 0, "Experimental", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+static const EnumPropertyItem rna_enum_date_format_items[] = {
+    {int(date_string::DateFormat::Default),
+     "DEFAULT",
+     0,
+     "Default",
+     "Default date formating based on output language"},
+    {int(date_string::DateFormat::LE_Slash),
+     "LE_SLASH",
+     0,
+     "dd/mm/yyyy",
+     "Date format: dd/mm/yyyy, eg: 27/02/2019"},
+    {int(date_string::DateFormat::LE_Dot),
+     "LE_DOT",
+     0,
+     "dd.mm.yyyy",
+     "Date format: dd.mm.yyyy, eg: 27.02.2019"},
+    {int(date_string::DateFormat::LE_Dash),
+     "LE_DASH",
+     0,
+     "dd-mm-yyyy",
+     "Date format: dd-mm-yyyy, eg: 27-02-2019"},
+    {int(date_string::DateFormat::ME_Slash),
+     "ME_SLASH",
+     0,
+     "mm/dd/yyyy",
+     "Date format: mm/dd/yyyy, eg: 02/27/2019"},
+    {int(date_string::DateFormat::BE_Slash),
+     "BE_SLASH",
+     0,
+     "yyyy/mm/dd",
+     "Date format: yyyy/mm/dd, eg: 2019/02/27"},
+    {int(date_string::DateFormat::BE_Dot),
+     "BE_DOT",
+     0,
+     "yyyy.mm.dd",
+     "Date format: yyyy.mm.dd, eg: 2019.02.27"},
+    {int(date_string::DateFormat::BE_Dash),
+     "BE_DASH",
+     0,
+     "yyyy-mm-dd",
+     "Date format: yyyy-mm-dd, eg: 2019-02-27"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -386,6 +430,7 @@ static void rna_userdef_language_update(Main *bmain, Scene * /*scene*/, PointerR
   }
 
   BKE_callback_exec_null(bmain, BKE_CB_EVT_TRANSLATION_UPDATE_POST);
+  WM_main_add_notifier(NC_UI, nullptr);
   USERDEF_TAG_DIRTY;
 }
 
@@ -516,7 +561,7 @@ static void rna_userdef_extension_repo_access_token_set(PointerRNA *ptr, const c
 
 static void rna_userdef_extension_repo_generic_flag_set_impl(PointerRNA *ptr,
                                                              const bool value,
-                                                             const int flag)
+                                                             const eUserExtensionRepo_Flag flag)
 {
   Main *bmain = G.main;
   bUserExtensionRepo *repo = static_cast<bUserExtensionRepo *>(ptr->data);
@@ -547,7 +592,7 @@ static void rna_userdef_extension_repo_source_set(PointerRNA *ptr, int value)
   Main *bmain = G.main;
   bUserExtensionRepo *repo = static_cast<bUserExtensionRepo *>(ptr->data);
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_PRE);
-  repo->source = value;
+  repo->source = eUserExtensionRepo_Source(value);
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
 }
 
@@ -713,7 +758,7 @@ static bUserExtensionRepo *rna_userdef_extension_repo_new(const char *name,
     repo->flag |= USER_EXTENSION_REPO_FLAG_USE_CUSTOM_DIRECTORY;
   }
 
-  repo->source = source;
+  repo->source = eUserExtensionRepo_Source(source);
 
   BKE_callback_exec_null(bmain, BKE_CB_EVT_EXTENSION_REPOS_UPDATE_POST);
   USERDEF_TAG_DIRTY;
@@ -789,12 +834,12 @@ static void rna_userdef_autokeymode_set(PointerRNA *ptr, int value)
   UserDef *userdef = static_cast<UserDef *>(ptr->data);
 
   if (value == AUTOKEY_MODE_NORMAL) {
-    userdef->autokey_mode |= (AUTOKEY_MODE_NORMAL - AUTOKEY_ON);
-    userdef->autokey_mode &= ~(AUTOKEY_MODE_EDITKEYS - AUTOKEY_ON);
+    userdef->autokey_mode |= eAutokey_Mode(AUTOKEY_MODE_NORMAL - AUTOKEY_ON);
+    userdef->autokey_mode &= ~eAutokey_Mode(AUTOKEY_MODE_EDITKEYS - AUTOKEY_ON);
   }
   else if (value == AUTOKEY_MODE_EDITKEYS) {
-    userdef->autokey_mode |= (AUTOKEY_MODE_EDITKEYS - AUTOKEY_ON);
-    userdef->autokey_mode &= ~(AUTOKEY_MODE_NORMAL - AUTOKEY_ON);
+    userdef->autokey_mode |= eAutokey_Mode(AUTOKEY_MODE_EDITKEYS - AUTOKEY_ON);
+    userdef->autokey_mode &= ~eAutokey_Mode(AUTOKEY_MODE_NORMAL - AUTOKEY_ON);
   }
 }
 
@@ -835,7 +880,7 @@ static void rna_userdef_timecode_style_set(PointerRNA *ptr, int value)
   int required_size = userdef->v2d_min_gridsize;
 
   /* Set the time-code style. */
-  userdef->timecode_style = value;
+  userdef->timecode_style = eTimecodeStyles(value);
 
   /* Adjust the v2d grid-size if needed so that time-codes don't overlap
    * NOTE: most of these have been hand-picked to avoid overlaps while still keeping
@@ -1453,6 +1498,30 @@ static void rna_UserDef_studiolight_light_ambient_get(PointerRNA *ptr, float *va
 {
   StudioLight *sl = static_cast<StudioLight *>(ptr->data);
   copy_v3_v3(values, sl->light_ambient);
+}
+
+static const EnumPropertyItem *rna_userdef_date_format_itemf(bContext * /*C*/,
+                                                             PointerRNA * /*ptr*/,
+                                                             PropertyRNA * /*prop*/,
+                                                             bool *r_free)
+{
+  int totitem = 0;
+  EnumPropertyItem *result = nullptr;
+  static std::string date_format_names[8];
+  const char *lang = BLT_lang_get();
+  for (int i = 0; rna_enum_date_format_items[i].identifier != nullptr; i++) {
+    const EnumPropertyItem *item = &rna_enum_date_format_items[i];
+    constexpr std::tm test = {59, 59, 11, 20, 2, 60, 5, 139, 0}; /* March 20, 1960 11:59:59 */
+    BLI_assert(i <= ARRAY_SIZE(date_format_names) - 1);
+    date_format_names[i] = date_string::date(
+        &test, (i == 0) ? lang : nullptr, date_string::DateFormat(item->value));
+    EnumPropertyItem new_item = {
+        item->value, item->identifier, 0, date_format_names[i].c_str(), item->description};
+    RNA_enum_item_add(&result, &totitem, &new_item);
+  }
+  RNA_enum_item_end(&result, &totitem);
+  *r_free = true;
+  return result;
 }
 
 int rna_show_statusbar_vram_editable(const PointerRNA * /*ptr*/, const char ** /*r_info*/)
@@ -5484,6 +5553,31 @@ static void rna_def_userdef_view(BlenderRNA *brna)
                            "Translate New Names",
                            "Translate the names of new data-blocks (objects, materials...)");
   RNA_def_property_update(prop, 0, "rna_userdef_translation_update");
+
+  prop = RNA_def_property(srna, "date_format", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_date_format_items);
+  RNA_def_property_enum_funcs(prop, nullptr, nullptr, "rna_userdef_date_format_itemf");
+  RNA_def_property_ui_text(prop, "Date Format", "Format for displaying date strings");
+  RNA_def_property_update(prop, 0, "rna_userdef_language_update");
+
+  static const EnumPropertyItem rna_enum_time_format_items[] = {
+      {int(date_string::TimeFormat::H24),
+       "H24",
+       0,
+       "24-Hour (23:59)",
+       "Time format: 24-hour clock with colon, eg: 23:59"},
+      {int(date_string::TimeFormat::H12),
+       "H12",
+       0,
+       "12-Hour (11:59 PM)",
+       "Time format: 12-hour clock, eg: 11:59 PM"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  prop = RNA_def_property(srna, "time_format", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_time_format_items);
+  RNA_def_property_ui_text(prop, "Time Format", "Format for displaying time strings");
+  RNA_def_property_update(prop, 0, "rna_userdef_language_update");
 
   /* Status-bar. */
 

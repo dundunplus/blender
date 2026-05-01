@@ -50,6 +50,8 @@ namespace ui {
 struct Layout;
 }  // namespace ui
 
+enum eObject_Partype : short;
+
 namespace ed::object {
 
 struct XFormObjectData;
@@ -279,7 +281,7 @@ bool base_deselect_all(
 Base *add_duplicate(
     Main *bmain, Scene *scene, ViewLayer *view_layer, Base *base, eDupli_ID_Flags dupflag);
 
-void parent_set(Object *ob, Object *parent, int type, const char *substr);
+void parent_set(Object *ob, Object *parent, eObject_Partype type, const char *substr);
 std::string drop_named_material_tooltip(bContext *C, StringRef name, const int mval[2]);
 std::string drop_geometry_nodes_tooltip(bContext *C, PointerRNA *properties, const int mval[2]);
 

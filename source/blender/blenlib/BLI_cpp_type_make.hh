@@ -329,6 +329,8 @@ template<typename T> void hash_unique_cb(const void *value, UniqueHashBytes &has
   return hash_unique_default(value_, hash);
 }
 
+inline std::atomic<int> type_index_counter{0};
+
 }  // namespace cpp_type_util
 
 template<typename T, CPPTypeFlags Flags>
@@ -468,6 +470,8 @@ CPPType::CPPType(TypeTag<T> /*type*/,
   this->is_destructible = destruct_ != nullptr;
   this->is_copy_assignable = copy_assign_ != nullptr;
   this->is_move_assignable = move_assign_ != nullptr;
+
+  this->type_index = type_index_counter++;
 }
 
 namespace detail {

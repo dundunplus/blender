@@ -759,7 +759,7 @@ static void rna_TextureSlot_brush_angle_update(bContext *C, PointerRNA *ptr)
   Scene *scene = CTX_data_scene(C);
   MTex *mtex = static_cast<MTex *>(ptr->data);
   /* skip invalidation of overlay for stencil mode */
-  if (mtex->mapping != MTEX_MAP_MODE_STENCIL) {
+  if (mtex->brush_map_mode != MTEX_MAP_MODE_STENCIL) {
     ViewLayer *view_layer = CTX_data_view_layer(C);
     BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, mtex->tex);
   }

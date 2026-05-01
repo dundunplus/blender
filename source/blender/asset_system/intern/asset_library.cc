@@ -528,6 +528,9 @@ bool is_or_contains_remote_libraries(const AssetLibraryReference &reference)
       }
       break;
     }
+    case ASSET_LIBRARY_LOCAL:
+    case ASSET_LIBRARY_ESSENTIALS:
+      return false;
   }
 
   return false;

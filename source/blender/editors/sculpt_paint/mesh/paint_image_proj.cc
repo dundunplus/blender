@@ -6444,8 +6444,8 @@ static wmOperatorStatus texture_paint_image_from_view_exec(bContext *C, wmOperat
    * texture paint overlay opacity */
   View3D *v3d = static_cast<View3D *>(area->spacedata.first);
   View3D v3d_copy = dna::shallow_copy(*v3d);
-  v3d_copy.gridflag = 0;
-  v3d_copy.flag2 = 0;
+  v3d_copy.gridflag = eView3D_GridFlag{};
+  v3d_copy.flag2 = eView3D_Flag2{};
   v3d_copy.flag = V3D_HIDE_HELPLINES;
   v3d_copy.gizmo_flag = V3D_GIZMO_HIDE;
 
@@ -6556,7 +6556,7 @@ bool ED_paint_proj_mesh_data_check(Scene &scene,
   bool has_stencil = true;
   bool has_uvs = true;
 
-  imapaint.missing_data = 0;
+  imapaint.missing_data = eImagePaint_MissingData{};
 
   BLI_assert(ob.type == OB_MESH);
 

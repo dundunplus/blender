@@ -418,9 +418,9 @@ static void cancelTransTracking(TransInfo *t)
 
       BLI_assert(marker != nullptr);
 
-      marker->flag = tdt->flag;
+      marker->flag = TrackingMarkerFlag(tdt->flag);
 
-      if (track->flag & SELECT) {
+      if (track->flag & TRACK_SELECT) {
         i++;
       }
 
@@ -439,7 +439,7 @@ static void cancelTransTracking(TransInfo *t)
 
       BLI_assert(plane_marker != nullptr);
 
-      plane_marker->flag = tdt->flag;
+      plane_marker->flag = TrackingPlaneMarkerFlag(tdt->flag);
       i += 3;
     }
 

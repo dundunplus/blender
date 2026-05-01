@@ -251,8 +251,8 @@ static wmOperatorStatus pose_calculate_paths_exec(bContext *C, wmOperator *op)
   {
     bAnimVizSettings *avs = &ob->pose->avs;
 
-    avs->path_type = RNA_enum_get(op->ptr, "display_type");
-    avs->path_range = RNA_enum_get(op->ptr, "range");
+    avs->path_type = eMotionPaths_Types(RNA_enum_get(op->ptr, "display_type"));
+    avs->path_range = eMotionPath_Ranges(RNA_enum_get(op->ptr, "range"));
     animviz_motionpath_compute_range(ob, scene);
 
     PointerRNA avs_ptr = RNA_pointer_create_discrete(nullptr, RNA_AnimVizMotionPaths, avs);
@@ -619,14 +619,14 @@ void POSE_OT_autoside_names(wmOperatorType *ot)
 
 static wmOperatorStatus pose_bone_rotmode_exec(bContext *C, wmOperator *op)
 {
-  const int mode = RNA_enum_get(op->ptr, "type");
+  const eRotationModes mode = eRotationModes(RNA_enum_get(op->ptr, "type"));
   Object *prev_ob = nullptr;
 
   /* Set rotation mode of selected bones. */
   CTX_DATA_BEGIN_WITH_ID (C, bPoseChannel *, pchan, selected_pose_bones, Object *, ob) {
     /* use API Method for conversions... */
     BKE_rotMode_change_values(
-        pchan->quat, pchan->eul, pchan->rotAxis, &pchan->rotAngle, pchan->rotmode, short(mode));
+        pchan->quat, pchan->eul, pchan->rotAxis, &pchan->rotAngle, pchan->rotmode, mode);
 
     /* finally, set the new rotation type */
     pchan->rotmode = mode;

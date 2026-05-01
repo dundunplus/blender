@@ -942,6 +942,9 @@ bool bNodeTreeInterfaceSocket::set_socket_type(const StringRef new_socket_type)
   const bool supports_dynamic = supports_fields || supports_grids;
   const bool supports_lists = true;
   switch (this->structure_type) {
+    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO:
+    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE:
+      break;
     case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD:
       if (!supports_fields) {
         this->structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
@@ -1568,6 +1571,10 @@ bNode *create_proxy_const_input_node(const eNodeSocketDatatype socket_type,
               {src_property_path, get_node_property_path(dst_tree, *node, "value")});
           return node;
         }
+        case NTREE_TEXTURE:
+        case NTREE_UNDEFINED:
+        case NTREE_CUSTOM:
+          break;
       }
       return nullptr;
     }

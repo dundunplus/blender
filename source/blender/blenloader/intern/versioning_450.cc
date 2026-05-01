@@ -4874,7 +4874,7 @@ static void asset_browser_add_list_view(Main *bmain)
           if (sfile->asset_params->base_params.list_column_size == 0) {
             sfile->asset_params->base_params.list_column_size = 220;
           }
-          sfile->asset_params->base_params.details_flags = 0;
+          sfile->asset_params->base_params.details_flags = eFileDetails{};
         }
       }
     }
@@ -5818,7 +5818,7 @@ void blo_do_versions_450(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       if (ELEM(cu.ob_type, OB_CURVES_LEGACY, OB_FONT, OB_SURF)) {
         continue;
       }
-      short ob_type = OB_CURVES_LEGACY;
+      ObjectType ob_type = OB_CURVES_LEGACY;
       if (cu.vfont) {
         ob_type = OB_FONT;
       }

@@ -146,6 +146,8 @@ bool mode_compat_test(const Object *ob, eObjectMode mode)
         return true;
       }
       break;
+    default:
+      break;
   }
 
   return false;

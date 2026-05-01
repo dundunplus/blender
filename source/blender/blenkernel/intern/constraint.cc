@@ -942,7 +942,7 @@ static bool default_get_tarmat_full_bbone(Depsgraph * /*depsgraph*/,
       if (no_copy == 0) { \
         datatar = ct->tar; \
         STRNCPY_UTF8(datasubtarget, ct->subtarget); \
-        con->tarspace = char(ct->space); \
+        con->tarspace = ct->space; \
       } \
 \
       BLI_freelinkN(list, ct); \
@@ -963,7 +963,7 @@ static bool default_get_tarmat_full_bbone(Depsgraph * /*depsgraph*/,
       bConstraintTarget *ctn = ct->next; \
       if (no_copy == 0) { \
         datatar = ct->tar; \
-        con->tarspace = char(ct->space); \
+        con->tarspace = ct->space; \
       } \
 \
       BLI_freelinkN(list, ct); \
@@ -1472,7 +1472,7 @@ static void followpath_new_data(void *cdata)
   data->trackflag = TRACK_Y;
   data->upflag = UP_Z;
   data->offset = 0;
-  data->followflag = 0;
+  data->followflag = eFollowPath_Flags{};
 }
 
 static void followpath_id_looper(bConstraint *con, ConstraintIDFunc func, void *userdata)
@@ -3473,7 +3473,7 @@ static void stretchto_new_data(void *cdata)
 {
   bStretchToConstraint *data = static_cast<bStretchToConstraint *>(cdata);
 
-  data->volmode = 0;
+  data->volmode = eStretchTo_VolMode{};
   data->plane = SWING_Y;
   data->orglength = 0.0;
   data->bulge = 1.0;
@@ -3688,7 +3688,7 @@ static void minmax_new_data(void *cdata)
 
   data->minmaxflag = TRACK_Z;
   data->offset = 0.0f;
-  data->flag = 0;
+  data->flag = eFloor_Flags{};
 }
 
 static void minmax_id_looper(bConstraint *con, ConstraintIDFunc func, void *userdata)
@@ -6119,7 +6119,7 @@ void BKE_constraint_panel_expand(bConstraint *con)
 /* ......... */
 
 /* Creates a new constraint, initializes its data, and returns it */
-static bConstraint *add_new_constraint_internal(const char *name, short type)
+static bConstraint *add_new_constraint_internal(const char *name, eBConstraint_Types type)
 {
   bConstraint *con = MEM_new<bConstraint>("Constraint");
   const bConstraintTypeInfo *cti = BKE_constraint_typeinfo_from_type(type);
@@ -6187,7 +6187,7 @@ static void add_new_constraint_to_list(Object *ob, bPoseChannel *pchan, bConstra
 static bConstraint *add_new_constraint(Object *ob,
                                        bPoseChannel *pchan,
                                        const char *name,
-                                       short type)
+                                       eBConstraint_Types type)
 {
   bConstraint *con;
 
@@ -6218,6 +6218,8 @@ static bConstraint *add_new_constraint(Object *ob,
       }
       break;
     }
+    default:
+      break;
   }
 
   return con;
@@ -6237,7 +6239,7 @@ bool BKE_constraint_target_uses_bbone(bConstraint *con, bConstraintTarget *ct)
 bConstraint *BKE_constraint_add_for_pose(Object *ob,
                                          bPoseChannel *pchan,
                                          const char *name,
-                                         short type)
+                                         eBConstraint_Types type)
 {
   if (pchan == nullptr) {
     return nullptr;
@@ -6246,7 +6248,7 @@ bConstraint *BKE_constraint_add_for_pose(Object *ob,
   return add_new_constraint(ob, pchan, name, type);
 }
 
-bConstraint *BKE_constraint_add_for_object(Object *ob, const char *name, short type)
+bConstraint *BKE_constraint_add_for_object(Object *ob, const char *name, eBConstraint_Types type)
 {
   return add_new_constraint(ob, nullptr, name, type);
 }
@@ -6857,6 +6859,8 @@ void BKE_constraint_blend_write(BlendWriter *writer, ListBaseT<bConstraint> *con
           writer->write_string(data->attribute_name);
           break;
         }
+        default:
+          break;
       }
     }
 
@@ -6927,6 +6931,8 @@ void BKE_constraint_blend_read_data(BlendDataReader *reader,
         BLO_read_string(reader, &data->attribute_name);
         break;
       }
+      default:
+        break;
     }
   }
 }

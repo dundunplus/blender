@@ -552,7 +552,7 @@ static void rna_NodeTreeInterfaceSocket_structure_type_set(PointerRNA *ptr, int 
   }
 
   if (is_supported) {
-    socket->structure_type = value;
+    socket->structure_type = NodeSocketInterfaceStructureType(value);
   }
 }
 

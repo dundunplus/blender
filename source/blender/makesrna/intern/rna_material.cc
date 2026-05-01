@@ -249,7 +249,7 @@ static void rna_Material_blend_method_set(PointerRNA *ptr, int new_blend_method)
 static void rna_Material_render_method_set(PointerRNA *ptr, int new_render_method)
 {
   Material *material = id_cast<Material *>(ptr->owner_id);
-  material->surface_render_method = new_render_method;
+  material->surface_render_method = eMaterial_SurfaceRenderMethod(new_render_method);
 
   /* Still sets the legacy property for forward compatibility. */
   switch (new_render_method) {

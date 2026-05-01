@@ -652,7 +652,7 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 
   region->v2d.scroll = (V2D_SCROLL_RIGHT | V2D_SCROLL_BOTTOM);
   region->v2d.keepzoom = V2D_LIMITZOOM | V2D_KEEPASPECT;
-  region->v2d.keeptot = 0;
+  region->v2d.keeptot = eView2D_KeepTot{};
 
   return reinterpret_cast<SpaceLink *>(snode);
 }

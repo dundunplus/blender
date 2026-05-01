@@ -1477,7 +1477,7 @@ void BKE_pose_update_constraint_flags(bPose *pose)
   pose->flag &= ~POSE_CONSTRAINTS_TIMEDEPEND;
 
   for (bPoseChannel &pchan : pose->chanbase) {
-    pchan.constflag = 0;
+    pchan.constflag = ePchan_ConstFlag{};
 
     for (bConstraint &con : pchan.constraints) {
       pchan.constflag |= PCHAN_HAS_CONST;

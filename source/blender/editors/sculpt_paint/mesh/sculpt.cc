@@ -3471,6 +3471,8 @@ static void do_brush_action(const Depsgraph &depsgraph,
     case SCULPT_BRUSH_TYPE_SCENE_PROJECT:
       brushes::do_scene_project_brush(depsgraph, sd, ob, node_mask);
       break;
+    case SCULPT_BRUSH_TYPE_SIMPLIFY:
+      break;
   }
 
   if (!ELEM(brush.sculpt_brush_type, SCULPT_BRUSH_TYPE_SMOOTH, SCULPT_BRUSH_TYPE_MASK) &&

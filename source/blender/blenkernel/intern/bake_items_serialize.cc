@@ -754,7 +754,7 @@ static GreasePencil *try_load_grease_pencil(const DictionaryValue &io_geometry,
   for (const int layer_i : IndexRange(layers_num)) {
     greasepencil::Layer &layer = grease_pencil->layer(layer_i);
     layer.opacity = layer_opacities[layer_i];
-    layer.blend_mode = layer_blend_modes[layer_i];
+    layer.blend_mode = GreasePencilLayerBlendMode(layer_blend_modes[layer_i]);
     layer.set_local_transform(layer_transforms[layer_i]);
   }
 
@@ -1160,7 +1160,7 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
       }
 
       layer_opacities.append(layer->opacity);
-      layer_blend_modes.append(layer->blend_mode);
+      layer_blend_modes.append(int8_t(layer->blend_mode));
       layer_transforms.append(layer->local_transform());
     }
 

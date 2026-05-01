@@ -29,7 +29,7 @@
 namespace blender::ed::transform {
 
 struct TransDataTrackingCurves {
-  int flag;
+  TrackingMarkerFlag flag;
 
   /* Marker transformation from curves editor. */
   float *prev_pos;

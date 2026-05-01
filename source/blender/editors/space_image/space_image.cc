@@ -1245,7 +1245,7 @@ static void image_space_subtype_set(ScrArea *area, int value)
     if (sima->mode != SI_MODE_UV) {
       sima->mode_prev = sima->mode;
     }
-    sima->mode = value;
+    sima->mode = eSpaceImage_Mode(value);
   }
   else {
     sima->mode = sima->mode_prev;

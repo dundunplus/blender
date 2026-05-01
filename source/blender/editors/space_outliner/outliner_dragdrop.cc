@@ -889,6 +889,8 @@ static bool datastack_drop_are_types_valid(StackDropData *drop_data)
     case TSE_GPENCIL_EFFECT:
       return ob_parent->type == OB_GREASE_PENCIL && ob_dst->type == OB_GREASE_PENCIL;
       break;
+    default:
+      break;
   }
 
   return true;
@@ -1000,6 +1002,8 @@ static void datastack_drop_link(bContext *C, StackDropData *drop_data)
 
       object::shaderfx_link(ob_dst, drop_data->ob_parent);
       break;
+    default:
+      break;
   }
 }
 
@@ -1041,6 +1045,8 @@ static void datastack_drop_copy(bContext *C, StackDropData *drop_data)
       object::shaderfx_copy(ob_dst, static_cast<ShaderFxData *>(drop_data->drag_directdata));
       break;
     }
+    default:
+      break;
   }
 }
 
@@ -1086,6 +1092,9 @@ static void datastack_drop_reorder(bContext *C, ReportList *reports, StackDropDa
       index = outliner_get_insert_index(drag_te, drop_te, insert_type, &ob->shader_fx);
       object::shaderfx_move_to_index(
           reports, ob, static_cast<ShaderFxData *>(drop_data->drag_directdata), index);
+      break;
+    default:
+      break;
   }
 }
 

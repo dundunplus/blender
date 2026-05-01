@@ -1212,8 +1212,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 
 #define SCE_SNAP_PROJECT (1 << 3)
       if (ts->snap_flag & SCE_SNAP_PROJECT) {
-        ts->snap_mode &= ~(1 << 2); /* SCE_SNAP_TO_FACE */
-        ts->snap_mode |= (1 << 8);  /* SCE_SNAP_INDIVIDUAL_PROJECT */
+        ts->snap_mode &= ~eSnapMode(1 << 2); /* SCE_SNAP_TO_FACE */
+        ts->snap_mode |= eSnapMode(1 << 8);  /* SCE_SNAP_INDIVIDUAL_PROJECT */
       }
 #undef SCE_SNAP_PROJECT
     }
@@ -1427,8 +1427,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       for (Camera &camera : bmain->cameras) {
         IDProperty *ccam = version_cycles_properties_from_ID(&camera.id);
         if (ccam) {
-          camera.panorama_type = version_cycles_property_int(
-              ccam, "panorama_type", default_cam.panorama_type);
+          camera.panorama_type = eCamera_PanoType(
+              version_cycles_property_int(ccam, "panorama_type", default_cam.panorama_type));
           camera.fisheye_fov = version_cycles_property_float(
               ccam, "fisheye_fov", default_cam.fisheye_fov);
           camera.fisheye_lens = version_cycles_property_float(
@@ -1487,7 +1487,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
 
     for (Scene &scene : bmain->scenes) {
       scene.toolsettings->snap_flag_anim |= SCE_SNAP;
-      scene.toolsettings->snap_anim_mode |= (1 << 10); /* SCE_SNAP_TO_FRAME */
+      scene.toolsettings->snap_anim_mode |= eSnapMode(1 << 10); /* SCE_SNAP_TO_FRAME */
     }
   }
 

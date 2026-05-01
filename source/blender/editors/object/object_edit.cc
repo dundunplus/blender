@@ -1236,7 +1236,7 @@ static wmOperatorStatus forcefield_toggle_exec(bContext *C, wmOperator * /*op*/)
     ob->empty_drawtype = OB_PLAINAXES;
   }
   else {
-    ob->pd->forcefield = 0;
+    ob->pd->forcefield = ePFieldType{};
   }
 
   check_force_modifiers(CTX_data_main(C), CTX_data_scene(C), ob);
@@ -1413,8 +1413,8 @@ static wmOperatorStatus object_calculate_paths_invoke(bContext *C,
 static wmOperatorStatus object_calculate_paths_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
-  short path_type = RNA_enum_get(op->ptr, "display_type");
-  short path_range = RNA_enum_get(op->ptr, "range");
+  eMotionPaths_Types path_type = eMotionPaths_Types(RNA_enum_get(op->ptr, "display_type"));
+  eMotionPath_Ranges path_range = eMotionPath_Ranges(RNA_enum_get(op->ptr, "range"));
 
   /* set up path data for objects being calculated */
   CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects) {

@@ -816,7 +816,7 @@ static void rna_ToolSettings_snap_mode_set(PointerRNA *ptr, int value)
 {
   ToolSettings *ts = static_cast<ToolSettings *>(ptr->data);
   if (value != 0) {
-    ts->snap_mode = value;
+    ts->snap_mode = eSnapMode(value);
   }
 }
 
@@ -824,7 +824,7 @@ static void rna_ToolSettings_snap_uv_mode_set(PointerRNA *ptr, int value)
 {
   ToolSettings *ts = static_cast<ToolSettings *>(ptr->data);
   if (value != 0) {
-    ts->snap_uv_mode = value;
+    ts->snap_uv_mode = eSnapMode(value);
   }
 }
 
@@ -1838,7 +1838,7 @@ static void rna_RenderSettings_views_format_set(PointerRNA *ptr, int value)
     }
   }
 
-  rd->views_format = value;
+  rd->views_format = eSceneViews_Format(value);
 }
 
 static void rna_RenderSettings_engine_set(PointerRNA *ptr, int value)
@@ -2413,8 +2413,8 @@ static void rna_View3DCursor_rotation_mode_set(PointerRNA *ptr, int value)
                             cursor->rotation_euler,
                             cursor->rotation_axis,
                             &cursor->rotation_angle,
-                            cursor->rotation_mode,
-                            short(value));
+                            eRotationModes(cursor->rotation_mode),
+                            eRotationModes(value));
 
   /* finally, set the new rotation type */
   cursor->rotation_mode = value;
@@ -2526,7 +2526,7 @@ static KeyingSet *rna_Scene_keying_set_new(Scene *sce,
   KeyingSet *ks = nullptr;
 
   /* call the API func, and set the active keyingset index */
-  ks = BKE_keyingset_add(&sce->keyingsets, idname, name, KEYINGSET_ABSOLUTE, 0);
+  ks = BKE_keyingset_add(&sce->keyingsets, idname, name, KEYINGSET_ABSOLUTE, INSERTKEY_NOFLAGS);
 
   if (ks) {
     sce->active_keyingset = BLI_listbase_count(&sce->keyingsets);
@@ -3098,7 +3098,7 @@ static void rna_FFmpegSettings_codec_update(Main * /*bmain*/, Scene * /*scene*/,
     Scene *scene = (Scene *)ptr->owner_id;
     const int valid_depths = BKE_imtype_valid_depths_with_video(scene->r.im_format.imtype, id);
     if ((scene->r.im_format.depth & valid_depths) == 0) {
-      scene->r.im_format.depth = BKE_imtype_first_valid_depth(valid_depths);
+      scene->r.im_format.depth = eImageFormatDepth(BKE_imtype_first_valid_depth(valid_depths));
     }
   }
 }

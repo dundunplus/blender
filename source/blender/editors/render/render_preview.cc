@@ -514,7 +514,7 @@ static Scene *preview_prepare_scene(
 
     /* Only enable the combined render-pass. */
     view_layer->passflag = SCE_PASS_COMBINED;
-    view_layer->eevee.render_passes = 0;
+    view_layer->eevee.render_passes = eViewLayerEEVEEPassType{};
 
     /* This flag tells render to not execute depsgraph or F-Curves etc. */
     sce->r.scemode |= R_BUTS_PREVIEW;
@@ -1790,7 +1790,7 @@ Set<std::string> &PreviewLoadJob::known_downloaded_previews()
 PreviewLoadJob &PreviewLoadJob::ensure_job(wmWindowManager *wm, wmWindow *win)
 {
   wmJob *wm_job = WM_jobs_get(
-      wm, win, nullptr, "Loading previews...", eWM_JobFlag(0), WM_JOB_TYPE_LOAD_PREVIEW);
+      wm, win, nullptr, "Loading previews...", eWM_JobFlag{}, WM_JOB_TYPE_LOAD_PREVIEW);
 
   if (!WM_jobs_is_running(wm_job)) {
     PreviewLoadJob *job_data = MEM_new<PreviewLoadJob>("PreviewLoadJobData");

@@ -464,7 +464,7 @@ void OBJECT_OT_parent_clear(wmOperatorType *ot)
 /** \name Make Parent Operator
  * \{ */
 
-void parent_set(Object *ob, Object *par, const int type, const char *substr)
+void parent_set(Object *ob, Object *par, const eObject_Partype type, const char *substr)
 {
   /* Always clear parentinv matrix for sake of consistency, see #41950. */
   unit_m4(ob->parentinv);

@@ -289,6 +289,9 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
         col.prop(view, "use_translate_reports", text="Reports")
         col.prop(view, "use_translate_new_dataname", text="New Data")
 
+        layout.prop(view, "date_format")
+        layout.prop(view, "time_format", text="Time")
+
 
 class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Panel):
     bl_label = "Accessibility"

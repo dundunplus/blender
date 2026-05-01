@@ -1012,7 +1012,7 @@ static bool skip_fcurve_selected_data(bAnimContext *ac,
                                       ID *owner_id,
                                       const eAnimFilter_Flags filter_mode)
 {
-  if (fcu->grp != nullptr && fcu->grp->flag & ADT_CURVES_ALWAYS_VISIBLE) {
+  if (fcu->grp != nullptr && fcu->grp->flag & AGRP_CURVES_ALWAYS_VISIBLE) {
     return false;
   }
   /* hidden items should be skipped if we only care about visible data,
@@ -3080,6 +3080,8 @@ static size_t animdata_filter_ds_obdata(bAnimContext *ac,
       expanded = FILTER_LIGHTPROBE_OBJD(probe);
       break;
     }
+    default:
+      break;
   }
 
   /* add object data animation channels */
@@ -3100,6 +3102,8 @@ static size_t animdata_filter_ds_obdata(bAnimContext *ac,
         }
         break;
       }
+      default:
+        break;
     }
   }
   END_ANIMFILTER_SUBCHANNELS;

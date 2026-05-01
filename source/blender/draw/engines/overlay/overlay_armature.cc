@@ -1790,6 +1790,8 @@ static void pchan_draw_ik_lines(const Armatures::DrawContext *ctx,
         }
         break;
       }
+      default:
+        break;
     }
   }
 }

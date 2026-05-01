@@ -1049,7 +1049,7 @@ static void mesh_tessface_calc(Mesh &mesh)
     lidx[3] = 0; \
     mf->mat_nr = material_indices[poly_index]; \
     mf->flag = sharp_faces[poly_index] ? 0 : ME_SMOOTH; \
-    mf->edcode = 0; \
+    mf->edcode = eMFace_EdgeCode{}; \
     (void)0
 
 /* ALMOST IDENTICAL TO DEFINE ABOVE (see EXCEPTION) */
@@ -1072,7 +1072,7 @@ static void mesh_tessface_calc(Mesh &mesh)
     lidx[3] = l4; \
     mf->mat_nr = material_indices[poly_index]; \
     mf->flag = sharp_faces[poly_index] ? 0 : ME_SMOOTH; \
-    mf->edcode = TESSFACE_IS_QUAD; \
+    mf->edcode = eMFace_EdgeCode(TESSFACE_IS_QUAD); \
     (void)0
 
     else if (mp_totloop == 3) {
@@ -1159,7 +1159,7 @@ static void mesh_tessface_calc(Mesh &mesh)
         lidx[3] = 0;
 
         mf->mat_nr = material_indices ? material_indices[poly_index] : 0;
-        mf->edcode = 0;
+        mf->edcode = eMFace_EdgeCode{};
 
         mface_index++;
       }
@@ -1211,7 +1211,7 @@ static void mesh_tessface_calc(Mesh &mesh)
   for (mface_index = 0; mface_index < totface; mface_index++, mf++) {
     if (mf->edcode == TESSFACE_IS_QUAD) {
       BKE_mesh_mface_index_validate(mf, fdata_legacy, mface_index, 4);
-      mf->edcode = 0;
+      mf->edcode = eMFace_EdgeCode{};
     }
   }
 #endif
@@ -1589,14 +1589,14 @@ void BKE_mesh_legacy_convert_flags_to_hide_layers(Mesh *mesh)
   if (mesh->medge) {
     const Span<MEdge> edges(mesh->medge, mesh->edges_num);
     if (std::any_of(edges.begin(), edges.end(), [](const MEdge &edge) {
-          return edge.flag_legacy & ME_HIDE;
+          return int(edge.flag_legacy) & ME_HIDE;
         }))
     {
       SpanAttributeWriter<bool> hide_edge = attributes.lookup_or_add_for_write_only_span<bool>(
           ".hide_edge", AttrDomain::Edge);
       threading::parallel_for(edges.index_range(), 4096, [&](IndexRange range) {
         for (const int i : range) {
-          hide_edge.span[i] = edges[i].flag_legacy & ME_HIDE;
+          hide_edge.span[i] = int(edges[i].flag_legacy) & ME_HIDE;
         }
       });
       hide_edge.finish();
@@ -1607,14 +1607,14 @@ void BKE_mesh_legacy_convert_flags_to_hide_layers(Mesh *mesh)
       static_cast<const MPoly *>(CustomData_get_layer(&mesh->face_data, CD_MPOLY)),
       mesh->faces_num);
   if (std::any_of(polys.begin(), polys.end(), [](const MPoly &poly) {
-        return poly.flag_legacy & ME_HIDE;
+        return int(poly.flag_legacy) & ME_HIDE;
       }))
   {
     SpanAttributeWriter<bool> hide_poly = attributes.lookup_or_add_for_write_only_span<bool>(
         ".hide_poly", AttrDomain::Face);
     threading::parallel_for(polys.index_range(), 4096, [&](IndexRange range) {
       for (const int i : range) {
-        hide_poly.span[i] = polys[i].flag_legacy & ME_HIDE;
+        hide_poly.span[i] = int(polys[i].flag_legacy) & ME_HIDE;
       }
     });
     hide_poly.finish();

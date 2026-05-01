@@ -128,7 +128,7 @@ static void action_flip_pchan_cache_init(FCurve_KeyCache *fkc,
   BLI_assert(fkc->fcurve != nullptr);
 
   /* Cache the F-Curve values for `keyed_frames`. */
-  const int fcurve_flag = fkc->fcurve->flag;
+  const eFCurve_Flags fcurve_flag = fkc->fcurve->flag;
   fkc->fcurve->flag |= FCURVE_MOD_OFF;
   fkc->fcurve_eval = MEM_new_array_uninitialized<float>(size_t(keyed_frames_len), __func__);
   for (int frame_index = 0; frame_index < keyed_frames_len; frame_index++) {
@@ -285,7 +285,8 @@ static void action_flip_pchan(Object *ob_arm,
 
 #define READ_VALUE_INT(id) \
   if (fkc_pchan.id.fcurve_eval != nullptr) { \
-    pchan_temp.id = floorf(fkc_pchan.id.fcurve_eval[frame_index] + 0.5f); \
+    pchan_temp.id = decltype(pchan_temp.id)( \
+        int(floorf(fkc_pchan.id.fcurve_eval[frame_index] + 0.5f))); \
   } \
   ((void)0)
 
@@ -375,7 +376,7 @@ static void action_flip_pchan(Object *ob_arm,
 
   /* Recalculate handles. */
   for (int i = 0; i < fcurve_array_len; i++) {
-    BKE_fcurve_handles_recalc_ex(*fcurve_array[i], eBezTriple_Flag(0));
+    BKE_fcurve_handles_recalc_ex(*fcurve_array[i], eBezTriple_Flag{});
   }
 
   MEM_delete(keyed_frames);

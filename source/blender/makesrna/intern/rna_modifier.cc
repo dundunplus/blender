@@ -1298,7 +1298,6 @@ static void rna_fluid_set_type(Main *bmain, Scene *scene, PointerRNA *ptr)
       break;
     case MOD_FLUID_TYPE_FLOW:
     case MOD_FLUID_TYPE_EFFEC:
-    case 0:
     default:
       break;
   }
@@ -2343,7 +2342,7 @@ const EnumPropertyItem *grease_pencil_build_time_mode_filter(bContext * /*C*/,
 
   auto *md = static_cast<ModifierData *>(ptr->data);
   auto *mmd = reinterpret_cast<BuildGpencilModifierData *>(md);
-  const bool is_concurrent = (mmd->mode == MOD_GREASE_PENCIL_BUILD_MODE_CONCURRENT);
+  const bool is_concurrent = (mmd->mode == GP_BUILD_MODE_CONCURRENT);
 
   EnumPropertyItem *item_list = nullptr;
   int totitem = 0;

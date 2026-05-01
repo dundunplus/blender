@@ -157,6 +157,13 @@ class CPPType : NonCopyable, NonMovable {
   bool is_copy_assignable = false;
   bool is_move_assignable = false;
 
+  /**
+   * An index that is assigned when the type is registered. Each #CPPtype has a unique index.
+   * While the pointer of a #CPPType is also unique, sometimes it's easier to work with an index
+   * that is a relatively small number (generally <100).
+   */
+  int type_index = -1;
+
  private:
   uintptr_t alignment_mask_ = 0;
 
@@ -756,31 +763,29 @@ template<typename... Types, typename Fn> inline bool CPPType::to_static_type_try
   using Fn_ = std::remove_reference_t<Fn>;
   using Callback = void (*)(const Fn_ &);
 
-  /* Build a lookup table to avoid having to compare the current #CPPType with every type in
-   * #Types one after another. */
-  static const Map<const CPPType *, Callback> callback_map = []() {
-    Map<const CPPType *, Callback> callback_map;
-    /* This adds an entry in the map for every type in #Types.
-     * NOTE: Two separate braced array pack expansions are used instead of a comma fold
-     * expression to work around a known MSVC bug where a non-capturing lambda inside a comma
-     * fold expression that references the pack parameter causes MSVC to generate zero
-     * iterations, leaving the map empty and making all type lookups fail. */
-    if constexpr (sizeof...(Types) > 0) {
-      const CPPType *keys[] = {&CPPType::get<Types>()...};
-      const Callback vals[] = {&CPPType::call_with_type_impl_<Types, Fn_>...};
-      for (int64_t i = 0; i < int64_t(sizeof...(Types)); i++) {
-        callback_map.add_new(keys[i], vals[i]);
-      }
-    }
-    return callback_map;
+  /* Use an array indexed by #CPPType::type_index instead of a #Map for faster lookup and less
+   * generated code. The array can be quite a bit larger at run-time than the number of types but
+   * the total number of types is fairly limited, so that should be fine. */
+  static Array<Callback, 0> callback_array = [&]() {
+    /* This way to compute the max generates less code than using std::max with an initializer
+     * list. */
+    int max_type_index = 0;
+    ((max_type_index = std::max(max_type_index, CPPType::get<Types>().type_index)), ...);
+    Array<Callback, 0> callback_array(max_type_index + 1, nullptr);
+    /* Using call_with_type_impl_ instead of a lambda due to an MSVC bug.  */
+    ((callback_array[CPPType::get<Types>().type_index] = call_with_type_impl_<Types, Fn_>), ...);
+    return callback_array;
   }();
 
-  const Callback callback = callback_map.lookup_default(this, nullptr);
-  if (callback != nullptr) {
-    callback(fn);
-    return true;
+  if (this->type_index >= callback_array.size()) {
+    return false;
   }
-  return false;
+  const Callback callback = callback_array[this->type_index];
+  if (!callback) {
+    return false;
+  }
+  callback(fn);
+  return true;
 }
 
 }  // namespace blender

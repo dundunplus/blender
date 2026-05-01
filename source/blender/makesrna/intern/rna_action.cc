@@ -2325,7 +2325,7 @@ static void rna_def_action_group(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_pin", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "flag", ADT_CURVES_ALWAYS_VISIBLE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", AGRP_CURVES_ALWAYS_VISIBLE);
   RNA_def_property_ui_text(prop, "Pin in Graph Editor", "");
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, nullptr);
 

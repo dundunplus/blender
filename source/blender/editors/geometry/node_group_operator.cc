@@ -727,7 +727,10 @@ static void store_result_geometry(const bContext &C,
       if (inserted_new_keyframe) {
         WM_event_add_notifier(&C, NC_GPENCIL | NA_EDITED, nullptr);
       }
+      break;
     }
+    default:
+      break;
   }
 }
 

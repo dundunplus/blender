@@ -692,7 +692,7 @@ static bool rna_range_from_int_type(const char *dnatype, int r_range[2])
     r_range[1] = SHRT_MAX;
     return true;
   }
-  if (STR_ELEM(dnatype, "ushort")) {
+  if (STREQ(dnatype, "ushort")) {
     r_range[0] = 0;
     r_range[1] = USHRT_MAX;
     return true;
@@ -705,6 +705,11 @@ static bool rna_range_from_int_type(const char *dnatype, int r_range[2])
   if (STREQ(dnatype, "int8_t")) {
     r_range[0] = INT8_MIN;
     r_range[1] = INT8_MAX;
+    return true;
+  }
+  if (STREQ(dnatype, "uint8_t")) {
+    r_range[0] = 0;
+    r_range[1] = UINT8_MAX;
     return true;
   }
   return false;

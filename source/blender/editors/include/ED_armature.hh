@@ -11,6 +11,7 @@
 #include "BLI_compiler_attrs.h"
 #include "BLI_span.hh"
 
+#include "DNA_armature_types.h"
 #include "DNA_listBase.h"
 #include "DNA_windowmanager_enums.h"
 
@@ -160,8 +161,11 @@ bool ED_armature_edit_deselect_all_visible_multi(bContext *C);
 /**
  * \return True when pick finds an element or the selection changed.
  */
-bool ED_armature_edit_select_pick_bone(
-    bContext *C, Base *basact, EditBone *ebone, int selmask, const SelectPick_Params &params);
+bool ED_armature_edit_select_pick_bone(bContext *C,
+                                       Base *basact,
+                                       EditBone *ebone,
+                                       eBone_Flag selmask,
+                                       const SelectPick_Params &params);
 /**
  * Bone selection picking for armature edit-mode in the view3d.
  */
@@ -251,10 +255,10 @@ void ED_armature_ebone_listbase_copy(ListBaseT<EditBone> *lb_dst,
                                      bool do_id_user);
 
 int ED_armature_ebone_selectflag_get(const EditBone *ebone);
-void ED_armature_ebone_selectflag_set(EditBone *ebone, int flag);
+void ED_armature_ebone_selectflag_set(EditBone *ebone, eBone_Flag flag);
 void ED_armature_ebone_select_set(EditBone *ebone, bool select);
-void ED_armature_ebone_selectflag_enable(EditBone *ebone, int flag);
-void ED_armature_ebone_selectflag_disable(EditBone *ebone, int flag);
+void ED_armature_ebone_selectflag_enable(EditBone *ebone, eBone_Flag flag);
+void ED_armature_ebone_selectflag_disable(EditBone *ebone, eBone_Flag flag);
 
 /* `pose_edit.cc` */
 

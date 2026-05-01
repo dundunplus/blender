@@ -482,7 +482,7 @@ void IMB_colormanagement_init_untonemapped_view_settings(
   /* TODO(sergey): Find a way to safely/reliable un-hardcode this. */
   STRNCPY_UTF8(view_settings->look, "None");
   /* Initialize rest of the settings. */
-  view_settings->flag = 0;
+  view_settings->flag = {};
   view_settings->gamma = 1.0f;
   view_settings->exposure = 0.0f;
   view_settings->temperature = 6500.0f;
@@ -2602,13 +2602,17 @@ int IMB_colormanagement_view_max_nits(const char *display_name, const char *view
 }
 
 ocio::ScopeInfo IMB_colormanagement_get_scope_info(
-    const ColorManagedDisplaySettings *display_settings, const char *view_name)
+    const ColorManagedDisplaySettings *display_settings,
+    const ColorManagedViewSettings *view_settings)
 {
   const ocio::Display *display = g_config()->get_display_by_name(display_settings->display_device);
   if (display == nullptr) {
     return {};
   }
-  const ocio::View *view = (display) ? display->get_view_by_name(view_name) : nullptr;
+  const ocio::View *view = (display) ? (view_settings) ?
+                                       display->get_view_by_name(view_settings->view_transform) :
+                                       display->get_untonemapped_view() :
+                                       nullptr;
   if (view == nullptr) {
     return {};
   }

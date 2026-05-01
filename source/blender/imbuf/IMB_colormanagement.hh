@@ -373,7 +373,8 @@ int IMB_colormanagement_view_max_nits(const char *display_name, const char *view
 
 /** Get scope display info for waveform/parade/vector-scope. */
 ocio::ScopeInfo IMB_colormanagement_get_scope_info(
-    const ColorManagedDisplaySettings *display_settings, const char *view_name);
+    const ColorManagedDisplaySettings *display_settings,
+    const ColorManagedViewSettings *view_settings);
 
 /** \} */
 
