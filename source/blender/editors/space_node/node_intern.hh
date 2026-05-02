@@ -622,6 +622,14 @@ void node_geometry_add_volume_grid_search_button(const bContext &C,
                                                  ui::Layout &layout,
                                                  StringRef placeholder = "");
 
+/* `node_bundle_type_search.cc` */
+
+void node_bundle_type_add_string_search_button(const bContext &C,
+                                               const bNode &node,
+                                               PointerRNA &socket_ptr,
+                                               ui::Layout &layout,
+                                               StringRef placeholder = "");
+
 /* `node_context_path.cc` */
 
 Vector<ui::ContextPathItem> context_path_for_space_node(const bContext &C);

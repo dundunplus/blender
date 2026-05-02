@@ -973,6 +973,13 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::is_volume_grid_name(
   return *this;
 }
 
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::try_copy_ui_data(
+    const SocketDeclaration & /*other_decl*/)
+{
+  /* Can't copy any value by default. */
+  return *this;
+}
+
 OutputFieldDependency OutputFieldDependency::ForFieldSource()
 {
   OutputFieldDependency field_dependency;
