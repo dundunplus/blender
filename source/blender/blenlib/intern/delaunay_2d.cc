@@ -2161,6 +2161,8 @@ template<typename T> void add_edge_constraints(CDT_state<T> *cdt_state, const CD
     }
     CDTVert<T> *v1 = cdt_state->cdt.get_vert_resolve_merge(iv1);
     CDTVert<T> *v2 = cdt_state->cdt.get_vert_resolve_merge(iv2);
+    /* Safe to drop to 0 here (unlike in `add_face_constraints`): loose-edge ids
+     * stay below any face's id range, so `add_face_ids` doesn't depend on them. */
     uint32_t id = cdt_state->need_ids ? i : 0;
     add_edge_constraint(cdt_state, v1, v2, id, nullptr);
   }
@@ -2295,8 +2297,13 @@ int add_face_constraints(CDT_state<T> *cdt_state,
       CDTVert<T> *v1 = cdt->get_vert_resolve_merge(iv1);
       CDTVert<T> *v2 = cdt->get_vert_resolve_merge(iv2);
       LinkNode *edge_list;
-      uint32_t id = cdt_state->need_ids ? face_edge_id : 0;
-      add_edge_constraint(cdt_state, v1, v2, id, &edge_list);
+      /* Always tag with `face_edge_id` even when `need_ids` is false:
+       * `add_face_ids` interior flood reads it via `id_range_in_list` as a
+       * boundary marker. Without it the flood escapes the face and walks the
+       * whole CDT, doing significantly more work.
+       * The orig id tagged here doesn't require the orig arrays to exist
+       * (created when `need_ids == true`). */
+      add_edge_constraint(cdt_state, v1, v2, face_edge_id, &edge_list);
       /* Set a new face_symedge0 each time since earlier ones may not
        * survive later symedge splits. Really, just want the one when
        * `i == face.size() - 1`, but this code guards against that one somehow being null. */

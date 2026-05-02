@@ -4725,17 +4725,17 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
         button_retval_set(item_but, B_NOP);
       }
       else {
-        item_but = uiDefBut(block,
-                            ButtonType::ButMenu,
-                            item->name,
-                            0,
-                            0,
-                            UI_UNIT_X * 5,
-                            UI_UNIT_X,
-                            &handle->retvalue,
-                            item->value,
-                            0.0,
-                            description_static);
+        item_but = uiDefButV(block,
+                             ButtonType::ButMenu,
+                             item->name,
+                             0,
+                             0,
+                             UI_UNIT_X * 5,
+                             UI_UNIT_X,
+                             &handle->retvalue,
+                             item->value,
+                             0.0,
+                             description_static);
         button_retval_set(item_but, B_NOP);
       }
       if (item->value == current_value) {

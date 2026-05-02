@@ -2672,8 +2672,7 @@ int handler_panel_region(bContext *C,
                          ARegion *region,
                          const Button *active_but)
 {
-  /* Handle release of dragged panel in separate handlers. */
-  if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
+  if (event->val == KM_RELEASE) {
     return WM_UI_HANDLER_CONTINUE;
   }
 
