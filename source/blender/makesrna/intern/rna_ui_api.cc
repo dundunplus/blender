@@ -110,11 +110,25 @@ static void rna_uiItemTextBox(Layout *layout,
                               PointerRNA *ptr,
                               const char *propname,
                               PointerRNA *state_ptr,
-                              const char *placeholder)
+                              const char *placeholder,
+                              const char *text_ctxt,
+                              bool translate)
 {
-  std::optional<StringRefNull> placeholder_opt = placeholder ? std::make_optional<StringRefNull>(
-                                                                   placeholder) :
-                                                               std::nullopt;
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+
+  if (!prop) {
+    RNA_warning_bare("UILayout.textbox(): property not found: %s.%s",
+                     RNA_struct_identifier(ptr->type),
+                     propname);
+    return;
+  }
+
+  std::optional<StringRefNull> placeholder_opt = std::nullopt;
+
+  if (placeholder) {
+    placeholder_opt = rna_translate_ui_text(placeholder, text_ctxt, nullptr, prop, translate);
+  }
+
   if (state_ptr && !RNA_pointer_is_null(state_ptr)) {
     layout->textbox_with_state(ptr, propname, state_ptr->data_as<TextboxState>(), placeholder_opt);
   }
@@ -1525,6 +1539,7 @@ void RNA_api_ui_layout(StructRNA *srna)
   parm = RNA_def_string(
       func, "placeholder", nullptr, 0, "", "Hint describing the expected value when empty");
   RNA_def_property_clear_flag(parm, PROP_NEVER_NULL);
+  api_ui_item_common_translation(func);
 
   func = RNA_def_function(srna, "prop", "rna_uiItemR");
   RNA_def_function_ui_description(func,

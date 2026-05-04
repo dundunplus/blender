@@ -37,10 +37,7 @@ void AmbientOcclusion::init()
   render_pass_enabled_ = inst_.film.enabled_passes_get() & EEVEE_RENDER_PASS_AO;
 
   const SceneEEVEE &sce_eevee = inst_.scene->eevee;
-  const ViewLayerEEVEE &view_layer_eevee = inst_.view_layer->eevee;
 
-  data_.distance = view_layer_eevee.ambient_occlusion_distance;
-  data_.gi_distance = (sce_eevee.fast_gi_distance > 0.0f) ? sce_eevee.fast_gi_distance : 1e16f;
   /* AO node uses its own number of samples. */
   data_.lod_factor_ao = 1.0f / (1.0f + sce_eevee.fast_gi_quality * 4.0f);
   /* Scale up to LOD 5 at the end of the ray. */
@@ -59,6 +56,16 @@ void AmbientOcclusion::init()
 
 void AmbientOcclusion::sync()
 {
+  const SceneEEVEE &sce_eevee = inst_.scene->eevee;
+  const ViewLayerEEVEE &view_layer_eevee = inst_.view_layer->eevee;
+  /* Needs camera to be synced first. */
+  float max_distance = inst_.camera.bound_radius() * 2.0f;
+
+  data_.distance = (view_layer_eevee.ambient_occlusion_distance > 0.0f) ?
+                       view_layer_eevee.ambient_occlusion_distance :
+                       max_distance;
+  data_.gi_distance = (sce_eevee.fast_gi_distance > 0.0f) ? sce_eevee.fast_gi_distance :
+                                                            max_distance;
   if (!render_pass_enabled_) {
     return;
   }

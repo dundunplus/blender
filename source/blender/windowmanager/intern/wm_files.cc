@@ -3314,7 +3314,7 @@ static std::string wm_open_mainfile_get_description(bContext * /*C*/,
   const time_t ts_now = time(nullptr);
   const tm now_tm = *localtime(&ts_now);
   const char *lang = BLT_lang_get();
-  std::string modified_s = blender::date_string::datetime(&mod_time,
+  std::string modified_s = blender::date_string::datetime(mod_time,
                                                           lang,
                                                           date_string::DateFormat(U.date_format),
                                                           date_string::TimeFormat(U.time_format),

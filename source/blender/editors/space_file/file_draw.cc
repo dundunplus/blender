@@ -312,7 +312,7 @@ static void file_draw_tooltip_custom_func(bContext & /*C*/,
     const time_t ts_now = time(nullptr);
     const std::tm now = *std::localtime(&ts_now);
     const char *lang = BLT_lang_get();
-    std::string modified_s = blender::date_string::datetime(&mod_time,
+    std::string modified_s = blender::date_string::datetime(mod_time,
                                                             lang,
                                                             date_string::DateFormat(U.date_format),
                                                             date_string::TimeFormat(U.time_format),
@@ -1239,15 +1239,14 @@ static const char *filelist_get_details_column_string(
           const std::tm now = *std::localtime(&ts_now);
           const char *lang = BLT_lang_get();
           std::string modified_s =
-              compact ?
-                  date_string::date(&mod_time, lang, date_string::DateFormat(U.date_format)) :
-                  date_string::datetime(&mod_time,
-                                        lang,
-                                        date_string::DateFormat(U.date_format),
-                                        date_string::TimeFormat(U.time_format),
-                                        &now,
-                                        TIP_("Today"),
-                                        TIP_("Yesterday"));
+              compact ? date_string::date(mod_time, lang, date_string::DateFormat(U.date_format)) :
+                        date_string::datetime(mod_time,
+                                              lang,
+                                              date_string::DateFormat(U.date_format),
+                                              date_string::TimeFormat(U.time_format),
+                                              &now,
+                                              TIP_("Today"),
+                                              TIP_("Yesterday"));
           STRNCPY_UTF8(file->draw_data.datetime_str, modified_s.c_str());
         }
         return file->draw_data.datetime_str;

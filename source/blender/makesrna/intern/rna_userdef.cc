@@ -1514,7 +1514,7 @@ static const EnumPropertyItem *rna_userdef_date_format_itemf(bContext * /*C*/,
     constexpr std::tm test = {59, 59, 11, 20, 2, 60, 5, 139, 0}; /* March 20, 1960 11:59:59 */
     BLI_assert(i <= ARRAY_SIZE(date_format_names) - 1);
     date_format_names[i] = date_string::date(
-        &test, (i == 0) ? lang : nullptr, date_string::DateFormat(item->value));
+        test, (i == 0) ? lang : nullptr, date_string::DateFormat(item->value));
     EnumPropertyItem new_item = {
         item->value, item->identifier, 0, date_format_names[i].c_str(), item->description};
     RNA_enum_item_add(&result, &totitem, &new_item);

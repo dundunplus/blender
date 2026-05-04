@@ -88,7 +88,7 @@ static void template_recent_files_tooltip_func(bContext & /*C*/,
     const time_t ts_now = time(nullptr);
     const tm now = *localtime(&ts_now);
     const char *lang = BLT_lang_get();
-    std::string modified_s = date_string::datetime(&mod_time,
+    std::string modified_s = date_string::datetime(mod_time,
                                                    lang,
                                                    date_string::DateFormat(U.date_format),
                                                    date_string::TimeFormat(U.time_format),
