@@ -2825,7 +2825,7 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
       }
       BKE_pose_rebuild(nullptr, &object, id_cast<bArmature *>(object.data), false);
       for (bPoseChannel &pose_bone : object.pose->chanbase) {
-        if (pose_bone.bone->flag & BONE_HIDDEN_P) {
+        if (pose_bone.bone_get(object)->flag & BONE_HIDDEN_P) {
           pose_bone.drawflag |= PCHAN_DRAW_HIDDEN;
         }
         else {

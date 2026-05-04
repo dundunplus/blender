@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-07-23 14:56+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian (Latin script) <https://translate.blender.org/projects/blender-ui/ui/sr_Latn/>\n"
@@ -8498,52 +8498,8 @@ msgid "Material slot name"
 msgstr "Naziv slota materijala"
 
 
-msgid "Clear Transform"
-msgstr "Očisti transformacije"
-
-
-msgid "In-Betweens"
-msgstr "U međuvremenu"
-
-
-msgid "Propagate"
-msgstr "Prenesi"
-
-
-msgid "Names"
-msgstr "Imena"
-
-
 msgid "Show/Hide"
 msgstr "Prikaži/sakrij"
-
-
-msgid "Apply"
-msgstr "Primeni"
-
-
-msgid "Toggle Bone Options"
-msgstr "Manje/više informacija"
-
-
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "Enable Bone Options"
-msgstr "Omogući opcije kostiju"
-
-
-msgid "Disable Bone Options"
-msgstr "Onemogući opcije kostiju"
-
-
-msgid "Mesh Select Mode"
-msgstr "Mod izbora mreže"
-
-
-msgid "Merge"
-msgstr "Sjedini"
 
 
 msgid "Special Characters"
@@ -8554,20 +8510,24 @@ msgid "Metaball"
 msgstr "Meta lopta"
 
 
+msgid "Names"
+msgstr "Imena"
+
+
+msgid "Math"
+msgstr "Matematika"
+
+
 msgid "Bone Roll"
 msgstr "Rolna kostiju"
-
-
-msgid "Import"
-msgstr "Uvoz"
 
 
 msgid "Snap"
 msgstr "Lepljenje"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Import"
+msgstr "Uvoz"
 
 
 msgid "Mirror"
@@ -8590,6 +8550,10 @@ msgid "Align View"
 msgstr "Poravnaj pogled"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Linked"
 msgstr "Izaberi povezano"
 
@@ -8602,16 +8566,12 @@ msgid "Relations"
 msgstr "Odnosi"
 
 
-msgid "Keying"
-msgstr "Zbirka tastera"
-
-
-msgid "Tracking"
-msgstr "Praćenje"
-
-
 msgid "Rigid Body"
 msgstr "Kruto telo"
+
+
+msgid "Apply"
+msgstr "Primeni"
 
 
 msgid "Track"
@@ -8624,6 +8584,46 @@ msgstr "Brzi efekti"
 
 msgid "Hooks"
 msgstr "Udice"
+
+
+msgid "Clear Transform"
+msgstr "Očisti transformacije"
+
+
+msgid "In-Betweens"
+msgstr "U međuvremenu"
+
+
+msgid "Keying"
+msgstr "Zbirka tastera"
+
+
+msgid "Propagate"
+msgstr "Prenesi"
+
+
+msgid "Tracking"
+msgstr "Praćenje"
+
+
+msgid "Toggle Bone Options"
+msgstr "Manje/više informacija"
+
+
+msgid "Enable Bone Options"
+msgstr "Omogući opcije kostiju"
+
+
+msgid "Disable Bone Options"
+msgstr "Onemogući opcije kostiju"
+
+
+msgid "Mesh Select Mode"
+msgstr "Mod izbora mreže"
+
+
+msgid "Merge"
+msgstr "Sjedini"
 
 
 msgid "Basic"
@@ -20155,10 +20155,6 @@ msgstr "Ograniči veličinu teksture radi uštede memorije grafičke kartice"
 
 msgid "Device"
 msgstr "Uređaj"
-
-
-msgid "2D Texture"
-msgstr "2D tekstura"
 
 
 msgid "Ambient Color"

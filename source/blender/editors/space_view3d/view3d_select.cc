@@ -667,7 +667,7 @@ static bool do_pose_tag_select_op_exec(MutableSpan<Base *> bases, const eSelectO
 
     bool changed = false;
     for (bPoseChannel &pchan : ob_iter->pose->chanbase) {
-      Bone *bone = pchan.bone;
+      Bone *bone = pchan.bone_get(*ob_iter);
       if ((bone->flag & BONE_UNSELECTABLE) == 0) {
         const bool is_select = pchan.flag & POSE_SELECTED;
         const bool is_inside = pchan.runtime.flag & POSE_RUNTIME_IN_SELECTION_AREA;
@@ -2014,7 +2014,7 @@ static bool bone_mouse_select_menu(bContext *C,
       const uint hit_bone = (select_id & ~BONESEL_ANY) >> 16;
       bPoseChannel *pchan = static_cast<bPoseChannel *>(
           BLI_findlink(&bone_base->object->pose->chanbase, hit_bone));
-      if (pchan && !(pchan->bone->flag & BONE_UNSELECTABLE)) {
+      if (pchan && !(pchan->bone_get(*bone_base->object)->flag & BONE_UNSELECTABLE)) {
         bone_ptr = pchan;
       }
     }

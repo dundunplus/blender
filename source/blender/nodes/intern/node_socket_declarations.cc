@@ -749,7 +749,7 @@ MenuBuilder &MenuBuilder::static_items(const EnumPropertyItem *items,
    * This is necessary because otherwise each node would have a different (incompatible) menu
    * definition. */
   static Mutex mutex;
-  static Map<std::pair<const EnumPropertyItem *, const StaticItemFilterFn>,
+  static Map<std::pair<const EnumPropertyItem *, StaticItemFilterFn>,
              ImplicitSharingPtr<bke::RuntimeNodeEnumItems>>
       items_by_enum_ptr;
 

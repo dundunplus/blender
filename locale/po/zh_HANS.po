@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
-"PO-Revision-Date: 2026-04-26 10:12+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
+"PO-Revision-Date: 2026-05-01 14:12+0000\n"
 "Last-Translator: Ye Gui <ziweidao@foxmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hans/>\n"
 "Language: zh_HANS\n"
@@ -5439,6 +5439,10 @@ msgstr "具有高度特性"
 
 msgid "Has Jitter"
 msgstr "具有抖动特性"
+
+
+msgid "Has Normal Radius"
+msgstr "具有法向半径"
 
 
 msgid "Has Crease/Pinch Factor"
@@ -35141,8 +35145,32 @@ msgid "Placement"
 msgstr "放置"
 
 
+msgid "Randomize color hue"
+msgstr "随机化色相"
+
+
 msgid "Scale the noise frequency"
 msgstr "缩放噪波频率"
+
+
+msgid "Randomize texture rotation"
+msgstr "纹理旋转随机化"
+
+
+msgid "Randomize color saturation"
+msgstr "随机化颜色饱和度"
+
+
+msgid "Randomize the size"
+msgstr "随机化尺寸"
+
+
+msgid "Randomize strength"
+msgstr "随机化强度"
+
+
+msgid "Randomize color value"
+msgstr "随机化颜色明度"
 
 
 msgid "Show stroke fills of this material"
@@ -35202,6 +35230,14 @@ msgid "Disable stencil and overlap self intersections with alpha materials"
 msgstr "禁用带alpha材质的镂版与重叠自交错"
 
 
+msgid "Randomization"
+msgstr "随机化"
+
+
+msgid "Use materiel randomization"
+msgstr "使用材质随机化"
+
+
 msgid "Material Line Art"
 msgstr "材质线条画"
 
@@ -35246,92 +35282,12 @@ msgid "Editor menu containing buttons"
 msgstr "包含按钮的编辑器菜单"
 
 
-msgid "Clear Transform"
-msgstr "清空变换"
-
-
-msgid "In-Betweens"
-msgstr "间帧调整"
-
-
-msgid "Propagate"
-msgstr "传导"
-
-
-msgid "Bone Collections"
-msgstr "骨骼集合"
-
-
-msgid "Names"
-msgstr "名称"
-
-
-msgid "Show/Hide"
-msgstr "显示 / 隐藏"
-
-
-msgid "Apply"
-msgstr "应用"
-
-
-msgid "Toggle Bone Options"
-msgstr "切换骨骼设置"
-
-
-msgid "Math"
-msgstr "运算"
-
-
-msgid "Enable Bone Options"
-msgstr "启用骨骼设置"
-
-
-msgid "Disable Bone Options"
-msgstr "禁用骨骼设置"
-
-
-msgid "Utilities"
-msgstr "实用工具"
-
-
-msgid "Mesh Select Mode"
-msgstr "网格选择模式"
-
-
-msgid "Face Data"
-msgstr "面数据"
-
-
-msgid "Select by Face Strength"
-msgstr "按面强度选择"
-
-
-msgid "Set Face Strength"
-msgstr "设置面强度"
-
-
 msgid "Clean Up"
 msgstr "清理"
 
 
-msgid "Merge"
-msgstr "合并"
-
-
-msgid "Read"
-msgstr "读取"
-
-
-msgid "Sample"
-msgstr "采样"
-
-
-msgid "Write"
-msgstr "写入"
-
-
-msgid "Primitives"
-msgstr "基本体"
+msgid "Show/Hide"
+msgstr "显示 / 隐藏"
 
 
 msgid "Special Characters"
@@ -35346,40 +35302,44 @@ msgid "Metaball"
 msgstr "融球"
 
 
-msgid "Gizmo"
-msgstr "操控器"
+msgid "Names"
+msgstr "名称"
+
+
+msgid "Math"
+msgstr "运算"
 
 
 msgid "Bone Roll"
 msgstr "骨骼扭转"
 
 
-msgid "Instances"
-msgstr "实例"
-
-
-msgid "Import"
-msgstr "导入"
-
-
-msgid "Deprecated"
-msgstr "已弃用"
+msgid "Utilities"
+msgstr "实用工具"
 
 
 msgid "Pivot Point"
 msgstr "轴心点"
 
 
+msgid "Read"
+msgstr "读取"
+
+
 msgid "Snap"
 msgstr "吸附"
+
+
+msgid "Sample"
+msgstr "采样"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "衰减编辑的衰减方式"
 
 
-msgid "List"
-msgstr "列表"
+msgid "Write"
+msgstr "写入"
 
 
 msgid "Mask Edit"
@@ -35390,8 +35350,8 @@ msgid "Automasking"
 msgstr "自动遮罩"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "基本体"
 
 
 msgid "Face Sets Edit"
@@ -35400,6 +35360,18 @@ msgstr "面组编辑"
 
 msgid "Vertex Group Locks"
 msgstr "顶点组锁"
+
+
+msgid "Gizmo"
+msgstr "操控器"
+
+
+msgid "Instances"
+msgstr "实例"
+
+
+msgid "Import"
+msgstr "导入"
 
 
 msgid "Mirror"
@@ -35416,6 +35388,10 @@ msgstr "局部视图"
 
 msgid "Viewpoint"
 msgstr "视图"
+
+
+msgid "Deprecated"
+msgstr "已弃用"
 
 
 msgid "Navigation"
@@ -35438,6 +35414,14 @@ msgid "Select More/Less"
 msgstr "扩展/缩减选择"
 
 
+msgid "List"
+msgstr "列表"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "选择相似"
 
@@ -35458,20 +35442,12 @@ msgid "Assign Material"
 msgstr "指定材质"
 
 
-msgid "Layout"
-msgstr "布局"
-
-
 msgid "Light"
 msgstr "灯光"
 
 
 msgid "Light Probe"
 msgstr "光照探头"
-
-
-msgid "Adjust"
-msgstr "校正"
 
 
 msgid "Add Image"
@@ -35482,32 +35458,20 @@ msgid "Relations"
 msgstr "关系"
 
 
-msgid "Keying"
-msgstr "抠像"
-
-
-msgid "Tracking"
-msgstr "追踪"
-
-
 msgid "Rigid Body"
 msgstr "刚体"
+
+
+msgid "Apply"
+msgstr "应用"
 
 
 msgid "Track"
 msgstr "追踪"
 
 
-msgid "Creative"
-msgstr "创意"
-
-
 msgid "Quick Effects"
 msgstr "快速效果"
-
-
-msgid "Render Preview"
-msgstr "渲染预览"
 
 
 msgid "Asset"
@@ -35530,6 +35494,10 @@ msgid "Hooks"
 msgstr "钩挂"
 
 
+msgid "Layout"
+msgstr "布局"
+
+
 msgid "Trim/Add"
 msgstr "修剪 / 添加"
 
@@ -35548,6 +35516,74 @@ msgstr "面组初始化"
 
 msgid "Random Mask"
 msgstr "随机遮罩"
+
+
+msgid "Adjust"
+msgstr "校正"
+
+
+msgid "Clear Transform"
+msgstr "清空变换"
+
+
+msgid "In-Betweens"
+msgstr "间帧调整"
+
+
+msgid "Keying"
+msgstr "抠像"
+
+
+msgid "Propagate"
+msgstr "传导"
+
+
+msgid "Tracking"
+msgstr "追踪"
+
+
+msgid "Bone Collections"
+msgstr "骨骼集合"
+
+
+msgid "Toggle Bone Options"
+msgstr "切换骨骼设置"
+
+
+msgid "Creative"
+msgstr "创意"
+
+
+msgid "Enable Bone Options"
+msgstr "启用骨骼设置"
+
+
+msgid "Disable Bone Options"
+msgstr "禁用骨骼设置"
+
+
+msgid "Render Preview"
+msgstr "渲染预览"
+
+
+msgid "Mesh Select Mode"
+msgstr "网格选择模式"
+
+
+msgid "Face Data"
+msgstr "面数据"
+
+
+msgid "Select by Face Strength"
+msgstr "按面强度选择"
+
+
+msgid "Set Face Strength"
+msgstr "设置面强度"
+
+
+msgid "Merge"
+msgstr "合并"
 
 
 msgid "Keyframe Insert Pie"
@@ -45427,6 +45463,14 @@ msgid "Outputs"
 msgstr "输出"
 
 
+msgid "Panel States"
+msgstr "面板状态"
+
+
+msgid "Expansion state of each panel in the node"
+msgstr "节点中每个面板的展开状态"
+
+
 msgid "Node selection state"
 msgstr "节点选取状态"
 
@@ -50429,6 +50473,10 @@ msgid "Volumetric approximation to physically based volume scattering, with scat
 msgstr "基于物理体积散射的体积近似方法，其散射半径可自动调整以匹配色彩纹理。专为皮肤着色设计。"
 
 
+msgid "Random Walk (Legacy)"
+msgstr "随机游走 (旧版)"
+
+
 msgid "Ray Portal BSDF"
 msgstr "光线传送 BSDF"
 
@@ -52745,6 +52793,26 @@ msgid "Node Outputs"
 msgstr "节点输出"
 
 
+msgid "Node Panel State"
+msgstr "节点面板状态"
+
+
+msgid "Expansion state of a panel in a node"
+msgstr "节点中面板的展开状态"
+
+
+msgid "Unique identifier matching the panel's persistent_uid"
+msgstr "与面板的持久性 uid 匹配的唯一标识符"
+
+
+msgid "Is Collapsed"
+msgstr "折叠"
+
+
+msgid "Whether the panel is collapsed"
+msgstr "面板是否已折叠"
+
+
 msgid "Separate Bundle Item"
 msgstr "分离捆包项目"
 
@@ -54611,6 +54679,11 @@ msgstr "导入 BVH"
 
 msgid "Load a SVG file"
 msgstr "加载 SVG 文件"
+
+
+msgctxt "Operator"
+msgid "Import SVG as Curves"
+msgstr "导入SVG为曲线"
 
 
 msgid "Load a FBX file"
@@ -57221,6 +57294,10 @@ msgstr "Y 最小值"
 msgctxt "Operator"
 msgid "Select by Type"
 msgstr "按类型选择"
+
+
+msgid "Select all keyframes of the given type"
+msgstr "选择指定类型的所有关键帧"
 
 
 msgid "Extend Selection"
@@ -73031,22 +73108,6 @@ msgstr "添加组输入节点"
 
 msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "在当前节点编辑器中添加带有选定接口的组输入节点"
-
-
-msgid "Panel Identifier"
-msgstr "面板标识符"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "将接口添加到组输入/输出节点的面板"
-
-
-msgid "Socket Identifier"
-msgstr "接口标识符"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "要纳入到所添加的组输入/输出节点的接口"
 
 
 msgctxt "Operator"
@@ -92831,20 +92892,20 @@ msgid "glTF Material Variants"
 msgstr "glTF 材质变体"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 动画"
-
-
 msgid "Active Tool"
 msgstr "活动工具"
 
 
 msgid "View Lock"
 msgstr "视图锁定"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 动画"
 
 
 msgid "Selectability & Visibility"
@@ -96562,14 +96623,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "支持在几何节点的几何体中存储自定义捆包"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "几何节点列表"
-
-
-msgid "Enable new list types and nodes"
-msgstr "启用新的列表类型和节点"
-
-
 msgid "New Curves Tools"
 msgstr "新曲线工具"
 
@@ -97744,34 +97797,6 @@ msgid "Number of shader compilation threads or subprocesses, clamped at the max 
 msgstr "着色器编译线程或子进程的数量，限制在 CPU 支持的最大线程数（需要重新启动 Blender 才能使更改生效）。更高的数字会增加内存使用率，同时减少编译时间。值为 0 将使用自动配置。（仅限 OpenGL）"
 
 
-msgid "Image Display Method"
-msgstr "图像显示方式"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "用于在屏幕上显示图像的方法"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "基于GPU和图像自动选择方法"
-
-
-msgid "2D Texture"
-msgstr "2D 纹理"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "使用CPU进行显示变换并使用二维纹理显示图像"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "使用GLSL着色器显示变换并使用二维纹理显示图像"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "微软商店安装"
 
@@ -98264,10 +98289,6 @@ msgid "Chinese (Simplified) - 简体中文"
 msgstr "简体中文"
 
 
-msgid "Locale code: zh_HANS. Translation progress: 100%"
-msgstr "区域代码: zh_HANS. 翻译进度: 100%"
-
-
 msgid "Chinese (Traditional) - 繁體中文"
 msgstr "繁体中文 - 繁體中文"
 
@@ -98342,6 +98363,10 @@ msgstr "区域代码: fi_FI. 翻译进度: 11%"
 
 msgid "French - Français"
 msgstr "法语 - Français"
+
+
+msgid "Locale code: fr_FR. Translation progress: 100%"
+msgstr "区域代码: fr_FR. 翻译进度: 100%"
 
 
 msgid "Georgian - ქართული"
@@ -98556,16 +98581,8 @@ msgid "Swedish - Svenska"
 msgstr "瑞典语 - Svenska"
 
 
-msgid "Locale code: sv_SE. Translation progress: 99%"
-msgstr "区域代码: sv_SE. 翻译进度: 99%"
-
-
 msgid "Tamil - தமிழ்"
 msgstr "泰米尔语 - தமிழ்"
-
-
-msgid "Locale code: ta. Translation progress: 99%"
-msgstr "区域代码: ta. 翻译进度: 99%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -107691,6 +107708,14 @@ msgid "Display library override relationships"
 msgstr "显示库重写关系"
 
 
+msgid "Scroll to Active"
+msgstr "滚动到活动项"
+
+
+msgid "Scroll the active item into view when it changes outside of the Outliner"
+msgstr "当活动项移出大纲范围时，将其滚动至视野中"
+
+
 msgid "Show Mode Column"
 msgstr "显示模式栏"
 
@@ -110150,6 +110175,14 @@ msgid "Text that will be displayed"
 msgstr "将被显示的文字"
 
 
+msgid "UI Textbox State"
+msgstr "UI 文本框状态"
+
+
+msgid "Textbox state in the UI"
+msgstr "UI 中的文本框状态"
+
+
 msgid "Display text as bold"
 msgstr "显示文本为粗体"
 
@@ -110599,10 +110632,6 @@ msgstr "片段修改器"
 
 msgid "Modifier for sequence strip"
 msgstr "序列片段的修改器"
-
-
-msgid "Enable this modifier"
-msgstr "启用当前修改器"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -121299,6 +121328,11 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "无效目标 %r (必须为骨架或物体)"
 
 
+msgctxt "Operator"
+msgid "SVG as Curves (.svg)"
+msgstr "SVG为曲线 (.svg)"
+
+
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "无法解析 XML, %s:%s 针对文件 %r"
 
@@ -127179,6 +127213,21 @@ msgstr "表达式: {:s}"
 msgctxt "Operator"
 msgid "Zoom Region..."
 msgstr "框选放大..."
+
+
+msgctxt "Operator"
+msgid "Tile"
+msgstr "分块"
+
+
+msgctxt "Operator"
+msgid "Pinned"
+msgstr "钉固"
+
+
+msgctxt "Operator"
+msgid "Overlap"
+msgstr "重叠"
 
 
 msgctxt "Operator"
@@ -133251,6 +133300,18 @@ msgid "Is Tile"
 msgstr "是否为分块"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "输入的栅格有不兼容的变换"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "未找到可确定拓扑结构的输入栅格"
+
+
+msgid "Grid type not supported"
+msgstr "栅格类型不受支持"
+
+
 msgid "OpenVDB error: {}"
 msgstr "OpenVDB错误: {}"
 
@@ -136699,10 +136760,6 @@ msgstr "今天"
 
 msgid "Yesterday"
 msgstr "昨天"
-
-
-msgid "Modified: {}{}{}"
-msgstr "修改时间: {}{}{}"
 
 
 msgid "Size: {}"
@@ -141560,14 +141617,6 @@ msgid "Could not add material"
 msgstr "无法添加材质"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "无法同时设置接口和面板标识符"
-
-
-msgid "Invalid panel identifier"
-msgstr "无效的面板标识符"
-
-
 msgid "Could not add a color node"
 msgstr "无法添加颜色节点"
 
@@ -141594,14 +141643,6 @@ msgstr "尚未定义节点树类型 %s"
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "自定义 (Python 定义) 节点树不支持添加节点组"
-
-
-msgid "Cannot drag an output socket"
-msgstr "无法拖动输出接口"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "无法拖动无输入的面板"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -141942,18 +141983,6 @@ msgstr "面板开关"
 
 msgid "Group Sockets"
 msgstr "群组接口"
-
-
-msgid "Add \"{}\" Input"
-msgstr "添加 \"{}\" 输入"
-
-
-msgid "Add \"{}\" Input (Ctrl to add panel)"
-msgstr "添加 \"{}\" 输入 (按 Ctrl 添加面板)"
-
-
-msgid "Add \"{}\" Panel"
-msgstr "添加 \"{}\" 面板"
 
 
 msgid "More than one collection is selected"
@@ -144334,10 +144363,6 @@ msgstr "断离与顶点黏性选择不兼容"
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "断离仅与顶点/边选择的同步选择兼容"
-
-
-msgid "Rip failed"
-msgstr "断离失败"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -153031,18 +153056,6 @@ msgid "Found conflicting closure signatures"
 msgstr "发现冲突的闭包签名"
 
 
-msgid "Input grids have incompatible transforms"
-msgstr "输入的栅格有不兼容的变换"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "未找到可确定拓扑结构的输入栅格"
-
-
-msgid "Grid type not supported"
-msgstr "栅格类型不受支持"
-
-
 msgid "Not a shader node tree"
 msgstr "不是着色器节点树"
 
@@ -156436,10 +156449,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "随机化时排除最后一个副本"
 
 
-msgid "The forward direction along the array shape"
-msgstr "沿阵列形状的前进方向"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr "按距离合并重叠点。（必须启用实现实例）"
 
@@ -156562,10 +156571,6 @@ msgstr "在本地定义变换，或通过物体的变换属性定义"
 
 msgid "Translation accumulated for each copy"
 msgstr "每个副本的平移累计值"
-
-
-msgid "The up direction along the array shape"
-msgstr "阵列形态的向上方向"
 
 
 msgid "Invalid Distance"

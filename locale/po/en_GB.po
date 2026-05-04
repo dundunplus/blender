@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-02-16 18:12+0000\n"
 "Last-Translator: Deniz Jones <sdfoakes@gmail.com>\n"
 "Language-Team: English (United Kingdom) <https://translate.blender.org/projects/blender-ui/ui/en_GB/>\n"
@@ -34914,92 +34914,12 @@ msgid "Editor menu containing buttons"
 msgstr "Editor menu containing buttons"
 
 
-msgid "Clear Transform"
-msgstr "Clear Transform"
-
-
-msgid "In-Betweens"
-msgstr "In-Betweens"
-
-
-msgid "Propagate"
-msgstr "Propagate"
-
-
-msgid "Bone Collections"
-msgstr "Bone Collections"
-
-
-msgid "Names"
-msgstr "Names"
-
-
-msgid "Show/Hide"
-msgstr "Show/Hide"
-
-
-msgid "Apply"
-msgstr "Apply"
-
-
-msgid "Toggle Bone Options"
-msgstr "Toggle Bone Options"
-
-
-msgid "Math"
-msgstr "Maths"
-
-
-msgid "Enable Bone Options"
-msgstr "Enable Bone Options"
-
-
-msgid "Disable Bone Options"
-msgstr "Disable Bone Options"
-
-
-msgid "Utilities"
-msgstr "Utilities"
-
-
-msgid "Mesh Select Mode"
-msgstr "Mesh Select Mode"
-
-
-msgid "Face Data"
-msgstr "Face Data"
-
-
-msgid "Select by Face Strength"
-msgstr "Select by Face Strength"
-
-
-msgid "Set Face Strength"
-msgstr "Set Face Strength"
-
-
 msgid "Clean Up"
 msgstr "Clean Up"
 
 
-msgid "Merge"
-msgstr "Merge"
-
-
-msgid "Read"
-msgstr "Read"
-
-
-msgid "Sample"
-msgstr "Sample"
-
-
-msgid "Write"
-msgstr "Write"
-
-
-msgid "Primitives"
-msgstr "Primitives"
+msgid "Show/Hide"
+msgstr "Show/Hide"
 
 
 msgid "Special Characters"
@@ -35014,40 +34934,44 @@ msgid "Metaball"
 msgstr "Metaball"
 
 
-msgid "Gizmo"
-msgstr "Gizmo"
+msgid "Names"
+msgstr "Names"
+
+
+msgid "Math"
+msgstr "Maths"
 
 
 msgid "Bone Roll"
 msgstr "Bone Roll"
 
 
-msgid "Instances"
-msgstr "Instances"
-
-
-msgid "Import"
-msgstr "Import"
-
-
-msgid "Deprecated"
-msgstr "Deprecated"
+msgid "Utilities"
+msgstr "Utilities"
 
 
 msgid "Pivot Point"
 msgstr "Pivot Point"
 
 
+msgid "Read"
+msgstr "Read"
+
+
 msgid "Snap"
 msgstr "Snap"
+
+
+msgid "Sample"
+msgstr "Sample"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "Proportional Editing Falloff"
 
 
-msgid "List"
-msgstr "List"
+msgid "Write"
+msgstr "Write"
 
 
 msgid "Mask Edit"
@@ -35058,8 +34982,8 @@ msgid "Automasking"
 msgstr "Automasking"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "Primitives"
 
 
 msgid "Face Sets Edit"
@@ -35068,6 +34992,18 @@ msgstr "Face Sets Edit"
 
 msgid "Vertex Group Locks"
 msgstr "Vertex Group Locks"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instances"
+
+
+msgid "Import"
+msgstr "Import"
 
 
 msgid "Mirror"
@@ -35084,6 +35020,10 @@ msgstr "Local View"
 
 msgid "Viewpoint"
 msgstr "Viewpoint"
+
+
+msgid "Deprecated"
+msgstr "Deprecated"
 
 
 msgid "Navigation"
@@ -35106,6 +35046,14 @@ msgid "Select More/Less"
 msgstr "Select More/Less"
 
 
+msgid "List"
+msgstr "List"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Select Similar"
 
@@ -35126,20 +35074,12 @@ msgid "Assign Material"
 msgstr "Assign Material"
 
 
-msgid "Layout"
-msgstr "Layout"
-
-
 msgid "Light"
 msgstr "Light"
 
 
 msgid "Light Probe"
 msgstr "Light Probe"
-
-
-msgid "Adjust"
-msgstr "Adjust"
 
 
 msgid "Add Image"
@@ -35150,32 +35090,20 @@ msgid "Relations"
 msgstr "Relations"
 
 
-msgid "Keying"
-msgstr "Keying"
-
-
-msgid "Tracking"
-msgstr "Tracking"
-
-
 msgid "Rigid Body"
 msgstr "Rigid Body"
+
+
+msgid "Apply"
+msgstr "Apply"
 
 
 msgid "Track"
 msgstr "Track"
 
 
-msgid "Creative"
-msgstr "Creative"
-
-
 msgid "Quick Effects"
 msgstr "Quick Effects"
-
-
-msgid "Render Preview"
-msgstr "Render Preview"
 
 
 msgid "Asset"
@@ -35198,6 +35126,10 @@ msgid "Hooks"
 msgstr "Hooks"
 
 
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Trim/Add"
 msgstr "Trim/Add"
 
@@ -35212,6 +35144,74 @@ msgstr "Face Sets Init"
 
 msgid "Random Mask"
 msgstr "Random Mask"
+
+
+msgid "Adjust"
+msgstr "Adjust"
+
+
+msgid "Clear Transform"
+msgstr "Clear Transform"
+
+
+msgid "In-Betweens"
+msgstr "In-Betweens"
+
+
+msgid "Keying"
+msgstr "Keying"
+
+
+msgid "Propagate"
+msgstr "Propagate"
+
+
+msgid "Tracking"
+msgstr "Tracking"
+
+
+msgid "Bone Collections"
+msgstr "Bone Collections"
+
+
+msgid "Toggle Bone Options"
+msgstr "Toggle Bone Options"
+
+
+msgid "Creative"
+msgstr "Creative"
+
+
+msgid "Enable Bone Options"
+msgstr "Enable Bone Options"
+
+
+msgid "Disable Bone Options"
+msgstr "Disable Bone Options"
+
+
+msgid "Render Preview"
+msgstr "Render Preview"
+
+
+msgid "Mesh Select Mode"
+msgstr "Mesh Select Mode"
+
+
+msgid "Face Data"
+msgstr "Face Data"
+
+
+msgid "Select by Face Strength"
+msgstr "Select by Face Strength"
+
+
+msgid "Set Face Strength"
+msgstr "Set Face Strength"
+
+
+msgid "Merge"
+msgstr "Merge"
 
 
 msgid "Keyframe Insert Pie"
@@ -71893,22 +71893,6 @@ msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "Add a Group Input node with selected sockets to the current node editor"
 
 
-msgid "Panel Identifier"
-msgstr "Panel Identifier"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "Panel from which to add sockets to the added group input/output node"
-
-
-msgid "Socket Identifier"
-msgstr "Socket Identifier"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "Socket to include in the added group input/output node"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "Add Image as Node"
@@ -91409,20 +91393,20 @@ msgid "glTF Material Variants"
 msgstr "glTF Material Variants"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF Animations"
-
-
 msgid "Active Tool"
 msgstr "Active Tool"
 
 
 msgid "View Lock"
 msgstr "View Lock"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF Animations"
 
 
 msgid "Selectability & Visibility"
@@ -95112,14 +95096,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "Support storing custom bundles in a geometry in Geometry Nodes"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "Geometry Nodes Lists"
-
-
-msgid "Enable new list types and nodes"
-msgstr "Enable new list types and nodes"
-
-
 msgid "New Curves Tools"
 msgstr "New Curves Tools"
 
@@ -96236,34 +96212,6 @@ msgstr "Shader Compilation Workers"
 
 msgid "Number of shader compilation threads or subprocesses, clamped at the max threads supported by the CPU (requires restarting Blender for changes to take effect). A higher number increases the RAM usage while reducing compilation time. A value of 0 will use automatic configuration. (OpenGL only)"
 msgstr "Number of shader compilation threads or subprocesses, clamped at the max threads supported by the CPU (requires restarting Blender for changes to take effect). A higher number increases the RAM usage while reducing compilation time. A value of 0 will use automatic configuration. (OpenGL only)"
-
-
-msgid "Image Display Method"
-msgstr "Image Display Method"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Method used for displaying images on the screen"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Automatically choose method based on GPU and image"
-
-
-msgid "2D Texture"
-msgstr "2D Texture"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Use CPU for display transform and display image with 2D texture"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "Use GLSL shaders for display transform and display image with 2D texture"
 
 
 msgid "Is Microsoft Store Install"
@@ -108753,10 +108701,6 @@ msgstr "Strip Modifier"
 
 msgid "Modifier for sequence strip"
 msgstr "Modifier for sequence strip"
-
-
-msgid "Enable this modifier"
-msgstr "Enable this modifier"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -131056,6 +131000,18 @@ msgid "Is Tile"
 msgstr "Is Tile"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "Input grids have incompatible transforms"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "No input grid found that can determine the topology"
+
+
+msgid "Grid type not supported"
+msgstr "Grid type not supported"
+
+
 msgid "OpenVDB error: {}"
 msgstr "OpenVDB error: {}"
 
@@ -134384,10 +134340,6 @@ msgstr "Today"
 
 msgid "Yesterday"
 msgstr "Yesterday"
-
-
-msgid "Modified: {}{}{}"
-msgstr "Modified: {}{}{}"
 
 
 msgid "Anim Player"
@@ -139119,14 +139071,6 @@ msgid "Could not add material"
 msgstr "Could not add material"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "Cannot set both socket and panel identifier"
-
-
-msgid "Invalid panel identifier"
-msgstr "Invalid panel identifier"
-
-
 msgid "Could not add a color node"
 msgstr "Could not add a colour node"
 
@@ -139153,14 +139097,6 @@ msgstr "Node tree type %s undefined"
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "Adding node groups isn't supported for custom (Python defined) node trees"
-
-
-msgid "Cannot drag an output socket"
-msgstr "Cannot drag an output socket"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "Cannot drag panel with no inputs"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -141829,10 +141765,6 @@ msgstr "Rip is not compatible with vertex sticky selection"
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "Rip is only compatible with sync-select with vertex/edge selection"
-
-
-msgid "Rip failed"
-msgstr "Rip failed"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -150316,18 +150248,6 @@ msgid "Found conflicting closure signatures"
 msgstr "Found conflicting closure signatures"
 
 
-msgid "Input grids have incompatible transforms"
-msgstr "Input grids have incompatible transforms"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "No input grid found that can determine the topology"
-
-
-msgid "Grid type not supported"
-msgstr "Grid type not supported"
-
-
 msgid "Not a shader node tree"
 msgstr "Not a shader node tree"
 
@@ -153661,10 +153581,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "Exclude the last copy from randomization"
 
 
-msgid "The forward direction along the array shape"
-msgstr "The forward direction along the array shape"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr "Merge overlapping points by their distance. (Realise Instances must be enabled)"
 
@@ -153787,10 +153703,6 @@ msgstr "Define the transform locally or with an object's transform"
 
 msgid "Translation accumulated for each copy"
 msgstr "Translation accumulated for each copy"
-
-
-msgid "The up direction along the array shape"
-msgstr "The up direction along the array shape"
 
 
 msgid "Invalid Distance"

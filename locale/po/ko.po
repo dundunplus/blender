@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-03-27 12:12+0000\n"
 "Last-Translator: kim nahyeong <weiing0123@ajou.ac.kr>\n"
 "Language-Team: Korean <https://translate.blender.org/projects/blender-ui/ui/ko/>\n"
@@ -34769,92 +34769,12 @@ msgid "Editor menu containing buttons"
 msgstr "버튼이 포함된 에디터 메뉴"
 
 
-msgid "Clear Transform"
-msgstr "변환을 지우기"
-
-
-msgid "In-Betweens"
-msgstr "사이에서"
-
-
-msgid "Propagate"
-msgstr "전파"
-
-
-msgid "Bone Collections"
-msgstr "뼈대 컬렉션"
-
-
-msgid "Names"
-msgstr "이름"
-
-
-msgid "Show/Hide"
-msgstr "표시/숨기기"
-
-
-msgid "Apply"
-msgstr "적용"
-
-
-msgid "Toggle Bone Options"
-msgstr "뼈대 옵션을 토글"
-
-
-msgid "Math"
-msgstr "수학"
-
-
-msgid "Enable Bone Options"
-msgstr "뼈대 옵션을 사용"
-
-
-msgid "Disable Bone Options"
-msgstr "뼈대 옵션을 사용 중지"
-
-
-msgid "Utilities"
-msgstr "유틸리티"
-
-
-msgid "Mesh Select Mode"
-msgstr "메시 선택 모드"
-
-
-msgid "Face Data"
-msgstr "페이스 데이터"
-
-
-msgid "Select by Face Strength"
-msgstr "페이스 강도로 선택"
-
-
-msgid "Set Face Strength"
-msgstr "페이스 강도를 설정"
-
-
 msgid "Clean Up"
 msgstr "정리"
 
 
-msgid "Merge"
-msgstr "병합"
-
-
-msgid "Read"
-msgstr "읽기"
-
-
-msgid "Sample"
-msgstr "샘플"
-
-
-msgid "Write"
-msgstr "쓰기"
-
-
-msgid "Primitives"
-msgstr "프리미티브"
+msgid "Show/Hide"
+msgstr "표시/숨기기"
 
 
 msgid "Special Characters"
@@ -34869,40 +34789,44 @@ msgid "Metaball"
 msgstr "메타볼"
 
 
-msgid "Gizmo"
-msgstr "기즈모"
+msgid "Names"
+msgstr "이름"
+
+
+msgid "Math"
+msgstr "수학"
 
 
 msgid "Bone Roll"
 msgstr "뼈대 롤"
 
 
-msgid "Instances"
-msgstr "인스턴스"
-
-
-msgid "Import"
-msgstr "가져오기"
-
-
-msgid "Deprecated"
-msgstr "사용 중단"
+msgid "Utilities"
+msgstr "유틸리티"
 
 
 msgid "Pivot Point"
 msgstr "피벗 포인트"
 
 
+msgid "Read"
+msgstr "읽기"
+
+
 msgid "Snap"
 msgstr "스냅"
+
+
+msgid "Sample"
+msgstr "샘플"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "비례 편집 감소"
 
 
-msgid "List"
-msgstr "목록"
+msgid "Write"
+msgstr "쓰기"
 
 
 msgid "Mask Edit"
@@ -34913,8 +34837,8 @@ msgid "Automasking"
 msgstr "오토마스킹"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "프리미티브"
 
 
 msgid "Face Sets Edit"
@@ -34923,6 +34847,18 @@ msgstr "페이스 세트 편집"
 
 msgid "Vertex Group Locks"
 msgstr "버텍스 그룹 잠금"
+
+
+msgid "Gizmo"
+msgstr "기즈모"
+
+
+msgid "Instances"
+msgstr "인스턴스"
+
+
+msgid "Import"
+msgstr "가져오기"
 
 
 msgid "Mirror"
@@ -34939,6 +34875,10 @@ msgstr "로컬 뷰"
 
 msgid "Viewpoint"
 msgstr "뷰포트"
+
+
+msgid "Deprecated"
+msgstr "사용 중단"
 
 
 msgid "Navigation"
@@ -34961,6 +34901,14 @@ msgid "Select More/Less"
 msgstr "선택 증가/감소"
 
 
+msgid "List"
+msgstr "목록"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "유사한 선택"
 
@@ -34981,20 +34929,12 @@ msgid "Assign Material"
 msgstr "머티리얼을 할당"
 
 
-msgid "Layout"
-msgstr "레이아웃"
-
-
 msgid "Light"
 msgstr "라이트"
 
 
 msgid "Light Probe"
 msgstr "라이트 프로브"
-
-
-msgid "Adjust"
-msgstr "조정"
 
 
 msgid "Add Image"
@@ -35005,32 +34945,20 @@ msgid "Relations"
 msgstr "관계"
 
 
-msgid "Keying"
-msgstr "키잉"
-
-
-msgid "Tracking"
-msgstr "트래킹"
-
-
 msgid "Rigid Body"
 msgstr "리지드 바디"
+
+
+msgid "Apply"
+msgstr "적용"
 
 
 msgid "Track"
 msgstr "트랙"
 
 
-msgid "Creative"
-msgstr "크리에이티브"
-
-
 msgid "Quick Effects"
 msgstr "빠른 이펙트"
-
-
-msgid "Render Preview"
-msgstr "렌더링 미리보기"
 
 
 msgid "Asset"
@@ -35053,6 +34981,10 @@ msgid "Hooks"
 msgstr "후크"
 
 
+msgid "Layout"
+msgstr "레이아웃"
+
+
 msgid "Trim/Add"
 msgstr "트림/추가"
 
@@ -35067,6 +34999,74 @@ msgstr "페이스 세트 초기화"
 
 msgid "Random Mask"
 msgstr "랜덤 마스크"
+
+
+msgid "Adjust"
+msgstr "조정"
+
+
+msgid "Clear Transform"
+msgstr "변환을 지우기"
+
+
+msgid "In-Betweens"
+msgstr "사이에서"
+
+
+msgid "Keying"
+msgstr "키잉"
+
+
+msgid "Propagate"
+msgstr "전파"
+
+
+msgid "Tracking"
+msgstr "트래킹"
+
+
+msgid "Bone Collections"
+msgstr "뼈대 컬렉션"
+
+
+msgid "Toggle Bone Options"
+msgstr "뼈대 옵션을 토글"
+
+
+msgid "Creative"
+msgstr "크리에이티브"
+
+
+msgid "Enable Bone Options"
+msgstr "뼈대 옵션을 사용"
+
+
+msgid "Disable Bone Options"
+msgstr "뼈대 옵션을 사용 중지"
+
+
+msgid "Render Preview"
+msgstr "렌더링 미리보기"
+
+
+msgid "Mesh Select Mode"
+msgstr "메시 선택 모드"
+
+
+msgid "Face Data"
+msgstr "페이스 데이터"
+
+
+msgid "Select by Face Strength"
+msgstr "페이스 강도로 선택"
+
+
+msgid "Set Face Strength"
+msgstr "페이스 강도를 설정"
+
+
+msgid "Merge"
+msgstr "병합"
 
 
 msgid "Keyframe Insert Pie"
@@ -71282,22 +71282,6 @@ msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "현재 노드 에디터에 선택된 소켓이 있는 그룹 입력 노드를 추가함"
 
 
-msgid "Panel Identifier"
-msgstr "패널 식별자"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "추가된 그룹 입력/출력 노드에 소켓을 추가할 패널"
-
-
-msgid "Socket Identifier"
-msgstr "소켓 식별자"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "추가된 그룹 입력/출력 노드에 포함할 소켓"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "이미지를 노드로 추가"
@@ -90474,20 +90458,20 @@ msgid "glTF Material Variants"
 msgstr "glTF 머티리얼 배리언트"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 애니메이션"
-
-
 msgid "Active Tool"
 msgstr "활성 도구"
 
 
 msgid "View Lock"
 msgstr "뷰 잠금"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 애니메이션"
 
 
 msgid "Selectability & Visibility"
@@ -94169,14 +94153,6 @@ msgid "Extra debugging information & developer support utilities for extensions"
 msgstr "확장 기능을 위한 추가 디버깅 정보 및 개발자 지원 유틸리티"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "지오메트리 노드 목록"
-
-
-msgid "Enable new list types and nodes"
-msgstr "새 목록 유형 및 노드 활성화"
-
-
 msgid "New Curves Tools"
 msgstr "새로운 커브 도구"
 
@@ -95253,34 +95229,6 @@ msgstr "셰이더 컴파일 워커"
 
 msgid "Number of shader compilation threads or subprocesses, clamped at the max threads supported by the CPU (requires restarting Blender for changes to take effect). A higher number increases the RAM usage while reducing compilation time. A value of 0 will use automatic configuration. (OpenGL only)"
 msgstr "셰이더 컴파일 스레드 또는 하위 프로세스의 수로, CPU에서 지원하는 최대 스레드로 고정됩니다(변경 사항을 적용하려면 Blender를 다시 시작해야 함). 숫자가 클수록 컴파일 시간이 단축되는 동시에 RAM 사용량이 증가합니다. 값이 0이면 자동 설정 또는 구성을 사용합니다. (OpenGL만 해당)"
-
-
-msgid "Image Display Method"
-msgstr "이미지 표시 방법"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "화면에 이미지를 표시에 대한 사용되는 메서드"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "GPU와 이미지를 기반으로 자동으로 메서드를 선택"
-
-
-msgid "2D Texture"
-msgstr "2D 텍스처"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "디스플레이 트랜스폼에 CPU 사용 및 2D 텍스처로 이미지 표시"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "2D 텍스처를 사용한 디스플레이 트랜스폼 및 디스플레이 이미지에 GLSL 셰이더 사용"
 
 
 msgid "Is Microsoft Store Install"
@@ -107590,10 +107538,6 @@ msgstr "스트립 모디파이어"
 
 msgid "Modifier for sequence strip"
 msgstr "시퀀스 스트립에 대한 모디파이어"
-
-
-msgid "Enable this modifier"
-msgstr "이 모디파이어 활성화"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -129419,6 +129363,18 @@ msgid "Is Tile"
 msgstr "타일"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "입력 그리드 변환 호환되지 않음"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "토폴로지 결정 가능한 입력 그리드 없음"
+
+
+msgid "Grid type not supported"
+msgstr "그리드 유형 지원되지 않음"
+
+
 msgid "OpenVDB error: {}"
 msgstr "OpenVDB 오차: {}"
 
@@ -137214,14 +137170,6 @@ msgid "Could not add material"
 msgstr "머티리얼을 추가할 수 없음"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "소켓 및 패널 식별자를 모두 설정할 수 없음"
-
-
-msgid "Invalid panel identifier"
-msgstr "잘못된 패널 식별자"
-
-
 msgid "Could not add a color node"
 msgstr "색상 노드를 추가할 수 없음"
 
@@ -137248,14 +137196,6 @@ msgstr "노드 트리 유형 %s 정의되지 않음"
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "노드 그룹 추가는 사용자 정의(Python 정의) 노드 트리에는 지원되지 없음"
-
-
-msgid "Cannot drag an output socket"
-msgstr "출력 소켓을 드래그할 수 없음"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "입력이 없는 패널을 드래그할 수 없음"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -139860,10 +139800,6 @@ msgstr "립은 버텍스 스티커 선택과 호환되지 없음"
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "추출은 버텍스/에지 선택 동기화 선택과만 호환함"
-
-
-msgid "Rip failed"
-msgstr "떼어내기 실패"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -148063,18 +147999,6 @@ msgid "Found conflicting closure signatures"
 msgstr "충돌하는 클로저 시그니처 발견함"
 
 
-msgid "Input grids have incompatible transforms"
-msgstr "입력 그리드 변환 호환되지 않음"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "토폴로지 결정 가능한 입력 그리드 없음"
-
-
-msgid "Grid type not supported"
-msgstr "그리드 유형 지원되지 않음"
-
-
 msgid "Not a shader node tree"
 msgstr "쉐이더 노드 트리 아님"
 
@@ -151308,10 +151232,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "마지막 복사를 무작위화에서 제외함"
 
 
-msgid "The forward direction along the array shape"
-msgstr "배열 형태를 따라 앞쪽 방향함"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr "겹치는 점들을 거리로 병합함. (인스턴스 실제화 기능이 활성화되어야 함)"
 
@@ -151434,10 +151354,6 @@ msgstr "변환을 객체의 변환으로 로컬로 정의하거나 함"
 
 msgid "Translation accumulated for each copy"
 msgstr "각 복사본에 대해 이동 누적함"
-
-
-msgid "The up direction along the array shape"
-msgstr "어레이 형태에 따른 위쪽 방향"
 
 
 msgid "Invalid Distance"

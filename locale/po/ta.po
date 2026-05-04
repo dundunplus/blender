@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -35040,92 +35040,12 @@ msgid "Editor menu containing buttons"
 msgstr "பொத்தான்களைக் கொண்ட திருத்தி பட்டியல்"
 
 
-msgid "Clear Transform"
-msgstr "தெளிவான உருமாற்றம்"
-
-
-msgid "In-Betweens"
-msgstr "இன்-பெட்வீன்ச்"
-
-
-msgid "Propagate"
-msgstr "பிரச்சாரம்"
-
-
-msgid "Bone Collections"
-msgstr "எலும்பு வசூல்"
-
-
-msgid "Names"
-msgstr "பெயர்கள்"
-
-
-msgid "Show/Hide"
-msgstr "காட்டு/மறைக்க"
-
-
-msgid "Apply"
-msgstr "இடு"
-
-
-msgid "Toggle Bone Options"
-msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
-
-
-msgid "Math"
-msgstr "கணிதம்"
-
-
-msgid "Enable Bone Options"
-msgstr "எலும்பு விருப்பங்களை இயக்கவும்"
-
-
-msgid "Disable Bone Options"
-msgstr "எலும்பு விருப்பங்களை முடக்கு"
-
-
-msgid "Utilities"
-msgstr "பயன்பாடுகள்"
-
-
-msgid "Mesh Select Mode"
-msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Face Data"
-msgstr "முகத்தை முகம்"
-
-
-msgid "Select by Face Strength"
-msgstr "முக வலிமையால் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Set Face Strength"
-msgstr "முக வலிமையை அமைக்கவும்"
-
-
 msgid "Clean Up"
 msgstr "தூய்மை செய்"
 
 
-msgid "Merge"
-msgstr "ஒன்றிணைக்கவும்"
-
-
-msgid "Read"
-msgstr "படி"
-
-
-msgid "Sample"
-msgstr "மாதிரி"
-
-
-msgid "Write"
-msgstr "எழுதுங்கள்"
-
-
-msgid "Primitives"
-msgstr "ப்ரைமிடிவ்ச்"
+msgid "Show/Hide"
+msgstr "காட்டு/மறைக்க"
 
 
 msgid "Special Characters"
@@ -35140,40 +35060,44 @@ msgid "Metaball"
 msgstr "வளர்சிதை மாற்ற"
 
 
-msgid "Gizmo"
-msgstr "கிச்மோ"
+msgid "Names"
+msgstr "பெயர்கள்"
+
+
+msgid "Math"
+msgstr "கணிதம்"
 
 
 msgid "Bone Roll"
 msgstr "எலும்பு ரோல்"
 
 
-msgid "Instances"
-msgstr "நிகழ்வுகள்"
-
-
-msgid "Import"
-msgstr "இறக்குமதி"
-
-
-msgid "Deprecated"
-msgstr "மதிப்பிடப்பட்டது"
+msgid "Utilities"
+msgstr "பயன்பாடுகள்"
 
 
 msgid "Pivot Point"
 msgstr "பிவோட் புள்ளி"
 
 
+msgid "Read"
+msgstr "படி"
+
+
 msgid "Snap"
 msgstr "ச்னாப்"
+
+
+msgid "Sample"
+msgstr "மாதிரி"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "விகிதாசார திருத்துதல் வீழ்ச்சி"
 
 
-msgid "List"
-msgstr "பட்டியல்"
+msgid "Write"
+msgstr "எழுதுங்கள்"
 
 
 msgid "Mask Edit"
@@ -35184,8 +35108,8 @@ msgid "Automasking"
 msgstr "ஆட்டோமேச்கிங்"
 
 
-msgid "UV"
-msgstr "புறஊதா"
+msgid "Primitives"
+msgstr "ப்ரைமிடிவ்ச்"
 
 
 msgid "Face Sets Edit"
@@ -35194,6 +35118,18 @@ msgstr "முகம் தொகுப்புகள் திருத்த�
 
 msgid "Vertex Group Locks"
 msgstr "வெர்டெக்ச் குழு பூட்டுகள்"
+
+
+msgid "Gizmo"
+msgstr "கிச்மோ"
+
+
+msgid "Instances"
+msgstr "நிகழ்வுகள்"
+
+
+msgid "Import"
+msgstr "இறக்குமதி"
 
 
 msgid "Mirror"
@@ -35210,6 +35146,10 @@ msgstr "உள்ளக பார்வை"
 
 msgid "Viewpoint"
 msgstr "பார்வை"
+
+
+msgid "Deprecated"
+msgstr "மதிப்பிடப்பட்டது"
 
 
 msgid "Navigation"
@@ -35232,6 +35172,14 @@ msgid "Select More/Less"
 msgstr "மேலும்/குறைவாக தேர்ந்தெடுக்கவும்"
 
 
+msgid "List"
+msgstr "பட்டியல்"
+
+
+msgid "UV"
+msgstr "புறஊதா"
+
+
 msgid "Select Similar"
 msgstr "ஒத்ததைத் தேர்ந்தெடுக்கவும்"
 
@@ -35252,20 +35200,12 @@ msgid "Assign Material"
 msgstr "மூலப்பொருள் ஒதுக்க"
 
 
-msgid "Layout"
-msgstr "தளவமைப்பு"
-
-
 msgid "Light"
 msgstr "ஒளி"
 
 
 msgid "Light Probe"
 msgstr "ஒளி ஆய்வு"
-
-
-msgid "Adjust"
-msgstr "சரிசெய்யவும்"
 
 
 msgid "Add Image"
@@ -35276,32 +35216,20 @@ msgid "Relations"
 msgstr "உறவுகள்"
 
 
-msgid "Keying"
-msgstr "கீயிங்"
-
-
-msgid "Tracking"
-msgstr "கண்காணிப்பு"
-
-
 msgid "Rigid Body"
 msgstr "கடினமான உடல்"
+
+
+msgid "Apply"
+msgstr "இடு"
 
 
 msgid "Track"
 msgstr "டிராக்"
 
 
-msgid "Creative"
-msgstr "படைப்பாற்றல்"
-
-
 msgid "Quick Effects"
 msgstr "விரைவான விளைவுகள்"
-
-
-msgid "Render Preview"
-msgstr "வழங்குதல் முன்னோட்டம்"
 
 
 msgid "Asset"
@@ -35324,6 +35252,10 @@ msgid "Hooks"
 msgstr "கொக்கிகள்"
 
 
+msgid "Layout"
+msgstr "தளவமைப்பு"
+
+
 msgid "Trim/Add"
 msgstr "டிரிம்/சேர்"
 
@@ -35338,6 +35270,74 @@ msgstr "முகம் தொடங்குகிறது"
 
 msgid "Random Mask"
 msgstr "சீரற்ற முகமூடி"
+
+
+msgid "Adjust"
+msgstr "சரிசெய்யவும்"
+
+
+msgid "Clear Transform"
+msgstr "தெளிவான உருமாற்றம்"
+
+
+msgid "In-Betweens"
+msgstr "இன்-பெட்வீன்ச்"
+
+
+msgid "Keying"
+msgstr "கீயிங்"
+
+
+msgid "Propagate"
+msgstr "பிரச்சாரம்"
+
+
+msgid "Tracking"
+msgstr "கண்காணிப்பு"
+
+
+msgid "Bone Collections"
+msgstr "எலும்பு வசூல்"
+
+
+msgid "Toggle Bone Options"
+msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
+
+
+msgid "Creative"
+msgstr "படைப்பாற்றல்"
+
+
+msgid "Enable Bone Options"
+msgstr "எலும்பு விருப்பங்களை இயக்கவும்"
+
+
+msgid "Disable Bone Options"
+msgstr "எலும்பு விருப்பங்களை முடக்கு"
+
+
+msgid "Render Preview"
+msgstr "வழங்குதல் முன்னோட்டம்"
+
+
+msgid "Mesh Select Mode"
+msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Face Data"
+msgstr "முகத்தை முகம்"
+
+
+msgid "Select by Face Strength"
+msgstr "முக வலிமையால் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Set Face Strength"
+msgstr "முக வலிமையை அமைக்கவும்"
+
+
+msgid "Merge"
+msgstr "ஒன்றிணைக்கவும்"
 
 
 msgid "Keyframe Insert Pie"
@@ -72463,22 +72463,6 @@ msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "தற்போதைய முனை எடிட்டரில் தேர்ந்தெடுக்கப்பட்ட சாக்கெட்டுகளுடன் குழு உள்ளீட்டு முனையைச் சேர்க்கவும்"
 
 
-msgid "Panel Identifier"
-msgstr "குழு அடையாளங்காட்டி"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "சேர்க்கப்பட்ட குழு உள்ளீடு/வெளியீட்டு முனையில் சாக்கெட்டுகளைச் சேர்க்க வேண்டிய குழு"
-
-
-msgid "Socket Identifier"
-msgstr "சாக்கெட் அடையாளங்காட்டி"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "சேர்க்கப்பட்ட குழு உள்ளீடு/வெளியீட்டு முனையில் சேர்க்க சாக்கெட்"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "படத்தை முனையாக சேர்க்கவும்"
@@ -92153,20 +92137,20 @@ msgid "glTF Material Variants"
 msgstr "GLTF பொருள் மாறுபாடுகள்"
 
 
-msgid "glTF"
-msgstr "gltf"
-
-
-msgid "glTF Animations"
-msgstr "GLTF அனிமேசன்கள்"
-
-
 msgid "Active Tool"
 msgstr "செயலில் உள்ள கருவி"
 
 
 msgid "View Lock"
 msgstr "பூட்டைக் காண்க"
+
+
+msgid "glTF"
+msgstr "gltf"
+
+
+msgid "glTF Animations"
+msgstr "GLTF அனிமேசன்கள்"
 
 
 msgid "Selectability & Visibility"
@@ -95864,14 +95848,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "வடிவியல் முனைகளில் வடிவவியலில் தனிப்பயன் மூட்டைகளை சேமிப்பதற்கான உதவி"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "வடிவியல் முனைகள் பட்டியல்கள்"
-
-
-msgid "Enable new list types and nodes"
-msgstr "புதிய பட்டியல் வகைகள் மற்றும் முனைகளை இயக்கவும்"
-
-
 msgid "New Curves Tools"
 msgstr "புதிய வளைவுகள் கருவிகள்"
 
@@ -96988,34 +96964,6 @@ msgstr "சேடர் தொகுப்பு தொழிலாளர்க�
 
 msgid "Number of shader compilation threads or subprocesses, clamped at the max threads supported by the CPU (requires restarting Blender for changes to take effect). A higher number increases the RAM usage while reducing compilation time. A value of 0 will use automatic configuration. (OpenGL only)"
 msgstr "சிபியு ஆல் ஆதரிக்கப்படும் அதிகபட்ச நூல்களில் பிணைக்கப்பட்டுள்ள சேடர் தொகுப்பு நூல்கள் அல்லது துணை செயலாக்கங்களின் எண்ணிக்கை (மாற்றங்கள் நடைமுறைக்கு வருவதற்கு மறுதொடக்கம் செய்ய வேண்டும்). தொகுப்பு நேரத்தைக் குறைக்கும் போது அதிக எண்ணிக்கையானது ரேம் பயன்பாட்டை அதிகரிக்கிறது. 0 இன் மதிப்பு தானியங்கி உள்ளமைவைப் பயன்படுத்தும். (Opengl மட்டும்)"
-
-
-msgid "Image Display Method"
-msgstr "பட காட்சி முறை"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "திரையில் படங்களை காண்பிக்க பயன்படுத்தப்படும் முறை"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "சிபியு மற்றும் படத்தின் அடிப்படையில் தானாகவே முறையைத் தேர்வுசெய்க"
-
-
-msgid "2D Texture"
-msgstr "2 டி அமைப்பு"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "காட்சி உருமாற்றத்திற்கு சிபியு ஐப் பயன்படுத்தவும் மற்றும் 2d அமைப்புடன் படத்தைக் காண்பி"
-
-
-msgid "GLSL"
-msgstr "சி.எல்.எச்.எல்"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "காட்சி உருமாற்றத்திற்கு சி.எல்.எச்.எல் சேடர்களைப் பயன்படுத்தவும் மற்றும் 2 டி அமைப்புடன் படத்தைக் காண்பி"
 
 
 msgid "Is Microsoft Store Install"
@@ -109589,10 +109537,6 @@ msgstr "உரி மாற்றியமைப்பாளர்"
 
 msgid "Modifier for sequence strip"
 msgstr "வரிசை துண்டுக்கான மாற்றியமைப்பாளர்"
-
-
-msgid "Enable this modifier"
-msgstr "இந்த மாற்றியை இயக்கவும்"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -132050,6 +131994,18 @@ msgid "Is Tile"
 msgstr "டைல் ஆகும்"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "உள்ளீட்டு கட்டங்கள் பொருந்தாத உருமாற்றங்களைக் கொண்டுள்ளன"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "இடவியல் தீர்மானிக்கக்கூடிய உள்ளீட்டு கட்டம் எதுவும் கிடைக்கவில்லை"
+
+
+msgid "Grid type not supported"
+msgstr "கட்டம் வகை ஆதரிக்கப்படவில்லை"
+
+
 msgid "OpenVDB error: {}"
 msgstr "OpenVDB பிழை: {}"
 
@@ -135414,10 +135370,6 @@ msgstr "இன்று"
 
 msgid "Yesterday"
 msgstr "நேற்று"
-
-
-msgid "Modified: {}{}{}"
-msgstr "மாற்றப்பட்டது: {}{}{}"
 
 
 msgid "Size: {}"
@@ -140185,14 +140137,6 @@ msgid "Could not add material"
 msgstr "மூலப்பொருள் சேர்க்க முடியவில்லை"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "சாக்கெட் மற்றும் பேனல் அடையாளங்காட்டி இரண்டையும் அமைக்க முடியாது"
-
-
-msgid "Invalid panel identifier"
-msgstr "தவறான குழு அடையாளங்காட்டி"
-
-
 msgid "Could not add a color node"
 msgstr "வண்ண முனையைச் சேர்க்க முடியவில்லை"
 
@@ -140219,14 +140163,6 @@ msgstr "முனை மரம் வகை %s வரையறுக்கப்
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "முனை குழுக்களைச் சேர்ப்பது தனிப்பயன் (பைதான் வரையறுக்கப்பட்ட) முனை மரங்களுக்கு ஆதரிக்கப்படவில்லை"
-
-
-msgid "Cannot drag an output socket"
-msgstr "வெளியீட்டு சாக்கெட்டை இழுக்க முடியாது"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "உள்ளீடுகள் இல்லாமல் பேனலை இழுக்க முடியாது"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -142887,10 +142823,6 @@ msgstr "வெர்டெக்ச் ச்டிக்கி தேர்வ�
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "ரிப் என்பது வெர்டெக்ச்/எட்ச் தேர்வுடன் ஒத்திசைவு-தேர்ந்தெடுப்புடன் மட்டுமே இணக்கமாக இருக்கும்"
-
-
-msgid "Rip failed"
-msgstr "rip தோல்வியுற்றது"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -151412,18 +151344,6 @@ msgid "Found conflicting closure signatures"
 msgstr "முரண்பட்ட மூடல் கையொப்பங்கள் காணப்பட்டன"
 
 
-msgid "Input grids have incompatible transforms"
-msgstr "உள்ளீட்டு கட்டங்கள் பொருந்தாத உருமாற்றங்களைக் கொண்டுள்ளன"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "இடவியல் தீர்மானிக்கக்கூடிய உள்ளீட்டு கட்டம் எதுவும் கிடைக்கவில்லை"
-
-
-msgid "Grid type not supported"
-msgstr "கட்டம் வகை ஆதரிக்கப்படவில்லை"
-
-
 msgid "Not a shader node tree"
 msgstr "ஒரு சேடர் முனை மரம் அல்ல"
 
@@ -154773,10 +154693,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "சீரற்றமயமாக்கலில் இருந்து கடைசி நகலை விலக்கவும்"
 
 
-msgid "The forward direction along the array shape"
-msgstr "வரிசை வடிவத்துடன் முன்னோக்கி திசை"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr "ஒன்றுடன் ஒன்று புள்ளிகளை அவற்றின் தூரத்தால் இணைக்கவும். (நிகழ்வுகள் இயக்கப்பட வேண்டும் என்பதை உணரவும்)"
 
@@ -154899,10 +154815,6 @@ msgstr "உருமாற்றத்தை உள்நாட்டில் �
 
 msgid "Translation accumulated for each copy"
 msgstr "ஒவ்வொரு பிரதிக்கும் திரட்டப்பட்ட மொழிபெயர்ப்பு"
-
-
-msgid "The up direction along the array shape"
-msgstr "வரிசை வடிவத்துடன் மேல் திசை"
 
 
 msgid "Invalid Distance"

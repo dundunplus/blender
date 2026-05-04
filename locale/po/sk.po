@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-04-15 12:12+0000\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Slovak <https://translate.blender.org/projects/blender-ui/ui/sk/>\n"
@@ -35560,92 +35560,12 @@ msgid "Editor menu containing buttons"
 msgstr "Ponuka editora obsahujúca tlačidlá"
 
 
-msgid "Clear Transform"
-msgstr "Zmazať transformáciu"
-
-
-msgid "In-Betweens"
-msgstr "Sprostredkovatelia"
-
-
-msgid "Propagate"
-msgstr "Propagovať"
-
-
-msgid "Bone Collections"
-msgstr "Kolekcie kostí"
-
-
-msgid "Names"
-msgstr "Názvy"
-
-
-msgid "Show/Hide"
-msgstr "Ukázať/skryť"
-
-
-msgid "Apply"
-msgstr "Použiť"
-
-
-msgid "Toggle Bone Options"
-msgstr "Prepínač možnosti kostí"
-
-
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "Enable Bone Options"
-msgstr "Povoliť možnosti kostí"
-
-
-msgid "Disable Bone Options"
-msgstr "Zakázať možnosti kostí"
-
-
-msgid "Utilities"
-msgstr "Obslužné programy"
-
-
-msgid "Mesh Select Mode"
-msgstr "Režim výberu povrchovej siete"
-
-
-msgid "Face Data"
-msgstr "Údaje plôšky"
-
-
-msgid "Select by Face Strength"
-msgstr "Vybrať podľa vplyvu plôšky"
-
-
-msgid "Set Face Strength"
-msgstr "Nastaviť vplyv plôšky"
-
-
 msgid "Clean Up"
 msgstr "Prečistiť"
 
 
-msgid "Merge"
-msgstr "Zlúčiť"
-
-
-msgid "Read"
-msgstr "Čítanie"
-
-
-msgid "Sample"
-msgstr "Snímka"
-
-
-msgid "Write"
-msgstr "Zápis"
-
-
-msgid "Primitives"
-msgstr "Prvotné tvary"
+msgid "Show/Hide"
+msgstr "Ukázať/skryť"
 
 
 msgid "Special Characters"
@@ -35660,40 +35580,44 @@ msgid "Metaball"
 msgstr "Meta guľa"
 
 
-msgid "Gizmo"
-msgstr "Manipulačný prvok"
+msgid "Names"
+msgstr "Názvy"
+
+
+msgid "Math"
+msgstr "Matematika"
 
 
 msgid "Bone Roll"
 msgstr "Kývanie kosti"
 
 
-msgid "Instances"
-msgstr "Inštancie"
-
-
-msgid "Import"
-msgstr "Import"
-
-
-msgid "Deprecated"
-msgstr "Zastarané"
+msgid "Utilities"
+msgstr "Obslužné programy"
 
 
 msgid "Pivot Point"
 msgstr "Otočný bod"
 
 
+msgid "Read"
+msgstr "Čítanie"
+
+
 msgid "Snap"
 msgstr "Prichytiť"
+
+
+msgid "Sample"
+msgstr "Snímka"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "Dopad proporcionálnej úpravy"
 
 
-msgid "List"
-msgstr "Zoznam"
+msgid "Write"
+msgstr "Zápis"
 
 
 msgid "Mask Edit"
@@ -35704,8 +35628,8 @@ msgid "Automasking"
 msgstr "Automatické maskovanie"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "Prvotné tvary"
 
 
 msgid "Face Sets Edit"
@@ -35714,6 +35638,18 @@ msgstr "Úprava nastavenia plôšok"
 
 msgid "Vertex Group Locks"
 msgstr "Zámky skupiny vrcholov"
+
+
+msgid "Gizmo"
+msgstr "Manipulačný prvok"
+
+
+msgid "Instances"
+msgstr "Inštancie"
+
+
+msgid "Import"
+msgstr "Import"
 
 
 msgid "Mirror"
@@ -35730,6 +35666,10 @@ msgstr "Lokálny pohľad"
 
 msgid "Viewpoint"
 msgstr "Smer záberu"
+
+
+msgid "Deprecated"
+msgstr "Zastarané"
 
 
 msgid "Navigation"
@@ -35752,6 +35692,14 @@ msgid "Select More/Less"
 msgstr "Vybrať viac/menej"
 
 
+msgid "List"
+msgstr "Zoznam"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Vybrať podobné"
 
@@ -35772,20 +35720,12 @@ msgid "Assign Material"
 msgstr "Priradiť materiál"
 
 
-msgid "Layout"
-msgstr "Rozloženie"
-
-
 msgid "Light"
 msgstr "Svetlo"
 
 
 msgid "Light Probe"
 msgstr "Snímač svetla"
-
-
-msgid "Adjust"
-msgstr "Prispôsobenie"
 
 
 msgid "Add Image"
@@ -35796,32 +35736,20 @@ msgid "Relations"
 msgstr "Vzťahy"
 
 
-msgid "Keying"
-msgstr "Kľúčovanie"
-
-
-msgid "Tracking"
-msgstr "Snímanie"
-
-
 msgid "Rigid Body"
 msgstr "Pevné teleso"
+
+
+msgid "Apply"
+msgstr "Použiť"
 
 
 msgid "Track"
 msgstr "Stopa"
 
 
-msgid "Creative"
-msgstr "Kreatívne"
-
-
 msgid "Quick Effects"
 msgstr "Rýchle efekty"
-
-
-msgid "Render Preview"
-msgstr "Náhľad prekreslenia"
 
 
 msgid "Asset"
@@ -35844,6 +35772,10 @@ msgid "Hooks"
 msgstr "Háky"
 
 
+msgid "Layout"
+msgstr "Rozloženie"
+
+
 msgid "Trim/Add"
 msgstr "Orezať/Pridať"
 
@@ -35862,6 +35794,74 @@ msgstr "Počiatočná sústava plôšok"
 
 msgid "Random Mask"
 msgstr "Náhodná maska"
+
+
+msgid "Adjust"
+msgstr "Prispôsobenie"
+
+
+msgid "Clear Transform"
+msgstr "Zmazať transformáciu"
+
+
+msgid "In-Betweens"
+msgstr "Sprostredkovatelia"
+
+
+msgid "Keying"
+msgstr "Kľúčovanie"
+
+
+msgid "Propagate"
+msgstr "Propagovať"
+
+
+msgid "Tracking"
+msgstr "Snímanie"
+
+
+msgid "Bone Collections"
+msgstr "Kolekcie kostí"
+
+
+msgid "Toggle Bone Options"
+msgstr "Prepínač možnosti kostí"
+
+
+msgid "Creative"
+msgstr "Kreatívne"
+
+
+msgid "Enable Bone Options"
+msgstr "Povoliť možnosti kostí"
+
+
+msgid "Disable Bone Options"
+msgstr "Zakázať možnosti kostí"
+
+
+msgid "Render Preview"
+msgstr "Náhľad prekreslenia"
+
+
+msgid "Mesh Select Mode"
+msgstr "Režim výberu povrchovej siete"
+
+
+msgid "Face Data"
+msgstr "Údaje plôšky"
+
+
+msgid "Select by Face Strength"
+msgstr "Vybrať podľa vplyvu plôšky"
+
+
+msgid "Set Face Strength"
+msgstr "Nastaviť vplyv plôšky"
+
+
+msgid "Merge"
+msgstr "Zlúčiť"
 
 
 msgid "Keyframe Insert Pie"
@@ -73384,22 +73384,6 @@ msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "Pridá uzol Vstup skupiny s vybranými zásuvkami do aktuálneho editora uzlov"
 
 
-msgid "Panel Identifier"
-msgstr "Identifikátor panela"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "Panel, z ktorého je možné pridať zásuvky do pridaného uzla vstupov/výstupov skupiny"
-
-
-msgid "Socket Identifier"
-msgstr "Identifikátor zásuvky"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "Zásuvka, ktorú chcete zahrnúť do pridaného uzla vstupu/výstupu skupiny"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "Pridať obrázok ako uzol"
@@ -93207,20 +93191,20 @@ msgid "glTF Material Variants"
 msgstr "glTF varianty materiálu"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF animácie"
-
-
 msgid "Active Tool"
 msgstr "Aktívny nástroj"
 
 
 msgid "View Lock"
 msgstr "Zamknúť zobrazenie"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF animácie"
 
 
 msgid "Selectability & Visibility"
@@ -96938,14 +96922,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "Podporuje ukladanie vlastných balíkov v geometrii v uzloch geometrie"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "Zoznamy uzlov geometrie"
-
-
-msgid "Enable new list types and nodes"
-msgstr "Povoliť nové typy zoznamov a uzlov"
-
-
 msgid "New Curves Tools"
 msgstr "Nové nástroje kriviek"
 
@@ -98120,34 +98096,6 @@ msgid "Number of shader compilation threads or subprocesses, clamped at the max 
 msgstr "Počet vlákien kompilácie tieňovačov alebo podprocesov, obmedzený na maximálny počet vlákien podporovaných procesorom (aby sa zmeny prejavili, je potrebné Blender reštartovať). Vyššie číslo zvyšuje využitie pamäte RAM a zároveň znižuje čas kompilácie. Hodnota 0 použije automatickú konfiguráciu. (iba OpenGL)"
 
 
-msgid "Image Display Method"
-msgstr "Metóda zobrazenia obrázka"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Metóda použitá na zobrazovanie obrázkov na obrazovke"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Automaticky zvolí metódu na základe GPU a obrázku"
-
-
-msgid "2D Texture"
-msgstr "2D textúra"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Použije CPU pre zobrazenie transformácie a obrázku s 2D textúrou"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "Použije tieňovače GLSL na transformáciu zobrazenia a zobrazenie obrázka s 2D textúrou"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "Je inštalácia obchodu Microsoft Store"
 
@@ -98640,10 +98588,6 @@ msgid "Chinese (Simplified) - 简体中文"
 msgstr "Čínsky (zjednodušená) - 简体中文"
 
 
-msgid "Locale code: zh_HANS. Translation progress: 100%"
-msgstr "Kód lokalizácie: zh_HANS. Pokrok prekladu: 100%"
-
-
 msgid "Chinese (Traditional) - 繁體中文"
 msgstr "Čínsky (tradičná) - 繁體中文"
 
@@ -98932,16 +98876,8 @@ msgid "Swedish - Svenska"
 msgstr "Švédsky - Svenska"
 
 
-msgid "Locale code: sv_SE. Translation progress: 99%"
-msgstr "Kód lokalizácie: sv_SE. Pokrok prekladu: 99%"
-
-
 msgid "Tamil - தமிழ்"
 msgstr "Tamilsky - தமிழ்"
-
-
-msgid "Locale code: ta. Translation progress: 99%"
-msgstr "Kód lokalizácie: ta. Pokrok prekladu: 99%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -110983,10 +110919,6 @@ msgstr "Pás Modifikátor"
 
 msgid "Modifier for sequence strip"
 msgstr "Modifikátor sekvenčných pásov"
-
-
-msgid "Enable this modifier"
-msgstr "Povoliť tento modifikátor"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -133711,6 +133643,18 @@ msgid "Is Tile"
 msgstr "Je dlaždica"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "Vstupné mriežky majú nekompatibilné transformácie"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "Nenašla sa žiadna vstupná sieť, ktorá by mohla určiť topológiu"
+
+
+msgid "Grid type not supported"
+msgstr "Typ mriežky nie je podporovaný"
+
+
 msgid "OpenVDB error: {}"
 msgstr "Chyba OpenVDB: {}"
 
@@ -137227,10 +137171,6 @@ msgstr "Dnes"
 
 msgid "Yesterday"
 msgstr "Včera"
-
-
-msgid "Modified: {}{}{}"
-msgstr "Upravené: {}{}{}"
 
 
 msgid "Size: {}"
@@ -142128,14 +142068,6 @@ msgid "Could not add material"
 msgstr "Nepodarilo sa pridať materiál"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "Nemožno nastaviť identifikátor zásuvky aj panela"
-
-
-msgid "Invalid panel identifier"
-msgstr "Nesprávny identifikátor panela"
-
-
 msgid "Could not add a color node"
 msgstr "Nepodarilo sa pridať uzol farby"
 
@@ -142162,14 +142094,6 @@ msgstr "Typ uzlového stromu %s nedefinovaný"
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "Pridávanie skupín uzlov nie je podporované pre vlastné stromy uzlov (definované v Pythone)"
-
-
-msgid "Cannot drag an output socket"
-msgstr "Nemožno pretiahnuť výstupnú zásuvku"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "Nemožno pretiahnuť panel bez vstupov"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -142510,18 +142434,6 @@ msgstr "Prepínač panelov"
 
 msgid "Group Sockets"
 msgstr "Skupina zásuviek"
-
-
-msgid "Add \"{}\" Input"
-msgstr "Pridať vstup \"{}\""
-
-
-msgid "Add \"{}\" Input (Ctrl to add panel)"
-msgstr "Pridať vstup \"{}\" (Ctrl pre pridanie panela)"
-
-
-msgid "Add \"{}\" Panel"
-msgstr "Pridať panel \"{}\""
 
 
 msgid "More than one collection is selected"
@@ -144906,10 +144818,6 @@ msgstr "Odtrhnutie nie je kompatibilné s výberom lepkavých vrcholov"
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "Odtrhnutie je kompatibilné iba so synchronizáciou výberu s výberom vrcholov/hrán"
-
-
-msgid "Rip failed"
-msgstr "Odtrhnutie zlyhalo"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -153643,18 +153551,6 @@ msgid "Found conflicting closure signatures"
 msgstr "Nájdené konfliktné podpisy uzáverov"
 
 
-msgid "Input grids have incompatible transforms"
-msgstr "Vstupné mriežky majú nekompatibilné transformácie"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "Nenašla sa žiadna vstupná sieť, ktorá by mohla určiť topológiu"
-
-
-msgid "Grid type not supported"
-msgstr "Typ mriežky nie je podporovaný"
-
-
 msgid "Not a shader node tree"
 msgstr "Nie je to strom uzlov tieňovača"
 
@@ -157048,10 +156944,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "Vylúči poslednú kópiu z náhodného výberu"
 
 
-msgid "The forward direction along the array shape"
-msgstr "Smer dopredu pozdĺž tvaru poľa"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr "Zlúči prekrývajúce sa body podľa ich vzdialenosti. (Musí byť povolené Realizovať inštancie)"
 
@@ -157174,10 +157066,6 @@ msgstr "Definuje transformáciu lokálne alebo použitím transformácie objektu
 
 msgid "Translation accumulated for each copy"
 msgstr "Presun nahromadený pre každú kópiu"
-
-
-msgid "The up direction along the array shape"
-msgstr "Smer nahor pozdĺž tvaru poľa"
 
 
 msgid "Invalid Distance"

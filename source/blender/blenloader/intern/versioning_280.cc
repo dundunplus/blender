@@ -2526,24 +2526,25 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
         for (bPoseChannel &pchan : ob.pose->chanbase) {
           /* If the 2.7 flag is enabled, processing is needed. */
-          if (pchan.bone && (pchan.bboneflag & PCHAN_BBONE_CUSTOM_HANDLES)) {
+          Bone *pchan_bone = pchan.bone_get(ob);
+          if (pchan_bone && (pchan.bboneflag & PCHAN_BBONE_CUSTOM_HANDLES)) {
             /* If the settings in the Bone are not set, copy. */
-            if (pchan.bone->bbone_prev_type == BBONE_HANDLE_AUTO &&
-                pchan.bone->bbone_next_type == BBONE_HANDLE_AUTO &&
-                pchan.bone->bbone_prev == nullptr && pchan.bone->bbone_next == nullptr)
+            if (pchan_bone->bbone_prev_type == BBONE_HANDLE_AUTO &&
+                pchan_bone->bbone_next_type == BBONE_HANDLE_AUTO &&
+                pchan_bone->bbone_prev == nullptr && pchan_bone->bbone_next == nullptr)
             {
-              pchan.bone->bbone_prev_type = (pchan.bboneflag & PCHAN_BBONE_CUSTOM_START_REL) ?
+              pchan_bone->bbone_prev_type = (pchan.bboneflag & PCHAN_BBONE_CUSTOM_START_REL) ?
                                                 BBONE_HANDLE_RELATIVE :
                                                 BBONE_HANDLE_ABSOLUTE;
-              pchan.bone->bbone_next_type = (pchan.bboneflag & PCHAN_BBONE_CUSTOM_END_REL) ?
+              pchan_bone->bbone_next_type = (pchan.bboneflag & PCHAN_BBONE_CUSTOM_END_REL) ?
                                                 BBONE_HANDLE_RELATIVE :
                                                 BBONE_HANDLE_ABSOLUTE;
 
               if (pchan.bbone_prev) {
-                pchan.bone->bbone_prev = pchan.bbone_prev->bone;
+                pchan_bone->bbone_prev = pchan.bbone_prev->bone_get(ob);
               }
               if (pchan.bbone_next) {
-                pchan.bone->bbone_next = pchan.bbone_next->bone;
+                pchan_bone->bbone_next = pchan.bbone_next->bone_get(ob);
               }
             }
 

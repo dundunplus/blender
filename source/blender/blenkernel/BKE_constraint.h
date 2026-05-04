@@ -36,6 +36,8 @@ struct bConstraintOb {
   struct Object *ob;
   /** pose channel that owns the constraints being evaluated */
   struct bPoseChannel *pchan;
+  /** Armature bone of the above pchan. */
+  struct Bone *pchan_armbone;
 
   /** matrix where constraints are accumulated + solved */
   float matrix[4][4];
@@ -325,6 +327,9 @@ void BKE_constraint_mat_convertspace(struct Object *ob,
  *
  * None of the actual calculations of the matrices should be done here! Also, this function is
  * not to be used by any new constraints, particularly any that have multiple targets.
+ *
+ * NOTE: ownertype=CONSTRAINT_OBTYPE_BONE is NOT supported by this function. Computing that also
+ * needs the bone-owning object, and that is not passed here.
  */
 void BKE_constraint_target_matrix_get(struct Depsgraph *depsgraph,
                                       struct Scene *scene,

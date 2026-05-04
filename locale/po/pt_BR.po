@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-04-13 10:12+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -21196,60 +21196,12 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Clear Transform"
-msgstr "Limpar transformações"
-
-
-msgid "In-Betweens"
-msgstr "Entre as continuidades"
-
-
-msgid "Propagate"
-msgstr "Propagar"
-
-
-msgid "Names"
-msgstr "Nomes"
-
-
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Apply"
-msgstr "Aplicar"
-
-
-msgid "Toggle Bone Options"
-msgstr "Alternar opções de ossos"
-
-
-msgid "Math"
-msgstr "Matemática"
-
-
-msgid "Enable Bone Options"
-msgstr "Habilitar opções de ossos"
-
-
-msgid "Disable Bone Options"
-msgstr "Desabilitar as opções de ossos"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modo de seleção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
 msgid "Clean Up"
 msgstr "Limpeza"
 
 
-msgid "Merge"
-msgstr "Fundir"
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
 
 
 msgid "Special Characters"
@@ -21260,16 +21212,16 @@ msgid "Metaball"
 msgstr "Meta-esfera"
 
 
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Math"
+msgstr "Matemática"
+
+
 msgid "Bone Roll"
 msgstr "Rolagem dos ossos"
-
-
-msgid "Instances"
-msgstr "Instâncias"
-
-
-msgid "Import"
-msgstr "Importar"
 
 
 msgid "Pivot Point"
@@ -21284,8 +21236,12 @@ msgid "Proportional Editing Falloff"
 msgstr "Tipo de decaimento para edição proporcional"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Import"
+msgstr "Importar"
 
 
 msgid "Mirror"
@@ -21324,6 +21280,10 @@ msgid "Select More/Less"
 msgstr "Selecionar mais ou menos"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Selecionar por similaridades"
 
@@ -21338,10 +21298,6 @@ msgstr "Selecionar vinculados(as)"
 
 msgid "Select Loops"
 msgstr "Selecionar anéis"
-
-
-msgid "Layout"
-msgstr "Organizar"
 
 
 msgid "Light"
@@ -21360,16 +21316,12 @@ msgid "Relations"
 msgstr "Relações"
 
 
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
 msgid "Rigid Body"
 msgstr "Corpo rígido"
+
+
+msgid "Apply"
+msgstr "Aplicar"
 
 
 msgid "Track"
@@ -21392,8 +21344,56 @@ msgid "Hooks"
 msgstr "Ganchos"
 
 
+msgid "Layout"
+msgstr "Organizar"
+
+
 msgid "Random Mask"
 msgstr "Máscara Aleatória"
+
+
+msgid "Clear Transform"
+msgstr "Limpar transformações"
+
+
+msgid "In-Betweens"
+msgstr "Entre as continuidades"
+
+
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
+msgid "Propagate"
+msgstr "Propagar"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
+
+
+msgid "Toggle Bone Options"
+msgstr "Alternar opções de ossos"
+
+
+msgid "Enable Bone Options"
+msgstr "Habilitar opções de ossos"
+
+
+msgid "Disable Bone Options"
+msgstr "Desabilitar as opções de ossos"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modo de seleção de malhas"
+
+
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Merge"
+msgstr "Fundir"
 
 
 msgid "Basic"
@@ -50721,14 +50721,6 @@ msgstr "Limita o tamanho de textura para poupar memória gráfica."
 
 msgid "Device"
 msgstr "Dispositivo"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Método usado para mostrar imagens na tela."
-
-
-msgid "2D Texture"
-msgstr "Textura 2D"
 
 
 msgid "Legacy Compute Device Type"

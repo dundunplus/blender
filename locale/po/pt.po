@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
-"PO-Revision-Date: 2026-04-27 06:12+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
+"PO-Revision-Date: 2026-04-29 20:12+0000\n"
 "Last-Translator: Duarte Ramos <duarte.framos@gmail.com>\n"
 "Language-Team: Portuguese <https://translate.blender.org/projects/blender-ui/ui/pt/>\n"
 "Language: pt\n"
@@ -5440,6 +5440,10 @@ msgstr "Há altura"
 
 msgid "Has Jitter"
 msgstr "Há tremulação"
+
+
+msgid "Has Normal Radius"
+msgstr "Tem Raio Normal"
 
 
 msgid "Has Crease/Pinch Factor"
@@ -35563,92 +35567,12 @@ msgid "Editor menu containing buttons"
 msgstr "Menu de editor contendo botões"
 
 
-msgid "Clear Transform"
-msgstr "Limpar transformações"
-
-
-msgid "In-Betweens"
-msgstr "Entre as continuidades"
-
-
-msgid "Propagate"
-msgstr "Propagar"
-
-
-msgid "Bone Collections"
-msgstr "Colecções de Ossos"
-
-
-msgid "Names"
-msgstr "Nomes"
-
-
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Apply"
-msgstr "Aplicar"
-
-
-msgid "Toggle Bone Options"
-msgstr "Alternar opções de ossos"
-
-
-msgid "Math"
-msgstr "Matemática"
-
-
-msgid "Enable Bone Options"
-msgstr "Activar opções de ossos"
-
-
-msgid "Disable Bone Options"
-msgstr "Desativar as opções de ossos"
-
-
-msgid "Utilities"
-msgstr "Utilidades"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modo de selecção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Select by Face Strength"
-msgstr "Seleccionar pela Força das Faces"
-
-
-msgid "Set Face Strength"
-msgstr "Definir Força das Faces"
-
-
 msgid "Clean Up"
 msgstr "Limpeza"
 
 
-msgid "Merge"
-msgstr "Fundir"
-
-
-msgid "Read"
-msgstr "Ler"
-
-
-msgid "Sample"
-msgstr "Amostrar"
-
-
-msgid "Write"
-msgstr "Escrever"
-
-
-msgid "Primitives"
-msgstr "Primitivas"
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
 
 
 msgid "Special Characters"
@@ -35663,40 +35587,44 @@ msgid "Metaball"
 msgstr "Esfera-meta"
 
 
-msgid "Gizmo"
-msgstr "Manipulador"
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Math"
+msgstr "Matemática"
 
 
 msgid "Bone Roll"
 msgstr "Rolagem do osso"
 
 
-msgid "Instances"
-msgstr "Instâncias"
-
-
-msgid "Import"
-msgstr "Importar"
-
-
-msgid "Deprecated"
-msgstr "Obsoleto"
+msgid "Utilities"
+msgstr "Utilidades"
 
 
 msgid "Pivot Point"
 msgstr "Pontos de pivô"
 
 
+msgid "Read"
+msgstr "Ler"
+
+
 msgid "Snap"
 msgstr "Atrair"
+
+
+msgid "Sample"
+msgstr "Amostrar"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "Tipo de decaimento para edição proporcional"
 
 
-msgid "List"
-msgstr "Lista"
+msgid "Write"
+msgstr "Escrever"
 
 
 msgid "Mask Edit"
@@ -35707,8 +35635,8 @@ msgid "Automasking"
 msgstr "Auto Máscara"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "Primitivas"
 
 
 msgid "Face Sets Edit"
@@ -35717,6 +35645,18 @@ msgstr "Edições de Conjuntos de Faces"
 
 msgid "Vertex Group Locks"
 msgstr "Bloqueios de Grupos de Vértices"
+
+
+msgid "Gizmo"
+msgstr "Manipulador"
+
+
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Import"
+msgstr "Importar"
 
 
 msgid "Mirror"
@@ -35733,6 +35673,10 @@ msgstr "Visão local"
 
 msgid "Viewpoint"
 msgstr "Ponto de Vista"
+
+
+msgid "Deprecated"
+msgstr "Obsoleto"
 
 
 msgid "Navigation"
@@ -35755,6 +35699,14 @@ msgid "Select More/Less"
 msgstr "Seleccionar mais ou menos"
 
 
+msgid "List"
+msgstr "Lista"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Seleccionar por similaridades"
 
@@ -35775,20 +35727,12 @@ msgid "Assign Material"
 msgstr "Aplicar Material"
 
 
-msgid "Layout"
-msgstr "Organizar"
-
-
 msgid "Light"
 msgstr "Leve"
 
 
 msgid "Light Probe"
 msgstr "Sonda de Luz"
-
-
-msgid "Adjust"
-msgstr "Ajustar"
 
 
 msgid "Add Image"
@@ -35799,32 +35743,20 @@ msgid "Relations"
 msgstr "Relações"
 
 
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
 msgid "Rigid Body"
 msgstr "Corpo rígido"
+
+
+msgid "Apply"
+msgstr "Aplicar"
 
 
 msgid "Track"
 msgstr "Rastrear"
 
 
-msgid "Creative"
-msgstr "Criativo"
-
-
 msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
-
-
-msgid "Render Preview"
-msgstr "Pré-Visualização da Render"
 
 
 msgid "Asset"
@@ -35847,6 +35779,10 @@ msgid "Hooks"
 msgstr "Ganchos"
 
 
+msgid "Layout"
+msgstr "Organizar"
+
+
 msgid "Trim/Add"
 msgstr "Aparar/Adicionar"
 
@@ -35865,6 +35801,74 @@ msgstr "Inicialização de Conjuntos de Faces"
 
 msgid "Random Mask"
 msgstr "Máscara Aleatória"
+
+
+msgid "Adjust"
+msgstr "Ajustar"
+
+
+msgid "Clear Transform"
+msgstr "Limpar transformações"
+
+
+msgid "In-Betweens"
+msgstr "Entre as continuidades"
+
+
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
+msgid "Propagate"
+msgstr "Propagar"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
+
+
+msgid "Bone Collections"
+msgstr "Colecções de Ossos"
+
+
+msgid "Toggle Bone Options"
+msgstr "Alternar opções de ossos"
+
+
+msgid "Creative"
+msgstr "Criativo"
+
+
+msgid "Enable Bone Options"
+msgstr "Activar opções de ossos"
+
+
+msgid "Disable Bone Options"
+msgstr "Desativar as opções de ossos"
+
+
+msgid "Render Preview"
+msgstr "Pré-Visualização da Render"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modo de selecção de malhas"
+
+
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Select by Face Strength"
+msgstr "Seleccionar pela Força das Faces"
+
+
+msgid "Set Face Strength"
+msgstr "Definir Força das Faces"
+
+
+msgid "Merge"
+msgstr "Fundir"
 
 
 msgid "Keyframe Insert Pie"
@@ -73391,22 +73395,6 @@ msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "Adicionar ao actual editor de nós um nó de Entrada de Grupo com os conectores seleccionados"
 
 
-msgid "Panel Identifier"
-msgstr "Identificador do Painel"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "Painel a partir do qual adicionar conectores ao nó de entrada/saída de grupo"
-
-
-msgid "Socket Identifier"
-msgstr "Identificador do Conector"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "Conector a incluir no nó de entrada/saída de grupo adicionado"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "Adicionar Imagem como Nó"
@@ -93214,20 +93202,20 @@ msgid "glTF Material Variants"
 msgstr "Variantes de material glTF"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "Animações glTF"
-
-
 msgid "Active Tool"
 msgstr "Ferramenta Activa"
 
 
 msgid "View Lock"
 msgstr "Trancar Vista"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "Animações glTF"
 
 
 msgid "Selectability & Visibility"
@@ -96945,14 +96933,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "Suportar armazenar agrupamentos personalizados numa geometria em Geometry Nodes"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "Listas de Nós de Geometria"
-
-
-msgid "Enable new list types and nodes"
-msgstr "Activar novos nós para tipos de lista"
-
-
 msgid "New Curves Tools"
 msgstr "Novas Ferramentas de Curvas"
 
@@ -98127,34 +98107,6 @@ msgid "Number of shader compilation threads or subprocesses, clamped at the max 
 msgstr "Número de threads ou subprocessos de sombreador, limitado pelo numero máximo de processos suportados pelo processador (é necessário reiniciar o Blender para que as alterações tenham efeito). Um número maior aumenta a utilização de memória RAM reduzindo o tempo de compilação. Um valor de zero utiliza configuração automática. (Apenas OpenGL)"
 
 
-msgid "Image Display Method"
-msgstr "Método de Exibição da Imagem"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Método usado para mostrar imagens na tela."
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Escolher automaticamente com base na placa gráfica e imagem"
-
-
-msgid "2D Texture"
-msgstr "Textura 2D"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Usar CPU para transformações de ecrã e desenhar imagens com textura 2D"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "Usa sombreadores GLSL para transformações de ecrã, e desenhar imagens com texturas 2D"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "É Instalação de Microsoft Store"
 
@@ -98647,10 +98599,6 @@ msgid "Chinese (Simplified) - 简体中文"
 msgstr "Chinês (Simplificado) - 简体中文"
 
 
-msgid "Locale code: zh_HANS. Translation progress: 100%"
-msgstr "Código de língua: zh_HANS. Progresso de tradução: 100%"
-
-
 msgid "Chinese (Traditional) - 繁體中文"
 msgstr "Chinês (Tradicional) - 繁體中文"
 
@@ -98939,16 +98887,8 @@ msgid "Swedish - Svenska"
 msgstr "Sueco - Svenska"
 
 
-msgid "Locale code: sv_SE. Translation progress: 99%"
-msgstr "Código de língua: sv_SE. Progresso de tradução: 99%"
-
-
 msgid "Tamil - தமிழ்"
 msgstr "Tamil - தமிழ்"
-
-
-msgid "Locale code: ta. Translation progress: 99%"
-msgstr "Código de língua: ta. Progresso de tradução: 99%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -110988,10 +110928,6 @@ msgstr "Modificador de Faixas"
 
 msgid "Modifier for sequence strip"
 msgstr "Modificador para faixa de sequência."
-
-
-msgid "Enable this modifier"
-msgstr "Activar este modificador"
 
 
 msgid "Mask ID used as mask input for the modifier"

@@ -45,6 +45,7 @@ struct wmKeyConfig;
 struct wmOperator;
 struct wmOperatorType;
 enum eReportType : uint16_t;
+enum eAnimvizCalcRange : uint8_t;
 
 namespace ui {
 struct Layout;
@@ -382,13 +383,6 @@ void single_obdata_user_make(Main *bmain, Scene *scene, Object *ob);
  */
 void motion_paths_clear(bContext *C, bool only_selected);
 
-/* Corresponds to eAnimvizCalcRange. */
-enum eObjectPathCalcRange {
-  OBJECT_PATH_CALC_RANGE_CURRENT_FRAME,
-  OBJECT_PATH_CALC_RANGE_CHANGED,
-  OBJECT_PATH_CALC_RANGE_FULL,
-};
-
 /**
  * For the objects with animation: update paths for those that have got them
  * This should selectively update paths that exist.
@@ -397,12 +391,12 @@ enum eObjectPathCalcRange {
  */
 void motion_paths_recalc(bContext *C,
                          Scene *scene,
-                         eObjectPathCalcRange range,
+                         eAnimvizCalcRange range,
                          ListBaseT<LinkData> *ld_objects);
 
-void motion_paths_recalc_selected(bContext *C, Scene *scene, eObjectPathCalcRange range);
+void motion_paths_recalc_selected(bContext *C, Scene *scene, eAnimvizCalcRange range);
 
-void motion_paths_recalc_visible(bContext *C, Scene *scene, eObjectPathCalcRange range);
+void motion_paths_recalc_visible(bContext *C, Scene *scene, eAnimvizCalcRange range);
 
 /* constraints */
 /**

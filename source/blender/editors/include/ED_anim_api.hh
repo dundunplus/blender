@@ -1259,7 +1259,7 @@ void ED_anim_ale_fcurve_delete(bAnimContext &ac, bAnimListElem &ale);
 
 /* ************************************************ */
 
-enum eAnimvizCalcRange {
+enum eAnimvizCalcRange : uint8_t {
   /** Update motion paths at the current frame only. */
   ANIMVIZ_CALC_RANGE_CURRENT_FRAME,
 

@@ -685,16 +685,16 @@ static bool parent_set_with_depsgraph(ReportList *reports,
       break;
     case PAR_BONE:
       ob->partype = PARBONE; /* NOTE: DNA define, not operator property. */
-      if (pchan->bone) {
-        pchan->bone->flag &= ~BONE_RELATIVE_PARENTING;
-        pchan_eval->bone->flag &= ~BONE_RELATIVE_PARENTING;
+      if (Bone *bone = pchan->bone_get(*par)) {
+        bone->flag &= ~BONE_RELATIVE_PARENTING;
+        pchan_eval->bone_get(*parent_eval)->flag &= ~BONE_RELATIVE_PARENTING;
       }
       break;
     case PAR_BONE_RELATIVE:
       ob->partype = PARBONE; /* NOTE: DNA define, not operator property. */
-      if (pchan->bone) {
-        pchan->bone->flag |= BONE_RELATIVE_PARENTING;
-        pchan_eval->bone->flag |= BONE_RELATIVE_PARENTING;
+      if (Bone *bone = pchan->bone_get(*par)) {
+        bone->flag |= BONE_RELATIVE_PARENTING;
+        pchan_eval->bone_get(*parent_eval)->flag |= BONE_RELATIVE_PARENTING;
       }
       break;
     case PAR_VERTEX:

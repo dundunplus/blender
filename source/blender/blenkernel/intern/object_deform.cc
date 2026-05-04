@@ -602,10 +602,14 @@ bool *BKE_object_defgroup_validmap_get(Object *ob, const int defbase_tot)
                            (reinterpret_cast<GreasePencilArmatureModifierData *>(md))->object;
       if (object && object->pose) {
         bPose *pose = object->pose;
+        bArmature *armature = id_cast<bArmature *>(object->data);
+        /* TODO(Sybren): call the yet-to-be-written 'assert the bone indices are up to date'
+         * function. This way the code below can just access the armature, instead of going through
+         * the object->data pointer. */
 
         for (bPoseChannel &chan : pose->chanbase) {
           void **val_p;
-          if (chan.bone->flag & BONE_NO_DEFORM) {
+          if (chan.bone_get(*armature)->flag & BONE_NO_DEFORM) {
             continue;
           }
 

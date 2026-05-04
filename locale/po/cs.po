@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-12-01 09:17+0000\n"
 "Last-Translator: Matt Mitacek <mattmitacek@gmail.com>\n"
 "Language-Team: Czech <https://translate.blender.org/projects/blender-ui/ui/cs/>\n"
@@ -13839,48 +13839,12 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
-msgid "Clear Transform"
-msgstr "Vyčistit transformaci"
-
-
-msgid "Propagate"
-msgstr "Vložit"
-
-
-msgid "Names"
-msgstr "Názvy"
-
-
-msgid "Show/Hide"
-msgstr "Zobrazit/skrýt"
-
-
-msgid "Apply"
-msgstr "Použít"
-
-
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "Utilities"
-msgstr "Nástroje"
-
-
-msgid "Mesh Select Mode"
-msgstr "Síťový mód výběru"
-
-
-msgid "Face Data"
-msgstr "Data Ploch"
-
-
 msgid "Clean Up"
 msgstr "Vyčistit"
 
 
-msgid "Merge"
-msgstr "Sloučit"
+msgid "Show/Hide"
+msgstr "Zobrazit/skrýt"
 
 
 msgid "Special Characters"
@@ -13891,16 +13855,20 @@ msgid "Metaball"
 msgstr "Meta objekt"
 
 
+msgid "Names"
+msgstr "Názvy"
+
+
+msgid "Math"
+msgstr "Matematika"
+
+
 msgid "Bone Roll"
 msgstr "Kost"
 
 
-msgid "Instances"
-msgstr "Instance"
-
-
-msgid "Import"
-msgstr "Importovat"
+msgid "Utilities"
+msgstr "Nástroje"
 
 
 msgid "Pivot Point"
@@ -13913,6 +13881,14 @@ msgstr "Přichytit"
 
 msgid "Proportional Editing Falloff"
 msgstr "Způsob útlumu"
+
+
+msgid "Instances"
+msgstr "Instance"
+
+
+msgid "Import"
+msgstr "Importovat"
 
 
 msgid "Mirror"
@@ -13943,10 +13919,6 @@ msgid "Assign Material"
 msgstr "Přiřadit Materiál"
 
 
-msgid "Layout"
-msgstr "Rozložení"
-
-
 msgid "Light"
 msgstr "Světlo"
 
@@ -13955,16 +13927,12 @@ msgid "Relations"
 msgstr "Vztahy"
 
 
-msgid "Keying"
-msgstr "Klíčovací sestava"
-
-
-msgid "Tracking"
-msgstr "Sledování"
-
-
 msgid "Rigid Body"
 msgstr "Tuhé Těleso"
+
+
+msgid "Apply"
+msgstr "Použít"
 
 
 msgid "Track"
@@ -13981,6 +13949,38 @@ msgstr "Přivlastnit"
 
 msgid "Hooks"
 msgstr "Háky"
+
+
+msgid "Layout"
+msgstr "Rozložení"
+
+
+msgid "Clear Transform"
+msgstr "Vyčistit transformaci"
+
+
+msgid "Keying"
+msgstr "Klíčovací sestava"
+
+
+msgid "Propagate"
+msgstr "Vložit"
+
+
+msgid "Tracking"
+msgstr "Sledování"
+
+
+msgid "Mesh Select Mode"
+msgstr "Síťový mód výběru"
+
+
+msgid "Face Data"
+msgstr "Data Ploch"
+
+
+msgid "Merge"
+msgstr "Sloučit"
 
 
 msgid "Basic"
@@ -32381,14 +32381,6 @@ msgstr "GL Omezení Textury"
 
 msgid "Device"
 msgstr "Zařízení"
-
-
-msgid "Image Display Method"
-msgstr "Metoda zobrazení obrázku"
-
-
-msgid "2D Texture"
-msgstr "2D Textura"
 
 
 msgid "Ambient Color"

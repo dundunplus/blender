@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: VertexSelection <amacsizk2021@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -28795,92 +28795,12 @@ msgid "Editor menu containing buttons"
 msgstr "Düğmeler içeren düzenleyici menüsü"
 
 
-msgid "Clear Transform"
-msgstr "Temizle Dönüşüm"
-
-
-msgid "In-Betweens"
-msgstr "Arada Kalanlar"
-
-
-msgid "Propagate"
-msgstr "Yaymak"
-
-
-msgid "Bone Collections"
-msgstr "Kemik Koleksiyonları"
-
-
-msgid "Names"
-msgstr "Adlar"
-
-
-msgid "Show/Hide"
-msgstr "Göster/Gizle"
-
-
-msgid "Apply"
-msgstr "Uygula"
-
-
-msgid "Toggle Bone Options"
-msgstr "Kemik Seçeneklerini Değiştir"
-
-
-msgid "Math"
-msgstr "Matematik"
-
-
-msgid "Enable Bone Options"
-msgstr "Kemik Seçeneklerini Etkinleştir"
-
-
-msgid "Disable Bone Options"
-msgstr "Kemik Seçeneklerini Devre Dışı Bırak"
-
-
-msgid "Utilities"
-msgstr "Kamu hizmetleri"
-
-
-msgid "Mesh Select Mode"
-msgstr "Örgü Seçim Kipi"
-
-
-msgid "Face Data"
-msgstr "Yüz Verileri"
-
-
-msgid "Select by Face Strength"
-msgstr "Yüz Gücüne Göre Seç"
-
-
-msgid "Set Face Strength"
-msgstr "Yüz Gücünü Ayarla"
-
-
 msgid "Clean Up"
 msgstr "Temizle"
 
 
-msgid "Merge"
-msgstr "Birleştir"
-
-
-msgid "Read"
-msgstr "Okumak"
-
-
-msgid "Sample"
-msgstr "Örnek"
-
-
-msgid "Write"
-msgstr "Yazmak"
-
-
-msgid "Primitives"
-msgstr "İlkel"
+msgid "Show/Hide"
+msgstr "Göster/Gizle"
 
 
 msgid "Special Characters"
@@ -28895,32 +28815,44 @@ msgid "Metaball"
 msgstr "Metabol"
 
 
+msgid "Names"
+msgstr "Adlar"
+
+
+msgid "Math"
+msgstr "Matematik"
+
+
 msgid "Bone Roll"
 msgstr "Kemik Rulosu"
 
 
-msgid "Instances"
-msgstr "Örnekler"
-
-
-msgid "Import"
-msgstr "İçe Aktar"
-
-
-msgid "Deprecated"
-msgstr "Kullanım dışı bırakıldı"
+msgid "Utilities"
+msgstr "Kamu hizmetleri"
 
 
 msgid "Pivot Point"
 msgstr "Pivot Noktası"
 
 
+msgid "Read"
+msgstr "Okumak"
+
+
 msgid "Snap"
 msgstr "Yakala"
 
 
+msgid "Sample"
+msgstr "Örnek"
+
+
 msgid "Proportional Editing Falloff"
 msgstr "Orantılı Düzenleme Düşüşü"
+
+
+msgid "Write"
+msgstr "Yazmak"
 
 
 msgid "Mask Edit"
@@ -28931,8 +28863,8 @@ msgid "Automasking"
 msgstr "Otomatik maskeleme"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "İlkel"
 
 
 msgid "Face Sets Edit"
@@ -28941,6 +28873,14 @@ msgstr "Yüz Setleri Düzenle"
 
 msgid "Vertex Group Locks"
 msgstr "Vertex Grup Kilitleri"
+
+
+msgid "Instances"
+msgstr "Örnekler"
+
+
+msgid "Import"
+msgstr "İçe Aktar"
 
 
 msgid "Mirror"
@@ -28957,6 +28897,10 @@ msgstr "Yerel Görünüm"
 
 msgid "Viewpoint"
 msgstr "Bakış açısı"
+
+
+msgid "Deprecated"
+msgstr "Kullanım dışı bırakıldı"
 
 
 msgid "Navigation"
@@ -28979,6 +28923,10 @@ msgid "Select More/Less"
 msgstr "Daha Fazla/Daha Az Seç"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Benzerini Seç"
 
@@ -28999,20 +28947,12 @@ msgid "Assign Material"
 msgstr "Malzeme Atamak"
 
 
-msgid "Layout"
-msgstr "Yerleşim"
-
-
 msgid "Light"
 msgstr "Işık"
 
 
 msgid "Light Probe"
 msgstr "Işık Sondası"
-
-
-msgid "Adjust"
-msgstr "Ayarlamak"
 
 
 msgid "Add Image"
@@ -29023,16 +28963,12 @@ msgid "Relations"
 msgstr "İlişkiler"
 
 
-msgid "Keying"
-msgstr "Anahtarlama"
-
-
-msgid "Tracking"
-msgstr "Takip"
-
-
 msgid "Rigid Body"
 msgstr "Sert Gövde"
+
+
+msgid "Apply"
+msgstr "Uygula"
 
 
 msgid "Track"
@@ -29063,6 +28999,10 @@ msgid "Hooks"
 msgstr "Kancalar"
 
 
+msgid "Layout"
+msgstr "Yerleşim"
+
+
 msgid "Trim/Add"
 msgstr "Kırp/Ekle"
 
@@ -29077,6 +29017,66 @@ msgstr "Yüz Setleri Başlatma"
 
 msgid "Random Mask"
 msgstr "Rastgele Maske"
+
+
+msgid "Adjust"
+msgstr "Ayarlamak"
+
+
+msgid "Clear Transform"
+msgstr "Temizle Dönüşüm"
+
+
+msgid "In-Betweens"
+msgstr "Arada Kalanlar"
+
+
+msgid "Keying"
+msgstr "Anahtarlama"
+
+
+msgid "Propagate"
+msgstr "Yaymak"
+
+
+msgid "Tracking"
+msgstr "Takip"
+
+
+msgid "Bone Collections"
+msgstr "Kemik Koleksiyonları"
+
+
+msgid "Toggle Bone Options"
+msgstr "Kemik Seçeneklerini Değiştir"
+
+
+msgid "Enable Bone Options"
+msgstr "Kemik Seçeneklerini Etkinleştir"
+
+
+msgid "Disable Bone Options"
+msgstr "Kemik Seçeneklerini Devre Dışı Bırak"
+
+
+msgid "Mesh Select Mode"
+msgstr "Örgü Seçim Kipi"
+
+
+msgid "Face Data"
+msgstr "Yüz Verileri"
+
+
+msgid "Select by Face Strength"
+msgstr "Yüz Gücüne Göre Seç"
+
+
+msgid "Set Face Strength"
+msgstr "Yüz Gücünü Ayarla"
+
+
+msgid "Merge"
+msgstr "Birleştir"
 
 
 msgid "Keyframe Insert Pie"
@@ -79733,30 +79733,6 @@ msgid "Auto detect best GPU for running Blender"
 msgstr "Blender'ı çalıştırmak için en iyi GPU'yu otomatik olarak algıla"
 
 
-msgid "Image Display Method"
-msgstr "Görüntü Görüntüleme Yöntemi"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Ekranda görüntü görüntülemek için kullanılan yöntem"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "GPU ve görüntüye göre yöntemi otomatik olarak seçin"
-
-
-msgid "2D Texture"
-msgstr "2D Doku"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Görüntü dönüşümü için CPU'yu kullanın ve görüntüyü 2D dokuyla görüntüleyin"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "Microsoft Store Kurulumu"
 
@@ -115002,10 +114978,6 @@ msgstr "Daire Seç (Seçimi Kaldır)"
 
 msgid "UV Vertex"
 msgstr "UV Tepe Noktası"
-
-
-msgid "Rip failed"
-msgstr "Kopyalama başarısız oldu"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"

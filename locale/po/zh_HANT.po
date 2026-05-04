@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-03-21 07:12+0000\n"
 "Last-Translator: 居樂行 <oscilloscope9705@gmail.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -26481,88 +26481,12 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
-msgid "Clear Transform"
-msgstr "清除變換"
-
-
-msgid "In-Betweens"
-msgstr "內部之間"
-
-
-msgid "Propagate"
-msgstr "增生"
-
-
-msgid "Bone Collections"
-msgstr "骨骼集盒"
-
-
-msgid "Names"
-msgstr "名稱"
-
-
-msgid "Show/Hide"
-msgstr "顯示/隱藏"
-
-
-msgid "Apply"
-msgstr "套用"
-
-
-msgid "Toggle Bone Options"
-msgstr "開關骨骼選項"
-
-
-msgid "Math"
-msgstr "數學公式"
-
-
-msgid "Enable Bone Options"
-msgstr "啟用骨骼設定"
-
-
-msgid "Disable Bone Options"
-msgstr "停用骨骼設定"
-
-
-msgid "Utilities"
-msgstr "效用"
-
-
-msgid "Mesh Select Mode"
-msgstr "網格選取模式"
-
-
-msgid "Face Data"
-msgstr "面資料"
-
-
-msgid "Set Face Strength"
-msgstr "設定面強度"
-
-
 msgid "Clean Up"
 msgstr "清理"
 
 
-msgid "Merge"
-msgstr "合併"
-
-
-msgid "Read"
-msgstr "讀取"
-
-
-msgid "Sample"
-msgstr "取樣"
-
-
-msgid "Write"
-msgstr "寫入"
-
-
-msgid "Primitives"
-msgstr "原形"
+msgid "Show/Hide"
+msgstr "顯示/隱藏"
 
 
 msgid "Special Characters"
@@ -26577,40 +26501,44 @@ msgid "Metaball"
 msgstr "變幻球"
 
 
-msgid "Gizmo"
-msgstr "操縱器"
+msgid "Names"
+msgstr "名稱"
+
+
+msgid "Math"
+msgstr "數學公式"
 
 
 msgid "Bone Roll"
 msgstr "骨骼滾動"
 
 
-msgid "Instances"
-msgstr "實例化"
-
-
-msgid "Import"
-msgstr "匯入"
-
-
-msgid "Deprecated"
-msgstr "已棄用"
+msgid "Utilities"
+msgstr "效用"
 
 
 msgid "Pivot Point"
 msgstr "樞紐點"
 
 
+msgid "Read"
+msgstr "讀取"
+
+
 msgid "Snap"
 msgstr "吸附"
+
+
+msgid "Sample"
+msgstr "取樣"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "比例化編輯衰落"
 
 
-msgid "List"
-msgstr "列表"
+msgid "Write"
+msgstr "寫入"
 
 
 msgid "Mask Edit"
@@ -26621,8 +26549,8 @@ msgid "Automasking"
 msgstr "自動遮罩"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "原形"
 
 
 msgid "Face Sets Edit"
@@ -26631,6 +26559,18 @@ msgstr "面集編輯"
 
 msgid "Vertex Group Locks"
 msgstr "頂點群組鎖定"
+
+
+msgid "Gizmo"
+msgstr "操縱器"
+
+
+msgid "Instances"
+msgstr "實例化"
+
+
+msgid "Import"
+msgstr "匯入"
 
 
 msgid "Mirror"
@@ -26647,6 +26587,10 @@ msgstr "區域檢視"
 
 msgid "Viewpoint"
 msgstr "視點"
+
+
+msgid "Deprecated"
+msgstr "已棄用"
 
 
 msgid "Navigation"
@@ -26669,6 +26613,14 @@ msgid "Select More/Less"
 msgstr "選取更多/更少"
 
 
+msgid "List"
+msgstr "列表"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "選取相似者"
 
@@ -26689,20 +26641,12 @@ msgid "Assign Material"
 msgstr "指派材質"
 
 
-msgid "Layout"
-msgstr "配置"
-
-
 msgid "Light"
 msgstr "燈光"
 
 
 msgid "Light Probe"
 msgstr "燈光採樣器"
-
-
-msgid "Adjust"
-msgstr "調整"
 
 
 msgid "Add Image"
@@ -26713,32 +26657,20 @@ msgid "Relations"
 msgstr "關係"
 
 
-msgid "Keying"
-msgstr "鍵處理"
-
-
-msgid "Tracking"
-msgstr "跟蹤"
-
-
 msgid "Rigid Body"
 msgstr "剛體"
+
+
+msgid "Apply"
+msgstr "套用"
 
 
 msgid "Track"
 msgstr "追蹤"
 
 
-msgid "Creative"
-msgstr "創意"
-
-
 msgid "Quick Effects"
 msgstr "快速效果"
-
-
-msgid "Render Preview"
-msgstr "算繪預覽"
 
 
 msgid "Asset"
@@ -26761,6 +26693,10 @@ msgid "Hooks"
 msgstr "鉤"
 
 
+msgid "Layout"
+msgstr "配置"
+
+
 msgid "Trim/Add"
 msgstr "修剪/增加"
 
@@ -26775,6 +26711,70 @@ msgstr "面集初始化"
 
 msgid "Random Mask"
 msgstr "隨機遮罩"
+
+
+msgid "Adjust"
+msgstr "調整"
+
+
+msgid "Clear Transform"
+msgstr "清除變換"
+
+
+msgid "In-Betweens"
+msgstr "內部之間"
+
+
+msgid "Keying"
+msgstr "鍵處理"
+
+
+msgid "Propagate"
+msgstr "增生"
+
+
+msgid "Tracking"
+msgstr "跟蹤"
+
+
+msgid "Bone Collections"
+msgstr "骨骼集盒"
+
+
+msgid "Toggle Bone Options"
+msgstr "開關骨骼選項"
+
+
+msgid "Creative"
+msgstr "創意"
+
+
+msgid "Enable Bone Options"
+msgstr "啟用骨骼設定"
+
+
+msgid "Disable Bone Options"
+msgstr "停用骨骼設定"
+
+
+msgid "Render Preview"
+msgstr "算繪預覽"
+
+
+msgid "Mesh Select Mode"
+msgstr "網格選取模式"
+
+
+msgid "Face Data"
+msgstr "面資料"
+
+
+msgid "Set Face Strength"
+msgstr "設定面強度"
+
+
+msgid "Merge"
+msgstr "合併"
 
 
 msgid "Keyframe Insert Pie"
@@ -49292,14 +49292,6 @@ msgid "Add a node group asset to the active node tree"
 msgstr "新增節點群組素材至作用中節點樹"
 
 
-msgid "Panel Identifier"
-msgstr "面板識別碼"
-
-
-msgid "Socket Identifier"
-msgstr "接口識別碼"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "新增影像為節點"
@@ -61399,20 +61391,20 @@ msgid "glTF Material Variants"
 msgstr "glTF 材質變體"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 動畫"
-
-
 msgid "Active Tool"
 msgstr "作用中工具"
 
 
 msgid "View Lock"
 msgstr "視圖鎖定"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 動畫"
 
 
 msgid "Shadow Settings"
@@ -65246,18 +65238,6 @@ msgstr "使用 Vulkan 後端"
 
 msgid "Device"
 msgstr "裝置"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "螢幕上顯示影像所用的方法"
-
-
-msgid "2D Texture"
-msgstr "2D 紋理"
-
-
-msgid "GLSL"
-msgstr "GLSL"
 
 
 msgid "Ambient Color"
@@ -73121,10 +73101,6 @@ msgstr "片段修改器"
 
 msgid "Modifier for sequence strip"
 msgstr "序段片段的修改器"
-
-
-msgid "Enable this modifier"
-msgstr "啟用此修改器"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -93254,10 +93230,6 @@ msgstr "選取 (列表)"
 
 msgid "UV Vertex"
 msgstr "UV 頂點"
-
-
-msgid "Rip failed"
-msgstr "拆分失敗"
 
 
 msgid "Switch Island"

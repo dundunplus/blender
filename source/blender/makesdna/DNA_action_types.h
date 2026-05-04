@@ -255,8 +255,9 @@ enum ePchan_DrawFlag : char {
 ENUM_OPERATORS(ePchan_DrawFlag);
 
 /* NOTE: It doesn't take custom_scale_xyz into account. */
-#define PCHAN_CUSTOM_BONE_LENGTH(pchan) \
-  (((pchan)->drawflag & PCHAN_DRAW_NO_CUSTOM_BONE_SIZE) ? 1.0f : (pchan)->bone->length)
+#define PCHAN_CUSTOM_BONE_LENGTH(pchanbone) \
+  (((pchanbone).pchan->drawflag & PCHAN_DRAW_NO_CUSTOM_BONE_SIZE) ? 1.0f : \
+                                                                    (pchanbone).bone->length)
 
 #ifdef DNA_DEPRECATED_ALLOW
 /* PoseChannel->bboneflag */
@@ -757,7 +758,7 @@ struct bPoseChannel {
   char _pad0[4] = {};
 
   /** Set on read file or rebuild pose. */
-  struct Bone *bone = nullptr;
+  struct Bone *bone = nullptr; /* Soon to be DNA_DEPRECATED. */
   /** Set on read file or rebuild pose. */
   struct bPoseChannel *parent = nullptr;
   /** Set on read file or rebuild pose, the 'ik' child, for b-bones. */
@@ -846,7 +847,7 @@ struct bPoseChannel {
 
   /**
    * Curved bones settings - these are for animating,
-   * and are applied on top of the copies in pchan->bone
+   * and are applied on top of the copies in pchan->bone_get(*ob)
    */
   float roll1 = 0, roll2 = 0;
   float curve_in_x = 0, curve_in_z = 0;
@@ -859,7 +860,8 @@ struct bPoseChannel {
   float scale_in[3] = {1.0f, 1.0f, 1.0f};
   float scale_out[3] = {1.0f, 1.0f, 1.0f};
 
-  /** B-Bone custom handles; set on read file or rebuild pose based on pchan->bone data. */
+  /** B-Bone custom handles; set on read file or rebuild pose based on pchan->bone_get(*ob)
+   * data. */
   struct bPoseChannel *bbone_prev = nullptr;
   struct bPoseChannel *bbone_next = nullptr;
 
@@ -877,6 +879,24 @@ struct bPoseChannel {
 
   /** Runtime data (keep last). */
   struct bPoseChannel_Runtime runtime;
+
+#ifdef __cplusplus
+  /**
+   * Get the armature bone that corresponds to this bPoseChannel.
+   *
+   * Prefer this function over bone_get(armature), as it performs more checks at runtime.
+   */
+  const Bone *bone_get(const Object &owner) const;
+  Bone *bone_get(Object &owner);
+
+  /**
+   * Get the armature bone that corresponds to this bPoseChannel.
+   *
+   * Prefer bone_get(object) over this function, as that performs more checks at runtime.
+   */
+  const Bone *bone_get(const bArmature &armature) const;
+  Bone *bone_get(bArmature &armature);
+#endif
 };
 
 /* Pose ------------------------------------ */

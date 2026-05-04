@@ -135,7 +135,7 @@ Base *ED_armature_base_and_bone_from_select_buffer(const Span<Base *> bases,
 {
   bPoseChannel *pchan = nullptr;
   Base *base = ED_armature_base_and_pchan_from_select_buffer(bases, select_id, &pchan);
-  *r_bone = pchan ? pchan->bone : nullptr;
+  *r_bone = pchan ? pchan->bone_get(*base->object) : nullptr;
   return base;
 }
 
@@ -178,7 +178,7 @@ static void *ed_armature_pick_bone_from_selectbuffer_impl(const bool is_editmode
       if (is_editmode == false) {
         base = ED_armature_base_and_pchan_from_select_buffer(bases, hit_id, &pchan);
         if (pchan != nullptr) {
-          if (pchan->bone->flag & BONE_UNSELECTABLE) {
+          if (pchan->bone_get(*base->object)->flag & BONE_UNSELECTABLE) {
             continue;
           }
           if (findunsel) {
@@ -291,7 +291,7 @@ Bone *ED_armature_pick_bone_from_selectbuffer(const Span<Base *> bases,
 {
   bPoseChannel *pchan = ED_armature_pick_pchan_from_selectbuffer(
       bases, hit_results, hits, findunsel, do_nearest, r_base);
-  return pchan ? pchan->bone : nullptr;
+  return pchan ? pchan->bone_get(*(*r_base)->object) : nullptr;
 }
 
 /** \} */
@@ -367,7 +367,7 @@ bPoseChannel *ED_armature_pick_pchan(bContext *C, const int xy[2], bool findunse
 Bone *ED_armature_pick_bone(bContext *C, const int xy[2], bool findunsel, Base **r_base)
 {
   bPoseChannel *pchan = ED_armature_pick_pchan(C, xy, findunsel, r_base);
-  return pchan ? pchan->bone : nullptr;
+  return pchan ? pchan->bone_get(*(*r_base)->object) : nullptr;
 }
 
 /** \} */

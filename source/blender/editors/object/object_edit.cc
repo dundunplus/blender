@@ -571,7 +571,7 @@ static void flush_bone_selection_to_pose(Object &ob)
   BLI_assert(ob.pose);
   for (bPoseChannel &pose_bone : ob.pose->chanbase) {
     pose_bone.flag &= ~(POSE_SELECTED | POSE_SELECTED_ROOT | POSE_SELECTED_TIP);
-    const Bone *bone = pose_bone.bone;
+    const Bone *bone = pose_bone.bone_get(ob);
     if (bone->flag & BONE_ROOTSEL) {
       pose_bone.flag |= POSE_SELECTED_ROOT;
     }
@@ -588,8 +588,8 @@ static void flush_pose_selection_to_bone(Object &ob)
 {
   BLI_assert(ob.pose);
   for (bPoseChannel &pose_bone : ob.pose->chanbase) {
-    pose_bone.bone->flag &= ~(BONE_ROOTSEL | BONE_TIPSEL | BONE_SELECTED);
-    Bone *bone = pose_bone.bone;
+    Bone *bone = pose_bone.bone_get(ob);
+    bone->flag &= ~(BONE_ROOTSEL | BONE_TIPSEL | BONE_SELECTED);
     if (pose_bone.flag & POSE_SELECTED_ROOT) {
       bone->flag |= BONE_ROOTSEL;
     }
@@ -1270,20 +1270,7 @@ void OBJECT_OT_forcefield_toggle(wmOperatorType *ot)
 /** \name Calculate Motion Paths Operator
  * \{ */
 
-static eAnimvizCalcRange object_path_convert_range(eObjectPathCalcRange range)
-{
-  switch (range) {
-    case OBJECT_PATH_CALC_RANGE_CURRENT_FRAME:
-      return ANIMVIZ_CALC_RANGE_CURRENT_FRAME;
-    case OBJECT_PATH_CALC_RANGE_CHANGED:
-      return ANIMVIZ_CALC_RANGE_CHANGED;
-    case OBJECT_PATH_CALC_RANGE_FULL:
-      return ANIMVIZ_CALC_RANGE_FULL;
-  }
-  return ANIMVIZ_CALC_RANGE_FULL;
-}
-
-void motion_paths_recalc_selected(bContext *C, Scene *scene, eObjectPathCalcRange range)
+void motion_paths_recalc_selected(bContext *C, Scene *scene, eAnimvizCalcRange range)
 {
   ListBaseT<LinkData> selected_objects = {nullptr, nullptr};
   CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects) {
@@ -1296,7 +1283,7 @@ void motion_paths_recalc_selected(bContext *C, Scene *scene, eObjectPathCalcRang
   BLI_freelistN(&selected_objects);
 }
 
-void motion_paths_recalc_visible(bContext *C, Scene *scene, eObjectPathCalcRange range)
+void motion_paths_recalc_visible(bContext *C, Scene *scene, eAnimvizCalcRange range)
 {
   ListBaseT<LinkData> visible_objects = {nullptr, nullptr};
   CTX_DATA_BEGIN (C, Object *, ob, visible_objects) {
@@ -1321,7 +1308,7 @@ static bool has_pose_motion_paths(Object *ob)
 
 void motion_paths_recalc(bContext *C,
                          Scene *scene,
-                         eObjectPathCalcRange range,
+                         eAnimvizCalcRange range,
                          ListBaseT<LinkData> *ld_objects)
 {
   /* Transform doesn't always have context available to do update. */
@@ -1352,7 +1339,7 @@ void motion_paths_recalc(bContext *C,
   bool free_depsgraph = false;
   /* For a single frame update it's faster to re-use existing dependency graph and avoid overhead
    * of building all the relations and so on for a temporary one. */
-  if (range == OBJECT_PATH_CALC_RANGE_CURRENT_FRAME) {
+  if (range == ANIMVIZ_CALC_RANGE_CURRENT_FRAME) {
     /* NOTE: Dependency graph will be evaluated at all the frames, but we first need to access some
      * nested pointers, like animation data. */
     depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
@@ -1363,11 +1350,10 @@ void motion_paths_recalc(bContext *C,
     free_depsgraph = true;
   }
 
-  animviz_calc_motionpaths(
-      depsgraph, bmain, scene, targets, object_path_convert_range(range), true);
+  animviz_calc_motionpaths(depsgraph, bmain, scene, targets, range, true);
   animviz_free_motionpath_targets(targets);
 
-  if (range != OBJECT_PATH_CALC_RANGE_CURRENT_FRAME) {
+  if (range != ANIMVIZ_CALC_RANGE_CURRENT_FRAME) {
     /* Tag objects for copy-on-eval - so paths will draw/redraw
      * For currently frame only we update evaluated object directly. */
     for (LinkData &link : *ld_objects) {
@@ -1430,7 +1416,7 @@ static wmOperatorStatus object_calculate_paths_exec(bContext *C, wmOperator *op)
   CTX_DATA_END;
 
   /* calculate the paths for objects that have them (and are tagged to get refreshed) */
-  motion_paths_recalc_selected(C, scene, OBJECT_PATH_CALC_RANGE_FULL);
+  motion_paths_recalc_selected(C, scene, ANIMVIZ_CALC_RANGE_FULL);
 
   /* notifiers for updates */
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW_ANIMVIZ, nullptr);
@@ -1502,7 +1488,7 @@ static wmOperatorStatus object_update_paths_exec(bContext *C, wmOperator *op)
   CTX_DATA_END;
 
   /* calculate the paths for objects that have them (and are tagged to get refreshed) */
-  motion_paths_recalc_selected(C, scene, OBJECT_PATH_CALC_RANGE_FULL);
+  motion_paths_recalc_selected(C, scene, ANIMVIZ_CALC_RANGE_FULL);
 
   /* notifiers for updates */
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW_ANIMVIZ, nullptr);
@@ -1547,7 +1533,7 @@ static wmOperatorStatus object_update_all_paths_exec(bContext *C, wmOperator * /
     return OPERATOR_CANCELLED;
   }
 
-  motion_paths_recalc_visible(C, scene, OBJECT_PATH_CALC_RANGE_FULL);
+  motion_paths_recalc_visible(C, scene, ANIMVIZ_CALC_RANGE_FULL);
 
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE | ND_TRANSFORM, nullptr);
 

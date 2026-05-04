@@ -6,6 +6,7 @@
  * \ingroup edgreasepencil
  */
 
+#include "BLI_assert.h"
 #include "BLI_listbase.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_matrix.hh"
@@ -45,11 +46,17 @@ static float4x4 get_bone_mat(const Object *parent, const char *parsubstr)
   }
 
   const bPoseChannel *pchan = BKE_pose_channel_find_name(parent->pose, parsubstr);
-  if (!pchan || !pchan->bone) {
+  if (!pchan) {
     return float4x4::identity();
   }
 
-  if (pchan->bone->flag & BONE_RELATIVE_PARENTING) {
+  const Bone *bone = pchan->bone_get(*parent);
+  if (!bone) {
+    BLI_assert_unreachable();
+    return float4x4::identity();
+  }
+
+  if (bone->flag & BONE_RELATIVE_PARENTING) {
     return float4x4(pchan->chan_mat);
   }
   return float4x4(pchan->pose_mat);

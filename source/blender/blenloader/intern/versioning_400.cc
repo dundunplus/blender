@@ -78,8 +78,8 @@ static void version_composite_nodetree_null_id(bNodeTree *ntree, Scene *scene)
 /* Move bone-group color to the individual bones. */
 static void version_bonegroup_migrate_color(Main *bmain)
 {
-  using PoseSet = Set<bPose *>;
-  Map<bArmature *, PoseSet> armature_poses;
+  using PoseObSet = Set<Object *>;
+  Map<bArmature *, PoseObSet> armature_poses;
 
   /* Gather a mapping from armature to the poses that use it. */
   for (Object &ob : bmain->objects) {
@@ -96,19 +96,20 @@ static void version_bonegroup_migrate_color(Main *bmain)
      * NOTE: No need to handle user reference-counting in readfile code. */
     BKE_pose_ensure(bmain, &ob, arm, false);
 
-    PoseSet &pose_set = armature_poses.lookup_or_add_default(arm);
-    pose_set.add(ob.pose);
+    PoseObSet &pose_set = armature_poses.lookup_or_add_default(arm);
+    pose_set.add(&ob);
   }
 
   /* Move colors from the pose's bone-group to either the armature bones or the
    * pose bones, depending on how many poses use the Armature. */
-  for (const PoseSet &pose_set : armature_poses.values()) {
+  for (const PoseObSet &pose_set : armature_poses.values()) {
     /* If the Armature is shared, the bone group colors might be different, and thus they have to
      * be stored on the pose bones. If the Armature is NOT shared, the bone colors can be stored
      * directly on the Armature bones. */
     const bool store_on_armature = pose_set.size() == 1;
 
-    for (bPose *pose : pose_set) {
+    for (Object *pose_ob : pose_set) {
+      bPose *pose = pose_ob->pose;
       for (bPoseChannel &pchan : pose->chanbase) {
         const bActionGroup *bgrp = static_cast<const bActionGroup *>(
             BLI_findlink(&pose->agroups, (pchan.agrp_index - 1)));
@@ -116,7 +117,7 @@ static void version_bonegroup_migrate_color(Main *bmain)
           continue;
         }
 
-        BoneColor &bone_color = store_on_armature ? pchan.bone->color : pchan.color;
+        BoneColor &bone_color = store_on_armature ? pchan.bone_get(*pose_ob)->color : pchan.color;
         bone_color.palette_index = bgrp->customCol;
         memcpy(&bone_color.custom, &bgrp->cs, sizeof(bone_color.custom));
       }
@@ -220,7 +221,7 @@ static void version_bonegroups_to_bonecollections(Main *bmain)
 
       /* Assign the bone. */
       BoneCollection *bcoll = collections_by_group.lookup(bgrp);
-      ANIM_armature_bonecoll_assign(bcoll, pchan.bone);
+      ANIM_armature_bonecoll_assign(bcoll, pchan.bone_get(ob));
     }
 
     /* The list of bone groups (pose->agroups) is intentionally left alone here. This will allow

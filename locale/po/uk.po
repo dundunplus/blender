@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-07-23 15:08+0000\n"
 "Last-Translator: Bartosz <gang65@poczta.onet.pl>\n"
 "Language-Team: Ukrainian <https://translate.blender.org/projects/blender-ui/ui/uk/>\n"
@@ -26291,80 +26291,12 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
-msgid "Clear Transform"
-msgstr "Зчистити трансформації"
-
-
-msgid "In-Betweens"
-msgstr "У проміжках"
-
-
-msgid "Propagate"
-msgstr "Поширити"
-
-
-msgid "Names"
-msgstr "Назви"
-
-
-msgid "Show/Hide"
-msgstr "Показати/приховати"
-
-
-msgid "Apply"
-msgstr "Застосувати"
-
-
-msgid "Toggle Bone Options"
-msgstr "Перемкнути параметри кісток"
-
-
-msgid "Math"
-msgstr "Математика"
-
-
-msgid "Enable Bone Options"
-msgstr "Увімкнути параметри кісток"
-
-
-msgid "Disable Bone Options"
-msgstr "Відключити параметри кісток"
-
-
-msgid "Utilities"
-msgstr "Утиліти"
-
-
-msgid "Mesh Select Mode"
-msgstr "Режим Вибору Сіті"
-
-
-msgid "Face Data"
-msgstr "Дані граней"
-
-
-msgid "Select by Face Strength"
-msgstr "Вибрати за Силою Грані"
-
-
-msgid "Set Face Strength"
-msgstr "Задати Силу Грані"
-
-
 msgid "Clean Up"
 msgstr "Вичищення"
 
 
-msgid "Merge"
-msgstr "Об'єднання"
-
-
-msgid "Sample"
-msgstr "Вибірка"
-
-
-msgid "Primitives"
-msgstr "Примітиви"
+msgid "Show/Hide"
+msgstr "Показати/приховати"
 
 
 msgid "Special Characters"
@@ -26379,12 +26311,20 @@ msgid "Metaball"
 msgstr "Метакуля"
 
 
+msgid "Names"
+msgstr "Назви"
+
+
+msgid "Math"
+msgstr "Математика"
+
+
 msgid "Bone Roll"
 msgstr "Прокручення Кістки"
 
 
-msgid "Import"
-msgstr "Імпортувати"
+msgid "Utilities"
+msgstr "Утиліти"
 
 
 msgid "Pivot Point"
@@ -26393,6 +26333,10 @@ msgstr "Точка Опертя"
 
 msgid "Snap"
 msgstr "Підхоп"
+
+
+msgid "Sample"
+msgstr "Вибірка"
 
 
 msgid "Proportional Editing Falloff"
@@ -26407,8 +26351,8 @@ msgid "Automasking"
 msgstr "Автомаскування"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "Примітиви"
 
 
 msgid "Face Sets Edit"
@@ -26417,6 +26361,10 @@ msgstr "Редагування Наборів Граней"
 
 msgid "Vertex Group Locks"
 msgstr "Блокування Груп Вершин"
+
+
+msgid "Import"
+msgstr "Імпортувати"
 
 
 msgid "Mirror"
@@ -26455,6 +26403,10 @@ msgid "Select More/Less"
 msgstr "Вибрати більше/менше"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Вибрати подібні"
 
@@ -26475,10 +26427,6 @@ msgid "Assign Material"
 msgstr "Призначити Матеріал"
 
 
-msgid "Layout"
-msgstr "Розстановка"
-
-
 msgid "Light"
 msgstr "Слабко"
 
@@ -26495,16 +26443,12 @@ msgid "Relations"
 msgstr "Зв'язки"
 
 
-msgid "Keying"
-msgstr "Ключування"
-
-
-msgid "Tracking"
-msgstr "Стеження"
-
-
 msgid "Rigid Body"
 msgstr "Тверде тіло"
+
+
+msgid "Apply"
+msgstr "Застосувати"
 
 
 msgid "Track"
@@ -26535,12 +26479,68 @@ msgid "Hooks"
 msgstr "Гачки"
 
 
+msgid "Layout"
+msgstr "Розстановка"
+
+
 msgid "Sculpt Set Pivot"
 msgstr "Ліплення Задати Опертя"
 
 
 msgid "Face Sets Init"
 msgstr "Ініціація Наборів Граней"
+
+
+msgid "Clear Transform"
+msgstr "Зчистити трансформації"
+
+
+msgid "In-Betweens"
+msgstr "У проміжках"
+
+
+msgid "Keying"
+msgstr "Ключування"
+
+
+msgid "Propagate"
+msgstr "Поширити"
+
+
+msgid "Tracking"
+msgstr "Стеження"
+
+
+msgid "Toggle Bone Options"
+msgstr "Перемкнути параметри кісток"
+
+
+msgid "Enable Bone Options"
+msgstr "Увімкнути параметри кісток"
+
+
+msgid "Disable Bone Options"
+msgstr "Відключити параметри кісток"
+
+
+msgid "Mesh Select Mode"
+msgstr "Режим Вибору Сіті"
+
+
+msgid "Face Data"
+msgstr "Дані граней"
+
+
+msgid "Select by Face Strength"
+msgstr "Вибрати за Силою Грані"
+
+
+msgid "Set Face Strength"
+msgstr "Задати Силу Грані"
+
+
+msgid "Merge"
+msgstr "Об'єднання"
 
 
 msgid "Basic"
@@ -64150,22 +64150,6 @@ msgid "Device"
 msgstr "Пристрій"
 
 
-msgid "Image Display Method"
-msgstr "Метод Показу Зображення"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Спосіб показу зображень на екрані"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Автоматично вибирати метод на основі ГП та зображення"
-
-
-msgid "2D Texture"
-msgstr "2D текстура"
-
-
 msgid "Legacy Compute Device Type"
 msgstr "Тип старішого пристрою обчислення"
 
@@ -86787,10 +86771,6 @@ msgstr "Обчислення числового уводу"
 
 msgid "UV Vertex"
 msgstr "UV-вершина"
-
-
-msgid "Rip failed"
-msgstr "Збій розривання"
 
 
 msgid "Minimize Stretch. Blend %.2f"

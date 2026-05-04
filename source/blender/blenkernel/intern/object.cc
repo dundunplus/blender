@@ -3213,7 +3213,8 @@ static void ob_parbone(const Object *ob, const Object *par, float r_mat[4][4])
 
   /* Make sure the bone is still valid */
   const bPoseChannel *pchan = BKE_pose_channel_find_name(par->pose, ob->parsubstr);
-  if (!pchan || !pchan->bone) {
+  const Bone *pchan_bone = pchan ? pchan->bone_get(*par) : nullptr;
+  if (!pchan || !pchan_bone) {
     CLOG_WARN(
         &LOG, "Parent Bone: '%s' for Object: '%s' doesn't exist", ob->parsubstr, ob->id.name + 2);
     unit_m4(r_mat);
@@ -3221,7 +3222,7 @@ static void ob_parbone(const Object *ob, const Object *par, float r_mat[4][4])
   }
 
   /* get bone transform */
-  if (pchan->bone->flag & BONE_RELATIVE_PARENTING) {
+  if (pchan_bone->flag & BONE_RELATIVE_PARENTING) {
     /* the new option uses the root - expected behavior, but differs from old... */
     /* XXX check on version patching? */
     copy_m4_m4(r_mat, pchan->chan_mat);
@@ -3231,7 +3232,7 @@ static void ob_parbone(const Object *ob, const Object *par, float r_mat[4][4])
 
     /* but for backwards compatibility, the child has to move to the tail */
     copy_v3_v3(vec, r_mat[1]);
-    mul_v3_fl(vec, pchan->bone->length);
+    mul_v3_fl(vec, pchan_bone->length);
     add_v3_v3(r_mat[3], vec);
   }
 }
@@ -4231,7 +4232,7 @@ void BKE_object_handle_update_ex(Depsgraph *depsgraph,
   if (ob->pose != nullptr) {
     BKE_pose_channels_hash_ensure(ob->pose);
     if (ob->pose->flag & POSE_CONSTRAINTS_NEED_UPDATE_FLAGS) {
-      BKE_pose_update_constraint_flags(ob->pose);
+      BKE_pose_update_constraint_flags(*ob);
     }
   }
   if (recalc_data) {

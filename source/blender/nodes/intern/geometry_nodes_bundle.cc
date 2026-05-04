@@ -443,22 +443,22 @@ std::optional<BundleSignature> LinkedBundleSignatures::get_merged_signature() co
 static void foreach_nested_bundle_item_recursive(
     const Bundle &bundle,
     const FunctionRef<void(Span<UString>, const BundleItemValue &value)> fn,
-    Vector<UString> &path)
+    Vector<UString> &r_path)
 {
   for (const auto &child_item : bundle.items()) {
-    path.append(child_item.key);
-    BLI_SCOPED_DEFER([&]() { path.pop_last(); });
+    r_path.append(child_item.key);
+    BLI_SCOPED_DEFER([&]() { r_path.pop_last(); });
 
     if (const BundlePtr *child_bundle_ptr = child_item.value.as_pointer<BundlePtr>()) {
       if (*child_bundle_ptr) {
         const Bundle &child_bundle = **child_bundle_ptr;
         if (!child_bundle.type().has_value()) {
-          foreach_nested_bundle_item_recursive(child_bundle, fn, path);
+          foreach_nested_bundle_item_recursive(child_bundle, fn, r_path);
           continue;
         }
       }
     }
-    fn(path, child_item.value);
+    fn(r_path, child_item.value);
   }
 }
 

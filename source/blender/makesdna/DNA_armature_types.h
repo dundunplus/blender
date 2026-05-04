@@ -410,6 +410,7 @@ struct bArmature {
   ID id;
   struct AnimData *adt = nullptr;
 
+  /** Root bones. Children are listed in Bone::childbase. */
   ListBaseT<Bone> bonebase = {nullptr, nullptr};
 
   /** Use a hash-table for quicker lookups of bones by name. */

@@ -10,14 +10,14 @@
  * Dispatched with one local thread per LOD0 tile and one work-group per tile-map.
  */
 
-#include "infos/eevee_shadow_pipeline_infos.hh"
+#pragma once
 
-COMPUTE_SHADER_CREATE_INFO(eevee_shadow_tilemap_init)
-
+#include "eevee_defines.hh"
+#include "eevee_shadow_shared.hh"
 #include "eevee_shadow_tilemap_lib.bsl.hh"
 #include "gpu_shader_utildefines_lib.glsl"
 
-shared int directional_range_changed;
+namespace eevee::shadow {
 
 ShadowTileDataPacked init_tile_data(ShadowTileDataPacked tile, bool do_update)
 {
@@ -31,31 +31,43 @@ ShadowTileDataPacked init_tile_data(ShadowTileDataPacked tile, bool do_update)
   return tile;
 }
 
-void main()
+struct TilemapInit {
+  [[storage(0, read_write)]] ShadowTileMapData (&tilemaps_buf)[];
+  [[storage(1, read_write)]] uint (&tiles_buf)[];
+  [[storage(2, read_write)]] ShadowTileMapClip (&tilemaps_clip_buf)[];
+  [[storage(4, read_write)]] uint2 (&pages_cached_buf)[];
+
+  [[shared]] int directional_range_changed;
+};
+
+[[compute, local_size(SHADOW_TILEMAP_RES, SHADOW_TILEMAP_RES)]]
+void tilemap_init_main([[resource_table]] TilemapInit &srt,
+                       [[global_invocation_id]] const uint3 global_id,
+                       [[local_invocation_index]] const uint local_index)
 {
-  uint tilemap_index = gl_GlobalInvocationID.z;
-  ShadowTileMapData tilemap = tilemaps_buf[tilemap_index];
+  uint tilemap_index = global_id.z;
+  ShadowTileMapData tilemap = srt.tilemaps_buf[tilemap_index];
 
   barrier();
 
-  if (gl_LocalInvocationIndex == 0u) {
+  if (local_index == 0u) {
     /* Reset shift to not tag for update more than once per sync cycle. */
-    tilemaps_buf[tilemap_index].grid_shift = int2(0);
-    tilemaps_buf[tilemap_index].is_dirty = false;
+    srt.tilemaps_buf[tilemap_index].grid_shift = int2(0);
+    srt.tilemaps_buf[tilemap_index].is_dirty = false;
 
-    directional_range_changed = 0;
+    srt.directional_range_changed = 0;
 
     const int clip_index = tilemap.clip_data_index;
     if (clip_index == -1) {
       /* NOP. This is the case for unused tile-maps that are getting pushed to the free heap. */
     }
     else if (tilemap.projection_type != SHADOW_PROJECTION_CUBEFACE) {
-      ShadowTileMapClip &clip_data = tilemaps_clip_buf[clip_index];
+      ShadowTileMapClip &clip_data = srt.tilemaps_clip_buf[clip_index];
       float clip_near_new = orderedIntBitsToFloat(clip_data.clip_near);
       float clip_far_new = orderedIntBitsToFloat(clip_data.clip_far);
       bool near_changed = clip_near_new != clip_data.clip_near_stored;
       bool far_changed = clip_far_new != clip_data.clip_far_stored;
-      directional_range_changed = int(near_changed || far_changed);
+      srt.directional_range_changed = int(near_changed || far_changed);
       /* NOTE(fclem): This assumes clip near/far are computed each time the initial phase runs. */
       clip_data.clip_near_stored = clip_near_new;
       clip_data.clip_far_stored = clip_far_new;
@@ -65,7 +77,7 @@ void main()
     }
     else {
       /* For cube-faces, simply use the light near and far distances. */
-      ShadowTileMapClip &clip_data = tilemaps_clip_buf[clip_index];
+      ShadowTileMapClip &clip_data = srt.tilemaps_clip_buf[clip_index];
       clip_data.clip_near_stored = tilemap.clip_near;
       clip_data.clip_far_stored = tilemap.clip_far;
     }
@@ -73,7 +85,7 @@ void main()
 
   barrier();
 
-  int2 tile_co = int2(gl_GlobalInvocationID.xy);
+  int2 tile_co = int2(global_id.xy);
   int2 tile_shifted = tile_co +
                       clamp(tilemap.is_dirty ? int2(SHADOW_TILEMAP_RES) : tilemap.grid_shift,
                             int2(-SHADOW_TILEMAP_RES),
@@ -85,7 +97,7 @@ void main()
   bool do_update = !in_range_inclusive(tile_shifted, int2(0), int2(SHADOW_TILEMAP_RES - 1));
 
   /* TODO(fclem): Might be better to resize the depth stored instead of a full render update. */
-  if (directional_range_changed != 0) {
+  if (srt.directional_range_changed != 0) {
     do_update = true;
   }
 
@@ -96,7 +108,7 @@ void main()
     ShadowTileDataPacked tile = 0;
     int tile_load = shadow_tile_offset(uint2(tile_wrapped), tilemap.tiles_index, lod);
     if (thread_active) {
-      tile = init_tile_data(tiles_buf[tile_load], do_update);
+      tile = init_tile_data(srt.tiles_buf[tile_load], do_update);
     }
 
     /* Uniform control flow for barrier. Needed to avoid race condition on shifted loads. */
@@ -106,9 +118,13 @@ void main()
       int tile_store = shadow_tile_offset(uint2(tile_co), tilemap.tiles_index, lod);
       if ((tile_load != tile_store) && flag_test(tile, SHADOW_IS_CACHED)) {
         /* Inlining of shadow_page_cache_update_tile_ref to avoid buffer dependencies. */
-        pages_cached_buf[shadow_tile_unpack(tile).cache_index].y = uint(tile_store);
+        srt.pages_cached_buf[shadow_tile_unpack(tile).cache_index].y = uint(tile_store);
       }
-      tiles_buf[tile_store] = tile;
+      srt.tiles_buf[tile_store] = tile;
     }
   }
 }
+
+PipelineCompute tilemap_init(tilemap_init_main);
+
+}  // namespace eevee::shadow

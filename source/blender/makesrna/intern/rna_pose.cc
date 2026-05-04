@@ -206,11 +206,12 @@ static void rna_Pose_ik_solver_update(Main *bmain, Scene * /*scene*/, PointerRNA
 {
   Object *ob = id_cast<Object *>(ptr->owner_id);
   bPose *pose = static_cast<bPose *>(ptr->data);
+  BLI_assert(ob->pose == pose);
 
   BKE_pose_tag_recalc(bmain, pose); /* checks & sorts pose channels */
   DEG_relations_tag_update(bmain);
 
-  BKE_pose_update_constraint_flags(pose);
+  BKE_pose_update_constraint_flags(*ob);
 
   ed::object::object_test_constraints(bmain, ob);
 
@@ -297,7 +298,8 @@ static PointerRNA rna_PoseChannel_bone_get(PointerRNA *ptr)
   /* Replace the id_data pointer with the Armature ID. */
   tmp_ptr.owner_id = ob->data;
 
-  return RNA_pointer_create_with_parent(tmp_ptr, RNA_Bone, pchan->bone);
+  bArmature *arm = id_cast<bArmature *>(ob->data);
+  return RNA_pointer_create_with_parent(tmp_ptr, RNA_Bone, pchan->bone_get(*arm));
 }
 
 static bool rna_PoseChannel_has_ik_get(PointerRNA *ptr)
@@ -511,8 +513,8 @@ static int rna_PoseChannel_proxy_editable(const PointerRNA * /*ptr*/, const char
   Object *ob = (Object *)ptr->owner_id;
   bArmature *arm = ob->data;
   bPoseChannel *pchan = (bPoseChannel *)ptr->data;
-
-  if (pchan->bone && (pchan->bone->layer & arm->layer_protected)) {
+  Bone *bone = pchan->bone_get(*ob);
+  if (bone && (bone->layer & arm->layer_protected)) {
     *r_info = "Can't edit property of a proxy on a protected layer";
     return 0;
   }
@@ -611,7 +613,8 @@ static bool rna_PoseBones_lookup_string(PointerRNA *ptr, const char *key, Pointe
 static void rna_PoseChannel_matrix_basis_get(PointerRNA *ptr, float *values)
 {
   bPoseChannel *pchan = static_cast<bPoseChannel *>(ptr->data);
-  BKE_pchan_to_mat4(pchan, reinterpret_cast<float (*)[4]>(values));
+  Object *ob = id_cast<Object *>(ptr->owner_id);
+  BKE_pchan_to_mat4({pchan, pchan->bone_get(*ob)}, reinterpret_cast<float (*)[4]>(values));
 }
 
 static void rna_PoseChannel_matrix_basis_set(PointerRNA *ptr, const float *values)

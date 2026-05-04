@@ -183,10 +183,10 @@ static void restrictbutton_r_lay_fn(bContext *C, void *poin, void * /*poin2*/)
 
 static void restrictbutton_bone_visibility_fn(bContext *C, void *poin, void *poin2)
 {
-  const Object *ob = static_cast<Object *>(poin);
+  Object *ob = static_cast<Object *>(poin);
   bPoseChannel *pchan = static_cast<bPoseChannel *>(poin2);
   if (CTX_wm_window(C)->runtime->eventstate->modifier & KM_SHIFT) {
-    animrig::pose_bone_descendent_iterator(*ob->pose, *pchan, [&](bPoseChannel &descendent) {
+    animrig::pose_bone_descendent_iterator(*ob, *pchan, [&](bPoseChannel &descendent) {
       if (pchan->drawflag & PCHAN_DRAW_HIDDEN) {
         descendent.drawflag |= PCHAN_DRAW_HIDDEN;
       }
@@ -908,7 +908,7 @@ static void namebutton_fn(bContext *C, void *tsep, char *oldname)
           STRNCPY_UTF8(newname, pchan->name);
           STRNCPY_UTF8(pchan->name, oldname);
           ED_armature_bone_rename(bmain, id_cast<bArmature *>(ob->data), oldname, newname);
-          WM_msg_publish_rna_prop(mbus, &arm->id, pchan->bone, Bone, name);
+          WM_msg_publish_rna_prop(mbus, &arm->id, pchan->bone_get(*ob), Bone, name);
           WM_event_add_notifier(C, NC_OBJECT | ND_ARMATURE_STRUCTURE, arm);
           WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN, arm);
           DEG_id_tag_update(tselem->id, ID_RECALC_SYNC_TO_EVAL);
@@ -1442,7 +1442,6 @@ static void outliner_draw_restrictbuts(ui::Block *block,
       }
       else if (tselem->type == TSE_POSE_CHANNEL) {
         bPoseChannel *pchan = static_cast<bPoseChannel *>(te.directdata);
-        Bone *bone = pchan->bone;
         Object *ob = id_cast<Object *>(tselem->id);
         bArmature *arm = id_cast<bArmature *>(ob->data);
 
@@ -1469,6 +1468,7 @@ static void outliner_draw_restrictbuts(ui::Block *block,
         }
 
         if (space_outliner->show_restrict_flags & SO_RESTRICT_SELECT) {
+          Bone *bone = pchan->bone_get(*ob);
           bt = uiDefIconButBit(block,
                                ui::ButtonType::IconToggle,
                                BONE_UNSELECTABLE,

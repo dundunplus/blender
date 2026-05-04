@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-03-19 19:12+0000\n"
 "Last-Translator: Tamás Máté <royalpython132@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.blender.org/projects/blender-ui/ui/hu/>\n"
@@ -6610,20 +6610,12 @@ msgid "Use Material Mask"
 msgstr "Anyagmaszk használata"
 
 
-msgid "Show/Hide"
-msgstr "Mutat/Rejt"
-
-
-msgid "Apply"
-msgstr "Elfogadás"
-
-
 msgid "Clean Up"
 msgstr "Tisztítás"
 
 
-msgid "Merge"
-msgstr "Összefésülés"
+msgid "Show/Hide"
+msgstr "Mutat/Rejt"
 
 
 msgid "Metaball"
@@ -6632,10 +6624,6 @@ msgstr "Meta test"
 
 msgid "Import"
 msgstr "Importálás"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Mirror"
@@ -6654,12 +6642,28 @@ msgid "Align View"
 msgstr "Nézet igazítása"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Light"
 msgstr "Fényforrás"
 
 
 msgid "Relations"
 msgstr "Kapcsolatok"
+
+
+msgid "Rigid Body"
+msgstr "Szilárd test"
+
+
+msgid "Apply"
+msgstr "Elfogadás"
+
+
+msgid "Track"
+msgstr "Nyom"
 
 
 msgid "Keying"
@@ -6670,12 +6674,8 @@ msgid "Tracking"
 msgstr "Követés"
 
 
-msgid "Rigid Body"
-msgstr "Szilárd test"
-
-
-msgid "Track"
-msgstr "Nyom"
+msgid "Merge"
+msgstr "Összefésülés"
 
 
 msgctxt "MovieClip"
@@ -13493,14 +13493,6 @@ msgstr "GL textúra limit"
 
 msgid "Limit the texture size to save graphics memory"
 msgstr "Textúra méretének korlátozása, hogy grafikus memóriát spóroljon"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "A képeknek a képernyőn történő megjelenítésének módja"
-
-
-msgid "2D Texture"
-msgstr "2D Textúra"
 
 
 msgid "Ambient Color"

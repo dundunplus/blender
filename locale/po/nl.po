@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-02-14 01:12+0000\n"
 "Last-Translator: Timo Hoetmer <timo@timohoetmer.nl>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -5751,16 +5751,12 @@ msgid "Dots"
 msgstr "Stippen"
 
 
-msgid "Clear Transform"
-msgstr "Maak Transformatie Leeg"
+msgid "Show/Hide"
+msgstr "Toon/Verberg"
 
 
 msgid "Names"
 msgstr "Namen"
-
-
-msgid "Show/Hide"
-msgstr "Toon/Verberg"
 
 
 msgid "Import"
@@ -5785,10 +5781,6 @@ msgstr "Selecteer Vergelijkbaar"
 
 msgid "Select Linked"
 msgstr "Selecteer Aaneengesloten"
-
-
-msgid "Layout"
-msgstr "Indeling"
 
 
 msgid "Light"
@@ -5817,6 +5809,14 @@ msgstr "Converteer"
 
 msgid "Hooks"
 msgstr "Haken"
+
+
+msgid "Layout"
+msgstr "Indeling"
+
+
+msgid "Clear Transform"
+msgstr "Maak Transformatie Leeg"
 
 
 msgctxt "MovieClip"

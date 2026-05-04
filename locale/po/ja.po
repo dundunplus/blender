@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-04-27 06:12+0000\n"
 "Last-Translator: Satoshi Yamasaki <yamyam@yo.rim.or.jp>\n"
 "Language-Team: Japanese <https://translate.blender.org/projects/blender-ui/ui/ja/>\n"
@@ -35775,92 +35775,12 @@ msgid "Editor menu containing buttons"
 msgstr "ボタンを含むエディターメニュー"
 
 
-msgid "Clear Transform"
-msgstr "トランスフォームをクリア"
-
-
-msgid "In-Betweens"
-msgstr "中間ポーズ"
-
-
-msgid "Propagate"
-msgstr "伝播"
-
-
-msgid "Bone Collections"
-msgstr "ボーンコレクション"
-
-
-msgid "Names"
-msgstr "名前"
-
-
-msgid "Show/Hide"
-msgstr "表示/隠す"
-
-
-msgid "Apply"
-msgstr "適用"
-
-
-msgid "Toggle Bone Options"
-msgstr "ボーンオプションを切り替え"
-
-
-msgid "Math"
-msgstr "数式"
-
-
-msgid "Enable Bone Options"
-msgstr "ボーンオプションを有効化"
-
-
-msgid "Disable Bone Options"
-msgstr "ボーンオプションを無効化"
-
-
-msgid "Utilities"
-msgstr "ユーティリティ"
-
-
-msgid "Mesh Select Mode"
-msgstr "メッシュ選択モード"
-
-
-msgid "Face Data"
-msgstr "面データ"
-
-
-msgid "Select by Face Strength"
-msgstr "面の強さで選択"
-
-
-msgid "Set Face Strength"
-msgstr "面の強さを設定"
-
-
 msgid "Clean Up"
 msgstr "クリーンアップ"
 
 
-msgid "Merge"
-msgstr "マージ"
-
-
-msgid "Read"
-msgstr "読込"
-
-
-msgid "Sample"
-msgstr "サンプル"
-
-
-msgid "Write"
-msgstr "書込"
-
-
-msgid "Primitives"
-msgstr "プリミティブ"
+msgid "Show/Hide"
+msgstr "表示/隠す"
 
 
 msgid "Special Characters"
@@ -35875,40 +35795,44 @@ msgid "Metaball"
 msgstr "メタボール"
 
 
-msgid "Gizmo"
-msgstr "ギズモ"
+msgid "Names"
+msgstr "名前"
+
+
+msgid "Math"
+msgstr "数式"
 
 
 msgid "Bone Roll"
 msgstr "ボーンロール"
 
 
-msgid "Instances"
-msgstr "インスタンス"
-
-
-msgid "Import"
-msgstr "インポート"
-
-
-msgid "Deprecated"
-msgstr "廃止予定"
+msgid "Utilities"
+msgstr "ユーティリティ"
 
 
 msgid "Pivot Point"
 msgstr "ピボットポイント"
 
 
+msgid "Read"
+msgstr "読込"
+
+
 msgid "Snap"
 msgstr "スナップ"
+
+
+msgid "Sample"
+msgstr "サンプル"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "プロポーショナル編集の減衰タイプ"
 
 
-msgid "List"
-msgstr "リスト"
+msgid "Write"
+msgstr "書込"
 
 
 msgid "Mask Edit"
@@ -35919,8 +35843,8 @@ msgid "Automasking"
 msgstr "自動マスク"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "プリミティブ"
 
 
 msgid "Face Sets Edit"
@@ -35929,6 +35853,18 @@ msgstr "面セット編集"
 
 msgid "Vertex Group Locks"
 msgstr "頂点グループのロック"
+
+
+msgid "Gizmo"
+msgstr "ギズモ"
+
+
+msgid "Instances"
+msgstr "インスタンス"
+
+
+msgid "Import"
+msgstr "インポート"
 
 
 msgid "Mirror"
@@ -35945,6 +35881,10 @@ msgstr "ローカルビュー"
 
 msgid "Viewpoint"
 msgstr "視点"
+
+
+msgid "Deprecated"
+msgstr "廃止予定"
 
 
 msgid "Navigation"
@@ -35967,6 +35907,14 @@ msgid "Select More/Less"
 msgstr "選択の拡大縮小"
 
 
+msgid "List"
+msgstr "リスト"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "類似選択"
 
@@ -35987,20 +35935,12 @@ msgid "Assign Material"
 msgstr "マテリアルを割り当て"
 
 
-msgid "Layout"
-msgstr "レイアウト"
-
-
 msgid "Light"
 msgstr "ライト"
 
 
 msgid "Light Probe"
 msgstr "ライトプローブ"
-
-
-msgid "Adjust"
-msgstr "調整"
 
 
 msgid "Add Image"
@@ -36011,32 +35951,20 @@ msgid "Relations"
 msgstr "関係"
 
 
-msgid "Keying"
-msgstr "キーイング"
-
-
-msgid "Tracking"
-msgstr "トラッキング"
-
-
 msgid "Rigid Body"
 msgstr "リジッドボディ"
+
+
+msgid "Apply"
+msgstr "適用"
 
 
 msgid "Track"
 msgstr "トラック"
 
 
-msgid "Creative"
-msgstr "クリエイティブ"
-
-
 msgid "Quick Effects"
 msgstr "クイックエフェクト"
-
-
-msgid "Render Preview"
-msgstr "レンダープレビュー"
 
 
 msgid "Asset"
@@ -36059,6 +35987,10 @@ msgid "Hooks"
 msgstr "フック"
 
 
+msgid "Layout"
+msgstr "レイアウト"
+
+
 msgid "Trim/Add"
 msgstr "トリム/追加"
 
@@ -36073,6 +36005,74 @@ msgstr "面セットを初期化"
 
 msgid "Random Mask"
 msgstr "ランダムマスク"
+
+
+msgid "Adjust"
+msgstr "調整"
+
+
+msgid "Clear Transform"
+msgstr "トランスフォームをクリア"
+
+
+msgid "In-Betweens"
+msgstr "中間ポーズ"
+
+
+msgid "Keying"
+msgstr "キーイング"
+
+
+msgid "Propagate"
+msgstr "伝播"
+
+
+msgid "Tracking"
+msgstr "トラッキング"
+
+
+msgid "Bone Collections"
+msgstr "ボーンコレクション"
+
+
+msgid "Toggle Bone Options"
+msgstr "ボーンオプションを切り替え"
+
+
+msgid "Creative"
+msgstr "クリエイティブ"
+
+
+msgid "Enable Bone Options"
+msgstr "ボーンオプションを有効化"
+
+
+msgid "Disable Bone Options"
+msgstr "ボーンオプションを無効化"
+
+
+msgid "Render Preview"
+msgstr "レンダープレビュー"
+
+
+msgid "Mesh Select Mode"
+msgstr "メッシュ選択モード"
+
+
+msgid "Face Data"
+msgstr "面データ"
+
+
+msgid "Select by Face Strength"
+msgstr "面の強さで選択"
+
+
+msgid "Set Face Strength"
+msgstr "面の強さを設定"
+
+
+msgid "Merge"
+msgstr "マージ"
 
 
 msgid "Keyframe Insert Pie"
@@ -73782,22 +73782,6 @@ msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "選択中のソケットでグループ入力ノードを現在のノードエディターに追加します"
 
 
-msgid "Panel Identifier"
-msgstr "パネル識別子"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "追加されたグループ入出力ノードにソケットを追加するためのパネル"
-
-
-msgid "Socket Identifier"
-msgstr "ソケット識別子"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "追加したグループ入出力ノードに含まれるソケット"
-
-
 msgctxt "Operator"
 msgid "Add Image as Node"
 msgstr "画像をノードで追加"
@@ -93695,20 +93679,20 @@ msgid "glTF Material Variants"
 msgstr "glTFマテリアルバリアント"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTFアニメーション"
-
-
 msgid "Active Tool"
 msgstr "アクティブツール"
 
 
 msgid "View Lock"
 msgstr "ビューのロック"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTFアニメーション"
 
 
 msgid "Selectability & Visibility"
@@ -97436,14 +97420,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "ジオメトリノードでのジオメトリ内へのカスタムバンドルの格納に対応します"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "ジオメトリノードリスト"
-
-
-msgid "Enable new list types and nodes"
-msgstr "新しいリストタイプとノードを有効にします"
-
-
 msgid "New Curves Tools"
 msgstr "新カーブツール"
 
@@ -98662,34 +98638,6 @@ msgstr ""
 "０にすると自動設定します (OpenGL のみ)"
 
 
-msgid "Image Display Method"
-msgstr "画像の表示方法"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "スクリーン上に画像を表示するのに使用される方法"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "GPUと画像を元に，方法が自動的に選択されます"
-
-
-msgid "2D Texture"
-msgstr "2Dテクスチャ"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "CPU を2Dテクスチャによる表示の変換と画像の表示に使用します"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "GLSL シェーダーを2Dテクスチャによる表示の変換と画像の表示に使用します"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "Microsoft Storeインストール"
 
@@ -99198,10 +99146,6 @@ msgstr "カタロニア語 - Català"
 
 msgid "Chinese (Simplified) - 简体中文"
 msgstr "簡体字中国語 - 简体中文"
-
-
-msgid "Locale code: zh_HANS. Translation progress: 100%"
-msgstr "ロケールコード：zh_HANS．翻訳の進行状況: 100％"
 
 
 msgid "Chinese (Traditional) - 繁體中文"
@@ -111670,10 +111614,6 @@ msgstr "ストリップモディファイアー"
 
 msgid "Modifier for sequence strip"
 msgstr "シーケンスストリップ用モディファイアー"
-
-
-msgid "Enable this modifier"
-msgstr "このモディファイアを有効化します"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -134246,6 +134186,18 @@ msgid "Is Tile"
 msgstr "タイルフラグ"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "入力グリッドに非互換のトランスフォームがあります"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "トポロジーを決める入力グリッドがありません"
+
+
+msgid "Grid type not supported"
+msgstr "グリッドタイプは未対応です"
+
+
 msgid "OpenVDB error: {}"
 msgstr "OpenVDB エラー：{}"
 
@@ -137691,10 +137643,6 @@ msgstr "今日"
 
 msgid "Yesterday"
 msgstr "昨日"
-
-
-msgid "Modified: {}{}{}"
-msgstr "変更済み: {}{}{}"
 
 
 msgid "Size: {}"
@@ -142532,14 +142480,6 @@ msgid "Could not add material"
 msgstr "マテリアルを追加できませんでした"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "ソケットとパネル識別子の両方が設定できません"
-
-
-msgid "Invalid panel identifier"
-msgstr "無効なパネル識別子です"
-
-
 msgid "Could not add a color node"
 msgstr "カラーノードを追加できませんでした"
 
@@ -142566,14 +142506,6 @@ msgstr "ノードツリータイプ「%s」が未定義です"
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "ノードグループ追加はカスタム（Python 定義の）ノードツリーには未対応です"
-
-
-msgid "Cannot drag an output socket"
-msgstr "出力ソケットがドラッグできません"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "入力のないパネルはドラッグできません"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -145243,10 +145175,6 @@ msgstr "リップは頂点の吸着選択と互換性がありません"
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "リップは頂点・辺選択モードとの同期選択のみ互換性があります"
-
-
-msgid "Rip failed"
-msgstr "リップ失敗"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -153987,18 +153915,6 @@ msgid "Found conflicting closure signatures"
 msgstr "クロージャのシグネチャに衝突が検出されました"
 
 
-msgid "Input grids have incompatible transforms"
-msgstr "入力グリッドに非互換のトランスフォームがあります"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "トポロジーを決める入力グリッドがありません"
-
-
-msgid "Grid type not supported"
-msgstr "グリッドタイプは未対応です"
-
-
 msgid "Not a shader node tree"
 msgstr "シェーダーノードツリーではありません"
 
@@ -157409,10 +157325,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "最後のコピーをランダム化から除外します"
 
 
-msgid "The forward direction along the array shape"
-msgstr "配列の形状に沿った前方向"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr ""
 "重なっているポイントを距離でマージします.\n"
@@ -157539,10 +157451,6 @@ msgstr "トランスフォームをローカル，またはオブジェクトの
 
 msgid "Translation accumulated for each copy"
 msgstr "各コピーで移動を累積します"
-
-
-msgid "The up direction along the array shape"
-msgstr "配列の形状に沿った方向に対する上方向"
 
 
 msgid "Invalid Distance"

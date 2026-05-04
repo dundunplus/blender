@@ -9,18 +9,18 @@
  * Some render-pass are written during this pass.
  */
 
+#pragma once
+
 #include "infos/eevee_geom_infos.hh"
 #include "infos/eevee_nodetree_infos.hh"
-#include "infos/eevee_surf_hybrid_infos.hh"
 
 FRAGMENT_SHADER_CREATE_INFO(eevee_nodetree)
 FRAGMENT_SHADER_CREATE_INFO(eevee_geom_mesh)
-FRAGMENT_SHADER_CREATE_INFO(eevee_surf_deferred_hybrid)
 FRAGMENT_SHADER_CREATE_INFO(eevee_render_pass_out)
 FRAGMENT_SHADER_CREATE_INFO(eevee_cryptomatte_out)
 
-#include "draw_curves_lib.glsl"
-#include "draw_view_lib.glsl"
+#include "draw_curves_lib.glsl" /* IWYU pragma: export. For nodetree functions. */
+#include "draw_view_lib.glsl"   /* IWYU pragma: export. For nodetree functions. */
 #include "eevee_forward_lib.glsl"
 #include "eevee_gbuffer_write_lib.glsl"
 #include "eevee_nodetree_frag_lib.glsl"
@@ -30,7 +30,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_cryptomatte_out)
 /* Global thickness because it is needed for closure_to_rgba. */
 Thickness g_thickness;
 
-float4 closure_to_rgba(Closure /*cl*/)
+float4 closure_to_rgba_hybrid(Closure /*cl*/)
 {
   float3 radiance, transmittance;
   forward_lighting_eval(g_thickness, radiance, transmittance);
@@ -59,33 +59,71 @@ float4 closure_to_rgba(Closure /*cl*/)
   return float4(radiance, saturate(1.0f - average(transmittance)));
 }
 
-void write_closure_data(int2 texel, int layer, float4 data)
-{
-  /* NOTE: The image view start at layer GBUF_CLOSURE_FB_LAYER_COUNT so all destination layer is
-   * `layer - GBUF_CLOSURE_FB_LAYER_COUNT`. */
-  imageStoreFast(out_gbuf_closure_img, int3(texel, layer - GBUF_CLOSURE_FB_LAYER_COUNT), data);
-}
+namespace eevee {
 
-void write_normal_data(int2 texel, int layer, float2 data)
-{
-  /* NOTE: The image view start at layer GBUF_NORMAL_FB_LAYER_COUNT so all destination layer is
-   * `layer - GBUF_NORMAL_FB_LAYER_COUNT`. */
-  imageStoreFast(out_gbuf_normal_img, int3(texel, layer - GBUF_NORMAL_FB_LAYER_COUNT), data.xyyy);
-}
+struct SurfaceHybrid {
+  /* Added at runtime because of test shaders not having `node_tree`. */
+  // [[legacy_info]] ShaderCreateInfo eevee_render_pass_out;
+  // [[legacy_info]] ShaderCreateInfo eevee_cryptomatte_out;
+  [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
+  [[legacy_info]] ShaderCreateInfo eevee_utility_texture;
+  [[legacy_info]] ShaderCreateInfo eevee_sampling_data;
+  [[legacy_info]] ShaderCreateInfo eevee_hiz_data;
+  [[legacy_info]] ShaderCreateInfo draw_view_culling;
 
-void write_header_data(int2 texel, int layer, uint data)
-{
-  /* NOTE: The image view start at layer GBUF_HEADER_FB_LAYER_COUNT so all destination layer is
-   * `layer - GBUF_HEADER_FB_LAYER_COUNT`. */
-  imageStoreFast(
-      out_gbuf_header_img, int3(texel, layer - GBUF_HEADER_FB_LAYER_COUNT), uint4(data));
-}
+  /* For closure_to_rgba. */
+  [[legacy_info]] ShaderCreateInfo eevee_light_data;
+  [[legacy_info]] ShaderCreateInfo eevee_lightprobe_data;
+  [[legacy_info]] ShaderCreateInfo eevee_shadow_data;
 
-void main()
+  /* Everything is stored inside a two layered target, one for each format. This is to fit the
+   * limitation of the number of images we can bind on a single shader. */
+  [[image(GBUF_CLOSURE_SLOT, write, UNORM_10_10_10_2)]] image2DArray gbuf_closure_img;
+  [[image(GBUF_NORMAL_SLOT, write, UNORM_16_16)]] image2DArray gbuf_normal_img;
+  /* Storage for additional infos that are shared across closures. */
+  [[image(GBUF_HEADER_SLOT, write, UINT_32)]] uimage2DArray gbuf_header_img;
+
+  void write_closure_data(int2 texel, int layer, float4 data)
+  {
+    /* NOTE: The image view start at layer GBUF_CLOSURE_FB_LAYER_COUNT so all destination layer is
+     * `layer - GBUF_CLOSURE_FB_LAYER_COUNT`. */
+    imageStoreFast(gbuf_closure_img, int3(texel, layer - GBUF_CLOSURE_FB_LAYER_COUNT), data);
+  }
+
+  void write_normal_data(int2 texel, int layer, float2 data)
+  {
+    /* NOTE: The image view start at layer GBUF_NORMAL_FB_LAYER_COUNT so all destination layer is
+     * `layer - GBUF_NORMAL_FB_LAYER_COUNT`. */
+    imageStoreFast(gbuf_normal_img, int3(texel, layer - GBUF_NORMAL_FB_LAYER_COUNT), data.xyyy);
+  }
+
+  void write_header_data(int2 texel, int layer, uint data)
+  {
+    /* NOTE: The image view start at layer GBUF_HEADER_FB_LAYER_COUNT so all destination layer is
+     * `layer - GBUF_HEADER_FB_LAYER_COUNT`. */
+    imageStoreFast(gbuf_header_img, int3(texel, layer - GBUF_HEADER_FB_LAYER_COUNT), uint4(data));
+  }
+};
+
+struct HybridFragOut {
+  /* Direct output. (Emissive, Holdout) */
+  [[frag_color(0)]] float4 radiance;
+
+  [[frag_color(1), raster_order_group(DEFERRED_GBUFFER_ROG_ID)]] uint gbuf_header;
+  [[frag_color(2)]] float2 gbuf_normal;
+  [[frag_color(3)]] float4 gbuf_closure1;
+  [[frag_color(4)]] float4 gbuf_closure2;
+};
+
+/* NOTE: This removes the possibility of using gl_FragDepth. */
+[[fragment]] [[early_fragment_tests]]
+void surf_hybrid([[resource_table]] SurfaceHybrid &srt,
+                 [[frag_coord]] const float4 frag_co,
+                 [[out]] HybridFragOut &frag_out)
 {
   init_globals();
 
-  float noise = utility_tx_fetch(utility_tx, gl_FragCoord.xy, UTIL_BLUE_NOISE_LAYER).r;
+  float noise = utility_tx_fetch(utility_tx, frag_co.xy, UTIL_BLUE_NOISE_LAYER).r;
   float closure_rand = fract(noise + sampling_rng_1D_get(SAMPLING_CLOSURE));
 
   g_thickness = Thickness::from(nodetree_thickness(), thickness_mode);
@@ -112,7 +150,7 @@ void main()
 
   g_emission *= alpha_rcp;
 
-  int2 out_texel = int2(gl_FragCoord.xy);
+  int2 out_texel = int2(frag_co.xy);
 
 #ifdef MAT_SUBSURFACE
   constexpr bool use_sss = true;
@@ -151,56 +189,57 @@ void main()
   gbuffer::Packed gbuf = gbuffer::pack(gbuf_data, g_data.Ng, g_data.N, g_thickness, use_object_id);
 
   /* Output header and first closure using frame-buffer attachment. */
-  out_gbuf_header = gbuf.header;
-  out_gbuf_closure1 = gbuf.closure[0];
-  out_gbuf_closure2 = gbuf.closure[1];
-  out_gbuf_normal = gbuf.normal[0];
+  frag_out.gbuf_header = gbuf.header;
+  frag_out.gbuf_closure1 = gbuf.closure[0];
+  frag_out.gbuf_closure2 = gbuf.closure[1];
+  frag_out.gbuf_normal = gbuf.normal[0];
 
   /* Output remaining closures using image store. */
 #if GBUFFER_LAYER_MAX >= 2 && !defined(GBUFFER_SIMPLE_CLOSURE_LAYOUT)
   if (flag_test(gbuf.used_layers, CLOSURE_DATA_2)) {
-    write_closure_data(out_texel, 2, gbuf.closure[2]);
+    srt.write_closure_data(out_texel, 2, gbuf.closure[2]);
   }
   if (flag_test(gbuf.used_layers, CLOSURE_DATA_3)) {
-    write_closure_data(out_texel, 3, gbuf.closure[3]);
+    srt.write_closure_data(out_texel, 3, gbuf.closure[3]);
   }
 #endif
 #if GBUFFER_LAYER_MAX >= 3
   if (flag_test(gbuf.used_layers, CLOSURE_DATA_4)) {
-    write_closure_data(out_texel, 4, gbuf.closure[4]);
+    srt.write_closure_data(out_texel, 4, gbuf.closure[4]);
   }
   if (flag_test(gbuf.used_layers, CLOSURE_DATA_5)) {
-    write_closure_data(out_texel, 5, gbuf.closure[5]);
+    srt.write_closure_data(out_texel, 5, gbuf.closure[5]);
   }
 #endif
 
 #if GBUFFER_LAYER_MAX >= 2
   if (flag_test(gbuf.used_layers, NORMAL_DATA_1)) {
-    write_normal_data(out_texel, 1, gbuf.normal[1]);
+    srt.write_normal_data(out_texel, 1, gbuf.normal[1]);
   }
 #endif
 #if GBUFFER_LAYER_MAX >= 3
   if (flag_test(gbuf.used_layers, NORMAL_DATA_2)) {
-    write_normal_data(out_texel, 2, gbuf.normal[2]);
+    srt.write_normal_data(out_texel, 2, gbuf.normal[2]);
   }
 #endif
 
 #if defined(GBUFFER_HAS_REFRACTION) || defined(GBUFFER_HAS_SUBSURFACE) || \
     defined(GBUFFER_HAS_TRANSLUCENT)
   if (flag_test(gbuf.used_layers, ADDITIONAL_DATA)) {
-    write_normal_data(
+    srt.write_normal_data(
         out_texel, uniform_buf.pipeline.gbuffer_additional_data_layer_id, gbuf.additional_info);
   }
 #endif
 
   if (flag_test(gbuf.used_layers, OBJECT_ID)) {
-    write_header_data(out_texel, 1, drw_resource_id());
+    srt.write_header_data(out_texel, 1, drw_resource_id());
   }
 
   /* ----- Radiance output ----- */
 
   /* Only output emission during the gbuffer pass. */
-  out_radiance = float4(g_emission, 0.0f);
-  out_radiance.rgb *= 1.0f - g_holdout;
-  out_radiance.a = g_holdout;
+  frag_out.radiance = float4(g_emission, 0.0f);
+  frag_out.radiance.rgb *= 1.0f - g_holdout;
+  frag_out.radiance.a = g_holdout;
 }
+}  // namespace eevee

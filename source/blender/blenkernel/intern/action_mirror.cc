@@ -265,8 +265,11 @@ static void action_flip_pchan(Object *ob_arm,
     pchan_flip = BKE_pose_channel_find_name(ob_arm->pose, pchan_name_flip);
   }
 
+  const Bone *pchan_bone = pchan->bone_get(*ob_arm);
+  const Bone *pchan_flip_bone = pchan_flip ? pchan_flip->bone_get(*ob_arm) : nullptr;
+
   float arm_mat_inv[4][4];
-  invert_m4_m4(arm_mat_inv, pchan_flip ? pchan_flip->bone->arm_mat : pchan->bone->arm_mat);
+  invert_m4_m4(arm_mat_inv, pchan_flip ? pchan_flip_bone->arm_mat : pchan_bone->arm_mat);
 
   /* Now flip the transformation & write it back to the F-Curves in `fkc_pchan`. */
 
@@ -309,10 +312,10 @@ static void action_flip_pchan(Object *ob_arm,
 #undef READ_VALUE_INT
 
     float chan_mat[4][4];
-    BKE_pchan_to_mat4(&pchan_temp, chan_mat);
+    BKE_pchan_to_mat4({&pchan_temp, pchan_bone}, chan_mat);
 
     /* Move to the pose-space. */
-    mul_m4_m4m4(chan_mat, pchan->bone->arm_mat, chan_mat);
+    mul_m4_m4m4(chan_mat, pchan_bone->arm_mat, chan_mat);
 
     /* Flip the matrix. */
     mul_m4_m4m4(chan_mat, chan_mat, flip_mtx);
@@ -328,7 +331,7 @@ static void action_flip_pchan(Object *ob_arm,
      * hence the check for `pchan_flip`. */
     const float unit_x[3] = {1.0f, 0.0f, 0.0f};
     const bool is_x_axis_orthogonal = (pchan_flip == nullptr) &&
-                                      (fabsf(dot_v3v3(pchan->bone->arm_mat[0], unit_x)) <= 1e-6f);
+                                      (fabsf(dot_v3v3(pchan_bone->arm_mat[0], unit_x)) <= 1e-6f);
     if (is_x_axis_orthogonal) {
       /* Matrix needs to flip both the X and Z axes to come out right. */
       float extra_mat[4][4] = {

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-11-14 10:59+0000\n"
 "Last-Translator: Isaac Gicheha <shwaky3@gmail.com>\n"
 "Language-Team: Swahili <https://translate.blender.org/projects/blender-ui/ui/sw/>\n"
@@ -28270,16 +28270,16 @@ msgid "Editor menu containing buttons"
 msgstr "Menyu ya mhariri iliyo na vitufe"
 
 
-msgid "Bone Collections"
-msgstr "Mikusanyo ya Mifupa"
+msgid "Clean Up"
+msgstr "Safisha"
 
 
 msgid "Show/Hide"
 msgstr "Onyesha/Ficha"
 
 
-msgid "Apply"
-msgstr "Tumia"
+msgid "Metaball"
+msgstr "Mpira wa miguu"
 
 
 msgid "Math"
@@ -28290,16 +28290,16 @@ msgid "Utilities"
 msgstr "Huduma"
 
 
-msgid "Clean Up"
-msgstr "Safisha"
-
-
-msgid "Merge"
-msgstr "Unganisha"
+msgid "Pivot Point"
+msgstr "Egemeo"
 
 
 msgid "Read"
 msgstr "Soma"
+
+
+msgid "Snap"
+msgstr "Picha"
 
 
 msgid "Sample"
@@ -28314,10 +28314,6 @@ msgid "Primitives"
 msgstr "Watu wa kwanza"
 
 
-msgid "Metaball"
-msgstr "Mpira wa miguu"
-
-
 msgid "Instances"
 msgstr "Matukio"
 
@@ -28326,20 +28322,12 @@ msgid "Import"
 msgstr "Ingiza"
 
 
-msgid "Deprecated"
-msgstr "Imeacha kutumika"
-
-
-msgid "Pivot Point"
-msgstr "Egemeo"
-
-
-msgid "Snap"
-msgstr "Picha"
-
-
 msgid "Mirror"
 msgstr "Kioo"
+
+
+msgid "Deprecated"
+msgstr "Imeacha kutumika"
 
 
 msgid "Navigation"
@@ -28350,16 +28338,24 @@ msgid "Select Linked"
 msgstr "Chagua Imeunganishwa"
 
 
-msgid "Layout"
-msgstr "Mpangilio"
-
-
 msgid "Light"
 msgstr "Mwanga"
 
 
 msgid "Light Probe"
 msgstr "Uchunguzi wa Mwanga"
+
+
+msgid "Apply"
+msgstr "Tumia"
+
+
+msgid "Asset"
+msgstr "Mali"
+
+
+msgid "Layout"
+msgstr "Mpangilio"
 
 
 msgid "Adjust"
@@ -28374,8 +28370,12 @@ msgid "Tracking"
 msgstr "Kufuatilia"
 
 
-msgid "Asset"
-msgstr "Mali"
+msgid "Bone Collections"
+msgstr "Mikusanyo ya Mifupa"
+
+
+msgid "Merge"
+msgstr "Unganisha"
 
 
 msgid "Keyframe Insert Pie"
@@ -75745,30 +75745,6 @@ msgid "Device"
 msgstr "Kifaa"
 
 
-msgid "Image Display Method"
-msgstr "Njia ya Kuonyesha Picha"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Njia inayotumika kuonyesha picha kwenye skrini"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Chagua kiotomatiki mbinu kulingana na GPU na picha"
-
-
-msgid "2D Texture"
-msgstr "2D Muundo"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Tumia CPU kwa kubadilisha onyesho na kuonyesha taswira yenye muundo wa 2D"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "Tumia vivuli vya GLSL kwa kubadilisha onyesho na kuonyesha picha yenye muundo wa 2D"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "Je, Usakinishaji wa Duka la Microsoft"
 
@@ -106559,10 +106535,6 @@ msgstr "Kipeo cha UV"
 
 msgid "Skipped %d of %d island(s), geometry was too complicated to detect a match"
 msgstr "Imerukwa %d ya kisiwa/visiwa %d), jiometri ilikuwa ngumu sana kutambua inayolingana."
-
-
-msgid "Rip failed"
-msgstr "Rip imeshindwa"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"

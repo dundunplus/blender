@@ -7,17 +7,17 @@
  *
  * This is used by alpha blended materials and materials using Shader to RGB nodes.
  */
+#pragma once
 
 #include "infos/eevee_geom_infos.hh"
 #include "infos/eevee_nodetree_infos.hh"
-#include "infos/eevee_surf_forward_infos.hh"
 
 FRAGMENT_SHADER_CREATE_INFO(eevee_nodetree)
 FRAGMENT_SHADER_CREATE_INFO(eevee_geom_mesh)
-FRAGMENT_SHADER_CREATE_INFO(eevee_surf_forward)
+FRAGMENT_SHADER_CREATE_INFO(eevee_volume_lib)
 
-#include "draw_curves_lib.glsl"
-#include "draw_view_lib.glsl"
+#include "draw_curves_lib.glsl" /* IWYU pragma: export. For nodetree functions. */
+#include "draw_view_lib.glsl"   /* IWYU pragma: export. For nodetree functions. */
 #include "eevee_forward_lib.glsl"
 #include "eevee_nodetree_frag_lib.glsl"
 #include "eevee_reverse_z_lib.bsl.hh"
@@ -26,12 +26,12 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_surf_forward)
 #include "eevee_volume_lib.bsl.hh"
 
 /* Global thickness because it is needed for closure_to_rgba. */
-Thickness g_thickness;
+Thickness g_thickness_forward;
 
-float4 closure_to_rgba(Closure /*cl_unused*/)
+float4 closure_to_rgba_forward(Closure /*cl_unused*/)
 {
   float3 radiance, transmittance;
-  forward_lighting_eval(g_thickness, radiance, transmittance);
+  forward_lighting_eval(g_thickness_forward, radiance, transmittance);
 
   /* Reset for the next closure tree. */
   float noise = utility_tx_fetch(utility_tx, gl_FragCoord.xy, UTIL_BLUE_NOISE_LAYER).r;
@@ -57,7 +57,42 @@ float4 closure_to_rgba(Closure /*cl_unused*/)
   return float4(radiance, saturate(1.0f - average(transmittance)));
 }
 
-void main()
+namespace eevee {
+
+struct SurfaceForward {
+  [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
+  [[legacy_info]] ShaderCreateInfo eevee_light_data;
+  [[legacy_info]] ShaderCreateInfo eevee_lightprobe_data;
+  [[legacy_info]] ShaderCreateInfo eevee_utility_texture;
+  [[legacy_info]] ShaderCreateInfo eevee_sampling_data;
+  [[legacy_info]] ShaderCreateInfo eevee_shadow_data;
+  [[legacy_info]] ShaderCreateInfo eevee_hiz_data;
+  [[legacy_info]] ShaderCreateInfo eevee_volume_lib;
+
+  [[legacy_info]] ShaderCreateInfo draw_view_culling;
+
+  /* Optionally added depending on the material. */
+  // [[legacy_info]] ShaderCreateInfo eevee_render_pass_out;
+  // [[legacy_info]] ShaderCreateInfo eevee_cryptomatte_out;
+  // [[legacy_info]] ShaderCreateInfo eevee_hiz_prev_data;
+  // [[legacy_info]] ShaderCreateInfo eevee_previous_layer_radiance;
+};
+
+struct SurfaceForwardFragOut {
+  /* Splitting RGB components into different target to overcome the lack of dual source blending
+   * with multiple render targets. */
+  [[frag_color(0)]] float4 combined_r;
+  [[frag_color(1)]] float4 combined_g;
+  [[frag_color(2)]] float4 combined_b;
+  [[frag_color(3)]] float4 combined_a;
+};
+
+/* Early fragment test is needed for render passes support for forward surfaces. */
+/* NOTE: This removes the possibility of using gl_FragDepth. */
+[[fragment]] [[early_fragment_tests]]
+void surf_forward([[resource_table]] SurfaceForward & /*srt*/,
+                  [[frag_coord]] const float4 frag_co,
+                  [[out]] SurfaceForwardFragOut &frag_out)
 {
   init_globals();
 
@@ -66,17 +101,17 @@ void main()
 
   fragment_displacement();
 
-  g_thickness = Thickness::from(nodetree_thickness(), thickness_mode);
+  g_thickness_forward = Thickness::from(nodetree_thickness(), thickness_mode);
 
   nodetree_surface(closure_rand);
 
   float3 radiance, transmittance;
-  forward_lighting_eval(g_thickness, radiance, transmittance);
+  forward_lighting_eval(g_thickness_forward, radiance, transmittance);
 
   /* Volumetric resolve and compositing. */
   float2 uvs = gl_FragCoord.xy * uniform_buf.volumes.main_view_extent_inv;
   VolumeResolveSample vol = volume_resolve(
-      float3(uvs, reverse_z::read(gl_FragCoord.z)), volume_transmittance_tx, volume_scattering_tx);
+      float3(uvs, reverse_z::read(frag_co.z)), volume_transmittance_tx, volume_scattering_tx);
   /* Removes the part of the volume scattering that has
    * already been added to the destination pixels by the opaque resolve.
    * Since we do that using the blending pipeline we need to account for material transmittance. */
@@ -97,12 +132,14 @@ void main()
    * - Combined RGB radiance with Monochromatic transmittance.
    * - Channel split RGB radiance & RGB transmittance + Dedicated average alpha with holdout. */
   if (uniform_buf.pipeline.use_monochromatic_transmittance) {
-    out_combined_r = float4(radiance.rgb, transmittance.r);
+    frag_out.combined_r = float4(radiance.rgb, transmittance.r);
   }
   else {
-    out_combined_r = float4(radiance.r, 0.0f, 0.0f, transmittance.r);
-    out_combined_g = float4(radiance.g, 0.0f, 0.0f, transmittance.g);
-    out_combined_b = float4(radiance.b, 0.0f, 0.0f, transmittance.b);
-    out_combined_a = float4(g_holdout, 0.0f, 0.0f, average(transmittance));
+    frag_out.combined_r = float4(radiance.r, 0.0f, 0.0f, transmittance.r);
+    frag_out.combined_g = float4(radiance.g, 0.0f, 0.0f, transmittance.g);
+    frag_out.combined_b = float4(radiance.b, 0.0f, 0.0f, transmittance.b);
+    frag_out.combined_a = float4(g_holdout, 0.0f, 0.0f, average(transmittance));
   }
 }
+
+}  // namespace eevee

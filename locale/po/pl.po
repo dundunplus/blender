@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
-"PO-Revision-Date: 2026-04-14 12:12+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
+"PO-Revision-Date: 2026-05-02 17:01+0000\n"
 "Last-Translator: Paweł Mazur <pawelmazur.zam@gmail.com>\n"
 "Language-Team: Polish <https://translate.blender.org/projects/blender-ui/ui/pl/>\n"
 "Language: pl\n"
@@ -5439,6 +5439,10 @@ msgid "Has Jitter"
 msgstr "Ma drgania"
 
 
+msgid "Has Normal Radius"
+msgstr "Ma normalny promień"
+
+
 msgid "Has Crease/Pinch Factor"
 msgstr "Ma współczynnik zagnieceń / ściskania"
 
@@ -7739,8 +7743,16 @@ msgid "ACES 1.3 sRGB"
 msgstr "ACES 1.3 sRGB"
 
 
+msgid "ACES 1.3 view transform for sRGB. May be used to convert backplates or matte paintings to the working space."
+msgstr "ACES 1.3 – transformacja widoku dla sRGB. Można jej używać do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
+
+
 msgid "ACES 2.0 sRGB"
 msgstr "ACES 2.0 sRGB"
+
+
+msgid "ACES 2.0 view transform for sRGB. May be used to convert backplates or matte paintings to the working space."
+msgstr "ACES 2.0 – transformacja widoku dla sRGB. Można jej używać do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
 
 
 msgid "ACES2065-1"
@@ -7803,6 +7815,10 @@ msgid "AgX Base sRGB"
 msgstr "Podstawa AgX sRGB"
 
 
+msgid "AgX view transform for sRGB. May be used to convert backplates or matte paintings to the working space."
+msgstr "Transformacja widoku AgX dla sRGB. Może być używana do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
+
+
 msgid "AgX Log"
 msgstr "Dziennik AgX"
 
@@ -7817,6 +7833,14 @@ msgstr "Dziennik Apple"
 
 msgid "Apple camera input space using Apple Log transfer function and Rec.2020 primaries."
 msgstr "Przestrzeń wejściowa kamery Apple przy użyciu funkcji transferu Apple Log i kolorów podstawowych Rec.2020."
+
+
+msgid "Apple Log 2"
+msgstr "Dziennik Apple 2"
+
+
+msgid "Apple camera input space using Apple Log transfer function and Apple Wide Gamut primaries."
+msgstr "Przestrzeń wejściowa kamery Apple przy użyciu funkcji transferu Dziennika Apple i podstawowych kolorów Apple Wide Gamut."
 
 
 msgid "BMDFilm WideGamut Gen5"
@@ -7879,8 +7903,56 @@ msgid "Filmic sRGB"
 msgstr "Filmowy sRGB"
 
 
+msgid "Filmic view transform for sRGB. May be used to convert backplates or matte paintings to the working space."
+msgstr "Transformacja widoku filmowego dla sRGB. Można jej użyć do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
+
+
+msgid "Gamma 1.8 Encoded Rec.709"
+msgstr "Rec.709 z kodowaniem gamma 1,8"
+
+
+msgid "1.8 gamma-encoded Rec.709 with illuminant D65 white point. For use with scene-referred textures."
+msgstr "Rec.709 z kodowaniem gamma 1,8 i oświetleniem D65 w punkcie bieli. Do stosowania z teksturami odniesionymi do sceny."
+
+
+msgid "Gamma 2.2 Encoded AP1"
+msgstr "AP1 z kodowaniem gamma 2,2"
+
+
+msgid "2.2 gamma-encoded AP1 with ACES white point. For use with scene-referred textures."
+msgstr "AP1 z kodowaniem gamma 2.2 i punktem bieli ACES. Do użytku z teksturami odniesionymi do sceny."
+
+
+msgid "Gamma 2.2 Encoded AdobeRGB"
+msgstr "AdobeRGB z kodowaniem gamma 2,2"
+
+
+msgid "2.2 gamma-encoded Adobe RGB (1998) with illuminant D65 white point. For use with scene-referred textures."
+msgstr "Adobe RGB (1998) z kodowaniem gamma 2,2 i oświetleniem D65 w punkcie bieli. Do użytku z teksturami odnoszącymi się do sceny."
+
+
+msgid "Gamma 2.2 Encoded Rec.709"
+msgstr "Rec.709 z kodowaniem gamma 2,2"
+
+
+msgid "2.2 gamma-encoded Rec.709 with illuminant D65 white point. For use with scene-referred textures."
+msgstr "Rec.709 z kodowaniem gamma 2,2 i oświetleniem D65 w punkcie bieli. Do użytku z teksturami odniesionymi do sceny."
+
+
+msgid "Gamma 2.4 Encoded Rec.709"
+msgstr "Rec.709 z kodowaniem gamma 2,4"
+
+
+msgid "2.4 gamma-encoded Rec.709 with illuminant D65 white point. For use with scene-referred textures."
+msgstr "Rec.709 z kodowaniem gamma 2,4 i oświetleniem D65 w punkcie bieli. Do użytku z teksturami odniesionymi do sceny."
+
+
 msgid "Khronos PBR Neutral sRGB"
 msgstr "Neutralny Khronos PBR sRGB"
+
+
+msgid "Khronos PBR Neutral view transform for sRGB. May be used to convert backplates or matte paintings to the working space."
+msgstr "Khronos PBR Neutralna transformacja widoku dla sRGB. Można jej używać do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
 
 
 msgid "Linear ARRI Wide Gamut 3"
@@ -7897,6 +7969,22 @@ msgstr "Liniowy ARRI Wide Gamut 4"
 
 msgid "ARRI camera input space using linear ARRI Wide Gamut 4 primaries."
 msgstr "Przestrzeń wejściowa kamery ARRI wykorzystująca liniowe barwy podstawowe ARRI Wide Gamut 4."
+
+
+msgid "Linear Adobe RGB"
+msgstr "Liniowy Adobe RGB"
+
+
+msgid "Linear Adobe RGB (1998) with illuminant D65 white point. For use with scene-referred textures."
+msgstr "Liniowy Adobe RGB (1998) z punktem bieli D65. Do użytku z teksturami odnoszącymi się do sceny."
+
+
+msgid "Linear Apple Wide Gamut"
+msgstr "Liniowy Apple Wide Gamut"
+
+
+msgid "Apple camera input space using linear Apple Wide Gamut primaries."
+msgstr "Przestrzeń wejściowa kamery Apple wykorzystująca liniowe barwy podstawowe Apple Wide Gamut."
 
 
 msgid "Linear BMD WideGamut Gen5"
@@ -8101,6 +8189,14 @@ msgstr "Przestrzeń wejściowa kamery Panasonic wykorzystująca funkcję transfe
 
 msgid "sRGB IEC 61966-2-1 compound (piece-wise) encoding"
 msgstr "sRGB IEC 61966-2-1 kodowanie złożone (częściowo)"
+
+
+msgid "sRGB-encoded AP1 with ACES white point. For use with scene-referred textures."
+msgstr "AP1 z kodowaniem sRGB i punktem bieli ACES. Do użytku z teksturami odniesionymi do sceny."
+
+
+msgid "sRGB-encoded P3-D65 with illuminant D65 white point. For use with scene-referred textures."
+msgstr "P3-D65 z kodowaniem sRGB i punktem bieli D65. Do użytku z teksturami odnoszącymi się do sceny."
 
 
 msgid "Working color space of the current file"
@@ -35455,8 +35551,32 @@ msgid "Spacing between dots as a percentage of the diameter"
 msgstr "Odstęp między kropkami jako procent średnicy"
 
 
+msgid "Randomize color hue"
+msgstr "Losuj odcień koloru"
+
+
 msgid "Scale the noise frequency"
 msgstr "Skaluj częstotliwość szumu"
+
+
+msgid "Randomize texture rotation"
+msgstr "Losuj obrót tekstury"
+
+
+msgid "Randomize color saturation"
+msgstr "Losuj nasycenie koloru"
+
+
+msgid "Randomize the size"
+msgstr "Losuj rozmiar"
+
+
+msgid "Randomize strength"
+msgstr "Losuj siłę"
+
+
+msgid "Randomize color value"
+msgstr "Losuj wartość koloru"
 
 
 msgid "Show stroke fills of this material"
@@ -35516,6 +35636,14 @@ msgid "Disable stencil and overlap self intersections with alpha materials"
 msgstr "Wyłącz szablon i nakładaj przecięcia z materiałami alfa"
 
 
+msgid "Randomization"
+msgstr "Randomizacja"
+
+
+msgid "Use materiel randomization"
+msgstr "Użyj randomizacji materiału"
+
+
 msgid "Material Line Art"
 msgstr "Materiał grafiki liniowej"
 
@@ -35560,92 +35688,12 @@ msgid "Editor menu containing buttons"
 msgstr "Menu edytora zawierające przyciski"
 
 
-msgid "Clear Transform"
-msgstr "Wyczyść transformację"
-
-
-msgid "In-Betweens"
-msgstr "Pomiędzy"
-
-
-msgid "Propagate"
-msgstr "Rozprzestrzeniaj"
-
-
-msgid "Bone Collections"
-msgstr "Kolekcje kości"
-
-
-msgid "Names"
-msgstr "Nazwy"
-
-
-msgid "Show/Hide"
-msgstr "Pokaż / ukryj"
-
-
-msgid "Apply"
-msgstr "Zastosuj"
-
-
-msgid "Toggle Bone Options"
-msgstr "Przełącz opcje kości"
-
-
-msgid "Math"
-msgstr "Matematyka"
-
-
-msgid "Enable Bone Options"
-msgstr "Włącz opcje kości"
-
-
-msgid "Disable Bone Options"
-msgstr "Wyłącz opcje kości"
-
-
-msgid "Utilities"
-msgstr "Narzędzia"
-
-
-msgid "Mesh Select Mode"
-msgstr "Tryb wybierz siatkę"
-
-
-msgid "Face Data"
-msgstr "Dane lica"
-
-
-msgid "Select by Face Strength"
-msgstr "Wybierz według siły lica"
-
-
-msgid "Set Face Strength"
-msgstr "Ustaw siłę lica"
-
-
 msgid "Clean Up"
 msgstr "Oczyść"
 
 
-msgid "Merge"
-msgstr "Scal"
-
-
-msgid "Read"
-msgstr "Odczyt"
-
-
-msgid "Sample"
-msgstr "Próbka"
-
-
-msgid "Write"
-msgstr "Napisz"
-
-
-msgid "Primitives"
-msgstr "Prymitywy"
+msgid "Show/Hide"
+msgstr "Pokaż / ukryj"
 
 
 msgid "Special Characters"
@@ -35660,40 +35708,44 @@ msgid "Metaball"
 msgstr "Metakula"
 
 
-msgid "Gizmo"
-msgstr "Gizmo"
+msgid "Names"
+msgstr "Nazwy"
+
+
+msgid "Math"
+msgstr "Matematyka"
 
 
 msgid "Bone Roll"
 msgstr "Rolka kości"
 
 
-msgid "Instances"
-msgstr "Instancje"
-
-
-msgid "Import"
-msgstr "Importuj"
-
-
-msgid "Deprecated"
-msgstr "Przestarzałe"
+msgid "Utilities"
+msgstr "Narzędzia"
 
 
 msgid "Pivot Point"
 msgstr "Punkt obrotu"
 
 
+msgid "Read"
+msgstr "Odczyt"
+
+
 msgid "Snap"
 msgstr "Przyciągaj"
+
+
+msgid "Sample"
+msgstr "Próbka"
 
 
 msgid "Proportional Editing Falloff"
 msgstr "Proporcjonalne zanikanie edycji"
 
 
-msgid "List"
-msgstr "Lista"
+msgid "Write"
+msgstr "Napisz"
 
 
 msgid "Mask Edit"
@@ -35704,8 +35756,8 @@ msgid "Automasking"
 msgstr "Automatyczne maskowanie"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Primitives"
+msgstr "Prymitywy"
 
 
 msgid "Face Sets Edit"
@@ -35714,6 +35766,18 @@ msgstr "Edytuj zestawy lica"
 
 msgid "Vertex Group Locks"
 msgstr "Blokady grup wierzchołków"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instancje"
+
+
+msgid "Import"
+msgstr "Importuj"
 
 
 msgid "Mirror"
@@ -35730,6 +35794,10 @@ msgstr "Widok lokalny"
 
 msgid "Viewpoint"
 msgstr "Punkt widzenia"
+
+
+msgid "Deprecated"
+msgstr "Przestarzałe"
 
 
 msgid "Navigation"
@@ -35752,6 +35820,14 @@ msgid "Select More/Less"
 msgstr "Wybierz więcej / mniej"
 
 
+msgid "List"
+msgstr "Lista"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Wybierz podobne"
 
@@ -35772,20 +35848,12 @@ msgid "Assign Material"
 msgstr "Przypisz materiał"
 
 
-msgid "Layout"
-msgstr "Układ"
-
-
 msgid "Light"
 msgstr "Światło"
 
 
 msgid "Light Probe"
 msgstr "Sonda świetlna"
-
-
-msgid "Adjust"
-msgstr "Dostosuj"
 
 
 msgid "Add Image"
@@ -35796,32 +35864,20 @@ msgid "Relations"
 msgstr "Relacje"
 
 
-msgid "Keying"
-msgstr "Kluczowanie"
-
-
-msgid "Tracking"
-msgstr "Śledzenie"
-
-
 msgid "Rigid Body"
 msgstr "Ciało sztywne"
+
+
+msgid "Apply"
+msgstr "Zastosuj"
 
 
 msgid "Track"
 msgstr "Ścieżka"
 
 
-msgid "Creative"
-msgstr "Twórczy"
-
-
 msgid "Quick Effects"
 msgstr "Szybkie efekty"
-
-
-msgid "Render Preview"
-msgstr "Podgląd renderowania"
 
 
 msgid "Asset"
@@ -35844,6 +35900,10 @@ msgid "Hooks"
 msgstr "Haki"
 
 
+msgid "Layout"
+msgstr "Układ"
+
+
 msgid "Trim/Add"
 msgstr "Przytnij / dodaj"
 
@@ -35862,6 +35922,74 @@ msgstr "Zestawy lica Init"
 
 msgid "Random Mask"
 msgstr "Losowa maska"
+
+
+msgid "Adjust"
+msgstr "Dostosuj"
+
+
+msgid "Clear Transform"
+msgstr "Wyczyść transformację"
+
+
+msgid "In-Betweens"
+msgstr "Pomiędzy"
+
+
+msgid "Keying"
+msgstr "Kluczowanie"
+
+
+msgid "Propagate"
+msgstr "Rozprzestrzeniaj"
+
+
+msgid "Tracking"
+msgstr "Śledzenie"
+
+
+msgid "Bone Collections"
+msgstr "Kolekcje kości"
+
+
+msgid "Toggle Bone Options"
+msgstr "Przełącz opcje kości"
+
+
+msgid "Creative"
+msgstr "Twórczy"
+
+
+msgid "Enable Bone Options"
+msgstr "Włącz opcje kości"
+
+
+msgid "Disable Bone Options"
+msgstr "Wyłącz opcje kości"
+
+
+msgid "Render Preview"
+msgstr "Podgląd renderowania"
+
+
+msgid "Mesh Select Mode"
+msgstr "Tryb wybierz siatkę"
+
+
+msgid "Face Data"
+msgstr "Dane lica"
+
+
+msgid "Select by Face Strength"
+msgstr "Wybierz według siły lica"
+
+
+msgid "Set Face Strength"
+msgstr "Ustaw siłę lica"
+
+
+msgid "Merge"
+msgstr "Scal"
 
 
 msgid "Keyframe Insert Pie"
@@ -45745,6 +45873,14 @@ msgid "Outputs"
 msgstr "Wyjścia"
 
 
+msgid "Panel States"
+msgstr "Stany panelu"
+
+
+msgid "Expansion state of each panel in the node"
+msgstr "Stan rozwinięcia każdego panelu w węźle"
+
+
 msgid "Parent this node is attached to, e.g. a Frame node"
 msgstr "Węzeł nadrzędny, do którego jest przyłączony, np. węzeł klatki"
 
@@ -46707,6 +46843,14 @@ msgstr "Stabilizacja 2D"
 
 msgid "Stabilize footage using 2D stabilization motion tracking settings"
 msgstr "Stabilizuj materiał filmowy, korzystając z ustawień śledzenia ruchu stabilizacji 2D"
+
+
+msgid "String To Image"
+msgstr "Ciąg do obrazu"
+
+
+msgid "Generates an image containing the given paragraph of text"
+msgstr "Generuje obraz zawierający podany akapit tekstu"
 
 
 msgid "Switch"
@@ -48826,6 +48970,14 @@ msgid "Calculate position bounds of each instance's geometry set"
 msgstr "Oblicz granice pozycji zbioru geometrycznego każdej instancji"
 
 
+msgid "Instance Reference"
+msgstr "Odwołanie instancji"
+
+
+msgid "Output the reference index of the instance"
+msgstr "Wyświetl indeks odniesienia instancji"
+
+
 msgid "Instance Rotation"
 msgstr "Rotacja instancji"
 
@@ -49664,6 +49816,14 @@ msgstr "Próbka najbliższej powierzchni"
 
 msgid "Calculate the interpolated value of a mesh attribute on the closest point of its surface"
 msgstr "Oblicz interpolowaną wartość atrybutu siatki w najbliższym punkcie jej powierzchni"
+
+
+msgid "Sample Sound Frequencies"
+msgstr "Próbka częstotliwości dźwięku"
+
+
+msgid "Retrieve the amplitude from a sound data-block of a frequency range at a given time"
+msgstr "Pobierz amplitudę z bloku danych dźwiękowych zakresu częstotliwości w danym momencie"
 
 
 msgid "Sample UV Surface"
@@ -50765,6 +50925,10 @@ msgstr "Losowe kroczenie (skóra)"
 
 msgid "Volumetric approximation to physically based volume scattering, with scattering radius automatically adjusted to match color textures. Designed for skin shading."
 msgstr "Aproksymacja objętościowa do fizycznego rozpraszania objętościowego, z promieniem rozpraszania automatycznie dostosowywanym do tekstur kolorów. Zaprojektowane do cieniowania skóry."
+
+
+msgid "Random Walk (Legacy)"
+msgstr "Losowe kroczenie (starsze)"
 
 
 msgid "Ray Portal BSDF"
@@ -53083,6 +53247,26 @@ msgid "Node Outputs"
 msgstr "Wyjścia węzła"
 
 
+msgid "Node Panel State"
+msgstr "Stan panelu węzła"
+
+
+msgid "Expansion state of a panel in a node"
+msgstr "Stan rozwinięcia panelu w węźle"
+
+
+msgid "Unique identifier matching the panel's persistent_uid"
+msgstr "Unikatowy identyfikator pasujący do persistent_uid panelu"
+
+
+msgid "Is Collapsed"
+msgstr "Jest zwinięty"
+
+
+msgid "Whether the panel is collapsed"
+msgstr "Czy panel jest zwinięty"
+
+
 msgid "Separate Bundle Item"
 msgstr "Oddzielny element pakietu"
 
@@ -54949,6 +55133,11 @@ msgstr "Importuj BVH"
 
 msgid "Load a SVG file"
 msgstr "Wczytaj plik SVG"
+
+
+msgctxt "Operator"
+msgid "Import SVG as Curves"
+msgstr "Importuj SVG jako krzywe"
 
 
 msgid "Load a FBX file"
@@ -57561,8 +57750,20 @@ msgid "Select by Type"
 msgstr "Wybierz według typu"
 
 
+msgid "Select all keyframes of the given type"
+msgstr "Wybierz wszystkie klatki kluczowe danego typu"
+
+
 msgid "Extend Selection"
 msgstr "Rozszerz wybór"
+
+
+msgid "Keeps the current selection and adds the given type to it. If disabled, only keys of the type will be selected"
+msgstr "Zachowuje bieżący wybór i dodaje do niego podany typ. Jeśli wyłączone, wybrane zostaną tylko klucze tego typu"
+
+
+msgid "The type of keyframe to select"
+msgstr "Typ klatki kluczowej do wybrania"
 
 
 msgctxt "Operator"
@@ -67429,6 +67630,14 @@ msgid "Select all curves in a fill"
 msgstr "Zaznacz wszystkie krzywe w wypełnieniu"
 
 
+msgid "Deselect linked"
+msgstr "Odznacz połączone"
+
+
+msgid "Deselect linked strokes"
+msgstr "Odznacz połączone obrysy"
+
+
 msgid "Selects random points from the current strokes selection"
 msgstr "Wybiera losowe punkty z bieżącego wyboru obrysów"
 
@@ -70786,6 +70995,31 @@ msgstr "Liczba boków otworu, które należy wypełnić (zero wypełnia wszystki
 
 
 msgctxt "Operator"
+msgid "Flatten"
+msgstr "Spłaszcz"
+
+
+msgid "Flatten vertices on a best-fitting plane"
+msgstr "Spłaszcz wierzchołki na najlepiej dopasowanej płaszczyźnie"
+
+
+msgid "Plane on which vertices are flattened"
+msgstr "Płaszczyzna, na której wierzchołki są spłaszczone"
+
+
+msgid "Calculate a best fitting plane"
+msgstr "Oblicz najlepiej dopasowaną płaszczyznę"
+
+
+msgid "Derive plane by averaging face normals"
+msgstr "Wyprowadź płaszczyznę poprzez uśrednienie normalnych ścian"
+
+
+msgid "Flatten on a plane perpendicular to the viewing angle"
+msgstr "Spłaszczyć na płaszczyźnie prostopadłej do kąta widzenia"
+
+
+msgctxt "Operator"
 msgid "Flip Normals"
 msgstr "Odwróć normalne"
 
@@ -73382,22 +73616,6 @@ msgstr "Dodaj węzeł wejściowy grupy"
 
 msgid "Add a Group Input node with selected sockets to the current node editor"
 msgstr "Dodaj węzeł wejściowy grupy z wybranymi gniazdami do bieżącego edytora węzłów"
-
-
-msgid "Panel Identifier"
-msgstr "Identyfikator panelu"
-
-
-msgid "Panel from which to add sockets to the added group input/output node"
-msgstr "Panel, z którego można dodawać gniazda do dodanego węzła wejścia / wyjścia grupy"
-
-
-msgid "Socket Identifier"
-msgstr "Identyfikator gniazda"
-
-
-msgid "Socket to include in the added group input/output node"
-msgstr "Gniazdo do uwzględnienia w dodanym węźle wejścia / wyjścia grupy"
 
 
 msgctxt "Operator"
@@ -82422,6 +82640,11 @@ msgid "Enable snapping"
 msgstr "Włącz przyciąganie"
 
 
+msgctxt "Operator"
+msgid "Area Edge Options"
+msgstr "Opcje krawędzi obszaru"
+
+
 msgid "Operations for splitting and merging"
 msgstr "Operacje dzielenia i scalania"
 
@@ -82469,6 +82692,15 @@ msgstr "Pokaż edytor sterowników"
 
 msgid "Show drivers editor in a separate window"
 msgstr "Pokaż edytor sterowników w osobnym oknie"
+
+
+msgctxt "Operator"
+msgid "Merge Area Edge"
+msgstr "Scal krawędź obszaru"
+
+
+msgid "Merge aligned area edges"
+msgstr "Scal wyrównane krawędzie obszaru"
 
 
 msgctxt "Operator"
@@ -87572,8 +87804,28 @@ msgid "Copy Mirrored UV Coords"
 msgstr "Kopiuj lustrzane współrzędne UV"
 
 
+msgid "Copy mirror UV coordinates based on a mirrored mesh"
+msgstr "Kopiuj współrzędne UV lustrzanego na podstawie siatki lustrzanej"
+
+
+msgid "Mesh Axis"
+msgstr "Oś siatki"
+
+
+msgid "Mirror vertices based on mesh axis"
+msgstr "Odbicie lustrzane wierzchołków na podstawie osi siatki"
+
+
 msgid "Tolerance for finding vertex duplicates"
 msgstr "Tolerancja na znajdowanie duplikatów wierzchołków"
+
+
+msgid "UV Axis"
+msgstr "Oś UV"
+
+
+msgid "Axis to mirror UV coordinates"
+msgstr "Oś do odbicia współrzędnych UV"
 
 
 msgctxt "Operator"
@@ -88196,12 +88448,26 @@ msgid "Reveal all hidden UV vertices"
 msgstr "Odkryj wszystkie ukryte wierzchołki UV"
 
 
+msgctxt "Operator"
+msgid "Rip UVs"
+msgstr "Rozerwij UV"
+
+
 msgid "Rip selected vertices or a selected region"
 msgstr "Rozerwij wybrane wierzchołki lub wybrany region"
 
 
+msgctxt "Operator"
+msgid "Rip Move UVs"
+msgstr "Przesuń rozerwane UV"
+
+
 msgid "Unstitch UVs and move the result"
 msgstr "Rozszyj UV i przenieś wynik"
+
+
+msgid "Rip UVs"
+msgstr "Rozerwij UV"
 
 
 msgctxt "Operator"
@@ -88239,6 +88505,23 @@ msgstr "Przypięty"
 
 msgid "Border select pinned UVs only"
 msgstr "Wybierz granicę tylko przypiętych UV"
+
+
+msgctxt "Operator"
+msgid "Select by Winding"
+msgstr "Wybierz według nawijania"
+
+
+msgid "Select UV faces by their winding"
+msgstr "Wybierz powierzchnie UV według ich nawijania"
+
+
+msgid "Winding"
+msgstr "Nawijanie"
+
+
+msgid "Select faces with positive or negative winding"
+msgstr "Wybierz powierzchnie z dodatnim lub ujemnym nawinięciem"
 
 
 msgid "Select UV vertices using circle selection"
@@ -93207,20 +93490,20 @@ msgid "glTF Material Variants"
 msgstr "Warianty materiałów glTF"
 
 
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "Animacje glTF"
-
-
 msgid "Active Tool"
 msgstr "Aktywne narzędzie"
 
 
 msgid "View Lock"
 msgstr "Widok blokady"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "Animacje glTF"
 
 
 msgid "Selectability & Visibility"
@@ -96938,14 +97221,6 @@ msgid "Support storing custom bundles in a geometry in Geometry Nodes"
 msgstr "Obsługa przechowywania własnych pakietów w geometrii w węzłach geometrii"
 
 
-msgid "Geometry Nodes Lists"
-msgstr "Listy węzłów geometrii"
-
-
-msgid "Enable new list types and nodes"
-msgstr "Włącz nowe typy list i węzły"
-
-
 msgid "New Curves Tools"
 msgstr "Nowe narzędzia krzywych"
 
@@ -98120,34 +98395,6 @@ msgid "Number of shader compilation threads or subprocesses, clamped at the max 
 msgstr "Liczba wątków kompilacji cieniowania lub podprocesów, ograniczona do maksymalnej liczby wątków obsługiwanych przez procesor (wymaga ponownego uruchomienia Blendera, aby zmiany zostały wprowadzone). Wyższa liczba zwiększa użycie pamięci RAM, jednocześnie skracając czas kompilacji. Wartość 0 spowoduje użycie konfiguracji automatycznej. (Tylko OpenGL)"
 
 
-msgid "Image Display Method"
-msgstr "Metoda wyświetlania obrazu"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Metoda używana do wyświetlania obrazów na ekranie"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Automatyczny wybór metody na podstawie GPU i obrazu"
-
-
-msgid "2D Texture"
-msgstr "Tekstura 2D"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Użyj procesora do wyświetlenia transformacji i wyświetlenia obrazu z teksturą 2D"
-
-
-msgid "GLSL"
-msgstr "GLSL"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "Użyj shaderów GLSL do wyświetlania transformacji i wyświetlania obrazu z teksturą 2D"
-
-
 msgid "Is Microsoft Store Install"
 msgstr "Jest instalacją sklepu Microsoft"
 
@@ -98250,6 +98497,14 @@ msgstr "Podproces"
 
 msgid "Use subprocesses for compiling shaders"
 msgstr "Użyj podprocesów do kompilacji cieniowań"
+
+
+msgid "Compact Sidebar Tabs"
+msgstr "Kompaktowe karty panelu bocznego"
+
+
+msgid "Display sidebar tabs in a compact size that shows icons when available"
+msgstr "Wyświetlaj zakładki paska bocznego w kompaktowym rozmiarze, pokazując ikony, gdy są dostępne"
 
 
 msgid "Solid Lights"
@@ -98640,10 +98895,6 @@ msgid "Chinese (Simplified) - 简体中文"
 msgstr "Chiński (uproszczony) - 简体中文"
 
 
-msgid "Locale code: zh_HANS. Translation progress: 100%"
-msgstr "Kod regionalny: zh_HANS. Postęp tłumaczenia: 100%"
-
-
 msgid "Chinese (Traditional) - 繁體中文"
 msgstr "Chiński (tradycyjny) - 繁體中文"
 
@@ -98718,6 +98969,10 @@ msgstr "Kod regionalny: fi_FI. Postęp tłumaczenia: 11%"
 
 msgid "French - Français"
 msgstr "Francuski - Français"
+
+
+msgid "Locale code: fr_FR. Translation progress: 100%"
+msgstr "Kod regionalny: fr_FR. Postęp tłumaczenia: 100%"
 
 
 msgid "Georgian - ქართული"
@@ -98932,16 +99187,8 @@ msgid "Swedish - Svenska"
 msgstr "Szwedzki - Svenska"
 
 
-msgid "Locale code: sv_SE. Translation progress: 99%"
-msgstr "Kod regionalny: sv_SE. Postęp tłumaczenia: 99%"
-
-
 msgid "Tamil - தமிழ்"
 msgstr "Tamilski - தமிழ்"
-
-
-msgid "Locale code: ta. Translation progress: 99%"
-msgstr "Kod regionalny: ta. Postęp tłumaczenia: 99%"
 
 
 msgid "Thai - ภาษาไทย"
@@ -100659,6 +100906,14 @@ msgid "Any object modification requires a complete BVH rebuild, but renders fast
 msgstr "Każda modyfikacja obiektu wymaga całkowitej przebudowy BVH, ale renderuje się szybciej"
 
 
+msgid "Preserve Unused MB"
+msgstr "Zachowaj nieużywane MB"
+
+
+msgid "Preserve unused texture cache data, up to this amount of memory"
+msgstr "Zachowaj nieużywane dane pamięci podręcznej tekstur do tej ilości pamięci"
+
+
 msgid "Use Compact BVH"
 msgstr "Użyj kompaktowego BVH"
 
@@ -100705,6 +100960,14 @@ msgstr "Użyj podziałów przestrzennych"
 
 msgid "Use BVH spatial splits: longer builder time, faster render"
 msgstr "Użyj podziałów przestrzennych BVH: dłuższy czas budowania, szybsze renderowanie"
+
+
+msgid "Cache Eviction"
+msgstr "Usuwanie pamięci podręcznej"
+
+
+msgid "Evict unused tiles from the texture cache to free up memory"
+msgstr "Usuń nieużywane kafelki z pamięci podręcznej tekstur, aby zwolnić pamięć"
 
 
 msgid "Denoiser"
@@ -101365,6 +101628,10 @@ msgstr "Drzewo światła"
 
 msgid "Sample multiple lights more efficiently based on estimated contribution at every shading point"
 msgstr "Bardziej wydajne próbkowanie wielu świateł na podstawie szacowanego wkładu w każdym punkcie zacienienia"
+
+
+msgid "Use Pixel Jitter"
+msgstr "Użyj drgań pikseli"
 
 
 msgid "Automatically reduce the number of samples per pixel based on estimated noise level, for viewport renders"
@@ -105763,6 +106030,14 @@ msgid "Visualize cached raw images"
 msgstr "Wizualizacja obrazów w postaci surowej z pamięci podręcznej"
 
 
+msgid "Sequencer Compositor Modifier Properties"
+msgstr "Właściwości modyfikatora kompozytora sekwencera"
+
+
+msgid "Sequencer Compositor Modifier Empty Properties"
+msgstr "Puste właściwości modyfikatora kompozytora sekwencera"
+
+
 msgid "Preview Overlay Settings"
 msgstr "Ustawienia nakładki podglądu"
 
@@ -108073,6 +108348,14 @@ msgstr "Hierarchie"
 
 msgid "Display library override relationships"
 msgstr "Wyświetl relacje nadpisywania biblioteki"
+
+
+msgid "Scroll to Active"
+msgstr "Przewiń do aktywnego"
+
+
+msgid "Scroll the active item into view when it changes outside of the Outliner"
+msgstr "Przewiń aktywny element do widoku, gdy znajdzie się on poza obszarem konspektu"
 
 
 msgid "Show Mode Column"
@@ -110534,6 +110817,14 @@ msgid "Text that will be displayed"
 msgstr "Tekst, który będzie wyświetlany"
 
 
+msgid "UI Textbox State"
+msgstr "Stan pola tekstowego interfejsu użytkownika"
+
+
+msgid "Textbox state in the UI"
+msgstr "Stan pola tekstowego w interfejsie użytkownika"
+
+
 msgid "Display text as bold"
 msgstr "Wyświetl tekst jako pogrubiony"
 
@@ -110983,10 +111274,6 @@ msgstr "Modyfikator paska"
 
 msgid "Modifier for sequence strip"
 msgstr "Modyfikator dla paska sekwencji"
-
-
-msgid "Enable this modifier"
-msgstr "Włącz ten modyfikator"
 
 
 msgid "Mask ID used as mask input for the modifier"
@@ -121711,6 +121998,11 @@ msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
 msgstr "Nieprawidłowy cel %r (musi być „ARMATURA” lub „OBIEKT”)"
 
 
+msgctxt "Operator"
+msgid "SVG as Curves (.svg)"
+msgstr "SVG jako krzywe (.svg)"
+
+
 msgid "Unable to parse XML, %s:%s for file %r"
 msgstr "Nie można przeanalizować XML, %s:%s dla pliku %r"
 
@@ -123511,6 +123803,10 @@ msgstr "Nie wybrano zasobu"
 
 msgid "Selected asset is contained in the current file"
 msgstr "Wybrany zasób znajduje się w bieżącym pliku"
+
+
+msgid "Selected asset is stored online"
+msgstr "Wybrany zasób jest przechowywany online"
 
 
 msgid "Selected asset is contained in a file managed by the asset system, manual edits should be avoided"
@@ -126572,6 +126868,10 @@ msgid "Render Engine"
 msgstr "Silnik renderowania"
 
 
+msgid "HDR not supported with OpenGL backend"
+msgstr "HDR nie jest obsługiwany przez oprogramowanie OpenGL"
+
+
 msgid "HDR display not supported"
 msgstr "Wyświetlacz HDR nie jest obsługiwany"
 
@@ -126630,6 +126930,22 @@ msgid "Export to File"
 msgstr "Eksportuj do pliku"
 
 
+msgid "Node group must have at least  Color input"
+msgstr "Grupa węzłów musi mieć co najmniej dane wejściowe koloru"
+
+
+msgid "s."
+msgstr "s."
+
+
+msgid "Node group does not have an input of type Float. Fade is unused."
+msgstr "Grupa węzłów nie ma wejścia typu Float. Zanikanie nie jest nieużywane."
+
+
+msgid "Node group must have an output."
+msgstr "Grupa węzłów musi mieć wyjście."
+
+
 msgid "Alignment X"
 msgstr "Wyrównanie X"
 
@@ -126649,6 +126965,10 @@ msgstr "Pozycja X"
 
 msgid "Convert to Float"
 msgstr "Konwertuj na zmiennoprzecinkowy"
+
+
+msgid "The first node group output must have the Color type."
+msgstr "Pierwsze wyjście grupy węzłów musi mieć typ Kolor."
 
 
 msgid "Default Fade"
@@ -127591,6 +127911,26 @@ msgstr "Wyrażenie: {:s}"
 msgctxt "Operator"
 msgid "Zoom Region..."
 msgstr "Powiększ obszar..."
+
+
+msgctxt "Operator"
+msgid "Tile"
+msgstr "Kafelek"
+
+
+msgctxt "Operator"
+msgid "Pinned"
+msgstr "Przypięty"
+
+
+msgctxt "Operator"
+msgid "Overlap"
+msgstr "Nakładka"
+
+
+msgctxt "Operator"
+msgid "Winding"
+msgstr "Nawijanie"
 
 
 msgctxt "Operator"
@@ -133711,6 +134051,18 @@ msgid "Is Tile"
 msgstr "Jest kafelkiem"
 
 
+msgid "Input grids have incompatible transforms"
+msgstr "Siatki wejściowe mają niekompatybilne transformacje"
+
+
+msgid "No input grid found that can determine the topology"
+msgstr "Nie znaleziono siatki wejściowej, która mogłaby określić topologię"
+
+
+msgid "Grid type not supported"
+msgstr "Typ siatki nie jest obsługiwany"
+
+
 msgid "OpenVDB error: {}"
 msgstr "Błąd OpenVDB: {}"
 
@@ -134137,6 +134489,10 @@ msgstr "Błąd: Zbyt wiele aktualizacji cieni, niektóre cienie mogą być niepr
 
 msgid "Error: Reached max shadow updates."
 msgstr "Błąd: Osiągnięto maksymalną liczbę aktualizacji cienia."
+
+
+msgid "Error: Could not allocate velocity geometry buffer. Only object and camera velocities will be used."
+msgstr "Błąd: Nie można przydzielić bufora geometrii prędkości. Zostaną użyte tylko prędkości obiektu i kamery."
 
 
 msgid "Warning: Volume rendering data could not be allocated. Now using a resolution of 1:{} instead of 1:{}."
@@ -135290,6 +135646,10 @@ msgid "Asset Library: Essentials"
 msgstr "Biblioteka zasobów: Niezbędne"
 
 
+msgid "Download Size: {}"
+msgstr "Rozmiar do pobrania: {}"
+
+
 msgid "No point was selected"
 msgstr "Nie wybrano żadnego punktu"
 
@@ -135601,6 +135961,10 @@ msgstr "Błąd rejestrowania narzędzia węzła „%s”, operator jest już zar
 
 msgid "Error registering node tool \"%s\", %d duplicate(s)"
 msgstr "Błąd rejestrowania narzędzia węzła „%s”, %d duplikatów"
+
+
+msgid "Node tool \"%s\" asset has invalid metadata. Asset meta-data may be out of date"
+msgstr "Zasób narzędzia węzła „%s” ma nieprawidłowe metadane. Metadane zasobu mogą być nieaktualne"
 
 
 msgid "Error registering node tool \"%s\", %s"
@@ -135937,6 +136301,10 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Skrót bez klawiatury"
 
 
+msgid "Pin Panel"
+msgstr "Przypnij panel"
+
+
 msgid "Shift Left Mouse"
 msgstr "Shift lewy przycisk myszy"
 
@@ -136149,6 +136517,10 @@ msgstr "Upuść {} na gniazdo {} (gniazdo aktywne) {}"
 
 msgid "Drop {} on slot {} of {}"
 msgstr "Upuść {} na gniazdo {} z {}"
+
+
+msgid "New Line"
+msgstr "Nowy wiersz"
 
 
 msgid "Autocomplete"
@@ -137229,10 +137601,6 @@ msgid "Yesterday"
 msgstr "Wczoraj"
 
 
-msgid "Modified: {}{}{}"
-msgstr "Zmodyfikowano: {}{}{}"
-
-
 msgid "Size: {}"
 msgstr "Rozmiar: {}"
 
@@ -137321,8 +137689,16 @@ msgid "Cannot edit external library data"
 msgstr "Nie można edytować danych biblioteki zewnętrznej"
 
 
+msgid "Invert search results (Show items that don't match the search string)"
+msgstr "Odwróć wyniki wyszukiwania (pokaż elementy, które nie pasują do ciągu wyszukiwania)"
+
+
 msgid "Sort items alphabetically"
 msgstr "Sortuj elementy alfabetycznie"
+
+
+msgid "Reverse the order of items"
+msgstr "Odwróć kolejność elementów"
 
 
 msgid "Samples Transform"
@@ -140053,6 +140429,10 @@ msgid "Join Left"
 msgstr "Połącz lewy"
 
 
+msgid "Merge Edge"
+msgstr "Scal krawędź"
+
+
 msgid "Move/Split Area"
 msgstr "Przenieś / podziel obszar"
 
@@ -142128,14 +142508,6 @@ msgid "Could not add material"
 msgstr "Nie można dodać materiału"
 
 
-msgid "Cannot set both socket and panel identifier"
-msgstr "Nie można ustawić jednocześnie identyfikatora gniazda i panelu"
-
-
-msgid "Invalid panel identifier"
-msgstr "Nieprawidłowy identyfikator panelu"
-
-
 msgid "Could not add a color node"
 msgstr "Nie można dodać węzła koloru"
 
@@ -142162,14 +142534,6 @@ msgstr "Typ drzewa węzłów %s niezdefiniowany"
 
 msgid "Adding node groups isn't supported for custom (Python defined) node trees"
 msgstr "Dodawanie grup węzłów nie jest obsługiwane w przypadku własnych drzew węzłów (zdefiniowanych w języku Python)"
-
-
-msgid "Cannot drag an output socket"
-msgstr "Nie można przeciągnąć gniazda wyjściowego"
-
-
-msgid "Cannot drag panel with no inputs"
-msgstr "Nie można przeciągnąć panelu bez wejść"
 
 
 msgid "Render size too large for GPU, use CPU compositor instead"
@@ -142510,18 +142874,6 @@ msgstr "Przełącz panelu"
 
 msgid "Group Sockets"
 msgstr "Gniazda grupowe"
-
-
-msgid "Add \"{}\" Input"
-msgstr "Dodaj wejście „{}”"
-
-
-msgid "Add \"{}\" Input (Ctrl to add panel)"
-msgstr "Dodaj wejście „{}” (Ctrl, aby dodać panel)"
-
-
-msgid "Add \"{}\" Panel"
-msgstr "Dodaj panel „{}”"
 
 
 msgid "More than one collection is selected"
@@ -144906,10 +145258,6 @@ msgstr "Rozerwij nie jest zgodny z opcją wyboru wierzchołków przyklejanych"
 
 msgid "Rip is only compatible with sync-select with vertex/edge selection"
 msgstr "Rozerwij jest kompatybilny tylko z synchronizacją wyboru z wyborem wierzchołków / krawędzi"
-
-
-msgid "Rip failed"
-msgstr "Rozerwanie nieudany"
 
 
 msgid "Pinned vertices can be selected in Vertex Mode only"
@@ -149751,6 +150099,22 @@ msgid "Invert stabilization to reintroduce motion to the image"
 msgstr "Odwróć stabilizację, aby ponownie wprowadzić ruch do obrazu"
 
 
+msgid "The image containing the paragraph of text"
+msgstr "Obraz zawierający akapit tekstu"
+
+
+msgid "The height of each line in pixels"
+msgstr "Wysokość każdej linii w pikselach"
+
+
+msgid "Wrap text into new lines if it exceeds the specified width"
+msgstr "Zawijaj tekst do nowych wierszy, jeśli przekracza określoną szerokość"
+
+
+msgid "The maximum width of each line in pixels. Lines with larger widths will be wrapped into new lines"
+msgstr "Maksymalna szerokość każdej linii w pikselach. Wiersze o większej szerokości zostaną zawinięte w nowe wiersze"
+
+
 msgid "The Strip Info node is only supported for sequencer compositing"
 msgstr "Węzeł informacji o pasku jest obsługiwany tylko w przypadku kompozycji sekwencera"
 
@@ -151733,6 +152097,10 @@ msgid "The values from the \"id\" attribute on points, or the index if that attr
 msgstr "Wartości z atrybutu „id” w punktach lub indeks, jeśli ten atrybut nie istnieje"
 
 
+msgid "Reference Index"
+msgstr "Indeks referencyjny"
+
+
 msgid "Unsigned Angle"
 msgstr "Kąt niepodpisany"
 
@@ -152827,6 +153195,58 @@ msgid "Splits the faces of the input mesh into groups which can be sampled indiv
 msgstr "Dzieli lica siatki wejściowej na grupy, które można indywidualnie próbkować"
 
 
+msgid "FFT Size"
+msgstr "Rozmiar FFT"
+
+
+msgid "Window Function"
+msgstr "Funkcja okna"
+
+
+msgid "Sum of amplitudes of the frequencies in the given range"
+msgstr "Suma amplitud częstotliwości w danym zakresie"
+
+
+msgid "Sound to sample"
+msgstr "Dźwięk do próbki"
+
+
+msgid "Time in seconds of the sound to sample at"
+msgstr "Czas próbkowania dźwięku w sekundach"
+
+
+msgid "Mix all channels before sampling the sound (e.g. stereo to mono)"
+msgstr "Przed próbkowaniem dźwięku należy zmiksować wszystkie kanały (np. ze stereo na mono)"
+
+
+msgid "The channel to sample unless 'All Channels' is checked"
+msgstr "Kanał do próbkowania, chyba że zaznaczono opcję „Wszystkie kanały”"
+
+
+msgid "Lower bound of the sampled frequency range"
+msgstr "Dolna granica próbkowanego zakresu częstotliwości"
+
+
+msgid "Upper bound of the sampled frequency range"
+msgstr "Górna granica próbkowanego zakresu częstotliwości"
+
+
+msgid "Configure details of the fourier transformation"
+msgstr "Skonfiguruj szczegóły transformacji Fouriera"
+
+
+msgid "Number of samples to process in the discrete fourier transformation at once. Higher values have higher frequency but lower time resolution and vice versa"
+msgstr "Liczba próbek do przetworzenia w dyskretnej transformacji Fouriera jednocześnie. Wyższe wartości mają wyższą częstotliwość, ale niższą rozdzielczość czasową i odwrotnie"
+
+
+msgid "Applies a tapering function to the windowed samples to minimize discontinuities at the edges, improving frequency resolution and reducing artifacts"
+msgstr "Stosuje funkcję zwężania do próbek okienkowych w celu zminimalizowania nieciągłości na krawędziach, co poprawia rozdzielczość częstotliwości i redukuje artefakty"
+
+
+msgid "FFT"
+msgstr "FFT"
+
+
 msgid "Sample UV"
 msgstr "Próbka UV"
 
@@ -153422,6 +153842,26 @@ msgid "Mask Input"
 msgstr "Wejście maski"
 
 
+msgid "The first node group input must have the Color type"
+msgstr "Pierwsze wejście grupy węzłów musi mieć typ Kolor"
+
+
+msgid "Node group must have at least two inputs to use the mask input"
+msgstr "Aby użyć wejścia maski, grupa węzłów musi mieć co najmniej dwa wejścia"
+
+
+msgid "The second node group input must have the Color type"
+msgstr "Drugie wejście grupy węzłów musi mieć typ Kolor"
+
+
+msgid "Node group must have an output"
+msgstr "Grupa węzłów musi mieć wyjście"
+
+
+msgid "The first node group output must have the Color type"
+msgstr "Pierwsze wyjście grupy węzłów musi mieć typ Kolor"
+
+
 msgid "Warnings"
 msgstr "Ostrzeżenia"
 
@@ -153641,18 +154081,6 @@ msgstr "Nie znaleziono podpisu zamknięcia"
 
 msgid "Found conflicting closure signatures"
 msgstr "Znaleziono sprzeczne sygnatury zamknięcia"
-
-
-msgid "Input grids have incompatible transforms"
-msgstr "Siatki wejściowe mają niekompatybilne transformacje"
-
-
-msgid "No input grid found that can determine the topology"
-msgstr "Nie znaleziono siatki wejściowej, która mogłaby określić topologię"
-
-
-msgid "Grid type not supported"
-msgstr "Typ siatki nie jest obsługiwany"
 
 
 msgid "Not a shader node tree"
@@ -153981,6 +154409,10 @@ msgstr "Współczynnik skali promienia rozpraszania podpowierzchniowego"
 
 msgid "Index of Refraction (IOR) used for rays that enter the subsurface component"
 msgstr "Współczynnik załamania światła (IOR) stosowany w przypadku promieni wnikających do składowej podpowierzchniowej"
+
+
+msgid "Directionality of volume scattering within the subsurface medium. Zero scatters uniformly in all directions, positive values scatter more in the forward direction, and negative values scatter more backwards. For example, skin has been measured to have an anisotropy of 0.8"
+msgstr "Kierunkowość rozpraszania objętości w ośrodku podpowierzchniowym. Zerowe rozpraszanie jest równomierne we wszystkich kierunkach, wartości dodatnie rozpraszają bardziej w kierunku do przodu, a wartości ujemne rozpraszają bardziej do tyłu. Na przykład, zmierzono, że skóra ma anizotropię równą 0,8"
 
 
 msgid "Adjustment to the Index of Refraction (IOR) to increase or decrease specular intensity (0.5 means no adjustment, 0 removes all reflections, 1 doubles them at normal incidence)"
@@ -156648,6 +157080,118 @@ msgid "Compress scene-referred values from common cameras into the ACEScg gamut"
 msgstr "Kompresja wartości odnoszących się do sceny z typowych kamer do gamy ACEScg"
 
 
+msgid ""
+"Filmic view transform for sRGB.\n"
+"May be used to convert backplates or matte paintings to the working space."
+msgstr ""
+"Transformacja widoku Filmic dla sRGB.\n"
+"Można jej używać do konwersji zdjęć tła lub matowych obrazów na przestrzeń roboczą."
+
+
+msgid ""
+"AgX view transform for sRGB.\n"
+"May be used to convert backplates or matte paintings to the working space."
+msgstr ""
+"Transformacja widoku AgX dla sRGB.\n"
+"Może być używana do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
+
+
+msgid ""
+"ACES 1.3 view transform for sRGB.\n"
+"May be used to convert backplates or matte paintings to the working space."
+msgstr ""
+"Transformacja widoku ACES 1.3 dla sRGB.\n"
+"Może służyć do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
+
+
+msgid ""
+"ACES 2.0 view transform for sRGB.\n"
+"May be used to convert backplates or matte paintings to the working space."
+msgstr ""
+"Transformacja widoku ACES 2.0 dla sRGB.\n"
+"Może służyć do konwersji zdjęć tła lub matowych obrazów na przestrzeń roboczą."
+
+
+msgid ""
+"Khronos PBR Neutral view transform for sRGB.\n"
+"May be used to convert backplates or matte paintings to the working space."
+msgstr ""
+"Khronos PBR Neutralna transformacja widoku dla sRGB.\n"
+"Może być używana do konwersji zdjęć tła lub matowych obrazów do przestrzeni roboczej."
+
+
+msgid ""
+"Linear Adobe RGB (1998) with illuminant D65 white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"Liniowy Adobe RGB (1998) z oświetleniem D65 w punkcie bieli.\n"
+"Do użytku z teksturami odnoszącymi się do sceny."
+
+
+msgid ""
+"1.8 gamma-encoded Rec.709 with illuminant D65 white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"Rec.709 z kodowaniem gamma 1,8 i oświetleniem D65 w punkcie bieli.\n"
+"Do użytku z teksturami odniesionymi do sceny."
+
+
+msgid ""
+"2.2 gamma-encoded Rec.709 with illuminant D65 white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"Rec.709 z kodowaniem gamma 2,2 i oświetleniem D65 w punkcie bieli.\n"
+"Do użytku z teksturami odniesionymi do sceny."
+
+
+msgid ""
+"2.4 gamma-encoded Rec.709 with illuminant D65 white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"Rec.709 z kodowaniem gamma 2,4 i oświetleniem D65 w punkcie bieli.\n"
+"Do użytku z teksturami odniesionymi do sceny."
+
+
+msgid "sRGB Encoded P3-D65"
+msgstr "P3-D65 z kodowaniem sRGB"
+
+
+msgid ""
+"sRGB-encoded P3-D65 with illuminant D65 white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"P3-D65 z kodowaniem sRGB i punktem bieli D65.\n"
+"Do użytku z teksturami odnoszącymi się do sceny."
+
+
+msgid ""
+"2.2 gamma-encoded Adobe RGB (1998) with illuminant D65 white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"Kolor Adobe RGB (1998) z kodowaniem gamma 2,2 i oświetleniem D65 w punkcie bieli.\n"
+"Do użytku z teksturami odnoszącymi się do sceny."
+
+
+msgid "sRGB Encoded AP1"
+msgstr "AP1 z kodowaniem sRGB"
+
+
+msgid ""
+"sRGB-encoded AP1 with ACES white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"AP1 z kodowaniem sRGB i punktem bieli ACES.\n"
+"Do użytku z teksturami odnoszącymi się do sceny."
+
+
+msgid ""
+"2.2 gamma-encoded AP1 with ACES white point.\n"
+"For use with scene-referred textures."
+msgstr ""
+"AP1 z kodowaniem gamma 2,2 i punktem bieli ACES.\n"
+"Do użytku z teksturami odnoszącymi się do sceny."
+
+
 msgid "blender:pq_rec2020_display_203nits"
 msgstr "blender:pq_rec2020_display_203nity"
 
@@ -157048,10 +157592,6 @@ msgid "Exclude the last copy from randomization"
 msgstr "Wyklucz ostatnią kopię z losowości"
 
 
-msgid "The forward direction along the array shape"
-msgstr "Kierunek do przodu wzdłuż kształtu tablicy"
-
-
 msgid "Merge overlapping points by their distance. (Realize Instances must be enabled)"
 msgstr "Scal nakładające się punkty według ich odległości. (Pamiętaj, że instancje muszą być włączone)"
 
@@ -157174,10 +157714,6 @@ msgstr "Zdefiniuj transformację lokalnie lub za pomocą transformacji obiektu"
 
 msgid "Translation accumulated for each copy"
 msgstr "Tłumaczenie skumulowane dla każdej kopii"
-
-
-msgid "The up direction along the array shape"
-msgstr "Kierunek w górę wzdłuż kształtu tablicy"
 
 
 msgid "Invalid Distance"

@@ -974,10 +974,10 @@ static void override_idtemplate_menu()
 #define NOT_RNA_NULL(assignment) ((assignment).data != nullptr)
 
 /**
- * Construct a PointerRNA that points to pchan->bone.
+ * Construct a PointerRNA that points to pchan->bone_get(*armature).
  *
- * Pose bones are owned by an Object, whereas `pchan->bone` is owned by the Armature, so this
- * doesn't just remap the pointer's `data` field, but also its `owner_id`.
+ * Pose bones are owned by an Object, whereas `pchan->bone_get(*armature)` is owned by the
+ * Armature, so this doesn't just remap the pointer's `data` field, but also its `owner_id`.
  */
 static PointerRNA rnapointer_pchan_to_bone(const PointerRNA &pchan_ptr)
 {
@@ -989,7 +989,7 @@ static PointerRNA rnapointer_pchan_to_bone(const PointerRNA &pchan_ptr)
   BLI_assert(GS(object->data->name) == ID_AR);
   bArmature *armature = id_cast<bArmature *>(object->data);
 
-  return RNA_pointer_create_discrete(&armature->id, RNA_Bone, pchan->bone);
+  return RNA_pointer_create_discrete(&armature->id, RNA_Bone, pchan->bone_get(*object));
 }
 
 static void context_selected_bones_via_pose(bContext *C, Vector<PointerRNA> *r_lb)

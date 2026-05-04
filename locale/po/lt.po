@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-07-23 15:18+0000\n"
 "Last-Translator: Aras Pranckevičius <aras@nesnausk.org>\n"
 "Language-Team: Lithuanian <https://translate.blender.org/projects/blender-ui/ui/lt/>\n"
@@ -3093,20 +3093,20 @@ msgid "Show/Hide"
 msgstr "Rodyti/Slėpti"
 
 
-msgid "Apply"
-msgstr "Pritaikyti"
-
-
 msgid "Import"
 msgstr "Importuoti"
 
 
-msgid "Layout"
-msgstr "Išdėstymas/Maketas"
+msgid "Apply"
+msgstr "Pritaikyti"
 
 
 msgid "Track"
 msgstr "Sekti"
+
+
+msgid "Layout"
+msgstr "Išdėstymas/Maketas"
 
 
 msgid "Animals"

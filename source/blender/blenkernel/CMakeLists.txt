@@ -496,6 +496,7 @@ set(SRC
   BKE_path_templates.hh
   BKE_pointcache.h
   BKE_pointcloud.hh
+  BKE_pose.hh
   BKE_pose_backup.h
   BKE_preferences.h
   BKE_preview_image.hh

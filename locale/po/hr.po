@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'8bc0d293b105')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 08:59+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-04-22 14:12+0000\n"
 "Last-Translator: Karlo Pavicic <soulcreature@hotmail.com>\n"
 "Language-Team: Croatian <https://translate.blender.org/projects/blender-ui/ui/hr/>\n"
@@ -748,10 +748,6 @@ msgid "Clean Up"
 msgstr "Počisti"
 
 
-msgid "Merge"
-msgstr "Spajanje"
-
-
 msgid "Navigation"
 msgstr "Navigacija"
 
@@ -762,6 +758,10 @@ msgstr "Svjetlo"
 
 msgid "Relations"
 msgstr "Odnosi"
+
+
+msgid "Merge"
+msgstr "Spajanje"
 
 
 msgid "Console"
