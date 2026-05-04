@@ -19,7 +19,6 @@
 
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
-#include <libavutil/dict.h>
 
 #ifdef WITH_FFMPEG
 #  include <cstdio>
@@ -221,58 +220,74 @@ static void add_stereo3d_metadata(AVCodecParameters *codecpar,
                                   const RenderData &render_data,
                                   const ImageFormatData &imf)
 {
-  if (BKE_scene_multiview_is_stereo3d(&render_data) && imf.views_format == R_IMF_VIEWS_STEREO_3D) {
-    AVPacketSideData *side_data = av_packet_side_data_new(&codecpar->coded_side_data,
-                                                          &codecpar->nb_coded_side_data,
-                                                          AV_PKT_DATA_STEREO3D,
-                                                          sizeof(AVStereo3D),
-                                                          0);
-    if (side_data == nullptr) {
-      CLOG_ERROR(&LOG, "Failed to attach stereo3d metadata to stream");
-      return;
+  if (!BKE_scene_multiview_is_stereo3d(&render_data)) {
+    return;
+  }
+  if (imf.views_format != R_IMF_VIEWS_STEREO_3D) {
+    return;
+  }
+  if (imf.stereo3d_format.display_mode == S3D_DISPLAY_ANAGLYPH) {
+    return;
+  }
+  if (imf.stereo3d_format.display_mode == S3D_DISPLAY_PAGEFLIP) {
+    /* Could be supported, but requires metadata to be set for each frame. */
+    return;
+  }
+  AVPacketSideData *side_data = av_packet_side_data_new(&codecpar->coded_side_data,
+                                                        &codecpar->nb_coded_side_data,
+                                                        AV_PKT_DATA_STEREO3D,
+                                                        sizeof(AVStereo3D),
+                                                        0);
+  if (side_data == nullptr) {
+    CLOG_ERROR(&LOG, "Failed to attach stereo3d metadata to stream");
+    return;
+  }
+  AVStereo3D *stereo_3d = reinterpret_cast<AVStereo3D *>(side_data->data);
+  AVStereo3DType interlace_type = AV_STEREO3D_UNSPEC;
+  switch (imf.stereo3d_format.interlace_type) {
+    case S3D_INTERLACE_ROW:
+      interlace_type = AV_STEREO3D_LINES;
+      break;
+    case S3D_INTERLACE_COLUMN:
+      interlace_type = AV_STEREO3D_COLUMNS;
+      break;
+    case S3D_INTERLACE_CHECKERBOARD:
+      interlace_type = AV_STEREO3D_CHECKERBOARD;
+      break;
+    default:
+      break;
+  }
+
+  switch (imf.stereo3d_format.display_mode) {
+    case S3D_DISPLAY_SIDEBYSIDE: {
+      stereo_3d->type = AV_STEREO3D_SIDEBYSIDE;
+      stereo_3d->view = AV_STEREO3D_VIEW_PACKED;
+      const bool is_swapped = bool(imf.stereo3d_format.flag & S3D_SIDEBYSIDE_CROSSEYED);
+      if (is_swapped) {
+        stereo_3d->flags |= AV_STEREO3D_FLAG_INVERT;
+      }
+      break;
     }
-    AVStereo3D *stereo_3d = reinterpret_cast<AVStereo3D *>(side_data->data);
-    AVStereo3DType interlace_type = AV_STEREO3D_UNSPEC;
-    switch (imf.stereo3d_format.interlace_type) {
-      case S3D_INTERLACE_ROW:
-        interlace_type = AV_STEREO3D_LINES;
-        break;
-      case S3D_INTERLACE_COLUMN:
-        interlace_type = AV_STEREO3D_COLUMNS;
-        break;
-      case S3D_INTERLACE_CHECKERBOARD:
-        interlace_type = AV_STEREO3D_CHECKERBOARD;
-        break;
-      default:
-        break;
+
+    case S3D_DISPLAY_TOPBOTTOM: {
+      stereo_3d->type = AV_STEREO3D_TOPBOTTOM;
+      stereo_3d->view = AV_STEREO3D_VIEW_PACKED;
+      break;
     }
 
-    switch (imf.stereo3d_format.display_mode) {
-      case S3D_DISPLAY_SIDEBYSIDE: {
-        stereo_3d->type = AV_STEREO3D_SIDEBYSIDE;
-        stereo_3d->view = AV_STEREO3D_VIEW_PACKED;
-        const bool is_swapped = bool(imf.stereo3d_format.flag & S3D_SIDEBYSIDE_CROSSEYED);
-        if (is_swapped) {
-          stereo_3d->flags |= AV_STEREO3D_FLAG_INVERT;
-        }
-        break;
+    case S3D_DISPLAY_INTERLACE: {
+      stereo_3d->type = interlace_type;
+      stereo_3d->view = AV_STEREO3D_VIEW_PACKED;
+      const bool is_swapped = bool(imf.stereo3d_format.flag & S3D_INTERLACE_SWAP);
+      if (is_swapped) {
+        stereo_3d->flags |= AV_STEREO3D_FLAG_INVERT;
       }
+      break;
+    }
 
-      case S3D_DISPLAY_TOPBOTTOM: {
-        stereo_3d->type = AV_STEREO3D_TOPBOTTOM;
-        stereo_3d->view = AV_STEREO3D_VIEW_PACKED;
-        break;
-      }
-
-      case S3D_DISPLAY_INTERLACE: {
-        stereo_3d->type = interlace_type;
-        stereo_3d->view = AV_STEREO3D_VIEW_PACKED;
-        const bool is_swapped = bool(imf.stereo3d_format.flag & S3D_INTERLACE_SWAP);
-        if (is_swapped) {
-          stereo_3d->flags |= AV_STEREO3D_FLAG_INVERT;
-        }
-        break;
-      }
+    case S3D_DISPLAY_ANAGLYPH:
+    case S3D_DISPLAY_PAGEFLIP: {
+      BLI_assert_unreachable();
     }
   }
 }

@@ -287,15 +287,22 @@ ResultT eval(sampler2D hiz_tx,
         float3 vP_sample_front = drw_point_screen_to_view(float3(sample_uv, sample_depth));
         float3 vP_sample_back = vP_sample_front - vV * thickness_near;
 
-        /* This should be a sphere intersection check + clipping of the intersecting ray.
-         * However, that would be way too costly. So instead we only check if front position is
-         * inside the search radius. */
-        float sample_distance;
-        float3 vL_front = normalize_and_get_length(vP_sample_front - vP, sample_distance);
-        float3 vL_back = normalize(vP_sample_back - vP);
-        if (sample_distance > search_distance) {
+        /* Mimic a sphere intersection check + clipping of the intersecting ray.
+         * Assumes the ray is aligned with the view Z axis.
+         * While this is exact for orthographic cameras it can distort the AO look with high FOV
+         * angle. However it is cheaper than a full sphere clipping. */
+        float3 ls_P_front = (vP_sample_front - vP) / search_distance;
+        float3 ls_P_back = (vP_sample_back - vP) / search_distance;
+        /* Simplification of `sin_from_cos(length(ls_P_front.xy))`. */
+        float max_dist = sqrt_fast(saturate(1.0f - length_squared(ls_P_front.xy)));
+        ls_P_front.z = clamp(ls_P_front.z, -max_dist, max_dist);
+        ls_P_back.z = clamp(ls_P_back.z, -max_dist, max_dist);
+        if (ls_P_front.z == ls_P_back.z) {
           continue;
         }
+
+        float3 vL_front = normalize(ls_P_front);
+        float3 vL_back = normalize(ls_P_back);
 
         /* Ordered pair of angle. Minimum in X, Maximum in Y.
          * Front will always have the smallest angle here since it is the closest to the view. */
