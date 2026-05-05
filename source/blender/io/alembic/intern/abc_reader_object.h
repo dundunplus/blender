@@ -160,6 +160,7 @@ class AbcObjectReader {
   void setupObjectTransform(chrono_t time);
 
   void addCacheModifier();
+  void readVisibility();
 
   int refcount() const;
   void incref();

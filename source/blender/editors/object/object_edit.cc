@@ -2168,8 +2168,10 @@ static wmOperatorStatus object_mode_set_exec(bContext *C, wmOperator *op)
     if (WM_autosave_is_scheduled(wm)) {
       /* Note, this uses the global `ReportList` rather than the operator, as we do not want to
        * interpret this failure as a failure of switching modes. */
-      WM_autosave_write(wm, CTX_data_main(C), &wm->runtime->reports);
-      WM_report_banner_show(wm, CTX_wm_window(C));
+      const bool success = WM_autosave_write(wm, CTX_data_main(C), &wm->runtime->reports);
+      if (!success) {
+        WM_report_banner_show(wm, CTX_wm_window(C));
+      }
     }
   }
 

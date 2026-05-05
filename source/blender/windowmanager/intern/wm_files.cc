@@ -2311,12 +2311,16 @@ static bool wm_autosave_write_try(Main *bmain, wmWindowManager *wm)
    * check can be removed once the performance regressions have been solved. */
   if (ED_undosys_stack_memfile_get_if_active(wm->runtime->undo_stack) != nullptr) {
     const bool success = WM_autosave_write(wm, bmain, &wm->runtime->reports);
-    WM_report_banner_show(wm, nullptr);
+    if (!success) {
+      WM_report_banner_show(wm, nullptr);
+    }
     return success;
   }
   if ((U.uiflag & USER_GLOBALUNDO) == 0) {
     const bool success = WM_autosave_write(wm, bmain, &wm->runtime->reports);
-    WM_report_banner_show(wm, nullptr);
+    if (!success) {
+      WM_report_banner_show(wm, nullptr);
+    }
     return success;
   }
   /* Can't auto-save with MemFile right now, try again later. */

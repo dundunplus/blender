@@ -26,11 +26,16 @@
 #include "BLI_math_rotation.h"
 #include "BLI_string.h"
 
+#include "Alembic/AbcGeom/Visibility.h"
+
 namespace blender {
 
 using Alembic::AbcGeom::IObject;
+using Alembic::AbcGeom::ISampleSelector;
+using Alembic::AbcGeom::IVisibilityProperty;
 using Alembic::AbcGeom::IXform;
 using Alembic::AbcGeom::IXformSchema;
+using Alembic::AbcGeom::ObjectVisibility;
 
 namespace io::alembic {
 
@@ -279,6 +284,27 @@ void AbcObjectReader::addCacheModifier()
   id_us_plus(&mcmd->cache_file->id);
 
   STRNCPY(mcmd->object_path, m_iobject.getFullName().c_str());
+}
+
+void AbcObjectReader::readVisibility()
+{
+  IObject vis_object = m_iobject;
+  ObjectVisibility vis = Alembic::AbcGeom::kVisibilityDeferred;
+  while (vis_object) {
+    IVisibilityProperty vis_prop = Alembic::AbcGeom::GetVisibilityProperty(vis_object);
+    if (vis_prop) {
+      vis = ObjectVisibility(vis_prop.getValue(ISampleSelector()));
+      if (vis != Alembic::AbcGeom::kVisibilityDeferred) {
+        break;
+      }
+    }
+
+    vis_object = vis_object.getParent();
+  }
+
+  if (vis == Alembic::AbcGeom::kVisibilityHidden) {
+    m_object->visibility_flag |= (OB_HIDE_RENDER | OB_HIDE_VIEWPORT);
+  }
 }
 
 int AbcObjectReader::refcount() const

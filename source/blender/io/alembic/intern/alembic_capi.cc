@@ -561,6 +561,7 @@ static void import_file(ImportJobData *data, const char *filepath, float progres
 
     if (reader->valid()) {
       reader->readObjectData(data->bmain, sample_sel);
+      reader->readVisibility();
     }
     else {
       std::cerr << "Object " << reader->name() << " in Alembic file " << filepath
@@ -707,6 +708,17 @@ static void import_endjob(void *user_data)
       has_instantiated_object = true;
       /* TODO: is setting active needed? */
       BKE_view_layer_base_select_and_set_active(view_layer, base);
+
+      /* If the object is hidden, we set the base as hidden instead so that hide/unhide shortcuts
+       * work and the outliner shows the right value. We also unset the flag on the object as users
+       * are more likely to interact with viewport visibility from the outliner or shortcuts than
+       * in the object visibility panel. */
+      if ((ob->visibility_flag & OB_HIDE_VIEWPORT) != 0) {
+        base->flag |= BASE_HIDDEN;
+        ob->visibility_flag &= ~OB_HIDE_VIEWPORT;
+        /* Needed for the shortcut (ALT+H) to work. */
+        BKE_base_eval_flags(base);
+      }
 
       DEG_id_tag_update(&lc->collection->id, ID_RECALC_SYNC_TO_EVAL);
       DEG_id_tag_update_ex(data->bmain,
