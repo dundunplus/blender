@@ -460,6 +460,16 @@ bool modifier_remove(Strip *strip, StripModifierData *smd)
     return false;
   }
 
+  if (smd->flag & STRIP_MODIFIER_FLAG_ACTIVE) {
+    /* Prefer the next modifier but use the previous if this modifier is the last in the list. */
+    if (smd->next != nullptr) {
+      modifier_set_active(strip, smd->next);
+    }
+    else if (smd->prev != nullptr) {
+      modifier_set_active(strip, smd->prev);
+    }
+  }
+
   BLI_remlink(&strip->modifiers, smd);
   modifier_free(smd);
 

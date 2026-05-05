@@ -384,18 +384,15 @@ void single_obdata_user_make(Main *bmain, Scene *scene, Object *ob);
 void motion_paths_clear(bContext *C, bool only_selected);
 
 /**
- * For the objects with animation: update paths for those that have got them
- * This should selectively update paths that exist.
- *
- * To be called from various tools that do incremental updates
+ * Recalculate motion paths on all selected objects. This includes bones when recalculating
+ * armature objects.
  */
-void motion_paths_recalc(bContext *C,
-                         Scene *scene,
-                         eAnimvizCalcRange range,
-                         ListBaseT<LinkData> *ld_objects);
-
 void motion_paths_recalc_selected(bContext *C, Scene *scene, eAnimvizCalcRange range);
 
+/**
+ * Recalculate motion paths on all visible objects. This includes bones when recalculating armature
+ * objects.
+ */
 void motion_paths_recalc_visible(bContext *C, Scene *scene, eAnimvizCalcRange range);
 
 /* constraints */

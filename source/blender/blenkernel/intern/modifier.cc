@@ -216,7 +216,7 @@ void BKE_modifier_remove_from_list(Object *ob, ModifierData *md)
   BLI_assert(BLI_findindex(&ob->modifiers, md) != -1);
 
   if (md->flag & eModifierFlag_Active) {
-    /* Prefer the previous modifier but use the next if this modifier is the first in the list. */
+    /* Prefer the next modifier but use the previous if this modifier is the last in the list. */
     if (md->next != nullptr) {
       BKE_object_modifier_set_active(ob, md->next);
     }

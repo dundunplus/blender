@@ -16,6 +16,7 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector.h"
+#include "BLI_string.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -117,14 +118,15 @@ void animviz_build_motionpath_targets(Object *ob, Vector<MPathTarget *> &r_targe
         continue;
       }
       Bone *bone = pchan.bone_get(*ob);
-      if (bone && ANIM_bone_in_visible_collection(arm, bone)) {
-        /* New target for bone. */
-        mpt = MEM_new_zeroed<MPathTarget>("MPathTarget PoseBone");
-        mpt->mpath = pchan.mpath;
-        mpt->ob = ob;
-        mpt->pchan = &pchan;
-        r_targets.append(mpt);
+      if (!bone || !ANIM_bone_in_visible_collection(arm, bone)) {
+        continue;
       }
+      /* New target for bone. */
+      mpt = MEM_new_zeroed<MPathTarget>("MPathTarget PoseBone");
+      mpt->mpath = pchan.mpath;
+      mpt->ob = ob;
+      mpt->pchan = &pchan;
+      r_targets.append(mpt);
     }
   }
 }
@@ -408,6 +410,22 @@ void animviz_motionpath_compute_range(Object *ob, Scene *scene)
   ED_keylist_free(keylist);
 }
 
+static void build_keylist_for_target(MPathTarget &target, AnimKeylist &keylist)
+{
+  /* For object level motion paths this is a nullptr in which case the filtering is ignored. */
+  bPoseChannel *pose_bone = target.pchan;
+  for (FCurve *fcu : animrig::fcurves_for_assigned_action(target.ob->adt)) {
+    if (pose_bone &&
+        !animrig::fcurve_matches_collection_path(*fcu, "pose.bones[", pose_bone->name))
+    {
+      continue;
+    }
+    /* When only updating a subset of the motion path we could pass a range here to improve
+     * performance. */
+    fcurve_to_keylist(target.ob->adt, fcu, &keylist, 0, {-FLT_MAX, FLT_MAX}, true);
+  }
+}
+
 void animviz_calc_motionpaths(Depsgraph *depsgraph,
                               Main *bmain,
                               Scene *scene,
@@ -476,9 +494,8 @@ void animviz_calc_motionpaths(Depsgraph *depsgraph,
       /* Get pointer to animviz settings for each target. */
       bAnimVizSettings *avs = animviz_target_settings_get(mpt);
 
-      /* It is assumed that keyframes for bones are all grouped in a single group
-       * unless an option is set to always use the whole action.
-       */
+      /* For bones it is likely that all FCurves belong to a group named after the bone. Only
+       * checking FCurves of a given group can improve performance when building the keylist. */
       if ((mpt->pchan) && (avs->path_viewflag & MOTIONPATH_VIEW_KFACT) == 0) {
         Action &action = adt->action->wrap();
         bActionGroup *agrp = nullptr;
@@ -491,10 +508,7 @@ void animviz_calc_motionpaths(Depsgraph *depsgraph,
         }
       }
       else {
-        Action &action = adt->action->wrap();
-        fcurves = Vector<FCurve *>(
-            channelbag_for_action_slot(action, adt->slot_handle)->fcurves());
-        action_to_keylist(adt, adt->action, mpt->keylist, 0, {-FLT_MAX, FLT_MAX});
+        build_keylist_for_target(*mpt, *mpt->keylist);
       }
     }
     ED_keylist_prepare_for_direct_access(mpt->keylist);
