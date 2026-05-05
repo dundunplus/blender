@@ -95,12 +95,12 @@ static void node_shader_buts_tex_voronoi(ui::Layout &layout, bContext * /*C*/, P
   }
 }
 
-static void node_shader_init_tex_voronoi(bNodeTree * /*ntree*/, bNode *node)
+static void node_shader_init_tex_voronoi(bNodeTree *node_tree, bNode *node)
 {
   NodeTexVoronoi *tex = MEM_new<NodeTexVoronoi>(__func__);
   BKE_texture_mapping_default(&tex->base.tex_mapping, TEXMAP_TYPE_POINT);
   BKE_texture_colormapping_default(&tex->base.color_mapping);
-  tex->dimensions = 3;
+  tex->dimensions = node_tree->type == NTREE_COMPOSIT ? 2 : 3;
   tex->distance = SHD_VORONOI_EUCLIDEAN;
   tex->feature = SHD_VORONOI_F1;
   tex->normalize = false;

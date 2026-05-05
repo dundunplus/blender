@@ -282,14 +282,14 @@ static void initialize_closure_input_structure_types(bNodeTree &ntree)
       }
       for (const int i : IndexRange(storage->input_items.items_num)) {
         NodeEvaluateClosureInputItem &item = storage->input_items.items[i];
-        if (item.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
-          item.structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC;
+        if (item.structure_type == NodeSocketInterfaceStructureType::Auto) {
+          item.structure_type = NodeSocketInterfaceStructureType::Dynamic;
         }
       }
       for (const int i : IndexRange(storage->output_items.items_num)) {
         NodeEvaluateClosureOutputItem &item = storage->output_items.items[i];
-        if (item.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
-          item.structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC;
+        if (item.structure_type == NodeSocketInterfaceStructureType::Auto) {
+          item.structure_type = NodeSocketInterfaceStructureType::Dynamic;
         }
       }
     }

@@ -29,20 +29,20 @@ static const EnumPropertyItem node_tree_interface_socket_in_out_items[] = {
     {0, nullptr, 0, nullptr, nullptr}};
 
 const EnumPropertyItem rna_enum_node_socket_structure_type_items[] = {
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO,
+    {int(NodeSocketInterfaceStructureType::Auto),
      "AUTO",
      0,
      "Auto",
      "Automatically detect a good structure type based on how the socket is used"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC,
+    {int(NodeSocketInterfaceStructureType::Dynamic),
      "DYNAMIC",
      0,
      "Dynamic",
      "Socket can work with different kinds of structures"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD, "FIELD", 0, "Field", "Socket expects a field"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID, "GRID", 0, "Grid", "Socket expects a grid"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST, "LIST", 0, "List", "Socket expects a list"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE,
+    {int(NodeSocketInterfaceStructureType::Field), "FIELD", 0, "Field", "Socket expects a field"},
+    {int(NodeSocketInterfaceStructureType::Grid), "GRID", 0, "Grid", "Socket expects a grid"},
+    {int(NodeSocketInterfaceStructureType::List), "LIST", 0, "List", "Socket expects a list"},
+    {int(NodeSocketInterfaceStructureType::Single),
      "SINGLE",
      0,
      "Single",
@@ -522,8 +522,8 @@ static void rna_NodeTreeInterfaceSocket_force_non_field_set(PointerRNA *ptr, con
 {
   bNodeTreeInterfaceSocket *socket = static_cast<bNodeTreeInterfaceSocket *>(ptr->data);
   SET_FLAG_FROM_TEST(socket->flag, value, NODE_INTERFACE_SOCKET_SINGLE_VALUE_ONLY_LEGACY);
-  socket->structure_type = value ? NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE :
-                                   NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+  socket->structure_type = value ? NodeSocketInterfaceStructureType::Single :
+                                   NodeSocketInterfaceStructureType::Auto;
 }
 
 static void rna_NodeTreeInterfaceSocket_structure_type_set(PointerRNA *ptr, int value)
@@ -535,18 +535,18 @@ static void rna_NodeTreeInterfaceSocket_structure_type_set(PointerRNA *ptr, int 
 
   bool is_supported = false;
   switch (NodeSocketInterfaceStructureType(value)) {
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO:
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE:
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST:
+    case NodeSocketInterfaceStructureType::Auto:
+    case NodeSocketInterfaceStructureType::Single:
+    case NodeSocketInterfaceStructureType::List:
       is_supported = true;
       break;
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD:
+    case NodeSocketInterfaceStructureType::Field:
       is_supported = supports_fields;
       break;
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID:
+    case NodeSocketInterfaceStructureType::Grid:
       is_supported = supports_grids;
       break;
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC:
+    case NodeSocketInterfaceStructureType::Dynamic:
       is_supported = supports_fields || supports_grids;
       break;
   }
@@ -577,30 +577,30 @@ const EnumPropertyItem *rna_NodeSocket_structure_type_item_filter(
        item++)
   {
     switch (NodeSocketInterfaceStructureType(item->value)) {
-      case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE:
-      case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO: {
+      case NodeSocketInterfaceStructureType::Single:
+      case NodeSocketInterfaceStructureType::Auto: {
         RNA_enum_item_add(&items, &items_count, item);
         break;
       }
-      case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC: {
+      case NodeSocketInterfaceStructureType::Dynamic: {
         if (supports_fields || supports_grids) {
           RNA_enum_item_add(&items, &items_count, item);
         }
         break;
       }
-      case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD: {
+      case NodeSocketInterfaceStructureType::Field: {
         if (supports_fields) {
           RNA_enum_item_add(&items, &items_count, item);
         }
         break;
       }
-      case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID: {
+      case NodeSocketInterfaceStructureType::Grid: {
         if (supports_grids) {
           RNA_enum_item_add(&items, &items_count, item);
         }
         break;
       }
-      case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST: {
+      case NodeSocketInterfaceStructureType::List: {
         if (supports_lists) {
           RNA_enum_item_add(&items, &items_count, item);
         }

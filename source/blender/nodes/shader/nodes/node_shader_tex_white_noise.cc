@@ -41,9 +41,9 @@ static void node_shader_buts_white_noise(ui::Layout &layout, bContext * /*C*/, P
   layout.prop(ptr, "noise_dimensions", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
 }
 
-static void node_shader_init_tex_white_noise(bNodeTree * /*ntree*/, bNode *node)
+static void node_shader_init_tex_white_noise(bNodeTree *node_tree, bNode *node)
 {
-  node->custom1 = 3;
+  node->custom1 = node_tree->type == NTREE_COMPOSIT ? 2 : 3;
 }
 
 static const char *gpu_shader_get_name(const int dimensions)

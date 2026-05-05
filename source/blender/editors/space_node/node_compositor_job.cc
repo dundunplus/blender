@@ -201,6 +201,10 @@ static bool is_compositing_possible(const Scene *scene)
 static compositor::NodeGroupOutputTypes get_compositor_needed_outputs(
     const wmWindowManager *window_manager, Scene *scene)
 {
+  if (G.background) {
+    return compositor::NodeGroupOutputTypes::None;
+  }
+
   compositor::NodeGroupOutputTypes needed_outputs = compositor::NodeGroupOutputTypes::None;
 
   for (wmWindow &window : window_manager->windows) {

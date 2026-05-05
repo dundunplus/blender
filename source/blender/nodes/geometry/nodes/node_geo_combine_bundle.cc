@@ -54,7 +54,7 @@ static void node_declare(NodeDeclarationBuilder &b)
                        .socket_name_ptr(
                            &tree->id, *CombineBundleItemsAccessor::item_srna, &item, "name")
                        .supports_field();
-      if (item.structure_type != NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
+      if (item.structure_type != NodeSocketInterfaceStructureType::Auto) {
         decl.structure_type(StructureType(item.structure_type));
       }
       else {

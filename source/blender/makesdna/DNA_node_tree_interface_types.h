@@ -74,24 +74,24 @@ enum NodeTreeInterfaceSocketFlag : int {
 };
 ENUM_OPERATORS(NodeTreeInterfaceSocketFlag);
 
-enum NodeSocketInterfaceStructureType : int8_t {
-  NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO = 0,
-  NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE = 1,
-  NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC = 2,
-  NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD = 3,
-  NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID = 4,
-  NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST = 5,
+enum class NodeSocketInterfaceStructureType : int8_t {
+  Auto = 0,
+  Single = 1,
+  Dynamic = 2,
+  Field = 3,
+  Grid = 4,
+  List = 5,
 };
 
 // TODO: Move out of DNA.
 #ifdef __cplusplus
 namespace nodes {
 enum class StructureType : int8_t {
-  Single = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE,
-  Dynamic = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC,
-  Field = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD,
-  Grid = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID,
-  List = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST,
+  Single = int8_t(NodeSocketInterfaceStructureType::Single),
+  Dynamic = int8_t(NodeSocketInterfaceStructureType::Dynamic),
+  Field = int8_t(NodeSocketInterfaceStructureType::Field),
+  Grid = int8_t(NodeSocketInterfaceStructureType::Grid),
+  List = int8_t(NodeSocketInterfaceStructureType::List),
 };
 }
 #endif
@@ -144,7 +144,7 @@ struct bNodeTreeInterfaceSocket {
 
   struct IDProperty *properties = nullptr;
 
-  NodeSocketInterfaceStructureType structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[7] = {};
 
 #ifdef __cplusplus

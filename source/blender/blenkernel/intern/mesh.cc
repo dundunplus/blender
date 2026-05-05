@@ -645,6 +645,18 @@ void mesh_ensure_active_uv_map(Mesh &mesh)
   }
 }
 
+void mesh_ensure_default_uv_map(Mesh &mesh)
+{
+  const StringRefNull default_name = mesh.default_uv_map_name();
+  if (!default_name.is_empty()) {
+    return;
+  }
+  const StringRefNull found = get_first_uv_map_name(mesh);
+  if (!found.is_empty()) {
+    mesh.uv_maps_default_set(found);
+  }
+}
+
 void mesh_remove_invalid_attribute_strings(Mesh &mesh)
 {
   bke::AttributeAccessor attributes = mesh.attributes();

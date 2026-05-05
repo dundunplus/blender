@@ -96,7 +96,6 @@ void main()
                           hiz_front_tx,
                           rand_trace,
                           roughness,
-                          true,  /* discard_backface */
                           false, /* allow_self_intersection */
                           ray_view);
 
@@ -114,6 +113,14 @@ void main()
       /* Fetch radiance at hit-point. */
       radiance = raytrace_sample_screen(
           radiance_front_tx, uniform_buf.raytrace, hit, roughness, history_ss_hit_P);
+
+      if (hit.hit_backface) {
+        radiance *= uniform_buf.raytrace.backface_hit_scale;
+
+        if (!uniform_buf.raytrace.use_backface_hit) {
+          hit.valid = false;
+        }
+      }
     }
   }
   else if (trace_refraction) {
@@ -122,8 +129,7 @@ void main()
                           hiz_back_tx,
                           rand_trace,
                           roughness,
-                          false, /* discard_backface */
-                          true,  /* allow_self_intersection */
+                          true, /* allow_self_intersection */
                           ray_view);
 
     if (hit.valid) {

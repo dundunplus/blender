@@ -87,6 +87,192 @@ static void pose_do_bone_select(const bke::PChanBone pchanbone, const int select
   }
 }
 
+/* Useful to get the selection before modifying it. */
+static Set<bPoseChannel *> get_selected_pose_bones(Object &pose_object)
+{
+  Set<bPoseChannel *> selected_pose_bones;
+  bArmature *arm = id_cast<bArmature *>(pose_object.data);
+  for (bPoseChannel &pchan : pose_object.pose->chanbase) {
+    if (animrig::bone_is_selected(arm, &pchan)) {
+      selected_pose_bones.add(&pchan);
+    }
+  }
+  return selected_pose_bones;
+}
+
+/**
+ * Returns true if any of the bones in the parent hierarchy of the bone is in `potential_parents`.
+ * The bone itself is not checked.
+ */
+static bool pose_bone_is_below_one_of(bPoseChannel &bone,
+                                      const Set<bPoseChannel *> &potential_parents)
+{
+  bPoseChannel *bone_iter = bone.parent;
+  while (bone_iter) {
+    if (potential_parents.contains(bone_iter)) {
+      return true;
+    }
+    bone_iter = bone_iter->parent;
+  }
+  return false;
+}
+
+static void deselect_pose_bones(const Set<bPoseChannel *> &pose_bones)
+{
+  for (bPoseChannel *pose_bone : pose_bones) {
+    if (!pose_bone) {
+      /* There may be a nullptr in the set if selecting siblings of root bones. */
+      continue;
+    }
+    animrig::bone_deselect(pose_bone);
+  }
+}
+
+static bool any_parent_to_select(const Set<bPoseChannel *> &pose_bones)
+{
+  for (bPoseChannel *pose_bone : pose_bones) {
+    if (pose_bone->parent != nullptr) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Returns true if at least one of the given bones has a child.
+ */
+static bool any_child_to_select(const Set<bPoseChannel *> &pose_bones, const bArmature &armature)
+{
+  for (bPoseChannel *pose_bone : pose_bones) {
+    const Bone *bone = pose_bone->bone_get(armature);
+    if (!BLI_listbase_is_empty(&bone->childbase)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Of all selected pose bones, select their parents.
+ *
+ * \param stop_at_root If true, selection will remain unchanged if there are no parents to select.
+ * \param modify_active The active bone of an armature will be moved to the parent.
+ */
+static bool pose_select_parents(bContext *C,
+                                const bool extend,
+                                const bool stop_at_root,
+                                const bool modify_active)
+{
+  Vector<Object *> objects = BKE_object_pose_array_get_unique(
+      *CTX_data_main(C), CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
+
+  bool changed_any_selection = false;
+  for (Object *pose_object : objects) {
+    bArmature *arm = id_cast<bArmature *>(pose_object->data);
+    BLI_assert(arm);
+    Bone *active_bone = arm->act_bone;
+    Set<bPoseChannel *> selected_pose_bones = get_selected_pose_bones(*pose_object);
+    if (stop_at_root && !any_parent_to_select(selected_pose_bones)) {
+      continue;
+    }
+    if (!extend) {
+      deselect_pose_bones(selected_pose_bones);
+    }
+    for (bPoseChannel *pchan : selected_pose_bones) {
+      if (!pchan->parent) {
+        continue;
+      }
+      Bone *parent_bone = pchan->parent->bone_get(*arm);
+      if (!animrig::bone_is_selectable(arm, parent_bone)) {
+        continue;
+      }
+      pose_do_bone_select({pchan->parent, parent_bone}, SEL_SELECT);
+      if (modify_active && pchan->bone_get(*arm) == active_bone) {
+        arm->act_bone = parent_bone;
+      }
+      changed_any_selection = true;
+    }
+    ED_pose_bone_select_tag_update(pose_object);
+  }
+  return changed_any_selection;
+}
+
+/**
+ * Returns the child bone that will be the new active bone when selecting children.
+ * This is either the first connected, or the first bone if there are no connected.
+ */
+static Bone *get_new_active_child(Bone &parent_bone)
+{
+  for (Bone &child : parent_bone.childbase) {
+    if (child.flag & BONE_CONNECTED) {
+      return &child;
+    }
+  }
+  return reinterpret_cast<Bone *>(&parent_bone.childbase.first);
+}
+
+/**
+ * Selects children of currently selected bones in all objects in pose mode. If `all` is true, a
+ * bone will be selected if any bone in its parent hierarchy is selected. If false, only bones
+ * whose direct parent is selected are changed.
+ *
+ * \param stop_at_leaf If true, selection will remain unchanged if there are no children to select.
+ * \param modify_active The active bone of an armature will be moved to the first child.
+ */
+static bool pose_select_children(bContext *C,
+                                 const bool all,
+                                 const bool extend,
+                                 const bool stop_at_leaf,
+                                 const bool modify_active)
+{
+  Vector<Object *> objects = BKE_object_pose_array_get_unique(
+      *CTX_data_main(C), CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
+
+  bool changed_any_selection = false;
+
+  for (Object *pose_object : objects) {
+    bArmature *arm = id_cast<bArmature *>(pose_object->data);
+    BLI_assert(arm);
+    Bone *active_bone = arm->act_bone;
+    Set<bPoseChannel *> selected_pose_bones = get_selected_pose_bones(*pose_object);
+    if (stop_at_leaf && !any_child_to_select(selected_pose_bones, *arm)) {
+      continue;
+    }
+    if (!extend) {
+      deselect_pose_bones(selected_pose_bones);
+    }
+    for (bPoseChannel &pchan : pose_object->pose->chanbase) {
+      if (!animrig::bone_is_selectable(arm, &pchan)) {
+        continue;
+      }
+      Bone *bone = pchan.bone_get(*arm);
+      if (all) {
+        if (pose_bone_is_below_one_of(pchan, selected_pose_bones)) {
+          pose_do_bone_select({&pchan, bone}, SEL_SELECT);
+          Bone *parent_bone = pchan.parent->bone_get(*arm);
+          if (modify_active && parent_bone == active_bone) {
+            arm->act_bone = get_new_active_child(*parent_bone);
+          }
+          changed_any_selection = true;
+        }
+      }
+      else {
+        if (selected_pose_bones.contains(pchan.parent)) {
+          pose_do_bone_select({&pchan, bone}, SEL_SELECT);
+          Bone *parent_bone = pchan.parent->bone_get(*arm);
+          if (modify_active && parent_bone == active_bone) {
+            arm->act_bone = get_new_active_child(*parent_bone);
+          }
+          changed_any_selection = true;
+        }
+      }
+    }
+    ED_pose_bone_select_tag_update(pose_object);
+  }
+
+  return changed_any_selection;
+}
+
 void ED_pose_bone_select_tag_update(Object *ob)
 {
   BLI_assert(ob->type == OB_ARMATURE);
@@ -758,62 +944,19 @@ void POSE_OT_select_constraint_target(wmOperatorType *ot)
  * selected we then keep the non-active objects untouched (selected/unselected). */
 static wmOperatorStatus pose_select_hierarchy_exec(bContext *C, wmOperator *op)
 {
-  Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
-  bArmature *arm = id_cast<bArmature *>(ob->data);
-  bPoseChannel *pchan_act;
-  int direction = RNA_enum_get(op->ptr, "direction");
-  const bool add_to_sel = RNA_boolean_get(op->ptr, "extend");
+  const int direction = RNA_enum_get(op->ptr, "direction");
+  const bool extend = RNA_boolean_get(op->ptr, "extend");
   bool changed = false;
 
-  pchan_act = BKE_pose_channel_active_if_bonecoll_visible(ob);
-  if (pchan_act == nullptr) {
-    return OPERATOR_CANCELLED;
-  }
-
   if (direction == BONE_SELECT_PARENT) {
-    if (pchan_act->parent) {
-      Bone *bone_parent = pchan_act->parent->bone_get(*ob);
-
-      if (animrig::bone_is_selectable(arm, bone_parent)) {
-        if (!add_to_sel) {
-          animrig::bone_deselect(pchan_act);
-        }
-        animrig::bone_select(pchan_act->parent);
-        arm->act_bone = bone_parent;
-
-        changed = true;
-      }
-    }
+    changed = pose_select_parents(C, extend, /* stop_at_root= */ true, /* modify_active= */ true);
   }
   else { /* direction == BONE_SELECT_CHILD */
-    bPoseChannel *bone_child = nullptr;
-    int pass;
-
-    /* first pass, only connected bones (the logical direct child) */
-    for (pass = 0; pass < 2 && (bone_child == nullptr); pass++) {
-      for (bPoseChannel &pchan_iter : ob->pose->chanbase) {
-        /* possible we have multiple children, some invisible */
-        if (animrig::bone_is_selectable(arm, &pchan_iter)) {
-          if (pchan_iter.parent == pchan_act) {
-            if ((pass == 1) || (pchan_iter.bone_get(*ob)->flag & BONE_CONNECTED)) {
-              bone_child = &pchan_iter;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    if (bone_child) {
-      arm->act_bone = bone_child->bone_get(*ob);
-
-      if (!add_to_sel) {
-        animrig::bone_deselect(pchan_act);
-      }
-      animrig::bone_select(bone_child);
-
-      changed = true;
-    }
+    changed = pose_select_children(C,
+                                   /* all= */ false,
+                                   extend,
+                                   /* stop_at_leaf= */ true,
+                                   /* modify_active= */ true);
   }
 
   if (changed == false) {
@@ -821,8 +964,6 @@ static wmOperatorStatus pose_select_hierarchy_exec(bContext *C, wmOperator *op)
   }
 
   ED_outliner_select_sync_from_pose_bone_tag(C);
-
-  ED_pose_bone_select_tag_update(ob);
 
   return OPERATOR_FINISHED;
 }
@@ -987,115 +1128,6 @@ static bool pose_select_same_collection(bContext *C, const bool extend)
   return changed_any_selection;
 }
 
-/* Useful to get the selection before modifying it. */
-static Set<bPoseChannel *> get_selected_pose_bones(Object *pose_object)
-{
-  Set<bPoseChannel *> selected_pose_bones;
-  bArmature *arm = id_cast<bArmature *>((pose_object) ? pose_object->data : nullptr);
-  for (bPoseChannel &pchan : pose_object->pose->chanbase) {
-    if (animrig::bone_is_selected(arm, &pchan)) {
-      selected_pose_bones.add(&pchan);
-    }
-  }
-  return selected_pose_bones;
-}
-
-static bool pose_bone_is_below_one_of(bPoseChannel &bone,
-                                      const Set<bPoseChannel *> &potential_parents)
-{
-  bPoseChannel *bone_iter = &bone;
-  while (bone_iter) {
-    if (potential_parents.contains(bone_iter)) {
-      return true;
-    }
-    bone_iter = bone_iter->parent;
-  }
-  return false;
-}
-
-static void deselect_pose_bones(const Set<bPoseChannel *> &pose_bones)
-{
-  for (bPoseChannel *pose_bone : pose_bones) {
-    if (!pose_bone) {
-      /* There may be a nullptr in the set if selecting siblings of root bones. */
-      continue;
-    }
-    animrig::bone_deselect(pose_bone);
-  }
-}
-
-/* Selects children of currently selected bones in all objects in pose mode. If `all` is true, a
- * bone will be selected if any bone in it's parent hierarchy is selected. If false, only bones
- * whose direct parent is selected are changed. */
-static bool pose_select_children(bContext *C, const bool all, const bool extend)
-{
-  const Main *bmain = CTX_data_main(C);
-  Vector<Object *> objects = BKE_object_pose_array_get_unique(
-      *bmain, CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
-
-  bool changed_any_selection = false;
-
-  for (Object *pose_object : objects) {
-    bArmature *arm = id_cast<bArmature *>(pose_object->data);
-    BLI_assert(arm);
-    Set<bPoseChannel *> selected_pose_bones = get_selected_pose_bones(pose_object);
-    if (!extend) {
-      deselect_pose_bones(selected_pose_bones);
-    }
-    for (bPoseChannel &pchan : pose_object->pose->chanbase) {
-      if (!animrig::bone_is_selectable(arm, &pchan)) {
-        continue;
-      }
-      Bone *bone = pchan.bone_get(*pose_object);
-      if (all) {
-        if (pose_bone_is_below_one_of(pchan, selected_pose_bones)) {
-          pose_do_bone_select({&pchan, bone}, SEL_SELECT);
-          changed_any_selection = true;
-        }
-      }
-      else {
-        if (selected_pose_bones.contains(pchan.parent)) {
-          pose_do_bone_select({&pchan, bone}, SEL_SELECT);
-          changed_any_selection = true;
-        }
-      }
-    }
-    ED_pose_bone_select_tag_update(pose_object);
-  }
-
-  return changed_any_selection;
-}
-
-static bool pose_select_parents(bContext *C, const bool extend)
-{
-  const Main *bmain = CTX_data_main(C);
-  Vector<Object *> objects = BKE_object_pose_array_get_unique(
-      *bmain, CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
-
-  bool changed_any_selection = false;
-  for (Object *pose_object : objects) {
-    bArmature *arm = id_cast<bArmature *>(pose_object->data);
-    BLI_assert(arm);
-    Set<bPoseChannel *> selected_pose_bones = get_selected_pose_bones(pose_object);
-    if (!extend) {
-      deselect_pose_bones(selected_pose_bones);
-    }
-    for (bPoseChannel *pchan : selected_pose_bones) {
-      if (!pchan->parent) {
-        continue;
-      }
-      Bone *parent_bone = pchan->parent->bone_get(*pose_object);
-      if (!animrig::bone_is_selectable(arm, parent_bone)) {
-        continue;
-      }
-      pose_do_bone_select({pchan->parent, parent_bone}, SEL_SELECT);
-      changed_any_selection = true;
-    }
-    ED_pose_bone_select_tag_update(pose_object);
-  }
-  return changed_any_selection;
-}
-
 static bool pose_select_siblings(bContext *C, const bool extend)
 {
   const Main *bmain = CTX_data_main(C);
@@ -1249,15 +1281,18 @@ static wmOperatorStatus pose_select_grouped_exec(bContext *C, wmOperator *op)
       break;
 
     case SelectRelatedMode::CHILDREN:
-      changed = pose_select_children(C, true, extend);
+      changed = pose_select_children(
+          C, /* all= */ true, extend, /* stop_at_leaf= */ false, /* modify_active= */ false);
       break;
 
     case SelectRelatedMode::IMMEDIATE_CHILDREN:
-      changed = pose_select_children(C, false, extend);
+      changed = pose_select_children(
+          C, /* all= */ false, extend, /* stop_at_leaf= */ false, /* modify_active= */ false);
       break;
 
     case SelectRelatedMode::PARENT:
-      changed = pose_select_parents(C, extend);
+      changed = pose_select_parents(
+          C, extend, /* stop_at_root= */ false, /* modify_active= */ false);
       break;
 
     case SelectRelatedMode::SIBLINGS:

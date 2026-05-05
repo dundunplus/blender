@@ -510,6 +510,9 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   raytrace_tracing_tiles_buf_.resize(ceil_to_multiple_u(raytrace_tile_count, 512));
   raytrace_denoise_tiles_buf_.resize(ceil_to_multiple_u(denoise_tile_count, 512));
 
+  data_.use_backface_hit = (options.flag & RAYTRACE_EEVEE_USE_BACKFACE) != 0;
+  data_.backface_hit_scale = data_.use_backface_hit ? options.backface_radiance_scale : 0.0f;
+
   /* Data for tile classification. */
   float roughness_mask_start = options.trace_max_roughness;
   float roughness_mask_fade = 0.2f;

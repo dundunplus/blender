@@ -28,7 +28,7 @@ void BundleSignature::set_auto_structure_types()
 {
   for (const BundleSignature::Item &item : this->items) {
     const_cast<BundleSignature::Item &>(item).structure_type =
-        NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+        NodeSocketInterfaceStructureType::Auto;
   }
 }
 
@@ -352,11 +352,11 @@ NodeSocketInterfaceStructureType get_structure_type_for_bundle_signature(
     const NodeSocketInterfaceStructureType stored_structure_type,
     const bool allow_auto_structure_type)
 {
-  if (stored_structure_type != NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
+  if (stored_structure_type != NodeSocketInterfaceStructureType::Auto) {
     return stored_structure_type;
   }
   if (allow_auto_structure_type) {
-    return NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+    return NodeSocketInterfaceStructureType::Auto;
   }
   return NodeSocketInterfaceStructureType(socket.runtime->inferred_structure_type);
 }
@@ -380,9 +380,7 @@ BundleSignature BundleSignature::from_combine_bundle_node(const bNode &node,
     if (const bke::bNodeSocketType *stype = bke::node_socket_type_find_static(item.socket_type)) {
       const NodeSocketInterfaceStructureType structure_type =
           get_structure_type_for_bundle_signature(
-              socket,
-              NodeSocketInterfaceStructureType(item.structure_type),
-              allow_auto_structure_type);
+              socket, item.structure_type, allow_auto_structure_type);
       signature.items.add({item.name, stype, structure_type});
     }
   }
@@ -401,9 +399,7 @@ BundleSignature BundleSignature::from_separate_bundle_node(const bNode &node,
     if (const bke::bNodeSocketType *stype = bke::node_socket_type_find_static(item.socket_type)) {
       const NodeSocketInterfaceStructureType structure_type =
           get_structure_type_for_bundle_signature(
-              socket,
-              NodeSocketInterfaceStructureType(item.structure_type),
-              allow_auto_structure_type);
+              socket, item.structure_type, allow_auto_structure_type);
       signature.items.add({item.name, stype, structure_type});
     }
   }
@@ -432,7 +428,7 @@ std::optional<BundleSignature> LinkedBundleSignatures::get_merged_signature() co
         }
         if (existing_item.structure_type != item.structure_type) {
           const_cast<BundleSignature::Item &>(existing_item).structure_type =
-              NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC;
+              NodeSocketInterfaceStructureType::Dynamic;
         }
       }
     }

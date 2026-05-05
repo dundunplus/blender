@@ -31,7 +31,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   const NodeGeometryListGetItem &storage = node_storage(*node);
   const auto type = eNodeSocketDatatype(storage.socket_type);
 
-  const auto structure_type = storage.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO ?
+  const auto structure_type = storage.structure_type == NodeSocketInterfaceStructureType::Auto ?
                                   StructureType::Dynamic :
                                   StructureType(storage.structure_type);
 

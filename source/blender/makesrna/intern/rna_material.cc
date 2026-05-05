@@ -788,7 +788,7 @@ static void rna_def_material_greasepencil(BlenderRNA *brna)
   /* Use Randomization. */
   prop = RNA_def_property(srna, "use_randomization", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GP_MATERIAL_USE_DOTS_RANDOMIZATION);
-  RNA_def_property_ui_text(prop, "Randomization", "Use materiel randomization");
+  RNA_def_property_ui_text(prop, "Randomization", "Use material randomization");
   RNA_def_property_update(prop, NC_GPENCIL | ND_SHADING, "rna_MaterialGpencil_update");
 
   /* Random Size. */

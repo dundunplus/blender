@@ -930,7 +930,7 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::structure_type(
     const StructureType structure_type)
 {
   BLI_assert(NodeSocketInterfaceStructureType(structure_type) !=
-             NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO);
+             NodeSocketInterfaceStructureType::Auto);
   decl_base_->structure_type = structure_type;
   return *this;
 }

@@ -90,12 +90,12 @@ static void node_shader_buts_tex_noise(ui::Layout &layout, bContext * /*C*/, Poi
   }
 }
 
-static void node_shader_init_tex_noise(bNodeTree * /*ntree*/, bNode *node)
+static void node_shader_init_tex_noise(bNodeTree *node_tree, bNode *node)
 {
   NodeTexNoise *tex = MEM_new<NodeTexNoise>(__func__);
   BKE_texture_mapping_default(&tex->base.tex_mapping, TEXMAP_TYPE_POINT);
   BKE_texture_colormapping_default(&tex->base.color_mapping);
-  tex->dimensions = 3;
+  tex->dimensions = node_tree->type == NTREE_COMPOSIT ? 2 : 3;
   tex->type = SHD_NOISE_FBM;
   tex->normalize = true;
 

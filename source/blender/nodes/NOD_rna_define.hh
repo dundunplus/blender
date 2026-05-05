@@ -58,7 +58,7 @@ struct EnumRNAAccessors {
   EnumRNAAccessors( \
       [](PointerRNA *ptr, PropertyRNA * /*prop*/) -> int { \
         const bNode &node = *static_cast<const bNode *>(ptr->data); \
-        return node_storage(node).member; \
+        return int(node_storage(node).member); \
       }, \
       [](PointerRNA *ptr, PropertyRNA * /*prop*/, const int value) { \
         bNode &node = *static_cast<bNode *>(ptr->data); \

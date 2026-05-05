@@ -1318,7 +1318,7 @@ static void motion_paths_recalc(bContext *C,
     free_depsgraph = true;
   }
 
-  animviz_calc_motionpaths(depsgraph, bmain, scene, targets, range, true);
+  animviz_calc_motionpaths(depsgraph, bmain, scene, targets, range);
   animviz_free_motionpath_targets(targets);
 
   if (range != ANIMVIZ_CALC_RANGE_CURRENT_FRAME) {

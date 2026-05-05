@@ -41,6 +41,8 @@ struct ScreenTraceHitData {
   float time;
   /* True if there was a valid intersection. False if went out of screen without intersection. */
   bool valid;
+  /* True if ray was under a surface. */
+  bool hit_backface;
 };
 
 /**
@@ -62,7 +64,6 @@ ScreenTraceHitData raytrace_screen(RayTraceData rt_data,
                                    sampler2D hiz_tx,
                                    float stride_rand,
                                    float roughness,
-                                   const bool discard_backface,
                                    const bool allow_self_intersection,
                                    Ray ray)
 {
@@ -119,8 +120,6 @@ ScreenTraceHitData raytrace_screen(RayTraceData rt_data,
     /* ... and above it with the added thickness. */
     hit = hit && (delta > ss_p.z - ss_p.w || abs(delta) < abs(ssray.direction.z * stride * 2.0f));
   }
-  /* Discard back-face hits. */
-  hit = hit && !(discard_backface && prev_delta < 0.0f);
   /* Reject hit if background. */
   hit = hit && (depth_sample != 1.0f);
   /* Refine hit using intersection between the sampled height-field and the ray.
@@ -128,6 +127,7 @@ ScreenTraceHitData raytrace_screen(RayTraceData rt_data,
   time = mix(prev_time, time, saturate(prev_delta / (prev_delta - delta)));
 
   ScreenTraceHitData result;
+  result.hit_backface = prev_delta < 0.0f && ssray.direction.z < 0.0f;
   result.ss_hit_P = ssray.origin.xyz + ssray.direction.xyz * time;
   result.v_hit_P = drw_point_screen_to_view(result.ss_hit_P);
   /* Convert to world space ray time. */

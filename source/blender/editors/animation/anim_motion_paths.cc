@@ -57,19 +57,9 @@ struct MPathTarget {
   /* Original (Source Objects) */
   Object *ob;          /* Source Object */
   bPoseChannel *pchan; /* Source pose-channel (if applicable). */
-
-  /* "Evaluated" Copies (these come from the background evaluated copy
-   * that provide all the coordinates we want to save off). */
-  Object *ob_eval; /* Evaluated Object. */
 };
 
 /* ........ */
-
-/* Update scene for current frame. */
-static void motionpaths_calc_update_scene(Depsgraph *depsgraph)
-{
-  BKE_scene_graph_update_for_newframe(depsgraph);
-}
 
 Depsgraph *animviz_depsgraph_build(Main *bmain,
                                    Scene *scene,
@@ -89,8 +79,6 @@ Depsgraph *animviz_depsgraph_build(Main *bmain,
   /* Build graph from all requested IDs. */
   DEG_graph_build_from_ids(depsgraph, ids);
 
-  /* Update once so we can access pointers of evaluated animation data. */
-  motionpaths_calc_update_scene(depsgraph);
   return depsgraph;
 }
 
@@ -161,7 +149,7 @@ static void motionpaths_calc_bake_targets(const Span<MPathTarget *> targets,
     /* Get the relevant cache vert to write to. */
     bMotionPathVert *mpv = mpath->points + (cframe - mpath->start_frame);
 
-    Object *ob_eval = mpt->ob_eval;
+    Object *ob_eval = DEG_get_evaluated(depsgraph, mpt->ob);
 
     /* Lookup evaluated pose channel, here because the depsgraph
      * evaluation can change them so they are not cached in mpt. */
@@ -430,8 +418,7 @@ void animviz_calc_motionpaths(Depsgraph *depsgraph,
                               Main *bmain,
                               Scene *scene,
                               MutableSpan<MPathTarget *> targets,
-                              eAnimvizCalcRange range,
-                              bool restore)
+                              eAnimvizCalcRange range)
 {
   using namespace blender::animrig;
 
@@ -482,9 +469,7 @@ void animviz_calc_motionpaths(Depsgraph *depsgraph,
   }
 
   for (MPathTarget *mpt : targets) {
-    mpt->ob_eval = DEG_get_evaluated(depsgraph, mpt->ob);
-
-    AnimData *adt = BKE_animdata_from_id(&mpt->ob_eval->id);
+    AnimData *adt = BKE_animdata_from_id(&mpt->ob->id);
 
     /* Build list of all keyframes in active action for object or pchan. */
     mpt->keylist = ED_keylist_create();
@@ -534,27 +519,19 @@ void animviz_calc_motionpaths(Depsgraph *depsgraph,
             frame_range.max,
             frame_range.max - frame_range.min + 1);
 
-  for (scene->r.cfra = frame_range.min; scene->r.cfra < frame_range.max; scene->r.cfra++) {
+  for (int frame = frame_range.min; frame < frame_range.max; frame++) {
     if (range == ANIMVIZ_CALC_RANGE_CURRENT_FRAME) {
       /* For current frame, only update tagged. */
+      BLI_assert(frame == scene->r.cfra);
       BKE_scene_graph_update_tagged(depsgraph, bmain);
     }
     else {
       /* Update relevant data for new frame. */
-      motionpaths_calc_update_scene(depsgraph);
+      DEG_evaluate_on_framechange(depsgraph, frame);
     }
 
     /* Perform baking for targets. */
-    motionpaths_calc_bake_targets(targets, scene->r.cfra, depsgraph, scene->camera);
-  }
-
-  /* Reset original environment. */
-  /* NOTE: We don't always need to reevaluate the main scene, as the depsgraph
-   * may be a temporary one that works on a subset of the data.
-   * We always have to restore the current frame though. */
-  scene->r.cfra = cfra;
-  if (range != ANIMVIZ_CALC_RANGE_CURRENT_FRAME && restore) {
-    motionpaths_calc_update_scene(depsgraph);
+    motionpaths_calc_bake_targets(targets, frame, depsgraph, scene->camera);
   }
 
   if (is_active_depsgraph) {

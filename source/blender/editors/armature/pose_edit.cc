@@ -173,7 +173,7 @@ void ED_pose_recalculate_paths(bContext *C, Scene *scene, Object *ob, eAnimvizCa
     free_depsgraph = true;
   }
 
-  animviz_calc_motionpaths(depsgraph, bmain, scene, targets, range, !free_depsgraph);
+  animviz_calc_motionpaths(depsgraph, bmain, scene, targets, range);
 
 #ifdef DEBUG_TIME
   TIMEIT_END(pose_path_calc);

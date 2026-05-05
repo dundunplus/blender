@@ -322,7 +322,11 @@ ResultT eval(sampler2D hiz_tx,
           radiance = float3(0);
         }
         /* Discard back-facing samples. */
-        float facing_weight = saturate(-dot(normal, vL_front));
+        float facing = dot(normal, -vL_front);
+        if (facing < 0.0f) {
+          radiance *= uniform_buf.raytrace.backface_hit_scale;
+        }
+        float facing_weight = abs(facing);
 
         /* Angular bias shrinks the visibility bitmask around the projected normal. */
         float2 biased_theta = (theta - vN_angle) * angle_bias;

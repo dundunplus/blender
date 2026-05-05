@@ -3646,8 +3646,7 @@ struct NodeClosureInputItem {
   char *name = nullptr;
   /** #eNodeSocketDatatype. */
   short socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[1] = {};
   int identifier = 0;
 };
@@ -3656,8 +3655,7 @@ struct NodeClosureOutputItem {
   char *name = nullptr;
   /** #eNodeSocketDatatype. */
   short socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[1] = {};
   int identifier = 0;
 };
@@ -3695,8 +3693,7 @@ struct NodeEvaluateClosureInputItem {
   char *name = nullptr;
   /** #eNodeSocketDatatype */
   short socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[1] = {};
   int identifier = 0;
 };
@@ -3705,8 +3702,7 @@ struct NodeEvaluateClosureOutputItem {
   char *name = nullptr;
   /** #eNodeSocketDatatype */
   short socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[1] = {};
   int identifier = 0;
 };
@@ -3876,8 +3872,7 @@ struct NodeCombineBundleItem {
   char *name = nullptr;
   int identifier = 0;
   int16_t socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[1] = {};
 };
 
@@ -3896,8 +3891,7 @@ struct NodeSeparateBundleItem {
   char *name = nullptr;
   int identifier = 0;
   int16_t socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad[1] = {};
 };
 
@@ -3932,24 +3926,21 @@ struct NodeFunctionFormatString {
 struct NodeGeometryListGetItem {
   /** #eNodeSocketDatatype. */
   int16_t socket_type = SOCK_FLOAT;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad = {};
 };
 
 struct NodeGetBundleItem {
   /** #eNodeSocketDatatype. */
   int16_t socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad = {};
 };
 
 struct NodeStoreBundleItem {
   /** #eNodeSocketDatatype. */
   int16_t socket_type = 0;
-  /** #NodeSocketInterfaceStructureType. */
-  int8_t structure_type = 0;
+  NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad = {};
 };
 
