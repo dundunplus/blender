@@ -2559,9 +2559,7 @@ static void rna_Node_internal_links_begin(CollectionPropertyIterator *iter, Poin
 static bool allow_identifier_lookup(const bNode &node)
 {
   switch (node.type_legacy) {
-    case FN_NODE_RANDOM_VALUE:
     case SH_NODE_MIX:
-    case FN_NODE_COMPARE:
     case SH_NODE_MAP_RANGE:
       return false;
     default:

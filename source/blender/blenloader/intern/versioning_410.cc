@@ -601,10 +601,9 @@ static void versioning_replace_splitviewer(bNodeTree *ntree)
   }
 }
 
-static void version_socket_identifier_suffixes_for_dynamic_types(
-    const ListBaseT<bNodeSocket> &sockets,
-    const char *separator,
-    const std::optional<int> total = std::nullopt)
+void version_socket_identifier_suffixes_for_dynamic_types(const ListBaseT<bNodeSocket> &sockets,
+                                                          const char *separator,
+                                                          const std::optional<int> total)
 {
   int index = 0;
   for (bNodeSocket &socket : sockets) {

@@ -1844,28 +1844,37 @@ void PreviewLoadJob::push_load_request(PreviewImage *preview, const eIconSizes i
     std::lock_guard lock(requested_previews_mutex_);
 
     /* Typically shouldn't happen, since previews are flagged with #PRV_RENDERING when loading,
-     * which should prevent double requests. However, a #PreviewImage might be deleted and
-     * recreated while a request is still pending. In that case, update the preview pointer.
+     * which should prevent double requests. However, a #PreviewImage might be tagged for deletion
+     * and recreated while a request is still pending. In that case, update the preview pointer.
      *
-     * This happens when reloading online asset libraries with running preview downloads. */
-    if (std::unique_ptr<RequestedPreview> *existing_request = requested_previews_.lookup_ptr(key))
+     * This happens when reloading online asset libraries with running preview downloads. The
+     * assets are destructed then, the preview removed from the global cache (so it won't be
+     * reused by the subsequent re-request) and tagged for freeing. */
+    if (std::unique_ptr<RequestedPreview> *existing_request_uptr = requested_previews_.lookup_ptr(
+            key))
     {
-      request = existing_request->get();
-      request->preview = preview;
+      RequestedPreview *existing_request = existing_request_uptr->get();
+      if (existing_request->preview != preview) {
+        /* This will free the preview if it's tagged with #PRV_TAG_DEFERRED_DELETE. That's
+         * important since the global cache doesn't hold it anymore and therefore won't free it.
+         * It's up to us here to end loading properly. */
+        BKE_previewimg_render_end(existing_request->preview, icon_size, PRV_RENDER_STATUS_FAILED);
+        existing_request->preview = preview;
+      }
+      return;
+    }
+
+    std::unique_ptr<RequestedPreview> new_request = std::make_unique<RequestedPreview>(preview,
+                                                                                       icon_size);
+    request = new_request.get();
+
+    if (is_downloading) {
+      request->state = PreviewState::Downloading;
     }
     else {
-      std::unique_ptr<RequestedPreview> new_request = std::make_unique<RequestedPreview>(
-          preview, icon_size);
-      request = new_request.get();
-
-      if (is_downloading) {
-        request->state = PreviewState::Downloading;
-      }
-      else {
-        request->state = PreviewState::LoadingFromDisk;
-      }
-      requested_previews_.add(key, std::move(new_request));
+      request->state = PreviewState::LoadingFromDisk;
     }
+    requested_previews_.add(key, std::move(new_request));
   }
 
   /* NOTE: The request gets pushed to the queue, even when state == PreviewState::Downloading, even

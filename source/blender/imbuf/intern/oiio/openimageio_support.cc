@@ -184,6 +184,11 @@ static ImBuf *get_oiio_ibuf(ImageInput *in, const ReadContext &ctx, ImFileColorS
     return nullptr;
   }
 
+  if (spec.depth > 1) {
+    CLOG_ERROR(&LOG_READ, "Image has unsupported depth of %d", spec.depth);
+    return nullptr;
+  }
+
   const bool use_all_planes = has_alpha || ctx.use_all_planes;
 
   ImBuf *ibuf = nullptr;

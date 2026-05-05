@@ -494,6 +494,14 @@ AssetLibraryReference all_library_reference()
   return all_library_ref;
 }
 
+AssetLibraryReference essentials_library_reference()
+{
+  AssetLibraryReference all_library_ref{};
+  all_library_ref.custom_library_index = -1;
+  all_library_ref.type = ASSET_LIBRARY_ESSENTIALS;
+  return all_library_ref;
+}
+
 AssetLibraryReference current_file_library_reference()
 {
   AssetLibraryReference library_ref{};

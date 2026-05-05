@@ -1682,6 +1682,14 @@ static void rna_experimental_no_data_block_packing_update(bContext *C, PointerRN
   rna_userdef_asset_libraries_refresh(C, ptr);
 }
 
+static void rna_userdef_use_geometry_nodes_hair_dynamics_update(bContext *C, PointerRNA * /*ptr*/)
+{
+  const AssetLibraryReference essentials_ref = asset_system::essentials_library_reference();
+  ed::asset::list::clear(&essentials_ref, C);
+  WM_event_add_notifier(C, NC_ASSET | ND_ASSET_LIST, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
+}
+
 }  // namespace blender
 
 #else
@@ -7710,6 +7718,8 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_geometry_nodes_hair_dynamics", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
       prop, "Geometry Nodes Hair Dynamics", "Enable hair dynamics simulation in geometry nodes");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(prop, 0, "rna_userdef_use_geometry_nodes_hair_dynamics_update");
 
   prop = RNA_def_property(srna, "use_extensions_debug", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(

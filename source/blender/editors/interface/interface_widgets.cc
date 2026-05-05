@@ -1876,6 +1876,8 @@ static void text_clip_right_label(const uiFontStyle *fstyle, Button *but, const 
   /* need to set this first */
   fontstyle_set(fstyle);
 
+  /* Clear stale edit scroll offset so numeric text is not scrolled. See #157999. */
+  but->ofs = 0;
   but->strwidth = BLF_width(fstyle->uifont_id, new_drawstr, drawstr_len);
 
   /* The string already fits, so do nothing. */
@@ -1889,8 +1891,6 @@ static void text_clip_right_label(const uiFontStyle *fstyle, Button *but, const 
 
   /* Assume the string will have an ellipsis for initial tests. */
   but->strwidth += sep_strwidth;
-
-  but->ofs = 0;
 
   /* First shorten number-buttons eg,
    *   Translucency: 0.000
