@@ -31,9 +31,9 @@ struct [[host_shared]] RayTraceData {
   /** Scale and bias to go from fast GI resolution to input resolution. */
   int2 fast_gi_resolution_bias;
   int fast_gi_resolution_scale;
-  /** Bias to the fullscreen buffer LOD to account for radiance buffer top downscaling factor. */
+  /** Bias to the full-screen buffer LOD to account for radiance buffer top down-scaling factor. */
   float fast_gi_lod_bias;
-  /** Scale to apply to fullscreen UVs to remove padding. */
+  /** Scale to apply to full-screen UVs to remove padding. */
   float2 fast_gi_uv_scale;
   /** Determine how fast the sample steps are getting bigger. */
   float quality;

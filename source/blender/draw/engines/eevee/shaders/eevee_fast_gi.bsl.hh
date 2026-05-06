@@ -586,7 +586,7 @@ void setup([[global_invocation_id]] const uint3 global_id,
   /* Export normal. */
   /* FIXME: This is zero for opaque layer when we are processing the refraction layer.
    * This is because the GBuffer header was cleared in between the layers. The refraction layer
-   * currently have incorrect fast GI comming from opaque layer. */
+   * currently have incorrect fast GI coming from opaque layer. */
   float3 vN = drw_normal_world_to_view(gbuf.surface_N());
 
   if (!is_processed) {

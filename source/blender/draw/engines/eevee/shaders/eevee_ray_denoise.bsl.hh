@@ -287,7 +287,7 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
   float weight_accum = 0.0f;
   float closest_hit_time = 1.0e10f;
 
-  /* In order to avoid costly texture fetchs, we assume the neighbors to be on the same plane as
+  /* In order to avoid costly texture fetches, we assume the neighbors to be on the same plane as
    * the shading point. We compute the fake surface derivatives form the normal. */
   float3 vs_N = drw_normal_world_to_view(closure.N);
   float2 pixel_uv_size = uniform_buf.raytrace.full_resolution_inv *

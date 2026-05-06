@@ -369,8 +369,8 @@ float raytrace_screen_2(const float3 vs_origin,
 }
 
 /**
- * Sample the given fullscreen framebuffer at the given hit location.
- * Does a small contact aware blur on incomming radiance.
+ * Sample the given full-screen frame-buffer at the given hit location.
+ * Does a small contact aware blur on incoming radiance.
  */
 float3 raytrace_sample_screen(sampler2D radiance_tx,
                               RayTraceData raytrace,
@@ -409,8 +409,8 @@ float3 raytrace_sample_screen(sampler2D radiance_tx,
 }
 
 /**
- * Sample the given fullscreen framebuffer at the given hit location.
- * Does a small contact aware blur on incomming radiance.
+ * Sample the given full-screen frame-buffer at the given hit location.
+ * Does a small contact aware blur on incoming radiance.
  */
 float3 raytrace_sample_screen(sampler2DArray radiance_tx,
                               RayTraceData raytrace,

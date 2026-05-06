@@ -1069,7 +1069,7 @@ static void view3d_header_region_listener(const wmRegionListenerParams *params)
       break;
     case NC_MATERIAL:
       /* For the canvas picker. */
-      if (wmn->data == ND_SHADING_LINKS) {
+      if (ELEM(wmn->data, ND_SHADING_LINKS, ND_NODES)) {
         ED_region_tag_redraw(region);
       }
       break;

@@ -927,7 +927,8 @@ mark_as_advanced(WITH_GPU_SHADER_CPP_COMPILATION)
 # Profiling
 option(WITH_TRACY "\
 Enable profiling via the Tracy Frame Profiler. \
-This option adds a `tracy_profiler` target for building the profiler GUI frontend. Requires internet access."
+This option adds a `tracy_profiler` target for building the profiler GUI front-end. \
+Requires internet access."
   OFF
 )
 mark_as_advanced(WITH_TRACY)
@@ -2045,6 +2046,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     C_AND_CXX_WARN_NO_FORMAT -Wno-format
     C_AND_CXX_WARN_NO_SWITCH -Wno-switch
     C_AND_CXX_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
+    C_AND_CXX_WARN_NO_UNUSED_BUT_SET_VARIABLE -Wno-unused-but-set-variable
     C_AND_CXX_WARN_NO_UNINITIALIZED -Wno-uninitialized
     C_AND_CXX_WARN_NO_IMPLICIT_FALLTHROUGH -Wno-implicit-fallthrough
   )

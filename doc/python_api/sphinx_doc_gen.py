@@ -2283,6 +2283,8 @@ def write_rst_geometry_set(basepath):
     with open(filepath, "w", encoding="utf-8") as fh:
         fw = fh.write
         fw(title_string("GeometrySet", "="))
+        # Needed for Sphinx cross-referencing.
+        fw(".. currentmodule:: bpy.types\n\n")
         write_example_ref("", fw, "bpy.types.GeometrySet")
         pyclass2sphinx(fw, "bpy.types", "GeometrySet", bpy.types.GeometrySet, False)
 
@@ -2301,6 +2303,8 @@ def write_rst_inline_shader_nodes(basepath):
     with open(filepath, "w", encoding="utf-8") as fh:
         fw = fh.write
         fw(title_string("InlineShaderNodes", "="))
+        # Needed for Sphinx cross-referencing.
+        fw(".. currentmodule:: bpy.types\n\n")
         write_example_ref("", fw, "bpy.types.InlineShaderNodes")
         pyclass2sphinx(fw, "bpy.types", "InlineShaderNodes", bpy.types.InlineShaderNodes, False)
 

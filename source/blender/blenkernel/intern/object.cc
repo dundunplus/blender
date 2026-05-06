@@ -1515,23 +1515,23 @@ static ParticleSystem *object_copy_modifier_particle_system_ensure(Main *bmain,
   return psys_dst;
 }
 
-bool BKE_object_copy_modifier(Main *bmain,
-                              const Scene *scene,
-                              Object *ob_dst,
-                              const Object *ob_src,
-                              const ModifierData *md_src)
+ModifierData *BKE_object_copy_modifier(Main *bmain,
+                                       const Scene *scene,
+                                       Object *ob_dst,
+                                       const Object *ob_src,
+                                       const ModifierData *md_src)
 {
   const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md_src->type));
   if (!object_modifier_type_copy_check(ModifierType(md_src->type))) {
     /* We never allow copying those modifiers here. */
-    return false;
+    return nullptr;
   }
   if (!BKE_object_support_modifier_type_check(ob_dst, md_src->type)) {
-    return false;
+    return nullptr;
   }
   if (mti->flags & eModifierTypeFlag_Single) {
     if (BKE_modifiers_findby_type(ob_dst, ModifierType(md_src->type)) != nullptr) {
-      return false;
+      return nullptr;
     }
   }
 
@@ -1617,9 +1617,7 @@ bool BKE_object_copy_modifier(Main *bmain,
     BKE_modifiers_persistent_uid_init(*ob_dst, *md_dst);
   }
 
-  BKE_object_modifier_set_active(ob_dst, md_dst);
-
-  return true;
+  return md_dst;
 }
 
 bool BKE_object_modifier_stack_copy(Object *ob_dst,
