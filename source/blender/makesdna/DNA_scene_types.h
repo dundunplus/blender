@@ -2600,7 +2600,7 @@ struct RaytraceEEVEE {
   /** Higher values will take lower strides and have less blurry intersections. */
   float screen_trace_quality = 0.25f;
   /** Thickness in world space each surface will have during screen space tracing. */
-  float screen_trace_thickness = 0.2f;
+  float screen_trace_thickness = 0.1f;
   /** Maximum roughness before using horizon scan. */
   float trace_max_roughness = 0.5f;
   /** Resolution downscale factor. */
@@ -2686,10 +2686,9 @@ struct SceneEEVEE {
   int fast_gi_ray_count = 2;
   float fast_gi_quality = 0.25f;
   float fast_gi_distance = 0.0f;
-  float fast_gi_thickness_near = 0.25f;
-  float fast_gi_thickness_far = DEG2RAD(45);
+  float fast_gi_thickness_near = 0.1f;
   FastGI_Method fast_gi_method = FAST_GI_FULL;
-  char _pad1[3] = {};
+  char _pad1[7] = {};
 
   float bokeh_overblur = 5.0f;
   float bokeh_max_size = 100.0f;

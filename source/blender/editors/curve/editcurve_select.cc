@@ -1568,7 +1568,7 @@ static void curve_nurb_selected_type_get(
           }
         }
         if (tree_1d) {
-          kdtree_1d_insert(tree_1d, tree_index++, tree_entry);
+          kdtree_1d_insert(tree_1d, tree_index++, tree_entry[0]);
         }
         else {
           kdtree_3d_insert(tree_3d, tree_index++, tree_entry);
@@ -1600,7 +1600,7 @@ static void curve_nurb_selected_type_get(
           }
         }
         if (tree_1d) {
-          kdtree_1d_insert(tree_1d, tree_index++, tree_entry);
+          kdtree_1d_insert(tree_1d, tree_index++, tree_entry[0]);
         }
         else {
           kdtree_3d_insert(tree_3d, tree_index++, tree_entry);

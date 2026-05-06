@@ -1247,7 +1247,6 @@ void blo_do_versions_420(FileData *fd, Library * /*lib*/, Main *bmain)
     const Scene default_scene;
     for (Scene &scene : bmain->scenes) {
       scene.eevee.fast_gi_thickness_near = default_scene.eevee.fast_gi_thickness_near;
-      scene.eevee.fast_gi_thickness_far = default_scene.eevee.fast_gi_thickness_far;
     }
   }
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 402, 48)) {

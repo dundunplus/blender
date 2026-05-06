@@ -250,12 +250,12 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
           }
           case SIMFACE_AREA: {
             float area = BM_face_calc_area_with_mat3(face, ob_m3);
-            kdtree_1d_insert(tree_1d, tree_index++, &area);
+            kdtree_1d_insert(tree_1d, tree_index++, area);
             break;
           }
           case SIMFACE_PERIMETER: {
             float perimeter = BM_face_calc_perimeter_with_mat3(face, ob_m3);
-            kdtree_1d_insert(tree_1d, tree_index++, &perimeter);
+            kdtree_1d_insert(tree_1d, tree_index++, perimeter);
             break;
           }
           case SIMFACE_NORMAL: {
@@ -610,16 +610,14 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
       }
       case SIMEDGE_CREASE: {
         if (!CustomData_has_layer_named(&bm->edata, CD_PROP_FLOAT, "crease_edge")) {
-          float pos = 0.0f;
-          kdtree_1d_insert(tree_1d, tree_index++, &pos);
+          kdtree_1d_insert(tree_1d, tree_index++, 0.0f);
           continue;
         }
         break;
       }
       case SIMEDGE_BEVEL: {
         if (!CustomData_has_layer_named(&bm->edata, CD_PROP_FLOAT, "bevel_weight_edge")) {
-          float pos = 0.0f;
-          kdtree_1d_insert(tree_1d, tree_index++, &pos);
+          kdtree_1d_insert(tree_1d, tree_index++, 0.0f);
           continue;
         }
         break;
@@ -667,13 +665,13 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
           }
           case SIMEDGE_LENGTH: {
             float length = edge_length_squared_worldspace_get(ob, edge);
-            kdtree_1d_insert(tree_1d, tree_index++, &length);
+            kdtree_1d_insert(tree_1d, tree_index++, length);
             break;
           }
           case SIMEDGE_FACE_ANGLE: {
             if (BM_edge_face_count_at_most(edge, 2) == 2) {
               float angle = BM_edge_calc_face_angle_with_imat3(edge, ob_m3_inv);
-              kdtree_1d_insert(tree_1d, tree_index++, &angle);
+              kdtree_1d_insert(tree_1d, tree_index++, angle);
             }
             break;
           }
@@ -701,7 +699,7 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
           }
           case SIMEDGE_CREASE:
           case SIMEDGE_BEVEL: {
-            const float *value = BM_ELEM_CD_GET_FLOAT_P(edge, custom_data_offset);
+            const float value = BM_ELEM_CD_GET_FLOAT(edge, custom_data_offset);
             kdtree_1d_insert(tree_1d, tree_index++, value);
             break;
           }
@@ -1008,8 +1006,7 @@ static wmOperatorStatus similar_vert_select_exec(bContext *C, wmOperator *op)
     }
     else if (type == SIMVERT_CREASE) {
       if (!CustomData_has_layer_named(&bm->vdata, CD_PROP_FLOAT, "crease_vert")) {
-        float pos = 0.0f;
-        kdtree_1d_insert(tree_1d, tree_1d_index++, &pos);
+        kdtree_1d_insert(tree_1d, tree_1d_index++, 0.0f);
         continue;
       }
       cd_crease_offset = CustomData_get_offset_named(&bm->vdata, CD_PROP_FLOAT, "crease_vert");
@@ -1051,7 +1048,7 @@ static wmOperatorStatus similar_vert_select_exec(bContext *C, wmOperator *op)
             break;
           }
           case SIMVERT_CREASE: {
-            const float *value = BM_ELEM_CD_GET_FLOAT_P(vert, cd_crease_offset);
+            const float value = BM_ELEM_CD_GET_FLOAT(vert, cd_crease_offset);
             kdtree_1d_insert(tree_1d, tree_1d_index++, value);
             break;
           }

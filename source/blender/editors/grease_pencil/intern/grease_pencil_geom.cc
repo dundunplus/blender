@@ -187,7 +187,7 @@ int curve_merge_by_distance(const IndexRange points,
   KDTree_1d *tree = kdtree_1d_new(selection.size());
   /* The selection is an IndexMask of the points just in this curve. */
   selection.foreach_index([&](const int64_t i, const int64_t pos) {
-    kdtree_1d_insert(tree, pos, &distances[i - points.first()]);
+    kdtree_1d_insert(tree, pos, distances[i - points.first()]);
   });
   kdtree_1d_balance(tree);
 

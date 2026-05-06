@@ -83,6 +83,10 @@ void ShadingView::render()
 
   update_view();
 
+  /* Need to be set early for planar probe renderding (if using raycast node) and raycast nodes in
+   * deferred / forward pipelines. */
+  inst_.raytracing.thickness_parameters_setup(render_view_.winmat(), extent_);
+
   GPU_debug_group_begin(name_);
 
   /* Needs to be before planar_probes because it needs correct crypto-matte & render-pass buffers
@@ -349,12 +353,24 @@ void CaptureView::render_probes()
 {
   Framebuffer prepass_fb;
   View view = {"Capture.View"};
+
+  /* Any 90 degree FOV view will do it. */
+  float4x4 win_m4 = math::projection::perspective(-0.1f, 0.1f, -0.1f, 0.1f, 0.1f, 10.0f);
+  /* Check if uniform_data needs to be updated. */
+  int prev_extent = 0;
+
   while (const auto update_info = inst_.sphere_probes.probe_update_info_pop()) {
     GPU_debug_group_begin("Probe.Capture");
 
-    if (assign_if_different(inst_.pipelines.data.ray_type, RAY_TYPE_GLOSSY)) {
+    if (assign_if_different(inst_.pipelines.data.ray_type, RAY_TYPE_GLOSSY) ||
+        prev_extent != update_info->cube_target_extent)
+    {
+      /* Set correct thickness for raycast node in probe pipelines. */
+      inst_.raytracing.thickness_parameters_setup(win_m4, int2(update_info->cube_target_extent));
       inst_.uniform_data.push_update();
     }
+
+    prev_extent = update_info->cube_target_extent;
 
     int2 extent = int2(update_info->cube_target_extent);
     RenderBuffers &rbufs = inst_.render_buffers;

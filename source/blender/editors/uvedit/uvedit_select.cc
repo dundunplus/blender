@@ -6506,7 +6506,7 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
           continue;
         }
         float needle = get_uv_vert_needle(type, l->v, ob_m3, l, offsets);
-        kdtree_1d_insert(tree_1d, tree_index++, &needle);
+        kdtree_1d_insert(tree_1d, tree_index++, needle);
       }
     }
   }
@@ -6633,7 +6633,7 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
 
         float needle = get_uv_edge_needle(type, l->e, ob_m3, l, l->next, offsets);
         if (tree_1d) {
-          kdtree_1d_insert(tree_1d, tree_index++, &needle);
+          kdtree_1d_insert(tree_1d, tree_index++, needle);
         }
       }
     }
@@ -6773,7 +6773,7 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
 
       float needle = get_uv_face_needle(type, face, ob_index, ob_m3, offsets, material_remap);
       if (tree_1d) {
-        kdtree_1d_insert(tree_1d, tree_index++, &needle);
+        kdtree_1d_insert(tree_1d, tree_index++, needle);
       }
     }
   }
@@ -6901,7 +6901,7 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
       }
       float needle = get_uv_island_needle(type, &island, ob_m3, island.offsets);
       if (tree_1d) {
-        kdtree_1d_insert(tree_1d, tree_index++, &needle);
+        kdtree_1d_insert(tree_1d, tree_index++, needle);
       }
     }
   }

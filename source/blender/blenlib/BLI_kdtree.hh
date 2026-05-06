@@ -35,6 +35,24 @@ constexpr uint kd_node_unset = (uint(-1));
  */
 constexpr uint kd_node_root_is_init = (uint(-2));
 
+template<typename CoordT>
+inline typename KDTreeCoordTraits<CoordT>::ValueType axis_get(const CoordT &co, uint axis)
+{
+  return KDTreeCoordTraits<CoordT>::get(co, axis);
+}
+
+template<typename CoordT>
+inline typename KDTreeCoordTraits<CoordT>::ValueType distance_squared(const CoordT &a,
+                                                                      const CoordT &b)
+{
+  return math::distance_squared(a, b);
+}
+template<> inline float distance_squared<float>(const float &a, const float &b)
+{
+  const float d = a - b;
+  return d * d;
+}
+
 }  // namespace detail
 
 /**
@@ -116,14 +134,14 @@ static uint kdtree_balance(KDTreeNode<CoordT> *nodes, uint nodes_len, uint axis,
   median = nodes_len / 2;
 
   while (right > left) {
-    co = nodes[right].co[axis];
+    co = axis_get(nodes[right].co, axis);
     i = left - 1;
     j = right;
 
     while (true) {
-      while (nodes[++i].co[axis] < co) { /* pass */
+      while (axis_get(nodes[++i].co, axis) < co) { /* pass */
       }
-      while (nodes[--j].co[axis] > co && j > left) { /* pass */
+      while (axis_get(nodes[--j].co, axis) > co && j > left) { /* pass */
       }
 
       if (i >= j) {
@@ -220,9 +238,9 @@ inline int kdtree_find_nearest(const KDTree<CoordT> *tree,
 
   root = &nodes[tree->root];
   min_node = root;
-  min_dist = math::distance_squared(root->co, co);
+  min_dist = detail::distance_squared(root->co, co);
 
-  if (co[root->d] < root->co[root->d]) {
+  if (detail::axis_get(co, root->d) < detail::axis_get(root->co, root->d)) {
     if (root->right != detail::kd_node_unset) {
       stack[cur++] = root->right;
     }
@@ -242,13 +260,13 @@ inline int kdtree_find_nearest(const KDTree<CoordT> *tree,
   while (cur--) {
     const KDTreeNode<CoordT> *node = &nodes[stack[cur]];
 
-    cur_dist = node->co[node->d] - co[node->d];
+    cur_dist = detail::axis_get(node->co, node->d) - detail::axis_get(co, node->d);
 
     if (cur_dist < 0.0f) {
       cur_dist = -cur_dist * cur_dist;
 
       if (-cur_dist < min_dist) {
-        cur_dist = math::distance_squared(node->co, co);
+        cur_dist = detail::distance_squared(node->co, co);
         if (cur_dist < min_dist) {
           min_dist = cur_dist;
           min_node = node;
@@ -265,7 +283,7 @@ inline int kdtree_find_nearest(const KDTree<CoordT> *tree,
       cur_dist = cur_dist * cur_dist;
 
       if (cur_dist < min_dist) {
-        cur_dist = math::distance_squared(node->co, co);
+        cur_dist = detail::distance_squared(node->co, co);
         if (cur_dist < min_dist) {
           min_dist = cur_dist;
           min_node = node;
@@ -328,7 +346,7 @@ inline int kdtree_find_nearest_cb(const KDTree<CoordT> *tree,
   stack_len_capacity = int(ARRAY_SIZE(stack_default));
 
   const auto node_test_nearest = [&](const KDTreeNode<CoordT> *node) -> bool {
-    const float dist_sq = math::distance_squared((node)->co, co);
+    const auto dist_sq = detail::distance_squared((node)->co, co);
     if (dist_sq >= min_dist) {
       return false;
     }
@@ -353,7 +371,7 @@ inline int kdtree_find_nearest_cb(const KDTree<CoordT> *tree,
   while (cur--) {
     const KDTreeNode<CoordT> *node = &nodes[stack[cur]];
 
-    cur_dist = node->co[node->d] - co[node->d];
+    cur_dist = detail::axis_get(node->co, node->d) - detail::axis_get(co, node->d);
 
     if (cur_dist < 0.0f) {
       cur_dist = -cur_dist * cur_dist;
@@ -474,7 +492,7 @@ inline int kdtree_find_nearest_n_with_len_squared_cb(const KDTree<CoordT> *tree,
   detail::nearest_ordered_insert<CoordT>(
       r_nearest, &nearest_len, nearest_len_capacity, root->index, cur_dist, root->co);
 
-  if (co[root->d] < root->co[root->d]) {
+  if (detail::axis_get(co, root->d) < detail::axis_get(root->co, root->d)) {
     if (root->right != detail::kd_node_unset) {
       stack[cur++] = root->right;
     }
@@ -494,7 +512,7 @@ inline int kdtree_find_nearest_n_with_len_squared_cb(const KDTree<CoordT> *tree,
   while (cur--) {
     const KDTreeNode<CoordT> *node = &nodes[stack[cur]];
 
-    cur_dist = node->co[node->d] - co[node->d];
+    cur_dist = detail::axis_get(node->co, node->d) - detail::axis_get(co, node->d);
 
     if (cur_dist < 0.0f) {
       cur_dist = -cur_dist * cur_dist;
@@ -555,10 +573,10 @@ inline int kdtree_find_nearest_n(const KDTree<CoordT> *tree,
                                  KDTreeNearest<CoordT> r_nearest[],
                                  uint nearest_len_capacity)
 {
-  using ValueType = typename KDTree<CoordT>::ValueType;
-  constexpr int DimsNum = KDTree<CoordT>::DimsNum;
   return kdtree_find_nearest_n_with_len_squared_cb<CoordT>(
-      tree, co, r_nearest, nearest_len_capacity, math::distance_squared<ValueType, DimsNum>);
+      tree, co, r_nearest, nearest_len_capacity, [](const CoordT &a, const CoordT &b) {
+        return detail::distance_squared(a, b);
+      });
 }
 
 namespace detail {
@@ -639,12 +657,12 @@ inline int kdtree_range_search_with_len_squared_cb(const KDTree<CoordT> *tree,
   while (cur--) {
     const KDTreeNode<CoordT> *node = &nodes[stack[cur]];
 
-    if (co[node->d] + range < node->co[node->d]) {
+    if (detail::axis_get(co, node->d) + range < detail::axis_get(node->co, node->d)) {
       if (node->left != detail::kd_node_unset) {
         stack[cur++] = node->left;
       }
     }
-    else if (co[node->d] - range > node->co[node->d]) {
+    else if (detail::axis_get(co, node->d) - range > detail::axis_get(node->co, node->d)) {
       if (node->right != detail::kd_node_unset) {
         stack[cur++] = node->right;
       }
@@ -688,10 +706,10 @@ inline int kdtree_range_search(const KDTree<CoordT> *tree,
                                KDTreeNearest<CoordT> **r_nearest,
                                typename KDTree<CoordT>::ValueType range)
 {
-  using ValueType = typename KDTree<CoordT>::ValueType;
-  constexpr int DimsNum = KDTree<CoordT>::DimsNum;
   return kdtree_range_search_with_len_squared_cb<CoordT>(
-      tree, co, r_nearest, range, math::distance_squared<ValueType, DimsNum>);
+      tree, co, r_nearest, range, [](const CoordT &a, const CoordT &b) {
+        return detail::distance_squared(a, b);
+      });
 }
 
 /**
@@ -731,18 +749,18 @@ inline void kdtree_range_search_cb(const KDTree<CoordT> *tree,
   while (cur--) {
     const KDTreeNode<CoordT> *node = &nodes[stack[cur]];
 
-    if (co[node->d] + range < node->co[node->d]) {
+    if (detail::axis_get(co, node->d) + range < detail::axis_get(node->co, node->d)) {
       if (node->left != detail::kd_node_unset) {
         stack[cur++] = node->left;
       }
     }
-    else if (co[node->d] - range > node->co[node->d]) {
+    else if (detail::axis_get(co, node->d) - range > detail::axis_get(node->co, node->d)) {
       if (node->right != detail::kd_node_unset) {
         stack[cur++] = node->right;
       }
     }
     else {
-      dist_sq = math::distance_squared(node->co, co);
+      dist_sq = detail::distance_squared(node->co, co);
       if (dist_sq <= range_sq) {
         if (search_cb(node->index, node->co, dist_sq) == false) {
           break;
@@ -804,19 +822,19 @@ template<typename CoordT>
 static void deduplicate_recursive(const DeDuplicateParams<CoordT> *p, uint i)
 {
   const KDTreeNode<CoordT> *node = &p->nodes[i];
-  if (p->search_co[node->d] + p->range <= node->co[node->d]) {
+  if (axis_get(p->search_co, node->d) + p->range <= axis_get(node->co, node->d)) {
     if (node->left != detail::kd_node_unset) {
       deduplicate_recursive(p, node->left);
     }
   }
-  else if (p->search_co[node->d] - p->range >= node->co[node->d]) {
+  else if (axis_get(p->search_co, node->d) - p->range >= axis_get(node->co, node->d)) {
     if (node->right != detail::kd_node_unset) {
       deduplicate_recursive(p, node->right);
     }
   }
   else {
     if ((p->search != node->index) && (p->duplicates[node->index] == -1)) {
-      if (math::distance_squared(node->co, p->search_co) <= p->range_sq) {
+      if (distance_squared(node->co, p->search_co) <= p->range_sq) {
         p->duplicates[node->index] = int(p->search);
         *p->duplicates_found += 1;
       }
@@ -1051,10 +1069,10 @@ static int kdtree_node_cmp_deduplicate(const void *n0_p, const void *n1_p)
   const KDTreeNode<CoordT> *n0 = static_cast<const KDTreeNode<CoordT> *>(n0_p);
   const KDTreeNode<CoordT> *n1 = static_cast<const KDTreeNode<CoordT> *>(n1_p);
   for (uint j = 0; j < KDTree<CoordT>::DimsNum; j++) {
-    if (n0->co[j] < n1->co[j]) {
+    if (axis_get(n0->co, j) < axis_get(n1->co, j)) {
       return -1;
     }
-    if (n0->co[j] > n1->co[j]) {
+    if (axis_get(n0->co, j) > axis_get(n1->co, j)) {
       return 1;
     }
   }
@@ -1103,43 +1121,43 @@ template<typename CoordT> inline int kdtree_deduplicate(KDTree<CoordT> *tree)
 
 /** \} */
 
-constexpr inline auto kdtree_1d_new = kdtree_new<float1>;
+constexpr inline auto kdtree_1d_new = kdtree_new<float>;
 constexpr inline auto kdtree_2d_new = kdtree_new<float2>;
 constexpr inline auto kdtree_3d_new = kdtree_new<float3>;
 constexpr inline auto kdtree_4d_new = kdtree_new<float4>;
 
-constexpr inline auto kdtree_1d_free = kdtree_free<float1>;
+constexpr inline auto kdtree_1d_free = kdtree_free<float>;
 constexpr inline auto kdtree_2d_free = kdtree_free<float2>;
 constexpr inline auto kdtree_3d_free = kdtree_free<float3>;
 constexpr inline auto kdtree_4d_free = kdtree_free<float4>;
 
-constexpr inline auto kdtree_1d_balance = kdtree_balance<float1>;
+constexpr inline auto kdtree_1d_balance = kdtree_balance<float>;
 constexpr inline auto kdtree_2d_balance = kdtree_balance<float2>;
 constexpr inline auto kdtree_3d_balance = kdtree_balance<float3>;
 constexpr inline auto kdtree_4d_balance = kdtree_balance<float4>;
 
-constexpr inline auto kdtree_1d_insert = kdtree_insert<float1>;
+constexpr inline auto kdtree_1d_insert = kdtree_insert<float>;
 constexpr inline auto kdtree_2d_insert = kdtree_insert<float2>;
 constexpr inline auto kdtree_3d_insert = kdtree_insert<float3>;
 constexpr inline auto kdtree_4d_insert = kdtree_insert<float4>;
 
-constexpr inline auto kdtree_1d_find_nearest = kdtree_find_nearest<float1>;
+constexpr inline auto kdtree_1d_find_nearest = kdtree_find_nearest<float>;
 constexpr inline auto kdtree_2d_find_nearest = kdtree_find_nearest<float2>;
 constexpr inline auto kdtree_3d_find_nearest = kdtree_find_nearest<float3>;
 constexpr inline auto kdtree_4d_find_nearest = kdtree_find_nearest<float4>;
 
-constexpr inline auto kdtree_1d_find_nearest_n = kdtree_find_nearest_n<float1>;
+constexpr inline auto kdtree_1d_find_nearest_n = kdtree_find_nearest_n<float>;
 constexpr inline auto kdtree_2d_find_nearest_n = kdtree_find_nearest_n<float2>;
 constexpr inline auto kdtree_3d_find_nearest_n = kdtree_find_nearest_n<float3>;
 constexpr inline auto kdtree_4d_find_nearest_n = kdtree_find_nearest_n<float4>;
 
-constexpr inline auto kdtree_1d_range_search = kdtree_range_search<float1>;
+constexpr inline auto kdtree_1d_range_search = kdtree_range_search<float>;
 constexpr inline auto kdtree_2d_range_search = kdtree_range_search<float2>;
 constexpr inline auto kdtree_3d_range_search = kdtree_range_search<float3>;
 constexpr inline auto kdtree_4d_range_search = kdtree_range_search<float4>;
 
 template<typename Filter>
-constexpr inline auto kdtree_1d_find_nearest_cb = kdtree_find_nearest_cb<float1, Filter>;
+constexpr inline auto kdtree_1d_find_nearest_cb = kdtree_find_nearest_cb<float, Filter>;
 template<typename Filter>
 constexpr inline auto kdtree_2d_find_nearest_cb = kdtree_find_nearest_cb<float2, Filter>;
 template<typename Filter>
@@ -1148,7 +1166,7 @@ template<typename Filter>
 constexpr inline auto kdtree_4d_find_nearest_cb = kdtree_find_nearest_cb<float4, Filter>;
 
 template<typename Fn>
-constexpr inline auto kdtree_1d_range_search_cb = kdtree_range_search_cb<float1, Fn>;
+constexpr inline auto kdtree_1d_range_search_cb = kdtree_range_search_cb<float, Fn>;
 template<typename Fn>
 constexpr inline auto kdtree_2d_range_search_cb = kdtree_range_search_cb<float2, Fn>;
 template<typename Fn>
@@ -1156,13 +1174,13 @@ constexpr inline auto kdtree_3d_range_search_cb = kdtree_range_search_cb<float3,
 template<typename Fn>
 constexpr inline auto kdtree_4d_range_search_cb = kdtree_range_search_cb<float4, Fn>;
 
-constexpr inline auto kdtree_1d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float1>;
+constexpr inline auto kdtree_1d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float>;
 constexpr inline auto kdtree_2d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float2>;
 constexpr inline auto kdtree_3d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float3>;
 constexpr inline auto kdtree_4d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float4>;
 
 template<typename Func>
-constexpr inline auto kdtree_1d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float1, Func>;
+constexpr inline auto kdtree_1d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float, Func>;
 template<typename Func>
 constexpr inline auto kdtree_2d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float2, Func>;
 template<typename Func>
@@ -1170,14 +1188,14 @@ constexpr inline auto kdtree_3d_calc_duplicates_cb = kdtree_calc_duplicates_cb<f
 template<typename Func>
 constexpr inline auto kdtree_4d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float4, Func>;
 
-constexpr inline auto kdtree_1d_deduplicate = kdtree_deduplicate<float1>;
+constexpr inline auto kdtree_1d_deduplicate = kdtree_deduplicate<float>;
 constexpr inline auto kdtree_2d_deduplicate = kdtree_deduplicate<float2>;
 constexpr inline auto kdtree_3d_deduplicate = kdtree_deduplicate<float3>;
 constexpr inline auto kdtree_4d_deduplicate = kdtree_deduplicate<float4>;
 
 template<typename Func>
 constexpr inline auto kdtree_1d_find_nearest_n_with_len_squared_cb =
-    kdtree_find_nearest_n_with_len_squared_cb<float1, Func>;
+    kdtree_find_nearest_n_with_len_squared_cb<float, Func>;
 template<typename Func>
 constexpr inline auto kdtree_2d_find_nearest_n_with_len_squared_cb =
     kdtree_find_nearest_n_with_len_squared_cb<float2, Func>;
@@ -1190,7 +1208,7 @@ constexpr inline auto kdtree_4d_find_nearest_n_with_len_squared_cb =
 
 template<typename Func>
 constexpr inline auto kdtree_1d_range_search_with_len_squared_cb =
-    kdtree_range_search_with_len_squared_cb<float1, Func>;
+    kdtree_range_search_with_len_squared_cb<float, Func>;
 template<typename Func>
 constexpr inline auto kdtree_2d_range_search_with_len_squared_cb =
     kdtree_range_search_with_len_squared_cb<float2, Func>;
