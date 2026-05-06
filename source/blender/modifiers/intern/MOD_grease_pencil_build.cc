@@ -658,7 +658,10 @@ static void build_drawing(const GreasePencilBuildModifierData &mmd,
   }
 
   const float use_time_alignment = mmd.transition != MOD_GREASE_PENCIL_BUILD_TRANSITION_GROW ?
-                                       !mmd.time_alignment :
+                                       ((mmd.time_alignment ==
+                                         MOD_GREASE_PENCIL_BUILD_TIMEALIGN_START) ?
+                                            MOD_GREASE_PENCIL_BUILD_TIMEALIGN_END :
+                                            MOD_GREASE_PENCIL_BUILD_TIMEALIGN_START) :
                                        mmd.time_alignment;
   switch (mmd.mode) {
     default:
