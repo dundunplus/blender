@@ -169,6 +169,8 @@ const char *RealizeOnDomainOperation::get_realization_shader_name()
         return "compositor_realize_on_domain_float4x4";
       case ResultType::Menu:
         return "compositor_realize_on_domain_menu";
+      case ResultType::Quaternion:
+        return "compositor_realize_on_domain_bicubic_float4";
       case ResultType::String:
       case ResultType::Object:
       case ResultType::Image:
@@ -210,6 +212,8 @@ const char *RealizeOnDomainOperation::get_realization_shader_name()
         return "compositor_realize_on_domain_float4x4";
       case ResultType::Menu:
         return "compositor_realize_on_domain_menu";
+      case ResultType::Quaternion:
+        return "compositor_realize_on_domain_float4";
       case ResultType::String:
       case ResultType::Object:
       case ResultType::Image:
@@ -262,7 +266,8 @@ void RealizeOnDomainOperation::realize_on_domain_cpu(const float3x3 &transformat
                       int4,
                       bool,
                       float4x4,
-                      nodes::MenuValue>(
+                      nodes::MenuValue,
+                      math::Quaternion>(
           [&]<typename T>() { realize_on_domain<T>(input, output, transformation); });
 }
 

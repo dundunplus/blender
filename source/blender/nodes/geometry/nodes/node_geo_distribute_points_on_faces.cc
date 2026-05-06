@@ -230,23 +230,15 @@ BLI_NOINLINE static void update_elimination_mask_for_close_points(
       continue;
     }
 
-    struct CallbackData {
-      int index;
-      MutableSpan<bool> elimination_mask;
-    } callback_data = {i, elimination_mask};
-
-    kdtree_3d_range_search_cb(
-        kdtree,
-        positions[i],
-        minimum_distance,
-        [](void *user_data, int index, const float3 & /*co*/, float /*dist_sq*/) {
-          CallbackData &callback_data = *static_cast<CallbackData *>(user_data);
-          if (index != callback_data.index) {
-            callback_data.elimination_mask[index] = true;
-          }
-          return true;
-        },
-        &callback_data);
+    kdtree_range_search_cb<float3>(kdtree,
+                                   positions[i],
+                                   minimum_distance,
+                                   [&](int index, const float3 & /*co*/, float /*dist_sq*/) {
+                                     if (index != i) {
+                                       elimination_mask[index] = true;
+                                     }
+                                     return true;
+                                   });
   }
 }
 

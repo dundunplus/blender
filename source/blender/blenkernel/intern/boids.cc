@@ -38,23 +38,21 @@
 #include "RNA_enum_types.hh"
 
 namespace blender {
-
-static float len_squared_v3v3_with_normal_bias(const float3 &co_search,
-                                               const float3 &co_test,
-                                               const void *user_data)
+static auto len_squared_v3v3_with_normal_bias_fn(const float3 &normal)
 {
-  const float *normal = static_cast<const float *>(user_data);
-  float d[3], dist;
+  return [=](const float3 &co_search, const float3 &co_test) -> float {
+    float d[3], dist;
 
-  sub_v3_v3v3(d, co_test, co_search);
+    sub_v3_v3v3(d, co_test, co_search);
 
-  dist = len_squared_v3(d);
+    dist = len_squared_v3(d);
 
-  /* Avoid head-on collisions. */
-  if (dot_v3v3(d, normal) < 0.0f) {
-    dist *= 10.0f;
-  }
-  return dist;
+    /* Avoid head-on collisions. */
+    if (dot_v3v3(d, normal) < 0.0f) {
+      dist *= 10.0f;
+    }
+    return dist;
+  };
 }
 
 struct BoidValues {
@@ -289,13 +287,12 @@ static bool rule_avoid_collision(BoidRule *rule,
 
   /* Check boids in their own system. */
   if (acbr->options & BRULE_ACOLL_WITH_BOIDS) {
-    neighbors = kdtree_3d_range_search_with_len_squared_cb(bbd->sim->psys->tree,
-                                                           pa->prev_state.co,
-                                                           &ptn,
-                                                           acbr->look_ahead *
-                                                               len_v3(pa->prev_state.vel),
-                                                           len_squared_v3v3_with_normal_bias,
-                                                           pa->prev_state.ave);
+    neighbors = kdtree_range_search_with_len_squared_cb<float3>(
+        bbd->sim->psys->tree,
+        pa->prev_state.co,
+        &ptn,
+        acbr->look_ahead * len_v3(pa->prev_state.vel),
+        len_squared_v3v3_with_normal_bias_fn(float3(pa->prev_state.ave)));
     if (neighbors > 1) {
       for (n = 1; n < neighbors; n++) {
         copy_v3_v3(co1, pa->prev_state.co);
@@ -344,13 +341,12 @@ static bool rule_avoid_collision(BoidRule *rule,
 
     if (epsys) {
       BLI_assert(epsys->tree != nullptr);
-      neighbors = kdtree_3d_range_search_with_len_squared_cb(epsys->tree,
-                                                             pa->prev_state.co,
-                                                             &ptn,
-                                                             acbr->look_ahead *
-                                                                 len_v3(pa->prev_state.vel),
-                                                             len_squared_v3v3_with_normal_bias,
-                                                             pa->prev_state.ave);
+      neighbors = kdtree_range_search_with_len_squared_cb<float3>(
+          epsys->tree,
+          pa->prev_state.co,
+          &ptn,
+          acbr->look_ahead * len_v3(pa->prev_state.vel),
+          len_squared_v3v3_with_normal_bias_fn(float3(pa->prev_state.ave)));
 
       if (neighbors > 0) {
         for (n = 0; n < neighbors; n++) {
@@ -453,12 +449,12 @@ static bool rule_flock(BoidRule * /*rule*/,
 {
   KDTreeNearest_3d ptn[11];
   float vec[3] = {0.0f, 0.0f, 0.0f}, loc[3] = {0.0f, 0.0f, 0.0f};
-  int neighbors = kdtree_3d_find_nearest_n_with_len_squared_cb(bbd->sim->psys->tree,
-                                                               pa->state.co,
-                                                               ptn,
-                                                               ARRAY_SIZE(ptn),
-                                                               len_squared_v3v3_with_normal_bias,
-                                                               pa->prev_state.ave);
+  int neighbors = kdtree_find_nearest_n_with_len_squared_cb<float3>(
+      bbd->sim->psys->tree,
+      pa->state.co,
+      ptn,
+      ARRAY_SIZE(ptn),
+      len_squared_v3v3_with_normal_bias_fn(float3(pa->prev_state.ave)));
   int n;
   bool ret = false;
 

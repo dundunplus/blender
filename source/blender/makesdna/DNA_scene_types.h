@@ -1046,7 +1046,7 @@ struct RenderData {
   struct CurveMapping mblur_shutter_curve;
 
   /** Device to use for compositor engine. */
-  eCompositorDevice compositor_device = SCE_COMPOSITOR_DEVICE_CPU;
+  eCompositorDevice compositor_device = SCE_COMPOSITOR_DEVICE_GPU;
 
   /** Precision used by the GPU execution of the compositor tree. */
   eCompositorPrecision compositor_precision = SCE_COMPOSITOR_PRECISION_AUTO;

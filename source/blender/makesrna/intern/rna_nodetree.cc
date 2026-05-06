@@ -3275,7 +3275,7 @@ static const EnumPropertyItem *rna_ShaderNodeMix_data_type_itemf(bContext * /*C*
     const eNodeSocketDatatype data_type = eNodeSocketDatatype(item->value);
     if (data_type == SOCK_ROTATION) {
       const bNodeTree *tree = reinterpret_cast<const bNodeTree *>(ptr->owner_id);
-      if (tree->type == NTREE_GEOMETRY) {
+      if (ELEM(tree->type, NTREE_GEOMETRY, NTREE_COMPOSIT)) {
         return true;
       }
     }

@@ -432,6 +432,8 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   scene->r.im_format.exr_flag |= R_IMF_EXR_FLAG_MULTIPART;
   scene->r.bake.im_format.exr_flag |= R_IMF_EXR_FLAG_MULTIPART;
 
+  scene->r.compositor_device = SCE_COMPOSITOR_DEVICE_GPU;
+
   /* Don't enable compositing nodes. */
   if (scene->nodetree) {
     bke::node_tree_free_embedded_tree(scene->nodetree);
