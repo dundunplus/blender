@@ -809,37 +809,61 @@ def write_indented_lines(ident, fn, text, strip=True):
             fn(ident + l + "\n")
 
 
-def pyfunc_is_inherited_method(py_func, identifier):
-    assert type(py_func) == MethodType
-    # Exclude Mix-in classes (after the first), because these don't get their own documentation.
-    cls = py_func.__self__
-    if (py_func_base := getattr(cls.__base__, identifier, None)) is not None:
-        if type(py_func_base) == MethodType:
-            if py_func.__func__ == py_func_base.__func__:
-                return True
-        elif type(py_func_base) == bpy.types.bpy_func:
-            return True
+def pyfunc_owner_class(py_func, is_class, struct):
+    """
+    Return the class ``py_func`` is accessed through, or None when undetermined.
+
+    This is the binding class (``__self__`` for bound methods,
+    the RNA struct's Python class for plain functions reached via an RNA struct),
+    not necessarily the class that defines ``py_func`` - inherited methods return the subclass.
+    """
+    if type(py_func) == MethodType and isinstance(py_func.__self__, type):
+        return py_func.__self__
+    if is_class and struct is not None and type(py_func) == FunctionType:
+        return struct.py_class
+    return None
+
+
+def pyfunc_is_inherited_method(py_class, py_func, identifier):
+    """
+    Test if ``py_func`` on py_class is shadowed on ``py_class.__base__``.
+
+    Only the immediate base is checked. Mix-in methods
+    (e.g. ``_GenericUI.append`` surfaced as ``Menu.append``)
+    survive because RNA bases come first by convention, so the mix-in is never ``__base__``.
+    """
+    assert isinstance(py_class, type)
+    assert type(py_func) in (MethodType, FunctionType)
+    base = py_class.__base__
+    if base is None or base is object:
+        return False
+    base_attr = getattr(base, identifier, None)
+    if base_attr is None:
+        return False
+    own_underlying = getattr(py_func, "__func__", py_func)
+    base_underlying = getattr(base_attr, "__func__", base_attr)
+    if base_underlying is own_underlying:
+        return True
+    if isinstance(base_attr, bpy.types.bpy_func):
+        return True
     return False
 
 
-def pyfunc2sphinx(ident, fw, module_name, type_name, identifier, py_func, is_class=True):
+def pyfunc2sphinx(ident, fw, module_name, type_name, identifier, py_func, *, struct, is_class=True):
     """
     function or class method to sphinx
     """
 
-    if type(py_func) == MethodType:
-        # Including methods means every operators "poll" function example
-        # would be listed in documentation which isn't useful.
-        #
-        # However, excluding all of them is also incorrect as it means class methods defined
-        # in `_bpy_types.py` for example are excluded, making some utility functions entirely hidden.
-        if (bl_rna := getattr(py_func.__self__, "bl_rna", None)) is not None:
-            if bl_rna.functions.get(identifier) is not None:
-                return
-        del bl_rna
-
-        # Only inline the method if it's not inherited from another class.
-        if pyfunc_is_inherited_method(py_func, identifier):
+    if (py_class := pyfunc_owner_class(py_func, is_class, struct)) is not None:
+        # Skip RNA-backed methods - docs come from the RNA definition.
+        # Including them would list every operator's `poll` example (and similar)
+        # in the docs which isn't useful. Excluding all methods would over-reach
+        # however, hiding utility methods defined in `_bpy_types.py`.
+        bl_rna = getattr(py_class, "bl_rna", None)
+        if bl_rna is not None and bl_rna.functions.get(identifier) is not None:
+            return
+        # Skip inherited methods - docs appear on the defining base.
+        if pyfunc_is_inherited_method(py_class, py_func, identifier):
             return
 
     arg_str = str(inspect.signature(py_func))
@@ -1117,7 +1141,7 @@ def pymodule2sphinx(basepath, module_name, module, title, module_all_extra):
             continue
 
         if value_type == FunctionType:
-            pyfunc2sphinx("", fw, module_name, None, attribute, value, is_class=False)
+            pyfunc2sphinx("", fw, module_name, None, attribute, value, struct=None, is_class=False)
         # Both the same at the moment but to be future proof.
         elif value_type in {types.BuiltinMethodType, types.BuiltinFunctionType}:
             # NOTE: can't get args from these, so dump the string as is
@@ -1196,7 +1220,7 @@ def pyclass2sphinx(fw, module_name, type_name, value, write_class_examples):
     # Needed for pure Python classes.
     for key, descr in descr_items:
         if type(descr) == FunctionType:
-            pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, is_class=True)
+            pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, struct=None, is_class=True)
 
     for key, descr in descr_items:
         if type(descr) == MethodDescriptorType:
@@ -1210,7 +1234,7 @@ def pyclass2sphinx(fw, module_name, type_name, value, write_class_examples):
     for key, descr in descr_items:
         if type(descr) == classmethod:
             descr = getattr(value, key)
-            pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, is_class=True)
+            pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, struct=None, is_class=True)
 
     for key, descr in descr_items:
         if type(descr) == StaticMethodType:
@@ -1222,7 +1246,7 @@ def pyclass2sphinx(fw, module_name, type_name, value, write_class_examples):
                 fw("\n")
             else:
                 # Python-defined static methods need signature extraction.
-                pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, is_class=True)
+                pyfunc2sphinx("   ", fw, module_name, type_name, key, descr, struct=None, is_class=True)
 
     fw("\n\n")
 
@@ -1841,7 +1865,7 @@ def pyrna2sphinx(basepath):
         py_func = None
 
         for identifier, py_func in py_funcs:
-            pyfunc2sphinx("   ", fw, "bpy.types", struct_id, identifier, py_func, is_class=True)
+            pyfunc2sphinx("   ", fw, "bpy.types", struct_id, identifier, py_func, struct=struct, is_class=True)
         del py_funcs, py_func
 
         py_funcs = struct.get_py_c_functions()
