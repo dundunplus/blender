@@ -26,8 +26,7 @@ void main()
   uint2 tile_coord = unpackUvec2x16(tiles_coord_buf[gl_WorkGroupID.x]);
   int2 texel = int2(gl_LocalInvocationID.xy + tile_coord * tile_size);
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.trace_pixel_scale +
-                       uniform_buf.raytrace.trace_pixel_offset;
+  int2 texel_fullres = texel * raytrace_buf.trace_pixel_scale + raytrace_buf.trace_pixel_offset;
 
   /* Check if texel is out of bounds,
    * so we can utilize fast texture functions and early-out if not. */
@@ -39,7 +38,7 @@ void main()
   float roughness = closure_apparent_roughness_get(cl);
 
   float depth = reverse_z::read(texelFetch(depth_tx, texel_fullres, 0).r);
-  float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
 
   float4 ray_data_im = imageLoadFast(ray_data_img, texel);
   float ray_pdf_inv = ray_data_im.w;

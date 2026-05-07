@@ -1275,6 +1275,11 @@ void ShadowModule::ShadowView::compute_visibility(ObjectBoundsBuf &bounds,
 
 void ShadowModule::set_view(View &view, int2 extent)
 {
+  data_.film_pixel_radius = screen_pixel_radius(view.wininv(), view.is_persp(), extent);
+}
+
+void ShadowModule::render(View &view, int2 extent)
+{
   if (enabled_ == false) {
     /* All lights have been tagged to have no shadow. */
     return;
@@ -1287,9 +1292,6 @@ void ShadowModule::set_view(View &view, int2 extent)
   dispatch_depth_scan_size_ = int3(math::divide_ceil(extent, int2(SHADOW_DEPTH_SCAN_GROUP_SIZE)),
                                    1);
   max_view_per_tilemap_ = max_view_per_tilemap();
-
-  data_.film_pixel_radius = screen_pixel_radius(view.wininv(), view.is_persp(), extent);
-  inst_.uniform_data.push_update();
 
   usage_tag_fb_resolution_ = math::divide_ceil(extent, int2(std::exp2(usage_tag_fb_lod_)));
   usage_tag_fb.ensure(usage_tag_fb_resolution_);

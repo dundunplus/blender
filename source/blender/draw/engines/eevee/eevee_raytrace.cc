@@ -558,7 +558,7 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
 
   /* TODO(fclem): Eventually all uniform data is setup here. */
 
-  inst_.uniform_data.push_update();
+  inst_.uniform_data.raytrace.push_update();
 
   RayTraceResult result;
 
@@ -684,7 +684,7 @@ RayTraceResultTexture RayTraceModule::trace(int closure_index,
   data_.full_resolution_inv = 1.0f / float2(extent);
   data_.skip_denoise = !use_spatial_denoise;
   data_.closure_index = closure_index;
-  inst_.uniform_data.push_update();
+  inst_.uniform_data.raytrace.push_update();
 
   /* Ray setup. */
   raytrace_tracing_dispatch_buf_.clear_to_zero();

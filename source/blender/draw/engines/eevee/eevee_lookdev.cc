@@ -452,7 +452,7 @@ void LookdevModule::draw(View &view)
   inst_.sphere_probes.set_view(view);
 
   if (assign_if_different(inst_.pipelines.data.use_monochromatic_transmittance, bool32_t(true))) {
-    inst_.uniform_data.push_update();
+    inst_.uniform_data.pipeline.push_update();
   }
 
   for (Sphere &sphere : spheres_) {

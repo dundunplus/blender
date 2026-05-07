@@ -46,14 +46,13 @@ void main()
     return;
   }
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.trace_pixel_scale +
-                       uniform_buf.raytrace.trace_pixel_offset;
+  int2 texel_fullres = texel * raytrace_buf.trace_pixel_scale + raytrace_buf.trace_pixel_offset;
 
   gbuffer::Header gbuf_header = gbuffer::read_header(texel_fullres);
   ClosureType closure_type = gbuffer::mode_to_closure_type(gbuf_header.bin_type(closure_index));
 
   float depth = reverse_z::read(texelFetch(depth_tx, texel_fullres, 0).r);
-  float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
 
   float3 P = drw_point_screen_to_world(float3(uv, depth));
   float3 V = drw_world_incident_vector(P);
@@ -91,7 +90,7 @@ void main()
    * index. Another idea is to put both HiZ buffer in the same texture and dynamically access one
    * or the other. But that might also impact performance. */
   if (!closure_has_transmission(closure_type)) {
-    hit = raytrace_screen(uniform_buf.raytrace,
+    hit = raytrace_screen(raytrace_buf,
                           uniform_buf.hiz,
                           hiz_front_tx,
                           rand_trace,
@@ -102,7 +101,7 @@ void main()
     if (hit.valid) {
       float3 hit_P = transform_point(drw_view().viewinv, hit.v_hit_P);
       /* TODO(@fclem): Split matrix multiply for precision. */
-      float2 history_ndc_hit_P = project_point(uniform_buf.raytrace.history_persmat, hit_P).xy;
+      float2 history_ndc_hit_P = project_point(raytrace_buf.history_persmat, hit_P).xy;
       /* Make sure to tag hits that _were_ out of view as no hit. Otherwise the history is sampled
        * with clamp to border mode, which can introduce too much energy if the border pixels are
        * bright. */
@@ -112,19 +111,19 @@ void main()
 
       /* Fetch radiance at hit-point. */
       radiance = raytrace_sample_screen(
-          radiance_front_tx, uniform_buf.raytrace, hit, roughness, history_ss_hit_P);
+          radiance_front_tx, raytrace_buf, hit, roughness, history_ss_hit_P);
 
       if (hit.hit_backface) {
-        radiance *= uniform_buf.raytrace.backface_hit_scale;
+        radiance *= raytrace_buf.backface_hit_scale;
 
-        if (!uniform_buf.raytrace.use_backface_hit) {
+        if (!raytrace_buf.use_backface_hit) {
           hit.valid = false;
         }
       }
     }
   }
   else if (trace_refraction) {
-    hit = raytrace_screen(uniform_buf.raytrace,
+    hit = raytrace_screen(raytrace_buf,
                           uniform_buf.hiz,
                           hiz_back_tx,
                           rand_trace,
@@ -135,7 +134,7 @@ void main()
     if (hit.valid) {
       /* Fetch radiance at hit-point. */
       radiance = raytrace_sample_screen(
-          radiance_back_tx, uniform_buf.raytrace, hit, roughness, hit.ss_hit_P.xy);
+          radiance_back_tx, raytrace_buf, hit, roughness, hit.ss_hit_P.xy);
     }
   }
 

@@ -337,9 +337,9 @@ ResultT eval(ScreenThicknessParameters thickness_params,
         /* If we are tracing backward, the angles are negative. Swizzle to keep correct order. */
         theta = (side == 0) ? theta.xy : -theta.yx;
 
-        const float2 sample_uv_data = sample_uv * uniform_buf.raytrace.fast_gi_uv_scale;
+        const float2 sample_uv_data = sample_uv * raytrace_buf.fast_gi_uv_scale;
         /* Need to account for LOD0 of radiance texture being the tracing resolution. */
-        float lod_data = lod - uniform_buf.raytrace.fast_gi_lod_bias;
+        float lod_data = lod - raytrace_buf.fast_gi_lod_bias;
 
         float3 radiance = sample_radiance<ResultT>(screen_radiance_tx, sample_uv_data, lod_data);
         /* Take emitter surface normal into consideration. */
@@ -350,7 +350,7 @@ ResultT eval(ScreenThicknessParameters thickness_params,
         /* Discard back-facing samples. */
         float facing = dot(normal, -vL_front);
         if (facing < 0.0f) {
-          radiance *= uniform_buf.raytrace.backface_hit_scale;
+          radiance *= raytrace_buf.backface_hit_scale;
         }
         float facing_weight = abs(facing);
 
@@ -463,8 +463,8 @@ struct SampleInput {
                           float2 sample_uv,
                           int2 sample_offset) const
   {
-    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.fast_gi_resolution_scale +
-                                uniform_buf.raytrace.fast_gi_resolution_bias;
+    int2 sample_texel_fullres = sample_texel * raytrace_buf.fast_gi_resolution_scale +
+                                raytrace_buf.fast_gi_resolution_bias;
     float sample_depth = texelFetch(hiz_tx, sample_texel_fullres, 0).r;
 
     bool is_valid;
@@ -492,10 +492,9 @@ struct SampleInput {
                           int2 sample_offset) const
   {
     int2 sample_texel = center_texel + sample_offset;
-    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.fast_gi_resolution_scale +
-                                uniform_buf.raytrace.fast_gi_resolution_bias;
-    float2 sample_uv = (float2(sample_texel_fullres) + 0.5f) *
-                       uniform_buf.raytrace.full_resolution_inv;
+    int2 sample_texel_fullres = sample_texel * raytrace_buf.fast_gi_resolution_scale +
+                                raytrace_buf.fast_gi_resolution_bias;
+    float2 sample_uv = (float2(sample_texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
 
     float sample_depth = reverse_z::read(texelFetch(depth_tx, sample_texel_fullres, 0).r);
 
@@ -593,8 +592,8 @@ void setup([[global_invocation_id]] const uint3 global_id,
            [[resource_table]] Setup &srt)
 {
   int2 texel = int2(global_id.xy);
-  int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
-                       uniform_buf.raytrace.fast_gi_resolution_bias;
+  int2 texel_fullres = texel * raytrace_buf.fast_gi_resolution_scale +
+                       raytrace_buf.fast_gi_resolution_bias;
 
   /* Avoid loading texels outside texture range. */
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
@@ -673,7 +672,7 @@ void setup([[global_invocation_id]] const uint3 global_id,
   float depth = reverse_z::read(texelFetch(srt.depth_tx, texel_fullres, 0).r);
   float3 P = drw_point_screen_to_world(float3(uv, depth));
 
-  float3 ssP_prev = drw_ndc_to_screen(project_point(uniform_buf.raytrace.history_persmat, P));
+  float3 ssP_prev = drw_ndc_to_screen(project_point(raytrace_buf.history_persmat, P));
 
   float4 radiance = textureLod(srt.in_radiance_tx, ssP_prev.xy, 0.0f);
   radiance = colorspace::brightness_clamp_max(radiance, uniform_buf.clamp.surface_indirect);
@@ -762,8 +761,8 @@ void scan([[work_group_id]] const uint3 group_id,
   uint2 tile_coord = unpackUvec2x16(tiles.tiles_coord_buf[group_id.x]);
   int2 texel = int2(local_id.xy + tile_coord * tile_size);
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
-                       uniform_buf.raytrace.fast_gi_resolution_bias;
+  int2 texel_fullres = texel * raytrace_buf.fast_gi_resolution_scale +
+                       raytrace_buf.fast_gi_resolution_bias;
 
   /* Avoid tracing the outside border if dispatch is too big. */
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
@@ -783,7 +782,7 @@ void scan([[work_group_id]] const uint3 group_id,
     return;
   }
 
-  float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
   float depth = texelFetch(hiz_tx, texel_fullres, 0).r;
   float3 vP = drw_point_screen_to_view(float3(uv, depth));
   float3 vN = texelFetch(srt.screen_normal_tx, texel, 0).rgb * 2.0f - 1.0f;
@@ -792,7 +791,7 @@ void scan([[work_group_id]] const uint3 group_id,
   noise = fract(noise + sampling_rng_3D_get(SAMPLING_AO_U).xyzx);
 
   SphericalHarmonicL1<float4> result = eevee::fast_gi::eval<SphericalHarmonicL1<float4>>(
-      uniform_buf.raytrace.fast_gi_thickness,
+      raytrace_buf.fast_gi_thickness,
       hiz_tx,
       srt.screen_radiance_tx,
       srt.screen_normal_tx,
@@ -836,8 +835,8 @@ void denoise([[work_group_id]] const uint3 group_id,
   int2 texel = int2(local_id.xy + tile_coord * tile_size);
 
   float2 texel_size = 1.0f / float2(textureSize(sh_in.fast_gi_radiance_0_tx, 0).xy);
-  int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
-                       uniform_buf.raytrace.fast_gi_resolution_bias;
+  int2 texel_fullres = texel * raytrace_buf.fast_gi_resolution_scale +
+                       raytrace_buf.fast_gi_resolution_bias;
 
   bool is_valid;
   float center_depth = texelFetch(hiz_tx, texel_fullres, 0).r;
@@ -908,8 +907,8 @@ void resolve([[work_group_id]] const uint3 group_id,
   uint2 tile_coord = unpackUvec2x16(tiles.tiles_coord_buf[group_id.x]);
   int2 texel_fullres = int2(local_id.xy + tile_coord * tile_size);
 
-  int2 texel = max(int2(0), texel_fullres - uniform_buf.raytrace.fast_gi_resolution_bias) /
-               uniform_buf.raytrace.fast_gi_resolution_scale;
+  int2 texel = max(int2(0), texel_fullres - raytrace_buf.fast_gi_resolution_bias) /
+               raytrace_buf.fast_gi_resolution_scale;
 
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
   if (any(greaterThanEqual(texel_fullres, extent))) {
@@ -922,19 +921,19 @@ void resolve([[work_group_id]] const uint3 group_id,
     return;
   }
 
-  float2 center_uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 center_uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
   float center_depth = reverse_z::read(texelFetch(sh_in.depth_tx, texel_fullres, 0).r);
   float3 center_P = drw_point_screen_to_world(float3(center_uv, center_depth));
   float3 center_N = gbuf.surface_N();
 
   SphericalHarmonicL1<float4> accum_sh;
-  if (uniform_buf.raytrace.fast_gi_resolution_scale == 1) {
+  if (raytrace_buf.fast_gi_resolution_scale == 1) {
     accum_sh = sh_in.load_sh(texel, true);
   }
   else {
-    float2 interp = float2(texel_fullres - texel * uniform_buf.raytrace.fast_gi_resolution_scale -
-                           uniform_buf.raytrace.fast_gi_resolution_bias) /
-                    float2(uniform_buf.raytrace.fast_gi_resolution_scale);
+    float2 interp = float2(texel_fullres - texel * raytrace_buf.fast_gi_resolution_scale -
+                           raytrace_buf.fast_gi_resolution_bias) /
+                    float2(raytrace_buf.fast_gi_resolution_scale);
     float4 interp4 = float4(interp, 1.0f - interp);
     float4 bilinear_weight = interp4.zxzx * interp4.wwyy;
 
@@ -981,8 +980,8 @@ void resolve([[work_group_id]] const uint3 group_id,
 
     float roughness = closure_apparent_roughness_get(cl);
 
-    float mix_fac = saturate(roughness * uniform_buf.raytrace.roughness_mask_scale -
-                             uniform_buf.raytrace.roughness_mask_bias);
+    float mix_fac = saturate(roughness * raytrace_buf.roughness_mask_scale -
+                             raytrace_buf.roughness_mask_bias);
     bool use_raytrace = mix_fac < 1.0f;
     bool use_fast_gi = mix_fac > 0.0f;
 
@@ -1103,7 +1102,7 @@ void occlusion_pass([[global_invocation_id]] const uint3 global_id, [[resource_t
   float4 noise = utility_tx_fetch(lut_tx, float2(texel), UTIL_BLUE_NOISE_LAYER);
   noise = fract(noise + sampling_rng_3D_get(SAMPLING_AO_U).xyzx);
 
-  float result = eevee::fast_gi::eval<float>(uniform_buf.raytrace.fast_gi_thickness,
+  float result = eevee::fast_gi::eval<float>(raytrace_buf.fast_gi_thickness,
                                              hiz_tx,
                                              srt.dummy_tx,
                                              srt.dummy_tx,

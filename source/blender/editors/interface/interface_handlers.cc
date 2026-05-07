@@ -5351,7 +5351,7 @@ static int do_but_TEXTBOX(bContext *C,
         int mx = event->xy[0];
         int my = event->xy[1];
         window_to_block(data->region, block, &mx, &my);
-        const float ymin = textbox->rect.ymin + textbox_padding_bottom() / block->aspect;
+        const float ymin = textbox->rect.ymin + textbox_padding_bottom();
         const float range = textbox->rect.ymax - ymin;
         const int scroll = round_fl_to_int(
             (range - (my - ymin)) / range *

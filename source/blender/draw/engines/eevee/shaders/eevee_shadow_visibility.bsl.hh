@@ -71,10 +71,7 @@ struct ViewVisibility {
 };
 
 [[compute, local_size(DRW_VISIBILITY_GROUP_SIZE)]]
-void comp_main([[resource_table]] ViewVisibility &srt,
-               [[global_invocation_id]] const uint3 global_id,
-               [[local_invocation_id]] const uint3 local_id,
-               [[local_invocation_index]] const uint local_index)
+void comp_main([[resource_table]] ViewVisibility &srt)
 {
   if (int(gl_GlobalInvocationID.x) >= srt.resource_len) {
     return;

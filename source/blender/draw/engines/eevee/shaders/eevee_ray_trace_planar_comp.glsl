@@ -42,8 +42,7 @@ void main()
     return;
   }
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.trace_pixel_scale +
-                       uniform_buf.raytrace.trace_pixel_offset;
+  int2 texel_fullres = texel * raytrace_buf.trace_pixel_scale + raytrace_buf.trace_pixel_offset;
 
   gbuffer::Header gbuf_header = gbuffer::read_header(texel_fullres);
   ClosureType closure_type = gbuffer::mode_to_closure_type(gbuf_header.bin_type(closure_index));
@@ -57,7 +56,7 @@ void main()
   float roughness = closure_apparent_roughness_get(cl);
 
   float depth = reverse_z::read(texelFetch(depth_tx, texel_fullres, 0).r);
-  float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
 
   float3 P = drw_point_screen_to_world(float3(uv, depth));
   float3 V = drw_world_incident_vector(P);
@@ -92,12 +91,12 @@ void main()
   ray_view.max_time = 1000.0f;
 
   ScreenTraceHitData hit = raytrace_planar(
-      uniform_buf.raytrace, planar_depth_tx, planar, rand_trace, ray_view);
+      raytrace_buf, planar_depth_tx, planar, rand_trace, ray_view);
 
   if (hit.valid) {
     /* Evaluate radiance at hit-point. */
     radiance = raytrace_sample_screen(
-        planar_radiance_tx, uniform_buf.raytrace, hit, roughness, hit.ss_hit_P.xy, planar_id);
+        planar_radiance_tx, raytrace_buf, hit, roughness, hit.ss_hit_P.xy, planar_id);
   }
   else {
     /* Using ray direction as geometric normal to bias the sampling position.

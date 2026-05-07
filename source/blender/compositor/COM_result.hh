@@ -735,7 +735,8 @@ BLI_INLINE_METHOD T Result::sample(const float2 &coordinates,
                        y_gradient,
                        sample_ewa_read_callback,
                        &sampling_data,
-                       output);
+                       output,
+                       extension_mode_x == Extension::Clip && extension_mode_y == Extension::Clip);
         break;
     }
 
