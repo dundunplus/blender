@@ -470,6 +470,8 @@ set(ZSTANDARD_COPYRIGHT "Copyright (c) 2016, Gregory Szorc. All rights reserved.
 set(AUTOPEP8_VERSION 2.3.1)
 # Needed by: `autopep8` (so the version doesn't change on rebuild).
 set(PYCODESTYLE_VERSION 2.13)
+# DocUtils Python source (to validate generated docs, not used by Blender at run-time).
+set(DOCUTILS_VERSION 0.22.4)
 # Build system for other packages (not used by Blender at run-time).
 set(MESON_VERSION 1.9.0)
 # Build time requirements for numpy and cython
