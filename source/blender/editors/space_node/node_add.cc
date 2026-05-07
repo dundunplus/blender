@@ -699,7 +699,7 @@ static wmOperatorStatus node_add_object_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  bNodeSocket *sock = bke::node_find_socket(*object_node, SOCK_IN, "Object");
+  bNodeSocket *sock = bke::node_find_socket(*object_node, SOCK_IN, "Object"_ustr);
   if (!sock) {
     BLI_assert_unreachable();
     return OPERATOR_CANCELLED;
@@ -786,7 +786,7 @@ static wmOperatorStatus node_add_collection_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  bNodeSocket *sock = bke::node_find_socket(*collection_node, SOCK_IN, "Collection");
+  bNodeSocket *sock = bke::node_find_socket(*collection_node, SOCK_IN, "Collection"_ustr);
   if (!sock) {
     BKE_report(op->reports, RPT_WARNING, "Could not find node collection socket");
     return OPERATOR_CANCELLED;

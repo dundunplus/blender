@@ -315,7 +315,7 @@ inline int kdtree_find_nearest(const KDTree<CoordT> *tree,
 }
 
 /**
- * A version of #kdtree_3d_find_nearest which runs a callback
+ * A version of #kdtree_find_nearest which runs a callback
  * to filter out values.
  *
  * \param filter_cb: Filter find results,
@@ -713,7 +713,7 @@ inline int kdtree_range_search(const KDTree<CoordT> *tree,
 }
 
 /**
- * A version of #kdtree_3d_range_search which runs a callback
+ * A version of #kdtree_range_search which runs a callback
  * instead of allocating an array.
  *
  * \param search_cb: Called for every node found in \a range,
@@ -802,7 +802,7 @@ template<typename CoordT> static Vector<int> kdtree_order(const KDTree<CoordT> *
 }
 
 /* -------------------------------------------------------------------- */
-/** \name kdtree_3d_calc_duplicates_fast
+/** \name kdtree_calc_duplicates_fast
  * \{ */
 
 template<typename CoordT> struct DeDuplicateParams {
@@ -925,7 +925,7 @@ inline int kdtree_calc_duplicates_fast(const KDTree<CoordT> *tree,
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name kdtree_3d_calc_duplicates_cb
+/** \name kdtree_calc_duplicates_cb
  * \{ */
 
 /**
@@ -1050,7 +1050,7 @@ inline int kdtree_calc_duplicates_cb(const KDTree<CoordT> *tree,
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name kdtree_3d_deduplicate
+/** \name kdtree_deduplicate
  * \{ */
 
 namespace detail {
@@ -1120,103 +1120,5 @@ template<typename CoordT> inline int kdtree_deduplicate(KDTree<CoordT> *tree)
 }
 
 /** \} */
-
-constexpr inline auto kdtree_1d_new = kdtree_new<float>;
-constexpr inline auto kdtree_2d_new = kdtree_new<float2>;
-constexpr inline auto kdtree_3d_new = kdtree_new<float3>;
-constexpr inline auto kdtree_4d_new = kdtree_new<float4>;
-
-constexpr inline auto kdtree_1d_free = kdtree_free<float>;
-constexpr inline auto kdtree_2d_free = kdtree_free<float2>;
-constexpr inline auto kdtree_3d_free = kdtree_free<float3>;
-constexpr inline auto kdtree_4d_free = kdtree_free<float4>;
-
-constexpr inline auto kdtree_1d_balance = kdtree_balance<float>;
-constexpr inline auto kdtree_2d_balance = kdtree_balance<float2>;
-constexpr inline auto kdtree_3d_balance = kdtree_balance<float3>;
-constexpr inline auto kdtree_4d_balance = kdtree_balance<float4>;
-
-constexpr inline auto kdtree_1d_insert = kdtree_insert<float>;
-constexpr inline auto kdtree_2d_insert = kdtree_insert<float2>;
-constexpr inline auto kdtree_3d_insert = kdtree_insert<float3>;
-constexpr inline auto kdtree_4d_insert = kdtree_insert<float4>;
-
-constexpr inline auto kdtree_1d_find_nearest = kdtree_find_nearest<float>;
-constexpr inline auto kdtree_2d_find_nearest = kdtree_find_nearest<float2>;
-constexpr inline auto kdtree_3d_find_nearest = kdtree_find_nearest<float3>;
-constexpr inline auto kdtree_4d_find_nearest = kdtree_find_nearest<float4>;
-
-constexpr inline auto kdtree_1d_find_nearest_n = kdtree_find_nearest_n<float>;
-constexpr inline auto kdtree_2d_find_nearest_n = kdtree_find_nearest_n<float2>;
-constexpr inline auto kdtree_3d_find_nearest_n = kdtree_find_nearest_n<float3>;
-constexpr inline auto kdtree_4d_find_nearest_n = kdtree_find_nearest_n<float4>;
-
-constexpr inline auto kdtree_1d_range_search = kdtree_range_search<float>;
-constexpr inline auto kdtree_2d_range_search = kdtree_range_search<float2>;
-constexpr inline auto kdtree_3d_range_search = kdtree_range_search<float3>;
-constexpr inline auto kdtree_4d_range_search = kdtree_range_search<float4>;
-
-template<typename Filter>
-constexpr inline auto kdtree_1d_find_nearest_cb = kdtree_find_nearest_cb<float, Filter>;
-template<typename Filter>
-constexpr inline auto kdtree_2d_find_nearest_cb = kdtree_find_nearest_cb<float2, Filter>;
-template<typename Filter>
-constexpr inline auto kdtree_3d_find_nearest_cb = kdtree_find_nearest_cb<float3, Filter>;
-template<typename Filter>
-constexpr inline auto kdtree_4d_find_nearest_cb = kdtree_find_nearest_cb<float4, Filter>;
-
-template<typename Fn>
-constexpr inline auto kdtree_1d_range_search_cb = kdtree_range_search_cb<float, Fn>;
-template<typename Fn>
-constexpr inline auto kdtree_2d_range_search_cb = kdtree_range_search_cb<float2, Fn>;
-template<typename Fn>
-constexpr inline auto kdtree_3d_range_search_cb = kdtree_range_search_cb<float3, Fn>;
-template<typename Fn>
-constexpr inline auto kdtree_4d_range_search_cb = kdtree_range_search_cb<float4, Fn>;
-
-constexpr inline auto kdtree_1d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float>;
-constexpr inline auto kdtree_2d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float2>;
-constexpr inline auto kdtree_3d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float3>;
-constexpr inline auto kdtree_4d_calc_duplicates_fast = kdtree_calc_duplicates_fast<float4>;
-
-template<typename Func>
-constexpr inline auto kdtree_1d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float, Func>;
-template<typename Func>
-constexpr inline auto kdtree_2d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float2, Func>;
-template<typename Func>
-constexpr inline auto kdtree_3d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float3, Func>;
-template<typename Func>
-constexpr inline auto kdtree_4d_calc_duplicates_cb = kdtree_calc_duplicates_cb<float4, Func>;
-
-constexpr inline auto kdtree_1d_deduplicate = kdtree_deduplicate<float>;
-constexpr inline auto kdtree_2d_deduplicate = kdtree_deduplicate<float2>;
-constexpr inline auto kdtree_3d_deduplicate = kdtree_deduplicate<float3>;
-constexpr inline auto kdtree_4d_deduplicate = kdtree_deduplicate<float4>;
-
-template<typename Func>
-constexpr inline auto kdtree_1d_find_nearest_n_with_len_squared_cb =
-    kdtree_find_nearest_n_with_len_squared_cb<float, Func>;
-template<typename Func>
-constexpr inline auto kdtree_2d_find_nearest_n_with_len_squared_cb =
-    kdtree_find_nearest_n_with_len_squared_cb<float2, Func>;
-template<typename Func>
-constexpr inline auto kdtree_3d_find_nearest_n_with_len_squared_cb =
-    kdtree_find_nearest_n_with_len_squared_cb<float3, Func>;
-template<typename Func>
-constexpr inline auto kdtree_4d_find_nearest_n_with_len_squared_cb =
-    kdtree_find_nearest_n_with_len_squared_cb<float4, Func>;
-
-template<typename Func>
-constexpr inline auto kdtree_1d_range_search_with_len_squared_cb =
-    kdtree_range_search_with_len_squared_cb<float, Func>;
-template<typename Func>
-constexpr inline auto kdtree_2d_range_search_with_len_squared_cb =
-    kdtree_range_search_with_len_squared_cb<float2, Func>;
-template<typename Func>
-constexpr inline auto kdtree_3d_range_search_with_len_squared_cb =
-    kdtree_range_search_with_len_squared_cb<float3, Func>;
-template<typename Func>
-constexpr inline auto kdtree_4d_range_search_with_len_squared_cb =
-    kdtree_range_search_with_len_squared_cb<float4, Func>;
 
 }  // namespace blender

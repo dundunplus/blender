@@ -1801,15 +1801,15 @@ std::optional<Mesh *> mesh_merge_by_distance_all(const Mesh &mesh,
 {
   Array<int> vert_dest_map(mesh.verts_num, OUT_OF_CONTEXT);
 
-  KDTree_3d *tree = kdtree_3d_new(selection.size());
+  KDTree<float3> *tree = kdtree_new<float3>(selection.size());
 
   const Span<float3> positions = mesh.vert_positions();
-  selection.foreach_index([&](const int64_t i) { kdtree_3d_insert(tree, i, positions[i]); });
+  selection.foreach_index([&](const int64_t i) { kdtree_insert<float3>(tree, i, positions[i]); });
 
-  kdtree_3d_balance(tree);
-  const int vert_kill_len = kdtree_3d_calc_duplicates_fast(
+  kdtree_balance<float3>(tree);
+  const int vert_kill_len = kdtree_calc_duplicates_fast<float3>(
       tree, merge_distance, true, vert_dest_map.data());
-  kdtree_3d_free(tree);
+  kdtree_free<float3>(tree);
 
   if (vert_kill_len == 0) {
     return std::nullopt;

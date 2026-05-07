@@ -9,9 +9,9 @@
  * \brief A KD-tree for nearest neighbor search.
  */
 
-#include <cstdint>
+#include "BLI_sys_types.h"
 
-#include "BLI_math_vector_types.hh"
+#include <cstdint>
 
 namespace blender {
 
@@ -72,15 +72,5 @@ template<typename CoordT> struct KDTreeNearest {
   ValueType dist;
   CoordT co;
 };
-
-using KDTree_1d = KDTree<float>;
-using KDTree_2d = KDTree<float2>;
-using KDTree_3d = KDTree<float3>;
-using KDTree_4d = KDTree<float4>;
-
-using KDTreeNearest_1d = KDTreeNearest<float>;
-using KDTreeNearest_2d = KDTreeNearest<float2>;
-using KDTreeNearest_3d = KDTreeNearest<float3>;
-using KDTreeNearest_4d = KDTreeNearest<float4>;
 
 }  // namespace blender

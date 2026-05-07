@@ -811,14 +811,14 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
     if (ma.nodetree) {
       for (bNode *node : ma.nodetree->all_nodes()) {
         if (node->type_legacy == SH_NODE_BSDF_PRINCIPLED) {
-          bNodeSocket *roughness_socket = bke::node_find_socket(*node, SOCK_IN, "Roughness");
+          bNodeSocket *roughness_socket = bke::node_find_socket(*node, SOCK_IN, "Roughness"_ustr);
           *version_cycles_node_socket_float_value(roughness_socket) = 0.5f;
-          bNodeSocket *emission = bke::node_find_socket(*node, SOCK_IN, "Emission Color");
+          bNodeSocket *emission = bke::node_find_socket(*node, SOCK_IN, "Emission Color"_ustr);
           copy_v4_fl(version_cycles_node_socket_rgba_value(emission), 1.0f);
           bNodeSocket *emission_strength = bke::node_find_socket(
-              *node, SOCK_IN, "Emission Strength");
+              *node, SOCK_IN, "Emission Strength"_ustr);
           *version_cycles_node_socket_float_value(emission_strength) = 0.0f;
-          bNodeSocket *ior = bke::node_find_socket(*node, SOCK_IN, "IOR");
+          bNodeSocket *ior = bke::node_find_socket(*node, SOCK_IN, "IOR"_ustr);
           *version_cycles_node_socket_float_value(ior) = 1.5f;
 
           node->custom1 = SHD_GLOSSY_MULTI_GGX;

@@ -1700,7 +1700,7 @@ bNode *create_proxy_implicit_input_node(const eNodeSocketDatatype socket_type,
     case SOCK_VECTOR:
       if (default_input == NODE_DEFAULT_INPUT_NORMAL_FIELD) {
         bNode *node = bke::node_add_node(&C, tree, "GeometryNodeInputNormal"_ustr);
-        bke::node_find_socket(*node, SOCK_OUT, "True Normal")->flag |= SOCK_HIDDEN;
+        bke::node_find_socket(*node, SOCK_OUT, "True Normal"_ustr)->flag |= SOCK_HIDDEN;
         return node;
       }
       if (default_input == NODE_DEFAULT_INPUT_POSITION_FIELD) {
@@ -1708,14 +1708,14 @@ bNode *create_proxy_implicit_input_node(const eNodeSocketDatatype socket_type,
       }
       if (default_input == NODE_DEFAULT_INPUT_HANDLE_LEFT_FIELD) {
         bNode *node = bke::node_add_node(&C, tree, "GeometryNodeInputCurveHandlePositions"_ustr);
-        bke::node_find_socket(*node, SOCK_IN, "Relative")->flag |= SOCK_HIDDEN;
-        bke::node_find_socket(*node, SOCK_OUT, "Right")->flag |= SOCK_HIDDEN;
+        bke::node_find_socket(*node, SOCK_IN, "Relative"_ustr)->flag |= SOCK_HIDDEN;
+        bke::node_find_socket(*node, SOCK_OUT, "Right"_ustr)->flag |= SOCK_HIDDEN;
         return node;
       }
       if (default_input == NODE_DEFAULT_INPUT_HANDLE_RIGHT_FIELD) {
         bNode *node = bke::node_add_node(&C, tree, "GeometryNodeInputCurveHandlePositions"_ustr);
-        bke::node_find_socket(*node, SOCK_IN, "Relative")->flag |= SOCK_HIDDEN;
-        bke::node_find_socket(*node, SOCK_OUT, "Left")->flag |= SOCK_HIDDEN;
+        bke::node_find_socket(*node, SOCK_IN, "Relative"_ustr)->flag |= SOCK_HIDDEN;
+        bke::node_find_socket(*node, SOCK_OUT, "Left"_ustr)->flag |= SOCK_HIDDEN;
         return node;
       }
       return nullptr;
