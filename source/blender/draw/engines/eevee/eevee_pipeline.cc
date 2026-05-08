@@ -1576,7 +1576,7 @@ void PlanarProbePipeline::render(View &view,
   inst_.volume_probes.set_view(view);
   inst_.sphere_probes.set_view(view);
 
-  inst_.gbuffer.bind(gbuffer_fb);
+  inst_.gbuffer.bind(gbuffer_fb, true);
   inst_.manager->submit(gbuffer_ps_, view);
 
   GPU_framebuffer_bind(combined_fb);

@@ -10,6 +10,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -2231,14 +2232,21 @@ IDProperty *node_create_asset_meta_data_properties(const bNodeTree &node_tree)
       }
       case SOCK_MENU: {
         const auto &value = node_interface::get_socket_data_as<bNodeSocketValueMenu>(*socket);
-        IDP_AddToGroup(input.get(), idprop::create("default_value", value.value).release());
         if (value.enum_items) {
+          if (std::ranges::any_of(value.enum_items->items, [&](const RuntimeNodeEnumItem &item) {
+                return item.identifier == value.value;
+              }))
+          {
+            /* Only add the default value property if it's contained in the enum items. */
+            IDP_AddToGroup(input.get(), idprop::create("default_value", value.value).release());
+          }
           auto items = idprop::create_group("items");
           for (const RuntimeNodeEnumItem &enum_item : value.enum_items->items) {
-            auto item = idprop::create_group(std::to_string(enum_item.identifier));
-            IDP_AddToGroup(item.get(), idprop::create("name", enum_item.name).release());
+            auto item = idprop::create_group(enum_item.name);
+            IDP_AddToGroup(item.get(), idprop::create("value", enum_item.identifier).release());
             IDP_AddToGroup(item.get(),
                            idprop::create("description", enum_item.description).release());
+            IDP_AddToGroup(items.get(), item.release());
           }
           IDP_AddToGroup(input.get(), items.release());
         }

@@ -15,6 +15,8 @@
 /* Allow using deprecated functionality for .blend file I/O. */
 #define DNA_DEPRECATED_ALLOW
 
+#include "DNA_ID.h"
+#include "DNA_action_types.h"
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_constraint_types.h"
@@ -818,11 +820,6 @@ void action_group_colors_set_from_posebone(bActionGroup *grp, const bke::PChanBo
 {
   BLI_assert_msg(pchanbone.pchan,
                  "cannot 'set action group colors from posebone' without a posebone");
-  if (!pchanbone.bone) {
-    /* pchan->bone is only set after leaving editmode. */
-    return;
-  }
-
   const BoneColor &color = animrig::ANIM_bonecolor_posebone_get(pchanbone);
   action_group_colors_set(grp, &color);
 }
@@ -851,11 +848,17 @@ void action_group_colors_set(bActionGroup *grp, const BoneColor *color)
 
 const Bone *bPoseChannel::bone_get(const bArmature &armature) const
 {
-  /* TODO(Sybren): actually implement this function via array lookup: */
-  // BLI_assert_msg(this->runtime.bone_index >= 0, "bone index should be known");
-  // return armature.bone_get_indexed(this->runtime.bone_index);
-  UNUSED_VARS(armature);
-  return this->bone;
+  if (this->runtime.bone_index == BONE_INDEX_UNKNOWN) {
+    /* This is a valid use case, as the nullptr is used to determine whether the bone exists. See
+     * BKE_pose_channels_clear_with_null_bone().
+     *
+     * In the future, this could be handled by another function (like `bool bone_exists(...)` while
+     * this one can then return a reference instead of a pointer. Currently that is not yet done,
+     * to keep the introduction of this function semantically close to the bPoseChannel::bone
+     * pointer it replaces. */
+    return nullptr;
+  }
+  return armature.bone_get_indexed(this->runtime.bone_index);
 }
 
 const Bone *bPoseChannel::bone_get(const Object &owner) const
@@ -864,8 +867,9 @@ const Bone *bPoseChannel::bone_get(const Object &owner) const
   BLI_assert(GS(owner.data->name) == ID_AR);
   bArmature *armature = id_cast<bArmature *>(owner.data);
 
-  /* TODO: check that the Object's pose bone index generation counter is the same as the
-   * Armature's. */
+  /* Check that the Object's pose bone index generation counter is the same as the Armature's, and
+   * rebuild when necessary. */
+  BKE_pose_ensure_bone_indices(owner);
 
   return this->bone_get(*armature);
 }
@@ -1940,7 +1944,6 @@ void BKE_pose_blend_read_data(BlendDataReader *reader, ID *id_owner, bPose *pose
     BKE_pose_channel_runtime_reset(&pchan.runtime);
     BKE_pose_channel_session_uid_generate(&pchan);
 
-    pchan.bone = nullptr;
     BLO_read_struct(reader, bPoseChannel, &pchan.parent);
     BLO_read_struct(reader, bPoseChannel, &pchan.child);
     BLO_read_struct(reader, bPoseChannel, &pchan.custom_tx);
@@ -1999,12 +2002,6 @@ void BKE_pose_blend_read_after_liblink(BlendLibReader *reader, Object *ob, bPose
   }
 
   for (bPoseChannel &pchan : pose->chanbase) {
-    pchan.bone = BKE_armature_find_bone_name(arm, pchan.name);
-
-    if (UNLIKELY(pchan.bone == nullptr)) {
-      rebuild = true;
-    }
-
     /* At some point in history, bones could have an armature object as custom shape, which caused
      * all kinds of wonderful issues. This is now avoided in RNA, but through the magic of linking
      * and editing the library file, the situation can still occur. Better to just reset the

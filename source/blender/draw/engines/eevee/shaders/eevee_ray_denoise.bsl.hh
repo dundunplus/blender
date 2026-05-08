@@ -350,7 +350,8 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
     /* The reference is wrong.
      * The ratio estimator is `pdf_local / pdf_ray` instead of `bsdf_local / pdf_ray`. */
     float pdf = closure_evaluate_pdf(closure, ray_direction, V, thickness);
-    float weight = pdf * ray_pdf_inv;
+    /* Avoid the weight exploding and summing to infinity. */
+    float weight = min(1e30f, pdf * ray_pdf_inv);
 
     float3 log_radiance = colorspace::log_from_scene_linear(ray_radiance.rgb);
 
