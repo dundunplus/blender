@@ -819,7 +819,7 @@ void BPy_init_modules(bContext *C)
   PyModule_AddObject(mod, "context", reinterpret_cast<PyObject *>(bpy_context_module));
 
   /* Register methods and property get/set for RNA types. */
-  BPY_rna_types_extend_capi();
+  BPY_rna_types_extend_capi(bpy_types);
 
 #define PYMODULE_ADD_METHOD(mod, meth) \
   PyModule_AddObject(mod, (meth)->ml_name, (PyObject *)PyCFunction_New(meth, mod))

@@ -272,6 +272,7 @@ else:
     EXCLUDE_MODULES = [
         "aud",
         "blf",
+        "blf.types",
         "bl_math",
         "imbuf",
         "imbuf.types",
@@ -646,6 +647,19 @@ _BPY_PROP_PYCAPI = "bpy_prop"
 _BPY_PROP_ARRAY_PYCAPI = "bpy_prop_array"
 _BPY_PROP_COLLECTION_PYCAPI = "bpy_prop_collection"
 _BPY_PROP_COLLECTION_IDPROP_PYCAPI = "bpy_prop_collection_idprop"
+_BPY_FUNC_CAPI = "bpy_func"
+_BPY_STRUCT_META_IDPROP_CAPI = "bpy_struct_meta_idprop"
+
+# All core C-API defined types in `bpy.types` that back the RNA wrapping itself.
+_BPY_TYPES_CORE_CAPI = frozenset((
+    _BPY_STRUCT_PYCAPI,
+    _BPY_PROP_PYCAPI,
+    _BPY_PROP_ARRAY_PYCAPI,
+    _BPY_PROP_COLLECTION_PYCAPI,
+    _BPY_PROP_COLLECTION_IDPROP_PYCAPI,
+    _BPY_FUNC_CAPI,
+    _BPY_STRUCT_META_IDPROP_CAPI,
+))
 
 _BPY_PROP_COLLECTION_ID = ":class:`{:s}`".format(_BPY_PROP_COLLECTION_PYCAPI) if USE_PYCAPI_TYPES else "collection"
 
@@ -2295,44 +2309,49 @@ def write_rst_ops_index(basepath):
         fw("   bpy.ops.*\n\n")
 
 
-def write_rst_geometry_set(basepath):
+def bpy_types_capi_iter():
     """
-    Write the RST file for ``bpy.types.GeometrySet``.
+    Yield names of C-API defined ``bpy.types.*`` classes (e.g. ``GeometrySet``).
+
+    These are classes added to ``bpy.types`` from C/C++ that are not RNA-derived
+    (i.e. not sub-classes of ``bpy_struct``, so they aren't picked up by :func:`pyrna2sphinx`.
     """
-    if 'bpy.types.GeometrySet' in EXCLUDE_MODULES:
-        return
+    for name in dir(bpy.types):
+        if name.startswith("_"):
+            continue
 
-    # Write the index.
-    filepath = os.path.join(basepath, "bpy.types.GeometrySet.rst")
-    with open(filepath, "w", encoding="utf-8") as fh:
-        fw = fh.write
-        fw(title_string("GeometrySet", "="))
-        # Needed for Sphinx cross-referencing.
-        fw(".. currentmodule:: bpy.types\n\n")
-        write_example_ref("", fw, "bpy.types.GeometrySet")
-        pyclass2sphinx(fw, "bpy.types", "GeometrySet", bpy.types.GeometrySet, False)
+        # Core C-API types in `bpy.types` that back the RNA wrapping itself
+        # (not user-facing C-API types).
+        if name in _BPY_TYPES_CORE_CAPI:
+            continue
+        attr = getattr(bpy.types, name)
+        if not isinstance(attr, type):
+            continue
+        # Skip RNA-derived types (sub-classes of `bpy_struct`).
+        if bpy_struct is not None and issubclass(attr, bpy_struct):
+            continue
+        yield name
 
-    EXAMPLE_SET_USED.add("bpy.types.GeometrySet")
 
-
-def write_rst_inline_shader_nodes(basepath):
+def write_rst_bpy_types_capi(basepath):
     """
-    Write the RST files for ``bpy.types.InlineShaderNodes``.
+    Write the RST files for C-API defined ``bpy.types.*`` classes.
     """
-    if 'bpy.types.InlineShaderNodes' in EXCLUDE_MODULES:
-        return
+    for type_name in bpy_types_capi_iter():
+        identifier = "bpy.types." + type_name
+        if identifier in EXCLUDE_MODULES:
+            continue
 
-    # Write the index.
-    filepath = os.path.join(basepath, "bpy.types.InlineShaderNodes.rst")
-    with open(filepath, "w", encoding="utf-8") as fh:
-        fw = fh.write
-        fw(title_string("InlineShaderNodes", "="))
-        # Needed for Sphinx cross-referencing.
-        fw(".. currentmodule:: bpy.types\n\n")
-        write_example_ref("", fw, "bpy.types.InlineShaderNodes")
-        pyclass2sphinx(fw, "bpy.types", "InlineShaderNodes", bpy.types.InlineShaderNodes, False)
+        filepath = os.path.join(basepath, identifier + ".rst")
+        with open(filepath, "w", encoding="utf-8") as fh:
+            fw = fh.write
+            fw(title_string(type_name, "="))
+            # Needed for Sphinx cross-referencing.
+            fw(".. currentmodule:: bpy.types\n\n")
+            write_example_ref("", fw, identifier)
+            pyclass2sphinx(fw, "bpy.types", type_name, getattr(bpy.types, type_name), False)
 
-    EXAMPLE_SET_USED.add("bpy.types.InlineShaderNodes")
+        EXAMPLE_SET_USED.add(identifier)
 
 
 def write_rst_msgbus(basepath):
@@ -2518,6 +2537,7 @@ def write_rst_importable_modules(basepath):
         # C_modules.
         "aud": "Audio System",
         "blf": "Font Drawing",
+        "blf.types": "Font Drawing Types",
         "imbuf": "Image Buffer",
         "imbuf.types": "Image Buffer Types",
         "gpu": "GPU Module",
@@ -2687,8 +2707,7 @@ def rna2sphinx(basepath):
     write_rst_types_index(basepath)         # `bpy.types`.
     write_rst_ops_index(basepath)           # `bpy.ops`.
     write_rst_msgbus(basepath)              # `bpy.msgbus`.
-    write_rst_geometry_set(basepath)        # `bpy.types.GeometrySet`.
-    write_rst_inline_shader_nodes(basepath)  # `bpy.types.InlineShaderNodes`.
+    write_rst_bpy_types_capi(basepath)      # `bpy.types.*` (C-API defined).
     pyrna2sphinx(basepath)                  # `bpy.types.*` & `bpy.ops.*`.
     write_rst_data(basepath)                # `bpy.data`.
     write_rst_importable_modules(basepath)

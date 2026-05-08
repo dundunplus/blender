@@ -285,6 +285,7 @@ class InfoPropertyRNA:
         "max",
         "array_length",
         "array_dimensions",
+        "is_array",
         "collection_type",
         "type",
         "fixed_type",
@@ -314,7 +315,13 @@ class InfoPropertyRNA:
         self.min = getattr(rna_prop, "hard_min", -1)
         self.max = getattr(rna_prop, "hard_max", -1)
         self.array_length = getattr(rna_prop, "array_length", 0)
-        self.array_dimensions = getattr(rna_prop, "array_dimensions", ())[:]
+        # Strip RNA's trailing zero padding so `len()` gives the dim count.
+        array_dimensions = tuple(getattr(rna_prop, "array_dimensions", ()))
+        while array_dimensions and array_dimensions[-1] == 0:
+            array_dimensions = array_dimensions[:-1]
+        self.array_dimensions = array_dimensions
+        # True for dynamic arrays too, where `array_length` is 0.
+        self.is_array = getattr(rna_prop, "is_array", bool(self.array_length))
         self.collection_type = GetInfoStructRNA(rna_prop.srna)
         self.subtype = getattr(rna_prop, "subtype", "")
         self.is_required = rna_prop.is_required
@@ -362,7 +369,7 @@ class InfoPropertyRNA:
 
         if self.array_length:
             self.default = tuple(getattr(rna_prop, "default_array", ()))
-            if self.array_dimensions[1] != 0:  # Multi-dimensional array, convert default flat one accordingly.
+            if len(self.array_dimensions) > 1:  # Multi-dimensional array, convert default flat one accordingly.
                 self.default_str = tuple(float_as_string(v) if self.type == "float" else str(v) for v in self.default)
                 for dim in self.array_dimensions[::-1]:
                     if dim != 0:
@@ -394,7 +401,8 @@ class InfoPropertyRNA:
             else:
                 self.default_str = repr(self.default)
         elif self.array_length:
-            if self.array_dimensions[1] == 0:  # single dimension array, we already took care of multi-dimensions ones.
+            # Single dimension array, we already took care of multi-dimensions ones.
+            if len(self.array_dimensions) == 1:
                 # Special case for floats.
                 if self.type == "float" and len(self.default) > 0:
                     self.default_str = seq_as_tuple_str(float_as_string(f) for f in self.default)
@@ -445,13 +453,17 @@ class InfoPropertyRNA:
             type_str += _RNA_TYPE_TO_PYTHON.get(self.type, self.type)
             if self.type == "string" and self.subtype == "BYTE_STRING":
                 type_str = "bytes"
-            if self.array_length:
-                if self.array_dimensions[1] != 0:
-                    type_info.append("multi-dimensional array of {:s} items".format(
-                        " * ".join(str(d) for d in self.array_dimensions if d != 0)
-                    ))
+            if self.is_array:
+                array_dimensions_len = len(self.array_dimensions)
+                if self.array_length:
+                    if array_dimensions_len > 1:
+                        type_info.append("multi-dimensional array of {:s} items".format(
+                            " * ".join(str(d) for d in self.array_dimensions)
+                        ))
+                    else:
+                        type_info.append("array of {:d} items".format(self.array_length))
                 else:
-                    type_info.append("array of {:d} items".format(self.array_length))
+                    type_info.append("dynamic array")
 
                 # Describe mathutils types; logic mirrors pyrna_math_object_from_array
                 base_type_str = type_str
@@ -477,11 +489,14 @@ class InfoPropertyRNA:
                 # Array properties that didn't match a mathutils type above
                 # should not be typed as a bare scalar (e.g. ``float``).
                 if type_str == base_type_str:
+                    # Wrap once per dimension (e.g. 2D -> `X[X[float]]`).
                     if as_arg:
-                        type_str = "Sequence[{:s}]".format(base_type_str)
+                        wrap_fmt = "Sequence[{:s}]"
                     else:
                         # Escape the space as: :class:`Class`[X] isn't valid RST.
-                        type_str = class_fmt.format("bpy_prop_array") + "\\ [{:s}]".format(base_type_str)
+                        wrap_fmt = class_fmt.format("bpy_prop_array") + "\\ [{:s}]"
+                    for _ in range(max(array_dimensions_len, 1)):
+                        type_str = wrap_fmt.format(type_str)
 
             if self.type in {"float", "int"}:
                 type_info.append("in [{:s}, {:s}]".format(range_str(self.min), range_str(self.max)))
@@ -767,6 +782,7 @@ def BuildRNAInfo():
     def _bpy_types_iterator():
         # Don't report when these types are ignored.
         suppress_warning = {
+            "ContextTempOverride",
             "GeometrySet",
             "InlineShaderNodes",
             "bpy_func",
