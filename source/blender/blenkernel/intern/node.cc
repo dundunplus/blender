@@ -2037,8 +2037,7 @@ void node_tree_blend_read_data(BlendDataReader *reader, ID *owner_id, bNodeTree 
 
     BLO_read_struct_list(reader, bNodeSocket, &node.inputs);
     BLO_read_struct_list(reader, bNodeSocket, &node.outputs);
-    BLO_read_struct_array(
-        reader, bNodePanelState, node.num_panel_states, &node.panel_states_array);
+    BLO_read_array_and_validate_size(reader, &node.panel_states_array, &node.num_panel_states);
 
     BLO_read_struct(reader, IDProperty, &node.prop);
     IDP_BlendDataRead(reader, &node.prop);
@@ -2093,8 +2092,7 @@ void node_tree_blend_read_data(BlendDataReader *reader, ID *owner_id, bNodeTree 
     BLO_read_string(reader, &ntree->geometry_node_asset_traits->node_tool_idname);
   }
 
-  BLO_read_struct_array(
-      reader, bNestedNodeRef, ntree->nested_node_refs_num, &ntree->nested_node_refs);
+  BLO_read_array_and_validate_size(reader, &ntree->nested_node_refs, &ntree->nested_node_refs_num);
 
   BLO_read_struct(reader, PreviewImage, &ntree->preview);
   BKE_previewimg_blend_read(reader, ntree->preview);

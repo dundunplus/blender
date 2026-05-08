@@ -6914,7 +6914,7 @@ void BKE_constraint_blend_read_data(BlendDataReader *reader,
       case CONSTRAINT_TYPE_SPLINEIK: {
         bSplineIKConstraint *data = static_cast<bSplineIKConstraint *>(con.data);
 
-        BLO_read_float_array(reader, data->numpoints, &data->points);
+        BLO_read_array_and_validate_size(reader, &data->points, &data->numpoints);
         break;
       }
       case CONSTRAINT_TYPE_KINEMATIC: {

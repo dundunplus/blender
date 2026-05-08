@@ -830,8 +830,7 @@ static void item_read_data(BlendDataReader *reader, bNodeTreeInterfaceItem &item
       bNodeTreeInterfacePanel &panel = reinterpret_cast<bNodeTreeInterfacePanel &>(item);
       BLO_read_string(reader, &panel.name);
       BLO_read_string(reader, &panel.description);
-      BLO_read_pointer_array(
-          reader, panel.items_num, reinterpret_cast<void **>(&panel.items_array));
+      BLO_read_pointer_array_and_validate_size(reader, &panel.items_array, &panel.items_num);
 
       /* Read the direct-data for each interface item if possible. The pointer becomes null if the
        * struct type is not known. */

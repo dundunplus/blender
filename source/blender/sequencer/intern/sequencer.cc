@@ -1070,8 +1070,9 @@ static bool strip_read_data_cb(Strip *strip, void *user_data)
   BLO_read_struct_list(reader, SeqTimelineChannel, &strip->channels);
 
   if (strip->retiming_keys != nullptr) {
-    const int size = retiming_keys_count(strip);
-    BLO_read_struct_array(reader, SeqRetimingKey, size, &strip->retiming_keys);
+    if (!BLO_read_array(reader, &strip->retiming_keys, retiming_keys_count(strip))) {
+      strip->retiming_keys_num = 0;
+    }
   }
 
   return true;

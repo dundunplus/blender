@@ -1514,21 +1514,6 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     if popover:
         color_jitter_panel(layout, context, brush)
 
-    # Brush modes
-    header, panel = layout.panel("modes", default_closed=True)
-    header.label(text="Modes")
-    if panel:
-        panel.use_property_split = True
-        panel.use_property_decorate = False
-
-        col = panel.column(align=True)
-        col.prop(brush, "use_paint_sculpt", text="Sculpt")
-        col.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
-        col.prop(brush, "use_paint_vertex", text="Vertex Paint")
-        col.prop(brush, "use_paint_weight", text="Weight Paint")
-        col.prop(brush, "use_paint_image", text="Texture Paint")
-        col.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
-
 
 def draw_color_settings(context, layout, brush, color_type=False):
     """Draw color wheel and gradient settings."""

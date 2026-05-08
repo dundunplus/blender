@@ -571,8 +571,8 @@ static void action_blend_write(BlendWriter *writer, ID *id, const void *id_addre
 
 static void read_channelbag(BlendDataReader *reader, animrig::Channelbag &channelbag)
 {
-  BLO_read_pointer_array(
-      reader, channelbag.group_array_num, reinterpret_cast<void **>(&channelbag.group_array));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &channelbag.group_array, &channelbag.group_array_num);
   for (int i = 0; i < channelbag.group_array_num; i++) {
     BLO_read_struct(reader, bActionGroup, &channelbag.group_array[i]);
     channelbag.group_array[i]->channelbag = &channelbag;
@@ -583,8 +583,8 @@ static void read_channelbag(BlendDataReader *reader, animrig::Channelbag &channe
     channelbag.group_array[i]->channels = {nullptr, nullptr};
   }
 
-  BLO_read_pointer_array(
-      reader, channelbag.fcurve_array_num, reinterpret_cast<void **>(&channelbag.fcurve_array));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &channelbag.fcurve_array, &channelbag.fcurve_array_num);
   for (int i = 0; i < channelbag.fcurve_array_num; i++) {
     BLO_read_struct(reader, FCurve, &channelbag.fcurve_array[i]);
     FCurve *fcurve = channelbag.fcurve_array[i];
@@ -601,9 +601,8 @@ static void read_channelbag(BlendDataReader *reader, animrig::Channelbag &channe
 static void read_strip_keyframe_data(BlendDataReader *reader,
                                      animrig::StripKeyframeData &strip_keyframe_data)
 {
-  BLO_read_pointer_array(reader,
-                         strip_keyframe_data.channelbag_array_num,
-                         reinterpret_cast<void **>(&strip_keyframe_data.channelbag_array));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &strip_keyframe_data.channelbag_array, &strip_keyframe_data.channelbag_array_num);
 
   for (int i = 0; i < strip_keyframe_data.channelbag_array_num; i++) {
     BLO_read_struct(reader, ActionChannelbag, &strip_keyframe_data.channelbag_array[i]);
@@ -614,9 +613,8 @@ static void read_strip_keyframe_data(BlendDataReader *reader,
 
 static void read_strip_keyframe_data_array(BlendDataReader *reader, animrig::Action &action)
 {
-  BLO_read_pointer_array(reader,
-                         action.strip_keyframe_data_array_num,
-                         reinterpret_cast<void **>(&action.strip_keyframe_data_array));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &action.strip_keyframe_data_array, &action.strip_keyframe_data_array_num);
 
   for (int i = 0; i < action.strip_keyframe_data_array_num; i++) {
     BLO_read_struct(reader, ActionStripKeyframeData, &action.strip_keyframe_data_array[i]);
@@ -627,15 +625,13 @@ static void read_strip_keyframe_data_array(BlendDataReader *reader, animrig::Act
 
 static void read_layers(BlendDataReader *reader, animrig::Action &action)
 {
-  BLO_read_pointer_array(
-      reader, action.layer_array_num, reinterpret_cast<void **>(&action.layer_array));
+  BLO_read_pointer_array_and_validate_size(reader, &action.layer_array, &action.layer_array_num);
 
   for (int layer_idx = 0; layer_idx < action.layer_array_num; layer_idx++) {
     BLO_read_struct(reader, ActionLayer, &action.layer_array[layer_idx]);
     ActionLayer *layer = action.layer_array[layer_idx];
 
-    BLO_read_pointer_array(
-        reader, layer->strip_array_num, reinterpret_cast<void **>(&layer->strip_array));
+    BLO_read_pointer_array_and_validate_size(reader, &layer->strip_array, &layer->strip_array_num);
     for (int strip_idx = 0; strip_idx < layer->strip_array_num; strip_idx++) {
       BLO_read_struct(reader, ActionStrip, &layer->strip_array[strip_idx]);
 
@@ -656,8 +652,7 @@ static void read_layers(BlendDataReader *reader, animrig::Action &action)
 
 static void read_slots(BlendDataReader *reader, animrig::Action &action)
 {
-  BLO_read_pointer_array(
-      reader, action.slot_array_num, reinterpret_cast<void **>(&action.slot_array));
+  BLO_read_pointer_array_and_validate_size(reader, &action.slot_array, &action.slot_array_num);
 
   for (int i = 0; i < action.slot_array_num; i++) {
     BLO_read_struct(reader, ActionSlot, &action.slot_array[i]);

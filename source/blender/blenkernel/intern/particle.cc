@@ -5591,11 +5591,11 @@ void BKE_particle_system_blend_read_data(BlendDataReader *reader,
   int a;
 
   for (ParticleSystem &psys : *particles) {
-    BLO_read_struct_array(reader, ParticleData, psys.totpart, &psys.particles);
+    BLO_read_array_and_validate_size(reader, &psys.particles, &psys.totpart);
 
     if (psys.particles && psys.particles->hair) {
       for (a = 0, pa = psys.particles; a < psys.totpart; a++, pa++) {
-        BLO_read_struct_array(reader, HairKey, pa->totkey, &pa->hair);
+        BLO_read_array_and_validate_size(reader, &pa->hair, &pa->totkey);
       }
     }
 
@@ -5610,14 +5610,16 @@ void BKE_particle_system_blend_read_data(BlendDataReader *reader,
 
     if (psys.particles && psys.particles->boid) {
       pa = psys.particles;
-      BLO_read_struct_array(reader, BoidParticle, psys.totpart, &pa->boid);
+      BLO_read_array_and_validate_size(reader, &pa->boid, &psys.totpart);
 
-      /* This is purely runtime data, but still can be an issue if left dangling. */
-      pa->boid->ground = nullptr;
-
-      for (a = 1, pa++; a < psys.totpart; a++, pa++) {
-        pa->boid = (pa - 1)->boid + 1;
+      if (pa->boid) {
+        /* This is purely runtime data, but still can be an issue if left dangling. */
         pa->boid->ground = nullptr;
+
+        for (a = 1, pa++; a < psys.totpart; a++, pa++) {
+          pa->boid = (pa - 1)->boid + 1;
+          pa->boid->ground = nullptr;
+        }
       }
     }
     else if (psys.particles) {
@@ -5626,9 +5628,9 @@ void BKE_particle_system_blend_read_data(BlendDataReader *reader,
       }
     }
 
-    BLO_read_struct_array(reader, ParticleSpring, psys.tot_fluidsprings, &psys.fluid_springs);
+    BLO_read_array_and_validate_size(reader, &psys.fluid_springs, &psys.tot_fluidsprings);
 
-    BLO_read_struct_array(reader, ChildParticle, psys.totchild, &psys.child);
+    BLO_read_array_and_validate_size(reader, &psys.child, &psys.totchild);
     psys.effectors = nullptr;
 
     BLO_read_struct_list(reader, ParticleTarget, &psys.targets);
