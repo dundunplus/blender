@@ -4002,6 +4002,7 @@ static PyObject *MatrixAccess_slice(MatrixAccessObject *self,
   Py_ssize_t index = start;
   for (Py_ssize_t i = 0; i < slice_length; i++, index += step) {
     BLI_assert(index >= 0 && index < matrix_access_len);
+    UNUSED_VARS_NDEBUG(matrix_access_len);
     PyTuple_SET_ITEM(tuple, i, Matrix_item_new(matrix_user, index));
   }
   return tuple;
