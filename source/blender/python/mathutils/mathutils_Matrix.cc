@@ -712,7 +712,7 @@ static PyObject *C_Matrix_Identity(PyObject *cls, PyObject *args)
 PyDoc_STRVAR(
     /* Wrap. */
     C_Matrix_Rotation_doc,
-    ".. classmethod:: Rotation(angle, size, axis, /)\n"
+    ".. classmethod:: Rotation(angle, size, axis=None, /)\n"
     "\n"
     "   Create a matrix representing a rotation.\n"
     "\n"
@@ -720,14 +720,15 @@ PyDoc_STRVAR(
     "   :type angle: float\n"
     "   :param size: The size of the rotation matrix to construct [2, 4].\n"
     "   :type size: int\n"
-    "   :param axis: an axis string or a 3D Vector Object\n"
-    "      (optional when size is 2).\n"
-    "   :type axis: Literal['X', 'Y', 'Z'] | Sequence[float]\n"
+    "   :param axis: Axis of rotation: a single-character string ('X', 'Y' or 'Z')\n"
+    "      or a 3D vector. Required for ``size`` 3 or 4. Must be None (or omitted)\n"
+    "      when ``size`` is 2 - 2D rotation has no axis.\n"
+    "   :type axis: Literal['X', 'Y', 'Z'] | Sequence[float] | None\n"
     "   :return: A new rotation matrix.\n"
     "   :rtype: :class:`Matrix`\n");
 static PyObject *C_Matrix_Rotation(PyObject *cls, PyObject *args)
 {
-  PyObject *vec = nullptr;
+  PyObject *vec = Py_None;
   const char *axis = nullptr;
   int matSize;
   double angle; /* Use double because of precision problems at high values. */
@@ -737,7 +738,7 @@ static PyObject *C_Matrix_Rotation(PyObject *cls, PyObject *args)
     return nullptr;
   }
 
-  if (vec && PyUnicode_Check(vec)) {
+  if (vec != Py_None && PyUnicode_Check(vec)) {
     axis = PyUnicode_AsUTF8(vec);
     if (axis == nullptr || axis[0] == '\0' || axis[1] != '\0' || axis[0] < 'X' || axis[0] > 'Z') {
       PyErr_SetString(PyExc_ValueError,
@@ -748,7 +749,7 @@ static PyObject *C_Matrix_Rotation(PyObject *cls, PyObject *args)
     }
 
     /* use the string */
-    vec = nullptr;
+    vec = Py_None;
   }
 
   angle = angle_wrap_rad(angle);
@@ -759,13 +760,13 @@ static PyObject *C_Matrix_Rotation(PyObject *cls, PyObject *args)
                     "can only return a 2x2 3x3 or 4x4 matrix");
     return nullptr;
   }
-  if (matSize == 2 && (vec != nullptr)) {
+  if (matSize == 2 && (vec != Py_None)) {
     PyErr_SetString(PyExc_ValueError,
                     "Matrix.Rotation(): "
                     "cannot create a 2x2 rotation matrix around arbitrary axis");
     return nullptr;
   }
-  if (ELEM(matSize, 3, 4) && (axis == nullptr) && (vec == nullptr)) {
+  if (ELEM(matSize, 3, 4) && (axis == nullptr) && (vec == Py_None)) {
     PyErr_SetString(PyExc_ValueError,
                     "Matrix.Rotation(): "
                     "axis of rotation for 3d and 4d matrices is required");
@@ -773,7 +774,7 @@ static PyObject *C_Matrix_Rotation(PyObject *cls, PyObject *args)
   }
 
   /* check for valid vector/axis above */
-  if (vec) {
+  if (vec != Py_None) {
     float tvec[3];
 
     if (mathutils_array_parse(
@@ -861,7 +862,7 @@ static PyObject *C_Matrix_Diagonal(PyObject *cls, PyObject *value)
 PyDoc_STRVAR(
     /* Wrap. */
     C_Matrix_Scale_doc,
-    ".. classmethod:: Scale(factor, size, axis, /)\n"
+    ".. classmethod:: Scale(factor, size, axis=None, /)\n"
     "\n"
     "   Create a matrix representing a scaling.\n"
     "\n"
@@ -869,13 +870,14 @@ PyDoc_STRVAR(
     "   :type factor: float\n"
     "   :param size: The size of the scale matrix to construct [2, 4].\n"
     "   :type size: int\n"
-    "   :param axis: Direction to influence scale. (optional).\n"
-    "   :type axis: Sequence[float]\n"
+    "   :param axis: Direction along which to scale. When None (or omitted),\n"
+    "      ``factor`` is applied uniformly along all axes.\n"
+    "   :type axis: Sequence[float] | None\n"
     "   :return: A new scale matrix.\n"
     "   :rtype: :class:`Matrix`\n");
 static PyObject *C_Matrix_Scale(PyObject *cls, PyObject *args)
 {
-  PyObject *vec = nullptr;
+  PyObject *vec = Py_None;
   int vec_num;
   float tvec[3];
   float factor;
@@ -891,7 +893,7 @@ static PyObject *C_Matrix_Scale(PyObject *cls, PyObject *args)
                     "can only return a 2x2 3x3 or 4x4 matrix");
     return nullptr;
   }
-  if (vec) {
+  if (vec != Py_None) {
     vec_num = (matSize == 2 ? 2 : 3);
     if (mathutils_array_parse(
             tvec, vec_num, vec_num, vec, "Matrix.Scale(factor, size, axis), invalid 'axis' arg") ==
@@ -900,7 +902,7 @@ static PyObject *C_Matrix_Scale(PyObject *cls, PyObject *args)
       return nullptr;
     }
   }
-  if (vec == nullptr) { /* scaling along axis */
+  if (vec == Py_None) { /* scaling along axis */
     if (matSize == 2) {
       mat[0] = factor;
       mat[3] = factor;
@@ -3661,7 +3663,7 @@ static PyMethodDef Matrix_methods[] = {
 PyDoc_STRVAR(
     /* Wrap. */
     matrix_doc,
-    ".. class:: Matrix(rows=Matrix.Identity(4), /)\n"
+    ".. class:: Matrix(rows=((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)), /)\n"
     "\n"
     "   This object gives access to Matrices in Blender, supporting square and rectangular\n"
     "   matrices from 2x2 up to 4x4.\n"

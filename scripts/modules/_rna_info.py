@@ -467,24 +467,36 @@ class InfoPropertyRNA:
 
                 # Describe mathutils types; logic mirrors pyrna_math_object_from_array
                 base_type_str = type_str
+                mathutils_type = ""
                 if self.type == "float":
                     if self.subtype == "MATRIX":
                         if self.array_length in {9, 16}:
-                            type_str = mathutils_fmt.format("Matrix")
+                            mathutils_type = "Matrix"
                     elif self.subtype in {"COLOR", "COLOR_GAMMA"}:
                         if self.array_length == 3:
-                            type_str = mathutils_fmt.format("Color")
+                            mathutils_type = "Color"
                     elif self.subtype in {"EULER", "QUATERNION"}:
                         if self.array_length == 3:
-                            type_str = mathutils_fmt.format("Euler")
+                            mathutils_type = "Euler"
                         elif self.array_length == 4:
-                            type_str = mathutils_fmt.format("Quaternion")
+                            mathutils_type = "Quaternion"
                     elif self.subtype in {
                             'COORDINATES', 'TRANSLATION', 'DIRECTION', 'VELOCITY',
                             'ACCELERATION', 'XYZ', 'XYZ_LENGTH',
                     }:
                         if 2 <= self.array_length <= 4:
-                            type_str = mathutils_fmt.format("Vector")
+                            mathutils_type = "Vector"
+                if mathutils_type:
+                    if as_arg:
+                        # Arguments accept both the mathutils type and plain sequences.
+                        if mathutils_type == "Matrix":
+                            seq_type = "Sequence[Sequence[{:s}]]".format(base_type_str)
+                        else:
+                            seq_type = "Sequence[{:s}]".format(base_type_str)
+                        type_str = "{:s} | {:s}".format(
+                            mathutils_fmt.format(mathutils_type), seq_type)
+                    else:
+                        type_str = mathutils_fmt.format(mathutils_type)
 
                 # Array properties that didn't match a mathutils type above
                 # should not be typed as a bare scalar (e.g. ``float``).
@@ -505,6 +517,10 @@ class InfoPropertyRNA:
                     enum_items_str = enum_descr_override
                 else:
                     enum_items_str = ", ".join("'{:s}'".format(s[0]) for s in self.enum_items)
+                # When the default is an empty string (sentinel for "unset"),
+                # include it in the Literal so the default is type-valid.
+                if as_arg and self.default == '' and enum_items_str:
+                    enum_items_str = "'', " + enum_items_str
                 if not enum_items_str:
                     # Dynamically generated enums have no static items,
                     # fall back to a plain string type.
@@ -539,6 +555,14 @@ class InfoPropertyRNA:
                     )
             else:
                 type_str += class_fmt.format(self.fixed_type.identifier)
+
+        # Pointer and collection properties can be `None` unless
+        # `is_never_none` is set.  For arguments, check `default_str`
+        # since any parameter defaulting to `None` must accept it.
+        if as_arg and self.default_str == "None":
+            type_str += " | None"
+        elif not (as_arg or as_ret) and self.type == "pointer" and not self.is_never_none:
+            type_str += " | None"
 
         if not (as_arg or as_ret):
             # Write default property, ignore function args for this.
