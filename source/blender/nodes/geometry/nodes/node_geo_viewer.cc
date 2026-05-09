@@ -388,9 +388,7 @@ static void geo_viewer_node_log_impl(const bNode &node,
     const NodeGeometryViewerItem &item = storage.items[i];
 
     bke::SocketValueVariant &value = *input_values[i];
-    if (value.is_single() && value.get_single_ptr().is_type<bke::GeometrySet>()) {
-      value.get_single_ptr().get<bke::GeometrySet>()->ensure_owns_direct_data();
-    }
+    value.ensure_owns_direct_data();
     r_log.items.add_new({item.identifier, item.name, std::move(value)});
   }
   log_viewer_attribute(node, r_log);
