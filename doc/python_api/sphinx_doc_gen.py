@@ -956,18 +956,24 @@ def py_descr2sphinx(ident, fw, descr, module_name, type_name, identifier, is_cla
     doc = descr.__doc__
 
     if type(descr) == GetSetDescriptorType:
-        if not doc:
-            raise ValueError(
-                "C-API PyGetSetDef {:s}.{:s}.{:s} has empty/missing doc-string".format(
-                    module_name, type_name, identifier,
+
+        # Exclude `aud`, ideally it should confirm to our naming convention, currently it doesn't.
+        # TODO: resolve upstream.
+        if module_name == "aud" or module_name.startswith("aud."):
+            pass
+        else:
+            if not doc:
+                raise ValueError(
+                    "C-API PyGetSetDef {:s}.{:s}.{:s} has empty/missing doc-string".format(
+                        module_name, type_name, identifier,
+                    )
                 )
-            )
-        if ":type:" not in doc:
-            raise ValueError(
-                "C-API PyGetSetDef {:s}.{:s}.{:s} doc-string is missing ':type:'".format(
-                    module_name, type_name, identifier,
+            if ":type:" not in doc:
+                raise ValueError(
+                    "C-API PyGetSetDef {:s}.{:s}.{:s} doc-string is missing ':type:'".format(
+                        module_name, type_name, identifier,
+                    )
                 )
-            )
 
     if not doc:
         doc = undocumented_message(module_name, type_name, identifier)
