@@ -527,7 +527,7 @@ void BKE_movieclip_convert_multilayer_ibuf(ImBuf *ibuf)
                              movieclip_convert_multilayer_add_pass);
   if (ctx.combined_pass != nullptr) {
     BLI_assert(ibuf->float_data() == nullptr);
-    IMB_assign_float_buffer(ibuf, ctx.combined_pass, IB_TAKE_OWNERSHIP);
+    ibuf->assign_float_data(ctx.combined_pass);
     ibuf->channels = ctx.num_combined_channels;
   }
   IMB_exr_close(ibuf->exrhandle);
@@ -1799,9 +1799,8 @@ static void movieclip_build_proxy_ibuf(const MovieClip *clip,
   quality = clip->proxy.quality;
   scaleibuf->ftype = IMB_FTYPE_JPG;
   scaleibuf->foptions.quality = quality;
-  /* unsupported feature only confuses other s/w */
-  if (scaleibuf->planes == 32) {
-    scaleibuf->planes = 24;
+  if (scaleibuf->can_contain_alpha()) {
+    scaleibuf->color_mode = ImColorMode::RGB;
   }
 
   /* TODO: currently the most weak part of multi-threaded proxies,
