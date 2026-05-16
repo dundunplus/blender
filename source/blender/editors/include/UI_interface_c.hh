@@ -1768,7 +1768,8 @@ enum AutoPropButsReturn {
 ENUM_OPERATORS(AutoPropButsReturn);
 
 /**
- * \param button_type_override \parblock
+ * \param button_type_override:
+ * \parblock
  * Overrides the default button type defined for some properties:
  * - Int/Float properties allows #ButtonType::Num or #ButtonType::NumSlider.
  * - Enum properties allows #ButtonType::Menu or #ButtonType::SearchMenu.
@@ -2034,8 +2035,7 @@ void tooltip_text_field_add(TooltipData &data,
                             const bool is_pad = false);
 
 /**
- * \param image: Image buffer (duplicated, ownership is *not* transferred to `data`).
- * \param image_size: Display size for the image (pixels without UI scale applied).
+ * \param image_data: Image buffer (duplicated, ownership is *not* transferred to `data`).
  */
 void tooltip_image_field_add(TooltipData &data, const TooltipImage &image_data);
 
