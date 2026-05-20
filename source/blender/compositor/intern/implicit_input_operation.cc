@@ -33,8 +33,7 @@ ImplicitInputOperation::ImplicitInputOperation(Context &context,
                                                const ImplicitInputType implicit_input)
     : Operation(context), implicit_input_(implicit_input)
 {
-  this->populate_result(output_identifier_,
-                        context.create_result(get_implicit_input_result_type(implicit_input)));
+  this->populate_result(output_identifier_, get_implicit_input_result_type(implicit_input));
 }
 
 void ImplicitInputOperation::execute()
@@ -60,8 +59,8 @@ Result &ImplicitInputOperation::get_result()
   return Operation::get_result(output_identifier_);
 }
 
-std::optional<Domain> ImplicitInputOperation::compute_domain(
-    const Context &context, const ImplicitInputType implicit_input)
+std::optional<Domain> ImplicitInputOperation::get_domain(const Context &context,
+                                                         const ImplicitInputType implicit_input)
 {
   switch (implicit_input) {
     case ImplicitInputType::UniformTextureCoordinates:
