@@ -660,7 +660,7 @@ static PyObject *bpy_op_fn_idname_py(BPyOpFunction *self, PyObject * /*args*/)
 static PyObject *bpy_op_fn_get_doc_impl(BPyOpFunction *self)
 {
   /* Get operator signature using Blender format idname:
-   * `_op_as_string(self.idname())` where `idname()` returns Blender format). */
+   * `_op_as_string(self.idname())` where `idname()` returns Blender format. */
   PyObject *sig_result = bpy_op_fn_as_string(self);
 
   if (!sig_result) {
@@ -733,7 +733,7 @@ static PyGetSetDef bpy_op_fn_getsetters[] = {
      nullptr,
      bpy_op_fn_get_bl_options_doc,
      nullptr},
-    /* No doc-string, as this is standard part of the Python spec. */
+    /* No docstring, as this is standard part of the Python spec. */
     {"__doc__", reinterpret_cast<getter>(bpy_op_fn_get_doc), nullptr, nullptr, nullptr},
     {nullptr, nullptr, nullptr, nullptr, nullptr}};
 
