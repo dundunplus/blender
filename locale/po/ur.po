@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'bc0a0ff2c0ce')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'24a58e1403ac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 11:20+0000\n"
+"POT-Creation-Date: 2026-05-25 07:25+0000\n"
 "PO-Revision-Date: 2025-07-23 15:12+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Urdu <https://translate.blender.org/projects/blender-ui/ui/ur/>\n"
@@ -1656,6 +1656,38 @@ msgstr "ﺲﻨﺴﺋﻻ﻿"
 
 msgid "The type of license this asset is distributed under. An empty license name does not necessarily indicate that this is free of licensing terms. Contact the author if any clarification is needed."
 msgstr "ﮟﯾﺮﮐ ﮧﻄﺑﺍﺭ ﮯﺳ ﻒﻨﺼﻣ ﻮﺗ ﻮﮨ ﺭﺎﮐﺭﺩ ﺖﺣﺎﺿﻭ ﯽﺋﻮﮐ ﺮﮔﺍ ﻂﺋﺍﺮﺷ ﯽﮐ ﺲﻨﺴﺋﻻ﻿ﮯﮨ ﺖﻔﻣ ﮧﯾ ﮧﮐ ﮯﮨ ﺎﺗﺮﮐ ﮟﯿﮩﻧ ﯽﮨﺪﻧﺎﺸﻧ ﯽﮐ ﺕﺎﺑ ﺱﺍ ﺮﭘ ﺭﻮﻃ ﯽﻣﺯﻻ﻿ ﻡﺎﻧ ﺎﮐ ﺲﻨﺴﺋﻼ﻿ﯿﻟﺎﺧ ﮏﯾﺍ ﮯﮨ ﺎﯿﮔ ﺎﯿﮐ ﻢﯿﺴﻘﺗ ﮧﺛﺎﺛﺍ ﮧﯾ ﺖﺤﺗ ﮯﮐ ﺲﺟ ﻢﺴﻗ ﯽﮐ ﺲﻨﺴﺋﻻ﻿"
+
+
+msgid "Default Import Method"
+msgstr "ﮧﻘﯾﺮﻃ ﺎﮐ ﺪﻣﺁﺭﺩ ﮦﺪﺷ ﮯﻃ"
+
+
+msgid "Link"
+msgstr "ﮏﻨﻟ"
+
+
+msgid "Import the assets as linked data-block"
+msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﻮﮐ ﮞﻮﺛﺎﺛﺍ"
+
+
+msgid "Append"
+msgstr "ﺎﻧﺮﮐ ﻞﻣﺎﺷ"
+
+
+msgid "Import the assets as copied data-block, with no link to the original asset data-block"
+msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮏﻨﻟ ﯽﺋﻮﮐ ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮧﺛﺎﺛﺍ ﻞﺻﺍ ،ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﯽﭘﺎﮐ ﻮﮐ ﮞﻮﺛﺎﺛﺍ"
+
+
+msgid "Append (Reuse Data)"
+msgstr "(ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮦﺭﺎﺑﻭﺩ ﺎﭩﯾﮈ) ﮟﯾﺮﮐ ﻞﻣﺎﺷ"
+
+
+msgid "Import the assets as copied data-block while avoiding multiple copies of nested, typically heavy data. For example the textures of a material asset, or the mesh of an object asset, don't have to be copied every time this asset is imported. The instances of the asset share the data instead."
+msgstr "ﮟﯿﮨ ﯽﺗﺮﮐ ﮎﺍﺮﺘﺷﺍ ﺎﮐ ﺎﭩﯾﮈ ﮟﯿﻟﺎﺜﻣ ﯽﮐ ﮧﺛﺎﺛﺍ ﮯﺋﺎﺠﺑ ﮯﮐ ﺱﺍ ﮯﮨ ﮟﯿﮩﻧ ﺕﺭﻭﺮﺿ ﯽﮐ ﮯﻧﺮﮐ ﯽﭘﺎﮐ ﮯﺳﺍ ﻮﺗ ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﺪﻣﺁﺭﺩ ﮧﺛﺎﺛﺍ ﮧﯾ ﺐﺟ ﺭﺎﺑ ﺮﮨ ،ﺶﯿﻣ ﯽﮐ ﮧﺛﺎﺛﺍ ﭧﮑﯿﺠﺑﺁ ﯽﺴﮐ ﺎﯾ ،ﺖﺧﺎﺳ ﯽﮐ ﮯﺛﺎﺛﺍ ﯼﺩﺎﻣ ﯽﺴﮐ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﻝﺎﺜﻣ ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﯽﭘﺎﮐ ﻮﮐ ﮞﻮﺛﺎﺛﺍ ﮯﺋﻮﮨ ﮯﺗﺮﮐ ﺰﯾﺮﮔ ﮯﺳ ﮞﻮﯿﭘﺎﮐ ﺩﺪﻌﺘﻣ ﯽﮐ ﺎﭩﯾﮈ ﯼﺭﺎﮭﺑ ﺮﭘ ﺭﻮﻃ ﻡﺎﻋ ،ﮉﭩﺴﯿﻧ"
+
+
+msgid "Pack"
+msgstr "ﮏﯿﭘ"
 
 
 msgid "Tags"
@@ -13917,32 +13949,8 @@ msgid "Determine how the asset will be imported"
 msgstr "ﺎﮔ ﮯﺋﺎﺟ ﺎﯿﮐ ﺪﻣﺁﺭﺩ ﮯﺴﯿﮐ ﮧﺛﺎﺛﺍ ﮧﮐ ﮟﯾﺮﮐ ﻦﯿﻌﺗ ﺎﮐ ﺕﺎﺑ ﺱﺍ"
 
 
-msgid "Follow Preferences"
-msgstr "ﮟﯾﺮﮐ ﻞﻤﻋ ﺮﭘ ﺕﺎﺤﯿﺟﺮﺗ"
-
-
 msgid "Use the import method set in the Preferences for this asset library, don't override it for this Asset Browser"
 msgstr "ﮟﯾﺮﮐ ﮧﻧ ﮉﺋﺍﺭ ﺭﻭﻭﺍ ﮯﺳﺍ ﮯﯿﻟ ﮯﮐ ﺭﺯﺅﺍﺮﺑ ﮧﺛﺎﺛﺍ ﺱﺍ ،ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮧﻘﯾﺮﻃ ﯼﺪﻣﺁﺭﺩ ﮦﺩﺮﮐ ﻦﯿﻌﺘﻣ ﮟﯿﻣ ﺕﺎﺤﯿﺟﺮﺗ ﮯﯿﻟ ﮯﮐ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﮧﺛﺎﺛﺍ ﺱﺍ"
-
-
-msgid "Link"
-msgstr "ﮏﻨﻟ"
-
-
-msgid "Import the assets as linked data-block"
-msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﻮﮐ ﮞﻮﺛﺎﺛﺍ"
-
-
-msgid "Append"
-msgstr "ﺎﻧﺮﮐ ﻞﻣﺎﺷ"
-
-
-msgid "Append (Reuse Data)"
-msgstr "(ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮦﺭﺎﺑﻭﺩ ﺎﭩﯾﮈ) ﮟﯾﺮﮐ ﻞﻣﺎﺷ"
-
-
-msgid "Pack"
-msgstr "ﮏﯿﭘ"
 
 
 msgid "Float2 Attribute Value"
@@ -23453,14 +23461,6 @@ msgid "Movie File"
 msgstr "ﻞﺋﺎﻓ ﯼﻭﻮﻣ"
 
 
-msgid "Use Proxy / Timecode"
-msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮈﻮﮐ ﻢﺋﺎﭨ / ﯽﺴﮐﺍﺮﭘ"
-
-
-msgid "Use a preview proxy and/or timecode index for this clip"
-msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺖﺳﺮﮩﻓ ﮈﻮﮐ ﻢﺋﺎﭨ ﺎﯾ/ﺭﻭﺍ ﯽﺴﮐﺍﺮﭘ ﻮﯾﻮﯾﺮﭘ  ﮯﯿﻟ ﮯﮐ ﭗﻠﮐ ﺱﺍ"
-
-
 msgid "Proxy Custom Directory"
 msgstr "ﯼﺮﭩﮐﺮﺋﺍﮈ ﻢﭩﺴﮐ ﯽﺴﮐﺍﺮﭘ"
 
@@ -32511,20 +32511,12 @@ msgid "Viewpoint"
 msgstr "ﺮﻈﻧ ﮧﻄﻘﻧ"
 
 
-msgid "Math"
-msgstr "ﯽﺿﺎﯾﺭ"
-
-
 msgid "Navigation"
 msgstr "ﻦﺸﯿﮕﯾﻮﯿﻧ"
 
 
 msgid "Align View"
 msgstr "ﮟﯿﮭﮑﯾﺩ ﮟﯿﻣ ﮪﺪﯿﺳ"
-
-
-msgid "Utilities"
-msgstr "ﺖﯾﺩﺎﻓﺍ"
 
 
 msgid "Align View to Active"
@@ -32547,12 +32539,28 @@ msgid "Select All by Trait"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﯽﮭﺒﺳ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﺖﯿﺻﻮﺼﺧ"
 
 
+msgid "Math"
+msgstr "ﯽﺿﺎﯾﺭ"
+
+
 msgid "Select Linked"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﮉﮑﻨﻟ"
 
 
 msgid "Select Loops"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﺲﭘﻮﻟ"
+
+
+msgid "Utilities"
+msgstr "ﺖﯾﺩﺎﻓﺍ"
+
+
+msgid "Assign Material"
+msgstr "ﮟﯾﺮﮐ ﺾﯾﻮﻔﺗ ﺩﺍﻮﻣ"
+
+
+msgid "Metaball"
+msgstr "ﻝﺎﺑ ﺎﭩﯿﻣ"
 
 
 msgid "Read"
@@ -32563,20 +32571,12 @@ msgid "Sample"
 msgstr "ﮧﻧﻮﻤﻧ"
 
 
-msgid "Assign Material"
-msgstr "ﮟﯾﺮﮐ ﺾﯾﻮﻔﺗ ﺩﺍﻮﻣ"
-
-
 msgid "Write"
 msgstr "ﮟﯿﮭﮑﻟ"
 
 
 msgid "Primitives"
 msgstr "ﻢﯾﺪﻗ"
-
-
-msgid "Metaball"
-msgstr "ﻝﺎﺑ ﺎﭩﯿﻣ"
 
 
 msgid "Light"
@@ -32587,14 +32587,6 @@ msgid "Light Probe"
 msgstr "ﺏﻭﺮﭘ ﭧﺋﻻ﻿"
 
 
-msgid "Gizmo"
-msgstr "ﻮﻣﺰﯿﮔ"
-
-
-msgid "Instances"
-msgstr "ﮟﯿﻟﺎﺜﻣ"
-
-
 msgid "Add Image"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺮﯾﻮﺼﺗ"
 
@@ -32603,12 +32595,16 @@ msgid "Relations"
 msgstr "ﮯﺘﺷﺭ"
 
 
-msgid "Import"
-msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ"
-
-
 msgid "Rigid Body"
 msgstr "ﻢﺴﺟ ﺖﺨﺳ"
+
+
+msgid "Gizmo"
+msgstr "ﻮﻣﺰﯿﮔ"
+
+
+msgid "Instances"
+msgstr "ﮟﯿﻟﺎﺜﻣ"
 
 
 msgid "Apply"
@@ -32619,12 +32615,12 @@ msgid "Track"
 msgstr "ﮏﯾﺮﭨ"
 
 
-msgid "Deprecated"
-msgstr "ﮦﺩﻮﺳﺮﻓ"
-
-
 msgid "Quick Effects"
 msgstr "ﺕﺍﺮﺛﺍ ﯼﺭﻮﻓ"
+
+
+msgid "Import"
+msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ"
 
 
 msgid "Show/Hide"
@@ -32647,10 +32643,6 @@ msgid "Convert"
 msgstr "ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ"
 
 
-msgid "UV"
-msgstr "ﯼﻭﻮﯾ"
-
-
 msgid "Link/Transfer Data"
 msgstr "ﮟﯾﺮﮐ ﻞﻘﺘﻨﻣ/ﮏﻨﻟ ﻮﮐ ﺎﭩﯾﮈ"
 
@@ -32659,12 +32651,20 @@ msgid "Hooks"
 msgstr "ﮯﭩﻧﺎﮐ"
 
 
+msgid "Deprecated"
+msgstr "ﮦﺩﻮﺳﺮﻓ"
+
+
 msgid "Vertex Group Locks"
 msgstr "ﮎﻻ﻿ ﮦﻭﺮﮔ ﺲﮑﯿﭨﺭﻭ"
 
 
 msgid "Trim/Add"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ/ﻡﺮﭨ"
+
+
+msgid "UV"
+msgstr "ﯼﻭﻮﯾ"
 
 
 msgid "Sculpt Set Pivot"
@@ -32731,10 +32731,6 @@ msgid "Merge"
 msgstr "ﺎﻧﺮﮐ ﻢﺿ"
 
 
-msgid "Layout"
-msgstr "ﭦﺅﺁ ﮯﻟ"
-
-
 msgid "Special Characters"
 msgstr "ﺭﺍﺩﺮﮐ ﯽﺻﻮﺼﺧ"
 
@@ -32743,12 +32739,16 @@ msgid "Kerning"
 msgstr "ﮓﻨﻧﺮﮐ"
 
 
-msgid "Adjust"
-msgstr "ﮟﯾﺮﮐ ﭧﺴﺟﮉﯾﺍ"
+msgid "Layout"
+msgstr "ﭦﺅﺁ ﮯﻟ"
 
 
 msgid "Bone Roll"
 msgstr "ﻝﻭﺭ ﻥﻮﺑ"
+
+
+msgid "Adjust"
+msgstr "ﮟﯾﺮﮐ ﭧﺴﺟﮉﯾﺍ"
 
 
 msgid "Keying"
@@ -40709,14 +40709,6 @@ msgid "Build proxy resolution 75% of the original footage dimension"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻦﺷﻮﻟﻭﺰﯾﺭ ﯽﺴﮐﺍﺮﭘ %75 ﺎﮐ ﺖﮩﺟ ﻞﺻﺍ ﮯﮐ ﺞﯿﭨﻮﻓ"
 
 
-msgid "Rec Run"
-msgstr "Rec ﮟﯿﺋﻼ﻿ﭼ"
-
-
-msgid "Build record run time code index"
-msgstr "ﮟﯿﺋﺎﻨﺑ ﺖﺳﺮﮩﻓ ﮈﻮﮐ ﻢﺋﺎﭨ ﻥﺭ ﮈﺭﺎﮑﯾﺭ"
-
-
 msgid "Build proxy resolution 100% of the original undistorted footage dimension"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻦﺷﻮﻟﻭﺰﯾﺭ ﯽﺴﮐﺍﺮﭘ %100 ﺎﮐ ﺽﺮﻋ ﻭ ﻝﻮﻃ ﮯﮐ ﺞﯿﭨﻮﻓ ﮦﺪﺷ ﺦﺴﻣ ﺮﯿﻏ ﻞﺻﺍ"
 
@@ -40739,30 +40731,6 @@ msgstr "ﻡﺎﻘﻣ ﺎﮐ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﻮﮐ ﮞﻮﻠﺋﺎ�
 
 msgid "JPEG quality of proxy images"
 msgstr "ﺭﺎﯿﻌﻣ JPEG ﺎﮐ ﺰﺠﯿﻣﺍ ﯽﺴﮐﺍﺮﭘ"
-
-
-msgid "Timecode"
-msgstr "ﮈﻮﮐ ﻢﺋﺎﭨ"
-
-
-msgid "Ignore generated timecodes, seek in movie stream based on calculated timestamp"
-msgstr "ﭗﻤﯿﭩﺳﺍ ﻢﺋﺎﭨ ﮦﺪﺷ ﺏﺎﺴﺤںﯾﺮﮐ ﺵﻼ﻿ﺗ ﮟﯿﻣ ﻢﯾﺮﭩﺳﺍ ﯼﻭﻮﻣ ﯽﻨﺒﻣ ﺮﭘ ﺱﺍ ،ﮟﯾﺮﮐ ﺯﺍﺪﻧﺍ ﺮﻈﻧ ﻮﮐ ﺯﮈﻮﮐ ﻢﺋﺎﭨ ﮦﺩﺮﮐ ﺭﺎﯿﺗ"
-
-
-msgid "Record Run"
-msgstr "ﻥﺭ ﮈﺭﺎﮑﯾﺭ"
-
-
-msgid "Seek based on timestamps read from movie stream, giving the best match between scene and movie times"
-msgstr "ﮟﯾﺮﮐ ﺵﻼ﻿ﺗ ﯽﻨﺒﻣ ﺮﭘ ﭗﻤﯿﭩﺳﺍ ﻢﺋﺎﭨ ﮯﺌﮔ ﮯﮬﮍﭘ ﮯﺳ ﻢﯾﺮﭩﺳﺍ ﯼﻭﻮﻣ ،ﮯﺋﻮﮨ ﮯﺘﯾﺩ ﺖﻠﺛﺎﻤﻣ ﻦﯾﺮﺘﮩﺑ ﻥﺎﯿﻣﺭﺩ ﮯﮐ ﺕﺎﻗﻭﺍ ﮯﮐ ﻢﻠﻓ ﺭﻭﺍ ﻦﯿﺳ"
-
-
-msgid "Record Run No Gaps"
-msgstr "ﮟﯿﮩﻧ ﻕﺮﻓ ﯽﺋﻮﮐ ﻥﺭ ﮈﺭﺎﮑﯾﺭ"
-
-
-msgid "Effectively convert movie to an image sequence, ignoring incomplete or dropped frames, and changes in frame rate"
-msgstr "ﯽﻠﯾﺪﺒﺗ ﮟﯿﻣ ﺡﺮﺷ ﯽﮐ ﻢﯾﺮﻓ ﺭﻭﺍ ،ﻢﯾﺮﻓ ﺍﻮﮨ ﺍﺮﮔ ﺎﯾ ﻞﻤﮑﻣﺎﻨںﯾﺮﮐ ﻞﯾﺪﺒﺗ ﮟﯿﻣ ﺐﯿﺗﺮﺗ ﯼﺮﯾﻮﺼﺗ ﻮﮐ ﻢﻠﻓ ﮯﺳ ﮯﻘﯾﺮﻃ ﺮﺛﺆﻣ ،ﮯﺋﻮﮨ ﮯﺗﺮﮐ ﺯﺍﺪﻧﺍ ﺮﻈﻧ"
 
 
 msgid "Scopes for statistical view of a movie clip"
@@ -47775,10 +47743,6 @@ msgid "Attribute Domain"
 msgstr "ﻦﯿﻣﻭﮈ ﺏﺎﺴﺘﻧﺍ"
 
 
-msgid "Attribute domain where the attribute is stored in the baked data"
-msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻅﻮﻔﺤﻣ ﮟﯿﻣ ﺎﭩﯾﮈ ﮉﮑﯿﺑ ﻮﮐ ﺏﺎﺴﺘﻧﺍ ﮞﺎﮩﺟ ﻦﯿﻣﻭﮈ ﺏﺎﺴﺘﻧﺍ"
-
-
 msgid "Is Attribute"
 msgstr "Is ﻒﺻﻭ"
 
@@ -54469,15 +54433,6 @@ msgstr "ﮟﯾﺮﮐ ﺶﯿﭘ ﻢﯾﺮﻓ ﮯﺳ ﮏﺳﮈ ﮯﯿﻟ ﮯﮐ �
 
 
 msgctxt "Operator"
-msgid "Rebuild Proxy and Timecode Indices"
-msgstr "ﮟﯿﺋﺎﻨﺑ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﺖﺳﺮﮩﻓ ﮈﻮﮐ ﻢﺋﺎﭨ ﺭﻭﺍ ﯽﺴﮐﺍﺮﭘ"
-
-
-msgid "Rebuild all selected proxies and timecode indices in the background"
-msgstr "ﮟﯿﺋﺎﻨﺑ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﺖﺳﺮﮩﻓ ﮈﻮﮐ ﻢﺋﺎﭨ ﺭﻭﺍ ﺰﯿﺴﮐﺍﺮﭘ ﺐﺨﺘﻨﻣ ﻡﺎﻤﺗ ﮟﯿﻣﻮﯾﻭ ﺲﭘ"
-
-
-msgctxt "Operator"
 msgid "Refine Markers"
 msgstr "ﮟﯾﺮﮐ ﺮﺘﮩﺑ ﻮﮐ ﮞﻭﺮﮐﺭﺎﻣ"
 
@@ -59497,6 +59452,11 @@ msgstr "ﮞﺎﯿﺑﺎﭼ ﯽﮐ ﮯﻧﻮﻤﻧ"
 
 msgid "Convert selected channels to an uneditable set of samples to save storage space"
 msgstr "ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﮟﯿﻣ ﭧﯿﺳ ﺮﺋﺎﻔﯾﮈﻮﻣ ﻞﺑﺎﻗﺎﻧ ﮯﮐ ﮞﻮﻧﻮﻤﻧ ﻮﮐ ﺰﻠﻨﯿﭼ ﺐﺨﺘﻨﻣ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﭽﺑ ﮧﮕﺟ ﯽﮐ ﺞﯾﺭﻮﭩﺳ"
+
+
+msgctxt "Operator"
+msgid "Local View"
+msgstr "ﺮﻈﻨﻣ ﯽﻣﺎﻘﻣ"
 
 
 msgctxt "Operator"
@@ -66483,14 +66443,6 @@ msgstr "ﮟﯾﺮﮐ ﻞﮔﻮﭨ ﻮﮐ ﮯﻧﺎﮭﮐﺩ ﭧﮐﺎﺳ ﮈﻮ�
 msgctxt "Operator"
 msgid "Collapse"
 msgstr "ﺎﻨﭩﻤﺳ"
-
-
-msgid "Remove an item from the index switch"
-msgstr "ﮟﯾﺮﮐ ﭻﺋﻮﺳ ﺲﮑﯾﮉﻧﺍ the ﮯﺳ ﻢﭩﺋﺁ an ﮟﯾﺩ ﺎﭩﮨ"
-
-
-msgid "Index to remove"
-msgstr "ﮟﯾﺩ ﺎﭩﮨ to ﺲﮑﯾﮉﻧﺍ"
 
 
 msgctxt "Operator"
@@ -79710,11 +79662,6 @@ msgid "ICO Sphere"
 msgstr "ICO ﮦﺮﺋﺍﺩ"
 
 
-msgctxt "Operator"
-msgid "Local View"
-msgstr "ﺮﻈﻨﻣ ﯽﻣﺎﻘﻣ"
-
-
 msgid "Toggle display of selected object(s) separately and centered in view"
 msgstr "ﮟﯾﺮﮐ ﻞﮔﻮﭨ ﮟﯿﻣ ﺰﮐﺮﻣ ﺭﻭﺍ ﮓﻟﺍ ﻮﮐ ﮯﻧﺎﮭﮐﺩ ﮯﮐ (ﭧﮑﯿﺠﺑﺁ) ﮯﺷ ﺐﺨﺘﻨﻣ"
 
@@ -83428,26 +83375,6 @@ msgid "Panel containing UI elements"
 msgstr "UI ﻞﻨﯿﭘ ﻞﻤﺘﺸﻣ ﺮﭘ ﺮﺻﺎﻨﻋ"
 
 
-msgid "Selectability & Visibility"
-msgstr "ﺖﯿﺋﺮﻣ ﺭﻭﺍ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Shadow Settings"
-msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﻭﮉﯿﺷ"
-
-
-msgid "SSAO Settings"
-msgstr "SSAO ﺕﺎﺒﯿﺗﺮﺗ"
-
-
-msgid "Cavity"
-msgstr "ﺎﮩﮔ"
-
-
-msgid "Render Pass"
-msgstr "ﺱﺎﭘ ﺭﮉﻨﯾﺭ"
-
-
 msgid "Compositor"
 msgstr "ﺮﭩﯾﺯﻮﭙﻤﮐ"
 
@@ -83508,10 +83435,6 @@ msgid "Multi Frame"
 msgstr "ﻢﯾﺮﻓ ﯽﭩﻠﻣ"
 
 
-msgid "glTF Material Variants"
-msgstr "glTF ﮟﯿﺘﻟﺎﺣ ﻒﻠﺘﺨﻣ ﯽﮐ ﺩﺍﻮﻣ"
-
-
 msgid "Auto-Masking"
 msgstr "ﮓﻨﮑﺳﺎﻣ ﻮﭨﺁ"
 
@@ -83532,8 +83455,8 @@ msgid "Viewport Debug"
 msgstr "ﮓﺒﯾﮈ ﭦﺭﻮﭘ ﻮﯾﻭ"
 
 
-msgid "glTF Animations"
-msgstr "glTF ﺮﯾﻭﺎﺼﺗ ﮎﺮﺤﺘﻣ"
+msgid "glTF Material Variants"
+msgstr "glTF ﮟﯿﺘﻟﺎﺣ ﻒﻠﺘﺨﻣ ﯽﮐ ﺩﺍﻮﻣ"
 
 
 msgid "VR"
@@ -83544,12 +83467,36 @@ msgid "VR Info"
 msgstr "VR ﺕﺎﻣﻮﻠﻌﻣ"
 
 
+msgid "glTF Animations"
+msgstr "glTF ﺮﯾﻭﺎﺼﺗ ﮎﺮﺤﺘﻣ"
+
+
 msgid "Active Tool"
 msgstr "ﻝﻮﭨ ﻝﺎﻌﻓ"
 
 
 msgid "View Lock"
 msgstr "ﮟﯿﮭﮑﯾﺩ ﮎﻻ﻿"
+
+
+msgid "Selectability & Visibility"
+msgstr "ﺖﯿﺋﺮﻣ ﺭﻭﺍ ﺏﺎﺨﺘﻧﺍ"
+
+
+msgid "Shadow Settings"
+msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﻭﮉﯿﺷ"
+
+
+msgid "SSAO Settings"
+msgstr "SSAO ﺕﺎﺒﯿﺗﺮﺗ"
+
+
+msgid "Cavity"
+msgstr "ﺎﮩﮔ"
+
+
+msgid "Render Pass"
+msgstr "ﺱﺎﭘ ﺭﮉﻨﯾﺭ"
 
 
 msgid "Chain Scaling"
@@ -83614,10 +83561,6 @@ msgstr "ﮯﻠﭙﺳﮈ ﺮﮐﺭﺎﻣ"
 
 msgid "Mask Display"
 msgstr "ﮯﻠﭙﺳﮈ ﮏﺳﺎﻣ"
-
-
-msgid "Proxy/Timecode"
-msgstr "ﮈﻮﮐ ﻢﺋﺎﭨ/ﯽﺴﮐﺍﺮﭘ"
 
 
 msgid "Stabilization"
@@ -84414,10 +84357,6 @@ msgstr "ﺰﻣﺭﺎﻓﻮﯾﻭ"
 
 msgid "Sequencer Snapping"
 msgstr "ﮓﻨﭙﯿﻨﺳ ﻻ﻿ﺍﻭ ﮯﻨﯾﺩ ﺐﯿﺗﺮﺗ"
-
-
-msgid "Strip Proxy & Timecode"
-msgstr "ﮈﻮﮐ ﻢﺋﺎﭨ ﺭﻭﺍ ﯽﺴﮐﺍﺮﭘ ﯽﭩﭘ"
 
 
 msgctxt "Operator"
@@ -94796,10 +94735,6 @@ msgid "Simulation Item"
 msgstr "ﻢﭩﺋﺁ ﯽﻠﻘﻧ"
 
 
-msgid "Attribute domain where the attribute is stored in the simulation state"
-msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻅﻮﻔﺤﻣ ﮟﯿﻣ ﺖﻟﺎﺣ ﯽﻠﻘﻧ ﻮﮐ ﺏﺎﺴﺘﻧﺍ ﮞﺎﮩﺟ ﻦﯿﻣﻭﮈ ﺏﺎﺴﺘﻧﺍ"
-
-
 msgid "Soft body simulation settings for an object"
 msgstr "ﺰﮕﻨﭩﯿﺳ ﻦﺸﯿﻟﻮﻤﺳ ﯼﮈﺎﺑ ﻡﺮﻧ ﮯﯿﻟ ﮯﮐ ﮯﺷ ﯽﺴﮐ"
 
@@ -98131,10 +98066,6 @@ msgid "Convert input to float data"
 msgstr "ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﮟﯿﻣ ﺎﭩﯾﮈ ﭦﻮﻠﻓ ﻮﮐ ﭧﭘ ﻥﺍ"
 
 
-msgid "Use a preview proxy and/or time-code index for this strip"
-msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺖﺳﺮﮩﻓ ﮈﻮﮐ ﻢﺋﺎﭨ ﺎﯾ/ﺭﻭﺍ ﯽﺴﮐﺍﺮﭘ ﻮﯾﻮﯾﺮﭘ  ﮯﯿﻟ ﮯﮐ ﯽﭩﭘ ﺱﺍ"
-
-
 msgid "Reverse Frames"
 msgstr "ﻢﯾﺮﻓ ﺱﺭﻮﯾﺭ"
 
@@ -98948,10 +98879,6 @@ msgstr "ﻡﺎﻘﻣ ﺎﮐ ﻞﺋﺎﻓ ﯽﺴﮐﺍﺮﭘ ﺕﺭﻭﺮﺿ ﺐ�
 
 msgid "Quality of proxies to build"
 msgstr "ﺭﺎﯿﻌﻣ ﺎﮐ ﮞﻮﯿﺴﮐﺍﺮﭘ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﻨﺑ"
-
-
-msgid "Method for reading the inputs timecode"
-msgstr "ﮧﻘﯾﺮﻃ ﺎﮐ ﮯﻨﮬﮍﭘ ﻮﮐ ﮈﻮﮐ ﻢﺋﺎﭨ ﭧﭘ ﻥﺍ"
 
 
 msgid "Overwrite existing proxy files when building"
@@ -102203,20 +102130,8 @@ msgid "Settings to define a reusable library for Asset Browsers to use"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﮯﻧﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﻝﺎﻤﻌﺘﺳﺍ ﻞﺑﺎﻗ ﮦﺭﺎﺑﻭﺩ ﮯﯿﻟ ﮯﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮯﮐ ﺯﺭﺯﺅﺍﺮﺑ ﮧﺛﺎﺛﺍ"
 
 
-msgid "Default Import Method"
-msgstr "ﮧﻘﯾﺮﻃ ﺎﮐ ﺪﻣﺁﺭﺩ ﮦﺪﺷ ﮯﻃ"
-
-
 msgid "Determine how the asset will be imported, unless overridden by the Asset Browser"
 msgstr "ﮯﺋﺎﺟ ﺎﯿﮐ ﮧﻧ ﮉﯿﺋﺍﺭ ﺭﻭﻭﺍ ﮯﻌﯾﺭﺫ ﮯﮐ ﺭﺯﺅﺍﺮﺑ ﮧﺛﺎﺛﺍ ﮧﮐ ﮏﺗ ﺐﺟ ،ﺎﮔ ﮯﺋﺎﺟ ﺎﯿﮐ ﺪﻣﺁﺭﺩ ﺡﺮﻃ ﺲﮐ ﮧﺛﺎﺛﺍ ﮧﮐ ﮟﯾﺮﮐ ﻦﯿﻌﺗ ﺎﮐ ﺕﺎﺑ ﺱﺍ"
-
-
-msgid "Import the assets as copied data-block, with no link to the original asset data-block"
-msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮏﻨﻟ ﯽﺋﻮﮐ ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮧﺛﺎﺛﺍ ﻞﺻﺍ ،ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﯽﭘﺎﮐ ﻮﮐ ﮞﻮﺛﺎﺛﺍ"
-
-
-msgid "Import the assets as copied data-block while avoiding multiple copies of nested, typically heavy data. For example the textures of a material asset, or the mesh of an object asset, don't have to be copied every time this asset is imported. The instances of the asset share the data instead."
-msgstr "ﮟﯿﮨ ﯽﺗﺮﮐ ﮎﺍﺮﺘﺷﺍ ﺎﮐ ﺎﭩﯾﮈ ﮟﯿﻟﺎﺜﻣ ﯽﮐ ﮧﺛﺎﺛﺍ ﮯﺋﺎﺠﺑ ﮯﮐ ﺱﺍ ﮯﮨ ﮟﯿﮩﻧ ﺕﺭﻭﺮﺿ ﯽﮐ ﮯﻧﺮﮐ ﯽﭘﺎﮐ ﮯﺳﺍ ﻮﺗ ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﺪﻣﺁﺭﺩ ﮧﺛﺎﺛﺍ ﮧﯾ ﺐﺟ ﺭﺎﺑ ﺮﮨ ،ﺶﯿﻣ ﯽﮐ ﮧﺛﺎﺛﺍ ﭧﮑﯿﺠﺑﺁ ﯽﺴﮐ ﺎﯾ ،ﺖﺧﺎﺳ ﯽﮐ ﮯﺛﺎﺛﺍ ﯼﺩﺎﻣ ﯽﺴﮐ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﻝﺎﺜﻣ ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﯽﭘﺎﮐ ﻮﮐ ﮞﻮﺛﺎﺛﺍ ﮯﺋﻮﮨ ﮯﺗﺮﮐ ﺰﯾﺮﮔ ﮯﺳ ﮞﻮﯿﭘﺎﮐ ﺩﺪﻌﺘﻣ ﯽﮐ ﺎﭩﯾﮈ ﯼﺭﺎﮭﺑ ﺮﭘ ﺭﻮﻃ ﻡﺎﻋ ،ﮉﭩﺴﯿﻧ"
 
 
 msgid "Path to a directory with .blend files to use as an asset library"
@@ -112153,11 +112068,6 @@ msgstr ":ﮟﯿﺋﺎﻨﺑ ﮦﺪﺷ ﺦﺴﻣ ﺮﯿﻏ"
 
 
 msgctxt "Operator"
-msgid "Build Proxy / Timecode"
-msgstr "ﮟﯿﺋﺎﻨﺑ ﮈﻮﮐ ﻢﺋﺎﭨ / ﯽﺴﮐﺍﺮﭘ"
-
-
-msgctxt "Operator"
 msgid "Build Proxy"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﯽﺴﮐﺍﺮﭘ"
 
@@ -112295,10 +112205,6 @@ msgstr "ﺲﮑﯾﺮﭨ ﮯﯿﻟ ﮯﮐ ﻡﺎﮑﺤﺘﺳﺍ"
 
 msgid "Tracks for Location"
 msgstr "ﺲﮑﯾﺮﭨ ﮯﯿﻟ ﮯﮐ ﻡﺎﻘﻣ"
-
-
-msgid "Timecode Index"
-msgstr "ﺲﮑﯾﮉﻧﺍ ﮈﻮﮐ ﻢﺋﺎﭨ"
 
 
 msgctxt "Operator"
@@ -117485,6 +117391,11 @@ msgid "shape_keys"
 msgstr "ﺰﯿﮐ_ﻞﮑﺷ"
 
 
+msgctxt "Key"
+msgid "Key"
+msgstr "ﯽﺑﺎﭼ"
+
+
 msgid "lattices"
 msgstr "ﮞﻮﯿﻟﺎﺟ"
 
@@ -120880,6 +120791,10 @@ msgid "No vertex group among the selected vertices"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮦﻭﺮﮔ ﯼﺩﻮﻤﻋ ﯽﺋﻮﮐ ﮟﯿﻣ ﮞﻮﯿﭨﻮﭼ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ"
 
 
+msgid "No edges selected"
+msgstr "ﺎﯿﮔ ﺎﯿﮐ ﮟﯿﮩﻧ ﺐﺨﺘﻨﻣ ﮦﺭﺎﻨﮐ ﯽﺋﻮﮐ"
+
+
 msgid "Invalid selection order"
 msgstr "ﺭﮈﺭﺁ ﻦﺸﮑﯿﻠﺳ ﻂﻠﻏ"
 
@@ -120906,10 +120821,6 @@ msgstr "ﮟﯿﮨ ﮟﯿﮩﻧ ﮞﺎﯿﺑﺎﭼ ﯽﮐ ﻞﮑﺷ ﮟﯿﻣ ﻝ
 
 msgid "Selection not supported in object mode"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮧﺘﻓﺎﯾ ﻥﻭﺎﻌﺗ ﮟﯿﻣ ﺭﻮﻃ ﮯﺷ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "No edges selected"
-msgstr "ﺎﯿﮔ ﺎﯿﮐ ﮟﯿﮩﻧ ﺐﺨﺘﻨﻣ ﮦﺭﺎﻨﮐ ﯽﺋﻮﮐ"
 
 
 msgid "No faces filled"
@@ -127175,11 +127086,6 @@ msgid "Failed to load image texture '%s'"
 msgstr "ﻡﺎﮐﺎﻧ ﮟﯿﻣ ﮯﻧﺮﮐ ﮈﻮﻟ '%s‬‪' ﺖﺧﺎﺳ ﯽﮐ ﺮﯾﻮﺼﺗ"
 
 
-msgctxt "Key"
-msgid "Key"
-msgstr "ﯽﺑﺎﭼ"
-
-
 msgid "ViewLayer '%s' does not contain object '%s'"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ '%s‬‪' ﮯﺷ ﮟﯿﻣ '%s‬‪'  ﺕﺮﭘ  ﻮﯾﻭ"
 
@@ -128908,6 +128814,10 @@ msgid "Crease Edges"
 msgstr "ﮞﻭﺭﺎﻨﮐ ﺰﯾﺮﮐ"
 
 
+msgid "Add Item"
+msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﻢﭩﺋﺁ"
+
+
 msgid "Not a compositor node tree"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ ﯼﺮﭨ ﮈﻮﻧ ﺮﭩﯾﺯﻮﭙﻤﮐ"
 
@@ -130046,6 +129956,14 @@ msgid "Top"
 msgstr "ﺮﭘﻭﺍ"
 
 
+msgid "Inverted"
+msgstr "ﺎﭩﻟﺍ"
+
+
+msgid "Pattern Mode"
+msgstr "ﮈﻮﻣ ﻥﺮﭩﯿﭘ"
+
+
 msgid "Local rotation of the gizmo. Only used if the local transforms are used in the 3D view"
 msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮟﯿﻣ ﺮﻈﻨﻣ 3D ﻮﮐ ﮞﻮﯿﻠﯾﺪﺒﺗ ﯽﻣﺎﻘﻣ ﺐﺟ ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮟﯿﻣ ﺕﺭﻮﺻ ﺱﺍ ﻑﺮﺻ ﺵﺩﺮﮔ ﯽﻣﺎﻘﻣ ﯽﮐ ﻮﻣﺰﯿﮔ"
 
@@ -130128,10 +130046,6 @@ msgstr "ﮯﮨ ﯽﺳﻭﮍﭘ"
 
 msgid "Index of nearest element"
 msgstr "ﮧﯾﺭﺎﺷﺍ ﺎﮐ ﺮﺼﻨﻋ ﻦﯾﺮﺗ ﺐﯾﺮﻗ"
-
-
-msgid "Add Item"
-msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﻢﭩﺋﺁ"
 
 
 msgid "The camera used for rendering the scene"
@@ -130965,20 +130879,12 @@ msgid "Number of levels of nested instances to realize for each top-level instan
 msgstr "ﺩﺍﺪﻌﺗ ﯽﮐ ﮞﻮﺤﻄﺳ ﯽﮐ ﮞﻮﻟﺎﺜﻣ ﮉﭩﺴﯿﻧ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﺱﻮﺴﺤﻣ ﮯﯿﻟ ﮯﮐ ﻝﺎﺜﻣ ﯽﮐ ﮯﺟﺭﺩ ﯽﻠﻋﺍ ﺮﮨ"
 
 
-msgid "Only one * is supported in the pattern"
-msgstr "ﮯﮨ ﮧﺘﻓﺎﯾ ﻥﻭﺎﻌﺗ * ﮏﯾﺍ ﻑﺮﺻ ﮟﯿﻣ ﻥﺮﭩﯿﭘ"
-
-
 msgid "Cannot remove built-in attributes: {}"
 msgstr "{} :ﺎﺘﮑﺳ ﺎﺟ ﮟﯿﮩﻧ ﺎﯾﺎﭩﮨ ﻮﮐ ﻑﺎﺻﻭﺍ ﺩﻮﺟﻮﻣ ﮯﺳ ﮯﻠﮩﭘ"
 
 
 msgid "Attribute does not exist: \"{}\""
 msgstr "\\{} :ﮯﮨ ﮟﯿﮩﻧ ﺩﻮﺟﻮﻣ ﻒﺻﻭ"
-
-
-msgid "Pattern Mode"
-msgstr "ﮈﻮﻣ ﻥﺮﭩﯿﭘ"
 
 
 msgid "How the attributes to remove are chosen"
@@ -131043,10 +130949,6 @@ msgstr "1 ﮈﺮﮔ"
 
 msgid "Grid 2"
 msgstr "2 ﮈﺮﮔ"
-
-
-msgid "Inverted"
-msgstr "ﺎﭩﻟﺍ"
 
 
 msgid "The parts of the geometry that go into the first output"
@@ -131291,6 +131193,10 @@ msgstr "ﻢﺴﻗ ﯽﮐ ﺖﺧﺭﺩ ﮈﻮﻧ ﮧﻨﯿﻌﺘﻣ ﺮﯿﻏ"
 
 msgid " (Deprecated)"
 msgstr "(ﮦﺩﻮﺳﺮﻓ) "
+
+
+msgid "Only one * is supported in the pattern"
+msgstr "ﮯﮨ ﮧﺘﻓﺎﯾ ﻥﻭﺎﻌﺗ * ﮏﯾﺍ ﻑﺮﺻ ﮟﯿﻣ ﻥﺮﭩﯿﭘ"
 
 
 msgid "Not a shader node tree"

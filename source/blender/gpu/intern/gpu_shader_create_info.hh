@@ -27,12 +27,6 @@
 #  include <iostream>
 #endif
 
-#if defined(GPU_SHADER)
-#  include "gpu_shader_srd_cpp.hh"
-#else
-#  include "gpu_shader_srd_info.hh"
-#endif
-
 #if !defined(GPU_SHADER)
 namespace blender {
 #endif
@@ -1116,6 +1110,12 @@ struct ShaderCreateInfo {
   ~ShaderCreateInfo() = default;
 
   using Self = ShaderCreateInfo;
+
+  /* WORKAROUND: Avoid unused expression warning. */
+  Self &noop()
+  {
+    return *this;
+  }
 
   /* -------------------------------------------------------------------- */
   /** \name Shaders in/outs (fixed function pipeline config)
