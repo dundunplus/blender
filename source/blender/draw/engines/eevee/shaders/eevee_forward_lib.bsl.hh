@@ -10,6 +10,8 @@
  * This is used by alpha blended materials and materials using Shader to RGB nodes.
  */
 
+#include "draw_object_infos_infos.hh"
+
 #include "draw_model_lib.glsl"
 #include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_light_eval.bsl.hh"
@@ -65,6 +67,7 @@ void forward_lighting_eval(Thickness thickness,
   ctx.P = g_data.P;
   ctx.Ng = g_data.Ng;
   ctx.V = V;
+  ctx.texel = frag_co;
   ctx.thickness = thickness;
 
   /* TODO(fclem): If transmission (no SSS) is present, we could reduce light_closure_eval_count
@@ -77,7 +80,7 @@ void forward_lighting_eval(Thickness thickness,
   ctx.terminator_normal_offset = object_infos.shadow_terminator_normal_offset;
   ctx.terminator_geometry_offset = object_infos.shadow_terminator_geometry_offset;
 
-  lights.eval_reflection(ctx, frag_co, vPz);
+  lights.eval_reflection(ctx, vPz);
 
   if (srt.light_closure_eval_count_transmit > 0) [[static_branch]] {
     ClosureUndetermined cl_transmit = g_closure_get(0);
@@ -87,7 +90,7 @@ void forward_lighting_eval(Thickness thickness,
       ctx_tr.stack.cl[0] = closure_light_new(cl_transmit, V, thickness);
 
       /* NOTE: Only evaluates `stack.cl[0]`. */
-      lights.eval_transmission(ctx_tr, frag_co, vPz);
+      lights.eval_transmission(ctx_tr, vPz);
 
       if (cl_transmit.type == CLOSURE_BSSRDF_BURLEY_ID) {
 #if defined(GLSL_CPP_STUBS) || defined(MAT_SUBSURFACE)

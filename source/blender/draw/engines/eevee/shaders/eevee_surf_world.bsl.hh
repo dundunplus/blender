@@ -32,11 +32,8 @@ namespace eevee {
 
 struct SurfWorld {
   [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
-  [[legacy_info]] ShaderCreateInfo eevee_sampling_data;
   [[legacy_info]] ShaderCreateInfo eevee_utility_texture;
   [[legacy_info]] ShaderCreateInfo eevee_geom_iface_info;
-
-  [[legacy_info]] ShaderCreateInfo eevee_cryptomatte_out;
 
   [[push_constant]] float world_opacity_fade;
   [[push_constant]] float world_background_blur;

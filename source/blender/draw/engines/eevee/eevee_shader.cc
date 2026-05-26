@@ -742,7 +742,7 @@ static SlotAllocator add_pipeline_create_info(gpu::shader::ShaderCreateInfo &inf
         case MAT_PIPE_PREPASS_FORWARD_VELOCITY:
         case MAT_PIPE_PREPASS_DEFERRED_VELOCITY:
           pipeline_info_name = "eevee_surf_depthTtrue_infos_";
-          additional_info_name = "eevee_velocity_geom";
+          additional_info_name = "eevee_GeometryVelocity";
           info.name_ += "_depth_velocity";
           info.compilation_constant(gpu::shader::Type::bool_t, "use_velocity", true);
           info.define("MAT_DEPTH");
@@ -1005,8 +1005,8 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
       GPU_material_flag_get(gpumat, GPU_MATFLAG_SHADER_TO_RGBA) &&
       GPU_material_flag_get(gpumat, GPU_MATFLAG_TRANSPARENT))
   {
-    info.additional_info("eevee_hiz_prev_data");
-    info.additional_info("eevee_previous_layer_radiance");
+    info.additional_info("eevee_PreviousLayerHiZ");
+    info.additional_info("eevee_PreviousLayerRadiance");
   }
 
   SlotAllocator slots = add_pipeline_create_info(
@@ -1133,6 +1133,7 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
         gpu::shader::Type::int_t, "light_closure_eval_count_reflect", closure_bin_count);
     info.compilation_constant(
         gpu::shader::Type::int_t, "light_closure_eval_count_transmit", transmit_eval_count);
+    info.compilation_constant(gpu::shader::Type::bool_t, "shadow_random", true);
   }
 
   if (GPU_material_flag_get(gpumat, GPU_MATFLAG_BARYCENTRIC)) {
@@ -1335,6 +1336,7 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
     Vector<StringRefNull> dependencies;
     if (use_ao_node) {
       dependencies.append("eevee_fast_gi.bsl.hh");
+      info.additional_info("eevee_HiZ");
     }
     dependencies.append("eevee_geom_types_lib.bsl.hh");
     dependencies.append("eevee_nodetree_lib.glsl");

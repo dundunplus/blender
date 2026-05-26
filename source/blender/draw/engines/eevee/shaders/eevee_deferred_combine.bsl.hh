@@ -6,13 +6,13 @@
 
 #include "infos/eevee_common_infos.hh"
 
-FRAGMENT_SHADER_CREATE_INFO(eevee_gbuffer_data)
-FRAGMENT_SHADER_CREATE_INFO(eevee_hiz_data)
+FRAGMENT_SHADER_CREATE_INFO(eevee_global_ubo)
 FRAGMENT_SHADER_CREATE_INFO(draw_view)
 
 #include "draw_view_lib.glsl"
 #include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_gbuffer_read.bsl.hh"
+#include "eevee_hiz.bsl.hh"
 #include "eevee_renderpass.bsl.hh"
 #include "gpu_shader_fullscreen_lib.glsl"
 #include "gpu_shader_shared_exponent_lib.glsl"
@@ -20,8 +20,7 @@ FRAGMENT_SHADER_CREATE_INFO(draw_view)
 namespace eevee::deferred {
 
 struct Combine {
-  [[legacy_info]] ShaderCreateInfo eevee_gbuffer_data;
-  [[legacy_info]] ShaderCreateInfo eevee_hiz_data;
+  [[legacy_info]] ShaderCreateInfo eevee_global_ubo;
   [[legacy_info]] ShaderCreateInfo draw_view;
 
   /* NOTE: Both light IDs have a valid specialized assignment of '-1' so only when default is
@@ -102,12 +101,14 @@ struct CombineFragOut {
 [[fragment, early_fragment_tests]]
 void combine_frag([[resource_table]] Combine &srt,
                   [[resource_table]] RenderPassOutput &render_passes,
+                  [[resource_table]] const HiZ &hiz,
+                  [[resource_table]] const ::gbuffer::Reader &reader,
                   [[in]] const CombineVertOut &v_out,
                   [[out]] CombineFragOut &frag_out)
 {
   int2 texel = int2(gl_FragCoord.xy);
 
-  const gbuffer::Layers gbuf = gbuffer::read_layers(texel);
+  const gbuffer::Layers gbuf = reader.read_layers(texel);
   const uchar closure_count = gbuf.header.closure_len();
   const uint3 bin_indices = gbuf.header.bin_index_per_layer();
 
@@ -159,7 +160,7 @@ void combine_frag([[resource_table]] Combine &srt,
 
         if ((cl.type == CLOSURE_BSDF_TRANSLUCENT_ID ||
              cl.type == CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID) &&
-            (gbuffer::read_thickness(gbuf.header, texel).value() != 0.0f))
+            (reader.read_thickness(gbuf.header, texel).value() != 0.0f))
         {
           /* We model two transmission event, so the surface color need to be applied twice. */
           cl.color *= cl.color;
@@ -223,7 +224,7 @@ void combine_frag([[resource_table]] Combine &srt,
         texel, uniform_buf.render_pass.normal_id, float4(average_normal, 1.0f));
   }
   if (srt.render_pass_position_enabled) {
-    float depth = texelFetch(hiz_tx, texel, 0).r;
+    float depth = texelFetch(hiz.hiz_tx, texel, 0).r;
     float3 P = drw_point_screen_to_world(float3(v_out.screen_uv, depth));
     render_passes.store_color(texel, uniform_buf.render_pass.position_id, float4(P, 1.0f));
   }
