@@ -40,7 +40,7 @@ struct GeomPointCloud {
     [[resource_table, condition(is_shadow_pipe)]] GeomShadow &shadow,
     [[instance_id]] const int /*inst_id*/,     /* Used by model_lib. */
     [[base_instance]] const int /*base_inst*/, /* Used by model_lib. */
-    [[vertex_id]] const int vert_id,
+    [[vertex_id]] const int /*vert_id*/,
     [[position]] float4 &out_position,
     /* Note: Removed manually if not needed. Otherwise, can generate geometry shader fallback. */
     [[viewport_index]] int &out_viewport)
@@ -49,8 +49,10 @@ struct GeomPointCloud {
 
   auto &interp = interface_get(eevee_geom_iface_info, interp);
   auto &pointcloud_interp = interface_get(eevee_geom_pointcloud_iface_info, pointcloud_interp);
-  auto &pointcloud_interp_flat = interface_get(eevee_geom_pointcloud_iface_info,
-                                               pointcloud_interp_flat);
+
+  /* clang-format off */ /* Multiline macro breaks error line counting. */
+  auto &pointcloud_interp_flat = interface_get(eevee_geom_pointcloud_iface_info, pointcloud_interp_flat);
+  /* clang-format on */
 
   if (pipe.is_shadow_pipe) [[static_branch]] {
     auto &shadow_iface = interface_get(eevee_shadow_iface_info, shadow_iface);

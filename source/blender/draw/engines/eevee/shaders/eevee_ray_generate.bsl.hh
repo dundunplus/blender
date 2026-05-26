@@ -14,11 +14,9 @@ SHADER_LIBRARY_CREATE_INFO(draw_view)
 SHADER_LIBRARY_CREATE_INFO(eevee_utility_texture)
 
 #include "draw_view_lib.glsl"
-#include "eevee_bxdf_diffuse_lib.glsl"
-#include "eevee_bxdf_lib.glsl"
-#include "eevee_bxdf_microfacet_lib.glsl"
-#include "eevee_gbuffer_read_lib.glsl"
-#include "eevee_sampling_lib.glsl"
+#include "eevee_bxdf.bsl.hh"
+#include "eevee_gbuffer_read.bsl.hh"
+#include "eevee_sampling_lib.bsl.hh"
 #include "gpu_shader_codegen_lib.glsl"
 #include "gpu_shader_math_matrix_construct_lib.glsl"
 
@@ -122,9 +120,7 @@ struct RayGenerate {
 [[compute, local_size(RAYTRACE_GROUP_SIZE, RAYTRACE_GROUP_SIZE)]]
 void generate_rays([[resource_table]] RayGenerate &srt,
                    [[work_group_id]] const uint3 group_id,
-                   [[global_invocation_id]] const uint3 global_id,
-                   [[local_invocation_id]] const uint3 local_id,
-                   [[local_invocation_index]] const uint local_index)
+                   [[local_invocation_id]] const uint3 local_id)
 {
   constexpr uint tile_size = RAYTRACE_GROUP_SIZE;
   uint2 tile_coord = unpackUvec2x16(srt.tiles_coord_buf[group_id.x]);

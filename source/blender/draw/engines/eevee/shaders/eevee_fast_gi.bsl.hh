@@ -26,14 +26,14 @@ VERTEX_SHADER_CREATE_INFO(eevee_hiz_data)
 VERTEX_SHADER_CREATE_INFO(draw_view)
 
 #include "draw_view_lib.glsl"
-#include "eevee_closure_lib.glsl"
+#include "eevee_closure.bsl.hh"
 #include "eevee_colorspace_lib.bsl.hh"
-#include "eevee_filter_lib.glsl"
-#include "eevee_gbuffer_read_lib.glsl"
+#include "eevee_filter.bsl.hh"
+#include "eevee_gbuffer_read.bsl.hh"
 #include "eevee_lightprobe.bsl.hh"
 #include "eevee_ray_types_lib.bsl.hh"
 #include "eevee_reverse_z_lib.bsl.hh"
-#include "eevee_sampling_lib.glsl"
+#include "eevee_sampling_lib.bsl.hh"
 #include "eevee_spherical_harmonics.bsl.hh"
 #include "eevee_utility_tx.bsl.hh"
 #include "gpu_shader_math_matrix_transform_lib.glsl"
@@ -473,12 +473,12 @@ struct SampleInput {
       return 0.0f;
     }
 
-    float gauss = filter_gaussian_factor(1.5f, 1.5f);
+    float gauss = filters::gaussian_factor(1.5f, 1.5f);
 
     /* TODO(fclem): Scene parameter. 100.0f is dependent on scene scale. */
-    float depth_weight = filter_planar_weight(center_N, center_P, sample_P, 100.0f);
-    float spatial_weight = filter_gaussian_weight(gauss, length_squared(float2(sample_offset)));
-    float normal_weight = filter_angle_weight(center_N, sample_N);
+    float depth_weight = filters::planar_weight(center_N, center_P, sample_P, 100.0f);
+    float spatial_weight = filters::gaussian_weight(gauss, length_squared(float2(sample_offset)));
+    float normal_weight = filters::angle_weight(center_N, sample_N);
 
     return max(1e-6f, depth_weight * spatial_weight * normal_weight);
   }
@@ -505,8 +505,8 @@ struct SampleInput {
     }
 
     /* TODO(fclem): Scene parameter. 10000.0f is dependent on scene scale. */
-    float depth_weight = filter_planar_weight(center_N, center_P, sample_P, 10000.0f);
-    float normal_weight = filter_angle_weight(center_N, sample_N);
+    float depth_weight = filters::planar_weight(center_N, center_P, sample_P, 10000.0f);
+    float normal_weight = filters::angle_weight(center_N, sample_N);
     /* Some pixels might have no correct weight (depth & normal weights being very small).
      * To avoid them have invalid energy (because of float precision),
      * we weight all valid samples by a very small amount. */
@@ -972,72 +972,74 @@ void resolve([[work_group_id]] const uint3 group_id,
   const uint3 bin_indices = gbuf.header.bin_index_per_layer();
   const Thickness thickness = gbuffer::read_thickness(gbuf.header, texel_fullres);
 
-  for (uchar i = 0; i < GBUFFER_LAYER_MAX && i < closure_count; i++) {
-    ClosureUndetermined cl = gbuf.layer_get(i);
+  /* Unroll needed for gbuf.layer access. */
+  for (int i = 0; i < 3 /* GBUFFER_LAYER_MAX */; i++) [[unroll]] {
+    if (i < closure_count) {
+      ClosureUndetermined cl = gbuf.layer[i];
 
-    float roughness = closure_apparent_roughness_get(cl);
+      float roughness = closure_apparent_roughness_get(cl);
 
-    float mix_fac = saturate(roughness * raytrace_buf.roughness_mask_scale -
-                             raytrace_buf.roughness_mask_bias);
-    bool use_raytrace = mix_fac < 1.0f;
-    bool use_fast_gi = mix_fac > 0.0f;
+      float mix_fac = saturate(roughness * raytrace_buf.roughness_mask_scale -
+                               raytrace_buf.roughness_mask_bias);
+      bool use_raytrace = mix_fac < 1.0f;
+      bool use_fast_gi = mix_fac > 0.0f;
 
-    if (!use_fast_gi) {
-      continue;
-    }
+      if (use_fast_gi) {
+        LightProbeRay ray = bxdf_lightprobe_ray(cl, P, V, thickness);
 
-    LightProbeRay ray = bxdf_lightprobe_ray(cl, P, V, thickness);
+        float3 L = ray.dominant_direction;
 
-    float3 L = ray.dominant_direction;
+        /* Evaluate lighting from fast GI scan. */
+        float4 radiance_with_visibility = accum_sh.evaluate_lambert(L);
+        float3 radiance = radiance_with_visibility.xyz;
+        /* Evaluate occlusion from fast GI scan. */
+        /* The energy amount from the visibility factor is supposed to be a pure lambertian
+         * visibility (which integrate to PI over the hemisphere). However, the tracing step weight
+         * the incoming radiance by 4 PI (and with it the visibility). So the expected computation
+         * should be `accum_sh.evaluate(L).w / 4.0f`. But in order to save some complexity, we
+         * approximate using the `evaluate_lambert` version even if not completely correct (max 3%
+         * errors). */
+        float distant_radiance_visibility = saturate(radiance_with_visibility.w / 3.0f);
 
-    /* Evaluate lighting from fast GI scan. */
-    float4 radiance_with_visibility = accum_sh.evaluate_lambert(L);
-    float3 radiance = radiance_with_visibility.xyz;
-    /* Evaluate occlusion from fast GI scan. */
-    /* The energy amount from the visibility factor is supposed to be a pure lambertian visibility
-     * (which integrate to PI over the hemisphere). However, the tracing step weight the incoming
-     * radiance by 4 PI (and with it the visibility). So the expected computation should be
-     * `accum_sh.evaluate(L).w / 4.0f`. But in order to save some complexity, we approximate using
-     * the `evaluate_lambert` version even if not completely correct (max 3% errors). */
-    float distant_radiance_visibility = saturate(radiance_with_visibility.w / 3.0f);
+        if (closure_has_transmission(cl.type)) {
+          /* We only recorded visibility and radiance for the upper hemisphere.
+           * Discard result for transmission closures. */
+          distant_radiance_visibility = 1.0f;
+          radiance = float3(0.0);
+        }
 
-    if (closure_has_transmission(cl.type)) {
-      /* We only recorded visibility and radiance for the upper hemisphere.
-       * Discard result for transmission closures. */
-      distant_radiance_visibility = 1.0f;
-      radiance = float3(0.0);
-    }
+        /* Apply missing distant lighting. */
+        radiance += distant_radiance_visibility * samp.volume_irradiance.evaluate_lambert(L).rgb;
 
-    /* Apply missing distant lighting. */
-    radiance += distant_radiance_visibility * samp.volume_irradiance.evaluate_lambert(L).rgb;
+        uchar layer_index = bin_indices[i];
 
-    uchar layer_index = bin_indices[i];
+        float4 radiance_fast_gi = float4(radiance, 0.0f);
+        float4 radiance_raytrace = float4(0.0f);
+        if (use_raytrace) {
+          /* TODO(fclem): Layered texture. */
+          if (layer_index == 0u) {
+            radiance_raytrace = imageLoad(srt.closure0_img, texel_fullres);
+          }
+          else if (layer_index == 1u) {
+            radiance_raytrace = imageLoad(srt.closure1_img, texel_fullres);
+          }
+          else if (layer_index == 2u) {
+            radiance_raytrace = imageLoad(srt.closure2_img, texel_fullres);
+          }
+        }
+        float4 radiance_mixed = mix(radiance_raytrace, radiance_fast_gi, mix_fac);
 
-    float4 radiance_fast_gi = float4(radiance, 0.0f);
-    float4 radiance_raytrace = float4(0.0f);
-    if (use_raytrace) {
-      /* TODO(fclem): Layered texture. */
-      if (layer_index == 0u) {
-        radiance_raytrace = imageLoad(srt.closure0_img, texel_fullres);
+        /* TODO(fclem): Layered texture. */
+        if (layer_index == 0u) {
+          imageStore(srt.closure0_img, texel_fullres, radiance_mixed);
+        }
+        else if (layer_index == 1u) {
+          imageStore(srt.closure1_img, texel_fullres, radiance_mixed);
+        }
+        else if (layer_index == 2u) {
+          imageStore(srt.closure2_img, texel_fullres, radiance_mixed);
+        }
       }
-      else if (layer_index == 1u) {
-        radiance_raytrace = imageLoad(srt.closure1_img, texel_fullres);
-      }
-      else if (layer_index == 2u) {
-        radiance_raytrace = imageLoad(srt.closure2_img, texel_fullres);
-      }
-    }
-    float4 radiance_mixed = mix(radiance_raytrace, radiance_fast_gi, mix_fac);
-
-    /* TODO(fclem): Layered texture. */
-    if (layer_index == 0u) {
-      imageStore(srt.closure0_img, texel_fullres, radiance_mixed);
-    }
-    else if (layer_index == 1u) {
-      imageStore(srt.closure1_img, texel_fullres, radiance_mixed);
-    }
-    else if (layer_index == 2u) {
-      imageStore(srt.closure2_img, texel_fullres, radiance_mixed);
     }
   }
 }

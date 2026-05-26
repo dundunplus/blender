@@ -17,7 +17,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_geom_iface_info)
 #include "draw_curves_lib.glsl" /* IWYU pragma: export. For nodetree functions. */
 #include "draw_view_lib.glsl"   /* IWYU pragma: export. For nodetree functions. */
 #include "eevee_nodetree_frag_lib.glsl"
-#include "eevee_sampling_lib.glsl"
+#include "eevee_sampling_lib.bsl.hh"
 #include "eevee_surf_common.bsl.hh"
 #include "eevee_transparency.bsl.hh"
 #include "eevee_velocity.bsl.hh"
@@ -62,8 +62,8 @@ template<> struct SurfaceDepthFragOut<true> {
 template<bool with_velocity>
 [[fragment]]
 void surf_depth([[resource_table]] PipelineConstants &pipe,
-                [[resource_table]] SurfaceDepth &srt,
-                [[frag_coord]] const float4 frag_co,
+                [[resource_table]] SurfaceDepth & /*srt*/,
+                [[frag_coord]] const float4 /*frag_co*/,
                 [[out]] SurfaceDepthFragOut<with_velocity> &frag_out,
                 [[front_facing]] const bool front_face)
 {
