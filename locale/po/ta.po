@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'24a58e1403ac')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'8764d33c658b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-25 07:25+0000\n"
+"POT-Creation-Date: 2026-06-01 07:36+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -5944,6 +5944,18 @@ msgstr "எளிமைப்படுத்துங்கள்"
 
 msgid "Number of simplify steps (large values reduce fill accuracy)"
 msgstr "எளிமைப்படுத்தும் படிகளின் எண்ணிக்கை (பெரிய மதிப்புகள் நிரப்பு துல்லியத்தைக் குறைக்கின்றன)"
+
+
+msgid "Fill Solver"
+msgstr "தீர்வை நிரப்பவும்"
+
+
+msgid "Delaunay"
+msgstr "டெலானே"
+
+
+msgid "Pixel"
+msgstr "படத்துணுக்கு"
 
 
 msgid "Threshold to consider color transparent for filling"
@@ -17496,12 +17508,48 @@ msgid "Use curve to define primitive stroke thickness"
 msgstr "பழமையான வீச்சு தடிமன் வரையறுக்க வளைவைப் பயன்படுத்தவும்"
 
 
-msgid "Field to Grid Item"
-msgstr "ஃபீல்டு டு கிரிட் உருப்படி"
+msgid "Automatically detect a good structure type based on how the socket is used"
+msgstr "சாக்கெட் எவ்வாறு பயன்படுத்தப்படுகிறது என்பதை அடிப்படையாகக் கொண்டு ஒரு நல்ல கட்டமைப்பு வகையை தானாகவே கண்டறியவும்"
+
+
+msgid "Dynamic"
+msgstr "மாறும்"
+
+
+msgid "Socket can work with different kinds of structures"
+msgstr "சாக்கெட் பல்வேறு வகையான கட்டமைப்புகளுடன் வேலை செய்யலாம்"
+
+
+msgid "Socket expects a field"
+msgstr "சாக்கெட் ஒரு புலத்தை எதிர்பார்க்கிறது"
+
+
+msgid "Socket expects a grid"
+msgstr "சாக்கெட் ஒரு கட்டத்தை எதிர்பார்க்கிறது"
+
+
+msgid "List"
+msgstr "பட்டியல்"
+
+
+msgid "Socket expects a list"
+msgstr "சாக்கெட் ஒரு பட்டியலை எதிர்பார்க்கிறது"
+
+
+msgid "Single"
+msgstr "ஒற்றை"
+
+
+msgid "Socket expects a single value"
+msgstr "சாக்கெட் ஒரு மதிப்பை எதிர்பார்க்கிறது"
 
 
 msgid "Items"
 msgstr "பொருட்களை"
+
+
+msgid "Field to Grid Item"
+msgstr "ஃபீல்டு டு கிரிட் உருப்படி"
 
 
 msgid "Collection of field to grid items"
@@ -19344,10 +19392,6 @@ msgstr "உலகளாவிய"
 
 msgid "Simulates the entire mesh"
 msgstr "முழு கண்ணி உருவகப்படுத்துகிறது"
-
-
-msgid "Dynamic"
-msgstr "மாறும்"
 
 
 msgid "The active simulation area moves with the brush"
@@ -22030,10 +22074,6 @@ msgid "Overlapping curves with the same winding direction are filled as a union"
 msgstr "ஒரே முறுக்கு திசையுடன் ஒன்றுடன் ஒன்று வளைவுகள் ஒரு தொழிற்சங்கமாக நிரப்பப்படுகின்றன"
 
 
-msgid "Fill Solver"
-msgstr "தீர்வை நிரப்பவும்"
-
-
 msgid "Triangulation solver for filling 2D curves"
 msgstr "2டி வளைவுகளை நிரப்புவதற்கான முக்கோண தீர்வு"
 
@@ -22044,10 +22084,6 @@ msgstr "ச்வீப் லைன்"
 
 msgid "Fast without support for self-intersection"
 msgstr "தன்வய வெட்டுக்கு உதவி இல்லாமல் வேகமாக"
-
-
-msgid "Delaunay"
-msgstr "டெலானே"
 
 
 msgid "Constrained Delaunay Triangulation (CDT), robust with support for self-intersections"
@@ -26798,10 +26834,6 @@ msgstr "டிகிரி"
 
 msgid "How many degrees path has to curve to make another render segment"
 msgstr "மற்றொரு வழங்குதல் பிரிவை உருவாக்க எத்தனை டிகிரி பாதை வளைவு செய்ய வேண்டும்"
-
-
-msgid "Pixel"
-msgstr "படத்துணுக்கு"
 
 
 msgid "How many pixels path has to cover to make another render segment"
@@ -35036,6 +35068,10 @@ msgid "Editor menu containing buttons"
 msgstr "பொத்தான்களைக் கொண்ட திருத்தி பட்டியல்"
 
 
+msgid "Render Preview"
+msgstr "வழங்குதல் முன்னோட்டம்"
+
+
 msgid "Mirror"
 msgstr "கண்ணாடி"
 
@@ -35072,8 +35108,16 @@ msgid "View Regions"
 msgstr "மண்டலங்களைக் காண்க"
 
 
+msgid "Math"
+msgstr "கணிதம்"
+
+
 msgid "Select More/Less"
 msgstr "மேலும்/குறைவாக தேர்ந்தெடுக்கவும்"
+
+
+msgid "Utilities"
+msgstr "பயன்பாடுகள்"
 
 
 msgid "Select Similar"
@@ -35084,10 +35128,6 @@ msgid "Select All by Trait"
 msgstr "அனைத்தையும் பண்பின் மூலம் தேர்ந்தெடுக்கவும்"
 
 
-msgid "Math"
-msgstr "கணிதம்"
-
-
 msgid "Select Linked"
 msgstr "இணைக்கப்பட்டதைத் தேர்ந்தெடுக்கவும்"
 
@@ -35096,16 +35136,8 @@ msgid "Select Loops"
 msgstr "சுழல்களைத் தேர்ந்தெடுக்கவும்"
 
 
-msgid "Utilities"
-msgstr "பயன்பாடுகள்"
-
-
 msgid "Assign Material"
 msgstr "மூலப்பொருள் ஒதுக்க"
-
-
-msgid "Metaball"
-msgstr "வளர்சிதை மாற்ற"
 
 
 msgid "Read"
@@ -35124,12 +35156,24 @@ msgid "Primitives"
 msgstr "ப்ரைமிடிவ்ச்"
 
 
+msgid "Metaball"
+msgstr "வளர்சிதை மாற்ற"
+
+
 msgid "Light"
 msgstr "ஒளி"
 
 
 msgid "Light Probe"
 msgstr "ஒளி ஆய்வு"
+
+
+msgid "Gizmo"
+msgstr "கிச்மோ"
+
+
+msgid "Instances"
+msgstr "நிகழ்வுகள்"
 
 
 msgid "Add Image"
@@ -35144,12 +35188,8 @@ msgid "Rigid Body"
 msgstr "கடினமான உடல்"
 
 
-msgid "Gizmo"
-msgstr "கிச்மோ"
-
-
-msgid "Instances"
-msgstr "நிகழ்வுகள்"
+msgid "Import"
+msgstr "இறக்குமதி"
 
 
 msgid "Apply"
@@ -35164,12 +35204,12 @@ msgid "Quick Effects"
 msgstr "விரைவான விளைவுகள்"
 
 
-msgid "Import"
-msgstr "இறக்குமதி"
-
-
 msgid "Show/Hide"
 msgstr "காட்டு/மறைக்க"
+
+
+msgid "Deprecated"
+msgstr "மதிப்பிடப்பட்டது"
 
 
 msgid "Clean Up"
@@ -35196,24 +35236,16 @@ msgid "Hooks"
 msgstr "கொக்கிகள்"
 
 
-msgid "Deprecated"
-msgstr "மதிப்பிடப்பட்டது"
+msgid "UV"
+msgstr "புறஊதா"
 
 
 msgid "Vertex Group Locks"
 msgstr "வெர்டெக்ச் குழு பூட்டுகள்"
 
 
-msgid "List"
-msgstr "பட்டியல்"
-
-
 msgid "Trim/Add"
 msgstr "டிரிம்/சேர்"
-
-
-msgid "UV"
-msgstr "புறஊதா"
 
 
 msgid "Sculpt Set Pivot"
@@ -35280,16 +35312,20 @@ msgid "Merge"
 msgstr "ஒன்றிணைக்கவும்"
 
 
+msgid "Linked"
+msgstr "இணைக்கப்பட்ட"
+
+
+msgid "Layout"
+msgstr "தளவமைப்பு"
+
+
 msgid "Special Characters"
 msgstr "சிறப்பு எழுத்துக்கள்"
 
 
 msgid "Kerning"
 msgstr "கெர்னிங்"
-
-
-msgid "Layout"
-msgstr "தளவமைப்பு"
 
 
 msgid "Bone Roll"
@@ -35308,6 +35344,10 @@ msgid "Tracking"
 msgstr "கண்காணிப்பு"
 
 
+msgid "Creative"
+msgstr "படைப்பாற்றல்"
+
+
 msgid "Pivot Point"
 msgstr "பிவோட் புள்ளி"
 
@@ -35324,16 +35364,8 @@ msgid "Automasking"
 msgstr "ஆட்டோமேச்கிங்"
 
 
-msgid "Creative"
-msgstr "படைப்பாற்றல்"
-
-
 msgid "Face Sets Edit"
 msgstr "முகம் தொகுப்புகள் திருத்து"
-
-
-msgid "Render Preview"
-msgstr "வழங்குதல் முன்னோட்டம்"
 
 
 msgid "Keyframe Insert Pie"
@@ -47125,6 +47157,10 @@ msgid "Which domain to store the data in"
 msgstr "தரவை சேமிக்க எந்த டொமைன்"
 
 
+msgid "Create a list of values"
+msgstr "மதிப்புகளின் பட்டியலை உருவாக்கவும்"
+
+
 msgid "Collection Info"
 msgstr "சேகரிப்பு செய்தி"
 
@@ -47679,10 +47715,6 @@ msgstr "இடவியல் கட்டத்திற்கான தரவ�
 
 msgid "Field to List"
 msgstr "பட்டியலுக்கான புலம்"
-
-
-msgid "Create a list of values"
-msgstr "மதிப்புகளின் பட்டியலை உருவாக்கவும்"
 
 
 msgid "Field Variance"
@@ -48384,34 +48416,6 @@ msgstr "கட்டமைப்பு வகை"
 
 msgid "What kind of higher order types are expected to flow through this socket"
 msgstr "இந்த சாக்கெட் வழியாக எந்த வகையான உயர் வரிசை வகைகள் பாயும் என்று எதிர்பார்க்கப்படுகிறது"
-
-
-msgid "Automatically detect a good structure type based on how the socket is used"
-msgstr "சாக்கெட் எவ்வாறு பயன்படுத்தப்படுகிறது என்பதை அடிப்படையாகக் கொண்டு ஒரு நல்ல கட்டமைப்பு வகையை தானாகவே கண்டறியவும்"
-
-
-msgid "Socket can work with different kinds of structures"
-msgstr "சாக்கெட் பல்வேறு வகையான கட்டமைப்புகளுடன் வேலை செய்யலாம்"
-
-
-msgid "Socket expects a field"
-msgstr "சாக்கெட் ஒரு புலத்தை எதிர்பார்க்கிறது"
-
-
-msgid "Socket expects a grid"
-msgstr "சாக்கெட் ஒரு கட்டத்தை எதிர்பார்க்கிறது"
-
-
-msgid "Socket expects a list"
-msgstr "சாக்கெட் ஒரு பட்டியலை எதிர்பார்க்கிறது"
-
-
-msgid "Single"
-msgstr "ஒற்றை"
-
-
-msgid "Socket expects a single value"
-msgstr "சாக்கெட் ஒரு மதிப்பை எதிர்பார்க்கிறது"
 
 
 msgid "List Length"
@@ -52435,10 +52439,6 @@ msgid "Socket is grayed out because it has been detected to not have any effect 
 msgstr "சாக்கெட் சாம்பல் நிறமாக உள்ளது, ஏனெனில் இது வெளியீட்டில் எந்த விளைவையும் ஏற்படுத்தாதது கண்டறியப்பட்டுள்ளது"
 
 
-msgid "Linked"
-msgstr "இணைக்கப்பட்ட"
-
-
 msgid "True if the socket is connected"
 msgstr "சாக்கெட் இணைக்கப்பட்டிருந்தால் உண்மை"
 
@@ -53588,6 +53588,11 @@ msgstr "சேகரிப்பு குறிப்புகளை சரி�
 msgctxt "Operator"
 msgid "Assign Action"
 msgstr "செயலை ஒதுக்கு"
+
+
+msgctxt "Operator"
+msgid "Open File Location"
+msgstr "கோப்பு இருப்பிடத்தைத் திறக்கவும்"
 
 
 msgid "Open the blend file that contains the active asset"
@@ -67676,18 +67681,6 @@ msgstr "udim களைக் கண்டறியவும்"
 
 msgid "Detect selected UDIM files and load all matching tiles"
 msgstr "தேர்ந்தெடுக்கப்பட்ட யுடிம் கோப்புகளைக் கண்டறிந்து பொருந்தக்கூடிய அனைத்து ஓடுகளையும் ஏற்றவும்"
-
-
-msgid "Use relative path"
-msgstr "உறவினர் பாதையைப் பயன்படுத்தவும்"
-
-
-msgid "Use sequence detection"
-msgstr "வரிசை கண்டறிதலைப் பயன்படுத்தவும்"
-
-
-msgid "Use UDIM detection"
-msgstr "UDIM கண்டறிதலைப் பயன்படுத்தவும்"
 
 
 msgctxt "Operator"
@@ -84213,10 +84206,6 @@ msgid "Jump to Strip"
 msgstr "துண்டுக்கு செல்லவும்"
 
 
-msgid "Move frame to next or previous edit point"
-msgstr "சட்டத்தை அடுத்த அல்லது முந்தைய திருத்தப் புள்ளிக்கு நகர்த்தவும்"
-
-
 msgid "Use Strip Center"
 msgstr "உரி சென்டர் பயன்படுத்தவும்"
 
@@ -92047,6 +92036,34 @@ msgid "Panel containing UI elements"
 msgstr "இடைமுகம் கூறுகளைக் கொண்ட குழு"
 
 
+msgid "Active Tool"
+msgstr "செயலில் உள்ள கருவி"
+
+
+msgid "View Lock"
+msgstr "பூட்டைக் காண்க"
+
+
+msgid "Selectability & Visibility"
+msgstr "தேர்ந்தெடுக்கும் தன்மை மற்றும் தெரிவுநிலை"
+
+
+msgid "Shadow Settings"
+msgstr "நிழல் அமைப்புகள்"
+
+
+msgid "SSAO Settings"
+msgstr "ssao அமைப்புகள்"
+
+
+msgid "Cavity"
+msgstr "குழி"
+
+
+msgid "Render Pass"
+msgstr "பாச் வழங்குதல்"
+
+
 msgid "Compositor"
 msgstr "தொகுப்பாளர்"
 
@@ -92157,34 +92174,6 @@ msgstr "gltf"
 
 msgid "glTF Animations"
 msgstr "GLTF அனிமேசன்கள்"
-
-
-msgid "Active Tool"
-msgstr "செயலில் உள்ள கருவி"
-
-
-msgid "View Lock"
-msgstr "பூட்டைக் காண்க"
-
-
-msgid "Selectability & Visibility"
-msgstr "தேர்ந்தெடுக்கும் தன்மை மற்றும் தெரிவுநிலை"
-
-
-msgid "Shadow Settings"
-msgstr "நிழல் அமைப்புகள்"
-
-
-msgid "SSAO Settings"
-msgstr "ssao அமைப்புகள்"
-
-
-msgid "Cavity"
-msgstr "குழி"
-
-
-msgid "Render Pass"
-msgstr "பாச் வழங்குதல்"
 
 
 msgid "Import Settings"
@@ -93384,20 +93373,8 @@ msgid "Image/UV Editor"
 msgstr "படம்/புறஊதா ஆசிரியர்"
 
 
-msgid "Axis & Gizmo Colors"
-msgstr "அச்சு & கிச்மோ வண்ணங்கள்"
-
-
-msgid "Icon Colors"
-msgstr "படவுரு வண்ணங்கள்"
-
-
 msgid "Shaded"
 msgstr "நிழல்"
-
-
-msgid "Styles"
-msgstr "பாணிகள்"
 
 
 msgid "Transparent Checkerboard"
@@ -93454,10 +93431,6 @@ msgstr "ச்க்ரப்பிங் / குறிப்பான்கள
 
 msgid "Toolbar / Sidebar"
 msgstr "கருவிப்பட்டி / பக்கப்பட்டி"
-
-
-msgid "Strip Color Tags"
-msgstr "துண்டு வண்ண குறிச்சொற்கள்"
 
 
 msgid "Text Style"
@@ -95181,6 +95154,10 @@ msgid "Graphics driver and operating system settings"
 msgstr "கிராபிக்ச் இயக்கி மற்றும் இயக்க முறைமை அமைப்புகள்"
 
 
+msgid "Styles"
+msgstr "பாணிகள்"
+
+
 msgid "Save on Exit"
 msgstr "வெளியேறும்போது சேமிக்கவும்"
 
@@ -95752,14 +95729,6 @@ msgstr "நீட்டிப்புகள் பிழைத்திரு�
 
 msgid "Extra debugging information & developer support utilities for extensions"
 msgstr "கூடுதல் பிழைத்திருத்த செய்தி மற்றும் உருவாக்குபவர் நீட்டிப்புகளுக்கான பயன்பாடுகள்"
-
-
-msgid "Bundle in Geometry"
-msgstr "வடிவவியலில் மூட்டை"
-
-
-msgid "Support storing custom bundles in a geometry in Geometry Nodes"
-msgstr "வடிவியல் முனைகளில் வடிவவியலில் தனிப்பயன் மூட்டைகளை சேமிப்பதற்கான உதவி"
 
 
 msgid "New Curves Tools"
@@ -119831,6 +119800,11 @@ msgid "Roughness Threshold"
 msgstr "கடினத்தன்மை வாசல்"
 
 
+msgctxt "Operator"
+msgid "Clear"
+msgstr "தெளிவான"
+
+
 msgid "Surfaces"
 msgstr "மேற்பரப்புகள்"
 
@@ -123749,11 +123723,6 @@ msgstr "ச்ப்லைன்:"
 
 msgid "Parenting:"
 msgstr "குழந்தை வளர்ப்பு:"
-
-
-msgctxt "Operator"
-msgid "Clear"
-msgstr "தெளிவான"
 
 
 msgid "Animation:"
@@ -127812,12 +127781,12 @@ msgid "Axis X"
 msgstr "அச்சு ஃச்"
 
 
-msgid "View Align"
-msgstr "சீரமை காண்க"
-
-
 msgid "B"
 msgstr "b"
+
+
+msgid "View Align"
+msgstr "சீரமை காண்க"
 
 
 msgctxt "Text"
@@ -132632,10 +132601,6 @@ msgid "B"
 msgstr "b"
 
 
-msgid "Modifier requires original data"
-msgstr "மாற்றிக்கு அசல் தரவு தேவை"
-
-
 msgctxt "Operator"
 msgid "Reorder F-Curve Modifier"
 msgstr "F-வளைவு மாற்றியை மறுவரிசைப்படுத்தவும்"
@@ -133564,10 +133529,6 @@ msgid "Duplicates: {}"
 msgstr "பிரதிகள்: {}"
 
 
-msgid "Missing node tool identifier ({})"
-msgstr "நோட் கருவி அடையாளங்காட்டியைக் காணவில்லை ({})"
-
-
 msgid "Unassigned Node Tools"
 msgstr "ஒதுக்கப்படாத முனை கருவிகள்"
 
@@ -134101,11 +134062,6 @@ msgstr "தேர்ந்தெடுக்கப்பட்டதை நக�
 msgctxt "Operator"
 msgid "Copy Full Data Path"
 msgstr "முழு தரவு பாதையை நகலெடுக்கவும்"
-
-
-msgctxt "Operator"
-msgid "Open File Location"
-msgstr "கோப்பு இருப்பிடத்தைத் திறக்கவும்"
 
 
 msgctxt "Operator"
@@ -142666,10 +142622,6 @@ msgid "Midpoints"
 msgstr "நடுப்பகுதி"
 
 
-msgid "Could not initialize stitching on any selected object"
-msgstr "தேர்ந்தெடுக்கப்பட்ட எந்தவொரு பொருளிலும் தையலை துவக்க முடியவில்லை"
-
-
 msgid "Stitching only works with less than %i objects selected (%i selected)"
 msgstr "தேர்ந்தெடுக்கப்பட்ட %i க்கும் குறைவான பொருள்களுடன் மட்டுமே தையல் வேலை செய்யும் (%i தேர்ந்தெடுக்கப்பட்டது)"
 
@@ -144511,10 +144463,6 @@ msgstr "மதிப்பிடப்பட்ட தரவை மதிப்�
 
 msgid "Only empty objects support collection instances"
 msgstr "வெற்று பொருள்கள் மட்டுமே சேகரிப்பு நிகழ்வுகளை ஆதரிக்கின்றன"
-
-
-msgid "Cannot set instance-collection as object belongs in collection being instanced, thus causing a cycle"
-msgstr "பொருள்-சேகரிப்பை அமைக்க முடியாது, ஏனெனில் பொருள் சேகரிப்பில் உள்ளது, இதனால் ஒரு சுழற்சியை ஏற்படுத்துகிறது"
 
 
 msgid "VertexGroup.add(): cannot be called while object is in edit mode"
@@ -148022,6 +147970,10 @@ msgid "Closure"
 msgstr "மூடல்"
 
 
+msgid "The number of elements in the list"
+msgstr "பட்டியலில் உள்ள உறுப்புகளின் எண்ணிக்கை"
+
+
 msgid "Collection contains current object"
 msgstr "சேகரிப்பில் தற்போதைய பொருள் உள்ளது"
 
@@ -148832,10 +148784,6 @@ msgid "Output grid with evaluated field values"
 msgstr "மதிப்பிடப்பட்ட புல மதிப்புகளுடன் வெளியீட்டு கட்டம்"
 
 
-msgid "The number of elements in the list"
-msgstr "பட்டியலில் உள்ள உறுப்புகளின் எண்ணிக்கை"
-
-
 msgid "Output list with evaluated field values"
 msgstr "மதிப்பிடப்பட்ட புல மதிப்புகளுடன் வெளியீட்டு பட்டியல்"
 
@@ -148951,10 +148899,6 @@ msgstr "ஒவ்வொரு உள்ளீட்டு வடிவவிய�
 
 msgid "Cannot get internal value from bundle"
 msgstr "மூட்டையிலிருந்து உள் மதிப்பைப் பெற முடியாது"
-
-
-msgid "The experimental option for this node is disabled"
-msgstr "இந்த முனைக்கான சோதனை விருப்பம் முடக்கப்பட்டுள்ளது"
 
 
 msgid "Geometry to get the bundle of"
