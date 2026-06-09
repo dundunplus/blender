@@ -1013,7 +1013,7 @@ static void file_draw_indicator_icons(const FileList *files,
       /* This on-disk asset no longer matches the asset listing it was downloaded from. */
       ui::icon_draw_ex(icon_x,
                        icon_y,
-                       ICON_WARNING_LARGE,
+                       ICON_ERROR,
                        1.0f / UI_SCALE_FAC,
                        0.6f,
                        0.0f,
@@ -1479,8 +1479,9 @@ void file_draw_list(const bContext *C, ARegion *region)
         /* Trigger the preview loader to wait until the download is done and load the preview from
          * disk. Has to be done explicitly here because the preview isn't attached to a button. */
         if (!file->asset->is_local_id()) {
-          ui::icon_render_id_ex(
-              C, nullptr, nullptr, ICON_SIZE_PREVIEW, true, file->asset->get_preview());
+          if (PreviewImage *preview = file->asset->get_preview()) {
+            ui::icon_render_id_ex(C, nullptr, nullptr, ICON_SIZE_PREVIEW, true, preview);
+          }
         }
       }
 
