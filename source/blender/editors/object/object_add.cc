@@ -86,6 +86,7 @@
 #include "BKE_mball.hh"
 #include "BKE_mesh.hh"
 #include "BKE_mesh_runtime.hh"
+#include "BKE_mesh_wrapper.hh"
 #include "BKE_modifier.hh"
 #include "BKE_nla.hh"
 #include "BKE_node.hh"
@@ -3600,6 +3601,11 @@ static Object *convert_mesh_to_mesh(Base &base, ObjectConversionInfo &info, Base
   const Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob_eval);
   Mesh *new_mesh = mesh_eval ? BKE_mesh_copy_for_eval(*mesh_eval) :
                                BKE_mesh_new_nomain(0, 0, 0, 0);
+  /* The evaluated mesh may not be a wrapper type (e.g. #ME_WRAPPER_TYPE_BMESH).
+   * Ensure mesh geometry otherwise the copy uses dummy sizes which don't
+   * represent the underlying mesh. */
+  BKE_mesh_wrapper_ensure_mdata(new_mesh);
+
   BKE_object_material_from_eval_data(info.bmain, newob, &new_mesh->id);
   /* Anonymous attributes shouldn't be available on the applied geometry. */
   new_mesh->attributes_for_write().remove_anonymous();
@@ -4435,18 +4441,21 @@ static Object *convert_curves_legacy_to_grease_pencil(Base &base,
 
   bke::greasepencil::Drawing *drawing = grease_pencil->insert_frame(layer, current_frame);
 
-  bke::CurvesGeometry &curves = curves_nomain->geometry.wrap();
+  /* An empty curve (no splines) converts to a #Curves of nullptr, leave the drawing empty. */
+  if (curves_nomain) {
+    bke::CurvesGeometry &curves = curves_nomain->geometry.wrap();
 
-  drawing->strokes_for_write() = std::move(curves);
-  /* Default radius (1.0 unit) is too thick for converted strokes. */
-  bke::MutableAttributeAccessor attributes = drawing->strokes_for_write().attributes_for_write();
-  attributes.remove("radius");
-  attributes.add<float>("radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.01f));
-  drawing->tag_positions_changed();
+    drawing->strokes_for_write() = std::move(curves);
+    /* Default radius (1.0 unit) is too thick for converted strokes. */
+    bke::MutableAttributeAccessor attributes = drawing->strokes_for_write().attributes_for_write();
+    attributes.remove("radius");
+    attributes.add<float>("radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.01f));
+    drawing->tag_positions_changed();
 
-  const bool use_fill = (legacy_curve_id->flag & (CU_FRONT | CU_BACK)) != 0;
-  if (use_fill) {
-    create_grease_pencil_fills(*drawing);
+    const bool use_fill = (legacy_curve_id->flag & (CU_FRONT | CU_BACK)) != 0;
+    if (use_fill) {
+      create_grease_pencil_fills(*drawing);
+    }
   }
 
   newob->data = id_cast<ID *>(grease_pencil);
@@ -4463,7 +4472,9 @@ static Object *convert_curves_legacy_to_grease_pencil(Base &base,
    * specific conversion combination), not sure why. Ref: #138793 / #146252 */
   DEG_id_tag_update(&grease_pencil->id, ID_RECALC_GEOMETRY);
 
-  BKE_id_free(nullptr, curves_nomain);
+  if (curves_nomain) {
+    BKE_id_free(nullptr, curves_nomain);
+  }
 
   return newob;
 }
