@@ -40,6 +40,7 @@
 #include "BKE_global.hh"
 #include "BKE_icons.hh"
 #include "BKE_image.hh"
+#include "BKE_image_gpu.hh"
 #include "BKE_keyconfig.h"
 #include "BKE_lib_remap.hh"
 #include "BKE_main.hh"
@@ -611,10 +612,6 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
 
   bke::subdiv::exit();
 
-  if (gpu_is_init) {
-    BKE_image_free_unused_gpu_textures();
-  }
-
   /* Frees the entire library (#G_MAIN) and space-types. */
   BKE_blender_free();
 
@@ -675,6 +672,7 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
     DRW_gpu_context_enable_ex(false);
     ui::exit();
     GPU_shader_cache_dir_clear_old();
+    BKE_image_free_gpu_fallback();
     GPU_exit();
     DRW_gpu_context_disable_ex(false);
     DRW_gpu_context_destroy();
