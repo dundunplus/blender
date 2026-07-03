@@ -26,7 +26,6 @@ class VKStateManager;
 class VKDevice;
 class VKPushConstants;
 class VKShader;
-class VKShaderInterface;
 class VKDescriptorSetTracker;
 class VKVertexBuffer;
 
@@ -105,6 +104,8 @@ class VKDescriptorSetUpdator {
                                     const VKResourceBinding &resource_binding);
   void bind_uniform_buffer_resource(const VKStateManager &state_manager,
                                     const VKResourceBinding &resource_binding);
+  void bind_acceleration_structure_resource(const VKStateManager &state_manager,
+                                            const VKResourceBinding &resource_binding);
   void bind_input_attachment_resource(const VKDevice &device,
                                       const VKStateManager &state_manager,
                                       const VKResourceBinding &resource_binding);
@@ -125,6 +126,9 @@ class VKDescriptorSetUpdator {
                           VkImageView vk_image_view,
                           VkImageLayout vk_image_layout,
                           VKDescriptorSet::Location location) = 0;
+  virtual void bind_acceleration_structure(VkDescriptorType vk_descriptor_type,
+                                           VkAccelerationStructureKHR vk_acceleration_structure,
+                                           VKDescriptorSet::Location location) = 0;
 };
 
 class VKDescriptorSetPoolUpdator : public VKDescriptorSetUpdator {
@@ -152,12 +156,18 @@ class VKDescriptorSetPoolUpdator : public VKDescriptorSetUpdator {
                   VkImageView vk_image_view,
                   VkImageLayout vk_image_layout,
                   VKDescriptorSet::Location location) override;
+  void bind_acceleration_structure(VkDescriptorType vk_descriptor_type,
+                                   VkAccelerationStructureKHR vk_acceleration_structure,
+                                   VKDescriptorSet::Location location) override;
 
  private:
   Vector<VkBufferView> vk_buffer_views_;
   Vector<VkDescriptorBufferInfo> vk_descriptor_buffer_infos_;
   Vector<VkDescriptorImageInfo> vk_descriptor_image_infos_;
   Vector<VkWriteDescriptorSet> vk_write_descriptor_sets_;
+  Vector<VkWriteDescriptorSetAccelerationStructureKHR>
+      vk_write_descrtiptor_sets_acceleration_structures_;
+  Vector<VkAccelerationStructureKHR> vk_acceleration_structures_;
 };
 
 class VKDescriptorSetTracker {
@@ -165,12 +175,6 @@ class VKDescriptorSetTracker {
 
   /* Last used layout to identify changes. */
   VkDescriptorSetLayout vk_descriptor_set_layout_ = VK_NULL_HANDLE;
-
-  /** Cache for resource access info, to avoid re-iterating all bindings when nothing changed. */
-  uint64_t cached_access_info_generation_ = UINT64_MAX;
-  const VKShaderInterface *cached_access_info_shader_interface_ = nullptr;
-  Vector<render_graph::VKBufferAccess> cached_access_info_buffers_;
-  Vector<render_graph::VKImageAccess> cached_access_info_images_;
 
  public:
   class VKDescriptorSetPoolUpdator descriptor_sets;
@@ -217,6 +221,10 @@ class VKDescriptorSetTracker {
       const VKResourceBinding &resource_binding,
       render_graph::VKResourceAccessInfo &access_info);
   static void update_resource_access_info_binding_input_attachment(
+      const VKStateManager &state_manager,
+      const VKResourceBinding &resource_binding,
+      render_graph::VKResourceAccessInfo &access_info);
+  static void update_resource_access_info_binding_acceleration_structure(
       const VKStateManager &state_manager,
       const VKResourceBinding &resource_binding,
       render_graph::VKResourceAccessInfo &access_info);
