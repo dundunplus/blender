@@ -601,20 +601,25 @@ void BKE_main_merge_as_archive_library(Main &bmain_dst,
     BKE_libblock_management_main_remove(&bmain_src, id);
     id->lib = &dst_external_library;
 
-    /* Consider these IDs as linked and packed. */
+    /* Consider these IDs as directly linked and packed. */
     id->flag |= ID_FLAG_LINKED_AND_PACKED;
 
     /* Need to tag embedded IDs as well. */
     bNodeTree *ntree = bke::node_tree_from_id(id);
     if (ntree != nullptr) {
+      ntree->id.lib = &dst_external_library;
       ntree->id.flag |= ID_FLAG_LINKED_AND_PACKED;
     }
     if (GS(id->name) == ID_SCE) {
       Collection *master_collection = (id_cast<Scene *>(id))->master_collection;
       if (master_collection != nullptr) {
+        master_collection->id.lib = &dst_external_library;
         master_collection->id.flag |= ID_FLAG_LINKED_AND_PACKED;
       }
     }
+
+    /* Needs to be done after setting library for embedded IDs above too. */
+    id_lib_extern(id, true);
   }
 
   /* Add all IDs into the destination Main under the external library. */
@@ -1223,14 +1228,15 @@ MainAllIDsIterator &MainAllIDsIterator::operator++()
   }
 
   BLI_assert(curr_id_ == nullptr);
-  BLI_assert(curr_lbarray_index_ >= -1 && curr_lbarray_index_ <= int64_t(lbarray_.size()));
+  BLI_assert(lbarray_index_is_valid());
 
-  if (curr_lbarray_index_ >= int64_t(lbarray_.size())) {
+  if (curr_lbarray_index_ == lbarray_index_upper_bound()) {
     return *this;
   }
   while (true) {
-    curr_lbarray_index_++;
-    if (curr_lbarray_index_ == int64_t(lbarray_.size())) {
+    lbarray_index_step_next();
+    BLI_assert(lbarray_index_is_valid());
+    if (curr_lbarray_index_ == lbarray_index_upper_bound()) {
       return *this;
     }
     /* Listbase pointers from lbarray_ can be nullptr when no data was provided (default
@@ -1255,14 +1261,15 @@ MainAllIDsIterator &MainAllIDsIterator::operator--()
     }
   }
   BLI_assert(curr_id_ == nullptr);
-  BLI_assert(curr_lbarray_index_ >= -1 && curr_lbarray_index_ <= int64_t(lbarray_.size()));
+  BLI_assert(lbarray_index_is_valid());
 
-  if (this->curr_lbarray_index_ <= -1) {
+  if (curr_lbarray_index_ == lbarray_index_lower_bound()) {
     return *this;
   }
   while (true) {
-    curr_lbarray_index_--;
-    if (curr_lbarray_index_ == -1) {
+    lbarray_index_step_prev();
+    BLI_assert(lbarray_index_is_valid());
+    if (curr_lbarray_index_ == lbarray_index_lower_bound()) {
       return *this;
     }
     /* Listbase pointers from lbarray_ can be nullptr when no data was provided (default

@@ -322,12 +322,23 @@ static void propagate_status_to_embedded_ids(ID &id)
   }
 }
 
-void id_lib_extern(ID *id)
+void id_lib_extern(ID *id, const bool enforce_fix)
 {
   if (id && ID_IS_LINKED(id)) {
+#ifndef NDEBUG
+    if (!enforce_fix) {
+      const eID_Tag linked_tags = eID_Tag(id->tag & (ID_TAG_EXTERN | ID_TAG_INDIRECT));
+      BLI_assert_msg(
+          linked_tags != (ID_TAG_EXTERN | ID_TAG_INDIRECT),
+          "A linked ID must never be both directly and indirectly linked at the same time.");
+      BLI_assert_msg(linked_tags != 0,
+                     "A linked ID must always be either directly or indirectly linked.");
+    }
+#endif
+
     /* Note: non-linkable IDs can be directly linked in case they are linked packed. */
     BLI_assert(BKE_idtype_idcode_is_linkable(GS(id->name)) || ID_IS_PACKED(id));
-    if (id->tag & ID_TAG_INDIRECT) {
+    if ((id->tag & ID_TAG_INDIRECT) != 0 || enforce_fix) {
       id->tag &= ~ID_TAG_INDIRECT;
       id->flag &= ~ID_FLAG_INDIRECT_WEAK_LINK;
       id->tag |= ID_TAG_EXTERN;
@@ -337,13 +348,24 @@ void id_lib_extern(ID *id)
   }
 }
 
-void id_lib_indirect(ID *id)
+void id_lib_indirect(ID *id, const bool enforce_fix)
 {
   if (id && ID_IS_LINKED(id)) {
-    if (id->tag & ID_TAG_EXTERN) {
+#ifndef NDEBUG
+    if (!enforce_fix) {
+      const eID_Tag linked_tags = eID_Tag(id->tag & (ID_TAG_EXTERN | ID_TAG_INDIRECT));
+      BLI_assert_msg(
+          linked_tags != (ID_TAG_EXTERN | ID_TAG_INDIRECT),
+          "A linked ID must never be both directly and indirectly linked at the same time.");
+      BLI_assert_msg(linked_tags != 0,
+                     "A linked ID must always be either directly or indirectly linked.");
+    }
+#endif
+
+    if ((id->tag & ID_TAG_EXTERN) != 0 || enforce_fix) {
       id->tag &= ~ID_TAG_EXTERN;
       id->tag |= ID_TAG_INDIRECT;
-      id->lib->runtime->parent = nullptr;
+      /* Do not clear library parent info here, it might have already been set to correct value. */
       propagate_status_to_embedded_ids(*id);
     }
   }
@@ -1497,6 +1519,17 @@ void *BKE_libblock_alloc_in_lib(Main *bmain,
       id->lib = owner_library ? *owner_library : nullptr;
     }
 
+    /* When creating an ID in a library, ensure it is properly tagged as either directly or
+     * indirectly linked.
+     *
+     * Note: Using the library parent here to decide if the type of linking is somewhat weak, but
+     * there is no other info at this level. In any case, this status is reset/revalidated on file
+     * save and read, and caller code is free to reset this value to its liking using
+     * `id_lib_extern`/`id_lib_indirect`. */
+    if (ID_IS_LINKED(id)) {
+      id->tag |= (id->lib->runtime->parent) ? ID_TAG_INDIRECT : ID_TAG_EXTERN;
+    }
+
     /* We also need to ensure a valid `session_uid` for some non-main data (like embedded IDs).
      * IDs not allocated however should not need those (this would e.g. avoid generating session
      * UIDs for depsgraph evaluated IDs, if it was using this function). */
@@ -2187,7 +2220,7 @@ void BKE_main_id_indirect_linked_update(Main &bmain, std::optional<Span<ID *>> l
         /* Forces all linked data to be considered as directly linked.
          * FIXME: Workaround some BAT tool limitations for Heist production, should be removed
          * asap afterward. */
-        id_lib_extern(&id);
+        id_lib_extern(&id, true);
       }
       else if (GS(id.name) == ID_SCE) {
         /* For scenes, do not force them into 'indirectly linked' status.
@@ -2209,14 +2242,14 @@ void BKE_main_id_indirect_linked_update(Main &bmain, std::optional<Span<ID *>> l
         propagate_status_to_embedded_ids(id);
       }
       else {
-        id_lib_indirect(&id);
+        id_lib_indirect(&id, true);
       }
     }
     else {
       /* By definition, non-linkable IDs are always indirectly linked (outside of special cases
        * like the packed linked data, which is covered later in this function, see
        * `id_indirect_linked_update_packed_ids_fn`). */
-      id_lib_indirect(&id);
+      id_lib_indirect(&id, true);
     }
   };
   for (ID &id : MainAllIDsIterator(bmain)) {
