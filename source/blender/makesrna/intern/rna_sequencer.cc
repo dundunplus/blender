@@ -671,10 +671,19 @@ static void rna_Strip_right_handle_offset_set(PointerRNA *ptr, float value)
   strip->end_offset_set(value);
 }
 
+static int strip_content_trim_max(const Strip *strip, const int anim_offset)
+{
+  /* Hold frames (negative `startofs`/`end_offset`) must not be counted as available content. */
+  return strip->content_length() + anim_offset - std::max(0, int(strip->startofs)) -
+         std::max(0, int(strip->end_offset())) - 1;
+}
+
 static void rna_Strip_content_trim_start_set(PointerRNA *ptr, int value)
 {
   Strip *strip = static_cast<Strip *>(ptr->data);
   Scene *scene = id_cast<Scene *>(ptr->owner_id);
+
+  value = std::clamp(value, 0, strip_content_trim_max(strip, strip->anim_startofs));
 
   /* As `anim_startofs` is changed, strip shrinks on the right with left handle position unchanged.
    * To give the appearance as if the strip is trimmed from the left, add move compensation. */
@@ -690,7 +699,7 @@ static void rna_Strip_content_trim_end_set(PointerRNA *ptr, int value)
   Strip *strip = static_cast<Strip *>(ptr->data);
   Scene *scene = id_cast<Scene *>(ptr->owner_id);
 
-  strip->anim_endofs = value;
+  strip->anim_endofs = std::clamp(value, 0, strip_content_trim_max(strip, strip->anim_endofs));
 
   seq::add_reload_new_file(G.main, scene, strip, false);
   do_strip_frame_change_update(scene, strip);
@@ -702,7 +711,7 @@ static void rna_Strip_content_trim_end_range(
   Strip *strip = static_cast<Strip *>(ptr->data);
 
   *min = 0;
-  *max = strip->content_length() + strip->anim_endofs - strip->startofs - strip->end_offset() - 1;
+  *max = strip_content_trim_max(strip, strip->anim_endofs);
 }
 
 static void rna_Strip_content_trim_start_range(
@@ -711,8 +720,7 @@ static void rna_Strip_content_trim_start_range(
   Strip *strip = static_cast<Strip *>(ptr->data);
 
   *min = 0;
-  *max = strip->content_length() + strip->anim_startofs - strip->startofs - strip->end_offset() -
-         1;
+  *max = strip_content_trim_max(strip, strip->anim_startofs);
 }
 
 static void rna_Strip_left_handle_range(
@@ -786,6 +794,34 @@ static int rna_Strip_content_duration_get(PointerRNA *ptr)
   Strip *strip = static_cast<Strip *>(ptr->data);
   Scene *scene = reinterpret_cast<Scene *>(ptr->owner_id);
   return strip->length(scene);
+}
+
+static int strip_default_duration(const Strip *strip, const Scene *scene)
+{
+  if (seq::transform_single_image_check(strip)) {
+    return seq::DEFAULT_STRIP_LENGTH;
+  }
+  return strip->length(scene);
+}
+
+static int rna_Strip_duration_default(PointerRNA *ptr, PropertyRNA * /*prop*/)
+{
+  const Strip *strip = static_cast<Strip *>(ptr->data);
+  const Scene *scene = id_cast<Scene *>(ptr->owner_id);
+  return strip_default_duration(strip, scene);
+}
+
+static int rna_Strip_left_handle_default(PointerRNA *ptr, PropertyRNA * /*prop*/)
+{
+  const Strip *strip = static_cast<Strip *>(ptr->data);
+  return int(strip->content_start());
+}
+
+static int rna_Strip_right_handle_default(PointerRNA *ptr, PropertyRNA * /*prop*/)
+{
+  const Strip *strip = static_cast<Strip *>(ptr->data);
+  const Scene *scene = id_cast<Scene *>(ptr->owner_id);
+  return int(strip->content_start()) + strip_default_duration(strip, scene);
 }
 
 static int rna_Strip_time_editable(const PointerRNA *ptr, const char ** /*r_info*/)
@@ -2643,6 +2679,7 @@ static void rna_def_strip(BlenderRNA *brna)
       prop, "Length", "The length of the contents of this strip after the handles are applied");
   RNA_def_property_int_funcs(
       prop, "rna_Strip_duration_get", "rna_Strip_duration_set", "rna_Strip_duration_range");
+  RNA_def_property_int_default_func(prop, "rna_Strip_duration_default");
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
@@ -2654,6 +2691,7 @@ static void rna_def_strip(BlenderRNA *brna)
       prop, "Strip Duration", "Length of the strip in frames from left handle to right handle");
   RNA_def_property_int_funcs(
       prop, "rna_Strip_duration_get", "rna_Strip_duration_set", "rna_Strip_duration_range");
+  RNA_def_property_int_default_func(prop, "rna_Strip_duration_default");
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
@@ -2711,6 +2749,7 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, nullptr, "startdisp");
   RNA_def_property_int_funcs(
       prop, "rna_Strip_left_handle_get", "rna_Strip_left_handle_set", nullptr);
+  RNA_def_property_int_default_func(prop, "rna_Strip_left_handle_default");
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(
@@ -2728,6 +2767,7 @@ static void rna_def_strip(BlenderRNA *brna)
                              "rna_Strip_left_handle_get",
                              "rna_Strip_left_handle_set",
                              "rna_Strip_left_handle_range");
+  RNA_def_property_int_default_func(prop, "rna_Strip_left_handle_default");
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(
@@ -2742,6 +2782,7 @@ static void rna_def_strip(BlenderRNA *brna)
                              "rna_Strip_right_handle_get",
                              "rna_Strip_right_handle_set",
                              "rna_Strip_right_handle_range");
+  RNA_def_property_int_default_func(prop, "rna_Strip_right_handle_default");
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(
@@ -2756,6 +2797,7 @@ static void rna_def_strip(BlenderRNA *brna)
                              "rna_Strip_right_handle_get",
                              "rna_Strip_right_handle_set",
                              "rna_Strip_right_handle_range");
+  RNA_def_property_int_default_func(prop, "rna_Strip_right_handle_default");
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop,
