@@ -89,7 +89,6 @@ set(SRC
   intern/geometry_nodes_physics_bundles.cc
   intern/geometry_nodes_repeat_zone.cc
   intern/geometry_nodes_srna.cc
-  intern/geometry_nodes_warning.cc
   intern/inverse_eval.cc
   intern/list_function_eval.cc
   intern/math_functions.cc
@@ -117,6 +116,7 @@ set(SRC
   intern/trace_values.cc
   intern/value_elem.cc
   intern/volume_grid_function_eval.cc
+  intern/warning.cc
 
   NOD_bundle_type.hh
   NOD_caller_ui.hh
@@ -147,7 +147,6 @@ set(SRC
   NOD_geometry_nodes_physics_bundles.hh
   NOD_geometry_nodes_srna.hh
   NOD_geometry_nodes_values.hh
-  NOD_geometry_nodes_warning.hh
   NOD_inverse_eval_params.hh
   NOD_inverse_eval_path.hh
   NOD_inverse_eval_run.hh
@@ -165,6 +164,7 @@ set(SRC
   NOD_scene_compositor_effect_inputs_srna.hh
   NOD_shader.h
   NOD_shader_nodes_inline.hh
+  NOD_shader_nodes_multi_function.hh
   NOD_socket.hh
   NOD_socket_declarations.hh
   NOD_socket_declarations_geometry.hh
@@ -183,6 +183,7 @@ set(SRC
   NOD_trace_values.hh
   NOD_value_elem.hh
   NOD_value_elem_eval.hh
+  NOD_warning.hh
   intern/list_function_eval.hh
   intern/node_common.h
   intern/node_exec.hh
