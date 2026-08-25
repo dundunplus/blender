@@ -8,8 +8,8 @@ set(INC
   intern
   metal
   opengl
-  vulkan
   shader_tool
+  vulkan
   ../makesrna
 
   # For theme color access.
@@ -108,8 +108,8 @@ set(SRC
   intern/gpu_vertex_format.cc
   intern/gpu_vertex_format_normals.cc
   intern/gpu_viewport.cc
-  intern/gpu_worker.cc
   intern/gpu_work_in_flight.cc
+  intern/gpu_worker.cc
 
   shader_tool/ast.cc
   shader_tool/attribute.cc
@@ -217,6 +217,17 @@ set(SRC
   dummy/dummy_context.hh
   dummy/dummy_framebuffer.hh
   dummy/dummy_vertex_buffer.hh
+
+  shaders/gpu_shader_compat.hh
+  shaders/gpu_shader_compat_cxx.hh
+  shaders/gpu_shader_cxx_attribute.hh
+  shaders/gpu_shader_cxx_builtin.hh
+  shaders/gpu_shader_cxx_global.hh
+  shaders/gpu_shader_cxx_image.hh
+  shaders/gpu_shader_cxx_matrix.hh
+  shaders/gpu_shader_cxx_sampler.hh
+  shaders/gpu_shader_cxx_string.hh
+  shaders/gpu_shader_cxx_vector.hh
 )
 
 set(OPENGL_SRC
