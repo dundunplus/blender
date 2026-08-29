@@ -1184,6 +1184,11 @@ static void do_vpaint_brush_smear(const Depsgraph &depsgraph,
   SculptSession &ss = *ob.runtime->sculpt_session;
   StrokeCache &cache = *ss.cache;
 
+  if (stroke_is_first_brush_step_of_symmetry_pass(cache)) {
+    /* We need a directional component to calculate the effect of this brush */
+    return;
+  }
+
   const Brush &brush = *cache.brush;
   GMutableSpan g_color_curr = vpd.smear.color_curr;
   GMutableSpan g_color_prev_smear = vpd.smear.color_prev;
@@ -1745,7 +1750,8 @@ static void vpaint_do_paint(const Depsgraph &depsgraph,
   const VPaint &vp = *scene.toolsettings->vpaint;
   Mesh &mesh = *id_cast<Mesh *>(ob.data);
   IndexMaskMemory memory;
-  const IndexMask node_mask = gather_brush_nodes(ob, brush, memory);
+  const IndexMask node_mask = gather_brush_nodes(
+      ob, brush, memory, BKE_pbvh_node_fully_hidden_get);
   vwpaint::update_sculpt_normal(depsgraph, ob, vp, brush, node_mask);
 
   if (auto_mask::is_enabled(vp.paint, ob, &brush)) {
