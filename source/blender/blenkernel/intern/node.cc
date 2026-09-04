@@ -4230,9 +4230,7 @@ void node_unique_name(bNodeTree &ntree, bNode &node)
 
 void node_unique_id(bNodeTree &ntree, bNode &node)
 {
-  /* Use a pointer cast to avoid overflow warnings. */
-  const double time = BLI_time_now_seconds() * 1000000.0;
-  RandomNumberGenerator id_rng{*reinterpret_cast<const uint32_t *>(&time)};
+  RandomNumberGenerator id_rng{ntree.next_node_identifier_seed++};
 
   /* In the unlikely case that the random ID doesn't match, choose a new one until it does. */
   int32_t new_id = id_rng.get_int32();
@@ -4423,9 +4421,8 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
       return true;
     case SH_NODE_VALUE:
       /* The value is stored in the default value of the first output socket. */
-      static_cast<bNodeSocket *>(node.outputs.first)
-          ->default_value_typed<bNodeSocketValueFloat>()
-          ->value = *static_cast<const float *>(value);
+      node.outputs.first()->default_value_typed<bNodeSocketValueFloat>()->value =
+          *static_cast<const float *>(value);
       return true;
     case FN_NODE_INPUT_INT:
       reinterpret_cast<NodeInputInt *>(node.storage)->integer = *static_cast<const int *>(value);
@@ -5371,8 +5368,8 @@ bNodeTree *node_tree_localize(bNodeTree *ntree, std::optional<ID *> new_owner_id
   /* Ensures only a single output node is enabled. */
   node_tree_set_output(*ntree);
 
-  bNode *node_src = reinterpret_cast<bNode *>(ntree->nodes.first);
-  bNode *node_local = reinterpret_cast<bNode *>(ltree->nodes.first);
+  bNode *node_src = ntree->nodes.first();
+  bNode *node_local = ltree->nodes.first();
   while (node_src != nullptr) {
     node_local->runtime->original = node_src;
     node_src = node_src->next;
@@ -6214,13 +6211,13 @@ void node_system_exit()
 
 void node_tree_iterator_init(NodeTreeIterStore *ntreeiter, Main *bmain)
 {
-  ntreeiter->ngroup = static_cast<bNodeTree *>(bmain->nodetrees.first);
-  ntreeiter->scene = static_cast<Scene *>(bmain->scenes.first);
-  ntreeiter->mat = static_cast<Material *>(bmain->materials.first);
-  ntreeiter->tex = static_cast<Tex *>(bmain->textures.first);
-  ntreeiter->light = static_cast<Light *>(bmain->lights.first);
-  ntreeiter->world = static_cast<World *>(bmain->worlds.first);
-  ntreeiter->linestyle = static_cast<FreestyleLineStyle *>(bmain->linestyles.first);
+  ntreeiter->ngroup = bmain->nodetrees.first();
+  ntreeiter->scene = bmain->scenes.first();
+  ntreeiter->mat = bmain->materials.first();
+  ntreeiter->tex = bmain->textures.first();
+  ntreeiter->light = bmain->lights.first();
+  ntreeiter->world = bmain->worlds.first();
+  ntreeiter->linestyle = bmain->linestyles.first();
 }
 bool node_tree_iterator_step(NodeTreeIterStore *ntreeiter, bNodeTree **r_nodetree, ID **r_id)
 {
