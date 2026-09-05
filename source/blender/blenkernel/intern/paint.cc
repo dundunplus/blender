@@ -343,11 +343,11 @@ CursorSnapshot::~CursorSnapshot()
   }
 }
 
-void cursor_delete_textures(Paint &paint)
+void cursor_reinitialize_textures(Paint &paint)
 {
-  paint.runtime->primary_snap.reset();
-  paint.runtime->secondary_snap.reset();
-  paint.runtime->cursor_snap.reset();
+  paint.runtime->primary_snap = std::make_unique<TexSnapshot>();
+  paint.runtime->secondary_snap = std::make_unique<TexSnapshot>();
+  paint.runtime->cursor_snap = std::make_unique<CursorSnapshot>();
 
   invalidate_overlay_all(paint);
 }
@@ -1610,6 +1610,9 @@ void BKE_paint_copy(const Paint *src, Paint *dst, const int flag)
   if (src->runtime) {
     dst->runtime->paint_mode = src->runtime->paint_mode;
     dst->runtime->ob_mode = src->runtime->ob_mode;
+    dst->runtime->primary_snap = std::make_unique<bke::paint::TexSnapshot>();
+    dst->runtime->secondary_snap = std::make_unique<bke::paint::TexSnapshot>();
+    dst->runtime->cursor_snap = std::make_unique<bke::paint::CursorSnapshot>();
     dst->runtime->initialized = true;
   }
 }
