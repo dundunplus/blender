@@ -29,11 +29,11 @@
 #include "BLI_string_utf8.hh"
 #include "BLI_utildefines.hh"
 
+#include "BKE_annotations.h"
 #include "BKE_asset.hh"
 #include "BKE_compositor.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_gpencil_legacy.h"
 #include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
@@ -1631,7 +1631,7 @@ static void view3d_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
   v3d->runtime = View3D_Runtime{};
 
   if (BLO_read_struct_nonnull(reader, bGPdata, &v3d->gpd)) {
-    BKE_gpencil_blend_read_data(reader, v3d->gpd);
+    BKE_annotations_blend_read_data(reader, v3d->gpd);
   }
   BLO_read_struct(reader, RegionView3D, &v3d->localvd);
 
