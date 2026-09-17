@@ -1708,6 +1708,13 @@ if(TEST_SRC_DIR_EXISTS)
   )
 
   add_blender_test(
+    bl_grease_pencil_paint_tests
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/grease_pencil_paint_tests.py
+    --
+    --testdir "${TEST_SRC_DIR}/grease_pencil"
+  )
+
+  add_blender_test(
     bl_sculpt_brush_curve_presets
     --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/brush_strength_curves_test.py
     --
@@ -1855,6 +1862,7 @@ if(WITH_UI_TESTS)
     test_tool_activation.image_editor
     test_tool_activation.node_editor
     test_tool_activation.sequencer
+    test_modifiers_constraints_draw.modifiers_constraints_draw
     test_preferences_draw_all.test_preferences_draw_all
     test_info_reports.test_info_report_selection_modes
     test_info_reports.test_info_report_delete
