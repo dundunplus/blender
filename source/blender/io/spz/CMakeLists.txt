@@ -20,11 +20,11 @@ set(SRC
   importer/spz_import.hh
 
   intern/spz_read.cc
-  intern/spz_read_gzip.cc
-  intern/spz_read_ngsp.cc
   intern/spz_read.hh
   intern/spz_read_common.cc
   intern/spz_read_common.hh
+  intern/spz_read_gzip.cc
+  intern/spz_read_ngsp.cc
 )
 
 set(LIB
@@ -33,7 +33,7 @@ set(LIB
   PRIVATE bf::dna
   PRIVATE bf::depsgraph
   PRIVATE bf_io_common
-  PRIVATE bf::intern::guardedalloc  # Indirect dependnecy of the bf::blenkernel.
+  PRIVATE bf::intern::guardedalloc  # Indirect dependency of the `bf::blenkernel`.
   PRIVATE bf::intern::clog
   PRIVATE bf::dependencies::zlib
   PRIVATE bf::dependencies::zstd
