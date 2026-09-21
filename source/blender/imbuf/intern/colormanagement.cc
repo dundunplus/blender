@@ -879,6 +879,10 @@ void IMB_colormanagement_check_file_config(Main *bmain)
         &scene.r.im_format.display_settings, "scene output", default_display);
     ok &= colormanage_check_view_settings(
         &scene.r.im_format.display_settings, &scene.r.im_format.view_settings, "scene output");
+    ok &= colormanage_check_colorspace_settings(&scene.r.im_format.linear_colorspace_settings,
+                                                "scene output");
+    ok &= colormanage_check_colorspace_settings(&scene.r.bake.im_format.linear_colorspace_settings,
+                                                "bake output");
 
     sequencer_colorspace_settings = &scene.sequencer_colorspace_settings;
 
@@ -929,6 +933,15 @@ void IMB_colormanagement_check_file_config(Main *bmain)
           NodeConvertColorSpace *ncs = static_cast<NodeConvertColorSpace *>(node.storage);
           ok &= colormanage_check_colorspace_name(ncs->from_color_space, "node");
           ok &= colormanage_check_colorspace_name(ncs->to_color_space, "node");
+        }
+        else if (node.type_legacy == CMP_NODE_OUTPUT_FILE) {
+          NodeCompositorFileOutput *nfo = static_cast<NodeCompositorFileOutput *>(node.storage);
+          ok &= colormanage_check_colorspace_settings(&nfo->format.linear_colorspace_settings,
+                                                      "node");
+          for (NodeCompositorFileOutputItem &item : MutableSpan(nfo->items, nfo->items_count)) {
+            ok &= colormanage_check_colorspace_settings(&item.format.linear_colorspace_settings,
+                                                        "node");
+          }
         }
       }
       is_missing_opencolorio_config |= (!ok && !ID_IS_LINKED(&ntree.id));
@@ -2794,7 +2807,7 @@ int IMB_colormanagement_colorspace_get_named_index(const char *name)
 {
   /* Roles. */
   if (STREQ(name, OCIO_ROLE_SCENE_LINEAR)) {
-    return g_config()->get_num_color_spaces();
+    return g_config()->get_num_all_color_spaces();
   }
 
   /* Regular color spaces. */
@@ -2808,7 +2821,7 @@ int IMB_colormanagement_colorspace_get_named_index(const char *name)
 const char *IMB_colormanagement_colorspace_get_indexed_name(const int index)
 {
   /* Roles. */
-  if (index == g_config()->get_num_color_spaces()) {
+  if (index == g_config()->get_num_all_color_spaces()) {
     return OCIO_ROLE_SCENE_LINEAR;
   }
 
@@ -3411,7 +3424,7 @@ void IMB_colormanagement_look_items_add(EnumPropertyItem **items,
 void IMB_colormanagement_colorspace_items_add(EnumPropertyItem **items, int *totitem)
 {
   /* Regular color spaces. */
-  for (const int colorspace_index : IndexRange(g_config()->get_num_color_spaces())) {
+  for (const int colorspace_index : IndexRange(g_config()->get_num_active_color_spaces())) {
     const ColorSpace *colorspace = g_config()->get_sorted_color_space_by_index(colorspace_index);
 
     EnumPropertyItem item;
@@ -3429,7 +3442,7 @@ void IMB_colormanagement_colorspace_items_add(EnumPropertyItem **items, int *tot
    * nodes that work the same regardless of working space. */
   EnumPropertyItem item;
 
-  item.value = g_config()->get_num_color_spaces();
+  item.value = g_config()->get_num_all_color_spaces();
   item.name = "Working Space";
   item.identifier = OCIO_ROLE_SCENE_LINEAR;
   item.icon = 0;
