@@ -227,6 +227,14 @@ static bool is_input_needed(const Context &context,
                             const bNodeSocket &input,
                             SocketResultFn socket_result_fn)
 {
+  /* Lazy evaluation of inputs that reference outputs outside of their own zone are currently not
+   * supported. */
+  const bke::bNodeTreeZones &zones = *node.owner_tree().zones();
+  const bNodeSocket *output = get_output_linked_to_input(input);
+  if (output && zones.get_zone_by_socket(input) != zones.get_zone_by_socket(*output)) {
+    return true;
+  }
+
   if (node.is_group_output()) {
     const Result *result = socket_result_fn(input);
     if (!result) {
@@ -710,7 +718,8 @@ Schedule compute_schedule(const Context &context,
 
   /* Validate node group. */
   node_group.ensure_topology_cache();
-  if (node_group.has_available_link_cycle()) {
+  const bke::bNodeTreeZones *zones = schedule.node_group.zones();
+  if (node_group.has_available_link_cycle() || !zones) {
     return schedule;
   }
 
